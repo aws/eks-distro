@@ -32,6 +32,10 @@ binaries: makes
 docker: makes
 	@echo 'Done' $(TARGET)
 
+.PHONY: docker-push
+docker-push: makes
+	@echo 'Done' $(TARGET)
+
 .PHONY: clean
 clean:
 	@echo 'Done' $(TARGET)

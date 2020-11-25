@@ -87,6 +87,10 @@ docker: binaries pause
 		-t $(PAUSE_IMAGE) \
 		-f ./docker/pause/Dockerfile ./_output/pause/
 
+.PHONY: docker-push
+docker-push:
+	docker push $(PAUSE_IMAGE)
+
 .PHONY: checksums
 checksums: local-images tarballs
 	build/create_release_checksums.sh $(RELEASE_BRANCH)
