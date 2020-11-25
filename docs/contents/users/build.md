@@ -16,11 +16,11 @@ going to use Elastic Container Repository (ECR), create it:
 
 The container is built with:
 
-    make docker IMAGE_TAG=186a72f9954148ae3abe9f236ac397e5a6264ec2
+    make docker
 
 If you want to push to a private repository:
 
-    make docker-push IMAGE_TAG=186a72f9954148ae3abe9f236ac397e5a6264ec2
+    make docker-push
 
 ## Build Remaining Containers
 
