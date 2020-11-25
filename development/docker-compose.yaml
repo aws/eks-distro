@@ -1,0 +1,19 @@
+version: "3.8"
+services:
+  buildkitd:
+    image: moby/buildkit:master-rootless
+    command:
+    - --addr
+    - tcp://0.0.0.0:1234
+    - --oci-worker-no-process-sandbox
+    #- --config=/etc/buildkit/buildkitd.toml
+    #dns: []
+    #dns_search: []
+    user: "1000"
+    privileged: true
+    ports:
+    - 1234:1234/tcp
+    #volumes:
+    #- type: bind
+    #  source: ./buildkitd.toml
+    #  target: /etc/buildkit/buildkitd.toml

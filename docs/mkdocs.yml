@@ -1,0 +1,51 @@
+site_name: 'EKS Distro'
+site_description: 'Amazon EKS Distro'
+site_author: 'The EKS-D contributors'
+repo_name: 'aws/eks-distro'
+repo_url: 'https://github.com/aws/eks-distro'
+copyright: 'Copyright &copy; 2020 Amazon'
+docs_dir: 'contents'
+dev_addr: 'localhost:8000'
+nav:
+- Home: 'index.md'
+- Users:
+  - Architecture: 'users/architecture.md'
+  - Start: 'users/index.md'
+  - Build Prerequisites: 'users/build-prerequisites.md'
+  - Build: 'users/build.md'
+- Community:
+  - Overview: 'community/overview.md'
+  - Contributing: 'community/contributing.md'
+  - Partners: 'community/partners.md'
+  - FAQ: 'community/faq.md'
+  - Governance: 'community/governance.md'
+  - Code of Conduct: 'community/code_of_conduct.md'
+extra:
+  social:
+  - icon: 'fontawesome/brands/twitter'
+    link: 'https://twitter.com/awscloud'
+theme:
+  name: 'material'
+  features:
+  - navigation.tabs
+  - navigation.instant
+  custom_dir: 'theme'
+  favicon: 'assets/images/favicon.png'
+  logo: 'assets/images/logo.png'
+  font:
+      text: 'Oxygen'
+      code: 'Oxygen Mono'
+  palette:
+    primary: 'white'
+  highlightjs: true
+  hljs_languages:
+  - 'yaml'
+  - 'json'
+  - 'bash'
+markdown_extensions:
+- pymdownx.snippets
+- toc:
+    permalink: true
+- admonition
+- codehilite:
+    linenums: true
