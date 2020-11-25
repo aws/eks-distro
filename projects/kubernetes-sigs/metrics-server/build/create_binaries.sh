@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+set -x
+set -o errexit
+set -o nounset
+set -o pipefail
+
+REPO="$1"
+CLONE_URL="$2"
+TAG="$3"
+BIN_ROOT="_output/bin"
+BIN_PATH=$BIN_ROOT/$REPO
+
+readonly SUPPORTED_PLATFORMS=(
+  linux/amd64
+  linux/arm64
+)
+
+function build::metrics-server::binaries(){
+  mkdir -p "$BIN_PATH"
+  if [ ! -d $REPO ]; then
+    git clone "$CLONE_URL" "$REPO"
+  fi
+  local -r pkg="sigs.k8s.io/metrics-server/pkg"
+  local -r git_commit="$(git -C $REPO describe --always --abbrev=0)"
+  local -r build_date=$(git -C $REPO show -s --format=format:%ct HEAD)
+  local -r goldflags="-X ${pkg}/version.gitVersion=$TAG -X ${pkg}/version.gitCommit=$git_commit -X ${pkg}/version.buildDate=$build_date"
+  git -C $REPO checkout "$TAG"
+  for platform in "${SUPPORTED_PLATFORMS[@]}";
+  do
+    OS="$(cut -d '/' -f1 <<< ${platform})"
+    ARCH="$(cut -d '/' -f2 <<< ${platform})"
+    GOOS=$OS make -C $REPO ARCH=$ARCH LDFLAGS="-s -w -buildid='' $goldflags"
+    mkdir -p $BIN_PATH/$OS-$ARCH
+    mv $REPO/metrics-server $BIN_PATH/$OS-$ARCH/metrics-server
+    make -C $REPO clean
+  done
+  rm -rf "$REPO"
+}
+
+build::metrics-server::binaries
