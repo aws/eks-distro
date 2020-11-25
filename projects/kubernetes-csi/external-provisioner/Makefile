@@ -71,6 +71,10 @@ docker: binaries
 		--build-arg TARGETOS=linux \
 		-f ./docker/linux/Dockerfile .
 
+.PHONY: docker-push
+docker-push:
+	docker push $(IMAGE)
+
 .PHONY: build
 build: local-images
 

@@ -100,6 +100,11 @@ docker: binaries
 		--build-arg TARGETOS=linux \
 		-f ./docker/kube-proxy-base/Dockerfile .
 
+.PHONY: docker-push
+docker-push:
+	docker push $(GO_RUNNER_IMAGE)
+	docker push $(KUBE_PROXY_BASE_IMAGE)
+
 .PHONY: clean
 clean:
 	rm -rf ./_output ./release

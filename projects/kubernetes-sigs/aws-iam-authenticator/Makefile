@@ -70,6 +70,10 @@ docker:
 		--build-arg TARGETOS=linux \
 		-f ./docker/linux/Dockerfile .
 
+.PHONY: docker-push
+docker-push:
+	docker push $(IMAGE)
+
 .PHONY: tarballs
 tarballs:
 	build/create_tarballs.sh $(REPO) $(GIT_TAG)

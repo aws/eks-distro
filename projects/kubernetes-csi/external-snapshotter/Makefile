@@ -113,6 +113,12 @@ docker: binaries
 		--build-arg TARGETOS=linux \
 		-f ./docker/linux/snapshot-validation-webhook/Dockerfile .
 
+.PHONY: docker-push
+docker-push:
+	docker push $(CSI_SNAPSHOTTER_IMAGE)
+	docker push $(SNAPSHOT_CONTROLLER_IMAGE)
+	docker push $(SNAPSHOT_VALIDATION_WEBHOOK_IMAGE)
+
 .PHONY: build
 build: local-images
 
