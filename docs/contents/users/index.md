@@ -25,7 +25,7 @@ container images.
 
 Run the `kops.sh` script, and when prompted supply a FQDN name for your cluster
 for a domain you control. Refer to the [kops
-documentation](https://kops.sigs.k8s.io/getting_started/aws/#configure-dns) for
+documentation](https://kops.sigs.k8s.io/getting_started/aws/) for
 full instructions.
 
 After you run the script, be sure to run the `export KOPS_STATE_STORE=...`
