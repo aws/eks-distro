@@ -1,0 +1,46 @@
+From 2c8aaad4951c0b2375f6678ad3591202bdfd5d84 Mon Sep 17 00:00:00 2001
+From: Yang Yang <yyyng@amazon.com>
+Date: Wed, 17 Jun 2020 06:38:49 -0700
+Subject: [PATCH 09/15] --EKS-CHERRYPICK-- fix aws loadbalancer vpc cidr
+ calculation ref: https://github.com/kubernetes/kubernetes/pull/92227
+
+Signed-off-by: Jackson West <jgw@amazon.com>
+---
+ .../aws/aws_loadbalancer.go                   | 21 +++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+
+diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer.go
+index ded82412d89..1197e7120f6 100644
+--- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer.go
++++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer.go
+@@ -707,6 +707,27 @@ func (c *Cloud) ensureTargetGroup(targetGroup *elbv2.TargetGroup, serviceName ty
+ 	return targetGroup, nil
+ }
+ 
++func (c *Cloud) getVpcCidrBlocks() ([]string, error) {
++	vpcs, err := c.ec2.DescribeVpcs(&ec2.DescribeVpcsInput{
++		VpcIds: []*string{aws.String(c.vpcID)},
++	})
++	if err != nil {
++		return nil, fmt.Errorf("error querying VPC for ELB: %q", err)
++	}
++	if len(vpcs.Vpcs) != 1 {
++		return nil, fmt.Errorf("error querying VPC for ELB, got %d vpcs for %s", len(vpcs.Vpcs), c.vpcID)
++	}
++
++	cidrBlocks := make([]string, 0, len(vpcs.Vpcs[0].CidrBlockAssociationSet))
++	for _, cidr := range vpcs.Vpcs[0].CidrBlockAssociationSet {
++		if aws.StringValue(cidr.CidrBlockState.State) != ec2.VpcCidrBlockStateCodeAssociated {
++			continue
++		}
++		cidrBlocks = append(cidrBlocks, aws.StringValue(cidr.CidrBlock))
++	}
++	return cidrBlocks, nil
++}
++
+ // updateInstanceSecurityGroupsForNLB will adjust securityGroup's settings to allow inbound traffic into instances from clientCIDRs and portMappings.
+ // TIP: if either instances or clientCIDRs or portMappings are nil, then the securityGroup rules for lbName are cleared.
+ func (c *Cloud) updateInstanceSecurityGroupsForNLB(lbName string, instances map[InstanceID]*ec2.Instance, subnetCIDRs []string, clientCIDRs []string, portMappings []nlbPortMapping) error {
+-- 
+2.29.2
+

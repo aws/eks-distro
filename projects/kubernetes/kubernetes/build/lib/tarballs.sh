@@ -1,0 +1,127 @@
+#!/usr/bin/env bash
+
+source "${MAKE_ROOT}/../../../build/lib/common.sh"
+
+readonly KUBE_SUPPORTED_SERVER_PLATFORMS=(
+  linux/amd64
+  linux/arm64
+)
+
+readonly KUBE_SUPPORTED_NODE_PLATFORMS=(
+  linux/amd64
+  linux/arm64
+  windows/amd64
+)
+
+readonly KUBE_SUPPORTED_CLIENT_PLATFORMS=(
+  linux/amd64
+  linux/arm64
+  darwin/amd64
+  windows/amd64
+)
+
+### server binaries
+function build::tarballs::server_targets() {
+  local targets=(
+    cmd/kube-proxy
+    cmd/kube-apiserver
+    cmd/kube-controller-manager
+    cmd/kubelet
+    cmd/kubeadm
+    cmd/kube-scheduler
+  )
+  echo "${targets[@]}"
+}
+
+IFS=" " read -ra KUBE_SERVER_TARGETS <<< "$(build::tarballs::server_targets)"
+readonly KUBE_SERVER_TARGETS
+readonly KUBE_SERVER_BINARIES=("${KUBE_SERVER_TARGETS[@]##*/}")
+
+### node binaries
+function build::tarballs::node_targets() {
+  local targets=(
+    cmd/kube-proxy
+    cmd/kubeadm
+    cmd/kubelet
+  )
+  echo "${targets[@]}"
+}
+
+IFS=" " read -ra KUBE_NODE_TARGETS <<< "$(build::tarballs::node_targets)"
+readonly KUBE_NODE_TARGETS
+readonly KUBE_NODE_BINARIES=("${KUBE_NODE_TARGETS[@]##*/}")
+readonly KUBE_NODE_BINARIES_WIN=("${KUBE_NODE_BINARIES[@]/%/.exe}")
+
+### client binaries
+readonly KUBE_CLIENT_TARGETS=(
+  cmd/kubectl
+)
+readonly KUBE_CLIENT_BINARIES=("${KUBE_CLIENT_TARGETS[@]##*/}")
+readonly KUBE_CLIENT_BINARIES_WIN=("${KUBE_CLIENT_BINARIES[@]/%/.exe}")
+
+# TODO include kubernetes/LICENSES
+function build::tarballs::create_tarballs(){
+    local -r bin_root="$1"
+    local -r output_dir="$2"
+
+    for platform in "${KUBE_SUPPORTED_SERVER_PLATFORMS[@]}"; do
+        # The substitution on platform_src below will replace all slashes with
+        # dashes.  It'll transform darwin/amd64 -> darwin-amd64.
+        local platform_src="${platform//\//-}"
+
+        tarball=$output_dir/kubernetes-server-$platform_src.tar.gz
+        local ch_dir="${output_dir}/${platform}"
+        local bin_dir="${output_dir}/${platform}/kubernetes/server/bin"
+        mkdir -p $bin_dir
+        for bin in ${KUBE_SERVER_BINARIES[@]}; do
+            cp ${bin_root}/${platform}/${bin} $bin_dir
+        done
+        build::common::create_tarball $tarball $ch_dir kubernetes
+        rm -rf $ch_dir
+        rmdir $(dirname $ch_dir)
+    done
+
+    for platform in "${KUBE_SUPPORTED_NODE_PLATFORMS[@]}"; do
+        # The substitution on platform_src below will replace all slashes with
+        # dashes.  It'll transform darwin/amd64 -> darwin-amd64.
+        local platform_src="${platform//\//-}"
+        tarball=$output_dir/kubernetes-node-$platform_src.tar.gz
+        local ch_dir="${output_dir}/${platform}"
+        local bin_dir="${output_dir}/${platform}/kubernetes/node/bin"
+        mkdir -p $bin_dir
+        if [ "$platform" == "windows/amd64" ]; then
+            for bin in ${KUBE_NODE_BINARIES_WIN[@]}; do
+                cp ${bin_root}/${platform}/${bin} $bin_dir
+            done
+        else
+            for bin in ${KUBE_NODE_BINARIES[@]}; do
+                cp ${bin_root}/${platform}/${bin} $bin_dir
+            done
+        fi
+        build::common::create_tarball $tarball $ch_dir kubernetes
+        rm -rf $ch_dir
+        rmdir $(dirname $ch_dir)
+    done
+
+    for platform in "${KUBE_SUPPORTED_CLIENT_PLATFORMS[@]}"; do
+        # The substitution on platform_src below will replace all slashes with
+        # dashes.  It'll transform darwin/amd64 -> darwin-amd64.
+        local platform_src="${platform//\//-}"
+        tarball=$output_dir/kubernetes-client-$platform_src.tar.gz
+        local ch_dir="${output_dir}/${platform}"
+        local bin_dir="${output_dir}/${platform}/kubernetes/client/bin"
+        mkdir -p $bin_dir
+        if [ "$platform" == "windows/amd64" ]; then
+            for bin in ${KUBE_CLIENT_BINARIES_WIN[@]}; do
+                cp ${bin_root}/${platform}/${bin} $bin_dir
+            done
+        else
+            for bin in ${KUBE_CLIENT_BINARIES[@]}; do
+                cp ${bin_root}/${platform}/${bin} $bin_dir
+            done
+        fi
+        build::common::create_tarball $tarball $ch_dir kubernetes
+        rm -rf $ch_dir
+        rmdir $(dirname $ch_dir)
+    done
+}
