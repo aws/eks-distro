@@ -1,8 +1,8 @@
 site_name: 'EKS Distro'
 site_description: 'Amazon EKS Distro'
 site_author: 'The EKS-D contributors'
-repo_name: 'aws/aws-paris'
-repo_url: 'https://github.com/aws/aws-paris'
+repo_name: 'aws/eks-distro'
+repo_url: 'https://github.com/aws/eks-distro'
 copyright: 'Copyright &copy; 2020 Amazon'
 docs_dir: 'contents'
 nav:
