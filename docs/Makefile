@@ -8,7 +8,7 @@ install:
 build: install
 	mkdocs build --strict --verbose --clean
 
-.PHONY: publish
-publish: build
+.PHONY: release
+release: build
 	# TODO: make publish script publish for launch
 	bash ./publish.sh
