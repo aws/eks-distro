@@ -40,4 +40,5 @@ build::binaries::kube_bins "$SOURCE_DIR"
 mkdir -p ${OUTPUT_DIR}/${RELEASE_BRANCH}/bin
 cp -r ${SOURCE_DIR}/_output/local/bin/* ${OUTPUT_DIR}/${RELEASE_BRANCH}/bin
 
-build::gather_licenses $MAKE_ROOT/$REPOSITORY $MAKE_ROOT/LICENSES
+(cd $REPOSITORY && build::gather_licenses ./ ${OUTPUT_DIR}/${RELEASE_BRANCH}/bin/LICENSES)
+cp $MAKE_ROOT/ATTRIBUTION.txt ${OUTPUT_DIR}/${RELEASE_BRANCH}/bin
