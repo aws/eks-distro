@@ -25,6 +25,8 @@ ARG TARGETOS
 
 COPY --from=0 /etc/ssl/certs /etc/ssl/certs
 COPY _output/bin/coredns/$TARGETOS-$TARGETARCH/coredns /coredns
+COPY LICENSES /LICENSES
+COPY ATTRIBUTION.txt /ATTRIBUTION.txt
 
 EXPOSE 53 53/udp
 ENTRYPOINT ["/coredns"]

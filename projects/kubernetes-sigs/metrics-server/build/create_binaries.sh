@@ -30,6 +30,9 @@ readonly SUPPORTED_PLATFORMS=(
   linux/arm64
 )
 
+MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
+source "${MAKE_ROOT}/../../../build/lib/common.sh"
+
 function build::metrics-server::binaries(){
   mkdir -p "$BIN_PATH"
   if [ ! -d $REPO ]; then
@@ -49,6 +52,7 @@ function build::metrics-server::binaries(){
     mv $REPO/metrics-server $BIN_PATH/$OS-$ARCH/metrics-server
     make -C $REPO clean
   done
+  build::gather_licenses ./ $MAKE_ROOT/LICENSES
   rm -rf "$REPO"
 }
 

@@ -23,6 +23,7 @@ RELEASE_BRANCH="$2"
 
 MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
 source "${MAKE_ROOT}/build/lib/init.sh"
+source "${MAKE_ROOT}/../../../build/lib/common.sh"
 
 GIT_TAG="$(cat ${MAKE_ROOT}/${RELEASE_BRANCH}/GIT_TAG)"
 PATCH_DIR=${MAKE_ROOT}/${RELEASE_BRANCH}/patches
@@ -38,3 +39,5 @@ build::binaries::kube_bins "$SOURCE_DIR"
 
 mkdir -p ${OUTPUT_DIR}/${RELEASE_BRANCH}/bin
 cp -r ${SOURCE_DIR}/_output/local/bin/* ${OUTPUT_DIR}/${RELEASE_BRANCH}/bin
+
+build::gather_licenses $MAKE_ROOT/$REPOSITORY $MAKE_ROOT/LICENSES

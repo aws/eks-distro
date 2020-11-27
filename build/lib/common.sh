@@ -65,3 +65,14 @@ function build::common::generate_shasum() {
   done
   cd -
 }
+
+# TODO: replace with go licenses tool which was used to create ATTRIBUTION.txt files
+function build::gather_licenses() {
+  local -r builddir=$1
+  local -r outputdir=$2
+  
+  find $builddir \( -name 'LICENCE' -o -name 'LICENSE' \
+     -o -name 'LICENSE.md' -o -name 'LICENSE.txt' \
+     -o -name 'NOTICE' -o -name 'COPYING' -o -name 'NOTICE.txt' \
+     -o -name 'LICENSE.code' -o -name 'LICENCE.md' \) | while IFS= read -r NAME; do mkdir -p "${outputdir}/$(dirname $NAME)" && cp  "$NAME" "${outputdir}/${NAME}"; done
+}

@@ -25,5 +25,7 @@ RUN gcc -Os -Wall -Werror -static -DVERSION=${VERSION} -o /pause /pause.c
 
 FROM scratch
 
+COPY LICENSES /LICENSES
+COPY ATTRIBUTION.txt /ATTRIBUTION.txt
 COPY --from=0 /pause /pause
 ENTRYPOINT ["/pause"]

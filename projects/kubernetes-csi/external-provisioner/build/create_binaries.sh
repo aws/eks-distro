@@ -30,6 +30,9 @@ readonly SUPPORTED_PLATFORMS=(
   linux/arm64
 )
 
+MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
+source "${MAKE_ROOT}/../../../build/lib/common.sh"
+
 function build::external-provisioner::binaries(){
   mkdir -p $BIN_PATH
   git clone $CLONE_URL $REPO
@@ -44,7 +47,8 @@ function build::external-provisioner::binaries(){
     mv bin/* ../${BIN_PATH}/${OS}-${ARCH}
     make clean
   done
-  cd ..
+  build::gather_licenses ./ $MAKE_ROOT/LICENSES
+  cd ..  
   rm -rf $REPO
 }
 

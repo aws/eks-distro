@@ -38,9 +38,13 @@ function build::plugins::tarball() {
     OS="$(cut -d '/' -f1 <<< ${platform})"
     ARCH="$(cut -d '/' -f2 <<< ${platform})"
     TAR_FILE="cni-plugins-${OS}-${ARCH}-${TAG}.tar.gz"
+
+    cp -rf LICENSES $BIN_ROOT/$REPO/${OS}-${ARCH}/ 
+    cp ATTRIBUTION.txt $BIN_ROOT/$REPO/${OS}-${ARCH}/ 
     build::common::create_tarball ${TAR_PATH}/${TAR_FILE} $BIN_ROOT/$REPO/${OS}-${ARCH} .
   done
   rm -rf $BIN_ROOT
+  rm -rf LICENSES
 }
 
 build::plugins::tarball
