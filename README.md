@@ -2,7 +2,7 @@
 
 The EKS Distro repository has everything you need to build and create
 kubernetes clusters.  Detailed documentation for this project can be found
-in the [docs](docs/index.md) directory.
+in the [docs](./docs/contents/index.md) directory.
 
 ## Security
 
