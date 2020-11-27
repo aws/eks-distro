@@ -8,6 +8,6 @@ security patching support. EKS-D follows the same Kubernetes version release
 cycle as Amazon EKS and we provide the bits here.
 
 
-Check out EKS Distro's [architecture](users/architecture) and give it a spin by using
-one of the many exemplary [install](users/install) recipes or using
-[build](users/build) instructions to build a cluster from scratch.
+Check out EKS Distro's [architecture](./users/architecture.md) and give it a spin by using
+one of the many exemplary [install](./users/install.md) recipes or using
+[build](./users/build.md) instructions to build a cluster from scratch.
