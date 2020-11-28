@@ -1,7 +1,7 @@
 From af681bdbde7ae7522a90f8f0e898cb090d6877ab Mon Sep 17 00:00:00 2001
 From: Kishor Joshi <joshikis@amazon.com>
 Date: Mon, 22 Jun 2020 14:37:37 -0700
-Subject: [PATCH 12/15] --EKS-CHERRYPICK-- AWS cloudprovider allow nlb-ip and
+Subject: [PATCH 12/16] --EKS-CHERRYPICK-- AWS cloudprovider allow nlb-ip and
  external type lbs to be managed externally ref:
  https://github.com/kubernetes/kubernetes/pull/92839/
 
