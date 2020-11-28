@@ -100,7 +100,7 @@ checksums: tarballs local-images
 build: checksums
 
 .PHONY: release
-release: images checksums
+release: checksums images
 
 .PHONY: all
 all: release
