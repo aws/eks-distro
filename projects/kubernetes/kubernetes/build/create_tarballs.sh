@@ -32,8 +32,6 @@ if [ ! -d ${OUTPUT_DIR}/${RELEASE_BRANCH} ]; then
     exit 1
 fi
 mkdir -p ${OUTPUT_DIR}/${RELEASE_BRANCH}
-cp -rf LICENSES $BIN_ROOT/$REPO/${OS}-${ARCH} 
-cp ATTRIBUTION.txt $BIN_ROOT/$REPO/${OS}-${ARCH}/ 
 build::common::ensure_tar
 build::tarballs::create_tarballs "${OUTPUT_DIR}/${RELEASE_BRANCH}/bin" "${OUTPUT_DIR}/${RELEASE_BRANCH}"
 git \
