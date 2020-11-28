@@ -32,6 +32,9 @@ readonly SUPPORTED_PLATFORMS=(
   windows/amd64
 )
 
+MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
+source "${MAKE_ROOT}/../../../build/lib/common.sh"
+
 function build::aws-iam-authenticator::binaries(){
 
   mkdir -p "$BIN_PATH"
@@ -57,6 +60,7 @@ function build::aws-iam-authenticator::binaries(){
     mkdir -p ../"$BIN_PATH"/"$OS"-"$ARCH"
     mv bin/* ../"$BIN_PATH"/"$OS"-"$ARCH"
   done
+  build::gather_licenses ./ $MAKE_ROOT/LICENSES
   cd ..
   rm -rf "$REPO"
 }

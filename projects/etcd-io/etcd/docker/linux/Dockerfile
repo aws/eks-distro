@@ -18,6 +18,8 @@ FROM $BASE_IMAGE
 ARG TARGETARCH
 ARG TARGETOS
 
+COPY LICENSES /LICENSES
+COPY ATTRIBUTION.txt /ATTRIBUTION.txt
 COPY _output/bin/etcd/$TARGETOS-$TARGETARCH/etcd /usr/local/bin/
 COPY _output/bin/etcd/$TARGETOS-$TARGETARCH/etcdctl /usr/local/bin/
 VOLUME /var/etcd/

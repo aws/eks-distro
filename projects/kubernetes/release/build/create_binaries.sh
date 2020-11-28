@@ -27,7 +27,10 @@ OUTPUT_DIR="${OUTPUT_DIR:-${MAKE_ROOT}/_output}"
 
 source "${MAKE_ROOT}/build/lib/clone.sh"
 source "${MAKE_ROOT}/build/lib/binaries.sh"
+source "${MAKE_ROOT}/../../../build/lib/common.sh"
 
 mkdir -p $OUTPUT_DIR
 build::clone::release $CLONE_URL $REPOSITORY $TAG
 build::binaries::bins $MAKE_ROOT/$REPOSITORY $OUTPUT_DIR
+
+build::gather_licenses $MAKE_ROOT/$REPOSITORY $MAKE_ROOT/LICENSES
