@@ -1,7 +1,7 @@
 From 370504b5fc4b12d18d9c4bb38b35c84bab6ff547 Mon Sep 17 00:00:00 2001
 From: M00nF1sh <yyyng@amazon.com>
 Date: Tue, 2 Jul 2019 10:44:42 -0700
-Subject: [PATCH 02/15] --EKS-PATCH-- Pass region to sts client for ap-east-1
+Subject: [PATCH 02/16] --EKS-PATCH-- Pass region to sts client for ap-east-1
 
 Signed-off-by: Jackson West <jgw@amazon.com>
 ---

@@ -1,7 +1,7 @@
 From fe795f5896c475b0a36e5997caedf0a77b01c373 Mon Sep 17 00:00:00 2001
 From: Gyuho Lee <leegyuho@amazon.com>
 Date: Thu, 17 Oct 2019 13:02:49 -0700
-Subject: [PATCH 03/15] --EKS-PATCH-- staging/*/apiserver: disable info level
+Subject: [PATCH 03/16] --EKS-PATCH-- staging/*/apiserver: disable info level
  gRPC logging
 
 gRPC balancer wrapper has (non-leveled) info logging on "Notify" call.

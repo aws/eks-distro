@@ -1,7 +1,7 @@
 From 2c8aaad4951c0b2375f6678ad3591202bdfd5d84 Mon Sep 17 00:00:00 2001
 From: Yang Yang <yyyng@amazon.com>
 Date: Wed, 17 Jun 2020 06:38:49 -0700
-Subject: [PATCH 09/15] --EKS-CHERRYPICK-- fix aws loadbalancer vpc cidr
+Subject: [PATCH 09/16] --EKS-CHERRYPICK-- fix aws loadbalancer vpc cidr
  calculation ref: https://github.com/kubernetes/kubernetes/pull/92227
 
 Signed-off-by: Jackson West <jgw@amazon.com>

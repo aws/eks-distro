@@ -1,7 +1,7 @@
 From 9d3d7d5066a7164251abd5fd86ab5aaff5eaec15 Mon Sep 17 00:00:00 2001
 From: Angus Lees <gus@inodes.org>
 Date: Mon, 8 Jun 2020 15:12:35 +1000
-Subject: [PATCH 08/15] --EKS-PATCH-- aws: Fix address sorting of multiple
+Subject: [PATCH 08/16] --EKS-PATCH-- aws: Fix address sorting of multiple
  interfaces
 
 It is common to have "holes" in the network interfaces, eg after

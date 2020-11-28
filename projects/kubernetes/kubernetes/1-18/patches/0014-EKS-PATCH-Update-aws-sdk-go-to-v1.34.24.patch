@@ -1,7 +1,7 @@
 From 54a9660d9992a4221c881f0ae849d113bc88823a Mon Sep 17 00:00:00 2001
 From: Justin Ngo <justngo@amazon.com>
 Date: Tue, 13 Oct 2020 22:59:04 -0700
-Subject: [PATCH 14/15] --EKS-PATCH-- Update aws-sdk-go to v1.34.24
+Subject: [PATCH 14/16] --EKS-PATCH-- Update aws-sdk-go to v1.34.24
 
 Signed-off-by: Jackson West <jgw@amazon.com>
 ---
