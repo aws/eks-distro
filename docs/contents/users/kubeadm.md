@@ -39,15 +39,15 @@ As a result:
 
 * An Ansible playbook (eks-distro.yaml) runs to automate the configuration of the AMI for EKS-D. The results include:
 
-    * Systemd services configured: Docker container engine and kubelet
+    * Systemd services configured: Docker container engine and kubelet.
 
-    * Installing and/or running the following from container images: CNI plugins, etcd, kube-apiserver, kube-controller-manager, kube-scheduler, kube-proxy, metrics-server, aws-iam-authenticator, coredns, and pause container images.
+    * Container images ready to deploy the following: CNI plugins, etcd, kube-apiserver, kube-controller-manager, kube-scheduler, kube-proxy, metrics-server, aws-iam-authenticator, coredns, and pause container images.
 
     * Binary commands being installed: kubeadm and kubelet.
 
-    * An SSH key being created and uploaded to EC2 to use for authentication to the running instance
+    * An SSH key being created and uploaded to EC2 to use for authentication to the running instance.
 
-* A new EC2 instance starts from the AMI
+* A new EC2 instance starts from the AMI.
 
 ## Run kubeadm to initialize EKS-D
 
