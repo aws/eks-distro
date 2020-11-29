@@ -7,15 +7,15 @@ GIT_TAG?=$(shell cat ./$(RELEASE_BRANCH)/GIT_TAG)
 AWS_ACCOUNT_ID?=$(shell aws sts get-caller-identity --query Account --output text)
 AWS_REGION?=us-west-2
 
-RELEASE_BRANCH?="1-18"
-RELEASE?="1"
+RELEASE_BRANCH?=1-18
+RELEASE?=1
 
 BASE_REPO?=$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
 GO_RUNNER_IMAGE_NAME?=kubernetes/go-runner
 KUBE_PROXY_BASE_IMAGE_NAME?=kubernetes/kube-proxy-base
-BASE_TAG?=v0.4.2-ea45689a0da457711b15fa1245338cd0b636ad4b
-GO_RUNNER_IMAGE?=$(BASE_REPO)/$(GO_RUNNER_IMAGE_NAME):$(BASE_TAG)
-KUBE_PROXY_BASE_IMAGE?=$(BASE_REPO)/$(KUBE_PROXY_BASE_IMAGE_NAME):$(BASE_TAG)
+KUBE_BASE_TAG?=v0.4.2-ea45689a0da457711b15fa1245338cd0b636ad4b
+GO_RUNNER_IMAGE?=$(BASE_REPO)/$(GO_RUNNER_IMAGE_NAME):$(KUBE_BASE_TAG)
+KUBE_PROXY_BASE_IMAGE?=$(BASE_REPO)/$(KUBE_PROXY_BASE_IMAGE_NAME):$(KUBE_BASE_TAG)
 
 IMAGE_REPO?=$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
 IMAGE_REPO_PREFIX=kubernetes
@@ -38,8 +38,6 @@ update-checksums:
 .PHONY: binaries
 binaries:
 	build/create_binaries.sh $(CLONE_URL) $(RELEASE_BRANCH)
-	# TODO: Commit hashsums when other patches are applied
-	#sha256sum -c ./$(RELEASE_BRANCH)/checksums
 
 .PHONY: tarballs
 tarballs: binaries
@@ -58,7 +56,7 @@ local-images: binaries pause
 	buildctl \
 		build \
 		--frontend dockerfile.v0 \
-		--opt platform=linux/amd64  \
+		--opt platform=linux/amd64 \
 		--local dockerfile=./docker/pause/ \
 		--local context=./_output/pause \
 		--opt build-arg:BASE_IMAGE=$(GO_RUNNER_IMAGE) \
