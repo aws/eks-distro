@@ -10,9 +10,10 @@ nav:
 - Home: 'index.md'
 - Users:
   - Architecture: 'users/architecture.md'
-  - Start: 'users/index.md'
+  - Starting EKS-D with kOps: 'users/index.md'
+  - Starting EKS-D with kubeadm: 'users/kubeadm.md'
   - Build Prerequisites: 'users/build-prerequisites.md'
-  - Build: 'users/build.md'
+  - Build EKS-D: 'users/build.md'
 - Community:
   - Overview: 'community/overview.md'
   - Contributing: 'community/contributing.md'

@@ -1,4 +1,4 @@
-# Starting a Cluster
+# Starting EKS-D with kOps
 
 Before you start your cluster, you need to get several container images.
 Container images can be accessed either from the EKS Distro Container
