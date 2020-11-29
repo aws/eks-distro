@@ -12,3 +12,7 @@ build: install
 release: build
 	# TODO: make publish script publish for launch
 	bash ./publish.sh
+
+.PHONY: clean
+clean:
+	rm -rf site/
