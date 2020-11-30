@@ -10,9 +10,9 @@ nav:
 - Home: 'index.md'
 - Users:
   - Architecture: 'users/architecture.md'
-  - Start: 'users/index.md'
+  - Start EKS-D: 'users/index.md'
   - Build Prerequisites: 'users/build-prerequisites.md'
-  - Build: 'users/build.md'
+  - Build EKS-D: 'users/build.md'
 - Community:
   - Overview: 'community/overview.md'
   - Contributing: 'community/contributing.md'
