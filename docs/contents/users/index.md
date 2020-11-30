@@ -7,9 +7,9 @@ repository, downloaded in as a tarball, or built from scratch.
 ### EKS Distro Container Repository
 
 You may pull the images you need from the EKS Distro Container Repository.
-For example:
-
-    docker pull 137112412989.dkr.ecr.us-west-2.amazonaws.com/eks-distro/base
+There is a [pull-all.sh shell script](https://github.com/aws/eks-distro/blob/main/development/pull-all.sh)
+that may be used to pull the lastest images. You may also browse the
+[EKS Distor Container Repository](https://gallery.ecr.aws/?searchTerm=eks-distro)
 
 ### Download Containers Tarball
 
