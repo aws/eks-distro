@@ -3,9 +3,19 @@
 In order to build EKS Distro, you will need to make sure several things
 are installed and configured.
 
-## Goland Proxy Settings
+## Region Environment Variables
 
-If you are on a VPN, you may need to set and export `GOPROXY`:
+The build uses the new convention setting region with the `AWS_REGION` environment
+variable. Some older utilities such as v1 of the AWS CLI use the environment
+variable `AWS_DEFAULT_REGION`. To be safe, set and export both to the same value:
+
+    export AWS_REGION=us-west-2
+    export AWS_DEFAULT_REGION="${AWS_REGION}"
+
+## Go Proxy Settings
+
+If you are using an HTTP proxy like you might if you are on a corporate VPN,
+you may need to set and export `GOPROXY`:
 
     export GOPROXY=direct
 
@@ -40,6 +50,11 @@ In order to build and run multi-architecture containers, you will need to
 install [Qemu](https://www.qemu.org/download/). On amazonlinux2, this can be
 installed with the `qemu-user-static` package, and then updating your host's
 `binfmt_misc` configuration.
+
+## GNU Tar
+
+If you are on a Mac, you will need to `brew install coreutils` to get GNU
+tar.
 
 ## Build Options
 

@@ -16,6 +16,7 @@ You can run EKS-D on-premises, in a cloud, or on your own systems. Using EKS-D o
 of AWS can provide a path to having the same Kubernetes distribution
 wherever you need to run it as the Kubernetes you use in the cloud with EKS.
 
+
 Once EKS-D is running, you are responsible for managing and
 upgrading it yourself. For end users, however, running applications is the
 same as with EKS since the two support the same API versions and

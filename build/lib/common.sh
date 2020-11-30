@@ -1,4 +1,18 @@
 #!/usr/bin/env bash
+# Copyright 2020 Amazon.com Inc. or its affiliates. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 
 function build::common::ensure_tar() {
   if [[ -n "${TAR:-}" ]]; then
@@ -50,4 +64,15 @@ function build::common::generate_shasum() {
     sha512sum "$file" > "$file.sha512"
   done
   cd -
+}
+
+# TODO: replace with go licenses tool which was used to create ATTRIBUTION.txt files
+function build::gather_licenses() {
+  local -r builddir=$1
+  local -r outputdir=$2
+  
+  find $builddir \( -name 'LICENCE' -o -name 'LICENSE' \
+     -o -name 'LICENSE.md' -o -name 'LICENSE.txt' \
+     -o -name 'NOTICE' -o -name 'COPYING' -o -name 'NOTICE.txt' \
+     -o -name 'LICENSE.code' -o -name 'LICENCE.md' \) | while IFS= read -r NAME; do mkdir -p "${outputdir}/$(dirname $NAME)" && cp  "$NAME" "${outputdir}/${NAME}"; done
 }

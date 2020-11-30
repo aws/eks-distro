@@ -34,6 +34,10 @@ SNAPSHOT_CONTROLLER_IMAGE?=$(IMAGE_REPO)/kubernetes-csi/external-snapshotter/sna
 SNAPSHOT_VALIDATION_WEBHOOK_IMAGE_TAG=${GIT_TAG}-eks-${RELEASE_BRANCH}-${RELEASE}
 SNAPSHOT_VALIDATION_WEBHOOK_IMAGE?=$(IMAGE_REPO)/kubernetes-csi/external-snapshotter/snapshot-validation-webhook:$(SNAPSHOT_VALIDATION_WEBHOOK_IMAGE_TAG)
 
+ifeq ($(DEVELOPMENT),true)
+	BASE_IMAGE=amazonlinux:2
+endif
+
 .PHONY: binaries
 binaries:
 	build/create_binaries.sh $(REPO) $(CLONE_URL) $(GIT_TAG)
@@ -112,6 +116,12 @@ docker: binaries
 		--build-arg TARGETARCH=amd64 \
 		--build-arg TARGETOS=linux \
 		-f ./docker/linux/snapshot-validation-webhook/Dockerfile .
+
+.PHONY: docker-push
+docker-push:
+	docker push $(CSI_SNAPSHOTTER_IMAGE)
+	docker push $(SNAPSHOT_CONTROLLER_IMAGE)
+	docker push $(SNAPSHOT_VALIDATION_WEBHOOK_IMAGE)
 
 .PHONY: build
 build: local-images

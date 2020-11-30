@@ -50,6 +50,7 @@ pause:
 	mkdir -p $(PAUSE_DST_DIR)
 	# Older versions have the pause.c file stored under kubernetes/build/pause/
 	test -f $(PAUSE_SRC_DIR)/linux/pause.c && cp $(PAUSE_SRC_DIR)/linux/pause.c $(PAUSE_DST_DIR) || cp $(PAUSE_SRC_DIR)/pause.c $(PAUSE_DST_DIR)
+	rm -rf ./kubernetes
 
 .PHONY: local-images
 local-images: binaries pause
@@ -87,15 +88,19 @@ docker: binaries pause
 		-t $(PAUSE_IMAGE) \
 		-f ./docker/pause/Dockerfile ./_output/pause/
 
+.PHONY: docker-push
+docker-push:
+	docker push $(PAUSE_IMAGE)
+
 .PHONY: checksums
-checksums: local-images tarballs
+checksums: tarballs local-images
 	build/create_release_checksums.sh $(RELEASE_BRANCH)
 
 .PHONY: build
 build: checksums
 
 .PHONY: release
-release: images checksums
+release: checksums images
 
 .PHONY: all
 all: release

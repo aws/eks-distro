@@ -1,7 +1,9 @@
 From 86a72356c233c36dab0a6878e20f3e94f2197ab2 Mon Sep 17 00:00:00 2001
 From: Micah Hausler <mhausler@amazon.com>
 Date: Wed, 19 Sep 2018 18:16:23 -0700
-Subject: [PATCH 01/15] --EKS-PATCH-- Added whitelist CIDR flag, use "klog"
+Subject: [PATCH 01/16] --EKS-PATCH-- Added whitelist CIDR flag, use "klog"
+
+Alternative to https://github.com/kubernetes/kubernetes/pull/71980
 
 Cherry-picked from https://github.com/kubernetes/kubernetes/commit/7e814da396692f3e364741fb6f775acea0aaaba3.
 
