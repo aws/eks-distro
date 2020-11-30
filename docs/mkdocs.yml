@@ -9,7 +9,7 @@ docs_dir: 'contents'
 nav:
 - Home: 'index.md'
 - Users:
-  - Architecture: 'users/architecture.md'
+  # - Architecture: 'users/architecture.md'
   - Start: 'users/index.md'
   - Build Prerequisites: 'users/build-prerequisites.md'
   - Build: 'users/build.md'
