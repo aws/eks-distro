@@ -1,0 +1,6 @@
+---
+- name: Download and install kubeadm binary
+  get_url:
+    url: https://beta.cdn.model-rocket.aws.dev/kubernetes-1-18/releases/1/artifacts/kubernetes/v1.18.9/bin/linux/amd64/kubectl
+    dest: /usr/bin/kubectl
+    mode: '0755'

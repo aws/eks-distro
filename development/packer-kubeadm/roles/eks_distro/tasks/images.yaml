@@ -1,0 +1,24 @@
+---
+- name: Pull images except for coredns/pause containers
+  docker_image:
+    name: "{{ item }}"
+    source: pull
+  with_items:
+    - 520703868821.dkr.ecr.us-east-1.amazonaws.com/etcd-io/etcd:v3.4.13-eks-1-18-1
+    - 520703868821.dkr.ecr.us-east-1.amazonaws.com/kubernetes/kube-apiserver:v1.18.9-eks-1-18-1
+    - 520703868821.dkr.ecr.us-east-1.amazonaws.com/kubernetes/kube-controller-manager:v1.18.9-eks-1-18-1
+    - 520703868821.dkr.ecr.us-east-1.amazonaws.com/kubernetes/kube-scheduler:v1.18.9-eks-1-18-1
+    - 520703868821.dkr.ecr.us-east-1.amazonaws.com/kubernetes/kube-proxy:v1.18.9-eks-1-18-1
+    - 520703868821.dkr.ecr.us-east-1.amazonaws.com/kubernetes-sigs/metrics-server:v0.4.0-eks-1-18-1
+    - 520703868821.dkr.ecr.us-east-1.amazonaws.com/kubernetes-sigs/aws-iam-authenticator:v0.5.2-eks-1-18-1
+
+- name: Pull and retag images for coredns/pause to work around w/kubeadm's hard coded values
+  docker_image:
+    name: "{{ item.image }}"
+    repository: "{{ item.tag }}"
+    source: pull
+  with_items:
+    - image: 520703868821.dkr.ecr.us-east-1.amazonaws.com/coredns/coredns:v1.7.0-eks-1-18-1
+      tag: 520703868821.dkr.ecr.us-east-1.amazonaws.com/kubernetes/coredns:1.6.7
+    - image: 520703868821.dkr.ecr.us-east-1.amazonaws.com/kubernetes/pause:v1.18.9-eks-1-18-1
+      tag: 520703868821.dkr.ecr.us-east-1.amazonaws.com/kubernetes/pause:3.2

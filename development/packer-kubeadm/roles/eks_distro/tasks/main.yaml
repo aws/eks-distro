@@ -1,0 +1,19 @@
+---
+- block:
+
+  - name: Install CNI
+    include_tasks: cni.yaml
+
+  - name: Install kubelet
+    include_tasks: kubelet.yaml
+
+  - name: Pull images
+    include_tasks: images.yaml
+
+  - name: Install kubeadm
+    include_tasks: kubeadm.yaml
+
+  - name: Install kubectl
+    include_tasks: kubectl.yaml
+
+  become: true

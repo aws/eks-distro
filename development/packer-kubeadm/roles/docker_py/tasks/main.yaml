@@ -1,0 +1,13 @@
+---
+- block:
+
+  - name: install pip
+    yum:
+      name: python-pip
+      state: present
+
+  - name: install docker-py using pip
+    pip:
+      name: docker
+
+  become: true

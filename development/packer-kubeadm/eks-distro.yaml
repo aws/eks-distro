@@ -1,0 +1,7 @@
+---
+- name: Install EKS Distro binaries and images
+  hosts: all
+
+  roles:
+    - docker_ce
+    - eks_distro

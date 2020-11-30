@@ -1,0 +1,30 @@
+{
+  "variables": {
+    "docker_ce_version": "19.03.*",
+    "iam_instance_profile": "ecr-readonly",
+    "k8s_version": "1.18.9"
+  },
+  "builders": [{
+    "type": "amazon-ebs",
+    "iam_instance_profile": "{{user `iam_instance_profile`}}",
+    "source_ami_filter": {
+      "filters": {
+	"virtualization-type": "hvm",
+	"root-device-type": "ebs",
+	"name": "amzn2-ami-hvm-2.0.*-x86_64-gp2"
+      },
+      "owners": ["amazon"],
+      "most_recent": true
+    },
+    "instance_type": "t3.micro",
+    "ssh_username": "ec2-user",
+    "ami_name": "eks-distro {{ timestamp }}"
+  }],
+  "provisioners": [{
+    "type": "ansible",
+    "playbook_file": "eks-distro.yaml",
+    "extra_arguments": [
+      "--extra-vars", "docker_ce_version={{user `docker_ce_version`}}"
+    ]
+  }]
+}

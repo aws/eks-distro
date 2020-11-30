@@ -1,0 +1,30 @@
+---
+- name: Install kubelet dependencies
+  yum:
+    name: 
+      - conntrack
+      - ebtables
+      - socat
+    state: present
+    update_cache: yes   
+
+- name: Create /etc/kubernetes/manifests directory
+  file:
+    path: /etc/kubernetes/manifests
+    state: directory
+
+- name: Install the /etc/sysconfig/kubelet file
+  copy:
+    src: files/etc-sysconfig-kubelet
+    dest: /etc/sysconfig/kubelet
+
+- name: Install the kubelet systemd unit file
+  copy:
+    src: files/kubelet.service
+    dest: /usr/lib/systemd/system/kubelet.service
+
+- name: Download and install kubelet binary
+  get_url:
+    url: https://beta.cdn.model-rocket.aws.dev/kubernetes-1-18/releases/1/artifacts/kubernetes/v1.18.9/bin/linux/amd64/kubelet
+    dest: /usr/bin/kubelet
+    mode: '0755'

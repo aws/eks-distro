@@ -1,0 +1,16 @@
+---
+- name: Download and install kubeadm binary
+  get_url:
+    url: https://beta.cdn.model-rocket.aws.dev/kubernetes-1-18/releases/1/artifacts/kubernetes/v1.18.9/bin/linux/amd64/kubeadm
+    dest: /usr/bin/kubeadm
+    mode: '0755'
+
+- name: Create /usr/lib/systemd/system/kubelet.service.d directory
+  file:
+    path: /usr/lib/systemd/system/kubelet.service.d
+    state: directory
+
+- name: Install the kubeadm systemd unit file
+  copy:
+    src: files/10-kubeadm.conf
+    dest: /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf

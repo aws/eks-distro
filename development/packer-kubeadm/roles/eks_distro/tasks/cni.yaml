@@ -1,0 +1,11 @@
+---
+- name: Create /opt/cni/bin directory
+  file:
+    path: /opt/cni/bin
+    state: directory
+
+- name: Download and install CNI
+  unarchive:
+    src: https://beta.cdn.model-rocket.aws.dev/kubernetes-1-18/releases/1/artifacts/plugins/v0.8.7/cni-plugins-linux-amd64-v0.8.7.tar.gz
+    dest: /opt/cni/bin
+    remote_src: yes

@@ -1,0 +1,34 @@
+---
+- block:
+
+  - name: Install Docker CE
+    yum:
+      name: 
+        - docker-{{ docker_ce_version }}
+        - amazon-ecr-credential-helper
+      state: present
+      update_cache: yes
+
+  - name: create ~/.docker directory
+    file:
+      path: /root/.docker
+      state: directory
+
+  - name: Configure the ECR credential helper
+    copy:
+      src: files/config.json
+      dest: /root/.docker/config.json
+
+  - name: Add ec2-user to docker group
+    user:
+      name: ec2-user
+      groups: docker
+      append: yes
+
+  - name: Start and enable Docker service
+    service:
+      name: docker
+      state: started
+      enabled: yes
+
+  become: true
