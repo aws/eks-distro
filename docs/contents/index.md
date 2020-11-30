@@ -29,7 +29,7 @@ EKS-D for now, instructions in this repository describe how to:
 
 * Add EKS-D into an AMI that is ready to initialize EKS-D
 
-* Install EKS-D using kOps or kubeadm installation methods
+* Install EKS-D using kOps or other installation methods
 
 Check out EKS Distro's [Starting a cluster](users/index.md) page or
 refer to the [Build](users/build) instructions to build a cluster from scratch.
