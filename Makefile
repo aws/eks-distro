@@ -21,7 +21,7 @@ build: makes
 
 .PHONY: release
 release: makes
-	bash $(TARGET)/lib/create_final_dir.sh $(RELEASE_BRANCH) $(RELEASE) 
+	bash build/lib/create_final_dir.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET)
 	@echo 'Done' $(TARGET)
 
 .PHONY: binaries
