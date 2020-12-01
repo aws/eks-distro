@@ -10,5 +10,4 @@ build: install
 
 .PHONY: release
 release: build
-	# TODO: make publish script publish for launch
 	bash ./publish.sh
