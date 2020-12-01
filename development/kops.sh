@@ -20,7 +20,7 @@ if [ -z "$CLUSTER_NAME" ]; then
 fi
 
 export CNI_VERSION_URL=https://distro.eks.amazonaws.com/kubernetes-1-18/releases/1/artifacts/plugins/v0.8.7/cni-plugins-linux-amd64-v0.8.7.tar.gz
-export CNI_ASSET_HASH_STRING=sha256:f168b4e62a1f263b1d81c648339b6a878bbef279c8dd568075604c3750e05298
+export CNI_ASSET_HASH_STRING=sha256:7426431524c2976f481105b80497238030e1c3eedbfcad00e2a9ccbaaf9eef9d
 
 # Create a unique s3 bucket name, or use an existing S3_BUCKET environment variable
 export S3_BUCKET=${S3_BUCKET:-"kops-state-store-$(cat /dev/random | LC_ALL=C tr -dc "[:alpha:]" | tr '[:upper:]' '[:lower:]' | head -c 32)"}
@@ -57,23 +57,23 @@ echo "Add the following content to your Cluster spec in $CLUSTER_NAME.yaml"
 echo
 cat << EOF >> /dev/stdout
   kubeAPIServer:
-    image: 379412251201.dkr.ecr.us-east-1.amazonaws.com/kubernetes/kube-apiserver:v1.18.9-eks-1-18-1
+    image: public.ecr.aws/eks-distro/kubernetes/kube-apiserver:v1.18.9-eks-1-18-1
   kubeControllerManager:
-    image: 379412251201.dkr.ecr.us-east-1.amazonaws.com/kubernetes/kube-controller-manager:v1.18.9-eks-1-18-1
+    image: public.ecr.aws/eks-distro/kubernetes/kube-controller-manager:v1.18.9-eks-1-18-1
   kubeScheduler:
-    image: 379412251201.dkr.ecr.us-east-1.amazonaws.com/kubernetes/kube-scheduler:v1.18.9-eks-1-18-1
+    image: public.ecr.aws/eks-distro/kubernetes/kube-scheduler:v1.18.9-eks-1-18-1
   kubeProxy:
-    image: 379412251201.dkr.ecr.us-east-1.amazonaws.com/kubernetes/kube-proxy:v1.18.9-eks-1-18-1
+    image: public.ecr.aws/eks-distro/kubernetes/kube-proxy:v1.18.9-eks-1-18-1
   # Metrics Server will be supported with kops 1.19
   metricsServer:
     enabled: true
-    image: 379412251201.dkr.ecr.us-east-1.amazonaws.com/kubernetes-sigs/metrics-server:v0.4.0-eks-1-18-1
+    image: public.ecr.aws/eks-distro/kubernetes-sigs/metrics-server:v0.4.0-eks-1-18-1
   authentication:
     aws:
-      image: 379412251201.dkr.ecr.us-east-1.amazonaws.com/kubernetes-sigs/aws-iam-authenticator:v0.5.2-eks-1-18-1
+      image: public.ecr.aws/eks-distro/kubernetes-sigs/aws-iam-authenticator:v0.5.2-eks-1-18-1
   kubeDNS:
     provider: CoreDNS
-    coreDNSImage: 379412251201.dkr.ecr.us-east-1.amazonaws.com/coredns/coredns:v1.7.0-eks-1-18-1
+    coreDNSImage: public.ecr.aws/eks-distro/coredns/coredns:v1.7.0-eks-1-18-1
     externalCoreFile: |
       .:53 {
           errors
@@ -93,9 +93,9 @@ cat << EOF >> /dev/stdout
           reload
       }
   masterKubelet:
-    podInfraContainerImage: 379412251201.dkr.ecr.us-east-1.amazonaws.com/kubernetes/pause:v1.18.9-eks-1-18-1
+    podInfraContainerImage: public.ecr.aws/eks-distro/kubernetes/pause:v1.18.9-eks-1-18-1
   # kubelet might already be defined, append the following config
   kubelet:
-    podInfraContainerImage: 379412251201.dkr.ecr.us-east-1.amazonaws.com/kubernetes/pause:v1.18.9-eks-1-18-1
+    podInfraContainerImage: public.ecr.aws/eks-distro/kubernetes/pause:v1.18.9-eks-1-18-1
 EOF
 
