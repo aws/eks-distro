@@ -1,2 +1,3 @@
 *.swp
 _output
+.DS_Store
