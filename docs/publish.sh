@@ -36,4 +36,4 @@ BUCKET_NAME=artifactsstack-3794122512-artifactsbucket2aac5544-1f3dgu9wrpiz2
 export AWS_CONFIG_FILE=$(pwd)/config
 export AWS_DEFAULT_PROFILE=release-prod
 
-aws s3 sync --acl public-read ./site s3://$(BUCKET_NAME)
+aws s3 sync --acl public-read ./site s3://${BUCKET_NAME}
