@@ -49,3 +49,4 @@ markdown_extensions:
 - admonition
 - codehilite:
     linenums: true
+use_directory_urls: false
