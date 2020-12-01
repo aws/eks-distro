@@ -1,0 +1,21 @@
+#!/usr/bin/env bash -ex
+
+docker pull public.ecr.aws/eks-distro/kubernetes/pause:v1.18.9-eks-1-18-1
+docker pull public.ecr.aws/eks-distro/kubernetes-csi/external-provisioner:v2.0.3-eks-1-18-1
+docker pull public.ecr.aws/eks-distro/kubernetes/go-runner:v0.4.2-eks-1-18-1
+docker pull public.ecr.aws/eks-distro/kubernetes-csi/external-snapshotter/csi-snapshotter:v3.0.2-eks-1-18-1
+docker pull public.ecr.aws/eks-distro/kubernetes-csi/external-snapshotter/snapshot-validation-webhook:v3.0.2-eks-1-18-1
+docker pull public.ecr.aws/eks-distro/kubernetes-csi/livenessprobe:v2.1.0-eks-1-18-1
+docker pull public.ecr.aws/eks-distro/kubernetes-csi/external-snapshotter/snapshot-controller:v3.0.2-eks-1-18-1
+docker pull public.ecr.aws/eks-distro/kubernetes/kube-scheduler:v1.18.9-eks-1-18-1
+docker pull public.ecr.aws/eks-distro/kubernetes-csi/external-attacher:v3.0.1-eks-1-18-1
+docker pull public.ecr.aws/eks-distro/kubernetes/kube-proxy-base:v0.4.2-eks-1-18-1
+docker pull public.ecr.aws/eks-distro/kubernetes-sigs/aws-iam-authenticator:v0.5.2-eks-1-18-1
+docker pull public.ecr.aws/eks-distro/kubernetes-sigs/metrics-server:v0.4.0-eks-1-18-1
+docker pull public.ecr.aws/eks-distro/etcd-io/etcd:v3.4.14-eks-1-18-1
+docker pull public.ecr.aws/eks-distro/kubernetes/kube-proxy:v1.18.9-eks-1-18-1
+docker pull public.ecr.aws/eks-distro/coredns/coredns:v1.7.0-eks-1-18-1
+docker pull public.ecr.aws/eks-distro/kubernetes-csi/node-driver-registrar:v2.0.1-eks-1-18-1
+docker pull public.ecr.aws/eks-distro/kubernetes/kube-controller-manager:v1.18.9-eks-1-18-1
+docker pull public.ecr.aws/eks-distro/kubernetes-csi/external-resizer:v1.0.1-eks-1-18-1
+docker pull public.ecr.aws/eks-distro/kubernetes/kube-apiserver:v1.18.9-eks-1-18-1
