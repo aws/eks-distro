@@ -15,13 +15,25 @@ that may be used to pull the lastest images. You may also browse the
 
 You may download container images tarballs with the
 [download-tarballs.sh shell script](https://github.com/aws/eks-distro/blob/main/development/download-tarballs.sh).
-The default is `linux/amd64`, but if you want to download `linux/arm64`, you
-can specify that on the command line::
+This script will download and import several docker images and the `kubectl`
+command for Mac.  The default is `linux/amd64`, but if you want to download
+`linux/arm64`, you can specify that on the command line::
 
     mkdir eks-distro
     cd eks-distro
     curl -O https://raw.githubusercontent.com/aws/eks-distro/blob/main/development/download-tarballs.sh
     bash download-tarballs.sh linux/arm64
+
+After it has run, you should see several images similar (but not exactly) to this:
+
+    % docker images
+    REPOSITORY                                                     TAG                  IMAGE ID            CREATED              SIZE
+    public.ecr.aws/eks-distro/kubernetes/kube-proxy                v1.18.9-eks-1-18-1   97800949be3c        About a minute ago   231MB
+    public.ecr.aws/eks-distro/kubernetes/kube-scheduler            v1.18.9-eks-1-18-1   b3b740b3b18f        About a minute ago   203MB
+    public.ecr.aws/eks-distro/kubernetes/kube-controller-manager   v1.18.9-eks-1-18-1   dae8773a61cd        About a minute ago   218MB
+    public.ecr.aws/eks-distro/kubernetes/kube-apiserver            v1.18.9-eks-1-18-1   6bbb954113ab        2 minutes ago        220MB
+
+The `kubectl` command will download to `kubernetes/client/bin/kubectl ` in the current directory.
 
 ### Building Your Own Container Images
 See the [Build Guide](build.md) for more information about building your own
