@@ -24,8 +24,8 @@ If you are building from macOS, and have installed go 1.15.3 with
 $ go env GOROOT
 /usr/local/Cellar/go/1.15.3/libexec
 ```
-In our [build container](../../../builder-base/README.md), you can see we
-get Go from https://golang.org/dl/] and install it in `/usr/local`
+In our [build container](https://github.com/aws/eks-distro-build-tooling/blob/main/builder-base/README.md), you can see we
+get Go from https://golang.org/dl and install it in `/usr/local`
 resulting in the following `GOROOT`:
 ```bash
 # cd builder-base

@@ -8,8 +8,8 @@ repository, downloaded in as a tarball, or built from scratch.
 
 You may pull the images you need from the EKS Distro Container Repository.
 There is a [pull-all.sh shell script](https://github.com/aws/eks-distro/blob/main/development/pull-all.sh)
-that may be used to pull the lastest images. You may also browse the
-[EKS Distor Container Repository](https://gallery.ecr.aws/?searchTerm=eks-distro)
+that may be used to pull the latest images. You may also browse the
+[EKS Distro Container Repository](https://gallery.ecr.aws/?searchTerm=eks-distro)
 
 ### Download Containers Tarball
 
