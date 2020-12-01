@@ -1,7 +1,7 @@
 From 86a72356c233c36dab0a6878e20f3e94f2197ab2 Mon Sep 17 00:00:00 2001
 From: Micah Hausler <mhausler@amazon.com>
 Date: Wed, 19 Sep 2018 18:16:23 -0700
-Subject: [PATCH 01/16] --EKS-PATCH-- Added whitelist CIDR flag, use "klog"
+Subject: [PATCH 01/16] --EKS-PATCH-- Added allowlist CIDR flag, use "klog"
 
 Alternative to https://github.com/kubernetes/kubernetes/pull/71980
 
@@ -17,7 +17,7 @@ Signed-off-by: Jackson West <jgw@amazon.com>
  cmd/kube-apiserver/app/options/BUILD         |  1 +
  cmd/kube-apiserver/app/options/options.go    |  6 ++
  cmd/kube-apiserver/app/options/validation.go | 15 ++++
- cmd/kube-apiserver/app/options/whitelist.go  |  9 ++
+ cmd/kube-apiserver/app/options/allowlist.go  |  9 ++
  cmd/kube-apiserver/app/server.go             |  6 ++
  pkg/kubeapiserver/options/BUILD              |  3 +
  pkg/kubeapiserver/options/ipnetslice.go      | 93 ++++++++++++++++++++
@@ -27,7 +27,7 @@ Signed-off-by: Jackson West <jgw@amazon.com>
  pkg/registry/core/node/strategy.go           | 14 +++
  13 files changed, 232 insertions(+)
  create mode 100644 cmd/kube-apiserver/app/dialer.go
- create mode 100644 cmd/kube-apiserver/app/options/whitelist.go
+ create mode 100644 cmd/kube-apiserver/app/options/allowlist.go
  create mode 100644 pkg/kubeapiserver/options/ipnetslice.go
  create mode 100644 pkg/kubeapiserver/options/ipnetslice_test.go
 
@@ -68,7 +68,7 @@ index 00000000000..4a0486baa8a
 +)
 +
 +func CreateOutboundDialer(s completedServerRunOptions) (*http.Transport, error) {
-+	proxyDialerFn := createWhitelistDialer(s.ProxyCIDRWhitelist)
++	proxyDialerFn := createAllowlistDialer(s.ProxyCIDRAllowlist)
 +
 +	proxyTLSClientConfig := &tls.Config{InsecureSkipVerify: true}
 +
@@ -79,7 +79,7 @@ index 00000000000..4a0486baa8a
 +	return proxyTransport, nil
 +}
 +
-+func createWhitelistDialer(whitelist kubeoptions.IPNetSlice) func(context.Context, string, string) (net.Conn, error) {
++func createAllowlistDialer(allowlist kubeoptions.IPNetSlice) func(context.Context, string, string) (net.Conn, error) {
 +	return func(ctx context.Context, network, addr string) (net.Conn, error) {
 +		start := time.Now()
 +		id := mathrand.Int63() // So you can match begins/ends in the log.
@@ -88,7 +88,7 @@ index 00000000000..4a0486baa8a
 +			klog.Infof("[%x: %v] Dialed in %v.", id, addr, time.Since(start))
 +		}()
 +
-+		if !whitelist.Contains(strings.Split(addr, ":")[0]) {
++		if !allowlist.Contains(strings.Split(addr, ":")[0]) {
 +			return nil, errors.New("Address is not allowed")
 +		}
 +		dialer := &net.Dialer{}
@@ -103,7 +103,7 @@ index b833a85aeba..e66e8058e4b 100644
          "globalflags_providers.go",
          "options.go",
          "validation.go",
-+        "whitelist.go",
++        "allowlist.go",
      ],
      importpath = "k8s.io/kubernetes/cmd/kube-apiserver/app/options",
      deps = [
@@ -115,7 +115,7 @@ index e64604758db..0fc452410d3 100644
  	KubeletConfig             kubeletclient.KubeletClientConfig
  	KubernetesServiceNodePort int
  	MaxConnectionBytesPerSec  int64
-+	ProxyCIDRWhitelist        kubeoptions.IPNetSlice
++	ProxyCIDRAllowlist        kubeoptions.IPNetSlice
  	// ServiceClusterIPRange is mapped to input provided by user
  	ServiceClusterIPRanges string
  	//PrimaryServiceClusterIPRange and SecondaryServiceClusterIPRange are the results
@@ -124,7 +124,7 @@ index e64604758db..0fc452410d3 100644
  		ServiceNodePortRange: kubeoptions.DefaultServiceNodePortRange,
  	}
 +	s.ServiceClusterIPRanges = kubeoptions.DefaultServiceIPCIDR.String()
-+	s.ProxyCIDRWhitelist = kubeoptions.DefaultProxyCIDRWhitelist
++	s.ProxyCIDRAllowlist = kubeoptions.DefaultProxyCIDRAllowlist
  
  	// Overwrite the default for storage data format.
  	s.Etcd.DefaultStorageMediaType = "application/vnd.kubernetes.protobuf"
@@ -132,7 +132,7 @@ index e64604758db..0fc452410d3 100644
  		"A CIDR notation IP range from which to assign service cluster IPs. This must not "+
  		"overlap with any IP ranges assigned to nodes for pods.")
  
-+	fs.Var(&s.ProxyCIDRWhitelist, "proxy-cidr-whitelist", ""+
++	fs.Var(&s.ProxyCIDRAllowlist, "proxy-cidr-allowlist", ""+
 +		"A comma-separated list of CIDR IP ranges which the API server can communicate with.")
 +
  	fs.Var(&s.ServiceNodePortRange, "service-node-port-range", ""+
@@ -146,13 +146,13 @@ index 4f94e438d00..5926205e201 100644
  	netutils "k8s.io/utils/net"
  )
  
-+func validateProxyCIDRWhitelist(options *ServerRunOptions) []error {
++func validateProxyCIDRAllowlist(options *ServerRunOptions) []error {
 +	errors := []error{}
 +
 +	// if its empty, don't add any IPs to the list
-+	for _, cidr := range options.ProxyCIDRWhitelist {
++	for _, cidr := range options.ProxyCIDRAllowlist {
 +		if cidr.IP == nil {
-+			errors = append(errors, fmt.Errorf("invalid --proxy-cidr-whitelist specified"))
++			errors = append(errors, fmt.Errorf("invalid --proxy-cidr-allowlist specified"))
 +		}
 +	}
 +	return errors
@@ -165,17 +165,17 @@ index 4f94e438d00..5926205e201 100644
  		errs = append(errs, fmt.Errorf("--apiserver-count should be a positive number, but value '%d' provided", s.MasterCount))
  	}
  	errs = append(errs, s.Etcd.Validate()...)
-+	if es := validateProxyCIDRWhitelist(s); len(es) > 0 {
++	if es := validateProxyCIDRAllowlist(s); len(es) > 0 {
 +		errs = append(errs, es...)
 +	}
  	errs = append(errs, validateClusterIPFlags(s)...)
  	errs = append(errs, validateServiceNodePort(s)...)
  	errs = append(errs, s.SecureServing.Validate()...)
-diff --git a/cmd/kube-apiserver/app/options/whitelist.go b/cmd/kube-apiserver/app/options/whitelist.go
+diff --git a/cmd/kube-apiserver/app/options/allowlist.go b/cmd/kube-apiserver/app/options/allowlist.go
 new file mode 100644
 index 00000000000..6accbd0ab2c
 --- /dev/null
-+++ b/cmd/kube-apiserver/app/options/whitelist.go
++++ b/cmd/kube-apiserver/app/options/allowlist.go
 @@ -0,0 +1,9 @@
 +package options
 +
@@ -184,7 +184,7 @@ index 00000000000..6accbd0ab2c
 +)
 +
 +var (
-+	ProxyCIDRWhitelist kubeoptions.IPNetSlice = kubeoptions.DefaultProxyCIDRWhitelist
++	ProxyCIDRAllowlist kubeoptions.IPNetSlice = kubeoptions.DefaultProxyCIDRAllowlist
 +)
 diff --git a/cmd/kube-apiserver/app/server.go b/cmd/kube-apiserver/app/server.go
 index 70a496913fd..e7d3a51767c 100644
@@ -284,7 +284,7 @@ index 00000000000..c38fa6cd3ce
 +	return "[]net.IPNet"
 +}
 +
-+// ContainsHost checks if all the IPs for a given hostname are in the whitelist
++// ContainsHost checks if all the IPs for a given hostname are in the allowlist
 +func (netSlice *IPNetSlice) ContainsHost(ctx context.Context, host string) (bool, error) {
 +	r := net.Resolver{}
 +	resp, err := r.LookupIPAddr(ctx, host)
@@ -292,7 +292,7 @@ index 00000000000..c38fa6cd3ce
 +		return false, err
 +	}
 +	for _, host := range resp {
-+		// reject if any of the IPs for a hostname are not in the whitelist
++		// reject if any of the IPs for a hostname are not in the allowlist
 +		if !netSlice.Contains(host.String()) {
 +			return false, nil
 +		}
@@ -300,9 +300,9 @@ index 00000000000..c38fa6cd3ce
 +	return true, nil
 +}
 +
-+// Contains checks if a given IP is in the whitelist
++// Contains checks if a given IP is in the allowlist
 +func (netSlice *IPNetSlice) Contains(ip string) bool {
-+	// if there are no whitelists, everything is allowed
++	// if there are no allowlists, everything is allowed
 +	if len(*netSlice) == 0 {
 +		return true
 +	}
@@ -373,7 +373,7 @@ index e38bd99996d..e8b141016e2 100644
  var DefaultServiceIPCIDR net.IPNet = net.IPNet{IP: net.ParseIP("10.0.0.0"), Mask: net.CIDRMask(24, 32)}
  
  const DefaultEtcdPathPrefix = "/registry"
-+var DefaultProxyCIDRWhitelist IPNetSlice = NewIPNetSlice("0.0.0.0/0")
++var DefaultProxyCIDRAllowlist IPNetSlice = NewIPNetSlice("0.0.0.0/0")
 diff --git a/pkg/registry/core/node/BUILD b/pkg/registry/core/node/BUILD
 index 0a76925b89b..dffe8ddd95e 100644
 --- a/pkg/registry/core/node/BUILD
@@ -404,7 +404,7 @@ index 1ca914b6a49..7a5c7b49ae7 100644
  
 +	// REVIEW NOTE:
 +	// I didn't see a better way to plumb this down here. Feature gates are globals too, but I'd be happy to get the CIDRs here another way
-+	included, err := kubeapiserveroptions.ProxyCIDRWhitelist.ContainsHost(
++	included, err := kubeapiserveroptions.ProxyCIDRAllowlist.ContainsHost(
 +		ctx,
 +		info.Hostname,
 +	)

@@ -37,7 +37,7 @@ index b4f1b4304c1..df18630ef00 100644
  	// IPv6ZeroCIDR is the CIDR block for the whole IPv6 address space
 -	IPv6ZeroCIDR = "::/0"
 +	IPv6ZeroCIDR               = "::/0"
-+	EnvExtraProxyBlackListCIDR = "EXTRA_PROXY_BLACKLIST_CIDR"
++	EnvExtraProxyDenyListCIDR = "EXTRA_PROXY_DENYLIST_CIDR"
  )
  
  var (
@@ -45,7 +45,7 @@ index b4f1b4304c1..df18630ef00 100644
  	return nil
  }
  
-+func IsProxyableHostnameV2(ctx context.Context, resolv Resolver, blackListNetworks []*net.IPNet, hostname string) error {
++func IsProxyableHostnameV2(ctx context.Context, resolv Resolver, denyListNetworks []*net.IPNet, hostname string) error {
 +	resp, err := resolv.LookupIPAddr(ctx, hostname)
 +	if err != nil {
 +		return err
@@ -59,7 +59,7 @@ index b4f1b4304c1..df18630ef00 100644
 +		if err := isProxyableIP(host.IP); err != nil {
 +			return err
 +		}
-+		for _, network := range blackListNetworks {
++		for _, network := range denyListNetworks {
 +			if network.Contains(host.IP) {
 +				return ErrAddressNotAllowed
 +			}
@@ -76,12 +76,12 @@ index b4f1b4304c1..df18630ef00 100644
  }
  
 +func NewSafeDialContext(dialContext func(context.Context, string, string) (net.Conn, error)) func(context.Context, string, string) (net.Conn, error) {
-+	var blackListNetworks []*net.IPNet
-+	blackListCIDRs := os.Getenv(EnvExtraProxyBlackListCIDR)
-+	if blackListCIDRs != "" {
-+		for _, cidr := range strings.Split(blackListCIDRs, ",") {
++	var denyListNetworks []*net.IPNet
++	denyListCIDRs := os.Getenv(EnvExtraProxyDenyListCIDR)
++	if denyListCIDRs != "" {
++		for _, cidr := range strings.Split(denyListCIDRs, ",") {
 +			_, ipNet, _ := net.ParseCIDR(cidr)
-+			blackListNetworks = append(blackListNetworks, ipNet)
++			denyListNetworks = append(denyListNetworks, ipNet)
 +		}
 +	}
 +
@@ -97,7 +97,7 @@ index b4f1b4304c1..df18630ef00 100644
 +		if err != nil {
 +			return nil, err
 +		}
-+		if err := IsProxyableHostnameV2(ctx, &net.Resolver{}, blackListNetworks, host); err != nil {
++		if err := IsProxyableHostnameV2(ctx, &net.Resolver{}, denyListNetworks, host); err != nil {
 +			return nil, err
 +		}
 +		return dialContext(ctx, network, addr)
