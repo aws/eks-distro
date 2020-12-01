@@ -1,4 +1,4 @@
-🟩 [View the live docs](https://aws.github.io/eks-distro/)
+🟩 [View the live docs](https://distro.eks.amazonaws.com)
 
 # Writing and publishing docs
 
