@@ -2,7 +2,7 @@
 
 Before you start your cluster, you need to get several container images.
 Container images can be accessed either from the EKS Distro Container
-repository, downloaded in as a tarball, or built from scratch.
+repository or built from scratch.
 
 ### EKS Distro Container Repository
 
@@ -10,12 +10,6 @@ You may pull the images you need from the EKS Distro Container Repository.
 There is a [pull-all.sh shell script](https://github.com/aws/eks-distro/blob/main/development/pull-all.sh)
 that may be used to pull the lastest images. You may also browse the
 [EKS Distor Container Repository](https://gallery.ecr.aws/?searchTerm=eks-distro)
-
-### Download Containers Tarball
-
-You may download container images as a tarball from our [EKS Distro
-download site](http://boguslink.example.com/download). Once you have
-downloaded the containers, push them to your private container repository.
 
 ### Building Your Own Container Images
 See the [Build Guide](build.md) for more information about building your own
