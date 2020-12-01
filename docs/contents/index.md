@@ -1,12 +1,12 @@
 # Amazon EKS Distro
 
-Amazon **EKS Distro** (EKS-D) is a Kubernetes distribution based on and used by 
-Amazon Elastic Kubernetes Service (EKS) to create reliable and secure Kubernetes clusters. With EKS-D,
-you can rely on the same versions of Kubernetes and its dependencies deployed
-by Amazon EKS. This includes the latest upstream updates as well as extended 
-security patching support. EKS-D follows the same Kubernetes version release 
-cycle as Amazon EKS and we provide the bits here. 
-EKS-D provides the same software that has enabled tens of thousands of Kubernetes
+Amazon **EKS Distro** (EKS-D) is a Kubernetes distribution based on and used by
+Amazon Elastic Kubernetes Service (EKS) to create reliable and secure Kubernetes
+clusters. With EKS-D, you can rely on the same versions of Kubernetes and its
+dependencies deployed by Amazon EKS. This includes the latest upstream updates
+as well as extended security patching support. EKS-D follows the same Kubernetes
+version release cycle as Amazon EKS and we provide the bits here.  EKS-D
+provides the same software that has enabled tens of thousands of Kubernetes
 clusters on Amazon EKS.
 
 What is the difference between EKS (the AWS Kubernetes cloud service) and EKS-D?
@@ -15,7 +15,6 @@ Kubernetes platform, while EKS-D is available to install and manage yourself.
 You can run EKS-D on-premises, in a cloud, or on your own systems. Using EKS-D outside
 of AWS can provide a path to having the same Kubernetes distribution
 wherever you need to run it as the Kubernetes you use in the cloud with EKS.
-
 
 Once EKS-D is running, you are responsible for managing and
 upgrading it yourself. For end users, however, running applications is the
@@ -28,11 +27,71 @@ EKS-D for now, instructions in this repository describe how to:
 
 * Build EKS-D from source code
 
-* Add EKS-D into an AMI that is ready to initialize EKS-D
-
 * Install EKS-D using kOps or other installation methods
 
 Check out EKS Distro's [Starting a cluster](users/index.md) page or
 refer to the [Build](users/build) instructions to build a cluster from scratch.
 See the [Partners](community/partners) page for links to third-party methods for
 installing EKS-D.
+
+## Release Channels
+
+The EKS Distro releases Kubernetes versions at the same pace as EKS, and updates
+are issued as releases in release channels. A release channel tracks minor
+versions (`v<major>.<minor>.<point>`) of Kubernetes, and a channel will be
+retired when EKS ceases supporting a particular minor version of Kubernetes.
+New releases and release channels will be announced via an SNS topic when they
+are launched. Releases and release channels are structured as Kubernetes Custom
+Resource Definitions
+([CRDs](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/))
+and the schema can be found in the
+[eks-distro-build-tooling](https://github.com/aws/eks-distro-build-tooling/tree/main/release)
+GitHub repository.
+
+You can install the CRD API type, the release channel for Kubernetes 1-18, and
+view the release channel by running the following commands:
+
+```bash
+kubectl apply -f https://distro.eks.amazonaws.com/crds/releasechannels.distro.eks.amazonaws.com-v1alpha1.yaml
+kubectl apply -f https://distro.eks.amazonaws.com/releasechannels/1-18.yaml
+kubectl get -o yaml releasechannels
+```
+
+## Releases
+
+Releases of the EKS Distro are in-step with versions of components used by
+or recommended for use with Amazon EKS beginning with Kubernetes v1.18.9, and
+include the following components:
+
+* CNI plugins
+* CoreDNS
+* etcd
+* CSI Sidecars
+* aws-iam-authenticator
+* Kubernetes Metrics Server
+* Kubernetes
+
+All container images for these components are based on Amazon Linux 2, and are
+available on the ECR public registry for amd64 and arm64 architectures. New
+releases will be created when there is an updated component version, a required
+update in the Amazon Linux 2 base image, or a change required in the build
+toolchain (ex: a Go version update).
+
+Components such as CNI, etcd, aws-iam-authenticator, and Kubernetes have
+release artifacts that are not delivered as container images, and are available
+as compressed tar archives and binaries. sha256 and sha512 sum files are
+provided in release mainfests and are availabe as files for download (ex:
+`https://distro.eks.amazonaws.com/..../kubectl.sha256`)
+
+A list of all the components and assets that make up a release including URIs
+to all the compressed archives, binaries, and container images are available in
+the release manifests. You can install the CRD API type, the first release
+manifest for Kubernetes 1-18, and view the release by running the following
+commands:
+
+```bash
+kubectl apply -f https://distro.eks.amazonaws.com/crds/releases.distro.eks.amazonaws.com-v1alpha1.yaml
+kubectl apply -f https://distro.eks.amazonaws.com/kubernetes-1-18/kubernetes-1-18-eks-1.yaml
+kubectl get release kubernetes-1-18-eks-1
+kubectl get release kubernetes-1-18-eks-1 -o yaml
+```

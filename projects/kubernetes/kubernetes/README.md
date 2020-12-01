@@ -8,10 +8,7 @@
 
 The builds of Kubernetes are reproducible, meaning you can build Kubernetes
 using the same code, same toolchain and same build settings, and get bit-for-bit
-identical binaries as output. In an effort to assure that we remain
-reproducible, a sha256sum check is performed as part of CI. If your changes
-alter the build environment or the source code, your new hashsums must also be
-committed.
+identical binaries as output.
 
 ### GOROOT
 
