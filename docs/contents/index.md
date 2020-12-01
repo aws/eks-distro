@@ -12,9 +12,9 @@ clusters on Amazon EKS.
 What is the difference between EKS (the AWS Kubernetes cloud service) and EKS-D?
 The main difference is in how they are managed. EKS is a fully managed
 Kubernetes platform, while EKS-D is available to install and manage yourself.
-You can run EKS-D on-premises, in a cloud, or on your own systems. Using EKS-D outside
-of AWS can provide a path to having the same Kubernetes distribution
-wherever you need to run it as the Kubernetes you use in the cloud with EKS.
+You can run EKS-D on-premises, in a cloud, or on your own systems. EKS-D
+provides a path to having essentially the same Amazon EKS Kubernetes distribution
+running wherever you need to run it.
 
 Once EKS-D is running, you are responsible for managing and
 upgrading it yourself. For end users, however, running applications is the
@@ -30,8 +30,8 @@ EKS-D for now, instructions in this repository describe how to:
 * Install EKS-D using kOps or other installation methods
 
 Check out EKS Distro's [Starting a cluster](users/index.md) page or
-refer to the [Build](users/build) instructions to build a cluster from scratch.
-See the [Partners](community/partners) page for links to third-party methods for
+refer to the [Build](users/build.md) instructions to build a cluster from scratch.
+See the [Partners](community/partners.md) page for links to third-party methods for
 installing EKS-D.
 
 ## Release Channels
