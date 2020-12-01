@@ -80,7 +80,7 @@ toolchain (ex: a Go version update).
 Components such as CNI, etcd, aws-iam-authenticator, and Kubernetes have
 release artifacts that are not delivered as container images, and are available
 as compressed tar archives and binaries. sha256 and sha512 sum files are
-provided in release mainfests and are availabe as files for download (ex:
+provided in release manifests and are available as files for download (ex:
 `https://distro.eks.amazonaws.com/..../kubectl.sha256`)
 
 A list of all the components and assets that make up a release including URIs
