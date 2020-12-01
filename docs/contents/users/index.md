@@ -14,8 +14,11 @@ that may be used to pull the lastest images. You may also browse the
 ### Download Containers Tarball
 
 You may download container images as a tarball from our [EKS Distro
-download site](http://boguslink.example.com/download). Once you have
-downloaded the containers, push them to your private container repository.
+download tar ball](https://distro.eks.amazonaws.com/kubernetes-1-18/releases/1/artifacts/kubernetes/${release}/kubernetes-client-${platform}.tar.gz).
+Once you have downloaded the containers, push them to your private container
+repository.
+
+    curl -L https://distro.eks.amazonaws.com/kubernetes-1-18/releases/1/artifacts/kubernetes/${release}/kubernetes-client-${platform}.tar.gz | tar zvx
 
 ### Building Your Own Container Images
 See the [Build Guide](build.md) for more information about building your own
