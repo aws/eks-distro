@@ -1,8 +1,8 @@
 ## Starting a Cluster
 
-Before you start your cluster, you need several container images and binaries.
-Container images can be accessed either from public ECR registry, downloaded
-as a tarball, or built from scratch.
+Before you start your cluster, you need to get several container images.
+Container images can be accessed either from the public ECR registry or
+built from scratch.
 
 ### EKS Distro Container Images
 
@@ -11,12 +11,6 @@ and a [pull-all.sh shell
 script](https://github.com/aws/eks-distro/blob/main/development/pull-all.sh) is
 provided to demonstrate how to do this. You can also browse the [EKS Distro
 Container Repository](https://gallery.ecr.aws/?searchTerm=eks-distro&verified=verified)
-
-### Download Containers Tarball
-
-You may download container images as a tarball from our [EKS Distro
-download site](http://boguslink.example.com/download). Once you have
-downloaded the containers, push them to your private container repository.
 
 ### Building Your Own Container Images
 See the [Build Guide](build.md) for more information about building your own
