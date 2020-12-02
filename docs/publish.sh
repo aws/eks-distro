@@ -38,4 +38,4 @@ export AWS_CONFIG_FILE=$(pwd)/config
 export AWS_DEFAULT_PROFILE=release-prod
 
 aws s3 sync --acl public-read ./site s3://${BUCKET_NAME}
-aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths '/404.html /assets/ /community/ /index.html /search/ /sitemap.xml /sitemap.xml.gz /users/'
+aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths "/404.html" "/assets/" "/community/" "/index.html" "/search/" "/sitemap.xml" "/sitemap.xml.gz" "/users/"
