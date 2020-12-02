@@ -32,8 +32,10 @@ source_profile=default
 EOF
 
 BUCKET_NAME=artifactsstack-3794122512-artifactsbucket2aac5544-1f3dgu9wrpiz2
+DISTRIBUTION_ID=${DISTRIBUTION_ID:-"E1G9R70424D2RN"}
 
 export AWS_CONFIG_FILE=$(pwd)/config
 export AWS_DEFAULT_PROFILE=release-prod
 
 aws s3 sync --acl public-read ./site s3://${BUCKET_NAME}
+aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths '/404.html /assets/ /community/ /index.html /search/ /sitemap.xml /sitemap.xml.gz /users/'
