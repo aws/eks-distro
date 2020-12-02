@@ -24,7 +24,7 @@ RELEASE?="1"
 BASE_REPO?=$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
 BASE_IMAGE_NAME?=eks-distro/base
 BASE_TAG?=26f234d9da8bc4423bacb539caaece931808d28b
-BASE_IMAGE?=$(BASE_REPO)/$(BASE_IMAGE_NAME):$(BASE_TAG)
+BASE_IMAGE?=$(BASE_REPO)/$(BASE_IMAGE_NAME):
 
 IMAGE_REPO?=$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
 IMAGE_NAME?=kubernetes-csi/external-provisioner
