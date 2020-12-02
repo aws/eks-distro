@@ -26,7 +26,7 @@ role_arn=$AWS_ROLE_ARN
 web_identity_token_file=/var/run/secrets/eks.amazonaws.com/serviceaccount/token
 
 [profile release-prod]
-role_arn = arn:aws:iam::379412251201:role/ArtifactDeploymentRole
+role_arn = arn:aws:iam::379412251201:role/DocsDeploymentRole
 region = us-east-1
 source_profile=default
 EOF
