@@ -31,7 +31,7 @@ region = us-east-1
 source_profile=default
 EOF
 
-BUCKET_NAME=artifactsstack-3794122512-artifactsbucket2aac5544-1f3dgu9wrpiz2
+BUCKET_NAME=artifactsstack-379412251201-docsbucketecea003f-bhslmuf2xe3m
 DISTRIBUTION_ID=${DISTRIBUTION_ID:-"E1G9R70424D2RN"}
 
 export AWS_CONFIG_FILE=$(pwd)/config
