@@ -23,7 +23,7 @@ export CNI_VERSION_URL=https://distro.eks.amazonaws.com/kubernetes-1-18/releases
 export CNI_ASSET_HASH_STRING=sha256:7426431524c2976f481105b80497238030e1c3eedbfcad00e2a9ccbaaf9eef9d
 
 # Create a unique s3 bucket name, or use an existing S3_BUCKET environment variable
-export S3_BUCKET=${S3_BUCKET:-"kops-state-store-$(cat /dev/random | LC_ALL=C tr -dc "[:alpha:]" | tr '[:upper:]' '[:lower:]' | head -c 32)"}
+export S3_BUCKET=${S3_BUCKET:-"kops-state-store-$(cat /dev/urandom | LC_ALL=C tr -dc "[:alpha:]" | tr '[:upper:]' '[:lower:]' | head -c 32)"}
 export KOPS_STATE_STORE=s3://$S3_BUCKET
 echo "Using S3 bucket $S3_BUCKET: to use with kops run"
 echo
