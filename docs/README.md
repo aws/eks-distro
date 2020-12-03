@@ -6,14 +6,6 @@ Our docs are written in [MkDocs](https://www.mkdocs.org/) using the [Material fo
 
 MkDocs is a static site generator. It converts markdown files to static html pages. Edit the markdown files, and view the rendered site with MkDocs.
 
-## Automatic deployments with github actions
-
-Commits that change a file under the `docs/` directory trigger a github action to build the site, and deploy it to github pages.
-
-The github action is [mkdocs-deploy-gh-pages](https://github.com/mhausenblas/mkdocs-deploy-gh-pages).
-
-🟧 Running `mkdocs gh-deploy` locally will have no effect, the github action will overwrite it.
-
 ## Build the docs locally
 
 ### Install mkdocs-material
