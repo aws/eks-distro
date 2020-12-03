@@ -11,3 +11,7 @@ build: install
 .PHONY: release
 release: build
 	bash ./publish.sh
+
+.PHONY: clean
+clean:
+	rm -rf site/
