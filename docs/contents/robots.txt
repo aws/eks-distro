@@ -1,0 +1,5 @@
+User-agent: *
+
+Sitemap: https://distro.eks.amazon.com/sitemap.xml
+
+Crawl-delay: 5

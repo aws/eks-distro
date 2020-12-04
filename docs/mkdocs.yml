@@ -30,7 +30,7 @@ theme:
   - navigation.tabs
   - navigation.instant
   custom_dir: 'theme'
-  favicon: 'assets/images/favicon.png'
+  favicon: 'assets/images/favicon.ico'
   logo: 'assets/images/logo.png'
   font:
       text: 'Oxygen'
