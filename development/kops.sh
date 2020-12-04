@@ -14,7 +14,6 @@
 # limitations under the License.
 
 set -eo pipefail
-set -x
 
 if [ -z "$CLUSTER_NAME" ]; then
     echo "Cluster name must be an FQDN: <yourcluster>.yourdomain.com or <yourcluster>.sub.yourdomain.com"
@@ -96,13 +95,19 @@ export CREATE_CLUSTER=${CREATE_CLUSTER:-y}
 # Test variable as lowercase
 if [ $(echo ${CREATE_CLUSTER} | tr '[:upper:]' '[:lower:]') == "y" ]; then
 	kops update cluster $CLUSTER_NAME --yes
-	kops validate cluster --wait 10m
-	kubectl apply -f ./aws-iam-authenticator.yaml
+	echo ""
+	echo "You can validate your cluster with"
+	echo "KOPS_STATE_STORE=$KOPS_STATE_STORE kops validate cluster --wait 10m"
 else
 	echo "Skipping cluster create"
 	echo "Run this command whenever you're ready"
 	echo ""
-	echo "kops update cluster $CLUSTER_NAME --yes"
+	echo "KOPS_STATE_STORE=$KOPS_STATE_STORE kops update cluster $CLUSTER_NAME --yes"
 	echo ""
 fi
 
+echo "Kops state is stored in $KOPS_STATE_STORE"
+echo ""
+echo "You will need to manually deploy the aws authenticator config once the cluster is ready with"
+echo ""
+echo "kubectl apply -f ./aws-iam-authenticator.yaml"
