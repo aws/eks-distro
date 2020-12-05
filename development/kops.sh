@@ -63,10 +63,13 @@ EOF
 if [ -f values.yaml ]; then
 	echo "A values.yaml file already exists"
 	read -r -p "Would you like to delete it and create a new cluster? [Y/n] " DELETE_VALUES
-	DELETE_VALUES=${DELETE_VALUES:-y}
 fi
-if [ $(echo ${DELETE_VALUES} | tr '[:upper:]' '[:lower:]') == "y" ]; then
-	rm values.yaml
+
+DELETE_VALUES=${DELETE_VALUES:-y}
+if [ "$(echo ${DELETE_VALUES} | tr '[:upper:]' '[:lower:]')" == "y" ]; then
+	if [ -f values.yaml ]; then
+		rm values.yaml
+	fi
 	cat << EOF > values.yaml
 kubernetesVersion: $KUBERNETES_VERSION
 clusterName: $CLUSTER_NAME
