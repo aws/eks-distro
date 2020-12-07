@@ -111,7 +111,7 @@ metadata:
   name: master-us-west-2a
 spec:
   image: 099720109477/ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-20201026
-  machineType: m5.large
+  machineType: t3.medium
   maxSize: 1
   minSize: 1
   nodeLabels:
@@ -131,7 +131,7 @@ metadata:
   name: nodes
 spec:
   image: 099720109477/ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-20201026
-  machineType: m5.xlarge
+  machineType: t3.medium
   maxSize: 3
   minSize: 3
   nodeLabels:
