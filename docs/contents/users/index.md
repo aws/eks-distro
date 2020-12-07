@@ -30,13 +30,22 @@ cd development
 ```
 
 Your cluster variables will be stored in the values.yaml file.
-If you want to create a new cluster you can delete that file and run `kops.sh` again.
+If you want to create a new cluster you can delete the values.yaml file and run `kops.sh` again.
+
+When your DNS is available for your cluster you'll need to deploy the aws-iam-authenticator.yaml ConfigMap so the pods can schedule properly.
+```bash
+kubectl apply -f ./aws-iam-authenticator.yaml
+
+# Delete the pods that were created before the ConfigMap existed
+kubectl delete pod -n kube-system -l k8s-app=aws-iam-authenticator
+```
 
 You can verify the pods in your cluster are using the EKS Distro images by running
 the following command:
 ```bash
 kubectl get po --all-namespaces -o json | jq -r .items[].spec.containers[].image | sort -u
 ```
+
 To tear down the cluster, run:
 ```bash
 kops delete -f ./$CLUSTER_NAME.yaml --yes
