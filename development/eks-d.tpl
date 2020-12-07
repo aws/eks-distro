@@ -15,13 +15,13 @@ spec:
   etcdClusters:
   - cpuRequest: 200m
     etcdMembers:
-    - instanceGroup: master-us-west-2a
+    - instanceGroup: control-plane-{{.awsRegion}}a
       name: a
     memoryRequest: 100Mi
     name: main
   - cpuRequest: 100m
     etcdMembers:
-    - instanceGroup: master-us-west-2a
+    - instanceGroup: control-plane-{{.awsRegion}}a
       name: a
     memoryRequest: 100Mi
     name: events
@@ -42,17 +42,17 @@ spec:
   - 0.0.0.0/0
   subnets:
   - cidr: 172.20.32.0/19
-    name: us-west-2a
+    name: {{.awsRegion}}a
     type: Public
-    zone: us-west-2a
+    zone: {{.awsRegion}}a
   - cidr: 172.20.64.0/19
-    name: us-west-2b
+    name: {{.awsRegion}}b
     type: Public
-    zone: us-west-2b
+    zone: {{.awsRegion}}b
   - cidr: 172.20.96.0/19
-    name: us-west-2c
+    name: {{.awsRegion}}c
     type: Public
-    zone: us-west-2c
+    zone: {{.awsRegion}}c
   topology:
     dns:
       type: Public
@@ -108,17 +108,17 @@ metadata:
   creationTimestamp: null
   labels:
     kops.k8s.io/cluster: {{.clusterName}}
-  name: master-us-west-2a
+  name: control-plane-{{.awsRegion}}a
 spec:
   image: 099720109477/ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-20201026
   machineType: t3.medium
   maxSize: 1
   minSize: 1
   nodeLabels:
-    kops.k8s.io/instancegroup: master-us-west-2a
+    kops.k8s.io/instancegroup: control-plane-{{.awsRegion}}a
   role: Master
   subnets:
-  - us-west-2a
+  - {{.awsRegion}}a
 
 ---
 
@@ -138,6 +138,6 @@ spec:
     kops.k8s.io/instancegroup: nodes
   role: Node
   subnets:
-  - us-west-2a
-  - us-west-2b
-  - us-west-2c
+  - {{.awsRegion}}a
+  - {{.awsRegion}}b
+  - {{.awsRegion}}c

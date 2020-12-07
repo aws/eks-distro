@@ -74,6 +74,7 @@ if [ "$(echo ${DELETE_VALUES} | tr '[:upper:]' '[:lower:]')" == "y" ]; then
 kubernetesVersion: $KUBERNETES_VERSION
 clusterName: $CLUSTER_NAME
 configBase: $KOPS_STATE_STORE
+awsRegion: $AWS_DEFAULT_REGION
 EOF
 else
 	echo "Skipping delete and exiting"
