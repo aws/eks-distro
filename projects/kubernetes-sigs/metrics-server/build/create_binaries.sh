@@ -42,7 +42,7 @@ function build::metrics-server::binaries(){
   local -r git_commit="$(git -C $REPO describe --always --abbrev=0)"
   local -r build_date=$(git -C $REPO show -s --format=format:%ct HEAD)
   local -r goldflags="-X ${pkg}/version.gitVersion=$TAG -X ${pkg}/version.gitCommit=$git_commit -X ${pkg}/version.buildDate=$build_date"
-  git -C $REPO checkout "$TAG"
+  git -C $REPO switch -c "$TAG"
   for platform in "${SUPPORTED_PLATFORMS[@]}";
   do
     OS="$(cut -d '/' -f1 <<< ${platform})"

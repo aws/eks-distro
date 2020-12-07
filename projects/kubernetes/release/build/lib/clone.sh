@@ -23,6 +23,6 @@ function build::clone::release() {
         git clone $clone_url $repository
     fi
     if [[ $tag != "" ]]; then
-        git -C $repository checkout $tag
+        git -C $repository switch -c $tag
     fi
 }

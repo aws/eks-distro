@@ -37,7 +37,7 @@ function build::plugins::binaries(){
   mkdir -p "$BIN_PATH"
   git clone "$CLONE_URL" "$REPO"
   cd "$REPO"
-  git checkout "$TAG"
+  git switch -c "$TAG"
   for platform in "${SUPPORTED_PLATFORMS[@]}"; do
     OS="$(cut -d '/' -f1 <<< ${platform})"
     ARCH="$(cut -d '/' -f2 <<< ${platform})"

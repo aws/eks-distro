@@ -20,7 +20,7 @@ function build::version::create_env_file() {
     local -r release_file="$3"
     local -r repository="$4"
 
-    git -C $repository checkout $tag
+    git -C $repository switch -c $tag
     local -r source_date_epoch=$(git -C $repository show -s --format=format:%ct HEAD)
 
     cd $repository

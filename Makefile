@@ -42,7 +42,7 @@ docker-push: makes
 	@echo 'Done' $(TARGET)
 
 .PHONY: clean
-clean:
+clean: makes
 	@echo 'Done' $(TARGET)
 
 makes:
