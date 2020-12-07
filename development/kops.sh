@@ -19,6 +19,9 @@ if [ -z "$CLUSTER_NAME" ]; then
     read -r -p "What is the name of your Cluster? " CLUSTER_NAME
 fi
 
+# Make sure a default region was selected
+: ${AWS_DEFAULT_REGION:="us-east-1"}
+
 export CNI_VERSION_URL=https://distro.eks.amazonaws.com/kubernetes-1-18/releases/1/artifacts/plugins/v0.8.7/cni-plugins-linux-amd64-v0.8.7.tar.gz
 export CNI_ASSET_HASH_STRING=sha256:7426431524c2976f481105b80497238030e1c3eedbfcad00e2a9ccbaaf9eef9d
 
@@ -44,8 +47,8 @@ if [ $_bucket_name == "None" ]; then
 fi
 
 kops create cluster $CLUSTER_NAME \
-    --zones "us-west-2a,us-west-2b,us-west-2c" \
-    --master-zones "us-west-2a" \
+    --zones "${AWS_DEFAULT_REGION}a,${AWS_DEFAULT_REGION}b,${AWS_DEFAULT_REGION}c" \
+    --master-zones "${AWS_DEFAULT_REGION}a" \
     --networking kubenet \
     --node-count 3 \
     --node-size m5.xlarge \

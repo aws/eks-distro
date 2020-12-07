@@ -18,6 +18,13 @@ container images.
 
 ## Run the kops.sh script
 
+The kops S3 bucket and Kubernetes cluster will be created by default in
+`us-east-1`. If you want to change this, set a default region as follows:
+
+```
+export AWS_DEFAULT_REGION=eu-north-1
+```
+
 Run the `kops.sh` script, and when prompted supply a FQDN name for your cluster
 for a domain you control. Refer to the [kops
 documentation](https://kops.sigs.k8s.io/getting_started/aws/) for
