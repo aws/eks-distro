@@ -23,31 +23,15 @@ for a domain you control. Refer to the [kops
 documentation](https://kops.sigs.k8s.io/getting_started/aws/) for
 full instructions.
 
-After you run the script, be sure to run the `export KOPS_STATE_STORE=...`
-command specified, and edit the yaml file with the output the script provides.
-
-You will then need to run the following commands:
+You will then need to run the following:
 ```bash
-# Set to your cluster name
-CLUSTER_NAME=my-super-cool-cluster.mydomain.com
-kops create -f ./$CLUSTER_NAME.yaml
-kops create secret --name $CLUSTER_NAME sshpublickey admin -i ~/.ssh/id_rsa.pub
-kops update cluster $CLUSTER_NAME --yes
-kops validate cluster --wait 10m
-cat << EOF > aws-iam-authenticator.yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: aws-iam-authenticator
-  namespace: kube-system
-  labels:
-    k8s-app: aws-iam-authenticator
-data:
-  config.yaml: |
-    clusterID: $CLUSTER_NAME
-EOF
-kubectl apply -f aws-iam-authenticator.yaml
+cd development
+./kops.sh
 ```
+
+Your cluster variables will be stored in the values.yaml file.
+If you want to create a new cluster you can delete that file and run `kops.sh` again.
+
 You can verify the pods in your cluster are using the EKS Distro images by running
 the following command:
 ```bash
