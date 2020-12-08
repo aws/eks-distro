@@ -14,7 +14,6 @@
 
 #/usr/bin/env bash
 
-# TODO: add arm64 once qemu is addd to AMI
 readonly KUBE_LINUX_IMAGE_PLATFORMS=(
     amd64
     arm64
