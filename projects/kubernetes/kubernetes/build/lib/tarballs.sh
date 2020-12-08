@@ -73,7 +73,6 @@ readonly KUBE_CLIENT_TARGETS=(
 readonly KUBE_CLIENT_BINARIES=("${KUBE_CLIENT_TARGETS[@]##*/}")
 readonly KUBE_CLIENT_BINARIES_WIN=("${KUBE_CLIENT_BINARIES[@]/%/.exe}")
 
-# TODO include kubernetes/LICENSES
 function build::tarballs::create_tarballs(){
     local -r bin_root="$1"
     local -r output_dir="$2"
