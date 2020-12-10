@@ -13,6 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 export KOPS_STATE_STORE=${1:-${KOPS_STATE_STORE}}
+if [ -z "${KOPS_STATE_STORE}" ]
+then
+  echo "Usage: ${0} s3://bucketname"
+  echo "  or set and export KOPS_STATE_STORE"
+  exit 1
+fi
 unset KOPS_CLUSTER_NAME
 BUCKET_NAME=$(echo "${KOPS_STATE_STORE}" | sed -e 's,s3://,,g')
 echo "Deleting cluster $KOPS_STATE_STORE"
