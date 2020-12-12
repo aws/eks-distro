@@ -19,12 +19,17 @@ then
   echo "  or set and export KOPS_STATE_STORE"
   exit 1
 fi
+if [ "${KOPS_STATE_STORE}" != "s3://*" ]
+then
+  export KOPS_STATE_STORE="s3://${KOPS_STATE_STORE}"
+fi
 unset KOPS_CLUSTER_NAME
 BUCKET_NAME=$(echo "${KOPS_STATE_STORE}" | sed -e 's,s3://,,g')
 echo "Deleting cluster $KOPS_STATE_STORE"
+kops get cluster --state "${KOPS_STATE_STORE}"
 kops get cluster --state "${KOPS_STATE_STORE}" |
   tail -n +2 |
-  cut -f1 -d '  ' |
+  cut -f1 -d '  ' 2>/dev/null |
   while read NAME
   do
     set -x
