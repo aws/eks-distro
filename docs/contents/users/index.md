@@ -16,21 +16,16 @@ Container Repository](https://gallery.ecr.aws/?searchTerm=eks-distro&verified=ve
 See the [Build Guide](build.md) for more information about building your own
 container images.
 
-## Run the kops.sh script
+## Run the kOps create cluster script
 
-Run the `kops.sh` script, and when prompted supply a FQDN name for your cluster
-for a domain you control. Refer to the [kops
-documentation](https://kops.sigs.k8s.io/getting_started/aws/) for
-full instructions.
-
-You will then need to run the following:
+Run the create cluster script:
 ```bash
-cd development
-./kops.sh
+cd development/kops
+./create_cluster.sh
 ```
 
-Your cluster variables will be stored in the values.yaml file.
-If you want to create a new cluster you can delete the values.yaml file and run `kops.sh` again.
+Refer to the [kops documentation](https://kops.sigs.k8s.io/getting_started/aws/)
+for full instructions.
 
 When your DNS is available for your cluster you'll need to deploy the aws-iam-authenticator.yaml ConfigMap so the pods can schedule properly.
 ```bash
