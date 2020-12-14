@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+# Copyright 2020 Amazon.com Inc. or its affiliates. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+set -eo pipefail
+
+export KOPS_STATE_STORE=${1:-${KOPS_STATE_STORE}}
+if [ -z "${KOPS_STATE_STORE}" ]
+then
+  echo "Usage: ${0} s3://bucketname"
+  echo "  or set and export KOPS_STATE_STORE"
+  exit 1
+fi
+if [[ "${KOPS_STATE_STORE}" != s3://* ]]
+then
+  export KOPS_STATE_STORE="s3://${KOPS_STATE_STORE}"
+fi
+export KOPS_CLUSTER_NAME=$(kops get cluster --state "${KOPS_STATE_STORE}" | tail -n +2 | cut -f1 -d '  ' 2>/dev/null)
+
+# Move to the script directory
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+cd $DIR
+
+echo "Download sonobuoy"
+wget -qO- https://github.com/vmware-tanzu/sonobuoy/releases/download/v0.19.0/sonobuoy_0.19.0_linux_386.tar.gz |tar -xz
+rm -f LICENSE
+chmod 755 sonobuoy
+
+echo "Testing cluster $KOPS_STATE_STORE"
+export KOPS_FEATURE_FLAGS=SpecOverrideFlag
+kops set cluster "${KOPS_CLUSTER_NAME}" cluster.spec.nodePortAccess=0.0.0.0/0
+./sonobuoy run --mode=certified-conformance --wait --kube-conformance-image k8s.gcr.io/conformance:v1.18.9
+results=$(./sonobuoy retrieve)
+mkdir ./results
+tar xzf $results -C ./results
+./sonobuoy e2e ${results}
