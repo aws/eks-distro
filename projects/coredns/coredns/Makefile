@@ -31,7 +31,8 @@ IMAGE_NAME?=coredns/coredns
 # This tag is overwritten in the prow job to point to the upstream git tag and this repo's commit hash
 IMAGE_TAG?=${GIT_TAG}-eks-${RELEASE_BRANCH}-${RELEASE}
 IMAGE?=$(IMAGE_REPO)/$(IMAGE_NAME):$(IMAGE_TAG)
-
+DATE_EPOCH_TAG=$(shell date "+%F-%s")
+DATE_TAG_IMAGE=$(IMAGE_REPO)/$(IMAGE_NAME):$(DATE_EPOCH_TAG)
 
 ifeq ($(DEVELOPMENT),true)
 	BASE_IMAGE=amazonlinux:2
@@ -50,7 +51,7 @@ local-images: binaries
 		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
 		--local dockerfile=./docker/linux \
 		--local context=. \
-		--output type=oci,oci-mediatypes=true,name=$(IMAGE),dest=/tmp/coredns.tar
+		--output type=oci,oci-mediatypes=true,\"name=$(IMAGE),$(DATE_TAG_IMAGE)\",dest=/tmp/coredns.tar
 		
 .PHONY: images
 images: binaries
@@ -61,7 +62,7 @@ images: binaries
 		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
 		--local dockerfile=./docker/linux \
 		--local context=. \
-		--output type=image,oci-mediatypes=true,name=$(IMAGE),push=true
+		--output type=image,oci-mediatypes=true,\"name=$(IMAGE),$(DATE_TAG_IMAGE)\",push=true
 
 .PHONY: docker		
 docker: binaries

@@ -33,6 +33,10 @@ SNAPSHOT_CONTROLLER_IMAGE_TAG=${GIT_TAG}-eks-${RELEASE_BRANCH}-${RELEASE}
 SNAPSHOT_CONTROLLER_IMAGE?=$(IMAGE_REPO)/kubernetes-csi/external-snapshotter/snapshot-controller:$(SNAPSHOT_CONTROLLER_IMAGE_TAG)
 SNAPSHOT_VALIDATION_WEBHOOK_IMAGE_TAG=${GIT_TAG}-eks-${RELEASE_BRANCH}-${RELEASE}
 SNAPSHOT_VALIDATION_WEBHOOK_IMAGE?=$(IMAGE_REPO)/kubernetes-csi/external-snapshotter/snapshot-validation-webhook:$(SNAPSHOT_VALIDATION_WEBHOOK_IMAGE_TAG)
+DATE_EPOCH_TAG=$(shell date "+%F-%s")
+CSI_SNAPSHOTTER_DATE_TAG_IMAGE=$(IMAGE_REPO)/kubernetes-csi/external-snapshotter/csi-snapshotter:$(DATE_EPOCH_TAG)
+SNAPSHOT_CONTROLLER_DATE_TAG_IMAGE=$(IMAGE_REPO)/kubernetes-csi/external-snapshotter/snapshot-controller:$(DATE_EPOCH_TAG)
+SNAPSHOT_VALIDATION_WEBHOOK_DATE_TAG_IMAGE=$(IMAGE_REPO)/kubernetes-csi/external-snapshotter/snapshot-validation-webhook:$(DATE_EPOCH_TAG)
 
 ifeq ($(DEVELOPMENT),true)
 	BASE_IMAGE=amazonlinux:2
@@ -51,7 +55,7 @@ local-images: binaries
 		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
 		--local dockerfile=./docker/linux/csi-snapshotter \
 		--local context=. \
-		--output type=oci,oci-mediatypes=true,name=$(CSI_SNAPSHOTTER_IMAGE),dest=/tmp/csi-snapshotter.tar
+		--output type=oci,oci-mediatypes=true,\"name=$(CSI_SNAPSHOTTER_IMAGE),$(CSI_SNAPSHOTTER_DATE_TAG_IMAGE)\",dest=/tmp/csi-snapshotter.tar
 	buildctl \
 		build \
 		--frontend dockerfile.v0 \
@@ -59,7 +63,7 @@ local-images: binaries
 		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
 		--local dockerfile=./docker/linux/snapshot-controller \
 		--local context=. \
-		--output type=oci,oci-mediatypes=true,name=$(SNAPSHOT_CONTROLLER_IMAGE),dest=/tmp/snapshot-controller.tar
+		--output type=oci,oci-mediatypes=true,\"name=$(SNAPSHOT_CONTROLLER_IMAGE),$(SNAPSHOT_CONTROLLER_DATE_TAG_IMAGE)\",dest=/tmp/snapshot-controller.tar
 	buildctl \
 		build \
 		--frontend dockerfile.v0 \
@@ -67,7 +71,7 @@ local-images: binaries
 		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
 		--local dockerfile=./docker/linux/snapshot-validation-webhook \
 		--local context=. \
-		--output type=oci,oci-mediatypes=true,name=$(SNAPSHOT_VALIDATION_WEBHOOK_IMAGE),dest=/tmp/snapshot-validation-webhook.tar
+		--output type=oci,oci-mediatypes=true,\"name=$(SNAPSHOT_VALIDATION_WEBHOOK_IMAGE),$(SNAPSHOT_VALIDATION_WEBHOOK_DATE_TAG_IMAGE)\",dest=/tmp/snapshot-validation-webhook.tar
 
 .PHONY: images
 images: binaries
@@ -78,7 +82,7 @@ images: binaries
 		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
 		--local dockerfile=./docker/linux/csi-snapshotter \
 		--local context=. \
-		--output type=image,oci-mediatypes=true,name=$(CSI_SNAPSHOTTER_IMAGE),push=true
+		--output type=image,oci-mediatypes=true,\"name=$(CSI_SNAPSHOTTER_IMAGE),$(CSI_SNAPSHOTTER_DATE_TAG_IMAGE)\",push=true
 	buildctl \
 		build \
 		--frontend dockerfile.v0 \
@@ -86,7 +90,7 @@ images: binaries
 		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
 		--local dockerfile=./docker/linux/snapshot-controller \
 		--local context=. \
-		--output type=image,oci-mediatypes=true,name=$(SNAPSHOT_CONTROLLER_IMAGE),push=true
+		--output type=image,oci-mediatypes=true,\"name=$(SNAPSHOT_CONTROLLER_IMAGE),$(SNAPSHOT_CONTROLLER_DATE_TAG_IMAGE)\",push=true
 	buildctl \
 		build \
 		--frontend dockerfile.v0 \
@@ -94,7 +98,7 @@ images: binaries
 		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
 		--local dockerfile=./docker/linux/snapshot-validation-webhook \
 		--local context=. \
-		--output type=image,oci-mediatypes=true,name=$(SNAPSHOT_VALIDATION_WEBHOOK_IMAGE),push=true
+		--output type=image,oci-mediatypes=true,\"name=$(SNAPSHOT_VALIDATION_WEBHOOK_IMAGE),$(SNAPSHOT_VALIDATION_WEBHOOK_DATE_TAG_IMAGE)\",push=true
 
 .PHONY: docker
 docker: binaries

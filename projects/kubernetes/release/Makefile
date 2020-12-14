@@ -35,7 +35,9 @@ KUBE_PROXY_BASE_IMAGE_NAME?=kubernetes/kube-proxy-base
 # This tag is overwritten in the prow job to point to the upstream git tag and this repo's commit hash
 KUBE_PROXY_BASE_IMAGE_TAG?=${GIT_TAG}-eks-${RELEASE_BRANCH}-${RELEASE}
 KUBE_PROXY_BASE_IMAGE?=$(IMAGE_REPO)/$(KUBE_PROXY_BASE_IMAGE_NAME):$(KUBE_PROXY_BASE_IMAGE_TAG)
-
+DATE_EPOCH_TAG=$(shell date "+%F-%s")
+GO_RUNNER_DATE_TAG_IMAGE=$(IMAGE_REPO)/$(GO_RUNNER_IMAGE_NAME):$(DATE_EPOCH_TAG)
+KUBE_PROXY_BASE_DATE_TAG_IMAGE=$(IMAGE_REPO)/$(KUBE_PROXY_BASE_IMAGE_NAME):$(DATE_EPOCH_TAG)
 ifeq ($(DEVELOPMENT),true)
 	BASE_IMAGE=amazonlinux:2
 endif
@@ -54,7 +56,7 @@ local-images: binaries
 		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
 		--local dockerfile=./docker/go-runner/ \
 		--local context=. \
-		--output type=oci,oci-mediatypes=true,name=$(GO_RUNNER_IMAGE),dest=/tmp/go-runner.tar
+		--output type=oci,oci-mediatypes=true,\"name=$(GO_RUNNER_IMAGE),$(GO_RUNNER_DATE_TAG_IMAGE)\",dest=/tmp/go-runner.tar
 	buildctl \
 		build \
 		--frontend dockerfile.v0 \
@@ -62,7 +64,7 @@ local-images: binaries
 		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
 		--local dockerfile=./docker/kube-proxy-base/ \
 		--local context=. \
-		--output type=oci,oci-mediatypes=true,name=$(KUBE_PROXY_BASE_IMAGE),dest=/tmp/kube-proxy-base.tar
+		--output type=oci,oci-mediatypes=true,\"name=$(KUBE_PROXY_BASE_IMAGE),$(KUBE_PROXY_BASE_DATE_TAG_IMAGE)\",dest=/tmp/kube-proxy-base.tar
 
 .PHONY: images
 images: binaries
@@ -74,7 +76,7 @@ images: binaries
 		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
 		--local dockerfile=./docker/go-runner/ \
 		--local context=. \
-		--output type=image,oci-mediatypes=true,name=$(GO_RUNNER_IMAGE),push=true
+		--output type=image,oci-mediatypes=true,\"name=$(GO_RUNNER_IMAGE),$(GO_RUNNER_DATE_TAG_IMAGE)\",push=true
 	buildctl \
 		build \
 		--frontend dockerfile.v0 \
@@ -82,7 +84,7 @@ images: binaries
 		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
 		--local dockerfile=./docker/kube-proxy-base/ \
 		--local context=. \
-		--output type=image,oci-mediatypes=true,name=$(KUBE_PROXY_BASE_IMAGE),push=true
+		--output type=image,oci-mediatypes=true,\"name=$(KUBE_PROXY_BASE_IMAGE),$(KUBE_PROXY_BASE_DATE_TAG_IMAGE)\",push=true
 
 .PHONY: docker
 docker: binaries
