@@ -31,8 +31,7 @@ unset KOPS_CLUSTER_NAME
 echo "Deleting cluster $KOPS_STATE_STORE"
 kops get cluster --state "${KOPS_STATE_STORE}" |
   tail -n +2 |
-  cut -f1 -d '  ' 2>/dev/null |
-  while read NAME
+  while read NAME ROL
   do
     set -x
     kops delete cluster --state "${KOPS_STATE_STORE}" --name "${NAME}" --yes
