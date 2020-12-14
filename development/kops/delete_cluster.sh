@@ -22,7 +22,7 @@ then
   echo "  or set and export KOPS_STATE_STORE"
   exit 1
 fi
-if [ "${KOPS_STATE_STORE}" != "s3://*" ]
+if [[ "${KOPS_STATE_STORE}" != s3://* ]]
 then
   export KOPS_STATE_STORE="s3://${KOPS_STATE_STORE}"
 fi
