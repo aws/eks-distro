@@ -95,3 +95,7 @@ kubectl apply -f https://distro.eks.amazonaws.com/kubernetes-1-18/kubernetes-1-1
 kubectl get release kubernetes-1-18-eks-1
 kubectl get release kubernetes-1-18-eks-1 -o yaml
 ```
+
+### Release Version Dependencies
+
+* [EKS-D v1.18-eks-1 Version Dependencies](v1-18-eks-1.md)
