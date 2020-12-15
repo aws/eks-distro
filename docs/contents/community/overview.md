@@ -1,6 +1,12 @@
 # Overview
 
-This section of the docs is targeting EKS Distro contributors and the wider
-community.
+We work hard to provide a high-quality Kubernetes distribution just like EKS
+and we greatly value feedback and contributions from our community.  Please
+review our [contribution guidelines](contributing.md) before
+submitting any [issues](https://github.com/aws/eks-distro/issues) or
+[pull requests](https://github.com/aws/eks-distro/pulls) to ensure we have
+all the necessary information to effectively respond to your bug report or
+contribution. If you have a concern with a security vulnerability please
+review our [reporting a vulnerability policy](https://github.com/aws/eks-distro/security/policy).
 
 
