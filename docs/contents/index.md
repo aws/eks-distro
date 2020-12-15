@@ -98,4 +98,4 @@ kubectl get release kubernetes-1-18-eks-1 -o yaml
 
 ### Release Version Dependencies
 
-* [EKS-D v1.18-eks-1 Version Dependencies](v1-18-eks-1.md)
+* [EKS-D v1.18-eks-1 Version Dependencies](releases/v1-18-eks-1.md)
