@@ -28,11 +28,11 @@ PAUSE_IMAGE_TAG?=$(IMAGE_TAG)
 PAUSE_IMAGE?=$(IMAGE_REPO)/$(IMAGE_REPO_PREFIX)/$(PAUSE_IMAGE_NAME):$(PAUSE_IMAGE_TAG)
 
 .PHONY: update-version
-update-version:
+update-version: binaries
 	build/create_version_file.sh $(GIT_TAG) $(RELEASE_BRANCH)
 
 .PHONY: update-checksums
-update-checksums:
+update-checksums: binaries
 	build/update_checksums.sh $(RELEASE_BRANCH)
 
 .PHONY: binaries

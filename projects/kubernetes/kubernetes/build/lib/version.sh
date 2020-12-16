@@ -19,6 +19,7 @@ function build::version::create_env_file() {
     local -r version_file="$2"
     local -r release_file="$3"
     local -r repository="$4"
+    local -r release_branch="$5"
 
     git -C $repository checkout $tag
     local -r source_date_epoch=$(git -C $repository show -s --format=format:%ct HEAD)
@@ -32,7 +33,7 @@ function build::version::create_env_file() {
 
     local -r version_file_cleaned=$version_file.tmp
     local -r release_version=$(cat $release_file)
-    local -r kube_git_version="${tag}-eks-distro-${release_version}"
+    local -r kube_git_version="${tag}-eks-${release_branch}-${release_version}"
 
     cat $version_file | sed -e "s/${tag}/${kube_git_version}/g"| grep -v "KUBE_GIT_TREE_STATE" > $version_file_cleaned
 
