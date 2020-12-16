@@ -15,16 +15,32 @@
 
 set -eo pipefail
 
+BASEDIR=$(dirname "$0")
+
+if [ -z "$AWS_DEFAULT_REGION" ]; then
+    echo "Please set a default region for the kops config bucket (e.g. us-west-2)"
+    read -r -p "What region would you like to store the config? " AWS_DEFAULT_REGION
+fi
+
+if ! aws sts get-caller-identity --query Account --output text >/dev/null 2>/dev/null
+then
+    echo "Error authtenticating with AWS running: aws sts get-caller-identity"
+    echo "The AWS CLI must be able to run for this script"
+    exit 1
+fi
+
 if [ -z "$CLUSTER_NAME" ]; then
     echo "Cluster name must be an FQDN: <yourcluster>.yourdomain.com or <yourcluster>.sub.yourdomain.com"
     read -r -p "What is the name of your Cluster? " CLUSTER_NAME
 fi
 
-if [ -z "$AWS_DEFAULT_REGION" ]; then
-	  echo "Please set a default region for the kops config bucket (e.g. us-west-2)"
-	  read -r -p "What region would you like to store the config? " AWS_DEFAULT_REGION
+if [ -z "$KOPS_STATE_STORE" ]; then
+    source ${BASEDIR}/create_store_name.sh
+    echo "Please enter the value for the kOps state store"
+    read -r -p "What kOps state store would you like use? " -i "${KOPS_STATE_STORE}" KOPS_STATE_STORE
 fi
 
+exit 0
 export KUBERNETES_VERSION=https://distro.eks.amazonaws.com/kubernetes-1-18/releases/1/artifacts/kubernetes/v1.18.9
 export CNI_VERSION_URL=https://distro.eks.amazonaws.com/kubernetes-1-18/releases/1/artifacts/plugins/v0.8.7/cni-plugins-linux-amd64-v0.8.7.tar.gz
 export CNI_ASSET_HASH_STRING=sha256:7426431524c2976f481105b80497238030e1c3eedbfcad00e2a9ccbaaf9eef9d
