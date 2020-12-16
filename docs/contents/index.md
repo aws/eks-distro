@@ -38,12 +38,13 @@ installing EKS-D.
 
 The tenets of the EKS Distro (EKS-D) project are:
 
-1. **Simple**: make Kubernetes operations, administration, and management simple and boring
-2. **Opinionated Modularity**: provide opinionated defaults about the best tooling to include with Kubernetes, but give customers the ability to swap them out
-3. **Open**: provide open source tooling backed, validated and supported by Amazon
-4. **Ubiquitous**: provide support for the most common public cloud, on-premises bare metal, and on-premises virtualized deployment targets
-5. **Stand Alone**: provided for use anywhere without AWS dependencies (on-premises air-gapped)
-6. **Better with AWS**: enable AWS customers to enlist AWS Enterprise Support and allow them easily adopt additional AWS services
+1. **The Source**: The goal of the EKS Distro is to be the Kubernetes source for EKS and EKS Anywhere
+2. **Simple**: make Kubernetes operations, administration, and management simple and boring
+3. **Opinionated Modularity**: provide opinionated defaults about the best tooling to include with Kubernetes, but give customers the ability to swap them out
+4. **Open**: provide open source tooling backed, validated and supported by Amazon
+5. **Ubiquitous**: provide support for the most common public cloud, on-premises bare metal, and on-premises virtualized deployment targets
+6. **Stand Alone**: provided for use anywhere without AWS dependencies (on-premises air-gapped)
+7. **Better with AWS**: enable AWS customers to enlist AWS Enterprise Support and allow them easily adopt additional AWS services
 
 ## Release Channels
 
