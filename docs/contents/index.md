@@ -34,6 +34,18 @@ refer to the [Build](users/build.md) instructions to build a cluster from scratc
 See the [Partners](community/partners.md) page for links to third-party methods for
 installing EKS-D.
 
+## Project Tenets (unless you know better ones)
+
+The tenets of the EKS Distro (EKS-D) project are:
+
+1. **The Source**: The goal of the EKS Distro is to be the Kubernetes source for EKS and EKS Anywhere
+2. **Simple**: Make using a Kubernetes distribution simple and boring (reliable and secure).
+3. **Opinionated Modularity**: Provide opinionated defaults about the best components to include with Kubernetes, but give customers the ability to swap them out
+4. **Open**: Provide open source tooling backed, validated and maintained by Amazon
+5. **Ubiquitous**: Enable customers and partners to integrate a Kubernetes distribution in the most common tooling (Kubernetes installers and distributions, infrastructure as code, and more).
+6. **Stand Alone**: Provided for use anywhere without AWS dependencies
+7. **Better with AWS**: Enable AWS customers to easily adopt additional AWS services
+
 ## Release Channels
 
 The EKS Distro releases Kubernetes versions at the same pace as EKS, and updates
