@@ -41,6 +41,10 @@ docker: makes
 docker-push: makes
 	@echo 'Done' $(TARGET)
 
+.PHONY: update-kubernetes-version
+update-kubernetes-version:
+	build/update-kubernetes-version/update.sh $(RELEASE_BRANCH)
+
 .PHONY: clean
 clean:
 	@echo 'Done' $(TARGET)

@@ -36,7 +36,7 @@ fi
 
 rm ${MAKE_ROOT}/${RELEASE_BRANCH}/checksums || true
 # TODO: come up with a beter filter than 'kube*'
-for file in $(find ${BIN_DIR} -name 'kube*' -type file ); do
+for file in $(find ${BIN_DIR} -name 'kube*' -type f ); do
     filepath=$(realpath --relative-base=$MAKE_ROOT $file)
     sha256sum $filepath >> ${MAKE_ROOT}/${RELEASE_BRANCH}/checksums
 done
