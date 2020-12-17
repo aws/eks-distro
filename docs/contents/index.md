@@ -34,7 +34,7 @@ refer to the [Build](users/build.md) instructions to build a cluster from scratc
 See the [Partners](community/partners.md) page for links to third-party methods for
 installing EKS-D.
 
-## Project Tenets
+## Project Tenets (unless you know better ones)
 
 The tenets of the EKS Distro (EKS-D) project are:
 
