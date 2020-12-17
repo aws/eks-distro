@@ -15,4 +15,4 @@
 
 set -eo pipefail
 
-echo "This script will create the cluster, run tests and tear it down"
+echo "This script will create a cluster, run tests and tear it down"
