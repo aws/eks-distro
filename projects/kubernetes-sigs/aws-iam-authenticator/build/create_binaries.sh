@@ -40,7 +40,7 @@ function build::aws-iam-authenticator::binaries(){
   mkdir -p "$BIN_PATH"
   git clone "$CLONE_URL" "$REPO"
   cd "$REPO"
-  git switch -c "$TAG"
+  git switch -c "$TAG" "$TAG"
   for platform in "${SUPPORTED_PLATFORMS[@]}";
   do
     OS="$(cut -d '/' -f1 <<< ${platform})"

@@ -37,7 +37,7 @@ function build::etcd::binaries(){
   mkdir -p $BIN_PATH
   git clone $CLONE_URL $REPO
   cd $REPO
-  git checkout $TAG
+  git switch -c "$TAG" "$TAG"
   go mod vendor
   for platform in "${SUPPORTED_PLATFORMS[@]}";
   do
