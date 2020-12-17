@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -eo pipefail
+set -exo pipefail
 
 export KOPS_STATE_STORE=${1:-${KOPS_STATE_STORE}}
 if [ -z "${KOPS_STATE_STORE}" ]
