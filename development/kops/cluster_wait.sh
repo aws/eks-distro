@@ -15,7 +15,5 @@
 
 set -eo pipefail
 
-BASEDIR=$(dirname "$0")
-source ${BASEDIR}/set_k8s_versions.sh
-
-kops update cluster $CLUSTER_NAME --yes
+kops validate cluster --wait 10m
+kubectl apply -f ./aws-iam-authenticator.yaml
