@@ -5,14 +5,18 @@ Subject: [PATCH 04/16] --EKS-PATCH-- volume plugin requests patch
 
 Mitigation for CVE-2020-8555
 
+To maintain backwards compatibility, the "EXTRA_PROXY_BLACKLIST_CIDR" env var must be accepted, despite containing the
+non-inclusive term "BLACKLIST". The "EXTRA_PROXY_DENYLIST_CIDR" env var has the same functionality and should be used
+instead of it. Future releases should consider supporting only the inclusive variable.
+
 Signed-off-by: Jackson West <jgw@amazon.com>
 ---
- pkg/proxy/util/utils.go                       | 59 ++++++++++++++++++-
+ pkg/proxy/util/utils.go                       | 63 +++++++++++++++++++-
  .../heketi/client/api/go-client/client.go     | 19 +++++-
  vendor/github.com/quobyte/api/quobyte.go      | 18 +++++-
  vendor/github.com/storageos/go-api/client.go  |  5 +-
- .../github.com/thecodeteam/goscaleio/api.go   | 11 +++-
- 5 files changed, 106 insertions(+), 6 deletions(-)
+ .../github.com/thecodeteam/goscaleio/api.go   |  9 +++
+ 5 files changed, 109 insertions(+), 5 deletions(-)
 
 diff --git a/pkg/proxy/util/utils.go b/pkg/proxy/util/utils.go
 index b4f1b4304c1..df18630ef00 100644
@@ -31,21 +35,22 @@ index b4f1b4304c1..df18630ef00 100644
  
  	v1 "k8s.io/api/core/v1"
  	"k8s.io/apimachinery/pkg/types"
-@@ -39,7 +43,8 @@ const (
+@@ -39,7 +43,9 @@ const (
  	IPv4ZeroCIDR = "0.0.0.0/0"
  
  	// IPv6ZeroCIDR is the CIDR block for the whole IPv6 address space
 -	IPv6ZeroCIDR = "::/0"
 +	IPv6ZeroCIDR               = "::/0"
-+	EnvExtraProxyBlackListCIDR = "EXTRA_PROXY_BLACKLIST_CIDR"
++	EnvExtraProxyBlackListCIDR = "EXTRA_PROXY_BLACKLIST_CIDR" // Use the more inclusive EnvExtraProxyDenyListCIDR instead
++	EnvExtraProxyDenyListCIDR = "EXTRA_PROXY_DENYLIST_CIDR"
  )
  
  var (
-@@ -123,6 +128,29 @@ func IsProxyableHostname(ctx context.Context, resolv Resolver, hostname string)
+@@ -123,6 +129,29 @@ func IsProxyableHostname(ctx context.Context, resolv Resolver, hostname string)
  	return nil
  }
  
-+func IsProxyableHostnameV2(ctx context.Context, resolv Resolver, blackListNetworks []*net.IPNet, hostname string) error {
++func IsProxyableHostnameV2(ctx context.Context, resolv Resolver, denyListNetworks []*net.IPNet, hostname string) error {
 +	resp, err := resolv.LookupIPAddr(ctx, hostname)
 +	if err != nil {
 +		return err
@@ -59,7 +64,7 @@ index b4f1b4304c1..df18630ef00 100644
 +		if err := isProxyableIP(host.IP); err != nil {
 +			return err
 +		}
-+		for _, network := range blackListNetworks {
++		for _, network := range denyListNetworks {
 +			if network.Contains(host.IP) {
 +				return ErrAddressNotAllowed
 +			}
@@ -71,17 +76,20 @@ index b4f1b4304c1..df18630ef00 100644
  // GetLocalAddrs returns a list of all network addresses on the local system
  func GetLocalAddrs() ([]net.IP, error) {
  	var localAddrs []net.IP
-@@ -159,6 +187,35 @@ func ShouldSkipService(svcName types.NamespacedName, service *v1.Service) bool {
+@@ -159,6 +188,38 @@ func ShouldSkipService(svcName types.NamespacedName, service *v1.Service) bool {
  	return false
  }
  
 +func NewSafeDialContext(dialContext func(context.Context, string, string) (net.Conn, error)) func(context.Context, string, string) (net.Conn, error) {
-+	var blackListNetworks []*net.IPNet
-+	blackListCIDRs := os.Getenv(EnvExtraProxyBlackListCIDR)
-+	if blackListCIDRs != "" {
-+		for _, cidr := range strings.Split(blackListCIDRs, ",") {
++	var denyListNetworks []*net.IPNet
++	denyListCIDRs := os.Getenv(EnvExtraProxyDenyListCIDR)
++	if denyListCIDRs == "" {
++   	denyListCIDRs = os.Getenv(EnvExtraProxyBlackListCIDR) // Use the more inclusive EnvExtraProxyDenyListCIDR instead
++   }
++	if denyListCIDRs != "" {
++		for _, cidr := range strings.Split(denyListCIDRs, ",") {
 +			_, ipNet, _ := net.ParseCIDR(cidr)
-+			blackListNetworks = append(blackListNetworks, ipNet)
++			denyListNetworks = append(denyListNetworks, ipNet)
 +		}
 +	}
 +
@@ -97,7 +105,7 @@ index b4f1b4304c1..df18630ef00 100644
 +		if err != nil {
 +			return nil, err
 +		}
-+		if err := IsProxyableHostnameV2(ctx, &net.Resolver{}, blackListNetworks, host); err != nil {
++		if err := IsProxyableHostnameV2(ctx, &net.Resolver{}, denyListNetworks, host); err != nil {
 +			return nil, err
 +		}
 +		return dialContext(ctx, network, addr)
