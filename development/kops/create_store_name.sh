@@ -13,9 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -eo pipefail
-
-BASEDIR=$(dirname "$0")
-source ${BASEDIR}/set_k8s_versions.sh
-
-kops update cluster $CLUSTER_NAME --yes
+# Create a unique s3 bucket name
+export KOPS_STATE_STORE="s3://kops-state-store-$(cat /dev/urandom | LC_ALL=C tr -dc "[:alpha:]" | tr '[:upper:]' '[:lower:]' | head -c 32)"
+echo export KOPS_STATE_STORE="${KOPS_STATE_STORE}"

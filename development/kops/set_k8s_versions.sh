@@ -13,9 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -eo pipefail
-
-BASEDIR=$(dirname "$0")
-source ${BASEDIR}/set_k8s_versions.sh
-
-kops update cluster $CLUSTER_NAME --yes
+export KUBERNETES_VERSION=https://distro.eks.amazonaws.com/kubernetes-1-18/releases/1/artifacts/kubernetes/v1.18.9
+export CNI_VERSION_URL=https://distro.eks.amazonaws.com/kubernetes-1-18/releases/1/artifacts/plugins/v0.8.7/cni-plugins-linux-amd64-v0.8.7.tar.gz
+export CNI_ASSET_HASH_STRING=sha256:7426431524c2976f481105b80497238030e1c3eedbfcad00e2a9ccbaaf9eef9d
