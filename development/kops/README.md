@@ -34,7 +34,7 @@ EKS-D cluster:
 ```
 
 ### 4. Wait for the Cluster
-It may take a while for the cluster. You can use the `cluster_waith.sh`
+It may take a while for the cluster. You can use the `cluster_wait.sh`
 script to wait for the cluster to be ready. Once the cluster is ready this
 script will add the AWS IAM authenticator.
 ```bash
