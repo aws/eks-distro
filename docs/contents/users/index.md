@@ -18,6 +18,6 @@ container images.
 
 ## Create cluster scripts
 
-You can deploy EKS Distro any way ou like, but we use kOps for testing, so you
-may like to use those scripts documented in the
-[kOps README](https://github.com/aws/eks-distro/blob/main/development/kops/README.md)
+You can deploy EKS Distro any way you like, but we use kOps for testing. You
+may like to use the testing scripts which are documented in this
+[README](https://github.com/aws/eks-distro/blob/main/development/kops/README.md).
