@@ -38,10 +38,10 @@ rm -f LICENSE
 chmod 755 sonobuoy
 
 echo "Testing cluster $KOPS_STATE_STORE"
-export KOPS_FEATURE_FLAGS=SpecOverrideFlag
-kops set cluster "${KOPS_CLUSTER_NAME}" cluster.spec.nodePortAccess=0.0.0.0/0
 ./sonobuoy run --mode=certified-conformance --wait --kube-conformance-image k8s.gcr.io/conformance:v1.18.9
 results=$(./sonobuoy retrieve)
 mkdir ./results
 tar xzf $results -C ./results
+cp ./results/plugins/e2e/results/global/junit_01.xml .
 ./sonobuoy e2e ${results}
+./sonobuoy e2e ${results} | grep 'test failed' >/dev/null ||  false # Return failure for failed

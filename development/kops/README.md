@@ -47,7 +47,7 @@ When the script completes, your cluster is ready to use.
 You can verify the pods in your cluster are using the EKS Distro images by running
 the following command:
 ```bash
-kubectl get po --all-namespaces -o json | jq -r .items[].spec.containers[].image | sort -u
+kubectl get po --all-namespaces -o json | jq -r '.items[].spec.containers[].image' | sort -u
 ```
 
 ## kOps Cluster Delete
