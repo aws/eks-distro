@@ -26,14 +26,8 @@ if [[ "${KOPS_STATE_STORE}" != s3://* ]]
 then
   export KOPS_STATE_STORE="s3://${KOPS_STATE_STORE}"
 fi
-unset KOPS_CLUSTER_NAME
 
-echo "Deleting cluster $KOPS_STATE_STORE"
-kops get cluster --state "${KOPS_STATE_STORE}" |
-  tail -n +2 |
-  while read NAME ROL
-  do
-    set -x
-    kops delete cluster --state "${KOPS_STATE_STORE}" --name "${NAME}" --yes
-    set +x
-  done
+echo "Deleting cluster $KOPS_STATE_STORE ${KOPS_CLUSTER_NAME}"
+set -x
+kops delete cluster --state "${KOPS_STATE_STORE}" --name "${KOPS_CLUSTER_NAME}" --yes
+set +x

@@ -2,7 +2,8 @@
 
 Follow these instructions to create an EKS-D Kubernetes cluster using
 kOps.  Refer to the [kops documentation](https://kops.sigs.k8s.io/getting_started/aws/)
-for full instructions.
+for full instructions.  Most of these commands require that you have
+`KOPS_STATE_STORE` and `KOPS_CLUSTER_NAME` set and exported.
 
 ## kOps Cluster Create
 
@@ -16,12 +17,12 @@ cd eks-distro/development/kops
 
 ### 2. Create the Cluster Configuration
 You will need to set and export `KOPS_STATE_STORE` to the s3 bucket to use for
-your kOps state and `CLUSTER_NAME` to a valid subdomain controlled by Route53.
+your kOps state and `KOPS_CLUSTER_NAME` to a valid subdomain controlled by Route53.
 If your kOps state store does not exist, this script will create it. It will
 also generate the cluster configuration:
 ```bash
 export KOPS_STATE_STORE=s3://kops-state-store
-export CLUSTER_NAME=clustername.example.com
+export KOPS_CLUSTER_NAME=clustername.example.com
 ./create_configuration.sh 
 ```
 
@@ -33,16 +34,15 @@ EKS-D cluster:
 ```
 
 ### 4. Wait for the Cluster
-It may take a while for the cluster to come up and you may wish to use AWS
-IAM authentication
+It may take a while for the cluster. You can use this script to wait for
+the cluster and apply the AWS IAM authenticator when it comes up.
 ```bash
-kops validate cluster --wait 10m
-kubectl apply -f ./aws-iam-authenticator.yaml
+./cluster_wait.sh
 ```
 
-# Delete the pods that were created before the ConfigMap existed
-kubectl delete pod -n kube-system -l k8s-app=aws-iam-authenticator
-```
+After that your cluster is ready to use.
+
+## Verify Your Cluster is Running EKS-D
 
 You can verify the pods in your cluster are using the EKS Distro images by running
 the following command:
@@ -50,9 +50,9 @@ the following command:
 kubectl get po --all-namespaces -o json | jq -r .items[].spec.containers[].image | sort -u
 ```
 
-## kOps Cluster Destroy
+## kOps Cluster Delete
 
 To tear down the cluster, run:
 ```bash
-kops delete -f ./$CLUSTER_NAME.yaml --yes
+./delete_cluster.sh
 ```
