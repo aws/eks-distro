@@ -26,7 +26,15 @@ if [[ "${KOPS_STATE_STORE}" != s3://* ]]
 then
   export KOPS_STATE_STORE="s3://${KOPS_STATE_STORE}"
 fi
-export KOPS_CLUSTER_NAME=$(kops get cluster --state "${KOPS_STATE_STORE}" | tail -n +2 | cut -f1 -d '  ' 2>/dev/null)
+if [ -z "${KOPS_CLUSTER_NAME}" ]
+then
+  export KOPS_CLUSTER_NAME=$(kops get cluster --state "${KOPS_STATE_STORE}" | tail -n +2 | cut -f1 -d '	' 2>/dev/null)
+  if [ -z "${KOPS_CLUSTER_NAME}" ]
+  then
+    echo "KOPS_CLUSTER_NAME must be set and exported to run this script"
+    exit 1
+  fi
+fi
 
 # Move to the script directory
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
