@@ -37,10 +37,10 @@ if [ -z "$KOPS_STATE_STORE" ]; then
 fi
 export BUCKET_NAME=${KOPS_STATE_STORE#"s3://"}
 
-if [ -z "$CLUSTER_NAME" ]; then
+if [ -z "$KOPS_CLUSTER_NAME" ]; then
     echo "Cluster name must be an FQDN: <yourcluster>.yourdomain.com or <yourcluster>.sub.yourdomain.com"
-    read -r -p "What is the name of your Cluster? " CLUSTER_NAME
-    export CLUSTER_NAME
+    read -r -p "What is the name of your Cluster? " KOPS_CLUSTER_NAME
+    export KOPS_CLUSTER_NAME
 fi
 
 if [ -f values.yaml ]; then
@@ -78,29 +78,29 @@ metadata:
     k8s-app: aws-iam-authenticator
 data:
   config.yaml: |
-    clusterID: $CLUSTER_NAME
+    clusterID: $KOPS_CLUSTER_NAME
 EOF
 
 echo "Creating values.yaml"
 cat << EOF > values.yaml
 kubernetesVersion: $KUBERNETES_VERSION
-clusterName: $CLUSTER_NAME
+clusterName: $KOPS_CLUSTER_NAME
 configBase: $KOPS_STATE_STORE
 awsRegion: $AWS_DEFAULT_REGION
 EOF
 
-echo "Creating ${CLUSTER_NAME}.yaml"
-kops toolbox template --template eks-d.tpl --values values.yaml > "${CLUSTER_NAME}.yaml"
+echo "Creating ${KOPS_CLUSTER_NAME}.yaml"
+kops toolbox template --template eks-d.tpl --values values.yaml > "${KOPS_CLUSTER_NAME}.yaml"
 
 echo "Creating cluster configuration"
-kops create -f ./"${CLUSTER_NAME}.yaml"
+kops create -f ./"${KOPS_CLUSTER_NAME}.yaml"
 
 echo "Creating cluster ssh key"
 export SSH_KEY_PATH=${SSH_KEY_PATH:-$HOME/.ssh/id_rsa.pub}
-kops create secret --name $CLUSTER_NAME sshpublickey admin -i ${SSH_KEY_PATH}
+kops create secret --name $KOPS_CLUSTER_NAME sshpublickey admin -i ${SSH_KEY_PATH}
 
 echo
 echo "# Set these values"
 echo "export AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION"
-echo "export CLUSTER_NAME=$CLUSTER_NAME"
+echo "export KOPS_CLUSTER_NAME=$KOPS_CLUSTER_NAME"
 echo "export KOPS_STATE_STORE=$KOPS_STATE_STORE"

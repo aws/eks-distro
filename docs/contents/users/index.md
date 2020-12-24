@@ -16,32 +16,8 @@ Container Repository](https://gallery.ecr.aws/?searchTerm=eks-distro&verified=ve
 See the [Build Guide](build.md) for more information about building your own
 container images.
 
-## Run the kOps create cluster script
+## Create cluster scripts
 
-Run the create cluster script:
-```bash
-cd development/kops
-./create_cluster.sh
-```
-
-Refer to the [kops documentation](https://kops.sigs.k8s.io/getting_started/aws/)
-for full instructions.
-
-When your DNS is available for your cluster you'll need to deploy the aws-iam-authenticator.yaml ConfigMap so the pods can schedule properly.
-```bash
-kubectl apply -f ./aws-iam-authenticator.yaml
-
-# Delete the pods that were created before the ConfigMap existed
-kubectl delete pod -n kube-system -l k8s-app=aws-iam-authenticator
-```
-
-You can verify the pods in your cluster are using the EKS Distro images by running
-the following command:
-```bash
-kubectl get po --all-namespaces -o json | jq -r .items[].spec.containers[].image | sort -u
-```
-
-To tear down the cluster, run:
-```bash
-kops delete -f ./$CLUSTER_NAME.yaml --yes
-```
+You can deploy EKS Distro any way you like, but we use kOps for testing. You
+may like to use the testing scripts which are documented in this
+[README](https://github.com/aws/eks-distro/blob/main/development/kops/README.md).

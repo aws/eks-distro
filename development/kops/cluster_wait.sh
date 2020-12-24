@@ -13,7 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -eo pipefail
+set -exo pipefail
 
 kops validate cluster --wait 10m
 kubectl apply -f ./aws-iam-authenticator.yaml
+kubectl delete pod -n kube-system -l k8s-app=aws-iam-authenticator
