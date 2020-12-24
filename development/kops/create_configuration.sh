@@ -86,7 +86,7 @@ echo "Creating ./${KOPS_CLUSTER_NAME}/values.yaml"
 cat << EOF > ./${KOPS_CLUSTER_NAME}/values.yaml
 kubernetesVersion: $KUBERNETES_VERSION
 clusterName: $KOPS_CLUSTER_NAME
-configBase: $KOPS_STATE_STORE
+configBase: $KOPS_STATE_STORE/$KOPS_CLUSTER_NAME
 awsRegion: $AWS_DEFAULT_REGION
 EOF
 
