@@ -13,8 +13,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -exo pipefail
+set -eo pipefail
 
-kops validate cluster --wait 10m
-kubectl apply -f ./aws-iam-authenticator.yaml
-kubectl delete pod -n kube-system -l k8s-app=aws-iam-authenticator
+#
+# Add IAM configmap
+COUNT=0
+while ! kubectl apply -f ./aws-iam-authenticator.yaml 2>/dev/null
+do
+    echo '.'
+    sleep 5
+    COUNT=$(expr $COUNT + 1)
+    if [ $COUNT -gt 120 ]
+    then
+        echo "Failed to configure IAM"
+        exit 1
+    fi
+done
+
+set -x
+kops validate cluster --wait 3m
+
+# This may not be required
+# kubectl delete pod -n kube-system -l k8s-app=aws-iam-authenticator

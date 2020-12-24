@@ -43,11 +43,12 @@ if [ -z "$KOPS_CLUSTER_NAME" ]; then
     export KOPS_CLUSTER_NAME
 fi
 
-if [ -f values.yaml ]; then
-    read -r -p "A values.yaml file exists. Would you like to delete it? [Y/n] " DELETE_VALUES
+mkdir "./${KOPS_CLUSTER_NAME}"
+if [ -f "./${KOPS_CLUSTER_NAME}/values.yaml" ]; then
+    read -r -p "A ./${KOPS_CLUSTER_NAME}/values.yaml file exists. Would you like to delete it? [Y/n] " DELETE_VALUES
     DELETE_VALUES=${DELETE_VALUES:-y}
     if [ "$(echo ${DELETE_VALUES} | tr '[:upper:]' '[:lower:]')" == "y" ]; then
-        rm values.yaml
+        rm "./${KOPS_CLUSTER_NAME}/values.yaml"
     else
         echo "Skipping delete and exiting"
         exit
@@ -67,8 +68,8 @@ else
     echo "Using kOps state store: $KOPS_STATE_STORE"
 fi
 
-echo "Creating aws-iam-authenticator.yaml"
-cat << EOF > aws-iam-authenticator.yaml
+echo "Creating ./${KOPS_CLUSTER_NAME}/aws-iam-authenticator.yaml"
+cat << EOF > ./${KOPS_CLUSTER_NAME}/aws-iam-authenticator.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -81,8 +82,8 @@ data:
     clusterID: $KOPS_CLUSTER_NAME
 EOF
 
-echo "Creating values.yaml"
-cat << EOF > values.yaml
+echo "Creating ./${KOPS_CLUSTER_NAME}/values.yaml"
+cat << EOF > ./${KOPS_CLUSTER_NAME}/values.yaml
 kubernetesVersion: $KUBERNETES_VERSION
 clusterName: $KOPS_CLUSTER_NAME
 configBase: $KOPS_STATE_STORE
@@ -90,10 +91,10 @@ awsRegion: $AWS_DEFAULT_REGION
 EOF
 
 echo "Creating ${KOPS_CLUSTER_NAME}.yaml"
-kops toolbox template --template eks-d.tpl --values values.yaml > "${KOPS_CLUSTER_NAME}.yaml"
+kops toolbox template --template eks-d.tpl --values ./${KOPS_CLUSTER_NAME}/values.yaml > "./${KOPS_CLUSTER_NAME}/${KOPS_CLUSTER_NAME}.yaml"
 
 echo "Creating cluster configuration"
-kops create -f ./"${KOPS_CLUSTER_NAME}.yaml"
+kops create -f "./${KOPS_CLUSTER_NAME}/${KOPS_CLUSTER_NAME}.yaml"
 
 echo "Creating cluster ssh key"
 export SSH_KEY_PATH=${SSH_KEY_PATH:-$HOME/.ssh/id_rsa.pub}
@@ -104,3 +105,7 @@ echo "# Set these values"
 echo "export AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION"
 echo "export KOPS_CLUSTER_NAME=$KOPS_CLUSTER_NAME"
 echo "export KOPS_STATE_STORE=$KOPS_STATE_STORE"
+
+echo "export AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION" >./${KOPS_CLUSTER_NAME}/test_env.sh
+echo "export KOPS_CLUSTER_NAME=$KOPS_CLUSTER_NAME" >>./${KOPS_CLUSTER_NAME}/test_env.sh
+echo "export KOPS_STATE_STORE=$KOPS_STATE_STORE" >>./${KOPS_CLUSTER_NAME}/test_env.sh

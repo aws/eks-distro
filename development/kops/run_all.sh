@@ -13,6 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -eo pipefail
+set -exo pipefail
 
 echo "This script will create a cluster, run tests and tear it down"
+source ./create_store_name.sh
+./create_configuration.sh
+./create_cluster.sh
+./cluster_wait.sh
+./run_sonobuoy.sh
+./delete_cluster.sh
+./delete_store.sh

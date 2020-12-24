@@ -44,4 +44,4 @@ mkdir ./results
 tar xzf $results -C ./results
 cp ./results/plugins/e2e/results/global/junit_01.xml .
 ./sonobuoy e2e ${results}
-./sonobuoy e2e ${results} | grep 'test failed' >/dev/null ||  false # Return failure for failed
+./sonobuoy e2e ${results} | grep 'failed tests: 0' >/dev/null
