@@ -43,7 +43,7 @@ if [ -z "$KOPS_CLUSTER_NAME" ]; then
     export KOPS_CLUSTER_NAME
 fi
 
-mkdir "./${KOPS_CLUSTER_NAME}"
+mkdir -p "./${KOPS_CLUSTER_NAME}"
 if [ -f "./${KOPS_CLUSTER_NAME}/values.yaml" ]; then
     read -r -p "A ./${KOPS_CLUSTER_NAME}/values.yaml file exists. Would you like to delete it? [Y/n] " DELETE_VALUES
     DELETE_VALUES=${DELETE_VALUES:-y}
@@ -106,6 +106,6 @@ echo "export AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION"
 echo "export KOPS_CLUSTER_NAME=$KOPS_CLUSTER_NAME"
 echo "export KOPS_STATE_STORE=$KOPS_STATE_STORE"
 
-echo "export AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION" >./${KOPS_CLUSTER_NAME}/test_env.sh
-echo "export KOPS_CLUSTER_NAME=$KOPS_CLUSTER_NAME" >>./${KOPS_CLUSTER_NAME}/test_env.sh
-echo "export KOPS_STATE_STORE=$KOPS_STATE_STORE" >>./${KOPS_CLUSTER_NAME}/test_env.sh
+echo "export AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION" >./${KOPS_CLUSTER_NAME}/env.sh
+echo "export KOPS_CLUSTER_NAME=$KOPS_CLUSTER_NAME" >>./${KOPS_CLUSTER_NAME}/env.sh
+echo "export KOPS_STATE_STORE=$KOPS_STATE_STORE" >>./${KOPS_CLUSTER_NAME}/env.sh

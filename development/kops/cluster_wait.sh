@@ -18,9 +18,9 @@ set -eo pipefail
 #
 # Add IAM configmap
 COUNT=0
-while ! kubectl apply -f ./aws-iam-authenticator.yaml 2>/dev/null
+echo 'Waiting for cluster to come up...'
+while ! kubectl apply -f ./${KOPS_CLUSTER_NAME}/aws-iam-authenticator.yaml
 do
-    echo '.'
     sleep 5
     COUNT=$(expr $COUNT + 1)
     if [ $COUNT -gt 120 ]
@@ -28,6 +28,7 @@ do
         echo "Failed to configure IAM"
         exit 1
     fi
+    echo 'Waiting for cluster to come up...'
 done
 
 set -x
