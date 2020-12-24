@@ -40,8 +40,10 @@ chmod 755 sonobuoy
 echo "Testing cluster $KOPS_STATE_STORE"
 ./sonobuoy run --mode=certified-conformance --wait --kube-conformance-image k8s.gcr.io/conformance:v1.18.9
 results=$(./sonobuoy retrieve)
-mkdir ./results
-tar xzf $results -C ./results
-cp ./results/plugins/e2e/results/global/junit_01.xml .
+mv $results "./${KOPS_CLUSTER_NAME}/$results"
+results="./${KOPS_CLUSTER_NAME}/$results"
+mkdir ./${KOPS_CLUSTER_NAME}/results
+tar xzf $results -C ./${KOPS_CLUSTER_NAME}/results
+cp ./${KOPS_CLUSTER_NAME}/results/plugins/e2e/results/global/junit_01.xml ${KOPS_CLUSTER_NAME}
 ./sonobuoy e2e ${results}
 ./sonobuoy e2e ${results} | grep 'failed tests: 0' >/dev/null
