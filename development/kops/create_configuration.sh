@@ -101,11 +101,7 @@ export SSH_KEY_PATH=${SSH_KEY_PATH:-$HOME/.ssh/id_rsa.pub}
 kops create secret --name $KOPS_CLUSTER_NAME sshpublickey admin -i ${SSH_KEY_PATH}
 
 echo
-echo "# Set these values"
-echo "export AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION"
-echo "export KOPS_CLUSTER_NAME=$KOPS_CLUSTER_NAME"
-echo "export KOPS_STATE_STORE=$KOPS_STATE_STORE"
-
-echo "export AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION" >./${KOPS_CLUSTER_NAME}/env.sh
-echo "export KOPS_CLUSTER_NAME=$KOPS_CLUSTER_NAME" >>./${KOPS_CLUSTER_NAME}/env.sh
-echo "export KOPS_STATE_STORE=$KOPS_STATE_STORE" >>./${KOPS_CLUSTER_NAME}/env.sh
+echo "# Creating ./${KOPS_CLUSTER_NAME}/env.sh"
+echo "export AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION" | tee ./${KOPS_CLUSTER_NAME}/env.sh
+echo "export KOPS_CLUSTER_NAME=$KOPS_CLUSTER_NAME" | tee -a ./${KOPS_CLUSTER_NAME}/env.sh
+echo "export KOPS_STATE_STORE=$KOPS_STATE_STORE" | tee -a ./${KOPS_CLUSTER_NAME}/env.sh
