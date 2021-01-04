@@ -13,8 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if [ "$AWS_ROLE_ARN" == "" ]; then
-    echo "Empty AWS_ROLE_ARN, this script must be run in a postsubmit pod with IAM Roles for Service Accounts"
+if [ "$PROW_ROLE_ARN" == "" ]; then
+    echo "Empty PROW_ROLE_ARN, this script must be run in a postsubmit pod with IAM Roles for Service Accounts"
+    exit 1
+fi
+
+if [ "$TEST_ROLE_ARN" == "" ]; then
+    echo "Empty TEST_ROLE_ARN, this script must be run in a postsubmit pod with IAM Roles for Service Accounts"
     exit 1
 fi
 
@@ -22,18 +27,19 @@ BASEDIR=$(dirname "$0")
 
 cat << EOF > ${BASEDIR}/config
 [default]
-output = json
-region = us-west-2
-role_arn=$AWS_ROLE_ARN
+output=json
+region=us-west-2
+role_arn=$PROW_ROLE_ARN
 web_identity_token_file=/var/run/secrets/eks.amazonaws.com/serviceaccount/token
 
 [profile conformance-test]
-role_arn = arn:aws:iam::379412251201:role/DocsDeploymentRole
-region = us-east-1
+role_arn=$TEST_ROLE_ARN
+region=us-west-2
 source_profile=default
 EOF
 
 export AWS_CONFIG_FILE=${BASEDIR}/config
 export AWS_DEFAULT_PROFILE=conformance-test
+export AWS_ROLE_ARN=${PROW_ROLE_ARN}
 
 ${BASEDIR}/run_all.sh
