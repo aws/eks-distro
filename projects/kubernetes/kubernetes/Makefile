@@ -8,7 +8,7 @@ AWS_ACCOUNT_ID?=$(shell aws sts get-caller-identity --query Account --output tex
 AWS_REGION?=us-west-2
 
 RELEASE_BRANCH?="1-18"
-RELEASE?="1"
+RELEASE?=1
 
 BASE_REPO?=$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
 GO_RUNNER_IMAGE_NAME?=kubernetes/go-runner
@@ -50,7 +50,6 @@ pause:
 	mkdir -p $(PAUSE_DST_DIR)
 	# Older versions have the pause.c file stored under kubernetes/build/pause/
 	test -f $(PAUSE_SRC_DIR)/linux/pause.c && cp $(PAUSE_SRC_DIR)/linux/pause.c $(PAUSE_DST_DIR) || cp $(PAUSE_SRC_DIR)/pause.c $(PAUSE_DST_DIR)
-	rm -rf ./kubernetes
 
 .PHONY: local-images
 local-images: binaries pause
