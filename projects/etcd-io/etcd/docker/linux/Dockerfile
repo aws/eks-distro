@@ -13,10 +13,17 @@
 # limitations under the License.
 
 ARG BASE_IMAGE
-FROM $BASE_IMAGE
+FROM $BASE_IMAGE AS base
 
 ARG TARGETARCH
 ARG TARGETOS
+
+FROM base AS branch-version-amd64
+
+FROM base AS branch-version-arm64
+ENV ETCD_UNSUPPORTED_ARCH=arm64
+
+FROM branch-version-${TARGETARCH} AS final
 
 COPY LICENSES /LICENSES
 COPY ATTRIBUTION.txt /ATTRIBUTION.txt
