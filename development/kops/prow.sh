@@ -28,13 +28,13 @@ BASEDIR=$(dirname "$0")
 cat << EOF > ${BASEDIR}/config
 [default]
 output=json
-region=${AWS_REGION:-${AWS_DEFAULT_REGION}}
+region=${AWS_REGION:-${AWS_DEFAULT_REGION:-us-west-2}}
 role_arn=$PROW_ROLE_ARN
 web_identity_token_file=/var/run/secrets/eks.amazonaws.com/serviceaccount/token
 
 [profile conformance-test]
 role_arn=$TEST_ROLE_ARN
-region=${AWS_REGION:-${AWS_DEFAULT_REGION}}
+region=${AWS_REGION:-${AWS_DEFAULT_REGION:-us-west-2}}
 source_profile=default
 EOF
 
