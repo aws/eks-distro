@@ -116,3 +116,20 @@ function build::images::docker(){
             -f ./docker/Dockerfile  ./_output/${release_branch}/bin/
     done
 }
+
+function build::images::docker::push(){
+    local -r release_branch="$1"
+    local -r go_runner_image="$2"
+    local -r kube_proxy_base_image="$3"
+    local -r repository="$4"
+    local -r repo_prefix="$5"
+    local -r image_tag="$6"
+
+    for binary in "${KUBE_IMAGE_BINARIES[@]}"; do
+        local base_image=$go_runner_image
+        if [ "$binary" == "kube-proxy" ]; then
+            base_image=$kube_proxy_base_image
+        fi
+        docker push ${repository}/${repo_prefix}/${binary}:${image_tag}
+    done
+}
