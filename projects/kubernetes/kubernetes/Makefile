@@ -90,6 +90,7 @@ docker: binaries pause
 
 .PHONY: docker-push
 docker-push:
+	build/docker_push.sh $(RELEASE_BRANCH) $(GO_RUNNER_IMAGE) $(KUBE_PROXY_BASE_IMAGE) $(IMAGE_REPO) $(IMAGE_REPO_PREFIX) $(IMAGE_TAG)
 	docker push $(PAUSE_IMAGE)
 
 .PHONY: checksums
