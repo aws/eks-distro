@@ -18,7 +18,7 @@ set -eo pipefail
 BASEDIR=$(dirname "$0")
 source ${BASEDIR}/set_k8s_versions.sh
 
-kops update cluster --yes
+kops update cluster --name ${KOPS_CLUSTER_NAME} --yes
 
 #
 # NodePort setting
