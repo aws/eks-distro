@@ -13,14 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -exo pipefail
+set -eo pipefail
 
-echo "This script will create a cluster, run tests and tear it down"
-source ./create_store_name.sh
-./create_configuration.sh
-./create_cluster.sh
-./set_nodeport_access.sh
-./cluster_wait.sh
-./run_sonobuoy.sh
-./delete_cluster.sh
-./delete_store.sh
+#
+# NodePort setting
+#
+export KOPS_FEATURE_FLAGS=SpecOverrideFlag
+kops set cluster "${KOPS_CLUSTER_NAME}" 'cluster.spec.nodePortAccess=0.0.0.0/0'
+
+kops update cluster --yes
