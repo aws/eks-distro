@@ -46,6 +46,8 @@ clean: makes
 	@echo 'Done' $(TARGET)
 
 makes:
+	make -C projects/kubernetes/release $(TARGET)                    RELEASE_BRANCH=${RELEASE_BRANCH} RELEASE=${RELEASE} DEVELOPMENT=${DEVELOPMENT} AWS_REGION=${AWS_REGION} AWS_ACCOUNT_ID=${AWS_ACCOUNT_ID} KUBE_PROXY_BASE_IMAGE=${KUBE_PROXY_BASE_IMAGE} GO_RUNNER_IMAGE=${GO_RUNNER_IMAGE} BASE_IMAGE=${BASE_IMAGE}
+	$(call presubmit-cleanup, $(TARGET), "projects/kubernetes/release")
 	make -C projects/kubernetes/kubernetes $(TARGET)                 RELEASE_BRANCH=${RELEASE_BRANCH} RELEASE=${RELEASE} DEVELOPMENT=${DEVELOPMENT} AWS_REGION=${AWS_REGION} AWS_ACCOUNT_ID=${AWS_ACCOUNT_ID} KUBE_PROXY_BASE_IMAGE=${KUBE_PROXY_BASE_IMAGE} GO_RUNNER_IMAGE=${GO_RUNNER_IMAGE}
 	$(call presubmit-cleanup, $(TARGET), "projects/kubernetes/kubernetes")
 	make -C projects/containernetworking/plugins $(TARGET)
@@ -66,8 +68,6 @@ makes:
 	$(call presubmit-cleanup, $(TARGET), "projects/kubernetes-sigs/aws-iam-authenticator")
 	make -C projects/kubernetes-sigs/metrics-server $(TARGET)        RELEASE_BRANCH=${RELEASE_BRANCH} RELEASE=${RELEASE} DEVELOPMENT=${DEVELOPMENT} AWS_REGION=${AWS_REGION} AWS_ACCOUNT_ID=${AWS_ACCOUNT_ID} BASE_IMAGE=${BASE_IMAGE} IMAGE_REPO=${IMAGE_REPO}
 	$(call presubmit-cleanup, $(TARGET), "projects/kubernetes-sigs/metrics-server")
-	make -C projects/kubernetes/release $(TARGET)                    RELEASE_BRANCH=${RELEASE_BRANCH} RELEASE=${RELEASE} DEVELOPMENT=${DEVELOPMENT} AWS_REGION=${AWS_REGION} AWS_ACCOUNT_ID=${AWS_ACCOUNT_ID} KUBE_PROXY_BASE_IMAGE=${KUBE_PROXY_BASE_IMAGE} GO_RUNNER_IMAGE=${GO_RUNNER_IMAGE} BASE_IMAGE=${BASE_IMAGE}
-	$(call presubmit-cleanup, $(TARGET), "projects/kubernetes/release")
 	make -C projects/kubernetes-csi/external-snapshotter $(TARGET)   RELEASE_BRANCH=${RELEASE_BRANCH} RELEASE=${RELEASE} DEVELOPMENT=${DEVELOPMENT} AWS_REGION=${AWS_REGION} AWS_ACCOUNT_ID=${AWS_ACCOUNT_ID} BASE_IMAGE=${BASE_IMAGE} IMAGE_REPO=${IMAGE_REPO}
 	$(call presubmit-cleanup, $(TARGET), "projects/kubernetes-csi/external-snapshotter")
 	make -C projects/kubernetes-csi/external-provisioner $(TARGET)   RELEASE_BRANCH=${RELEASE_BRANCH} RELEASE=${RELEASE} DEVELOPMENT=${DEVELOPMENT} AWS_REGION=${AWS_REGION} AWS_ACCOUNT_ID=${AWS_ACCOUNT_ID} BASE_IMAGE=${BASE_IMAGE} IMAGE_REPO=${IMAGE_REPO}
