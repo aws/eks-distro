@@ -18,10 +18,12 @@ set -eo pipefail
 BASEDIR=$(dirname "$0")
 source ${BASEDIR}/set_k8s_versions.sh
 
+export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-${AWS_REGION}}
 if [ -z "$AWS_DEFAULT_REGION" ]; then
     read -r -p "What region would you like to store the config? [us-west-2] " REGION
     export AWS_DEFAULT_REGION=${REGION:-us-west-2}
 fi
+export AWS_REGION="${AWS_DEFAULT_REGION}"
 
 if ! aws sts get-caller-identity --query Account --output text >/dev/null 2>/dev/null
 then
@@ -103,5 +105,6 @@ kops create secret --name $KOPS_CLUSTER_NAME sshpublickey admin -i ${SSH_KEY_PAT
 echo
 echo "# Creating ./${KOPS_CLUSTER_NAME}/env.sh"
 echo "export AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION" | tee ./${KOPS_CLUSTER_NAME}/env.sh
+echo "export AWS_REGION=$AWS_DEFAULT_REGION" | tee -a ./${KOPS_CLUSTER_NAME}/env.sh
 echo "export KOPS_CLUSTER_NAME=$KOPS_CLUSTER_NAME" | tee -a ./${KOPS_CLUSTER_NAME}/env.sh
 echo "export KOPS_STATE_STORE=$KOPS_STATE_STORE" | tee -a ./${KOPS_CLUSTER_NAME}/env.sh

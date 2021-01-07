@@ -33,6 +33,3 @@ done
 
 set -x
 kops validate cluster --wait 3m
-
-# This may not be required
-# kubectl delete pod -n kube-system -l k8s-app=aws-iam-authenticator
