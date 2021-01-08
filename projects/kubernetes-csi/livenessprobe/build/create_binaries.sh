@@ -25,6 +25,8 @@ TAG="$3"
 BIN_ROOT="_output/bin"
 BIN_PATH=$BIN_ROOT/$REPO
 
+GOLANG_VERSION="1.15"
+
 readonly SUPPORTED_PLATFORMS=(
   linux/amd64
   linux/arm64
@@ -38,6 +40,7 @@ function build::livenessprobe::binaries(){
   git clone $CLONE_URL $REPO
   cd $REPO
   git checkout $TAG
+  build::common::use_go_version $GOLANG_VERSION
   for platform in "${SUPPORTED_PLATFORMS[@]}";
   do
     OS="$(cut -d '/' -f1 <<< ${platform})"

@@ -13,6 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+function build::binaries::use_go_version_k8s() {
+    local -r releasebranch="$1"
+
+    if [[ "$releasebranch" == "1-18" ]]; then
+        build::common::use_go_version "1.13"
+    fi
+}
 
 function build::binaries::kube_bins() {
     local -r repository="$1"
