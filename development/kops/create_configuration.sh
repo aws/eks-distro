@@ -90,6 +90,21 @@ kubernetesVersion: $KUBERNETES_VERSION
 clusterName: $KOPS_CLUSTER_NAME
 configBase: $KOPS_STATE_STORE/$KOPS_CLUSTER_NAME
 awsRegion: $AWS_DEFAULT_REGION
+pause:
+    repository: public.ecr.aws/eks-distro/kubernetes
+    tag: v1.18.9-eks-1-18-1
+kubernetes:
+    repository: public.ecr.aws/eks-distro/kubernetes
+    tag: v1.18.9-eks-1-18-1
+metrics:
+    repository: public.ecr.aws/eks-distro/kubernetes-sigs
+    tag: v0.4.0-eks-1-18-1
+awsiamauth:
+    repository: public.ecr.aws/eks-distro/kubernetes-sigs
+    tag: v0.5.2-eks-1-18-1
+coredns:
+    repository: public.ecr.aws/eks-distro/coredns
+    tag: v1.7.0-eks-1-18-1
 EOF
 
 echo "Creating ${KOPS_CLUSTER_NAME}.yaml"
