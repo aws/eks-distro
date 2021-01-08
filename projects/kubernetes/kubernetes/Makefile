@@ -86,12 +86,14 @@ docker: binaries pause
 		--build-arg BASE_IMAGE=$(GO_RUNNER_IMAGE) \
 		--build-arg VERSION=$(IMAGE_TAG) \
 		-t $(PAUSE_IMAGE) \
+		-t $(IMAGE_REPO)/$(IMAGE_REPO_PREFIX)/$(PAUSE_IMAGE_NAME):3.2 \
 		-f ./docker/pause/Dockerfile ./_output/pause/
 
 .PHONY: docker-push
 docker-push:
 	build/docker_push.sh $(RELEASE_BRANCH) $(GO_RUNNER_IMAGE) $(KUBE_PROXY_BASE_IMAGE) $(IMAGE_REPO) $(IMAGE_REPO_PREFIX) $(IMAGE_TAG)
 	docker push $(PAUSE_IMAGE)
+	docker push $(IMAGE_REPO)/$(IMAGE_REPO_PREFIX)/$(PAUSE_IMAGE_NAME):3.2
 
 .PHONY: checksums
 checksums: tarballs local-images
