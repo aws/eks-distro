@@ -59,20 +59,20 @@ spec:
     masters: public
     nodes: public
   kubeAPIServer:
-    image: {{ .kube_apiserver.repository }}:{{ .kubernetes.tag }}
+    image: {{ .kube_apiserver.repository }}:{{ .kube_apiserver.tag }}
   kubeControllerManager:
-    image: {{ .kube_controller_manager.repository }}:{{ .kubernetes.tag }}
+    image: {{ .kube_controller_manager.repository }}:{{ .kube_controller_manager.tag }}
   kubeScheduler:
-    image: {{ .kube_scheduler.repository }}:{{ .kubernetes.tag }}
+    image: {{ .kube_scheduler.repository }}:{{ .kube_scheduler.tag }}
   kubeProxy:
-    image: {{ .kube_proxy.repository }}:{{ .kubernetes.tag }}
+    image: {{ .kube_proxy.repository }}:{{ .kube_proxy.tag }}
   # Metrics Server will be supported with kops 1.19
   metricsServer:
     enabled: true
-    image: {{ .metrics_server.repository }}:{{ .metrics.tag }}
+    image: {{ .metrics_server.repository }}:{{ .metrics_server.tag }}
   authentication:
     aws:
-      image: {{ .awsiamauth.repository }}/aws-iam-authenticator:{{ .awsiamauth.tag }}
+      image: {{ .awsiamauth.repository }}:{{ .awsiamauth.tag }}
   kubeDNS:
     provider: CoreDNS
     coreDNSImage: {{ .coredns.repository }}:{{ .coredns.tag }}

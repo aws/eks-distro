@@ -15,6 +15,9 @@
 
 set -eo pipefail
 
+BASEDIR=$(dirname "$0")
+source ${BASEDIR}/set_k8s_versions.sh
+
 export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-${AWS_REGION}}
 export AWS_REGION="${AWS_DEFAULT_REGION}"
 if [ -z "$AWS_DEFAULT_REGION" -o -z "$KOPS_STATE_STORE" -o -z "$KOPS_CLUSTER_NAME" ]
@@ -66,6 +69,7 @@ function get_container_latest_tag() {
 }
 
 function get_container_yaml() {
+    REPOSITORY_NAME="${1}"
     echo "    repository: ${REPOSITORY_URI}/${REPOSITORY_NAME}
     tag: $(get_container_latest_tag $*)"
 }
