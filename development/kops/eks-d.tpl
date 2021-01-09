@@ -59,23 +59,23 @@ spec:
     masters: public
     nodes: public
   kubeAPIServer:
-    image: {{ .kubernetes.repository }}/kube-apiserver:{{ .kubernetes.tag }}
+    image: {{ .kube_apiserver.repository }}:{{ .kubernetes.tag }}
   kubeControllerManager:
-    image: {{ .kubernetes.repository }}/kube-controller-manager:{{ .kubernetes.tag }}
+    image: {{ .kube_controller_manager.repository }}:{{ .kubernetes.tag }}
   kubeScheduler:
-    image: {{ .kubernetes.repository }}/kube-scheduler:{{ .kubernetes.tag }}
+    image: {{ .kube_scheduler.repository }}:{{ .kubernetes.tag }}
   kubeProxy:
-    image: {{ .kubernetes.repository }}/kube-proxy:{{ .kubernetes.tag }}
+    image: {{ .kube_proxy.repository }}:{{ .kubernetes.tag }}
   # Metrics Server will be supported with kops 1.19
   metricsServer:
     enabled: true
-    image: {{ .metrics.repository }}/metrics-server:{{ .metrics.tag }}
+    image: {{ .metrics_server.repository }}:{{ .metrics.tag }}
   authentication:
     aws:
       image: {{ .awsiamauth.repository }}/aws-iam-authenticator:{{ .awsiamauth.tag }}
   kubeDNS:
     provider: CoreDNS
-    coreDNSImage: {{ .coredns.repository }}/coredns:{{ .coredns.tag }}
+    coreDNSImage: {{ .coredns.repository }}:{{ .coredns.tag }}
     externalCoreFile: |
       .:53 {
           errors
@@ -95,10 +95,10 @@ spec:
           reload
       }
   masterKubelet:
-    podInfraContainerImage: {{ .pause.repository }}/pause:{{ .pause.tag }}
+    podInfraContainerImage: {{ .pause.repository }}:{{ .pause.tag }}
   # kubelet might already be defined, append the following config
   kubelet:
-    podInfraContainerImage: {{ .pause.repository }}/pause:{{ .pause.tag }}
+    podInfraContainerImage: {{ .pause.repository }}:{{ .pause.tag }}
 
 ---
 
