@@ -45,11 +45,11 @@ binaries:
 tarballs: binaries
 	build/create_tarballs.sh $(RELEASE_BRANCH)
 
-.PHONY: pause
-pause:
+$(PAUSE_DST_DIR)/pause.c:
 	mkdir -p $(PAUSE_DST_DIR)
-	# Older versions have the pause.c file stored under kubernetes/build/pause/
-	test -f $(PAUSE_SRC_DIR)/linux/pause.c && cp $(PAUSE_SRC_DIR)/linux/pause.c $(PAUSE_DST_DIR) || cp $(PAUSE_SRC_DIR)/pause.c $(PAUSE_DST_DIR)
+	cp $(PAUSE_SRC_DIR)/linux/pause.c $(PAUSE_DST_DIR) || cp $(PAUSE_SRC_DIR)/pause.c $(PAUSE_DST_DIR)
+
+pause: $(PAUSE_DST_DIR)/pause.c
 	rm -rf ./kubernetes
 
 .PHONY: local-images
