@@ -26,9 +26,9 @@ source "${MAKE_ROOT}/build/lib/init.sh"
 source "${MAKE_ROOT}/../../../build/lib/common.sh"
 
 GIT_TAG="$(cat ${MAKE_ROOT}/${RELEASE_BRANCH}/GIT_TAG)"
+RELEASE_FILE="${MAKE_ROOT}/${RELEASE_BRANCH}/RELEASE"
 PATCH_DIR=${MAKE_ROOT}/${RELEASE_BRANCH}/patches
-export KUBE_GIT_VERSION_FILE="${MAKE_ROOT}/${RELEASE_BRANCH}/KUBE_GIT_VERSION_FILE"
-
+export KUBE_GIT_VERSION=$(build::version::kube_git_version $GIT_TAG $RELEASE_FILE $RELEASE_BRANCH)
 if [ -d ${OUTPUT_DIR}/${RELEASE_BRANCH}/bin ]; then
     echo "${OUTPUT_DIR}/${RELEASE_BRANCH}/bin already exists. Run 'make clean' before rebuilding"
     exit 0
