@@ -1,0 +1,272 @@
+From d2b2d5e7216651db712f78285e7dc8331252a866 Mon Sep 17 00:00:00 2001
+From: Yang Yang <yyyng@amazon.com>
+Date: Sun, 22 Dec 2019 13:32:27 -0800
+Subject: --EKS-PATCH-- volume plugin requests patch
+
+Mitigation for CVE-2020-8555
+
+To maintain backwards compatibility, the "EXTRA_PROXY_BLACKLIST_CIDR"
+env var must be accepted, despite containing the non-inclusive term
+"BLACKLIST". The "EXTRA_PROXY_DENYLIST_CIDR" env var has the same
+functionality and should be used instead of it. Future releases
+should consider supporting only the inclusive variable.
+
+Signed-off-by: Jackson West <jgw@amazon.com>
+---
+ pkg/proxy/util/utils.go                       | 63 ++++++++++++++++++-
+ .../heketi/client/api/go-client/client.go     | 19 +++++-
+ vendor/github.com/quobyte/api/quobyte.go      | 18 +++++-
+ vendor/github.com/storageos/go-api/client.go  |  5 +-
+ .../github.com/thecodeteam/goscaleio/api.go   |  9 +++
+ 5 files changed, 109 insertions(+), 5 deletions(-)
+
+diff --git a/pkg/proxy/util/utils.go b/pkg/proxy/util/utils.go
+index c2bf2c97d15..d78f8c35108 100644
+--- a/pkg/proxy/util/utils.go
++++ b/pkg/proxy/util/utils.go
+@@ -20,8 +20,12 @@ import (
+ 	"context"
+ 	"errors"
+ 	"fmt"
++	mathrand "math/rand"
+ 	"net"
++	"os"
+ 	"strconv"
++	"strings"
++	"time"
+ 
+ 	v1 "k8s.io/api/core/v1"
+ 	"k8s.io/apimachinery/pkg/types"
+@@ -40,7 +44,9 @@ const (
+ 	IPv4ZeroCIDR = "0.0.0.0/0"
+ 
+ 	// IPv6ZeroCIDR is the CIDR block for the whole IPv6 address space
+-	IPv6ZeroCIDR = "::/0"
++	IPv6ZeroCIDR               = "::/0"
++	EnvExtraProxyBlackListCIDR = "EXTRA_PROXY_BLACKLIST_CIDR" // Use the more inclusive EnvExtraProxyDenyListCIDR instead
++	EnvExtraProxyDenyListCIDR = "EXTRA_PROXY_DENYLIST_CIDR"
+ )
+ 
+ var (
+@@ -124,6 +130,29 @@ func IsProxyableHostname(ctx context.Context, resolv Resolver, hostname string)
+ 	return nil
+ }
+ 
++func IsProxyableHostnameV2(ctx context.Context, resolv Resolver, denyListNetworks []*net.IPNet, hostname string) error {
++	resp, err := resolv.LookupIPAddr(ctx, hostname)
++	if err != nil {
++		return err
++	}
++
++	if len(resp) == 0 {
++		return ErrNoAddresses
++	}
++
++	for _, host := range resp {
++		if err := isProxyableIP(host.IP); err != nil {
++			return err
++		}
++		for _, network := range denyListNetworks {
++			if network.Contains(host.IP) {
++				return ErrAddressNotAllowed
++			}
++		}
++	}
++	return nil
++}
++
+ // GetLocalAddrs returns a list of all network addresses on the local system
+ func GetLocalAddrs() ([]net.IP, error) {
+ 	var localAddrs []net.IP
+@@ -160,6 +189,38 @@ func ShouldSkipService(service *v1.Service) bool {
+ 	return false
+ }
+ 
++func NewSafeDialContext(dialContext func(context.Context, string, string) (net.Conn, error)) func(context.Context, string, string) (net.Conn, error) {
++	var denyListNetworks []*net.IPNet
++	denyListCIDRs := os.Getenv(EnvExtraProxyDenyListCIDR)
++	if denyListCIDRs == "" {
++       denyListCIDRs = os.Getenv(EnvExtraProxyBlackListCIDR) // Use the more inclusive EnvExtraProxyDenyListCIDR instead
++   }
++	if denyListCIDRs != "" {
++		for _, cidr := range strings.Split(denyListCIDRs, ",") {
++			_, ipNet, _ := net.ParseCIDR(cidr)
++			denyListNetworks = append(denyListNetworks, ipNet)
++		}
++	}
++
++	return func(ctx context.Context, network, addr string) (net.Conn, error) {
++		start := time.Now()
++		id := mathrand.Int63() // So you can match begins/ends in the log.
++		klog.Infof("[%x: %v] Dialing...", id, addr)
++		defer func() {
++			klog.Infof("[%x: %v] Dialed in %v.", id, addr, time.Since(start))
++		}()
++
++		host, _, err := net.SplitHostPort(addr)
++		if err != nil {
++			return nil, err
++		}
++		if err := IsProxyableHostnameV2(ctx, &net.Resolver{}, denyListNetworks, host); err != nil {
++			return nil, err
++		}
++		return dialContext(ctx, network, addr)
++	}
++}
++
+ // GetNodeAddresses return all matched node IP addresses based on given cidr slice.
+ // Some callers, e.g. IPVS proxier, need concrete IPs, not ranges, which is why this exists.
+ // NetworkInterfacer is injected for test purpose.
+diff --git a/vendor/github.com/heketi/heketi/client/api/go-client/client.go b/vendor/github.com/heketi/heketi/client/api/go-client/client.go
+index c8fd50cb793..78da4f1ca6a 100644
+--- a/vendor/github.com/heketi/heketi/client/api/go-client/client.go
++++ b/vendor/github.com/heketi/heketi/client/api/go-client/client.go
+@@ -20,7 +20,9 @@ import (
+ 	"encoding/hex"
+ 	"fmt"
+ 	"io/ioutil"
++	"k8s.io/kubernetes/pkg/proxy/util"
+ 	"math/rand"
++	"net"
+ 	"net/http"
+ 	"strconv"
+ 	"time"
+@@ -189,12 +191,27 @@ func (c *Client) doBasic(req *http.Request) (*http.Response, error) {
+ 		<-c.throttle
+ 	}()
+ 
+-	httpClient := &http.Client{}
++	dialContext := (&net.Dialer{
++		Timeout:   30 * time.Second,
++		KeepAlive: 30 * time.Second,
++		DualStack: true,
++	}).DialContext
++
++	tr := &http.Transport{
++		DialContext:           util.NewSafeDialContext(dialContext),
++		MaxIdleConns:          100,
++		IdleConnTimeout:       90 * time.Second,
++		TLSHandshakeTimeout:   10 * time.Second,
++		ExpectContinueTimeout: 1 * time.Second,
++	}
++	httpClient := &http.Client{Transport: tr}
+ 	if c.tlsClientConfig != nil {
+ 		httpClient.Transport = &http.Transport{
++			DialContext:           util.NewSafeDialContext(dialContext),
+ 			TLSClientConfig: c.tlsClientConfig,
+ 		}
+ 	}
++
+ 	httpClient.CheckRedirect = c.checkRedirect
+ 	return httpClient.Do(req)
+ }
+diff --git a/vendor/github.com/quobyte/api/quobyte.go b/vendor/github.com/quobyte/api/quobyte.go
+index e9179dbdf43..e5bd8068b0a 100644
+--- a/vendor/github.com/quobyte/api/quobyte.go
++++ b/vendor/github.com/quobyte/api/quobyte.go
+@@ -2,8 +2,11 @@
+ package quobyte
+ 
+ import (
++	"k8s.io/kubernetes/pkg/proxy/util"
++	"net"
+ 	"net/http"
+ 	"regexp"
++	"time"
+ )
+ 
+ // retry policy codes
+@@ -34,8 +37,21 @@ func (client *QuobyteClient) GetAPIRetryPolicy() string {
+ 
+ // NewQuobyteClient creates a new Quobyte API client
+ func NewQuobyteClient(url string, username string, password string) *QuobyteClient {
++	dialContext := (&net.Dialer{
++		Timeout:   30 * time.Second,
++		KeepAlive: 30 * time.Second,
++		DualStack: true,
++	}).DialContext
++	tr := &http.Transport{
++		DialContext:           util.NewSafeDialContext(dialContext),
++		MaxIdleConns:          100,
++		IdleConnTimeout:       90 * time.Second,
++		TLSHandshakeTimeout:   10 * time.Second,
++		ExpectContinueTimeout: 1 * time.Second,
++	}
++
+ 	return &QuobyteClient{
+-		client:         &http.Client{},
++		client:         &http.Client{Transport: tr},
+ 		url:            url,
+ 		username:       username,
+ 		password:       password,
+diff --git a/vendor/github.com/storageos/go-api/client.go b/vendor/github.com/storageos/go-api/client.go
+index 4a95516b14b..c5698db6947 100644
+--- a/vendor/github.com/storageos/go-api/client.go
++++ b/vendor/github.com/storageos/go-api/client.go
+@@ -8,6 +8,7 @@ import (
+ 	"fmt"
+ 	"io"
+ 	"io/ioutil"
++	"k8s.io/kubernetes/pkg/proxy/util"
+ 	"math/rand"
+ 	"net"
+ 	"net/http"
+@@ -104,7 +105,7 @@ func (c *Client) ClientVersion() string {
+ // (net.Dialer fulfills this interface) and named pipes (a shim using
+ // winio.DialPipe)
+ type Dialer interface {
+-	Dial(network, address string) (net.Conn, error)
++	DialContext(ctx context.Context, network, addr string) (net.Conn, error)
+ }
+ 
+ // NewClient returns a Client instance ready for communication with the given
+@@ -535,7 +536,7 @@ func (e *Error) Error() string {
+ func defaultPooledTransport(dialer Dialer) *http.Transport {
+ 	transport := &http.Transport{
+ 		Proxy:               http.ProxyFromEnvironment,
+-		Dial:                dialer.Dial,
++		DialContext:         util.NewSafeDialContext(dialer.DialContext),
+ 		TLSHandshakeTimeout: 5 * time.Second,
+ 		DisableKeepAlives:   false,
+ 		MaxIdleConnsPerHost: 1,
+diff --git a/vendor/github.com/thecodeteam/goscaleio/api.go b/vendor/github.com/thecodeteam/goscaleio/api.go
+index 2b17c8886c1..5a6a6c1b800 100644
+--- a/vendor/github.com/thecodeteam/goscaleio/api.go
++++ b/vendor/github.com/thecodeteam/goscaleio/api.go
+@@ -9,6 +9,8 @@ import (
+ 	"fmt"
+ 	"io"
+ 	"io/ioutil"
++	"k8s.io/kubernetes/pkg/proxy/util"
++	"net"
+ 	"net/http"
+ 	"net/url"
+ 	"os"
+@@ -323,10 +325,16 @@ func NewClientWithArgs(
+ 			withFields(fields, "endpoint is required")
+ 	}
+ 
++	dialContext := (&net.Dialer{
++		Timeout:   30 * time.Second,
++		KeepAlive: 30 * time.Second,
++		DualStack: true,
++	}).DialContext
+ 	client = &Client{
+ 		SIOEndpoint: *uri,
+ 		Http: http.Client{
+ 			Transport: &http.Transport{
++				DialContext:           util.NewSafeDialContext(dialContext),
+ 				TLSHandshakeTimeout: 120 * time.Second,
+ 				TLSClientConfig: &tls.Config{
+ 					InsecureSkipVerify: insecure,
+@@ -340,6 +348,7 @@ func NewClientWithArgs(
+ 		pool.AppendCertsFromPEM(pemCerts)
+ 
+ 		client.Http.Transport = &http.Transport{
++			DialContext:           util.NewSafeDialContext(dialContext),
+ 			TLSHandshakeTimeout: 120 * time.Second,
+ 			TLSClientConfig: &tls.Config{
+ 				RootCAs:            pool,
+-- 
+2.29.2
+
