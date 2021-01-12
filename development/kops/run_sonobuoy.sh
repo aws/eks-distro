@@ -26,7 +26,15 @@ if [[ "${KOPS_STATE_STORE}" != s3://* ]]
 then
   export KOPS_STATE_STORE="s3://${KOPS_STATE_STORE}"
 fi
-export KOPS_CLUSTER_NAME=$(kops get cluster --state "${KOPS_STATE_STORE}" | tail -n +2 | cut -f1 -d '  ' 2>/dev/null)
+if [ -z "${KOPS_CLUSTER_NAME}" ]
+then
+  export KOPS_CLUSTER_NAME=$(kops get cluster --state "${KOPS_STATE_STORE}" | tail -n +2 | cut -f1 -d '	' 2>/dev/null)
+  if [ -z "${KOPS_CLUSTER_NAME}" ]
+  then
+    echo "KOPS_CLUSTER_NAME must be set and exported to run this script"
+    exit 1
+  fi
+fi
 
 # Move to the script directory
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
@@ -38,10 +46,12 @@ rm -f LICENSE
 chmod 755 sonobuoy
 
 echo "Testing cluster $KOPS_STATE_STORE"
-export KOPS_FEATURE_FLAGS=SpecOverrideFlag
-kops set cluster "${KOPS_CLUSTER_NAME}" cluster.spec.nodePortAccess=0.0.0.0/0
 ./sonobuoy run --mode=certified-conformance --wait --kube-conformance-image k8s.gcr.io/conformance:v1.18.9
 results=$(./sonobuoy retrieve)
-mkdir ./results
-tar xzf $results -C ./results
+mv $results "./${KOPS_CLUSTER_NAME}/$results"
+results="./${KOPS_CLUSTER_NAME}/$results"
+mkdir ./${KOPS_CLUSTER_NAME}/results
+tar xzf $results -C ./${KOPS_CLUSTER_NAME}/results
+cp ./${KOPS_CLUSTER_NAME}/results/plugins/e2e/results/global/junit_01.xml .
 ./sonobuoy e2e ${results}
+./sonobuoy e2e ${results} | grep 'failed tests: 0' >/dev/null

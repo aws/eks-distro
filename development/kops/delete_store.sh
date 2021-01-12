@@ -24,14 +24,13 @@ if [[ "${KOPS_STATE_STORE}" != s3://* ]]
 then
   export KOPS_STATE_STORE="s3://${KOPS_STATE_STORE}"
 fi
-unset KOPS_CLUSTER_NAME
+
 echo "Deleting kops store $KOPS_STATE_STORE"
-if kops get cluster --state "${KOPS_STATE_STORE}" 2>/dev/null
-then
-  echo "Delete the kops cluster before deleting the store"
-  exit 1
-fi
 BUCKET_NAME=$(echo "${KOPS_STATE_STORE}" | sed -e 's,s3://,,g')
 set -x
 aws s3 rm --recursive "${KOPS_STATE_STORE}" || true
 aws s3api delete-bucket --bucket "${BUCKET_NAME}"
+if [ -n "${KOPS_CLUSTER_NAME}" ]
+then
+  rm -rf "./${KOPS_CLUSTER_NAME}"
+fi

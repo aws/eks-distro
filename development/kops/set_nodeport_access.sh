@@ -16,20 +16,9 @@
 set -eo pipefail
 
 #
-# Add IAM configmap
-COUNT=0
-echo 'Waiting for cluster to come up...'
-while ! kubectl apply -f ./${KOPS_CLUSTER_NAME}/aws-iam-authenticator.yaml
-do
-    sleep 5
-    COUNT=$(expr $COUNT + 1)
-    if [ $COUNT -gt 120 ]
-    then
-        echo "Failed to configure IAM"
-        exit 1
-    fi
-    echo 'Waiting for cluster to come up...'
-done
+# NodePort setting
+#
+export KOPS_FEATURE_FLAGS=SpecOverrideFlag
+kops set cluster "${KOPS_CLUSTER_NAME}" 'cluster.spec.nodePortAccess=0.0.0.0/0'
 
-set -x
-kops validate cluster --wait 3m
+kops update cluster --yes
