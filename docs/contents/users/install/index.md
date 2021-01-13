@@ -6,4 +6,4 @@ with them, please submit a pull request. These installation methods may not
 be tested.
 
 * [kOps](kops.md) we use kOps for EKS-D automated tests
-* [kubeadm](kops.md) this has been tested on a cluster of Raspberry Pis
+* [kubeadm](kubeadm.md) this has been tested on a cluster of Raspberry Pis
