@@ -1,7 +1,7 @@
 From f369a57d1942d4e56ff905c30d80c4c06f9386bd Mon Sep 17 00:00:00 2001
 From: Yang Yang <yyyng@amazon.com>
 Date: Thu, 26 Mar 2020 20:28:40 -0700
-Subject: [PATCH 07/16] --EKS-PATCH-- fix aws loadbalancer nodePort cannot
+Subject: --EKS-PATCH-- fix aws loadbalancer nodePort cannot
  change issue
 
 ref. https://github.com/kubernetes/kubernetes/pull/89562
