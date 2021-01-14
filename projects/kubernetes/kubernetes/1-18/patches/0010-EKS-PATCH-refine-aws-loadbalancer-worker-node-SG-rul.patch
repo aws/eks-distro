@@ -1,8 +1,10 @@
 From 5c9f71a4f94adbfdf4f7d19905e0411cc3b429ed Mon Sep 17 00:00:00 2001
 From: Yang Yang <yyyng@amazon.com>
 Date: Wed, 17 Jun 2020 06:38:31 -0700
-Subject: [PATCH 10/16] --EKS-CHERRYPICK-- refine aws loadbalancer worker node
- SG rule logic ref: https://github.com/kubernetes/kubernetes/pull/92224
+Subject: --EKS-PATCH-- refine aws loadbalancer worker node SG rule
+ logic
+
+ref: https://github.com/kubernetes/kubernetes/pull/92224
 
 Signed-off-by: Jackson West <jgw@amazon.com>
 ---
