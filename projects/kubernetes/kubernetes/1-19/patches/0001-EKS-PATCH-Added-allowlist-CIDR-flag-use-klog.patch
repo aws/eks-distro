@@ -1,0 +1,445 @@
+From 7b619f13984860a8f12221c8eb6b0af2b9485498 Mon Sep 17 00:00:00 2001
+From: Micah Hausler <mhausler@amazon.com>
+Date: Wed, 19 Sep 2018 18:16:23 -0700
+Subject: --EKS-PATCH-- Added allowlist CIDR flag, use "klog"
+
+Alternative to https://github.com/kubernetes/kubernetes/pull/71980
+
+Cherry-picked from
+https://github.com/kubernetes/kubernetes/commit/7e814da396692f3e364741fb6f775acea0aaaba3
+
+cmd/kube-apiserver: use "klog" instead of "glog"
+
+To maintain backwards compatibility, the "--proxy-cidr-whitelist"
+flag must remain, despite containing the non-inclusive term
+"whitelist". The "--proxy-cidr-allowlist" flag has the same
+functionality and should be used instead of it. Future releases
+should consider removing the non-inclusive flag.
+
+Signed-off-by: Jackson West <jgw@amazon.com>
+---
+ cmd/kube-apiserver/app/BUILD                  |  1 +
+ cmd/kube-apiserver/app/dialer.go              | 46 +++++++++
+ cmd/kube-apiserver/app/options/BUILD          |  1 +
+ cmd/kube-apiserver/app/options/allowlist.go   |  9 ++
+ cmd/kube-apiserver/app/options/options.go     |  9 ++
+ .../app/options/options_test.go               |  1 +
+ cmd/kube-apiserver/app/options/validation.go  | 15 +++
+ cmd/kube-apiserver/app/server.go              |  6 ++
+ pkg/kubeapiserver/options/BUILD               |  3 +
+ pkg/kubeapiserver/options/ipnetslice.go       | 93 +++++++++++++++++++
+ pkg/kubeapiserver/options/ipnetslice_test.go  | 36 +++++++
+ pkg/kubeapiserver/options/options.go          |  2 +
+ pkg/registry/core/node/BUILD                  |  1 +
+ pkg/registry/core/node/strategy.go            | 14 +++
+ 14 files changed, 237 insertions(+)
+ create mode 100644 cmd/kube-apiserver/app/dialer.go
+ create mode 100644 cmd/kube-apiserver/app/options/allowlist.go
+ create mode 100644 pkg/kubeapiserver/options/ipnetslice.go
+ create mode 100644 pkg/kubeapiserver/options/ipnetslice_test.go
+
+diff --git a/cmd/kube-apiserver/app/BUILD b/cmd/kube-apiserver/app/BUILD
+index 4f47775adfe..295e0ba3fa2 100644
+--- a/cmd/kube-apiserver/app/BUILD
++++ b/cmd/kube-apiserver/app/BUILD
+@@ -5,6 +5,7 @@ go_library(
+     srcs = [
+         "aggregator.go",
+         "apiextensions.go",
++        "dialer.go",
+         "server.go",
+     ],
+     importpath = "k8s.io/kubernetes/cmd/kube-apiserver/app",
+diff --git a/cmd/kube-apiserver/app/dialer.go b/cmd/kube-apiserver/app/dialer.go
+new file mode 100644
+index 00000000000..3b67af3e45a
+--- /dev/null
++++ b/cmd/kube-apiserver/app/dialer.go
+@@ -0,0 +1,46 @@
++package app
++
++import (
++	"context"
++	"crypto/tls"
++	"errors"
++	mathrand "math/rand"
++	"net"
++	"net/http"
++	"strings"
++	"time"
++
++	"k8s.io/klog/v2"
++
++	utilnet "k8s.io/apimachinery/pkg/util/net"
++	kubeoptions "k8s.io/kubernetes/pkg/kubeapiserver/options"
++)
++
++func CreateOutboundDialer(s completedServerRunOptions) (*http.Transport, error) {
++	proxyDialerFn := createAllowlistDialer(s.ProxyCIDRAllowlist)
++
++	proxyTLSClientConfig := &tls.Config{InsecureSkipVerify: true}
++
++	proxyTransport := utilnet.SetTransportDefaults(&http.Transport{
++		DialContext:     proxyDialerFn,
++		TLSClientConfig: proxyTLSClientConfig,
++	})
++	return proxyTransport, nil
++}
++
++func createAllowlistDialer(allowlist kubeoptions.IPNetSlice) func(context.Context, string, string) (net.Conn, error) {
++	return func(ctx context.Context, network, addr string) (net.Conn, error) {
++		start := time.Now()
++		id := mathrand.Int63() // So you can match begins/ends in the log.
++		klog.Infof("[%x: %v] Dialing...", id, addr)
++		defer func() {
++			klog.Infof("[%x: %v] Dialed in %v.", id, addr, time.Since(start))
++		}()
++
++		if !allowlist.Contains(strings.Split(addr, ":")[0]) {
++			return nil, errors.New("Address is not allowed")
++		}
++		dialer := &net.Dialer{}
++		return dialer.DialContext(ctx, network, addr)
++	}
++}
+diff --git a/cmd/kube-apiserver/app/options/BUILD b/cmd/kube-apiserver/app/options/BUILD
+index 3e8edb7302e..bc160481104 100644
+--- a/cmd/kube-apiserver/app/options/BUILD
++++ b/cmd/kube-apiserver/app/options/BUILD
+@@ -13,6 +13,7 @@ go_library(
+         "globalflags_providers.go",
+         "options.go",
+         "validation.go",
++        "allowlist.go",
+     ],
+     importpath = "k8s.io/kubernetes/cmd/kube-apiserver/app/options",
+     deps = [
+diff --git a/cmd/kube-apiserver/app/options/allowlist.go b/cmd/kube-apiserver/app/options/allowlist.go
+new file mode 100644
+index 00000000000..d10ec4ebdda
+--- /dev/null
++++ b/cmd/kube-apiserver/app/options/allowlist.go
+@@ -0,0 +1,9 @@
++package options
++
++import (
++	kubeoptions "k8s.io/kubernetes/pkg/kubeapiserver/options"
++)
++
++var (
++	ProxyCIDRAllowlist kubeoptions.IPNetSlice = kubeoptions.DefaultProxyCIDRAllowlist
++)
+diff --git a/cmd/kube-apiserver/app/options/options.go b/cmd/kube-apiserver/app/options/options.go
+index 1434cc181b4..5e44358b868 100644
+--- a/cmd/kube-apiserver/app/options/options.go
++++ b/cmd/kube-apiserver/app/options/options.go
+@@ -60,6 +60,7 @@ type ServerRunOptions struct {
+ 	KubeletConfig             kubeletclient.KubeletClientConfig
+ 	KubernetesServiceNodePort int
+ 	MaxConnectionBytesPerSec  int64
++	ProxyCIDRAllowlist        kubeoptions.IPNetSlice
+ 	// ServiceClusterIPRange is mapped to input provided by user
+ 	ServiceClusterIPRanges string
+ 	//PrimaryServiceClusterIPRange and SecondaryServiceClusterIPRange are the results
+@@ -127,6 +128,8 @@ func NewServerRunOptions() *ServerRunOptions {
+ 		},
+ 		ServiceNodePortRange: kubeoptions.DefaultServiceNodePortRange,
+ 	}
++	s.ServiceClusterIPRanges = kubeoptions.DefaultServiceIPCIDR.String()
++	s.ProxyCIDRAllowlist = kubeoptions.DefaultProxyCIDRAllowlist
+ 
+ 	// Overwrite the default for storage data format.
+ 	s.Etcd.DefaultStorageMediaType = "application/vnd.kubernetes.protobuf"
+@@ -198,6 +201,12 @@ func (s *ServerRunOptions) Flags() (fss cliflag.NamedFlagSets) {
+ 		"A CIDR notation IP range from which to assign service cluster IPs. This must not "+
+ 		"overlap with any IP ranges assigned to nodes or pods.")
+ 
++	fs.Var(&s.ProxyCIDRAllowlist, "proxy-cidr-allowlist", ""+
++		"A comma-separated list of CIDR IP ranges which the API server can communicate with.")
++
++	fs.Var(&s.ProxyCIDRAllowlist, "proxy-cidr-whitelist", ""+
++		"Deprecated: Use '--proxy-cidr-allowlist' flag instead.")
++
+ 	fs.Var(&s.ServiceNodePortRange, "service-node-port-range", ""+
+ 		"A port range to reserve for services with NodePort visibility. "+
+ 		"Example: '30000-32767'. Inclusive at both ends of the range.")
+diff --git a/cmd/kube-apiserver/app/options/options_test.go b/cmd/kube-apiserver/app/options/options_test.go
+index 2149c0bed25..c618539dd05 100644
+--- a/cmd/kube-apiserver/app/options/options_test.go
++++ b/cmd/kube-apiserver/app/options/options_test.go
+@@ -126,6 +126,7 @@ func TestAddFlags(t *testing.T) {
+ 		MasterCount:            5,
+ 		EndpointReconcilerType: string(reconcilers.LeaseEndpointReconcilerType),
+ 		AllowPrivileged:        false,
++		ProxyCIDRAllowlist:     kubeoptions.NewIPNetSlice(),
+ 		GenericServerRunOptions: &apiserveroptions.ServerRunOptions{
+ 			AdvertiseAddress:            net.ParseIP("192.168.10.10"),
+ 			CorsAllowedOriginList:       []string{"10.10.10.100", "10.10.10.200"},
+diff --git a/cmd/kube-apiserver/app/options/validation.go b/cmd/kube-apiserver/app/options/validation.go
+index 25519a67832..5413b928e5d 100644
+--- a/cmd/kube-apiserver/app/options/validation.go
++++ b/cmd/kube-apiserver/app/options/validation.go
+@@ -31,6 +31,18 @@ import (
+ 	netutils "k8s.io/utils/net"
+ )
+ 
++func validateProxyCIDRAllowlist(options *ServerRunOptions) []error {
++	errors := []error{}
++
++	// if its empty, don't add any IPs to the list
++	for _, cidr := range options.ProxyCIDRAllowlist {
++		if cidr.IP == nil {
++			errors = append(errors, fmt.Errorf("invalid --proxy-cidr-allowlist (or --proxy-cidr-whitelist) specified"))
++		}
++	}
++	return errors
++}
++
+ // TODO: Longer term we should read this from some config store, rather than a flag.
+ // validateClusterIPFlags is expected to be called after Complete()
+ func validateClusterIPFlags(options *ServerRunOptions) []error {
+@@ -162,6 +174,9 @@ func (s *ServerRunOptions) Validate() []error {
+ 		errs = append(errs, fmt.Errorf("--apiserver-count should be a positive number, but value '%d' provided", s.MasterCount))
+ 	}
+ 	errs = append(errs, s.Etcd.Validate()...)
++	if es := validateProxyCIDRAllowlist(s); len(es) > 0 {
++		errs = append(errs, es...)
++	}
+ 	errs = append(errs, validateClusterIPFlags(s)...)
+ 	errs = append(errs, validateServiceNodePort(s)...)
+ 	errs = append(errs, validateAPIPriorityAndFairness(s)...)
+diff --git a/cmd/kube-apiserver/app/server.go b/cmd/kube-apiserver/app/server.go
+index 7c189ab10ca..8d6d59ffb7f 100644
+--- a/cmd/kube-apiserver/app/server.go
++++ b/cmd/kube-apiserver/app/server.go
+@@ -187,6 +187,12 @@ func CreateServerChain(completedOptions completedServerRunOptions, stopCh <-chan
+ 		return nil, err
+ 	}
+ 
++	// This will likely break node dialer, any good ideas for how to mitigate that?
++	proxyTransport, err = CreateOutboundDialer(completedOptions)
++	if err != nil {
++		return nil, err
++	}
++
+ 	// If additional API servers are added, they should be gated.
+ 	apiExtensionsConfig, err := createAPIExtensionsConfig(*kubeAPIServerConfig.GenericConfig, kubeAPIServerConfig.ExtraConfig.VersionedInformers, pluginInitializer, completedOptions.ServerRunOptions, completedOptions.MasterCount,
+ 		serviceResolver, webhook.NewDefaultAuthenticationInfoResolverWrapper(proxyTransport, kubeAPIServerConfig.GenericConfig.EgressSelector, kubeAPIServerConfig.GenericConfig.LoopbackClientConfig))
+diff --git a/pkg/kubeapiserver/options/BUILD b/pkg/kubeapiserver/options/BUILD
+index bd631e32707..a1c9f3e15bd 100644
+--- a/pkg/kubeapiserver/options/BUILD
++++ b/pkg/kubeapiserver/options/BUILD
+@@ -7,6 +7,7 @@ go_library(
+         "authentication.go",
+         "authorization.go",
+         "cloudprovider.go",
++        "ipnetslice.go",
+         "options.go",
+         "plugins.go",
+         "serving.go",
+@@ -82,6 +83,8 @@ go_test(
+         "authentication_test.go",
+         "authorization_test.go",
+         "plugins_test.go",
++        "ipnetslice_test.go",
++        "storage_versions_test.go",
+     ],
+     data = glob(["testdata/**"]),
+     embed = [":go_default_library"],
+diff --git a/pkg/kubeapiserver/options/ipnetslice.go b/pkg/kubeapiserver/options/ipnetslice.go
+new file mode 100644
+index 00000000000..8cc2fe76574
+--- /dev/null
++++ b/pkg/kubeapiserver/options/ipnetslice.go
+@@ -0,0 +1,93 @@
++/*
++This file is here because flags seemed to mostly be in staging/k8s.io/apiserver. Is there a better place for this?
++*/
++package options
++
++import (
++	"context"
++	"encoding/csv"
++	"net"
++	"strings"
++)
++
++// IPNetSlice is a flag for comma-separated slices of CIDR addresses
++type IPNetSlice []net.IPNet
++
++// String satisfies pflag.Value
++func (netSlice IPNetSlice) String() string {
++	netStrings := []string{}
++	for _, n := range netSlice {
++		netStrings = append(netStrings, n.String())
++	}
++	return strings.Join(netStrings, ",")
++}
++
++// Set satisfies pflag.Value
++func (netSlice *IPNetSlice) Set(value string) error {
++	cidrStrings, err := readAsCSV(value)
++	if err != nil {
++		return err
++	}
++	for _, v := range cidrStrings {
++		_, n, err := net.ParseCIDR(strings.TrimSpace(v))
++		if err != nil {
++			return err
++		}
++		*netSlice = append(*netSlice, *n)
++	}
++	return nil
++}
++
++func readAsCSV(val string) ([]string, error) {
++	if val == "" {
++		return []string{}, nil
++	}
++	stringReader := strings.NewReader(val)
++	csvReader := csv.NewReader(stringReader)
++	return csvReader.Read()
++}
++
++// Type satisfies plfag.Value
++func (netSlice *IPNetSlice) Type() string {
++	return "[]net.IPNet"
++}
++
++// ContainsHost checks if all the IPs for a given hostname are in the allowlist
++func (netSlice *IPNetSlice) ContainsHost(ctx context.Context, host string) (bool, error) {
++	r := net.Resolver{}
++	resp, err := r.LookupIPAddr(ctx, host)
++	if err != nil {
++		return false, err
++	}
++	for _, host := range resp {
++		// reject if any of the IPs for a hostname are not in the allowlist
++		if !netSlice.Contains(host.String()) {
++			return false, nil
++		}
++	}
++	return true, nil
++}
++
++// Contains checks if a given IP is in the allowlist
++func (netSlice *IPNetSlice) Contains(ip string) bool {
++	// if there are no allowlists, everything is allowed
++	if len(*netSlice) == 0 {
++		return true
++	}
++	netIP := net.ParseIP(ip)
++	for _, cidr := range *netSlice {
++		if cidr.Contains(netIP) {
++			return true
++		}
++	}
++	return false
++}
++
++// NewIPNetSlice creates a new IPNetSlice for a given list of networks
++func NewIPNetSlice(nets ...string) IPNetSlice {
++	netSlice := &IPNetSlice{}
++	for _, network := range nets {
++		netSlice.Set(network)
++	}
++	return *netSlice
++}
+diff --git a/pkg/kubeapiserver/options/ipnetslice_test.go b/pkg/kubeapiserver/options/ipnetslice_test.go
+new file mode 100644
+index 00000000000..f901214d692
+--- /dev/null
++++ b/pkg/kubeapiserver/options/ipnetslice_test.go
+@@ -0,0 +1,36 @@
++package options
++
++import (
++	"testing"
++)
++
++func TestIPNetSliceContains(t *testing.T) {
++	cases := []struct {
++		inputNets []string
++		inputIP   string
++		want      bool
++	}{
++		{
++			[]string{"192.168.0.1/24"},
++			"192.168.0.22",
++			true,
++		},
++		{
++			[]string{"192.168.0.1/24"},
++			"192.168.1.22",
++			false,
++		},
++		{
++			[]string{"192.168.0.1/24", "10.0.0.1/8"},
++			"10.0.100.1",
++			true,
++		},
++	}
++
++	for _, c := range cases {
++		ns := NewIPNetSlice(c.inputNets...)
++		if ns.Contains(c.inputIP) != c.want {
++			t.Errorf("%v.Contains(%s) was wrong: got %t, expected %t", ns, c.inputIP, !c.want, c.want)
++		}
++	}
++}
+diff --git a/pkg/kubeapiserver/options/options.go b/pkg/kubeapiserver/options/options.go
+index e38bd99996d..1738823f994 100644
+--- a/pkg/kubeapiserver/options/options.go
++++ b/pkg/kubeapiserver/options/options.go
+@@ -29,3 +29,4 @@ var DefaultServiceNodePortRange = utilnet.PortRange{Base: 30000, Size: 2768}
+ var DefaultServiceIPCIDR net.IPNet = net.IPNet{IP: net.ParseIP("10.0.0.0"), Mask: net.CIDRMask(24, 32)}
+ 
+ const DefaultEtcdPathPrefix = "/registry"
++var DefaultProxyCIDRAllowlist IPNetSlice = NewIPNetSlice("0.0.0.0/0")
+diff --git a/pkg/registry/core/node/BUILD b/pkg/registry/core/node/BUILD
+index 0a76925b89b..dffe8ddd95e 100644
+--- a/pkg/registry/core/node/BUILD
++++ b/pkg/registry/core/node/BUILD
+@@ -14,6 +14,7 @@ go_library(
+     ],
+     importpath = "k8s.io/kubernetes/pkg/registry/core/node",
+     deps = [
++        "//cmd/kube-apiserver/app/options:go_default_library",
+         "//pkg/api/legacyscheme:go_default_library",
+         "//pkg/apis/core:go_default_library",
+         "//pkg/apis/core/validation:go_default_library",
+diff --git a/pkg/registry/core/node/strategy.go b/pkg/registry/core/node/strategy.go
+index aaddb69e72a..56fed8cb5ae 100644
+--- a/pkg/registry/core/node/strategy.go
++++ b/pkg/registry/core/node/strategy.go
+@@ -35,6 +35,7 @@ import (
+ 	pkgstorage "k8s.io/apiserver/pkg/storage"
+ 	"k8s.io/apiserver/pkg/storage/names"
+ 	utilfeature "k8s.io/apiserver/pkg/util/feature"
++	kubeapiserveroptions "k8s.io/kubernetes/cmd/kube-apiserver/app/options"
+ 	"k8s.io/kubernetes/pkg/api/legacyscheme"
+ 	api "k8s.io/kubernetes/pkg/apis/core"
+ 	"k8s.io/kubernetes/pkg/apis/core/validation"
+@@ -242,6 +243,19 @@ func ResourceLocation(getter ResourceGetter, connection client.ConnectionInfoGet
+ 		return nil, nil, err
+ 	}
+ 
++	// REVIEW NOTE:
++	// I didn't see a better way to plumb this down here. Feature gates are globals too, but I'd be happy to get the CIDRs here another way
++	included, err := kubeapiserveroptions.ProxyCIDRAllowlist.ContainsHost(
++		ctx,
++		info.Hostname,
++	)
++	if err != nil {
++		return nil, nil, err
++	}
++	if !included {
++		return nil, nil, errors.NewBadRequest("Address is not allowed")
++	}
++
+ 	// We check if we want to get a default Kubelet's transport. It happens if either:
+ 	// - no port is specified in request (Kubelet's port is default)
+ 	// - the requested port matches the kubelet port for this node
+-- 
+2.29.2
+

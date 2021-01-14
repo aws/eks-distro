@@ -1,0 +1,141 @@
+From b2d73c514b49e3b43bc8860577f8800bb6703f4d Mon Sep 17 00:00:00 2001
+From: Kishor Joshi <joshikis@amazon.com>
+Date: Mon, 22 Jun 2020 14:37:37 -0700
+Subject: --EKS-PATCH-- AWS cloudprovider allow nlb-ip and external
+ type lbs to be managed externally
+
+ref: https://github.com/kubernetes/kubernetes/pull/92839/
+
+Signed-off-by: Jackson West <jgw@amazon.com>
+---
+ .../k8s.io/legacy-cloud-providers/aws/aws.go  | 14 ++++++-
+ .../aws/aws_loadbalancer.go                   |  7 ++++
+ .../aws/aws_loadbalancer_test.go              | 37 +++++++++++++++++++
+ 3 files changed, 56 insertions(+), 2 deletions(-)
+
+diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
+index 63d90a44ca5..543b44a7c36 100644
+--- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
++++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
+@@ -3704,6 +3704,9 @@ func (c *Cloud) getSubnetCidrs(subnetIDs []string) ([]string, error) {
+ // EnsureLoadBalancer implements LoadBalancer.EnsureLoadBalancer
+ func (c *Cloud) EnsureLoadBalancer(ctx context.Context, clusterName string, apiService *v1.Service, nodes []*v1.Node) (*v1.LoadBalancerStatus, error) {
+ 	annotations := apiService.Annotations
++	if isLBExternal(annotations) {
++		return nil, cloudprovider.ImplementedElsewhere
++	}
+ 	klog.V(2).Infof("EnsureLoadBalancer(%v, %v, %v, %v, %v, %v, %v)",
+ 		clusterName, apiService.Namespace, apiService.Name, c.region, apiService.Spec.LoadBalancerIP, apiService.Spec.Ports, annotations)
+ 
+@@ -3715,7 +3718,6 @@ func (c *Cloud) EnsureLoadBalancer(ctx context.Context, clusterName string, apiS
+ 	if len(apiService.Spec.Ports) == 0 {
+ 		return nil, fmt.Errorf("requested load balancer with no ports")
+ 	}
+-
+ 	// Figure out what mappings we want on the load balancer
+ 	listeners := []*elb.Listener{}
+ 	v2Mappings := []nlbPortMapping{}
+@@ -4107,6 +4109,9 @@ func (c *Cloud) EnsureLoadBalancer(ctx context.Context, clusterName string, apiS
+ 
+ // GetLoadBalancer is an implementation of LoadBalancer.GetLoadBalancer
+ func (c *Cloud) GetLoadBalancer(ctx context.Context, clusterName string, service *v1.Service) (*v1.LoadBalancerStatus, bool, error) {
++	if isLBExternal(service.Annotations) {
++		return nil, false, nil
++	}
+ 	loadBalancerName := c.GetLoadBalancerName(ctx, clusterName, service)
+ 
+ 	if isNLB(service.Annotations) {
+@@ -4367,6 +4372,9 @@ func (c *Cloud) updateInstanceSecurityGroupsForLoadBalancer(lb *elb.LoadBalancer
+ 
+ // EnsureLoadBalancerDeleted implements LoadBalancer.EnsureLoadBalancerDeleted.
+ func (c *Cloud) EnsureLoadBalancerDeleted(ctx context.Context, clusterName string, service *v1.Service) error {
++	if isLBExternal(service.Annotations) {
++		return nil
++	}
+ 	loadBalancerName := c.GetLoadBalancerName(ctx, clusterName, service)
+ 
+ 	if isNLB(service.Annotations) {
+@@ -4551,11 +4559,13 @@ func (c *Cloud) EnsureLoadBalancerDeleted(ctx context.Context, clusterName strin
+ 
+ // UpdateLoadBalancer implements LoadBalancer.UpdateLoadBalancer
+ func (c *Cloud) UpdateLoadBalancer(ctx context.Context, clusterName string, service *v1.Service, nodes []*v1.Node) error {
++	if isLBExternal(service.Annotations) {
++		return cloudprovider.ImplementedElsewhere
++	}
+ 	instances, err := c.findInstancesForELB(nodes, service.Annotations)
+ 	if err != nil {
+ 		return err
+ 	}
+-
+ 	loadBalancerName := c.GetLoadBalancerName(ctx, clusterName, service)
+ 	if isNLB(service.Annotations) {
+ 		lb, err := c.describeLoadBalancerv2(loadBalancerName)
+diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer.go
+index 07bb7106b1b..8c45fe6a521 100644
+--- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer.go
++++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer.go
+@@ -69,6 +69,13 @@ func isNLB(annotations map[string]string) bool {
+ 	return false
+ }
+ 
++func isLBExternal(annotations map[string]string) bool {
++	if val := annotations[ServiceAnnotationLoadBalancerType]; val == "nlb-ip" || val == "external" {
++		return true
++	}
++	return false
++}
++
+ type nlbPortMapping struct {
+ 	FrontendPort     int64
+ 	FrontendProtocol string
+diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer_test.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer_test.go
+index cfee659300a..df63d9b21f0 100644
+--- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer_test.go
++++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer_test.go
+@@ -168,6 +168,43 @@ func TestIsNLB(t *testing.T) {
+ 	}
+ }
+ 
++func TestIsLBExternal(t *testing.T) {
++	tests := []struct {
++		name        string
++		annotations map[string]string
++		want        bool
++	}{
++		{
++			name:        "No annotation",
++			annotations: map[string]string{},
++			want:        false,
++		},
++		{
++			name:        "Type NLB",
++			annotations: map[string]string{"service.beta.kubernetes.io/aws-load-balancer-type": "nlb"},
++			want:        false,
++		},
++		{
++			name:        "Type NLB-IP",
++			annotations: map[string]string{"service.beta.kubernetes.io/aws-load-balancer-type": "nlb-ip"},
++			want:        true,
++		},
++		{
++			name:        "Type External",
++			annotations: map[string]string{"service.beta.kubernetes.io/aws-load-balancer-type": "external"},
++			want:        true,
++		},
++	}
++	for _, test := range tests {
++		t.Logf("Running test case %s", test.name)
++		got := isLBExternal(test.annotations)
++
++		if got != test.want {
++			t.Errorf("Incorrect value for isLBExternal() case %s. Got %t, expected %t.", test.name, got, test.want)
++		}
++	}
++}
++
+ func TestSyncElbListeners(t *testing.T) {
+ 	tests := []struct {
+ 		name                 string
+-- 
+2.29.2
+
