@@ -22,6 +22,8 @@ CLONE_URL=$1
 REPOSITORY=$2
 TAG=$3
 
+GOLANG_VERSION="1.15"
+
 MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
 OUTPUT_DIR="${OUTPUT_DIR:-${MAKE_ROOT}/_output}"
 
@@ -31,6 +33,7 @@ source "${MAKE_ROOT}/../../../build/lib/common.sh"
 
 mkdir -p $OUTPUT_DIR
 build::clone::release $CLONE_URL $REPOSITORY $TAG
+build::common::use_go_version $GOLANG_VERSION
 build::binaries::bins $MAKE_ROOT/$REPOSITORY $OUTPUT_DIR
 
 build::gather_licenses $MAKE_ROOT/$REPOSITORY $MAKE_ROOT/LICENSES

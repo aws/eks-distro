@@ -35,6 +35,7 @@ if [ -d ${OUTPUT_DIR}/${RELEASE_BRANCH}/bin ]; then
 fi
 build::git::clone "$CLONE_URL" "$SOURCE_DIR"
 build::git::patch "$SOURCE_DIR" "$GIT_TAG" "$PATCH_DIR"
+build::binaries::use_go_version_k8s "$RELEASE_BRANCH"
 build::binaries::kube_bins "$SOURCE_DIR"
 
 mkdir -p ${OUTPUT_DIR}/${RELEASE_BRANCH}/bin

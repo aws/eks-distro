@@ -32,7 +32,6 @@ IMAGE_NAME?=coredns/coredns
 IMAGE_TAG?=${GIT_TAG}-eks-${RELEASE_BRANCH}-${RELEASE}
 IMAGE?=$(IMAGE_REPO)/$(IMAGE_NAME):$(IMAGE_TAG)
 
-
 ifeq ($(DEVELOPMENT),true)
 	BASE_IMAGE=amazonlinux:2
 endif

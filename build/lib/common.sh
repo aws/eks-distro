@@ -76,3 +76,28 @@ function build::gather_licenses() {
      -o -name 'NOTICE' -o -name 'COPYING' -o -name 'NOTICE.txt' \
      -o -name 'LICENSE.code' -o -name 'LICENCE.md' \) | while IFS= read -r NAME; do mkdir -p "${outputdir}/$(dirname $NAME)" && cp  "$NAME" "${outputdir}/${NAME}"; done
 }
+
+function build::common::use_go_version() {
+  local -r version=$1
+  local gobinaryversion=""
+
+  if [[ $version == "1.13"* ]]; then
+    gobinaryversion="1.13"
+  fi
+  if [[ $version == "1.14"* ]]; then
+    gobinaryversion="1.14"
+  fi
+  if [[ $version == "1.15"* ]]; then
+    gobinaryversion="1.15"
+  fi
+
+  if [[ "$gobinaryversion" == "" ]]; then
+    return
+  fi
+
+  # This is the path where the specific go binary versions reside in our builder-base image
+  local -r gobinarypath=/go/go${gobinaryversion}/bin
+  echo "Adding $gobinarypath to PATH"
+  # Adding to the beginning of PATH to allow for builds on specific version if it exists
+  export PATH=${gobinarypath}:$PATH
+}
