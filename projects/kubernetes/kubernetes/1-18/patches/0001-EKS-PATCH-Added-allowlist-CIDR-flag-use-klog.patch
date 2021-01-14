@@ -22,6 +22,7 @@ Signed-off-by: Jackson West <jgw@amazon.com>
  cmd/kube-apiserver/app/dialer.go             | 46 ++++++++++
  cmd/kube-apiserver/app/options/BUILD         |  1 +
  cmd/kube-apiserver/app/options/options.go    |  9 ++
+ .../app/options/options_test.go               |     1 +
  cmd/kube-apiserver/app/options/validation.go | 15 ++++
  cmd/kube-apiserver/app/options/allowlist.go  |  9 ++
  cmd/kube-apiserver/app/server.go             |  6 ++
@@ -31,7 +32,7 @@ Signed-off-by: Jackson West <jgw@amazon.com>
  pkg/kubeapiserver/options/options.go         |  1 +
  pkg/registry/core/node/BUILD                 |  1 +
  pkg/registry/core/node/strategy.go           | 14 +++
- 13 files changed, 235 insertions(+)
+ 14 files changed, 236 insertions(+)
  create mode 100644 cmd/kube-apiserver/app/dialer.go
  create mode 100644 cmd/kube-apiserver/app/options/allowlist.go
  create mode 100644 pkg/kubeapiserver/options/ipnetslice.go
@@ -147,6 +148,18 @@ index e64604758db..0fc452410d3 100644
  	fs.Var(&s.ServiceNodePortRange, "service-node-port-range", ""+
  		"A port range to reserve for services with NodePort visibility. "+
  		"Example: '30000-32767'. Inclusive at both ends of the range.")
+diff --git a/cmd/kube-apiserver/app/options/options_test.go b/cmd/kube-apiserver/app/options/options_test.go
+index 9afed6eb875..77d2b3a68ab 100644
+--- a/cmd/kube-apiserver/app/options/options_test.go
++++ b/cmd/kube-apiserver/app/options/options_test.go
+@@ -126,6 +126,7 @@ func TestAddFlags(t *testing.T) {
+ 		MasterCount:            5,
+ 		EndpointReconcilerType: string(reconcilers.LeaseEndpointReconcilerType),
+ 		AllowPrivileged:        false,
++		ProxyCIDRAllowlist:     kubeoptions.NewIPNetSlice("0.0.0.0/0"),
+ 		GenericServerRunOptions: &apiserveroptions.ServerRunOptions{
+ 			AdvertiseAddress:            net.ParseIP("192.168.10.10"),
+ 			CorsAllowedOriginList:       []string{"10.10.10.100", "10.10.10.200"},
 diff --git a/cmd/kube-apiserver/app/options/validation.go b/cmd/kube-apiserver/app/options/validation.go
 index 4f94e438d00..5926205e201 100644
 --- a/cmd/kube-apiserver/app/options/validation.go

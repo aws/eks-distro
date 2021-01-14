@@ -104,7 +104,7 @@ checksums: tarballs
 	build/create_release_checksums.sh $(RELEASE_BRANCH)
 
 .PHONY: build
-build: checksums
+build: tarballs test checksums
 
 .PHONY: release
 release: images checksums
