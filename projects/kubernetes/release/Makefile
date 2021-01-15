@@ -59,7 +59,7 @@ local-images: binaries
 	buildctl \
 		build \
 		--frontend dockerfile.v0 \
-		--opt platform=linux/amd64  \
+		--opt platform=linux/amd64 \
 		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
 		--local dockerfile=./docker/kube-proxy-base/ \
 		--local context=. \
