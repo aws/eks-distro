@@ -84,3 +84,5 @@ makes:
 	$(call presubmit-cleanup, $(TARGET), "projects/kubernetes-csi/external-snapshotter")
 	make -C projects/kubernetes-csi/external-provisioner $(TARGET)
 	$(call presubmit-cleanup, $(TARGET), "projects/kubernetes-csi/external-provisioner")
+	make -C projects/kind-images $(TARGET)
+	$(call presubmit-cleanup, $(TARGET), "projects/kind-images")
