@@ -1,0 +1,8 @@
+FROM kindest/node:v1.18.8
+
+ARG K8S_VERSION=v1.18.9-eks-1-18-1
+
+COPY amd64/* /usr/bin/
+
+RUN echo ${K8S_VERSION} > /kind/version
+RUN chmod +x /usr/bin/kubectl /usr/bin/kubeadm /usr/bin/kubelet
