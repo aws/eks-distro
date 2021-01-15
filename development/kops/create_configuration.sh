@@ -46,16 +46,7 @@ if [ -z "$KOPS_CLUSTER_NAME" ]; then
 fi
 
 mkdir -p "./${KOPS_CLUSTER_NAME}"
-if [ -f "./${KOPS_CLUSTER_NAME}/values.yaml" ]; then
-    read -r -p "A ./${KOPS_CLUSTER_NAME}/values.yaml file exists. Would you like to delete it? [Y/n] " DELETE_VALUES
-    DELETE_VALUES=${DELETE_VALUES:-y}
-    if [ "$(echo ${DELETE_VALUES} | tr '[:upper:]' '[:lower:]')" == "y" ]; then
-        rm "./${KOPS_CLUSTER_NAME}/values.yaml"
-    else
-        echo "Skipping delete and exiting"
-        exit
-    fi
-fi
+${BASEDIR}/create_values_yaml.sh || exit 0
 
 # Create the bucket if it doesn't exist
 _bucket_name=$(aws s3api list-buckets  --query "Buckets[?Name=='$BUCKET_NAME'].Name | [0]" --out text)
@@ -82,14 +73,6 @@ metadata:
 data:
   config.yaml: |
     clusterID: $KOPS_CLUSTER_NAME
-EOF
-
-echo "Creating ./${KOPS_CLUSTER_NAME}/values.yaml"
-cat << EOF > ./${KOPS_CLUSTER_NAME}/values.yaml
-kubernetesVersion: $KUBERNETES_VERSION
-clusterName: $KOPS_CLUSTER_NAME
-configBase: $KOPS_STATE_STORE/$KOPS_CLUSTER_NAME
-awsRegion: $AWS_DEFAULT_REGION
 EOF
 
 echo "Creating ${KOPS_CLUSTER_NAME}.yaml"
