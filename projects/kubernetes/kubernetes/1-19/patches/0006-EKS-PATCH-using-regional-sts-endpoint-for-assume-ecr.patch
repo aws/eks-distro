@@ -1,8 +1,9 @@
-From 5bb639aa3e06157ef86d6fcfa057c6914ff3c775 Mon Sep 17 00:00:00 2001
+From 34c8f523b01670a781e8bb5b674cdcbc875bc236 Mon Sep 17 00:00:00 2001
 From: Yang Yang <yyyng@amazon.com>
 Date: Mon, 20 Jan 2020 11:59:08 -0800
 Subject: --EKS-PATCH-- using regional sts endpoint for assume ecr
  pull role
+
 
 Signed-off-by: Jackson West <jgw@amazon.com>
 ---
@@ -13,10 +14,10 @@ Signed-off-by: Jackson West <jgw@amazon.com>
  4 files changed, 49 insertions(+), 7 deletions(-)
 
 diff --git a/pkg/credentialprovider/aws/BUILD b/pkg/credentialprovider/aws/BUILD
-index f83326497c3..c139720ea4c 100644
+index af13e57b697..a2d5b9b4c3d 100644
 --- a/pkg/credentialprovider/aws/BUILD
 +++ b/pkg/credentialprovider/aws/BUILD
-@@ -15,10 +15,16 @@ go_library(
+@@ -15,11 +15,17 @@ go_library(
          "//staging/src/k8s.io/apimachinery/pkg/util/wait:go_default_library",
          "//staging/src/k8s.io/client-go/tools/cache:go_default_library",
          "//staging/src/k8s.io/component-base/version:go_default_library",
@@ -29,12 +30,13 @@ index f83326497c3..c139720ea4c 100644
          "//vendor/github.com/aws/aws-sdk-go/aws/request:go_default_library",
          "//vendor/github.com/aws/aws-sdk-go/aws/session:go_default_library",
          "//vendor/github.com/aws/aws-sdk-go/service/ecr:go_default_library",
+         "//vendor/k8s.io/klog/v2:go_default_library",
 +        "//vendor/github.com/aws/aws-sdk-go/service/sts:go_default_library",
-         "//vendor/k8s.io/klog:go_default_library",
      ],
  )
+ 
 diff --git a/pkg/credentialprovider/aws/aws_credentials.go b/pkg/credentialprovider/aws/aws_credentials.go
-index 82a990dc4a1..5ea6ec24115 100644
+index 8f85237e8f3..4358789f62d 100644
 --- a/pkg/credentialprovider/aws/aws_credentials.go
 +++ b/pkg/credentialprovider/aws/aws_credentials.go
 @@ -21,21 +21,28 @@ import (
@@ -60,7 +62,7 @@ index 82a990dc4a1..5ea6ec24115 100644
  	"k8s.io/apimachinery/pkg/util/wait"
  	"k8s.io/client-go/tools/cache"
  	"k8s.io/component-base/version"
- 	"k8s.io/klog"
+ 	"k8s.io/klog/v2"
  	"k8s.io/kubernetes/pkg/credentialprovider"
 +	k8saws "k8s.io/legacy-cloud-providers/aws"
  )
@@ -103,10 +105,10 @@ index 82a990dc4a1..5ea6ec24115 100644
  	getter.svc.Handlers.Build.PushFrontNamed(request.NamedHandler{
  		Name: "k8s/user-agent",
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-index a115c547047..d95e0834d79 100644
+index d4f52f455ca..63d90a44ca5 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-@@ -736,7 +736,7 @@ func newAWSSDKProvider(cfg *CloudConfig) (*awsSDKProvider, error) {
+@@ -742,7 +742,7 @@ func newAWSSDKProvider(cfg *CloudConfig) (*awsSDKProvider, error) {
  		if err != nil {
  			return nil, err
  		}
@@ -115,7 +117,7 @@ index a115c547047..d95e0834d79 100644
  		if err != nil {
  			return nil, err
  		}
-@@ -4807,7 +4807,7 @@ func arnToAwsUrlSuffix(arnString string) (string, error) {
+@@ -4861,7 +4861,7 @@ func arnToAwsUrlSuffix(arnString string) (string, error) {
  	}
  }
  
@@ -125,10 +127,10 @@ index a115c547047..d95e0834d79 100644
  	if err != nil {
  		return "", err
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
-index ef46452c3bd..b4549a80527 100644
+index bfa66fadb1f..096acbd2e86 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
-@@ -1987,7 +1987,7 @@ func TestConstructStsEndpoint(t *testing.T) {
+@@ -2569,7 +2569,7 @@ func TestConstructStsEndpoint(t *testing.T) {
  	t.Run("returns an error when the arn is invalid", func(t *testing.T) {
  		arn := "asdf"
  		region := "us-east-1"
@@ -137,7 +139,7 @@ index ef46452c3bd..b4549a80527 100644
  		assert.Equal(t, endpoint, "")
  		require.Error(t, err)
  	})
-@@ -1995,7 +1995,7 @@ func TestConstructStsEndpoint(t *testing.T) {
+@@ -2577,7 +2577,7 @@ func TestConstructStsEndpoint(t *testing.T) {
  	t.Run("returns sts.us-east-1.amazonaws.com when region/partition is us-east-1/aws", func(t *testing.T) {
  		arn := "arn:aws:eks:us-east-1:1234:cluster/asdf"
  		region := "us-east-1"
@@ -146,7 +148,7 @@ index ef46452c3bd..b4549a80527 100644
  		assert.Equal(t, endpoint, "sts.us-east-1.amazonaws.com")
  		require.NoError(t, err)
  	})
-@@ -2003,7 +2003,7 @@ func TestConstructStsEndpoint(t *testing.T) {
+@@ -2585,7 +2585,7 @@ func TestConstructStsEndpoint(t *testing.T) {
  	t.Run("returns sts.cn-northwest-1.amazonaws.com.cn when region/partition is cn-northwest-1/aws-cn", func(t *testing.T) {
  		arn := "arn:aws-cn:eks:cn-northwest-1:1234:cluster/asdf"
  		region := "cn-northwest-1"
@@ -155,7 +157,7 @@ index ef46452c3bd..b4549a80527 100644
  		assert.Equal(t, endpoint, "sts.cn-northwest-1.amazonaws.com.cn")
  		require.NoError(t, err)
  	})
-@@ -2011,7 +2011,7 @@ func TestConstructStsEndpoint(t *testing.T) {
+@@ -2593,7 +2593,7 @@ func TestConstructStsEndpoint(t *testing.T) {
  	t.Run("returns sts.us-gov-east-1.amazonaws.com when region/partion is us-gov-east-1/aws-us-gov", func(t *testing.T) {
  		arn := "arn:aws-us-gov:eks:us-gov-east-1:1234:cluster/asdf"
  		region := "us-gov-east-1"
@@ -164,7 +166,7 @@ index ef46452c3bd..b4549a80527 100644
  		assert.Equal(t, endpoint, "sts.us-gov-east-1.amazonaws.com")
  		require.NoError(t, err)
  	})
-@@ -2019,7 +2019,7 @@ func TestConstructStsEndpoint(t *testing.T) {
+@@ -2601,7 +2601,7 @@ func TestConstructStsEndpoint(t *testing.T) {
  	t.Run("returns sts.me-south-1.amazonaws.com when region/partion is me-south-1/aws", func(t *testing.T) {
  		arn := "arn:aws:eks:me-south-1:1234:cluster/asdf"
  		region := "me-south-1"

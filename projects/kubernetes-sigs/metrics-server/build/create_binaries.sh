@@ -25,6 +25,8 @@ TAG="$3"
 BIN_ROOT="_output/bin"
 BIN_PATH=$BIN_ROOT/$REPO
 
+GOLANG_VERSION="1.14"
+
 readonly SUPPORTED_PLATFORMS=(
   linux/amd64
   linux/arm64
@@ -43,6 +45,7 @@ function build::metrics-server::binaries(){
   local -r build_date=$(git -C $REPO show -s --format=format:%ct HEAD)
   local -r goldflags="-X ${pkg}/version.gitVersion=$TAG -X ${pkg}/version.gitCommit=$git_commit -X ${pkg}/version.buildDate=$build_date"
   git -C $REPO checkout "$TAG"
+  build::common::use_go_version $GOLANG_VERSION
   for platform in "${SUPPORTED_PLATFORMS[@]}";
   do
     OS="$(cut -d '/' -f1 <<< ${platform})"

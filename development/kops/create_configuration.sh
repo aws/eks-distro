@@ -18,10 +18,12 @@ set -eo pipefail
 BASEDIR=$(dirname "$0")
 source ${BASEDIR}/set_k8s_versions.sh
 
+export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-${AWS_REGION}}
 if [ -z "$AWS_DEFAULT_REGION" ]; then
     read -r -p "What region would you like to store the config? [us-west-2] " REGION
     export AWS_DEFAULT_REGION=${REGION:-us-west-2}
 fi
+export AWS_REGION="${AWS_DEFAULT_REGION}"
 
 if ! aws sts get-caller-identity --query Account --output text >/dev/null 2>/dev/null
 then
@@ -43,16 +45,8 @@ if [ -z "$KOPS_CLUSTER_NAME" ]; then
     export KOPS_CLUSTER_NAME
 fi
 
-if [ -f values.yaml ]; then
-    read -r -p "A values.yaml file exists. Would you like to delete it? [Y/n] " DELETE_VALUES
-    DELETE_VALUES=${DELETE_VALUES:-y}
-    if [ "$(echo ${DELETE_VALUES} | tr '[:upper:]' '[:lower:]')" == "y" ]; then
-        rm values.yaml
-    else
-        echo "Skipping delete and exiting"
-        exit
-    fi
-fi
+mkdir -p "./${KOPS_CLUSTER_NAME}"
+${BASEDIR}/create_values_yaml.sh || exit 0
 
 # Create the bucket if it doesn't exist
 _bucket_name=$(aws s3api list-buckets  --query "Buckets[?Name=='$BUCKET_NAME'].Name | [0]" --out text)
@@ -67,8 +61,8 @@ else
     echo "Using kOps state store: $KOPS_STATE_STORE"
 fi
 
-echo "Creating aws-iam-authenticator.yaml"
-cat << EOF > aws-iam-authenticator.yaml
+echo "Creating ./${KOPS_CLUSTER_NAME}/aws-iam-authenticator.yaml"
+cat << EOF > ./${KOPS_CLUSTER_NAME}/aws-iam-authenticator.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -81,26 +75,19 @@ data:
     clusterID: $KOPS_CLUSTER_NAME
 EOF
 
-echo "Creating values.yaml"
-cat << EOF > values.yaml
-kubernetesVersion: $KUBERNETES_VERSION
-clusterName: $KOPS_CLUSTER_NAME
-configBase: $KOPS_STATE_STORE
-awsRegion: $AWS_DEFAULT_REGION
-EOF
-
 echo "Creating ${KOPS_CLUSTER_NAME}.yaml"
-kops toolbox template --template eks-d.tpl --values values.yaml > "${KOPS_CLUSTER_NAME}.yaml"
+kops toolbox template --template eks-d.tpl --values ./${KOPS_CLUSTER_NAME}/values.yaml > "./${KOPS_CLUSTER_NAME}/${KOPS_CLUSTER_NAME}.yaml"
 
 echo "Creating cluster configuration"
-kops create -f ./"${KOPS_CLUSTER_NAME}.yaml"
+kops create -f "./${KOPS_CLUSTER_NAME}/${KOPS_CLUSTER_NAME}.yaml"
 
 echo "Creating cluster ssh key"
 export SSH_KEY_PATH=${SSH_KEY_PATH:-$HOME/.ssh/id_rsa.pub}
 kops create secret --name $KOPS_CLUSTER_NAME sshpublickey admin -i ${SSH_KEY_PATH}
 
 echo
-echo "# Set these values"
-echo "export AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION"
-echo "export KOPS_CLUSTER_NAME=$KOPS_CLUSTER_NAME"
-echo "export KOPS_STATE_STORE=$KOPS_STATE_STORE"
+echo "# Creating ./${KOPS_CLUSTER_NAME}/env.sh"
+echo "export AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION" | tee ./${KOPS_CLUSTER_NAME}/env.sh
+echo "export AWS_REGION=$AWS_DEFAULT_REGION" | tee -a ./${KOPS_CLUSTER_NAME}/env.sh
+echo "export KOPS_CLUSTER_NAME=$KOPS_CLUSTER_NAME" | tee -a ./${KOPS_CLUSTER_NAME}/env.sh
+echo "export KOPS_STATE_STORE=$KOPS_STATE_STORE" | tee -a ./${KOPS_CLUSTER_NAME}/env.sh

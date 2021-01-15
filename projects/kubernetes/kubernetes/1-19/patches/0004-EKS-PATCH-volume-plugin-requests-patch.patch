@@ -1,4 +1,4 @@
-From c7d6f0b981e5eec3a7f0ecfd6bf65dbee25b4636 Mon Sep 17 00:00:00 2001
+From d2b2d5e7216651db712f78285e7dc8331252a866 Mon Sep 17 00:00:00 2001
 From: Yang Yang <yyyng@amazon.com>
 Date: Sun, 22 Dec 2019 13:32:27 -0800
 Subject: --EKS-PATCH-- volume plugin requests patch
@@ -13,7 +13,7 @@ should consider supporting only the inclusive variable.
 
 Signed-off-by: Jackson West <jgw@amazon.com>
 ---
- pkg/proxy/util/utils.go                       | 63 +++++++++++++++++++-
+ pkg/proxy/util/utils.go                       | 63 ++++++++++++++++++-
  .../heketi/client/api/go-client/client.go     | 19 +++++-
  vendor/github.com/quobyte/api/quobyte.go      | 18 +++++-
  vendor/github.com/storageos/go-api/client.go  |  5 +-
@@ -21,7 +21,7 @@ Signed-off-by: Jackson West <jgw@amazon.com>
  5 files changed, 109 insertions(+), 5 deletions(-)
 
 diff --git a/pkg/proxy/util/utils.go b/pkg/proxy/util/utils.go
-index b4f1b4304c1..df18630ef00 100644
+index c2bf2c97d15..d78f8c35108 100644
 --- a/pkg/proxy/util/utils.go
 +++ b/pkg/proxy/util/utils.go
 @@ -20,8 +20,12 @@ import (
@@ -37,7 +37,7 @@ index b4f1b4304c1..df18630ef00 100644
  
  	v1 "k8s.io/api/core/v1"
  	"k8s.io/apimachinery/pkg/types"
-@@ -39,7 +43,9 @@ const (
+@@ -40,7 +44,9 @@ const (
  	IPv4ZeroCIDR = "0.0.0.0/0"
  
  	// IPv6ZeroCIDR is the CIDR block for the whole IPv6 address space
@@ -48,7 +48,7 @@ index b4f1b4304c1..df18630ef00 100644
  )
  
  var (
-@@ -123,6 +129,29 @@ func IsProxyableHostname(ctx context.Context, resolv Resolver, hostname string)
+@@ -124,6 +130,29 @@ func IsProxyableHostname(ctx context.Context, resolv Resolver, hostname string)
  	return nil
  }
  
@@ -78,7 +78,7 @@ index b4f1b4304c1..df18630ef00 100644
  // GetLocalAddrs returns a list of all network addresses on the local system
  func GetLocalAddrs() ([]net.IP, error) {
  	var localAddrs []net.IP
-@@ -159,6 +188,38 @@ func ShouldSkipService(svcName types.NamespacedName, service *v1.Service) bool {
+@@ -160,6 +189,38 @@ func ShouldSkipService(service *v1.Service) bool {
  	return false
  }
  
@@ -86,7 +86,7 @@ index b4f1b4304c1..df18630ef00 100644
 +	var denyListNetworks []*net.IPNet
 +	denyListCIDRs := os.Getenv(EnvExtraProxyDenyListCIDR)
 +	if denyListCIDRs == "" {
-+   	denyListCIDRs = os.Getenv(EnvExtraProxyBlackListCIDR) // Use the more inclusive EnvExtraProxyDenyListCIDR instead
++       denyListCIDRs = os.Getenv(EnvExtraProxyBlackListCIDR) // Use the more inclusive EnvExtraProxyDenyListCIDR instead
 +   }
 +	if denyListCIDRs != "" {
 +		for _, cidr := range strings.Split(denyListCIDRs, ",") {
@@ -230,7 +230,7 @@ index 4a95516b14b..c5698db6947 100644
  		DisableKeepAlives:   false,
  		MaxIdleConnsPerHost: 1,
 diff --git a/vendor/github.com/thecodeteam/goscaleio/api.go b/vendor/github.com/thecodeteam/goscaleio/api.go
-index 2b17c8886c1..4d6314ef060 100644
+index 2b17c8886c1..5a6a6c1b800 100644
 --- a/vendor/github.com/thecodeteam/goscaleio/api.go
 +++ b/vendor/github.com/thecodeteam/goscaleio/api.go
 @@ -9,6 +9,8 @@ import (

@@ -1,9 +1,11 @@
 From e63496276d8410de2f6b5522d42f292eb45d363a Mon Sep 17 00:00:00 2001
 From: Kishor Joshi <joshikis@amazon.com>
 Date: Fri, 12 Jun 2020 12:57:37 -0700
-Subject: [PATCH 11/16] --EKS-CHERRYPICK-- Allow UDP for AWS NLB ref:
- https://github.com/kubernetes/kubernetes/pull/92109 Co-authored-by: Patrick
- Ryan <pjryan@my.okcu.edu> Co-authored-by: Owen Ou <jingweno@gmail.com>
+Subject: --EKS-PATCH-- Allow UDP for AWS NLB
+
+ref: https://github.com/kubernetes/kubernetes/pull/92109
+ Co-authored-by: Patrick Ryan <pjryan@my.okcu.edu>
+ Co-authored-by: Owen Ou <jingweno@gmail.com>
 
 Signed-off-by: Jackson West <jgw@amazon.com>
 ---

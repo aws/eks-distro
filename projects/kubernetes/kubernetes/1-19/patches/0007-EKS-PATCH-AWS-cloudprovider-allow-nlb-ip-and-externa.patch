@@ -1,10 +1,10 @@
-From af681bdbde7ae7522a90f8f0e898cb090d6877ab Mon Sep 17 00:00:00 2001
+From b2d73c514b49e3b43bc8860577f8800bb6703f4d Mon Sep 17 00:00:00 2001
 From: Kishor Joshi <joshikis@amazon.com>
 Date: Mon, 22 Jun 2020 14:37:37 -0700
-Subject: [PATCH 12/16] --EKS-CHERRYPICK-- AWS cloudprovider allow nlb-ip and
- external type lbs to be managed externally ref:
- https://github.com/kubernetes/kubernetes/pull/92839/
+Subject: --EKS-PATCH-- AWS cloudprovider allow nlb-ip and external
+ type lbs to be managed externally
 
+ref: https://github.com/kubernetes/kubernetes/pull/92839/
 
 Signed-off-by: Jackson West <jgw@amazon.com>
 ---
@@ -14,10 +14,10 @@ Signed-off-by: Jackson West <jgw@amazon.com>
  3 files changed, 56 insertions(+), 2 deletions(-)
 
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-index 1aacba000ba..50e32f5b722 100644
+index 63d90a44ca5..543b44a7c36 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-@@ -3693,6 +3693,9 @@ func (c *Cloud) getSubnetCidrs(subnetIDs []string) ([]string, error) {
+@@ -3704,6 +3704,9 @@ func (c *Cloud) getSubnetCidrs(subnetIDs []string) ([]string, error) {
  // EnsureLoadBalancer implements LoadBalancer.EnsureLoadBalancer
  func (c *Cloud) EnsureLoadBalancer(ctx context.Context, clusterName string, apiService *v1.Service, nodes []*v1.Node) (*v1.LoadBalancerStatus, error) {
  	annotations := apiService.Annotations
@@ -27,7 +27,7 @@ index 1aacba000ba..50e32f5b722 100644
  	klog.V(2).Infof("EnsureLoadBalancer(%v, %v, %v, %v, %v, %v, %v)",
  		clusterName, apiService.Namespace, apiService.Name, c.region, apiService.Spec.LoadBalancerIP, apiService.Spec.Ports, annotations)
  
-@@ -3704,7 +3707,6 @@ func (c *Cloud) EnsureLoadBalancer(ctx context.Context, clusterName string, apiS
+@@ -3715,7 +3718,6 @@ func (c *Cloud) EnsureLoadBalancer(ctx context.Context, clusterName string, apiS
  	if len(apiService.Spec.Ports) == 0 {
  		return nil, fmt.Errorf("requested load balancer with no ports")
  	}
@@ -35,7 +35,7 @@ index 1aacba000ba..50e32f5b722 100644
  	// Figure out what mappings we want on the load balancer
  	listeners := []*elb.Listener{}
  	v2Mappings := []nlbPortMapping{}
-@@ -4096,6 +4098,9 @@ func (c *Cloud) EnsureLoadBalancer(ctx context.Context, clusterName string, apiS
+@@ -4107,6 +4109,9 @@ func (c *Cloud) EnsureLoadBalancer(ctx context.Context, clusterName string, apiS
  
  // GetLoadBalancer is an implementation of LoadBalancer.GetLoadBalancer
  func (c *Cloud) GetLoadBalancer(ctx context.Context, clusterName string, service *v1.Service) (*v1.LoadBalancerStatus, bool, error) {
@@ -45,7 +45,7 @@ index 1aacba000ba..50e32f5b722 100644
  	loadBalancerName := c.GetLoadBalancerName(ctx, clusterName, service)
  
  	if isNLB(service.Annotations) {
-@@ -4356,6 +4361,9 @@ func (c *Cloud) updateInstanceSecurityGroupsForLoadBalancer(lb *elb.LoadBalancer
+@@ -4367,6 +4372,9 @@ func (c *Cloud) updateInstanceSecurityGroupsForLoadBalancer(lb *elb.LoadBalancer
  
  // EnsureLoadBalancerDeleted implements LoadBalancer.EnsureLoadBalancerDeleted.
  func (c *Cloud) EnsureLoadBalancerDeleted(ctx context.Context, clusterName string, service *v1.Service) error {
@@ -55,14 +55,14 @@ index 1aacba000ba..50e32f5b722 100644
  	loadBalancerName := c.GetLoadBalancerName(ctx, clusterName, service)
  
  	if isNLB(service.Annotations) {
-@@ -4540,11 +4548,13 @@ func (c *Cloud) EnsureLoadBalancerDeleted(ctx context.Context, clusterName strin
+@@ -4551,11 +4559,13 @@ func (c *Cloud) EnsureLoadBalancerDeleted(ctx context.Context, clusterName strin
  
  // UpdateLoadBalancer implements LoadBalancer.UpdateLoadBalancer
  func (c *Cloud) UpdateLoadBalancer(ctx context.Context, clusterName string, service *v1.Service, nodes []*v1.Node) error {
 +	if isLBExternal(service.Annotations) {
 +		return cloudprovider.ImplementedElsewhere
 +	}
- 	instances, err := c.findInstancesForELB(nodes)
+ 	instances, err := c.findInstancesForELB(nodes, service.Annotations)
  	if err != nil {
  		return err
  	}
@@ -71,7 +71,7 @@ index 1aacba000ba..50e32f5b722 100644
  	if isNLB(service.Annotations) {
  		lb, err := c.describeLoadBalancerv2(loadBalancerName)
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer.go
-index 447913fff11..5c40deba3a1 100644
+index 07bb7106b1b..8c45fe6a521 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer.go
 @@ -69,6 +69,13 @@ func isNLB(annotations map[string]string) bool {
@@ -89,10 +89,10 @@ index 447913fff11..5c40deba3a1 100644
  	FrontendPort     int64
  	FrontendProtocol string
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer_test.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer_test.go
-index 16574b058c0..3faf328474f 100644
+index cfee659300a..df63d9b21f0 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer_test.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer_test.go
-@@ -166,6 +166,43 @@ func TestIsNLB(t *testing.T) {
+@@ -168,6 +168,43 @@ func TestIsNLB(t *testing.T) {
  	}
  }
  

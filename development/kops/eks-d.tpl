@@ -59,23 +59,23 @@ spec:
     masters: public
     nodes: public
   kubeAPIServer:
-    image: public.ecr.aws/eks-distro/kubernetes/kube-apiserver:v1.18.9-eks-1-18-1
+    image: {{ .kube_apiserver.repository }}:{{ .kube_apiserver.tag }}
   kubeControllerManager:
-    image: public.ecr.aws/eks-distro/kubernetes/kube-controller-manager:v1.18.9-eks-1-18-1
+    image: {{ .kube_controller_manager.repository }}:{{ .kube_controller_manager.tag }}
   kubeScheduler:
-    image: public.ecr.aws/eks-distro/kubernetes/kube-scheduler:v1.18.9-eks-1-18-1
+    image: {{ .kube_scheduler.repository }}:{{ .kube_scheduler.tag }}
   kubeProxy:
-    image: public.ecr.aws/eks-distro/kubernetes/kube-proxy:v1.18.9-eks-1-18-1
+    image: {{ .kube_proxy.repository }}:{{ .kube_proxy.tag }}
   # Metrics Server will be supported with kops 1.19
   metricsServer:
     enabled: true
-    image: public.ecr.aws/eks-distro/kubernetes-sigs/metrics-server:v0.4.0-eks-1-18-1
+    image: {{ .metrics_server.repository }}:{{ .metrics_server.tag }}
   authentication:
     aws:
-      image: public.ecr.aws/eks-distro/kubernetes-sigs/aws-iam-authenticator:v0.5.2-eks-1-18-1
+      image: {{ .awsiamauth.repository }}:{{ .awsiamauth.tag }}
   kubeDNS:
     provider: CoreDNS
-    coreDNSImage: public.ecr.aws/eks-distro/coredns/coredns:v1.7.0-eks-1-18-1
+    coreDNSImage: {{ .coredns.repository }}:{{ .coredns.tag }}
     externalCoreFile: |
       .:53 {
           errors
@@ -95,10 +95,10 @@ spec:
           reload
       }
   masterKubelet:
-    podInfraContainerImage: public.ecr.aws/eks-distro/kubernetes/pause:v1.18.9-eks-1-18-1
+    podInfraContainerImage: {{ .pause.repository }}:{{ .pause.tag }}
   # kubelet might already be defined, append the following config
   kubelet:
-    podInfraContainerImage: public.ecr.aws/eks-distro/kubernetes/pause:v1.18.9-eks-1-18-1
+    podInfraContainerImage: {{ .pause.repository }}:{{ .pause.tag }}
 
 ---
 

@@ -13,27 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -x
-set -o errexit
-set -o nounset
-set -o pipefail
+set -eo pipefail
 
-CLONE_URL=$1
-REPOSITORY=$2
-TAG=$3
+#
+# NodePort setting
+#
+export KOPS_FEATURE_FLAGS=SpecOverrideFlag
+kops set cluster "${KOPS_CLUSTER_NAME}" 'cluster.spec.nodePortAccess=0.0.0.0/0'
 
-GOLANG_VERSION="1.15"
-
-MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
-OUTPUT_DIR="${OUTPUT_DIR:-${MAKE_ROOT}/_output}"
-
-source "${MAKE_ROOT}/build/lib/clone.sh"
-source "${MAKE_ROOT}/build/lib/binaries.sh"
-source "${MAKE_ROOT}/../../../build/lib/common.sh"
-
-mkdir -p $OUTPUT_DIR
-build::clone::release $CLONE_URL $REPOSITORY $TAG
-build::common::use_go_version $GOLANG_VERSION
-build::binaries::bins $MAKE_ROOT/$REPOSITORY $OUTPUT_DIR
-
-build::gather_licenses $MAKE_ROOT/$REPOSITORY $MAKE_ROOT/LICENSES
+kops update cluster --yes

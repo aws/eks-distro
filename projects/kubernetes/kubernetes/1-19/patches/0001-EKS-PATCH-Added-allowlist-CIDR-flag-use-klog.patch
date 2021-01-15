@@ -1,4 +1,4 @@
-From 86a72356c233c36dab0a6878e20f3e94f2197ab2 Mon Sep 17 00:00:00 2001
+From 7b619f13984860a8f12221c8eb6b0af2b9485498 Mon Sep 17 00:00:00 2001
 From: Micah Hausler <mhausler@amazon.com>
 Date: Wed, 19 Sep 2018 18:16:23 -0700
 Subject: --EKS-PATCH-- Added allowlist CIDR flag, use "klog"
@@ -18,27 +18,28 @@ should consider removing the non-inclusive flag.
 
 Signed-off-by: Jackson West <jgw@amazon.com>
 ---
- cmd/kube-apiserver/app/BUILD                 |  1 +
- cmd/kube-apiserver/app/dialer.go             | 46 ++++++++++
- cmd/kube-apiserver/app/options/BUILD         |  1 +
- cmd/kube-apiserver/app/options/options.go    |  9 ++
- cmd/kube-apiserver/app/options/validation.go | 15 ++++
- cmd/kube-apiserver/app/options/allowlist.go  |  9 ++
- cmd/kube-apiserver/app/server.go             |  6 ++
- pkg/kubeapiserver/options/BUILD              |  3 +
- pkg/kubeapiserver/options/ipnetslice.go      | 93 ++++++++++++++++++++
- pkg/kubeapiserver/options/ipnetslice_test.go | 36 ++++++++
- pkg/kubeapiserver/options/options.go         |  1 +
- pkg/registry/core/node/BUILD                 |  1 +
- pkg/registry/core/node/strategy.go           | 14 +++
- 13 files changed, 235 insertions(+)
+ cmd/kube-apiserver/app/BUILD                  |  1 +
+ cmd/kube-apiserver/app/dialer.go              | 46 +++++++++
+ cmd/kube-apiserver/app/options/BUILD          |  1 +
+ cmd/kube-apiserver/app/options/allowlist.go   |  9 ++
+ cmd/kube-apiserver/app/options/options.go     |  9 ++
+ .../app/options/options_test.go               |  1 +
+ cmd/kube-apiserver/app/options/validation.go  | 15 +++
+ cmd/kube-apiserver/app/server.go              |  6 ++
+ pkg/kubeapiserver/options/BUILD               |  3 +
+ pkg/kubeapiserver/options/ipnetslice.go       | 93 +++++++++++++++++++
+ pkg/kubeapiserver/options/ipnetslice_test.go  | 36 +++++++
+ pkg/kubeapiserver/options/options.go          |  2 +
+ pkg/registry/core/node/BUILD                  |  1 +
+ pkg/registry/core/node/strategy.go            | 14 +++
+ 14 files changed, 237 insertions(+)
  create mode 100644 cmd/kube-apiserver/app/dialer.go
  create mode 100644 cmd/kube-apiserver/app/options/allowlist.go
  create mode 100644 pkg/kubeapiserver/options/ipnetslice.go
  create mode 100644 pkg/kubeapiserver/options/ipnetslice_test.go
 
 diff --git a/cmd/kube-apiserver/app/BUILD b/cmd/kube-apiserver/app/BUILD
-index 513a69a5c5f..05d2aecdf1f 100644
+index 4f47775adfe..295e0ba3fa2 100644
 --- a/cmd/kube-apiserver/app/BUILD
 +++ b/cmd/kube-apiserver/app/BUILD
 @@ -5,6 +5,7 @@ go_library(
@@ -51,7 +52,7 @@ index 513a69a5c5f..05d2aecdf1f 100644
      importpath = "k8s.io/kubernetes/cmd/kube-apiserver/app",
 diff --git a/cmd/kube-apiserver/app/dialer.go b/cmd/kube-apiserver/app/dialer.go
 new file mode 100644
-index 00000000000..4a0486baa8a
+index 00000000000..3b67af3e45a
 --- /dev/null
 +++ b/cmd/kube-apiserver/app/dialer.go
 @@ -0,0 +1,46 @@
@@ -67,7 +68,7 @@ index 00000000000..4a0486baa8a
 +	"strings"
 +	"time"
 +
-+	"k8s.io/klog"
++	"k8s.io/klog/v2"
 +
 +	utilnet "k8s.io/apimachinery/pkg/util/net"
 +	kubeoptions "k8s.io/kubernetes/pkg/kubeapiserver/options"
@@ -102,7 +103,7 @@ index 00000000000..4a0486baa8a
 +	}
 +}
 diff --git a/cmd/kube-apiserver/app/options/BUILD b/cmd/kube-apiserver/app/options/BUILD
-index b833a85aeba..e66e8058e4b 100644
+index 3e8edb7302e..bc160481104 100644
 --- a/cmd/kube-apiserver/app/options/BUILD
 +++ b/cmd/kube-apiserver/app/options/BUILD
 @@ -13,6 +13,7 @@ go_library(
@@ -113,11 +114,26 @@ index b833a85aeba..e66e8058e4b 100644
      ],
      importpath = "k8s.io/kubernetes/cmd/kube-apiserver/app/options",
      deps = [
+diff --git a/cmd/kube-apiserver/app/options/allowlist.go b/cmd/kube-apiserver/app/options/allowlist.go
+new file mode 100644
+index 00000000000..d10ec4ebdda
+--- /dev/null
++++ b/cmd/kube-apiserver/app/options/allowlist.go
+@@ -0,0 +1,9 @@
++package options
++
++import (
++	kubeoptions "k8s.io/kubernetes/pkg/kubeapiserver/options"
++)
++
++var (
++	ProxyCIDRAllowlist kubeoptions.IPNetSlice = kubeoptions.DefaultProxyCIDRAllowlist
++)
 diff --git a/cmd/kube-apiserver/app/options/options.go b/cmd/kube-apiserver/app/options/options.go
-index e64604758db..0fc452410d3 100644
+index 1434cc181b4..5e44358b868 100644
 --- a/cmd/kube-apiserver/app/options/options.go
 +++ b/cmd/kube-apiserver/app/options/options.go
-@@ -56,6 +56,7 @@ type ServerRunOptions struct {
+@@ -60,6 +60,7 @@ type ServerRunOptions struct {
  	KubeletConfig             kubeletclient.KubeletClientConfig
  	KubernetesServiceNodePort int
  	MaxConnectionBytesPerSec  int64
@@ -125,7 +141,7 @@ index e64604758db..0fc452410d3 100644
  	// ServiceClusterIPRange is mapped to input provided by user
  	ServiceClusterIPRanges string
  	//PrimaryServiceClusterIPRange and SecondaryServiceClusterIPRange are the results
-@@ -122,6 +123,8 @@ func NewServerRunOptions() *ServerRunOptions {
+@@ -127,6 +128,8 @@ func NewServerRunOptions() *ServerRunOptions {
  		},
  		ServiceNodePortRange: kubeoptions.DefaultServiceNodePortRange,
  	}
@@ -134,9 +150,9 @@ index e64604758db..0fc452410d3 100644
  
  	// Overwrite the default for storage data format.
  	s.Etcd.DefaultStorageMediaType = "application/vnd.kubernetes.protobuf"
-@@ -200,6 +203,12 @@ func (s *ServerRunOptions) Flags() (fss cliflag.NamedFlagSets) {
+@@ -198,6 +201,12 @@ func (s *ServerRunOptions) Flags() (fss cliflag.NamedFlagSets) {
  		"A CIDR notation IP range from which to assign service cluster IPs. This must not "+
- 		"overlap with any IP ranges assigned to nodes for pods.")
+ 		"overlap with any IP ranges assigned to nodes or pods.")
  
 +	fs.Var(&s.ProxyCIDRAllowlist, "proxy-cidr-allowlist", ""+
 +		"A comma-separated list of CIDR IP ranges which the API server can communicate with.")
@@ -147,8 +163,20 @@ index e64604758db..0fc452410d3 100644
  	fs.Var(&s.ServiceNodePortRange, "service-node-port-range", ""+
  		"A port range to reserve for services with NodePort visibility. "+
  		"Example: '30000-32767'. Inclusive at both ends of the range.")
+diff --git a/cmd/kube-apiserver/app/options/options_test.go b/cmd/kube-apiserver/app/options/options_test.go
+index 2149c0bed25..c618539dd05 100644
+--- a/cmd/kube-apiserver/app/options/options_test.go
++++ b/cmd/kube-apiserver/app/options/options_test.go
+@@ -126,6 +126,7 @@ func TestAddFlags(t *testing.T) {
+ 		MasterCount:            5,
+ 		EndpointReconcilerType: string(reconcilers.LeaseEndpointReconcilerType),
+ 		AllowPrivileged:        false,
++		ProxyCIDRAllowlist:     kubeoptions.NewIPNetSlice(),
+ 		GenericServerRunOptions: &apiserveroptions.ServerRunOptions{
+ 			AdvertiseAddress:            net.ParseIP("192.168.10.10"),
+ 			CorsAllowedOriginList:       []string{"10.10.10.100", "10.10.10.200"},
 diff --git a/cmd/kube-apiserver/app/options/validation.go b/cmd/kube-apiserver/app/options/validation.go
-index 4f94e438d00..5926205e201 100644
+index 25519a67832..5413b928e5d 100644
 --- a/cmd/kube-apiserver/app/options/validation.go
 +++ b/cmd/kube-apiserver/app/options/validation.go
 @@ -31,6 +31,18 @@ import (
@@ -170,7 +198,7 @@ index 4f94e438d00..5926205e201 100644
  // TODO: Longer term we should read this from some config store, rather than a flag.
  // validateClusterIPFlags is expected to be called after Complete()
  func validateClusterIPFlags(options *ServerRunOptions) []error {
-@@ -134,6 +146,9 @@ func (s *ServerRunOptions) Validate() []error {
+@@ -162,6 +174,9 @@ func (s *ServerRunOptions) Validate() []error {
  		errs = append(errs, fmt.Errorf("--apiserver-count should be a positive number, but value '%d' provided", s.MasterCount))
  	}
  	errs = append(errs, s.Etcd.Validate()...)
@@ -179,27 +207,12 @@ index 4f94e438d00..5926205e201 100644
 +	}
  	errs = append(errs, validateClusterIPFlags(s)...)
  	errs = append(errs, validateServiceNodePort(s)...)
- 	errs = append(errs, s.SecureServing.Validate()...)
-diff --git a/cmd/kube-apiserver/app/options/allowlist.go b/cmd/kube-apiserver/app/options/allowlist.go
-new file mode 100644
-index 00000000000..6accbd0ab2c
---- /dev/null
-+++ b/cmd/kube-apiserver/app/options/allowlist.go
-@@ -0,0 +1,9 @@
-+package options
-+
-+import (
-+	kubeoptions "k8s.io/kubernetes/pkg/kubeapiserver/options"
-+)
-+
-+var (
-+	ProxyCIDRAllowlist kubeoptions.IPNetSlice = kubeoptions.DefaultProxyCIDRAllowlist
-+)
+ 	errs = append(errs, validateAPIPriorityAndFairness(s)...)
 diff --git a/cmd/kube-apiserver/app/server.go b/cmd/kube-apiserver/app/server.go
-index 70a496913fd..e7d3a51767c 100644
+index 7c189ab10ca..8d6d59ffb7f 100644
 --- a/cmd/kube-apiserver/app/server.go
 +++ b/cmd/kube-apiserver/app/server.go
-@@ -172,6 +172,12 @@ func CreateServerChain(completedOptions completedServerRunOptions, stopCh <-chan
+@@ -187,6 +187,12 @@ func CreateServerChain(completedOptions completedServerRunOptions, stopCh <-chan
  		return nil, err
  	}
  
@@ -213,7 +226,7 @@ index 70a496913fd..e7d3a51767c 100644
  	apiExtensionsConfig, err := createAPIExtensionsConfig(*kubeAPIServerConfig.GenericConfig, kubeAPIServerConfig.ExtraConfig.VersionedInformers, pluginInitializer, completedOptions.ServerRunOptions, completedOptions.MasterCount,
  		serviceResolver, webhook.NewDefaultAuthenticationInfoResolverWrapper(proxyTransport, kubeAPIServerConfig.GenericConfig.EgressSelector, kubeAPIServerConfig.GenericConfig.LoopbackClientConfig))
 diff --git a/pkg/kubeapiserver/options/BUILD b/pkg/kubeapiserver/options/BUILD
-index f0b9aabbeb8..3dfc3f00a39 100644
+index bd631e32707..a1c9f3e15bd 100644
 --- a/pkg/kubeapiserver/options/BUILD
 +++ b/pkg/kubeapiserver/options/BUILD
 @@ -7,6 +7,7 @@ go_library(
@@ -235,7 +248,7 @@ index f0b9aabbeb8..3dfc3f00a39 100644
      embed = [":go_default_library"],
 diff --git a/pkg/kubeapiserver/options/ipnetslice.go b/pkg/kubeapiserver/options/ipnetslice.go
 new file mode 100644
-index 00000000000..c38fa6cd3ce
+index 00000000000..8cc2fe76574
 --- /dev/null
 +++ b/pkg/kubeapiserver/options/ipnetslice.go
 @@ -0,0 +1,93 @@
@@ -375,7 +388,7 @@ index 00000000000..f901214d692
 +	}
 +}
 diff --git a/pkg/kubeapiserver/options/options.go b/pkg/kubeapiserver/options/options.go
-index e38bd99996d..e8b141016e2 100644
+index e38bd99996d..1738823f994 100644
 --- a/pkg/kubeapiserver/options/options.go
 +++ b/pkg/kubeapiserver/options/options.go
 @@ -29,3 +29,4 @@ var DefaultServiceNodePortRange = utilnet.PortRange{Base: 30000, Size: 2768}
@@ -396,7 +409,7 @@ index 0a76925b89b..dffe8ddd95e 100644
          "//pkg/apis/core:go_default_library",
          "//pkg/apis/core/validation:go_default_library",
 diff --git a/pkg/registry/core/node/strategy.go b/pkg/registry/core/node/strategy.go
-index 1ca914b6a49..7a5c7b49ae7 100644
+index aaddb69e72a..56fed8cb5ae 100644
 --- a/pkg/registry/core/node/strategy.go
 +++ b/pkg/registry/core/node/strategy.go
 @@ -35,6 +35,7 @@ import (
@@ -407,7 +420,7 @@ index 1ca914b6a49..7a5c7b49ae7 100644
  	"k8s.io/kubernetes/pkg/api/legacyscheme"
  	api "k8s.io/kubernetes/pkg/apis/core"
  	"k8s.io/kubernetes/pkg/apis/core/validation"
-@@ -259,6 +260,19 @@ func ResourceLocation(getter ResourceGetter, connection client.ConnectionInfoGet
+@@ -242,6 +243,19 @@ func ResourceLocation(getter ResourceGetter, connection client.ConnectionInfoGet
  		return nil, nil, err
  	}
  

@@ -1,4 +1,4 @@
-From 1021b2d436d16367b693fdf204680f857d8bec33 Mon Sep 17 00:00:00 2001
+From abcd34690ee11b646175f68b09681bf3d4c6ec2c Mon Sep 17 00:00:00 2001
 From: Aleksandr Melnik <melnikal@amazon.com>
 Date: Wed, 8 Jan 2020 17:23:06 -0800
 Subject: --EKS-PATCH-- Lookup sts endpoint from custom map
@@ -8,17 +8,17 @@ Signed-off-by: Jackson West <jgw@amazon.com>
 ---
  .../k8s.io/legacy-cloud-providers/aws/BUILD   |  1 +
  .../k8s.io/legacy-cloud-providers/aws/aws.go  | 40 +++++++-
- .../legacy-cloud-providers/aws/aws_test.go    | 58 ++++++++----
+ .../legacy-cloud-providers/aws/aws_test.go    | 56 +++++++----
  vendor/github.com/aws/aws-sdk-go/aws/BUILD    |  1 +
  .../github.com/aws/aws-sdk-go/aws/arn/BUILD   | 23 +++++
  .../github.com/aws/aws-sdk-go/aws/arn/arn.go  | 93 +++++++++++++++++++
  vendor/modules.txt                            |  1 +
- 7 files changed, 198 insertions(+), 19 deletions(-)
+ 7 files changed, 197 insertions(+), 18 deletions(-)
  create mode 100644 vendor/github.com/aws/aws-sdk-go/aws/arn/BUILD
  create mode 100644 vendor/github.com/aws/aws-sdk-go/aws/arn/arn.go
 
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/BUILD b/staging/src/k8s.io/legacy-cloud-providers/aws/BUILD
-index 0a4b5b69107..19af207bee1 100644
+index 47d1f0ff5a7..eb96ef59b59 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/BUILD
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/BUILD
 @@ -52,6 +52,7 @@ go_library(
@@ -30,7 +30,7 @@ index 0a4b5b69107..19af207bee1 100644
          "//vendor/github.com/aws/aws-sdk-go/aws/credentials:go_default_library",
          "//vendor/github.com/aws/aws-sdk-go/aws/credentials/ec2rolecreds:go_default_library",
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-index aca86cdade3..a115c547047 100644
+index acc1d427fe7..d4f52f455ca 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
 @@ -33,6 +33,7 @@ import (
@@ -41,7 +41,7 @@ index aca86cdade3..a115c547047 100644
  	"github.com/aws/aws-sdk-go/aws/awserr"
  	"github.com/aws/aws-sdk-go/aws/credentials"
  	"github.com/aws/aws-sdk-go/aws/credentials/ec2rolecreds"
-@@ -735,7 +736,10 @@ func newAWSSDKProvider(cfg *CloudConfig) (*awsSDKProvider, error) {
+@@ -741,7 +742,10 @@ func newAWSSDKProvider(cfg *CloudConfig) (*awsSDKProvider, error) {
  		if err != nil {
  			return nil, err
  		}
@@ -53,7 +53,7 @@ index aca86cdade3..a115c547047 100644
  		provider = &stscreds.AssumeRoleProvider{
  			Client:  sts.New(sess, aws.NewConfig().WithRegion(regionName).WithEndpoint(stsEndpoint)),
  			RoleARN: cfg.Global.RoleARN,
-@@ -4776,3 +4780,37 @@ func getInitialAttachDetachDelay(status string) time.Duration {
+@@ -4830,3 +4834,37 @@ func getInitialAttachDetachDelay(status string) time.Duration {
  	}
  	return volumeAttachmentStatusInitialDelay
  }
@@ -92,19 +92,10 @@ index aca86cdade3..a115c547047 100644
 +	return fmt.Sprintf("sts.%s.%s", region, suffix), nil
 +}
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
-index 0cfe6645dcf..ef46452c3bd 100644
+index 69564f6357c..bfa66fadb1f 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
-@@ -34,7 +34,7 @@ import (
- 	"github.com/stretchr/testify/mock"
- 	"github.com/stretchr/testify/require"
- 
--	"k8s.io/api/core/v1"
-+	v1 "k8s.io/api/core/v1"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	"k8s.io/apimachinery/pkg/types"
- 	"k8s.io/apimachinery/pkg/util/sets"
-@@ -1983,22 +1983,44 @@ func newMockedFakeAWSServices(id string) *FakeAWSServices {
+@@ -2565,24 +2565,46 @@ func newMockedFakeAWSServices(id string) *FakeAWSServices {
  	return s
  }
  
@@ -166,6 +157,8 @@ index 0cfe6645dcf..ef46452c3bd 100644
 +		require.NoError(t, err)
 +	})
  }
+ 
+ func TestCloud_sortELBSecurityGroupList(t *testing.T) {
 diff --git a/vendor/github.com/aws/aws-sdk-go/aws/BUILD b/vendor/github.com/aws/aws-sdk-go/aws/BUILD
 index 0f3f2653695..95c41459841 100644
 --- a/vendor/github.com/aws/aws-sdk-go/aws/BUILD
@@ -307,12 +300,12 @@ index 00000000000..1c496742903
 +		arn.Resource
 +}
 diff --git a/vendor/modules.txt b/vendor/modules.txt
-index c85fbc08062..45f38259028 100644
+index 68d9a89f184..007ac45d6dd 100644
 --- a/vendor/modules.txt
 +++ b/vendor/modules.txt
-@@ -74,6 +74,7 @@ github.com/armon/circbuf
- github.com/asaskevich/govalidator
- # github.com/aws/aws-sdk-go v1.28.2 => github.com/aws/aws-sdk-go v1.28.2
+@@ -130,6 +130,7 @@ github.com/asaskevich/govalidator
+ ## explicit
+ # github.com/aws/aws-sdk-go => github.com/aws/aws-sdk-go v1.28.2
  github.com/aws/aws-sdk-go/aws
 +github.com/aws/aws-sdk-go/aws/arn
  github.com/aws/aws-sdk-go/aws/awserr

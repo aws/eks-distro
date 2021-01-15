@@ -18,7 +18,7 @@ TARGET=$(DEFAULT_GOAL)
 endif
 
 presubmit-cleanup = \
-	if [ `echo $(1)|awk '{$1=$1};1'` == "build" ]; then \
+	if [ `echo $(1)|awk '{$1==$1};1'` == "build" ]; then \
 		make -C $(2) clean; \
 	fi
 
@@ -33,7 +33,7 @@ build: makes
 
 .PHONY: release
 release: makes
-	AWS_DEFAULT_PROFILE=$(RELEASE_AWS_PROFILE) bash build/lib/create_final_dir.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET)
+	AWS_DEFAULT_PROFILE=$(RELEASE_AWS_PROFILE) bash release/lib/create_final_dir.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET)
 	@echo 'Done' $(TARGET)
 
 .PHONY: binaries
