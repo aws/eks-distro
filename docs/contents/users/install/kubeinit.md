@@ -1,6 +1,13 @@
-# Installation
+# EKS Distro deployment using Kubeinit on top of Libvirt
 
-## Libvirt
+Follow these instructions to create an EKS-D Kubernetes cluster using
+Kubeinit.
+
+[KubeInit](https://github.com/kubeinit/kubeinit)
+is an Ansible collection to ease the deployment
+of multiple upstream Kubernetes distributions.
+The following sections will describe a 3 controllers,
+1 compute deployment on a Libvirt host.
 
 Libvirt deployments are based in multiple guests VMs
 deployed on a common hypervisor host.
@@ -8,17 +15,7 @@ There are multiple use cases that can fit this scenario
 for instance continuous integration deployments or
 development environments.
 
-### KubeInit
-
-[KubeInit](https://github.com/kubeinit/kubeinit)
-is an Ansible collection to ease the deployment
-of multiple upstream Kubernetes distributions.
-The following sections will describe a 3 controllers,
-1 compute deployment on a Libvirt host using Kubeinit as
-the Ansible automation to configure the requirements
-to have a functional cluster.
-
-#### Components
+### Components
 
 Here is a list of the components that are currently deployed:
 
@@ -39,7 +36,7 @@ Here is a list of the components that are currently deployed:
 * Controller nodes: 3
 * Worker nodes: 1
 
-#### Deploying
+### Deploying
 
 The deployment procedure is the same as it is for the other
 Kubernetes distributions that can be deployed with KubeInit.
@@ -66,7 +63,8 @@ ansible-playbook \
     ./playbooks/$distro.yml
 ```
 
-This will deploy by default a 3 controllers 1 compute cluster.
+This will deploy by default a 3 controllers 1 compute cluster
+in a single hypervisor.
 
 The deployment time was fairly quick (around 15 minutes):
 
@@ -96,7 +94,7 @@ user	1m24.846s
 sys	0m24.366s
 ```
 
-Let's run some commands in the cluster.
+Now the deployment can be verified by executing a few checks.
 
 ```bash
 [root@eks-service-01 ~]: curl --user registryusername:registrypassword \
