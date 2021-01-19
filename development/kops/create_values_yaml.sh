@@ -45,7 +45,7 @@ function get_container_latest_tag() {
     DEFAULT_TAG="${2}"
     if [ "${REPOSITORY_URI}" == "${DEFAULT_REPOSITORY_URI}" ]
     then
-        echo "${TAG}"
+        echo "${DEFAULT_TAG}"
         return
     fi
     QUERY='[.imageDetails[] | select(.imageTags != null)] | sort_by(.imagePushedAt)|reverse|first|.imageTags[0]'
