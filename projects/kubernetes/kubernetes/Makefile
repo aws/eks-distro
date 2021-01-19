@@ -106,6 +106,10 @@ release: checksums images
 .PHONY: all
 all: release
 
+.PHONY: test
+test: binaries
+	build/run_tests.sh $(RELEASE_BRANCH)
+
 .PHONY: clean
 clean:
 	rm -rf ./kubernetes ./_output
