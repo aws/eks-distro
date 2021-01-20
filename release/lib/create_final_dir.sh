@@ -34,31 +34,43 @@ if [ -z "$3" ]; then
   exit 1
 fi
 
+if [ "$AWS_ROLE_ARN" == "" ]; then
+    echo "Empty AWS_ROLE_ARN, this script must be run in a postsubmit pod with IAM Roles for Service Accounts"
+    exit 1
+fi
+
+cat << EOF > config
+[default]
+output = json
+region = us-west-2
+role_arn=$AWS_ROLE_ARN
+web_identity_token_file=/var/run/secrets/eks.amazonaws.com/serviceaccount/token
+
+[profile release-prod]
+role_arn = arn:aws:iam::379412251201:role/ArtifactsDeploymentRole
+region = us-east-1
+source_profile=default
+EOF
+
+export AWS_CONFIG_FILE=$(pwd)/config
+export AWS_DEFAULT_PROFILE=release-prod
+
 RELEASE_BRANCH="$1"
 RELEASE="$2"
 ARTIFACT_BUCKET="$3"
+PROJECT="$4"
 DEST_DIR=kubernetes-${RELEASE_BRANCH}/releases/${RELEASE}/artifacts
 
-readonly TAR_PROJECTS=(
-  containernetworking/plugins
-  etcd-io/etcd
-  kubernetes-sigs/aws-iam-authenticator
-  kubernetes/kubernetes
-)
-
-for project in "${TAR_PROJECTS[@]}";
-do
-  if [ $project = "kubernetes/kubernetes" ]; then
-    SOURCE_DIR=projects/${project}/_output/${RELEASE_BRANCH}
-    GIT_TAG=$(cat projects/${project}/${RELEASE_BRANCH}/GIT_TAG)
-  else
-    SOURCE_DIR=projects/${project}/_output/tar/
-    GIT_TAG=$(cat projects/${project}/GIT_TAG)
-  fi
-  REPO="$(cut -d '/' -f2 <<< ${project})"
-  ARTIFACT_DIR=${DEST_DIR}/${REPO}/${GIT_TAG}
-  mkdir -p $ARTIFACT_DIR
-  cp -r $SOURCE_DIR/* $ARTIFACT_DIR
-done
+if [ $PROJECT = "kubernetes/kubernetes" ]; then
+  SOURCE_DIR=projects/${PROJECT}/_output/${RELEASE_BRANCH}
+  GIT_TAG=$(cat projects/${PROJECT}/${RELEASE_BRANCH}/GIT_TAG)
+else
+  SOURCE_DIR=projects/${PROJECT}/_output/tar/
+  GIT_TAG=$(cat projects/${PROJECT}/GIT_TAG)
+fi
+REPO="$(cut -d '/' -f2 <<< ${PROJECT})"
+ARTIFACT_DIR=${DEST_DIR}/${REPO}/${GIT_TAG}
+mkdir -p $ARTIFACT_DIR || true
+cp -r $SOURCE_DIR/* $ARTIFACT_DIR
 
 aws s3 sync $DEST_DIR s3://${ARTIFACT_BUCKET}/${DEST_DIR} --acl public-read
