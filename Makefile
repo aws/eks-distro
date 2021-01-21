@@ -34,7 +34,20 @@ build: makes
 .PHONY: postsubmit-conformance
 postsubmit-conformance:
 	go vet cmd/main_postsubmit.go
-	go run cmd/main_postsubmit.go "release" ${RELEASE_BRANCH} ${RELEASE} ${DEVELOPMENT} ${AWS_REGION} ${AWS_ACCOUNT_ID} ${BASE_IMAGE} ${IMAGE_REPO} ${GO_RUNNER_IMAGE} ${KUBE_PROXY_BASE_IMAGE} $(ARTIFACT_BUCKET) false
+	go run cmd/main_postsubmit.go \
+		--target=release \
+		--release-branch=${RELEASE_BRANCH} \
+		--release=${RELEASE} \
+		--development=${DEVELOPMENT} \
+		--region=${AWS_REGION} \
+		--account-id=${AWS_ACCOUNT_ID} \
+		--base-image=${BASE_IMAGE} \
+		--image-repo=${IMAGE_REPO} \
+		--go-runner-image=${GO_RUNNER_IMAGE} \
+		--kube-proxy-base=${KUBE_PROXY_BASE_IMAGE} \
+		--artifact-bucket=$(ARTIFACT_BUCKET) \
+		--upload-to-s3=false \
+		--dry-run=false
 	bash development/kops/prow.sh
 
 .PHONY: release
