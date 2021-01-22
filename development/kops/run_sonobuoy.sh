@@ -41,7 +41,13 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 cd $DIR
 
 echo "Download sonobuoy"
-wget -qO- https://github.com/vmware-tanzu/sonobuoy/releases/download/v0.19.0/sonobuoy_0.19.0_linux_386.tar.gz |tar -xz
+if [ "$(uname)" == "Darwin" ]
+then
+  SONOBUOY=https://github.com/vmware-tanzu/sonobuoy/releases/download/v0.19.0/sonobuoy_0.19.0_darwin_amd64.tar.gz
+else
+  SONOBUOY=https://github.com/vmware-tanzu/sonobuoy/releases/download/v0.19.0/sonobuoy_0.19.0_linux_386.tar.gz
+fi
+wget -qO- ${SONOBUOY} |tar -xz
 rm -f LICENSE
 chmod 755 sonobuoy
 
