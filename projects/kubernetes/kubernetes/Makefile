@@ -74,7 +74,7 @@ images: binaries pause
 		--local context=./_output/pause \
 		--opt build-arg:BASE_IMAGE=$(GO_RUNNER_IMAGE) \
 		--opt build-arg:VERSION=$(IMAGE_TAG) \
-		--output type=image,oci-mediatypes=true,name=$(PAUSE_IMAGE),push=true
+		--output type=image,oci-mediatypes=true,\"name=$(PAUSE_IMAGE),$(IMAGE_REPO)/$(IMAGE_REPO_PREFIX)/$(PAUSE_IMAGE_NAME):3.2\",push=true
 
 .PHONY: docker
 docker: binaries pause
