@@ -1,8 +1,9 @@
 ## Using EKS Distro 
 
-The best way to try out EKS Distro (EKS-D) is to use one of the Community
-procedures (such as [Starting EKS-D with kubeadm](../users/install/kubeadm-onsite.md))
-or [Partners](../community/partners.md) procedures to install and start an EKS-D cluster.
+The best way to try out EKS Distro (EKS-D) is to use one of the
+[Partners](../community/partners.md) procedures to install and start an EKS-D cluster.
+Community procedures (such as [Starting EKS-D with kubeadm](../users/install/kubeadm-onsite.md))
+are also available
 If you want to build EKS-D from source code, follow the instructions
 in [Build Prerequisites](build-prerequisites.md) and [Build EKS-D](build.md).
 

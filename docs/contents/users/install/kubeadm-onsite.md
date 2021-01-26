@@ -21,13 +21,13 @@ following prerequisites:
 
 1. Make sure SELinux is disabled by setting *SELINUX=disabled* in the */etc/syconfig/selinux* file. To turn it off immediately, type:
 
-    ```
+    ```bash
     sudo setenforce 0
     ```
 
 1. Make sure that swap is disabled and that no swap areas are reinstated on reboot. For example, type:
 
-    ```
+    ```bash
     sudo swapoff -a
     ```
 
@@ -39,10 +39,13 @@ following prerequisites:
 opening ports required by Kubernetes as described in
 [Check required ports](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/#check-required-ports):
 
+```bash
         sudo yum install firewalld -y
         sudo systemctl start firewalld
         sudo systemctl enable firewalld
         sudo firewall-cmd --zone=public --permanent --add-port=6443/tcp --add-port=2379-2380/tcp --add-port=10250-10252/tcp
+
+```
 
 ## Install runtime and supporting services
 
@@ -154,7 +157,6 @@ cluster from your laptop:
 ## Add nodes to the cluster
 
 Join any number of worker nodes by configuring compatible Linux systems, as described in the Prerequisites section. Then run the following on each node as root, using the IP address, token and certificate hash output by the kubeadm:
-
 
         cd /usr/bin/
         sudo wget sudo wget https://distro.eks.amazonaws.com/kubernetes-1-18/releases/1/artifacts/kubernetes/v1.18.9/bin/linux/amd64/kubeadm
