@@ -86,6 +86,7 @@ build: local-images tarballs
 .PHONY: release
 release: images tarballs
 	$(BASE_DIRECTORY)/release/copy_artifacts.sh $(RELEASE_BRANCH) $(RELEASE) etcd-io/etcd
+	$(BASE_DIRECTORY)/release/s3_sync.sh $(ARTIFACT_BUCKET)
 	echo "Done etcd-io/etcd"
 
 .PHONY: all

@@ -102,6 +102,7 @@ build: checksums
 .PHONY: release
 release: checksums images
 	$(BASE_DIRECTORY)/release/copy_artifacts.sh $(RELEASE_BRANCH) $(RELEASE) kubernetes/kubernetes
+	$(BASE_DIRECTORY)/release/s3_sync.sh $(ARTIFACT_BUCKET)
 	echo "Done kubernetes/kubernetes"
 
 .PHONY: all
