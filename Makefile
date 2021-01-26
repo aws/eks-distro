@@ -10,7 +10,6 @@ KUBE_BASE_TAG?=v0.4.2-ea45689a0da457711b15fa1245338cd0b636ad4b
 export KUBE_PROXY_BASE_IMAGE?=$(IMAGE_REPO)/kubernetes/kube-proxy-base:$(KUBE_BASE_TAG)
 export GO_RUNNER_IMAGE?=$(IMAGE_REPO)/kubernetes/go-runner:$(KUBE_BASE_TAG)
 ARTIFACT_BUCKET?=my-s3-bucket
-RELEASE_AWS_PROFILE?=default
 
 ifdef MAKECMDGOALS
 TARGET=$(MAKECMDGOALS)
@@ -50,9 +49,14 @@ postsubmit-conformance:
 		--dry-run=false
 	bash development/kops/prow.sh
 
+.PHONY: upload
+upload:
+	release/create_s3_bucket.sh $(ARTIFACT_BUCKET)
+	release/s3_sync.sh $(ARTIFACT_BUCKET)
+	@echo 'Done' $(TARGET)
+
 .PHONY: release
 release: makes
-	AWS_DEFAULT_PROFILE=$(RELEASE_AWS_PROFILE) bash release/lib/create_final_dir.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET)
 	@echo 'Done' $(TARGET)
 
 .PHONY: binaries
@@ -75,6 +79,7 @@ update-kubernetes-version:
 clean: makes
 	@echo 'Done' $(TARGET)
 
+.PHONY: makes
 makes:
 	make -C projects/kubernetes/release $(TARGET)
 	$(call presubmit-cleanup, $(TARGET), "projects/kubernetes/release")

@@ -1,6 +1,10 @@
+export RELEASE_BRANCH?=1-18
+export RELEASE?=1
+
 REPO?=plugins
 CLONE_URL?=https://github.com/containernetworking/$(REPO).git
 GIT_TAG?=$(shell cat GIT_TAG)
+BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
 
 ifeq ("$(REPO)","")
 	$(error No repository name was provided.)
@@ -23,7 +27,9 @@ tarballs:  binaries
 	build/create_tarballs.sh $(REPO) $(GIT_TAG)
 
 .PHONY: release
-release: tarballs
+release:
+	$(BASE_DIRECTORY)/release/copy_artifacts.sh $(RELEASE_BRANCH) $(RELEASE) containernetworking/plugins
+	echo "Done kubernetes/kubernetes"
 
 .PHONY: all
 all: release

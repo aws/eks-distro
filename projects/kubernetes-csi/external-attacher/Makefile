@@ -1,6 +1,10 @@
+export RELEASE_BRANCH?=1-18
+export RELEASE?=1
+
 REPO?=external-attacher
 CLONE_URL?=https://github.com/kubernetes-csi/$(REPO).git
 GIT_TAG?=$(shell cat GIT_TAG)
+BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
 
 ifeq ("$(REPO)","")
 	$(error No repository name was provided.)
@@ -17,9 +21,6 @@ endif
 DEVELOPMENT?=true
 AWS_ACCOUNT_ID?=$(shell aws sts get-caller-identity --query Account --output text)
 AWS_REGION?=us-west-2
-
-RELEASE_BRANCH?="1-18"
-RELEASE?="1"
 
 MAKE_ROOT=$(shell cd "$(shell dirname "${BASH_SOURCE[0]}")" && pwd -P)
 BASE_REPO?=$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
@@ -79,7 +80,8 @@ docker-push:
 build: local-images
 	
 .PHONY: release
-release: images
+release:
+	echo "Done kubernetes-csi/external-attacher"
 
 .PHONY: all
 all: release

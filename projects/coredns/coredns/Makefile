@@ -1,6 +1,10 @@
+export RELEASE_BRANCH?=1-18
+export RELEASE?=1
+
 REPO?=coredns
 CLONE_URL?=https://github.com/coredns/$(REPO).git
 GIT_TAG?=$(shell cat GIT_TAG)
+BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
 
 ifeq ("$(CLONE_URL)","")
 	$(error No clone url was provided.)	
@@ -13,9 +17,6 @@ endif
 ifeq ("$(GIT_TAG)","")
 	$(error No git tag was provided.)	
 endif
-
-RELEASE_BRANCH?="1-18"
-RELEASE?="1"
 
 DEVELOPMENT?=true
 AWS_REGION?=us-west-2
@@ -80,7 +81,8 @@ docker-push:
 build: local-images
 
 .PHONY: release
-release: images
+release:
+	echo "Done coredns/coredns"
 
 .PHONY: all
 all: release

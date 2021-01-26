@@ -1,14 +1,13 @@
+export RELEASE_BRANCH?=1-18
+export RELEASE?=1
+
 REPOSITORY?=kubernetes
 CLONE_URL?=https://github.com/kubernetes/$(REPOSITORY).git
-
-RELEASE_BRANCH?=1-18
 GIT_TAG?=$(shell cat ./$(RELEASE_BRANCH)/GIT_TAG)
+BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
 
 AWS_ACCOUNT_ID?=$(shell aws sts get-caller-identity --query Account --output text)
 AWS_REGION?=us-west-2
-
-RELEASE_BRANCH?=1-18
-RELEASE?=1
 
 BASE_REPO?=$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
 GO_RUNNER_IMAGE_NAME?=kubernetes/go-runner
@@ -94,14 +93,16 @@ docker-push:
 	docker push $(IMAGE_REPO)/$(IMAGE_REPO_PREFIX)/$(PAUSE_IMAGE_NAME):3.2
 
 .PHONY: checksums
-checksums: tarballs local-images
+checksums:
 	build/create_release_checksums.sh $(RELEASE_BRANCH)
 
 .PHONY: build
 build: checksums
 
 .PHONY: release
-release: checksums images
+release:
+	$(BASE_DIRECTORY)/release/copy_artifacts.sh $(RELEASE_BRANCH) $(RELEASE) kubernetes/kubernetes
+	echo "Done kubernetes/kubernetes"
 
 .PHONY: all
 all: release
