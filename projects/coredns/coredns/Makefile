@@ -81,7 +81,7 @@ docker-push:
 build: local-images
 
 .PHONY: release
-release:
+release: images
 	echo "Done coredns/coredns"
 
 .PHONY: all

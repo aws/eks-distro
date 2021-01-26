@@ -85,7 +85,7 @@ tarballs:
 build: local-images tarballs
 
 .PHONY: release
-release:
+release: images tarballs
 	echo "Done kubernetes-sigs/metrics-server"
 
 .PHONY: all

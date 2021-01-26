@@ -56,7 +56,7 @@ upload:
 	@echo 'Done' $(TARGET)
 
 .PHONY: release
-release: makes
+release: makes upload
 	@echo 'Done' $(TARGET)
 
 .PHONY: binaries

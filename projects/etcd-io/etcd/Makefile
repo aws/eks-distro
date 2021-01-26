@@ -84,7 +84,7 @@ tarballs:
 build: local-images tarballs
 
 .PHONY: release
-release:
+release: images tarballs
 	$(BASE_DIRECTORY)/release/copy_artifacts.sh $(RELEASE_BRANCH) $(RELEASE) etcd-io/etcd
 	echo "Done etcd-io/etcd"
 

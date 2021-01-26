@@ -84,7 +84,7 @@ tarballs:
 build: local-images tarballs
 
 .PHONY: release
-release:
+release: images tarballs
 	echo "Done kubernetes-sigs/aws-iam-authenticator"
 
 .PHONY: all

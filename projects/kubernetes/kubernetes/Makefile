@@ -93,14 +93,14 @@ docker-push:
 	docker push $(IMAGE_REPO)/$(IMAGE_REPO_PREFIX)/$(PAUSE_IMAGE_NAME):3.2
 
 .PHONY: checksums
-checksums:
+checksums: tarballs local-images
 	build/create_release_checksums.sh $(RELEASE_BRANCH)
 
 .PHONY: build
 build: checksums
 
 .PHONY: release
-release:
+release: checksums images
 	$(BASE_DIRECTORY)/release/copy_artifacts.sh $(RELEASE_BRANCH) $(RELEASE) kubernetes/kubernetes
 	echo "Done kubernetes/kubernetes"
 

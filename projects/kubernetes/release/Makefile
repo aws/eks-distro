@@ -115,7 +115,7 @@ clean:
 build: local-images
 
 .PHONY: release
-release:
+release: images
 	echo "Done kubernetes/release"
 
 .PHONY: all

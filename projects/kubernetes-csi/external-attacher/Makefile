@@ -80,7 +80,7 @@ docker-push:
 build: local-images
 	
 .PHONY: release
-release:
+release: images
 	echo "Done kubernetes-csi/external-attacher"
 
 .PHONY: all

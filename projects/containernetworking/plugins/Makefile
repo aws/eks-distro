@@ -27,7 +27,7 @@ tarballs:  binaries
 	build/create_tarballs.sh $(REPO) $(GIT_TAG)
 
 .PHONY: release
-release:
+release: tarballs
 	$(BASE_DIRECTORY)/release/copy_artifacts.sh $(RELEASE_BRANCH) $(RELEASE) containernetworking/plugins
 	echo "Done kubernetes/kubernetes"
 
