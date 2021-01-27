@@ -126,7 +126,7 @@ build: local-images
 
 .PHONY: release
 release: images
-	echo "Done kubernetes-csi/external-snapshotter"
+	echo "Done $(COMPONENT)"
 
 .PHONY: all
 all: release

@@ -23,7 +23,7 @@ BASE_TAG?=$(shell cat $(MAKE_ROOT)/../../../EKS_DISTRO_BASE_TAG_FILE)
 BASE_IMAGE?=$(BASE_REPO)/$(BASE_IMAGE_NAME):$(BASE_TAG)
 
 IMAGE_REPO?=$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
-IMAGE_NAME?=kubernetes-sigs/metrics-server
+IMAGE_NAME?=$(COMPONENT)
 IMAGE_TAG?=$(GIT_TAG)-eks-${RELEASE_BRANCH}-${RELEASE}
 IMAGE?=$(IMAGE_REPO)/$(IMAGE_NAME):$(IMAGE_TAG)
 
@@ -80,7 +80,7 @@ build: local-images tarballs
 
 .PHONY: release
 release: images tarballs
-	echo "Done kubernetes-sigs/metrics-server"
+	echo "Done $(COMPONENT)"
 
 .PHONY: all
 all: release

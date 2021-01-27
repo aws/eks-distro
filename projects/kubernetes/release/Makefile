@@ -111,7 +111,7 @@ build: local-images
 
 .PHONY: release
 release: images
-	echo "Done kubernetes/release"
+	echo "Done $(COMPONENT)"
 
 .PHONY: all
 all: release

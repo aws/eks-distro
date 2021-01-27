@@ -23,7 +23,7 @@ BASE_TAG?=$(shell cat $(MAKE_ROOT)/../../../EKS_DISTRO_BASE_TAG_FILE)
 BASE_IMAGE?=$(BASE_REPO)/$(BASE_IMAGE_NAME):$(BASE_TAG)
 
 IMAGE_REPO?=$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
-IMAGE_NAME?=etcd-io/etcd
+IMAGE_NAME?=$(COMPONENT)
 IMAGE_TAG?=$(GIT_TAG)-eks-${RELEASE_BRANCH}-${RELEASE}
 IMAGE?=$(IMAGE_REPO)/$(IMAGE_NAME):$(IMAGE_TAG)
 
@@ -79,9 +79,9 @@ build: local-images tarballs
 
 .PHONY: release
 release: images tarballs
-	$(BASE_DIRECTORY)/release/copy_artifacts.sh etcd-io/etcd $(RELEASE_BRANCH) $(RELEASE)
-	$(BASE_DIRECTORY)/release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET)
-	echo "Done etcd-io/etcd"
+	$(BASE_DIRECTORY)/release/copy_artifacts.sh $(COMPONENT) $(RELEASE_BRANCH) $(RELEASE)
+	$(BASE_DIRECTORY)/release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET) $(REPO)
+	echo "Done $(COMPONENT)"
 
 .PHONY: all
 all: release

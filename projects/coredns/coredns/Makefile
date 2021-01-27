@@ -23,7 +23,7 @@ BASE_TAG?=$(shell cat $(MAKE_ROOT)/../../../EKS_DISTRO_BASE_TAG_FILE)
 BASE_IMAGE?=$(BASE_REPO)/$(BASE_IMAGE_NAME):$(BASE_TAG)
 
 IMAGE_REPO?=$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
-IMAGE_NAME?=coredns/coredns
+IMAGE_NAME?=$(COMPONENT)
 # This tag is overwritten in the prow job to point to the upstream git tag and this repo's commit hash
 IMAGE_TAG?=${GIT_TAG}-eks-${RELEASE_BRANCH}-${RELEASE}
 IMAGE?=$(IMAGE_REPO)/$(IMAGE_NAME):$(IMAGE_TAG)
@@ -76,7 +76,7 @@ build: local-images
 
 .PHONY: release
 release: images
-	echo "Done coredns/coredns"
+	echo "Done $(COMPONENT)"
 
 .PHONY: all
 all: release
