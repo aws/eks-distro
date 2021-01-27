@@ -1,24 +1,15 @@
-export RELEASE_BRANCH?=1-18
-export PULL_NUMBER?=1
-export RELEASE?=$(PULL_NUMBER)
-
-REPO?=external-provisioner
-CLONE_URL?=https://github.com/kubernetes-csi/$(REPO).git
-GIT_TAG?=$(shell cat GIT_TAG)
 BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
+export RELEASE_BRANCH?=1-18
+export RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/RELEASE)
+ifeq ("$(PULL_NUMBER)","")
+    GIT_TAG?=$(shell cat GIT_TAG)
+else
+    GIT_TAG?=$(shell cat GIT_TAG).$(PULL_NUMBER)
+endif
 ARTIFACT_BUCKET?=$(shell cat $(BASE_DIRECTORY)/release/ARTIFACT_BUCKET)
 
-ifeq ("$(REPO)","")
-	$(error No repository name was provided.)
-endif
-
-ifeq ("$(CLONE_URL)","")
-	$(error No clone url was provided.)
-endif
-
-ifeq ("$(GIT_TAG)","")
-	$(error No git tag was provided.)
-endif
+REPO=external-provisioner
+CLONE_URL=https://github.com/kubernetes-csi/$(REPO).git
 
 DEVELOPMENT?=true
 AWS_ACCOUNT_ID?=$(shell aws sts get-caller-identity --query Account --output text)

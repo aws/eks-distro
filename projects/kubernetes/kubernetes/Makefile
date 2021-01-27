@@ -1,12 +1,15 @@
-export RELEASE_BRANCH?=1-18
-export PULL_NUMBER?=1
-export RELEASE?=$(PULL_NUMBER)
-
-REPOSITORY?=kubernetes
-CLONE_URL?=https://github.com/kubernetes/$(REPOSITORY).git
-GIT_TAG?=$(shell cat ./$(RELEASE_BRANCH)/GIT_TAG)
 BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
+export RELEASE_BRANCH?=1-18
+export RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/RELEASE)
+ifeq ("$(PULL_NUMBER)","")
+    GIT_TAG?=$(shell cat GIT_TAG)
+else
+    GIT_TAG?=$(shell cat GIT_TAG).$(PULL_NUMBER)
+endif
 ARTIFACT_BUCKET?=$(shell cat $(BASE_DIRECTORY)/release/ARTIFACT_BUCKET)
+
+REPOSITORY=kubernetes
+CLONE_URL=https://github.com/kubernetes/$(REPOSITORY).git
 
 AWS_ACCOUNT_ID?=$(shell aws sts get-caller-identity --query Account --output text)
 AWS_REGION?=us-west-2

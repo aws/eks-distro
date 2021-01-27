@@ -1,6 +1,13 @@
+BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
 export RELEASE_BRANCH?=1-18
-export PULL_NUMBER?=1
-export RELEASE?=$(PULL_NUMBER)
+export RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/RELEASE)
+ifeq ("$(PULL_NUMBER)","")
+    GIT_TAG?=$(shell cat GIT_TAG)
+else
+    GIT_TAG?=$(shell cat GIT_TAG).$(PULL_NUMBER)
+endif
+ARTIFACT_BUCKET?=$(shell cat $(BASE_DIRECTORY)/release/ARTIFACT_BUCKET)
+
 export DEVELOPMENT?=false
 export AWS_ACCOUNT_ID?=$(shell aws sts get-caller-identity --query Account --output text)
 export AWS_REGION?=us-west-2
