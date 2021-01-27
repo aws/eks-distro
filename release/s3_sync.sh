@@ -15,9 +15,9 @@
 
 set -euxo pipefail
 
-RELEASE_BRANCH="${1?First argument is release branch for example 1-18}"
-RELEASE="${2?Second argument is release for example 1}"
-ARTIFACT_BUCKET="${3?Third argument is artifact bucket name}"
+RELEASE_BRANCH="${1?First required argument is release branch for example 1-18}"
+RELEASE="${2?Second required argument is release for example 1}"
+ARTIFACT_BUCKET="${3?Third required argument is artifact bucket name}"
 
 BASE_DIRECTORY=$(git rev-parse --show-toplevel)
 ${BASE_DIRECTORY}/release/create_s3_bucket.sh ${ARTIFACT_BUCKET}

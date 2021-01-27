@@ -15,7 +15,7 @@
 
 set -euxo pipefail
 
-ARTIFACT_BUCKET="${1?First argument should be bucket to create}"
+ARTIFACT_BUCKET="${1?First required argument should be bucket to create}"
 
 # Create the bucket if it doesn't exist
 _bucket_name=$(aws s3api list-buckets  --query "Buckets[?Name=='$ARTIFACT_BUCKET'].Name | [0]" --out text)
