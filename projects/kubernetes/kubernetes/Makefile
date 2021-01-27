@@ -1,10 +1,11 @@
 BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
 export RELEASE_BRANCH?=1-18
 export RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/RELEASE)
+GIT_TAG?=$(shell cat GIT_TAG)
 ifeq ("$(PULL_NUMBER)","")
-    GIT_TAG?=$(shell cat GIT_TAG)
+    ARTIFACT_TAG?=$(GIT_TAG)
 else
-    GIT_TAG?=$(shell cat GIT_TAG).$(PULL_NUMBER)
+    ARTIFACT_TAG?=$(GIT_TAG).$(PULL_NUMBER)
 endif
 ARTIFACT_BUCKET?=$(shell cat $(BASE_DIRECTORY)/release/ARTIFACT_BUCKET)
 
@@ -24,7 +25,7 @@ KUBE_PROXY_BASE_IMAGE?=$(BASE_REPO)/$(KUBE_PROXY_BASE_IMAGE_NAME):$(KUBE_BASE_TA
 
 IMAGE_REPO?=$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
 IMAGE_REPO_PREFIX=kubernetes
-IMAGE_TAG?=$(GIT_TAG)-eks-${RELEASE_BRANCH}-${RELEASE}
+IMAGE_TAG?=$(ARTIFACT_TAG)-eks-${RELEASE_BRANCH}-${RELEASE}
 
 PAUSE_SRC_DIR?=kubernetes/build/pause
 PAUSE_DST_DIR?=_output/pause
