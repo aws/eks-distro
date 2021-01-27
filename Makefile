@@ -10,7 +10,7 @@ export BASE_IMAGE?=$(IMAGE_REPO)/eks-distro/base:$(BASE_IMAGE_TAG)
 KUBE_BASE_TAG?=v0.4.2-ea45689a0da457711b15fa1245338cd0b636ad4b
 export KUBE_PROXY_BASE_IMAGE?=$(IMAGE_REPO)/kubernetes/kube-proxy-base:$(KUBE_BASE_TAG)
 export GO_RUNNER_IMAGE?=$(IMAGE_REPO)/kubernetes/go-runner:$(KUBE_BASE_TAG)
-ARTIFACT_BUCKET?=my-s3-bucket
+ARTIFACT_BUCKET?=$(shell cat release/ARTIFACT_BUCKET)
 
 ifdef MAKECMDGOALS
 TARGET=$(MAKECMDGOALS)
