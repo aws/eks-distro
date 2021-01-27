@@ -1,7 +1,7 @@
 BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
 export RELEASE_BRANCH?=1-18
 export RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/RELEASE)
-GIT_TAG?=$(shell cat GIT_TAG)
+GIT_TAG?=$(shell cat ./$(RELEASE_BRANCH)/GIT_TAG)
 ifeq ("$(PULL_NUMBER)","")
     ARTIFACT_TAG?=$(GIT_TAG)
 else
@@ -43,7 +43,7 @@ update-checksums: binaries
 
 .PHONY: binaries
 binaries:
-	build/create_binaries.sh $(CLONE_URL) $(RELEASE_BRANCH)
+	build/create_binaries.sh $(CLONE_URL) $(RELEASE_BRANCH) $(GIT_TAG) $(ARTIFACT_TAG)
 
 .PHONY: tarballs
 tarballs: binaries
