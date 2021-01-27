@@ -6,7 +6,7 @@ REPOSITORY?=kubernetes
 CLONE_URL?=https://github.com/kubernetes/$(REPOSITORY).git
 GIT_TAG?=$(shell cat ./$(RELEASE_BRANCH)/GIT_TAG)
 BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
-ARTIFACT_BUCKET?=$(cat $(BASE_DIRECTORY)/release/ARTIFACT_BUCKET)
+ARTIFACT_BUCKET?=$(shell cat $(BASE_DIRECTORY)/release/ARTIFACT_BUCKET)
 
 AWS_ACCOUNT_ID?=$(shell aws sts get-caller-identity --query Account --output text)
 AWS_REGION?=us-west-2

@@ -6,7 +6,7 @@ REPO?=livenessprobe
 CLONE_URL?=https://github.com/kubernetes-csi/$(REPO).git
 GIT_TAG?=$(shell cat GIT_TAG)
 BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
-ARTIFACT_BUCKET?=$(cat $(BASE_DIRECTORY)/release/ARTIFACT_BUCKET)
+ARTIFACT_BUCKET?=$(shell cat $(BASE_DIRECTORY)/release/ARTIFACT_BUCKET)
 
 ifeq ("$(REPO)","")
 	$(error No repository name was provided.)
