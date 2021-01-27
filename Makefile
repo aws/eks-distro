@@ -1,5 +1,6 @@
 export RELEASE_BRANCH?=1-18
-export RELEASE?=1
+export PULL_NUMBER?=1
+export RELEASE?=$(PULL_NUMBER)
 export DEVELOPMENT?=false
 export AWS_ACCOUNT_ID?=$(shell aws sts get-caller-identity --query Account --output text)
 export AWS_REGION?=us-west-2
@@ -9,7 +10,7 @@ export BASE_IMAGE?=$(IMAGE_REPO)/eks-distro/base:$(BASE_IMAGE_TAG)
 KUBE_BASE_TAG?=v0.4.2-ea45689a0da457711b15fa1245338cd0b636ad4b
 export KUBE_PROXY_BASE_IMAGE?=$(IMAGE_REPO)/kubernetes/kube-proxy-base:$(KUBE_BASE_TAG)
 export GO_RUNNER_IMAGE?=$(IMAGE_REPO)/kubernetes/go-runner:$(KUBE_BASE_TAG)
-ARTIFACT_BUCKET?=prowdataclusterstack-316434458-prowbucket7c73355c-1n9f9v93wpjcm
+ARTIFACT_BUCKET?=my-s3-bucket
 
 ifdef MAKECMDGOALS
 TARGET=$(MAKECMDGOALS)
@@ -51,8 +52,7 @@ postsubmit-conformance:
 
 .PHONY: upload
 upload:
-	release/create_s3_bucket.sh $(ARTIFACT_BUCKET)
-	release/s3_sync.sh $(ARTIFACT_BUCKET)
+	release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET)
 	@echo 'Done' $(TARGET)
 
 .PHONY: release

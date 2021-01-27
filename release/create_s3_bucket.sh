@@ -16,17 +16,16 @@
 set -euxo pipefail
 
 ARTIFACT_BUCKET="${1?First argument should be bucket to create}"
-BUCKET_NAME=${ARTIFACT_BUCKET#"s3://"}
 
 # Create the bucket if it doesn't exist
-_bucket_name=$(aws s3api list-buckets  --query "Buckets[?Name=='$BUCKET_NAME'].Name | [0]" --out text)
+_bucket_name=$(aws s3api list-buckets  --query "Buckets[?Name=='$ARTIFACT_BUCKET'].Name | [0]" --out text)
 if [ $_bucket_name == "None" ]; then
-    echo "Creating artifact bucket: $ARTIFACT_BUCKET"
+    echo "Creating artifact bucket: s3://$ARTIFACT_BUCKET"
     if [ "$AWS_DEFAULT_REGION" == "us-east-1" ]; then
-        aws s3api create-bucket --bucket $BUCKET_NAME
+        aws s3api create-bucket --bucket $ARTIFACT_BUCKET
     else
-        aws s3api create-bucket --bucket $BUCKET_NAME --create-bucket-configuration LocationConstraint=$AWS_DEFAULT_REGION
+        aws s3api create-bucket --bucket $ARTIFACT_BUCKET --create-bucket-configuration LocationConstraint=$AWS_DEFAULT_REGION
     fi
 else
-    echo "Using existing artifact bucket: $ARTIFACT_BUCKET"
+    echo "Using existing artifact bucket: s3://$ARTIFACT_BUCKET"
 fi

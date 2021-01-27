@@ -1,5 +1,6 @@
 export RELEASE_BRANCH?=1-18
-export RELEASE?=1
+export PULL_NUMBER?=1
+export RELEASE?=$(PULL_NUMBER)
 
 REPO?=plugins
 CLONE_URL?=https://github.com/containernetworking/$(REPO).git
@@ -28,8 +29,8 @@ tarballs:  binaries
 
 .PHONY: release
 release: tarballs
-	$(BASE_DIRECTORY)/release/copy_artifacts.sh $(RELEASE_BRANCH) $(RELEASE) containernetworking/plugins
-	$(BASE_DIRECTORY)/release/s3_sync.sh $(ARTIFACT_BUCKET)
+	$(BASE_DIRECTORY)/release/copy_artifacts.sh containernetworking/plugins $(RELEASE_BRANCH) $(RELEASE)
+	$(BASE_DIRECTORY)/release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET)
 	echo "Done kubernetes/kubernetes"
 
 .PHONY: all

@@ -1,5 +1,6 @@
 export RELEASE_BRANCH?=1-18
-export RELEASE?=1
+export PULL_NUMBER?=1
+export RELEASE?=$(PULL_NUMBER)
 
 REPO?=etcd
 CLONE_URL?=https://github.com/etcd-io/$(REPO).git
@@ -85,8 +86,8 @@ build: local-images tarballs
 
 .PHONY: release
 release: images tarballs
-	$(BASE_DIRECTORY)/release/copy_artifacts.sh $(RELEASE_BRANCH) $(RELEASE) etcd-io/etcd
-	$(BASE_DIRECTORY)/release/s3_sync.sh $(ARTIFACT_BUCKET)
+	$(BASE_DIRECTORY)/release/copy_artifacts.sh etcd-io/etcd $(RELEASE_BRANCH) $(RELEASE)
+	$(BASE_DIRECTORY)/release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET)
 	echo "Done etcd-io/etcd"
 
 .PHONY: all

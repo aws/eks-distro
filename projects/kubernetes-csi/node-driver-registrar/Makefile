@@ -1,5 +1,6 @@
 export RELEASE_BRANCH?=1-18
-export RELEASE?=1
+export PULL_NUMBER?=1
+export RELEASE?=$(PULL_NUMBER)
 
 REPO?=node-driver-registrar
 CLONE_URL?=https://github.com/kubernetes-csi/$(REPO).git

@@ -15,9 +15,9 @@
 
 set -euxo pipefail
 
-RELEASE_BRANCH="${1?First argument is release branch for example 1-18}"
-RELEASE="${2?Second argument is release for example 1}"
-PROJECT="${3?Third argument is project}"
+PROJECT="${1?First argument is project}"
+RELEASE_BRANCH="${2?Second argument is release branch for example 1-18}"
+RELEASE="${3?Third argument is release for example 1}"
 
 BASE_DIRECTORY=$(git rev-parse --show-toplevel)
 DEST_DIR=${BASE_DIRECTORY}/kubernetes-${RELEASE_BRANCH}/releases/${RELEASE}/artifacts

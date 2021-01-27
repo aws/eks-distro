@@ -1,5 +1,6 @@
 export RELEASE_BRANCH?=1-18
-export RELEASE?=1
+export PULL_NUMBER?=1
+export RELEASE?=$(PULL_NUMBER)
 
 REPOSITORY?=kubernetes
 CLONE_URL?=https://github.com/kubernetes/$(REPOSITORY).git
@@ -101,8 +102,8 @@ build: checksums
 
 .PHONY: release
 release: checksums images
-	$(BASE_DIRECTORY)/release/copy_artifacts.sh $(RELEASE_BRANCH) $(RELEASE) kubernetes/kubernetes
-	$(BASE_DIRECTORY)/release/s3_sync.sh $(ARTIFACT_BUCKET)
+	$(BASE_DIRECTORY)/release/copy_artifacts.sh kubernetes/kubernetes $(RELEASE_BRANCH) $(RELEASE)
+	$(BASE_DIRECTORY)/release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET)
 	echo "Done kubernetes/kubernetes"
 
 .PHONY: all
