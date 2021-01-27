@@ -18,6 +18,7 @@ set -euxo pipefail
 RELEASE_BRANCH="${1?First required argument is release branch for example 1-18}"
 RELEASE="${2?Second required argument is release for example 1}"
 ARTIFACT_BUCKET="${3?Third required argument is artifact bucket name}"
+BASE_DIRECTORY=$(git rev-parse --show-toplevel)
 
 if aws s3api get-bucket-policy-status --bucket 2>/dev/null
 then
@@ -25,5 +26,5 @@ then
 else
   PUBLIC_READ=''
 fi
-DEST_DIR=kubernetes-${RELEASE_BRANCH}/releases/${RELEASE}/artifacts
+DEST_DIR=${BASE_DIRECTORY}/kubernetes-${RELEASE_BRANCH}/releases/${RELEASE}/artifacts
 aws s3 sync $DEST_DIR s3://${ARTIFACT_BUCKET}/${DEST_DIR} ${PUBLIC_READ}
