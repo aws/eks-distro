@@ -8,8 +8,9 @@ else
 endif
 ARTIFACT_BUCKET?=$(shell cat $(BASE_DIRECTORY)/release/ARTIFACT_BUCKET)
 
-REPOSITORY=kubernetes
-CLONE_URL=https://github.com/kubernetes/$(REPOSITORY).git
+REPO=kubernetes
+COMPONENT=kubernetes/$(REPO)
+CLONE_URL=https://github.com/$(COMPONENT).git
 
 AWS_ACCOUNT_ID?=$(shell aws sts get-caller-identity --query Account --output text)
 AWS_REGION?=us-west-2

@@ -9,7 +9,8 @@ endif
 ARTIFACT_BUCKET?=$(shell cat $(BASE_DIRECTORY)/release/ARTIFACT_BUCKET)
 
 REPO=external-attacher
-CLONE_URL=https://github.com/kubernetes-csi/$(REPO).git
+COMPONENT=kubernetes-csi/$(REPO)
+CLONE_URL=https://github.com/$(COMPONENT).git
 
 DEVELOPMENT?=true
 AWS_ACCOUNT_ID?=$(shell aws sts get-caller-identity --query Account --output text)

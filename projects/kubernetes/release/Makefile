@@ -10,7 +10,8 @@ endif
 ARTIFACT_BUCKET?=$(shell cat $(BASE_DIRECTORY)/release/ARTIFACT_BUCKET)
 
 REPO=release
-CLONE_URL=https://github.com/kubernetes/$(REPO).git
+COMPONENT=kubernetes/$(REPO)
+CLONE_URL=https://github.com/$(COMPONENT).git
 
 DEVELOPMENT?=true
 AWS_REGION?=us-west-2

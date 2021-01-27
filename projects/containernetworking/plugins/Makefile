@@ -9,7 +9,8 @@ endif
 ARTIFACT_BUCKET?=$(shell cat $(BASE_DIRECTORY)/release/ARTIFACT_BUCKET)
 
 REPO=plugins
-CLONE_URL=https://github.com/containernetworking/$(REPO).git
+COMPONENT=containernetworking/$(REPO)
+CLONE_URL=https://github.com/$(COMPONENT).git
 
 .PHONY: binaries
 binaries:
