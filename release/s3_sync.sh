@@ -26,5 +26,6 @@ then
 else
   PUBLIC_READ=''
 fi
-DEST_DIR=${BASE_DIRECTORY}/kubernetes-${RELEASE_BRANCH}/releases/${RELEASE}/artifacts
+cd ${BASE_DIRECTORY}
+DEST_DIR=kubernetes-${RELEASE_BRANCH}/releases/${RELEASE}/artifacts
 aws s3 sync $DEST_DIR s3://${ARTIFACT_BUCKET}/${DEST_DIR} ${PUBLIC_READ}
