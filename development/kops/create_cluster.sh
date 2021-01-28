@@ -16,6 +16,7 @@
 set -eo pipefail
 
 BASEDIR=$(dirname "$0")
-source ${BASEDIR}/set_k8s_versions.sh
+source ${BASEDIR}/set_environment.sh
+$COOL || exit 1
 
-kops update cluster --name ${KOPS_CLUSTER_NAME} --yes
+${KOPS} update cluster --name ${KOPS_CLUSTER_NAME} --yes

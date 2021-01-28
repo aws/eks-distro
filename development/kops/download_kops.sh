@@ -5,7 +5,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#      http://www.apache.org/licenses/LICENSE-2.0
+#            http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,21 +19,30 @@ BASEDIR=$(dirname "$0")
 source ${BASEDIR}/set_environment.sh
 $COOL || exit 1
 
-#
-# Add IAM configmap
-COUNT=0
-echo 'Waiting for cluster to come up...'
-while ! kubectl apply -f ./${KOPS_CLUSTER_NAME}/aws-iam-authenticator.yaml
-do
-    sleep 5
-    COUNT=$(expr $COUNT + 1)
-    if [ $COUNT -gt 120 ]
+if [ ! -x ${KOPS} ]
+then
+    echo "Determine kops version"
+    if [ "${RELEASE_BRANCH}" == "1-19" ]
     then
-        echo "Failed to configure IAM"
-        exit 1
+        KOPS_VERSION="v1.19.0-beta.3"
+    else
+        KOPS_VERSION="v1.18.3"
     fi
-    echo 'Waiting for cluster to come up...'
-done
 
-set -x
-${KOPS} validate cluster --wait 3m
+    echo "Download kops"
+    if [ "$(uname)" == "Darwin" ]
+    then
+        OS_ARCH="darwin-amd64"
+    else
+        OS_ARCH="linux-amd64"
+    fi
+    KOPS_URL="https://github.com/kubernetes/kops/releases/download/${KOPS_VERSION}/kops-${OS_ARCH}"
+    set -x
+    curl -L -o ${KOPS} "${KOPS_URL}"
+    chmod 755 ${KOPS}
+    set +x
+else
+    echo "Kops executable ${KOPS} available..."
+    ${KOPS} version
+fi
+exit 0

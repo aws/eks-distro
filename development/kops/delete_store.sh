@@ -12,24 +12,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 set -eo pipefail
-export KOPS_STATE_STORE=${1:-${KOPS_STATE_STORE}}
-if [ -z "${KOPS_STATE_STORE}" ]
-then
-  echo "Usage: ${0} s3://bucketname"
-  echo "  or set and export KOPS_STATE_STORE"
-  exit 1
-fi
-if [[ "${KOPS_STATE_STORE}" != s3://* ]]
-then
-  export KOPS_STATE_STORE="s3://${KOPS_STATE_STORE}"
-fi
+
+BASEDIR=$(dirname "$0")
+source ${BASEDIR}/set_environment.sh
+$COOL || exit 1
 
 echo "Deleting kops store $KOPS_STATE_STORE"
-BUCKET_NAME=$(echo "${KOPS_STATE_STORE}" | sed -e 's,s3://,,g')
 set -x
 aws s3 rm --recursive "${KOPS_STATE_STORE}" || true
-aws s3api delete-bucket --bucket "${BUCKET_NAME}"
+aws s3api delete-bucket --bucket "${BUCKET_NAME}" || true
 if [ -n "${KOPS_CLUSTER_NAME}" ]
 then
   rm -rf "./${KOPS_CLUSTER_NAME}"

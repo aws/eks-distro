@@ -15,10 +15,14 @@
 
 set -eo pipefail
 
+BASEDIR=$(dirname "$0")
+source ${BASEDIR}/set_environment.sh
+$COOL || exit 1
+
 #
 # NodePort setting
 #
 export KOPS_FEATURE_FLAGS=SpecOverrideFlag
-kops set cluster "${KOPS_CLUSTER_NAME}" 'cluster.spec.nodePortAccess=0.0.0.0/0'
+${KOPS} set cluster "${KOPS_CLUSTER_NAME}" 'cluster.spec.nodePortAccess=0.0.0.0/0'
 
-kops update cluster --yes
+${KOPS} update cluster --yes
