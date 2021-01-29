@@ -32,4 +32,4 @@ do
 done
 
 set -x
-kops validate cluster --wait 3m
+kops validate cluster --wait 6m

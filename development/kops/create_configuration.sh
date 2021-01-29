@@ -82,9 +82,13 @@ echo "Creating cluster configuration"
 kops create -f "./${KOPS_CLUSTER_NAME}/${KOPS_CLUSTER_NAME}.yaml"
 
 echo "Creating cluster ssh key"
-export SSH_KEY_PATH=${SSH_KEY_PATH:-$HOME/.ssh/id_rsa.pub}
-kops create secret --name $KOPS_CLUSTER_NAME sshpublickey admin -i ${SSH_KEY_PATH}
-
+SSH_FILE=${SSH_KEY_PATH:-$HOME/.ssh/id_rsa}
+if [ ! -f "$SSH_FILE" ]
+then
+  ssh-keygen -t rsa -b 4096 -f "$SSH_FILE"
+fi
+export SSH_KEY_PATH="$SSH_FILE"
+kops create secret --name $KOPS_CLUSTER_NAME sshpublickey admin -i "${SSH_KEY_PATH}.pub"
 echo
 echo "# Creating ./${KOPS_CLUSTER_NAME}/env.sh"
 echo "export AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION" | tee ./${KOPS_CLUSTER_NAME}/env.sh

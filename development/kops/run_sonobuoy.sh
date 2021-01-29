@@ -58,6 +58,6 @@ mv $results "./${KOPS_CLUSTER_NAME}/$results"
 results="./${KOPS_CLUSTER_NAME}/$results"
 mkdir ./${KOPS_CLUSTER_NAME}/results
 tar xzf $results -C ./${KOPS_CLUSTER_NAME}/results
-cp ./${KOPS_CLUSTER_NAME}/results/plugins/e2e/results/global/junit_01.xml .
+cp ./${KOPS_CLUSTER_NAME}/results/plugins/e2e/results/global/junit_01.xml /logs/artifacts
 ./sonobuoy e2e ${results}
 ./sonobuoy e2e ${results} | grep 'failed tests: 0' >/dev/null

@@ -37,7 +37,7 @@ func (c *Command) buildProject(projectPath string, uploadArtifacts bool) error {
 	}
 	commandArgs = append(commandArgs, c.makeArgs...)
 
-	cmd := exec.Command("make", c.makeArgs...)
+	cmd := exec.Command("make", commandArgs...)
 	log.Printf("Executing: %s", strings.Join(cmd.Args, " "))
 	cmd.Stdout = outputStream
 	cmd.Stderr = errStream
@@ -72,12 +72,12 @@ func (c *Command) buildProject(projectPath string, uploadArtifacts bool) error {
 			cmd = exec.Command(
 				"/bin/bash",
 				"-c",
-				fmt.Sprintf("'mv %s/projects/%s/_output/%s/* /logs/artifacts'", c.gitRoot, projectPath, c.releaseBranch))
+				fmt.Sprintf("mv %s/projects/%s/_output/%s/* /logs/artifacts", c.gitRoot, projectPath, c.releaseBranch))
 		} else {
 			cmd = exec.Command(
 				"/bin/bash",
 				"-c",
-				fmt.Sprintf("'mv %s/projects/%s/_output/tar/* /logs/artifacts'", c.gitRoot, projectPath))
+				fmt.Sprintf("mv %s/projects/%s/_output/tar/* /logs/artifacts", c.gitRoot, projectPath))
 		}
 		cmd.Stdout = outputStream
 		cmd.Stderr = errStream
@@ -157,6 +157,9 @@ func main() {
 		"kubernetes/kubernetes": {
 			uploadArtifacts: true,
 		},
+		"kubernetes/release": {
+			uploadArtifacts: false,
+		},
 		"coredns/coredns": {
 			uploadArtifacts: false,
 		},
@@ -166,8 +169,29 @@ func main() {
 		"kubernetes-sigs/aws-iam-authenticator": {
 			uploadArtifacts: true,
 		},
+		"kubernetes-sigs/metrics-server": {
+			uploadArtifacts: false,
+		},
 		"etcd-io/etcd": {
 			uploadArtifacts: true,
+		},
+		"kubernetes-csi/external-attacher": {
+			uploadArtifacts: false,
+		},
+		"kubernetes-csi/external-resizer": {
+			uploadArtifacts: false,
+		},
+		"kubernetes-csi/livenessprobe": {
+			uploadArtifacts: false,
+		},
+		"kubernetes-csi/node-driver-registrar": {
+			uploadArtifacts: false,
+		},
+		"kubernetes-csi/external-snapshotter": {
+			uploadArtifacts: false,
+		},
+		"kubernetes-csi/external-provisioner": {
+			uploadArtifacts: false,
 		},
 	}
 

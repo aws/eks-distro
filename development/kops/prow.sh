@@ -13,23 +13,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if [ "$PROW_ROLE_ARN" == "" ]; then
-    echo "Empty PROW_ROLE_ARN, this script must be run in a postsubmit pod with IAM Roles for Service Accounts"
+if [ "$AWS_ROLE_ARN" == "" ]; then
+    echo "Empty AWS_ROLE_ARN, this script must be run in a postsubmit pod with IAM Roles for Service Accounts"
     exit 1
 fi
 
 if [ "$TEST_ROLE_ARN" == "" ]; then
-    echo "Empty TEST_ROLE_ARN, this script must be run in a postsubmit pod with IAM Roles for Service Accounts"
+    echo "Empty AWS_ROLE_ARN, this script must be run in a postsubmit pod with IAM Roles for Service Accounts"
     exit 1
 fi
 
 BASEDIR=$(dirname "$0")
 
-cat << EOF > ${BASEDIR}/config
+cat << EOF > config
 [default]
 output=json
 region=${AWS_REGION:-${AWS_DEFAULT_REGION:-us-west-2}}
-role_arn=$PROW_ROLE_ARN
+role_arn=$AWS_ROLE_ARN
 web_identity_token_file=/var/run/secrets/eks.amazonaws.com/serviceaccount/token
 
 [profile conformance-test]
@@ -37,9 +37,7 @@ role_arn=$TEST_ROLE_ARN
 region=${AWS_REGION:-${AWS_DEFAULT_REGION:-us-west-2}}
 source_profile=default
 EOF
-
-export AWS_CONFIG_FILE=${BASEDIR}/config
-export AWS_DEFAULT_PROFILE=conformance-test
-export AWS_ROLE_ARN=${PROW_ROLE_ARN}
-
+export AWS_CONFIG_FILE=$(pwd)/config
+export AWS_PROFILE=conformance-test
+unset AWS_ROLE_ARN AWS_WEB_IDENTITY_TOKEN_FILE
 ${BASEDIR}/run_all.sh
