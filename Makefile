@@ -1,13 +1,13 @@
 BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
 export RELEASE_BRANCH?=1-18
-export RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/RELEASE)
-GIT_TAG?=$(shell cat GIT_TAG)
-ifeq ("$(PULL_NUMBER)","")
-    ARTIFACT_TAG?=$(GIT_TAG)
+DEFAULT_RELEASE=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/RELEASE)
+ifneq ("$(PULL_NUMBER)","")
+	export RELEASE?=$(shell expr $(DEFAULT_RELEASE) \* 10000 + $(PULL_NUMBER))
 else
-    ARTIFACT_TAG?=$(GIT_TAG).$(PULL_NUMBER)
+	export RELEASE?=$(DEFAULT_RELEASE)
 endif
 ARTIFACT_BUCKET?=$(shell cat $(BASE_DIRECTORY)/release/ARTIFACT_BUCKET)
+GIT_TAG?=$(shell cat GIT_TAG)
 
 export DEVELOPMENT?=false
 export AWS_ACCOUNT_ID?=$(shell aws sts get-caller-identity --query Account --output text)
@@ -18,7 +18,6 @@ export BASE_IMAGE?=$(IMAGE_REPO)/eks-distro/base:$(BASE_IMAGE_TAG)
 KUBE_BASE_TAG?=v0.4.2-ea45689a0da457711b15fa1245338cd0b636ad4b
 export KUBE_PROXY_BASE_IMAGE?=$(IMAGE_REPO)/kubernetes/kube-proxy-base:$(KUBE_BASE_TAG)
 export GO_RUNNER_IMAGE?=$(IMAGE_REPO)/kubernetes/go-runner:$(KUBE_BASE_TAG)
-ARTIFACT_BUCKET?=$(shell cat release/ARTIFACT_BUCKET)
 
 ifdef MAKECMDGOALS
 TARGET=$(MAKECMDGOALS)

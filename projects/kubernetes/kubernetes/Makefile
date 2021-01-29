@@ -1,13 +1,13 @@
 BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
 export RELEASE_BRANCH?=1-18
-export RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/RELEASE)
-GIT_TAG?=$(shell cat ./$(RELEASE_BRANCH)/GIT_TAG)
-ifeq ("$(PULL_NUMBER)","")
-    ARTIFACT_TAG?=$(GIT_TAG)
+DEFAULT_RELEASE=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/RELEASE)
+ifneq ("$(PULL_NUMBER)","")
+	export RELEASE?=$(shell expr $(DEFAULT_RELEASE) \* 10000 + $(PULL_NUMBER))
 else
-    ARTIFACT_TAG?=$(GIT_TAG).$(PULL_NUMBER)
+	export RELEASE?=$(DEFAULT_RELEASE)
 endif
 ARTIFACT_BUCKET?=$(shell cat $(BASE_DIRECTORY)/release/ARTIFACT_BUCKET)
+GIT_TAG?=$(shell cat ./$(RELEASE_BRANCH)/GIT_TAG)
 
 REPO=kubernetes
 COMPONENT=kubernetes/$(REPO)
@@ -25,7 +25,7 @@ KUBE_PROXY_BASE_IMAGE?=$(BASE_REPO)/$(KUBE_PROXY_BASE_IMAGE_NAME):$(KUBE_BASE_TA
 
 IMAGE_REPO?=$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
 IMAGE_REPO_PREFIX=kubernetes
-IMAGE_TAG?=$(ARTIFACT_TAG)-eks-${RELEASE_BRANCH}-${RELEASE}
+IMAGE_TAG?=$(GIT_TAG)-eks-${RELEASE_BRANCH}-${RELEASE}
 
 PAUSE_SRC_DIR?=kubernetes/build/pause
 PAUSE_DST_DIR?=_output/pause
@@ -43,7 +43,7 @@ update-checksums: binaries
 
 .PHONY: binaries
 binaries:
-	build/create_binaries.sh $(CLONE_URL) $(RELEASE_BRANCH) $(GIT_TAG) $(ARTIFACT_TAG)
+	build/create_binaries.sh $(CLONE_URL) $(RELEASE_BRANCH) $(GIT_TAG)
 
 .PHONY: tarballs
 tarballs: binaries
@@ -54,7 +54,7 @@ $(PAUSE_DST_DIR)/pause.c:
 	cp $(PAUSE_SRC_DIR)/linux/pause.c $(PAUSE_DST_DIR) || cp $(PAUSE_SRC_DIR)/pause.c $(PAUSE_DST_DIR)
 
 pause: $(PAUSE_DST_DIR)/pause.c
-	rm -rf ./kubernetes
+	test -z "${BUILD_ID}" && rm -rf ./kubernetes
 
 .PHONY: local-images
 local-images: binaries pause
@@ -95,19 +95,19 @@ docker: binaries pause
 
 .PHONY: docker-push
 docker-push:
-	build/docker_push.sh $(RELEASE_BRANCH) $(GO_RUNNER_IMAGE) $(KUBE_PROXY_BASE_IMAGE) $(IMAGE_REPO) $(IMAGE_REPO_PREFIX) $(IMAGE_TAG)
+	# build/docker_push.sh $(RELEASE_BRANCH) $(GO_RUNNER_IMAGE) $(KUBE_PROXY_BASE_IMAGE) $(IMAGE_REPO) $(IMAGE_REPO_PREFIX) $(IMAGE_TAG)
 	docker push $(PAUSE_IMAGE)
 	docker push $(IMAGE_REPO)/$(IMAGE_REPO_PREFIX)/$(PAUSE_IMAGE_NAME):3.2
 
 .PHONY: checksums
-checksums: tarballs local-images
+checksums: tarballs
 	build/create_release_checksums.sh $(RELEASE_BRANCH)
 
 .PHONY: build
 build: checksums
 
 .PHONY: release
-release: checksums images
+release: images checksums
 	$(BASE_DIRECTORY)/release/copy_artifacts.sh $(COMPONENT) $(RELEASE_BRANCH) $(RELEASE)
 	$(BASE_DIRECTORY)/release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET) $(REPO)
 	echo "Done $(COMPONENT)"
