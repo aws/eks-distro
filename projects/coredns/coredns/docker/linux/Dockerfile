@@ -15,6 +15,7 @@
 ARG BASE_IMAGE
 FROM $BASE_IMAGE
 
+RUN yum update -y
 RUN yum install -y ca-certificates && update-ca-trust
 
 FROM scratch
