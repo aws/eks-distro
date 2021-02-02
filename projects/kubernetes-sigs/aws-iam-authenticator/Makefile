@@ -1,5 +1,5 @@
 BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
-export RELEASE_BRANCH?=1-18
+RELEASE_BRANCH?=1-18
 DEFAULT_RELEASE=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/RELEASE)
 ifneq ("$(PULL_NUMBER)","")
 	export RELEASE?=$(shell expr $(DEFAULT_RELEASE) \* 10000 + $(PULL_NUMBER))
