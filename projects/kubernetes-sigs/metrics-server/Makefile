@@ -6,7 +6,7 @@ ifneq ("$(PULL_NUMBER)","")
 else
 	export RELEASE?=$(DEFAULT_RELEASE)
 endif
-ARTIFACT_BUCKET?=$(shell cat $(BASE_DIRECTORY)/release/ARTIFACT_BUCKET)
+export ARTIFACT_BUCKET?=my-s3-bucket
 GIT_TAG?=$(shell cat GIT_TAG)
 
 REPO=metrics-server

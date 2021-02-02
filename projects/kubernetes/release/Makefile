@@ -1,4 +1,3 @@
-ARTIFACT_BUCKET?=$(shell cat $(BASE_DIRECTORY)/release/ARTIFACT_BUCKET)
 BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
 export RELEASE_BRANCH?=1-18
 DEFAULT_RELEASE=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/RELEASE)
@@ -7,7 +6,7 @@ ifneq ("$(PULL_NUMBER)","")
 else
 	export RELEASE?=$(DEFAULT_RELEASE)
 endif
-ARTIFACT_BUCKET?=$(shell cat $(BASE_DIRECTORY)/release/ARTIFACT_BUCKET)
+export ARTIFACT_BUCKET?=my-s3-bucket
 GIT_TAG?=$(shell cat GIT_TAG)
 
 REPO=release
