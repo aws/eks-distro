@@ -15,7 +15,7 @@
 version: "3.8"
 services:
   buildkitd:
-    image: moby/buildkit:master-rootless
+    image: moby/buildkit:v0.8.1-rootless
     command:
     - --addr
     - tcp://0.0.0.0:1234

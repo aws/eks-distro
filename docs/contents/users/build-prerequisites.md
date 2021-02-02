@@ -70,8 +70,8 @@ page](https://github.com/moby/buildkit/releases). To run a buildkit server
 locally, you can use [docker-compose](https://docs.docker.com/compose/)
 
 ```bash
-docker-compose -f development/docker-compose.yaml up -d
-docker-compose -f development/docker-compose.yaml logs buildkitd
+docker-compose -f development/buildkit-compose.yaml up -d
+docker-compose -f development/buildkit-compose.yaml logs buildkitd
 export BUILDKIT_HOST="tcp://127.0.0.1:1234"
 buildctl debug workers
 ```
@@ -84,7 +84,7 @@ access are failing, your network may be blocking DNS lookups to Google DNS IPs
 ```
 Try adding your local nameservers and search domains to the
 `development/buildkitd.toml` file and the `dns` and `dns_search`, and `volume`
-sections of the `development/docker-compose.yaml`, and run `docker-compose up
+sections of the `development/buildkit-compose.yaml`, and run `docker-compose up
 -d`. If you are on macOS, you can run the following command to find your
 nameservers and search domains.
 ```bash
