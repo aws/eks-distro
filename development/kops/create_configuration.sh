@@ -17,7 +17,7 @@ set -eo pipefail
 
 BASEDIR=$(dirname "$0")
 source ${BASEDIR}/set_environment.sh
-$COOL || exit 1
+$PREFLIGHT_CHECK_PASSED || exit 1
 
 # Create the bucket if it doesn't exist
 _bucket_name=$(aws s3api list-buckets  --query "Buckets[?Name=='$BUCKET_NAME'].Name | [0]" --out text)

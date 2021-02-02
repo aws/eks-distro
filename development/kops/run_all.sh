@@ -19,7 +19,7 @@ echo "This script will create a cluster, run tests and tear it down"
 cd "$BASEDIR"
 source ./create_store_name.sh
 source ./set_environment.sh
-$COOL || exit 1
+$PREFLIGHT_CHECK_PASSED || exit 1
 ./download_kops.sh
 ./create_values_yaml.sh
 ./create_configuration.sh

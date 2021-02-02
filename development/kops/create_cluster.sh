@@ -17,6 +17,6 @@ set -eo pipefail
 
 BASEDIR=$(dirname "$0")
 source ${BASEDIR}/set_environment.sh
-$COOL || exit 1
+$PREFLIGHT_CHECK_PASSED || exit 1
 
 ${KOPS} update cluster --name ${KOPS_CLUSTER_NAME} --yes

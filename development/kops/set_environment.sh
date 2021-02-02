@@ -24,15 +24,15 @@ else
     export RELEASE=$(expr ${DEFAULT_RELEASE} \* 10000 + ${PULL_NUMBER})
 fi
 
-if [ -z "${COOL}" ]
+if [ -z "${PREFLIGHT_CHECK_PASSED}" ]
 then
-    COOL=true
+    PREFLIGHT_CHECK_PASSED=true
     GOOD="\xE2\x9C\x94"
     BAD="\xE2\x9D\x8C"
     export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-${AWS_REGION}}
     export AWS_REGION="${AWS_DEFAULT_REGION}"
     if [ -z "$AWS_DEFAULT_REGION" ]; then
-        COOL=false
+        PREFLIGHT_CHECK_PASSED=false
         echo -e "${BAD} AWS_REGION must be set and exported"
     else
         echo -e "${GOOD} AWS_REGION=${AWS_REGION}"
@@ -40,14 +40,14 @@ then
 
     if ! aws sts get-caller-identity --query Account --output text >/dev/null 2>/dev/null
     then
-        COOL=false
+        PREFLIGHT_CHECK_PASSED=false
         echo -e "${BAD} AWS CLI failed to authenticate"
     else
         echo -e "${GOOD} AWS CLI authenticated"
     fi
 
     if [ -z "$KOPS_STATE_STORE" ]; then
-        COOL=false
+        PREFLIGHT_CHECK_PASSED=false
         echo -e "${BAD} KOPS_STATE_STORE must be set and exported"
     else
         echo -e "${GOOD} KOPS_STATE_STORE=${KOPS_STATE_STORE}"
@@ -59,13 +59,13 @@ then
     export BUCKET_NAME=${KOPS_STATE_STORE#"s3://"}
 
     if [ -z "$KOPS_CLUSTER_NAME" ]; then
-        COOL=false
+        PREFLIGHT_CHECK_PASSED=false
         echo -e "${BAD} KOPS_CLUSTER_NAME must be set and exported"
     else
         echo -e "${GOOD} KOPS_CLUSTER_NAME=${KOPS_CLUSTER_NAME}"
     fi
 fi
-export COOL
+export PREFLIGHT_CHECK_PASSED
 
 VERSION=$(cat ${BASEDIR}/../../projects/kubernetes/kubernetes/${RELEASE_BRANCH}/GIT_TAG)
 export DEFAULT_REPOSITORY_URI=public.ecr.aws/eks-distro
