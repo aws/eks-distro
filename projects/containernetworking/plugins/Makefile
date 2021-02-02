@@ -1,18 +1,8 @@
-REPO?=plugins
-CLONE_URL?=https://github.com/containernetworking/$(REPO).git
 GIT_TAG?=$(shell cat GIT_TAG)
 
-ifeq ("$(REPO)","")
-	$(error No repository name was provided.)
-endif
-
-ifeq ("$(CLONE_URL)","")
-	$(error No clone url was provided.)
-endif
-
-ifeq ("$(GIT_TAG)","")
-	$(error No git tag was provided.)
-endif
+REPO=plugins
+COMPONENT=containernetworking/$(REPO)
+CLONE_URL=https://github.com/$(COMPONENT).git
 
 .PHONY: binaries
 binaries:
@@ -22,8 +12,13 @@ binaries:
 tarballs:  binaries
 	build/create_tarballs.sh $(REPO) $(GIT_TAG)
 
+.PHONY: build
+build: tarballs
+	echo "Done $(COMPONENT)"
+
 .PHONY: release
 release: tarballs
+	echo "Done $(COMPONENT)"
 
 .PHONY: all
 all: release
@@ -36,4 +31,3 @@ docker-push:
 clean:
 	rm -rf $(REPO)
 	rm -rf "_output"
-
