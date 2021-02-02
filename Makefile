@@ -9,15 +9,15 @@ endif
 ARTIFACT_BUCKET?=my-s3-bucket
 GIT_TAG?=$(shell cat GIT_TAG)
 
-export DEVELOPMENT?=false
-export AWS_ACCOUNT_ID?=$(shell aws sts get-caller-identity --query Account --output text)
-export AWS_REGION?=us-west-2
-export IMAGE_REPO?=$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
+DEVELOPMENT?=false
+AWS_ACCOUNT_ID?=$(shell aws sts get-caller-identity --query Account --output text)
+AWS_REGION?=us-west-2
+IMAGE_REPO?=$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
 BASE_IMAGE_TAG?=$(shell cat EKS_DISTRO_BASE_TAG_FILE)
-export BASE_IMAGE?=$(IMAGE_REPO)/eks-distro/base:$(BASE_IMAGE_TAG)
+BASE_IMAGE?=$(IMAGE_REPO)/eks-distro/base:$(BASE_IMAGE_TAG)
 KUBE_BASE_TAG?=v0.4.2-ea45689a0da457711b15fa1245338cd0b636ad4b
-export KUBE_PROXY_BASE_IMAGE?=$(IMAGE_REPO)/kubernetes/kube-proxy-base:$(KUBE_BASE_TAG)
-export GO_RUNNER_IMAGE?=$(IMAGE_REPO)/kubernetes/go-runner:$(KUBE_BASE_TAG)
+KUBE_PROXY_BASE_IMAGE?=$(IMAGE_REPO)/kubernetes/kube-proxy-base:$(KUBE_BASE_TAG)
+GO_RUNNER_IMAGE?=$(IMAGE_REPO)/kubernetes/go-runner:$(KUBE_BASE_TAG)
 
 ifdef MAKECMDGOALS
 TARGET=$(MAKECMDGOALS)
