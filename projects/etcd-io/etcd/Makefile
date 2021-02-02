@@ -6,7 +6,7 @@ ifneq ("$(PULL_NUMBER)","")
 else
 	export RELEASE?=$(DEFAULT_RELEASE)
 endif
-export ARTIFACT_BUCKET?=my-s3-bucket
+ARTIFACT_BUCKET?=my-s3-bucket
 GIT_TAG?=$(shell cat GIT_TAG)
 
 REPO=etcd
