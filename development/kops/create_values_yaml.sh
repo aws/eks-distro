@@ -39,14 +39,14 @@ function get_container_latest_tag() {
     QUERY='[.imageDetails[] | select(.imageTags != null)] | sort_by(.imagePushedAt)|reverse|first|.imageTags[0]'
     if [[ "${REPOSITORY_URI}" != "public.ecr.aws/*" ]] # Public
     then
-        if aws --region us-east-1 ecr-public  describe-images --repository-name "${REPOSITORY_NAME}" --image-ids=imageTag=${DEFAULT_TAG}-${RELEASE} 2>/dev/null >/dev/null
+        if aws --region us-east-1 ecr-public describe-images --repository-name "${REPOSITORY_NAME}" --image-ids=imageTag=${DEFAULT_TAG}-${RELEASE} 2>/dev/null >/dev/null
         then
             TAG=${DEFAULT_TAG}-${RELEASE}
         else
             TAG=${DEFAULT_TAG}-${DEFAULT_RELEASE}
         fi
     else # Private
-        if aws ecr  describe-images --repository-name "${REPOSITORY_NAME}" --image-ids=imageTag=${DEFAULT_TAG}-${RELEASE} 2>/dev/null >/dev/null
+        if aws ecr describe-images --repository-name "${REPOSITORY_NAME}" --image-ids=imageTag=${DEFAULT_TAG}-${RELEASE} 2>/dev/null >/dev/null
         then
             TAG=${DEFAULT_TAG}-${RELEASE}
         else
