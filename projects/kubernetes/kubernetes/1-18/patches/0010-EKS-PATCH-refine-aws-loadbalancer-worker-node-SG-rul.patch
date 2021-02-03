@@ -117,64 +117,10 @@ diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go b/staging
 index b4549a80527..720de76d58e 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
-@@ -2024,3 +2024,116 @@ func TestConstructStsEndpoint(t *testing.T) {
+@@ -2024,3 +2024,62 @@ func TestConstructStsEndpoint(t *testing.T) {
  		require.NoError(t, err)
  	})
  }
-+
-+func TestNodeAddressesForFargate(t *testing.T) {
-+	awsServices := newMockedFakeAWSServices(TestClusterID)
-+	c, _ := newAWSCloud(CloudConfig{}, awsServices)
-+	c.cfg.Global.IPAddress = "1.2.3.4"
-+	c.cfg.Global.PrivateDNSName = "ip-1-2-3-4.compute.amazon.com"
-+
-+	nodeAddresses, _ := c.NodeAddresses(context.TODO(), "fargate-ip-1-2-3-4.compute.amazon.com")
-+	verifyNodeAddressesForFargate(t, nodeAddresses)
-+}
-+
-+func TestBuildFargateTaskFromDescribeNetworkInterfaces(t *testing.T) {
-+	awsServices := newMockedFakeAWSServices(TestClusterID)
-+	c, _ := newAWSCloud(CloudConfig{}, awsServices)
-+	c.cfg.Global.ProviderIDPrefix = "fargateTest"
-+
-+	awsInstance, _ := c.buildAWSInstanceForFargateNode("fargate-ip-1-2-3-4.compute.amazon.com")
-+	assert.Equal(t, "vpc-123456", awsInstance.vpcID)
-+	assert.Equal(t, "subnet-123456", awsInstance.subnetID)
-+	assert.Equal(t, "1.2.3.4", awsInstance.addresses[0].Address)
-+	assert.Equal(t, "us-west-2b", awsInstance.availabilityZone)
-+	assert.Equal(t, "fargateTest/fargate-ip-1-2-3-4.compute.amazon.com", awsInstance.awsID)
-+}
-+
-+func TestNodeAddressesByProviderIDForFargate(t *testing.T) {
-+	awsServices := newMockedFakeAWSServices(TestClusterID)
-+	c, _ := newAWSCloud(CloudConfig{}, awsServices)
-+	c.cfg.Global.IPAddress = "1.2.3.4"
-+	c.cfg.Global.PrivateDNSName = "ip-1-2-3-4.compute.amazon.com"
-+
-+	nodeAddresses, _ := c.NodeAddressesByProviderID(context.TODO(), "fargateTest/fargate-ip-1-2-3-4.compute.amazon.com")
-+	verifyNodeAddressesForFargate(t, nodeAddresses)
-+}
-+
-+func verifyNodeAddressesForFargate(t *testing.T, nodeAddresses []v1.NodeAddress) {
-+	assert.Equal(t, 2, len(nodeAddresses))
-+	assert.Equal(t, "1.2.3.4", nodeAddresses[0].Address)
-+	assert.Equal(t, v1.NodeInternalIP, nodeAddresses[0].Type)
-+	assert.Equal(t, "ip-1-2-3-4.compute.amazon.com", nodeAddresses[1].Address)
-+	assert.Equal(t, v1.NodeInternalDNS, nodeAddresses[1].Type)
-+}
-+
-+func TestBuildFargateTaskUsingPrivateIpFromDescribeNetworkInterfaces(t *testing.T) {
-+	awsServices := newMockedFakeAWSServices(TestClusterID)
-+	c, _ := newAWSCloud(CloudConfig{}, awsServices)
-+	c.cfg.Global.ProviderIDPrefix = "fargateTest"
-+	nodeName := "fargate-1.2.3.4"
-+
-+	awsInstance, _ := c.buildAWSInstanceForFargateNode(nodeName)
-+	assert.Equal(t, "1.2.3.4", awsInstance.addresses[0].Address)
-+	assert.Equal(t, string(awsInstance.nodeName), nodeName)
-+	assert.Equal(t, "fargateTest/fargate-1.2.3.4", awsInstance.awsID)
-+	assert.Equal(t, 1, len(awsInstance.addresses))
-+}
 +
 +func TestCloud_sortELBSecurityGroupList(t *testing.T) {
 +	type args struct {

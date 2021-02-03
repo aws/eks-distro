@@ -171,7 +171,7 @@ index 2149c0bed25..c618539dd05 100644
  		MasterCount:            5,
  		EndpointReconcilerType: string(reconcilers.LeaseEndpointReconcilerType),
  		AllowPrivileged:        false,
-+		ProxyCIDRAllowlist:     kubeoptions.NewIPNetSlice(),
++		ProxyCIDRAllowlist:     kubeoptions.NewIPNetSlice("0.0.0.0/0"),
  		GenericServerRunOptions: &apiserveroptions.ServerRunOptions{
  			AdvertiseAddress:            net.ParseIP("192.168.10.10"),
  			CorsAllowedOriginList:       []string{"10.10.10.100", "10.10.10.200"},

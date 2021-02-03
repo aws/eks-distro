@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM 316434458148.dkr.ecr.us-west-2.amazonaws.com/eks-distro/builder:e35d4971088ca37db784caf525373f7342126bf3 as build
+FROM 316434458148.dkr.ecr.us-west-2.amazonaws.com/eks-distro/builder:afa151c76fdefe7248c1a75bb1a764c7e28fb334 as build
 ARG RELEASE_BRANCH 
 ARG KUBERNETES_ROOT
 
