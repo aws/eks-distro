@@ -1,3 +1,12 @@
+BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
+RELEASE_BRANCH?=1-18
+DEFAULT_RELEASE=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/RELEASE)
+ifneq ("$(PULL_BASE_SHA)","")
+	RELEASE?=$(PULL_BASE_SHA)
+else
+	RELEASE?=$(DEFAULT_RELEASE)
+endif
+ARTIFACT_BUCKET?=my-s3-bucket
 GIT_TAG?=$(shell cat GIT_TAG)
 
 REPO=plugins
@@ -18,6 +27,8 @@ build: tarballs
 
 .PHONY: release
 release: tarballs
+	$(BASE_DIRECTORY)/release/copy_artifacts.sh $(COMPONENT) $(RELEASE_BRANCH) $(RELEASE)
+	$(BASE_DIRECTORY)/release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET) $(REPO)
 	echo "Done $(COMPONENT)"
 
 .PHONY: all
