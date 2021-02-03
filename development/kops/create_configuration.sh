@@ -16,37 +16,8 @@
 set -eo pipefail
 
 BASEDIR=$(dirname "$0")
-source ${BASEDIR}/set_k8s_versions.sh
-
-export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-${AWS_REGION}}
-if [ -z "$AWS_DEFAULT_REGION" ]; then
-    read -r -p "What region would you like to store the config? [us-west-2] " REGION
-    export AWS_DEFAULT_REGION=${REGION:-us-west-2}
-fi
-export AWS_REGION="${AWS_DEFAULT_REGION}"
-
-if ! aws sts get-caller-identity --query Account --output text >/dev/null 2>/dev/null
-then
-    echo "Error authtenticating with AWS running: aws sts get-caller-identity"
-    echo "The AWS CLI must be able to run for this script"
-    exit 1
-fi
-
-if [ -z "$KOPS_STATE_STORE" ]; then
-    source ${BASEDIR}/create_store_name.sh >/dev/null
-    read -r -p "What kOps state store would you like use? [${KOPS_STATE_STORE}] " STATE_STORE
-    export KOPS_STATE_STORE=${STATE_STORE:-${KOPS_STATE_STORE}}
-fi
-export BUCKET_NAME=${KOPS_STATE_STORE#"s3://"}
-
-if [ -z "$KOPS_CLUSTER_NAME" ]; then
-    echo "Cluster name must be an FQDN: <yourcluster>.yourdomain.com or <yourcluster>.sub.yourdomain.com"
-    read -r -p "What is the name of your Cluster? " KOPS_CLUSTER_NAME
-    export KOPS_CLUSTER_NAME
-fi
-
-mkdir -p "./${KOPS_CLUSTER_NAME}"
-${BASEDIR}/create_values_yaml.sh || exit 0
+source ${BASEDIR}/set_environment.sh
+$PREFLIGHT_CHECK_PASSED || exit 1
 
 # Create the bucket if it doesn't exist
 _bucket_name=$(aws s3api list-buckets  --query "Buckets[?Name=='$BUCKET_NAME'].Name | [0]" --out text)
@@ -76,14 +47,14 @@ data:
 EOF
 
 echo "Creating ${KOPS_CLUSTER_NAME}.yaml"
-kops toolbox template --template eks-d.tpl --values ./${KOPS_CLUSTER_NAME}/values.yaml > "./${KOPS_CLUSTER_NAME}/${KOPS_CLUSTER_NAME}.yaml"
+${KOPS} toolbox template --template eks-d.tpl --values ./${KOPS_CLUSTER_NAME}/values.yaml > "./${KOPS_CLUSTER_NAME}/${KOPS_CLUSTER_NAME}.yaml"
 
 echo "Creating cluster configuration"
-kops create -f "./${KOPS_CLUSTER_NAME}/${KOPS_CLUSTER_NAME}.yaml"
+${KOPS} create -f "./${KOPS_CLUSTER_NAME}/${KOPS_CLUSTER_NAME}.yaml"
 
 echo "Creating cluster ssh key"
 export SSH_KEY_PATH=${SSH_KEY_PATH:-$HOME/.ssh/id_rsa.pub}
-kops create secret --name $KOPS_CLUSTER_NAME sshpublickey admin -i ${SSH_KEY_PATH}
+${KOPS} create secret --name $KOPS_CLUSTER_NAME sshpublickey admin -i ${SSH_KEY_PATH}
 
 echo
 echo "# Creating ./${KOPS_CLUSTER_NAME}/env.sh"

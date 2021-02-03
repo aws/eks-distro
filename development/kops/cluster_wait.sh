@@ -15,6 +15,10 @@
 
 set -eo pipefail
 
+BASEDIR=$(dirname "$0")
+source ${BASEDIR}/set_environment.sh
+$PREFLIGHT_CHECK_PASSED || exit 1
+
 #
 # Add IAM configmap
 COUNT=0
@@ -32,4 +36,4 @@ do
 done
 
 set -x
-kops validate cluster --wait 3m
+${KOPS} validate cluster --wait 3m
