@@ -1,25 +1,21 @@
-REPO?=metrics-server
-CLONE_URL?=https://github.com/kubernetes-sigs/$(REPO).git
+BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
+RELEASE_BRANCH?=1-18
+DEFAULT_RELEASE=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/RELEASE)
+ifneq ("$(PULL_BASE_SHA)","")
+	RELEASE?=$(PULL_BASE_SHA)
+else
+	RELEASE?=$(DEFAULT_RELEASE)
+endif
+ARTIFACT_BUCKET?=my-s3-bucket
 GIT_TAG?=$(shell cat GIT_TAG)
 
-ifeq ("$(REPO)","")
-	$(error No repository name was provided.)
-endif
-
-ifeq ("$(CLONE_URL)","")
-	$(error No clone url was provided.)
-endif
-
-ifeq ("$(GIT_TAG)","")
-	$(error No git tag was provided.)
-endif
+REPO=metrics-server
+COMPONENT=kubernetes-sigs/$(REPO)
+CLONE_URL=https://github.com/$(COMPONENT).git
 
 DEVELOPMENT?=true
 AWS_ACCOUNT_ID?=$(shell aws sts get-caller-identity --query Account --output text)
 AWS_REGION?=us-west-2
-
-RELEASE_BRANCH?="1-18"
-RELEASE?="1"
 
 MAKE_ROOT=$(shell cd "$(shell dirname "${BASH_SOURCE[0]}")" && pwd -P)
 BASE_REPO?=$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
@@ -28,7 +24,7 @@ BASE_TAG?=$(shell cat $(MAKE_ROOT)/../../../EKS_DISTRO_BASE_TAG_FILE)
 BASE_IMAGE?=$(BASE_REPO)/$(BASE_IMAGE_NAME):$(BASE_TAG)
 
 IMAGE_REPO?=$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
-IMAGE_NAME?=kubernetes-sigs/metrics-server
+IMAGE_NAME?=$(COMPONENT)
 IMAGE_TAG?=$(GIT_TAG)-eks-${RELEASE_BRANCH}-${RELEASE}
 IMAGE?=$(IMAGE_REPO)/$(IMAGE_NAME):$(IMAGE_TAG)
 
@@ -85,6 +81,7 @@ build: local-images tarballs
 
 .PHONY: release
 release: images tarballs
+	echo "Done $(COMPONENT)"
 
 .PHONY: all
 all: release

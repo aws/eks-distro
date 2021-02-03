@@ -15,19 +15,11 @@
 
 set -eo pipefail
 
-export KOPS_STATE_STORE=${1:-${KOPS_STATE_STORE}}
-if [ -z "${KOPS_STATE_STORE}" ]
-then
-  echo "Usage: ${0} s3://bucketname"
-  echo "  or set and export KOPS_STATE_STORE"
-  exit 1
-fi
-if [[ "${KOPS_STATE_STORE}" != s3://* ]]
-then
-  export KOPS_STATE_STORE="s3://${KOPS_STATE_STORE}"
-fi
+BASEDIR=$(dirname "$0")
+source ${BASEDIR}/set_environment.sh
+$PREFLIGHT_CHECK_PASSED || exit 1
 
 echo "Deleting cluster $KOPS_STATE_STORE ${KOPS_CLUSTER_NAME}"
 set -x
-kops delete cluster --state "${KOPS_STATE_STORE}" --name "${KOPS_CLUSTER_NAME}" --yes
+${KOPS} delete cluster --state "${KOPS_STATE_STORE}" --name "${KOPS_CLUSTER_NAME}" --yes
 set +x

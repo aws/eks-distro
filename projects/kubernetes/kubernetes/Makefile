@@ -1,14 +1,20 @@
-REPOSITORY?=kubernetes
-CLONE_URL?=https://github.com/kubernetes/$(REPOSITORY).git
-
+BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
 RELEASE_BRANCH?=1-18
+DEFAULT_RELEASE=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/RELEASE)
+ifneq ("$(PULL_BASE_SHA)","")
+	RELEASE?=$(PULL_BASE_SHA)
+else
+	RELEASE?=$(DEFAULT_RELEASE)
+endif
+ARTIFACT_BUCKET?=my-s3-bucket
 GIT_TAG?=$(shell cat ./$(RELEASE_BRANCH)/GIT_TAG)
+
+REPO=kubernetes
+COMPONENT=kubernetes/$(REPO)
+CLONE_URL=https://github.com/$(COMPONENT).git
 
 AWS_ACCOUNT_ID?=$(shell aws sts get-caller-identity --query Account --output text)
 AWS_REGION?=us-west-2
-
-RELEASE_BRANCH?=1-18
-RELEASE?=1
 
 BASE_REPO?=$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
 GO_RUNNER_IMAGE_NAME?=kubernetes/go-runner
@@ -37,7 +43,7 @@ update-checksums: binaries
 
 .PHONY: binaries
 binaries:
-	build/create_binaries.sh $(CLONE_URL) $(RELEASE_BRANCH)
+	build/create_binaries.sh $(CLONE_URL) $(RELEASE_BRANCH) $(GIT_TAG)
 
 .PHONY: tarballs
 tarballs: binaries
@@ -48,7 +54,7 @@ $(PAUSE_DST_DIR)/pause.c:
 	cp $(PAUSE_SRC_DIR)/linux/pause.c $(PAUSE_DST_DIR) || cp $(PAUSE_SRC_DIR)/pause.c $(PAUSE_DST_DIR)
 
 pause: $(PAUSE_DST_DIR)/pause.c
-	rm -rf ./kubernetes
+	test -z "${BUILD_ID}" && rm -rf ./kubernetes
 
 .PHONY: local-images
 local-images: binaries pause
@@ -94,14 +100,17 @@ docker-push:
 	docker push $(IMAGE_REPO)/$(IMAGE_REPO_PREFIX)/$(PAUSE_IMAGE_NAME):3.2
 
 .PHONY: checksums
-checksums: tarballs local-images
+checksums: tarballs
 	build/create_release_checksums.sh $(RELEASE_BRANCH)
 
 .PHONY: build
 build: checksums
 
 .PHONY: release
-release: checksums images
+release: images checksums
+	$(BASE_DIRECTORY)/release/copy_artifacts.sh $(COMPONENT) $(RELEASE_BRANCH) $(RELEASE)
+	$(BASE_DIRECTORY)/release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET) $(REPO)
+	echo "Done $(COMPONENT)"
 
 .PHONY: all
 all: release

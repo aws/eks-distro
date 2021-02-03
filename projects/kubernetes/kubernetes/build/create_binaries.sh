@@ -18,14 +18,15 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
+
 CLONE_URL="$1"
 RELEASE_BRANCH="$2"
+GIT_TAG="${3:-$(cat ${MAKE_ROOT}/${RELEASE_BRANCH}/GIT_TAG)}"
 
-MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
 source "${MAKE_ROOT}/build/lib/init.sh"
 source "${MAKE_ROOT}/../../../build/lib/common.sh"
 
-GIT_TAG="$(cat ${MAKE_ROOT}/${RELEASE_BRANCH}/GIT_TAG)"
 RELEASE_FILE="${MAKE_ROOT}/${RELEASE_BRANCH}/RELEASE"
 PATCH_DIR=${MAKE_ROOT}/${RELEASE_BRANCH}/patches
 export KUBE_GIT_VERSION=$(build::version::kube_git_version $GIT_TAG $RELEASE_FILE $RELEASE_BRANCH)

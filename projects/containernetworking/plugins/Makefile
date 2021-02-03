@@ -1,18 +1,17 @@
-REPO?=plugins
-CLONE_URL?=https://github.com/containernetworking/$(REPO).git
+BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
+RELEASE_BRANCH?=1-18
+DEFAULT_RELEASE=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/RELEASE)
+ifneq ("$(PULL_BASE_SHA)","")
+	RELEASE?=$(PULL_BASE_SHA)
+else
+	RELEASE?=$(DEFAULT_RELEASE)
+endif
+ARTIFACT_BUCKET?=my-s3-bucket
 GIT_TAG?=$(shell cat GIT_TAG)
 
-ifeq ("$(REPO)","")
-	$(error No repository name was provided.)
-endif
-
-ifeq ("$(CLONE_URL)","")
-	$(error No clone url was provided.)
-endif
-
-ifeq ("$(GIT_TAG)","")
-	$(error No git tag was provided.)
-endif
+REPO=plugins
+COMPONENT=containernetworking/$(REPO)
+CLONE_URL=https://github.com/$(COMPONENT).git
 
 .PHONY: binaries
 binaries:
@@ -22,8 +21,15 @@ binaries:
 tarballs:  binaries
 	build/create_tarballs.sh $(REPO) $(GIT_TAG)
 
+.PHONY: build
+build: tarballs
+	echo "Done $(COMPONENT)"
+
 .PHONY: release
 release: tarballs
+	$(BASE_DIRECTORY)/release/copy_artifacts.sh $(COMPONENT) $(RELEASE_BRANCH) $(RELEASE)
+	$(BASE_DIRECTORY)/release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET) $(REPO)
+	echo "Done $(COMPONENT)"
 
 .PHONY: all
 all: release
@@ -36,4 +42,3 @@ docker-push:
 clean:
 	rm -rf $(REPO)
 	rm -rf "_output"
-

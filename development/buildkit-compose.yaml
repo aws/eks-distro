@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 # Copyright 2020 Amazon.com Inc. or its affiliates. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,6 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-export KUBERNETES_VERSION=https://distro.eks.amazonaws.com/kubernetes-1-18/releases/1/artifacts/kubernetes/v1.18.9
-export CNI_VERSION_URL=https://distro.eks.amazonaws.com/kubernetes-1-18/releases/1/artifacts/plugins/v0.8.7/cni-plugins-linux-amd64-v0.8.7.tar.gz
-export CNI_ASSET_HASH_STRING=sha256:7426431524c2976f481105b80497238030e1c3eedbfcad00e2a9ccbaaf9eef9d
+version: "3.8"
+services:
+  buildkitd:
+    image: moby/buildkit:v0.8.1-rootless
+    command:
+    - --addr
+    - tcp://0.0.0.0:1234
+    - --oci-worker-no-process-sandbox
+    #- --config=/etc/buildkit/buildkitd.toml
+    #dns: []
+    #dns_search: []
+    user: "1000"
+    privileged: true
+    ports:
+    - 1234:1234/tcp
+    #volumes:
+    #- type: bind
+    #  source: ./buildkitd.toml
+    #  target: /etc/buildkit/buildkitd.toml
