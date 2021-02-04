@@ -20,6 +20,7 @@ Full documentation for releases can be found on https://distro.eks.amazonaws.com
 
 ### Kubernetes 1-18
 
+[![Build status](https://prow.eks.amazonaws.com/badge.svg?jobs=main-1-18-postsubmit)](https://prow.eks.amazonaws.com/?job=main-1-18-postsubmit)
 | Release | Manifest |
 | --- | --- |
 | 1 | [kubernetes-1-18-eks-1](https://distro.eks.amazonaws.com/kubernetes-1-18/kubernetes-1-18-eks-1.yaml) |
