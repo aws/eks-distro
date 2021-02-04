@@ -23,17 +23,10 @@ also generate the cluster configuration:
 ```bash
 export KOPS_STATE_STORE=s3://kops-state-store
 export KOPS_CLUSTER_NAME=clustername.example.com
-./create_configuration.sh 
+./run_cluster.sh
 ```
 
-### 3. Create the Cluster
-Once the cluster configuration has been created succcessfully, create the
-EKS-D cluster:
-```bash
-./create_cluster.sh 
-```
-
-### 4. Wait for the Cluster
+### 3. Wait for the Cluster
 It may take a while for the cluster. You can use the `cluster_wait.sh`
 script to wait for the cluster to be ready. Once the cluster is ready this
 script will add the AWS IAM authenticator.
