@@ -105,22 +105,27 @@ func main() {
 	filesChanged := strings.Fields(string(gitDiffOutput))
 
 	allChanged := false
-	projects := map[string]*struct {
-		changed         bool
-	}{
-		"kubernetes/kubernetes": {},
-		"kubernetes/release": {},
-		"coredns/coredns": {},
-		"containernetworking/plugins": {},
-		"kubernetes-sigs/aws-iam-authenticator": {},
-		"kubernetes-sigs/metrics-server": {},
-		"etcd-io/etcd": {},
-		"kubernetes-csi/external-attacher": {},
-		"kubernetes-csi/external-resizer": {},
-		"kubernetes-csi/livenessprobe": {},
-		"kubernetes-csi/node-driver-registrar": {},
-		"kubernetes-csi/external-snapshotter": {},
-		"kubernetes-csi/external-provisioner": {},
+	buildOrder := [...]string {
+		"kubernetes/release",
+		"kubernetes/kubernetes",
+		"containernetworking/plugins",
+		"coredns/coredns",
+		"etcd-io/etcd",
+		"kubernetes-sigs/aws-iam-authenticator",
+		"kubernetes-sigs/metrics-server",
+		"kubernetes-csi/external-attacher",
+		"kubernetes-csi/external-resizer",
+		"kubernetes-csi/livenessprobe",
+		"kubernetes-csi/node-driver-registrar",
+		"kubernetes-csi/external-snapshotter",
+		"kubernetes-csi/external-provisioner",
+	}
+	type changedStruct struct {
+		changed		bool
+	}
+	projects := make(map[string]*changedStruct)
+	for _, projectPath := range buildOrder {
+		projects[projectPath] = &changedStruct{}
 	}
 
 	for _, file := range filesChanged {
@@ -134,8 +139,8 @@ func main() {
 			allChanged = true
 		}
 	}
-	for projectPath, config := range projects {
-		if config.changed || allChanged {
+	for _, projectPath := range buildOrder {
+		if projects[projectPath].changed || allChanged {
 			err = c.buildProject(projectPath)
 			if err != nil {
 				log.Fatalf("error building %s: %v", projectPath, err)
