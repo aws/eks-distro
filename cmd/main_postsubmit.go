@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"strings"
 )
 
@@ -21,7 +22,6 @@ type Command struct {
 	gitRoot              string
 	release              string
 	artifactBucket       string
-	uploadToPublicBucket bool
 
 	makeTarget string
 	makeArgs   []string
@@ -29,7 +29,7 @@ type Command struct {
 	dryRun bool
 }
 
-func (c *Command) buildProject(projectPath string, uploadArtifacts bool) error {
+func (c *Command) buildProject(projectPath string) error {
 	commandArgs := []string{
 		"-C",
 		filepath.Join(c.gitRoot, "projects", projectPath),
@@ -37,7 +37,7 @@ func (c *Command) buildProject(projectPath string, uploadArtifacts bool) error {
 	}
 	commandArgs = append(commandArgs, c.makeArgs...)
 
-	cmd := exec.Command("make", c.makeArgs...)
+	cmd := exec.Command("make", commandArgs...)
 	log.Printf("Executing: %s", strings.Join(cmd.Args, " "))
 	cmd.Stdout = outputStream
 	cmd.Stderr = errStream
@@ -46,49 +46,6 @@ func (c *Command) buildProject(projectPath string, uploadArtifacts bool) error {
 		if err != nil {
 			return fmt.Errorf("Error running make: %v", err)
 		}
-	}
-
-	if uploadArtifacts {
-		if c.uploadToPublicBucket {
-			cmd = exec.Command(
-				"/bin/bash",
-				filepath.Join(c.gitRoot, "release/lib/create_final_dir.sh"),
-				c.releaseBranch,
-				c.release,
-				c.artifactBucket,
-				projectPath,
-			)
-			cmd.Stdout = outputStream
-			cmd.Stderr = errStream
-			log.Printf("Executing: %s", strings.Join(cmd.Args, " "))
-			if !c.dryRun {
-				err := cmd.Run()
-				if err != nil {
-					return fmt.Errorf("Error running create_final_dir.sh: %v", err)
-				}
-			}
-		}
-		if projectPath == "kubernetes/kubernetes" {
-			cmd = exec.Command(
-				"/bin/bash",
-				"-c",
-				fmt.Sprintf("'mv %s/projects/%s/_output/%s/* /logs/artifacts'", c.gitRoot, projectPath, c.releaseBranch))
-		} else {
-			cmd = exec.Command(
-				"/bin/bash",
-				"-c",
-				fmt.Sprintf("'mv %s/projects/%s/_output/tar/* /logs/artifacts'", c.gitRoot, projectPath))
-		}
-		cmd.Stdout = outputStream
-		cmd.Stderr = errStream
-		log.Printf("Executing: %s", strings.Join(cmd.Args, " "))
-		if !c.dryRun {
-			err := cmd.Run()
-			if err != nil {
-				return fmt.Errorf("Error running make: %v", err)
-			}
-		}
-		log.Printf("Successfully moved artifacts to /logs/artifacts directory for %s", projectPath)
 	}
 	return nil
 }
@@ -105,7 +62,6 @@ func main() {
 	goRunnerImage := flag.String("go-runner-image", "", "go-runner image")
 	kubeProxyBase := flag.String("kube-proxy-base", "", "kube-proxy base image")
 	artifactBucket := flag.String("artifact-bucket", "", "S3 bucket for artifacts")
-	uploadToPublicBucket := flag.Bool("upload-to-s3", false, "Upload artifacts to s3 bucket")
 	gitRoot := flag.String("git-root", "", "Git root directory")
 	dryRun := flag.Bool("dry-run", false, "Echo out commands, but don't run them")
 
@@ -117,7 +73,6 @@ func main() {
 		release:              *release,
 		artifactBucket:       *artifactBucket,
 		gitRoot:              *gitRoot,
-		uploadToPublicBucket: *uploadToPublicBucket,
 		makeTarget:           *target,
 		dryRun:               *dryRun,
 	}
@@ -151,24 +106,21 @@ func main() {
 
 	allChanged := false
 	projects := map[string]*struct {
-		uploadArtifacts bool
 		changed         bool
 	}{
-		"kubernetes/kubernetes": {
-			uploadArtifacts: true,
-		},
-		"coredns/coredns": {
-			uploadArtifacts: false,
-		},
-		"containernetworking/plugins": {
-			uploadArtifacts: true,
-		},
-		"kubernetes-sigs/aws-iam-authenticator": {
-			uploadArtifacts: true,
-		},
-		"etcd-io/etcd": {
-			uploadArtifacts: true,
-		},
+		"kubernetes/kubernetes": {},
+		"kubernetes/release": {},
+		"coredns/coredns": {},
+		"containernetworking/plugins": {},
+		"kubernetes-sigs/aws-iam-authenticator": {},
+		"kubernetes-sigs/metrics-server": {},
+		"etcd-io/etcd": {},
+		"kubernetes-csi/external-attacher": {},
+		"kubernetes-csi/external-resizer": {},
+		"kubernetes-csi/livenessprobe": {},
+		"kubernetes-csi/node-driver-registrar": {},
+		"kubernetes-csi/external-snapshotter": {},
+		"kubernetes-csi/external-provisioner": {},
 	}
 
 	for _, file := range filesChanged {
@@ -177,13 +129,14 @@ func main() {
 				projects[projectPath].changed = true
 			}
 		}
-		if file == "Makefile" {
+		r := regexp.MustCompile("Makefile|cmd/main_postsubmit.go|release/.*")
+		if r.MatchString(file) {
 			allChanged = true
 		}
 	}
 	for projectPath, config := range projects {
 		if config.changed || allChanged {
-			err = c.buildProject(projectPath, config.uploadArtifacts)
+			err = c.buildProject(projectPath)
 			if err != nil {
 				log.Fatalf("error building %s: %v", projectPath, err)
 			}

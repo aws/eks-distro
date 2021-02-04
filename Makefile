@@ -18,6 +18,7 @@ BASE_IMAGE?=$(IMAGE_REPO)/eks-distro/base:$(BASE_IMAGE_TAG)
 KUBE_BASE_TAG?=v0.4.2-ea45689a0da457711b15fa1245338cd0b636ad4b
 KUBE_PROXY_BASE_IMAGE?=$(IMAGE_REPO)/kubernetes/kube-proxy-base:$(KUBE_BASE_TAG)
 GO_RUNNER_IMAGE?=$(IMAGE_REPO)/kubernetes/go-runner:$(KUBE_BASE_TAG)
+RELEASE_AWS_PROFILE?=default
 
 ifdef MAKECMDGOALS
 TARGET=$(MAKECMDGOALS)
@@ -35,7 +36,20 @@ setup:
 	AWS_DEFAULT_PROFILE=$(RELEASE_AWS_PROFILE) bash ./ecr-public/get-credentials.sh
 
 .PHONY: build
-build: makes
+build:
+	go vet cmd/main_postsubmit.go
+	go run cmd/main_postsubmit.go \
+		--target=build \
+		--release-branch=${RELEASE_BRANCH} \
+		--release=${RELEASE} \
+		--development=${DEVELOPMENT} \
+		--region=${AWS_REGION} \
+		--account-id=${AWS_ACCOUNT_ID} \
+		--base-image=${BASE_IMAGE} \
+		--image-repo=${IMAGE_REPO} \
+		--go-runner-image=${GO_RUNNER_IMAGE} \
+		--kube-proxy-base=${KUBE_PROXY_BASE_IMAGE} \
+		--dry-run=true
 	@echo 'Done' $(TARGET)
 
 .PHONY: postsubmit-conformance
@@ -53,9 +67,8 @@ postsubmit-conformance:
 		--go-runner-image=${GO_RUNNER_IMAGE} \
 		--kube-proxy-base=${KUBE_PROXY_BASE_IMAGE} \
 		--artifact-bucket=$(ARTIFACT_BUCKET) \
-		--upload-to-s3=false \
 		--dry-run=false
-	bash development/kops/prow.sh
+#	bash development/kops/prow.sh
 
 .PHONY: upload
 upload:

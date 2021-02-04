@@ -45,4 +45,13 @@ else
     echo "Kops executable ${KOPS} available..."
     ${KOPS} version
 fi
+if ! command -v kubectl &> /dev/null
+then
+    echo "kubectl could not be found"
+    
+    KUBECTL_VERSION=v1.18.9
+    KUBECTL_PATH=/usr/local/bin/kubectl
+    curl -sSL "https://distro.eks.amazonaws.com/kubernetes-1-18/releases/1/artifacts/kubernetes/${KUBECTL_VERSION}/bin/linux/amd64/kubectl" -o ${KUBECTL_PATH}
+    chmod +x ${KUBECTL_PATH}
+fi
 exit 0

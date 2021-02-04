@@ -1,3 +1,5 @@
+[![Build status](https://prow.eks.amazonaws.com/badge.svg?jobs=docs-postsubmit)](https://prow.eks.amazonaws.com/?job=docs-postsubmit)
+
 🟩 [View the live docs](https://distro.eks.amazonaws.com)
 
 # Writing and publishing docs
