@@ -54,7 +54,7 @@ $(PAUSE_DST_DIR)/pause.c:
 	cp $(PAUSE_SRC_DIR)/linux/pause.c $(PAUSE_DST_DIR) || cp $(PAUSE_SRC_DIR)/pause.c $(PAUSE_DST_DIR)
 
 pause: $(PAUSE_DST_DIR)/pause.c
-	test -z "${BUILD_ID}" && rm -rf ./kubernetes
+	rm -rf ./kubernetes
 
 .PHONY: local-images
 local-images: binaries pause
