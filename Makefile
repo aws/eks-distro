@@ -71,6 +71,11 @@ postsubmit-conformance:
 #	bash development/kops/prow.sh
 
 .PHONY: upload
+tag:
+	git tag --force v$(RELEASE_BRANCH)-eks-$(RELEASE)
+	git push --force origin tag v$(RELEASE_BRANCH)-eks-$(RELEASE)
+
+.PHONY: upload
 upload:
 	release/generate_crd.sh $(RELEASE_BRANCH) $(RELEASE)
 	release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET)
