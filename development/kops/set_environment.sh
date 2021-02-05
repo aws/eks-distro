@@ -15,14 +15,8 @@
 
 BASEDIR=$(dirname "$0")
 export RELEASE_BRANCH=${RELEASE_BRANCH:-"1-18"}
-export RELEASE=${RELEASE:-"1"}
 export DEFAULT_RELEASE=$(cat ${BASEDIR}/../../release/${RELEASE_BRANCH}/RELEASE)
-if [ -z "${PULL_NUMBER}" ]
-then
-    export RELEASE=${DEFAULT_RELEASE}
-else
-    export RELEASE=$(expr ${DEFAULT_RELEASE} \* 10000 + ${PULL_NUMBER})
-fi
+export RELEASE=${RELEASE:-${DEFAULT_RELEASE}}
 
 if [ -z "${PREFLIGHT_CHECK_PASSED}" ]
 then
