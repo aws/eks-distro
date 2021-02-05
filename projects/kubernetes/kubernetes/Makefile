@@ -24,6 +24,13 @@ KUBE_BASE_TAG?=${KUBE_BASE_GIT_TAG}-eks-${RELEASE_BRANCH}-${RELEASE}
 GO_RUNNER_IMAGE?=$(BASE_REPO)/$(GO_RUNNER_IMAGE_NAME):$(KUBE_BASE_TAG)
 KUBE_PROXY_BASE_IMAGE?=$(BASE_REPO)/$(KUBE_PROXY_BASE_IMAGE_NAME):$(KUBE_BASE_TAG)
 
+# Since the image won't be available for the local-images target,
+# need to override based on an image that is already available.
+# We want to a better way than this to avoid having to change often.
+PRESUBMIT_KUBE_BASE_TAG?=v0.4.2-ea45689a0da457711b15fa1245338cd0b636ad4b
+PRESUBMIT_GO_RUNNER_IMAGE?=$(BASE_REPO)/$(GO_RUNNER_IMAGE_NAME):$(PRESUBMIT_KUBE_BASE_TAG)
+PRESUBMIT_KUBE_PROXY_BASE_IMAGE?=$(BASE_REPO)/$(KUBE_PROXY_BASE_IMAGE_NAME):$(PRESUBMIT_KUBE_BASE_TAG)
+
 IMAGE_REPO?=$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
 IMAGE_REPO_PREFIX=kubernetes
 IMAGE_TAG?=$(GIT_TAG)-eks-${RELEASE_BRANCH}-${RELEASE}
@@ -47,7 +54,7 @@ binaries:
 	build/create_binaries.sh $(CLONE_URL) $(RELEASE_BRANCH) $(GIT_TAG)
 
 .PHONY: tarballs
-tarballs: binaries
+tarballs:
 	build/create_tarballs.sh $(RELEASE_BRANCH)
 
 $(PAUSE_DST_DIR)/pause.c:
@@ -55,23 +62,22 @@ $(PAUSE_DST_DIR)/pause.c:
 	cp $(PAUSE_SRC_DIR)/linux/pause.c $(PAUSE_DST_DIR) || cp $(PAUSE_SRC_DIR)/pause.c $(PAUSE_DST_DIR)
 
 pause: $(PAUSE_DST_DIR)/pause.c
-	rm -rf ./kubernetes
 
 .PHONY: local-images
-local-images: binaries pause
-	build/create_images.sh $(RELEASE_BRANCH) $(GO_RUNNER_IMAGE) $(KUBE_PROXY_BASE_IMAGE) $(IMAGE_REPO) $(IMAGE_REPO_PREFIX) $(IMAGE_TAG) false
+local-images:
+	build/create_images.sh $(RELEASE_BRANCH) $(PRESUBMIT_GO_RUNNER_IMAGE) $(PRESUBMIT_KUBE_PROXY_BASE_IMAGE) $(IMAGE_REPO) $(IMAGE_REPO_PREFIX) $(IMAGE_TAG) false
 	buildctl \
 		build \
 		--frontend dockerfile.v0 \
 		--opt platform=linux/amd64 \
 		--local dockerfile=./docker/pause/ \
 		--local context=./_output/pause \
-		--opt build-arg:BASE_IMAGE=$(GO_RUNNER_IMAGE) \
+		--opt build-arg:BASE_IMAGE=$(PRESUBMIT_GO_RUNNER_IMAGE) \
 		--opt build-arg:VERSION=$(IMAGE_TAG) \
 		--output type=oci,oci-mediatypes=true,name=$(PAUSE_IMAGE),dest=_output/$(RELEASE_BRANCH)/bin/linux/amd64/pause.tar
 
 .PHONY: images
-images: binaries pause
+images:
 	build/create_images.sh $(RELEASE_BRANCH) $(GO_RUNNER_IMAGE) $(KUBE_PROXY_BASE_IMAGE) $(IMAGE_REPO) $(IMAGE_REPO_PREFIX) $(IMAGE_TAG) true
 	buildctl \
 		build \
@@ -101,14 +107,14 @@ docker-push:
 	docker push $(IMAGE_REPO)/$(IMAGE_REPO_PREFIX)/$(PAUSE_IMAGE_NAME):3.2
 
 .PHONY: checksums
-checksums: tarballs
+checksums:
 	build/create_release_checksums.sh $(RELEASE_BRANCH)
 
 .PHONY: build
-build: tarballs test checksums
+build: test pause tarballs clean-repo local-images checksums
 
 .PHONY: release
-release: images checksums
+release: binaries pause tarballs clean-repo images checksums
 	$(BASE_DIRECTORY)/release/copy_artifacts.sh $(COMPONENT) $(RELEASE_BRANCH) $(RELEASE)
 	$(BASE_DIRECTORY)/release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET) $(REPO)
 	echo "Done $(COMPONENT)"
@@ -120,6 +126,10 @@ all: release
 test: binaries
 	build/run_tests.sh $(RELEASE_BRANCH)
 
+.PHONY: clean-repo
+clean-repo:
+	rm -rf ./kubernetes
+
 .PHONY: clean
-clean:
-	rm -rf ./kubernetes ./_output
+clean: clean-repo
+	rm -rf ./_output
