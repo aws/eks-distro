@@ -28,8 +28,8 @@ else
   PUBLIC_READ=''
 fi
 cd ${BASE_DIRECTORY}
-BASE_DIR=kubernetes-${RELEASE_BRANCH}
-DEST_DIR=${BASE_DIR}/releases/${RELEASE}/artifacts
+PREFIX_DIR=kubernetes-${RELEASE_BRANCH}
+DEST_DIR=${PREFIX_DIR}/releases/${RELEASE}/artifacts
 if [ -n "${REPO}" ]
 then
    DEST_DIR=${DEST_DIR}/${REPO}
@@ -37,10 +37,10 @@ fi
 aws s3 sync $DEST_DIR s3://${ARTIFACT_BUCKET}/${DEST_DIR} ${PUBLIC_READ}
 if [ -z "${REPO}" ]
 then
-  cd ${BASE_DIR}
+  cd ${PREFIX_DIR}
   for CRD
   in *yaml
   do
-    aws s3 cp ${CRD} s3://${ARTIFACT_BUCKET}/${BASE_DIR}/${CRD} ${PUBLIC_READ}
+    aws s3 cp ${CRD} s3://${ARTIFACT_BUCKET}/${PREFIX_DIR}/${CRD} ${PUBLIC_READ}
   done
 fi

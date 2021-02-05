@@ -73,7 +73,7 @@ postsubmit-conformance:
 .PHONY: upload
 upload:
 	release/generate_crd.sh $(RELEASE_BRANCH) $(RELEASE)
-	release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET) ""
+	release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET)
 	@echo 'Done' $(TARGET)
 
 .PHONY: release
