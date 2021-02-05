@@ -65,14 +65,14 @@ pause: $(PAUSE_DST_DIR)/pause.c
 
 .PHONY: local-images
 local-images:
-	build/create_images.sh $(RELEASE_BRANCH) $(GO_RUNNER_IMAGE) $(KUBE_PROXY_BASE_IMAGE) $(IMAGE_REPO) $(IMAGE_REPO_PREFIX) $(IMAGE_TAG) false
+	build/create_images.sh $(RELEASE_BRANCH) $(PRESUBMIT_GO_RUNNER_IMAGE) $(PRESUBMIT_KUBE_PROXY_BASE_IMAGE) $(IMAGE_REPO) $(IMAGE_REPO_PREFIX) $(IMAGE_TAG) false
 	buildctl \
 		build \
 		--frontend dockerfile.v0 \
 		--opt platform=linux/amd64 \
 		--local dockerfile=./docker/pause/ \
 		--local context=./_output/pause \
-		--opt build-arg:BASE_IMAGE=$(GO_RUNNER_IMAGE) \
+		--opt build-arg:BASE_IMAGE=$(PRESUBMIT_GO_RUNNER_IMAGE) \
 		--opt build-arg:VERSION=$(IMAGE_TAG) \
 		--output type=oci,oci-mediatypes=true,name=$(PAUSE_IMAGE),dest=_output/$(RELEASE_BRANCH)/bin/linux/amd64/pause.tar
 
