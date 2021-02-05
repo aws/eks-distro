@@ -1,7 +1,6 @@
 apiVersion: kops.k8s.io/v1alpha2
 kind: Cluster
 metadata:
-  creationTimestamp: null
   name: {{ .clusterName }}
 spec:
   api:
@@ -105,11 +104,14 @@ spec:
 apiVersion: kops.k8s.io/v1alpha2
 kind: InstanceGroup
 metadata:
-  creationTimestamp: null
   labels:
     kops.k8s.io/cluster: {{.clusterName}}
   name: control-plane-{{.awsRegion}}a
 spec:
+  {{- if .controlPlaneInstanceProfileArn }}
+  iam:
+    profile: {{ .controlPlaneInstanceProfileArn }}
+  {{- end }}
   image: 099720109477/ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-20201026
   machineType: t3.medium
   maxSize: 1
@@ -125,11 +127,14 @@ spec:
 apiVersion: kops.k8s.io/v1alpha2
 kind: InstanceGroup
 metadata:
-  creationTimestamp: null
   labels:
     kops.k8s.io/cluster: {{.clusterName}}
   name: nodes
 spec:
+  {{- if .nodeInstanceProfileArn }}
+  iam:
+    profile: {{ .nodeInstanceProfileArn }}
+  {{- end }}
   image: 099720109477/ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-20201026
   machineType: t3.medium
   maxSize: 3

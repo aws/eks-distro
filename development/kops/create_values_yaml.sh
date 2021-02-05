@@ -85,3 +85,15 @@ $(get_container_yaml kubernetes-sigs/aws-iam-authenticator v0.5.2-eks-1-18 $RELE
 coredns:
 $(get_container_yaml coredns/coredns v1.7.0-eks-1-18 $RELEASE)
 EOF
+
+if [ -n "$CONTROL_PLANE_INSTANCE_PROFILE" ]; then
+    cat << EOF >> ./${KOPS_CLUSTER_NAME}/values.yaml
+controlPlaneInstanceProfileArn: $CONTROL_PLANE_INSTANCE_PROFILE
+EOF
+fi
+
+if [ -n "$NODE_INSTANCE_PROFILE" ]; then
+    cat << EOF >> ./${KOPS_CLUSTER_NAME}/values.yaml
+nodeInstanceProfileArn: $NODE_INSTANCE_PROFILE
+EOF
+fi

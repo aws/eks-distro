@@ -18,6 +18,12 @@ cd eks-distro/development/kops
 ### 2. Create the Cluster Configuration
 You will need to set and export `KOPS_STATE_STORE` to the s3 bucket to use for
 your kOps state and `KOPS_CLUSTER_NAME` to a valid subdomain controlled by Route53.
+You can optionally set the environment variables below to use pre-created IAM
+instance profile roles for your cluster instead of having kOps create them.
+```bash
+export CONTROL_PLANE_INSTANCE_PROFILE=arn:aws:iam::111122223333:instance-profile/kops-control-plane-role
+export NODE_INSTANCE_PROFILE=arn:aws:iam::111122223333:instance-profile/kops-node-role
+```
 If your kOps state store does not exist, this script will create it. It will
 also generate the cluster configuration:
 ```bash
