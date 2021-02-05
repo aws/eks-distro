@@ -18,7 +18,7 @@ set -euxo pipefail
 RELEASE_BRANCH="${1?First required argument is release branch for example 1-18}"
 RELEASE="${2?Second required argument is release for example 1}"
 ARTIFACT_BUCKET="${3?Third required argument is artifact bucket name}"
-REPO="${4:-''}"
+REPO="${4:-""}"
 BASE_DIRECTORY=$(git rev-parse --show-toplevel)
 
 if [ "$DEVELOPMENT" == "false" ]
@@ -28,9 +28,19 @@ else
   PUBLIC_READ=''
 fi
 cd ${BASE_DIRECTORY}
-DEST_DIR=kubernetes-${RELEASE_BRANCH}/releases/${RELEASE}/artifacts
-if [ ! -z "${REPO}" ]
+PREFIX_DIR=kubernetes-${RELEASE_BRANCH}
+DEST_DIR=${PREFIX_DIR}/releases/${RELEASE}/artifacts
+if [ -n "${REPO}" ]
 then
    DEST_DIR=${DEST_DIR}/${REPO}
 fi
 aws s3 sync $DEST_DIR s3://${ARTIFACT_BUCKET}/${DEST_DIR} ${PUBLIC_READ}
+if [ -z "${REPO}" ]
+then
+  cd ${PREFIX_DIR}
+  for CRD
+  in *yaml
+  do
+    aws s3 cp ${CRD} s3://${ARTIFACT_BUCKET}/${PREFIX_DIR}/${CRD} ${PUBLIC_READ}
+  done
+fi
