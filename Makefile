@@ -7,17 +7,11 @@ else
 	RELEASE?=$(DEFAULT_RELEASE)
 endif
 ARTIFACT_BUCKET?=my-s3-bucket
-GIT_TAG?=$(shell cat GIT_TAG)
 
 DEVELOPMENT?=false
 AWS_ACCOUNT_ID?=$(shell aws sts get-caller-identity --query Account --output text)
 AWS_REGION?=us-west-2
 IMAGE_REPO?=$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
-BASE_IMAGE_TAG?=$(shell cat EKS_DISTRO_BASE_TAG_FILE)
-BASE_IMAGE?=$(IMAGE_REPO)/eks-distro/base:$(BASE_IMAGE_TAG)
-KUBE_BASE_TAG?=v0.4.2-ea45689a0da457711b15fa1245338cd0b636ad4b
-KUBE_PROXY_BASE_IMAGE?=$(IMAGE_REPO)/kubernetes/kube-proxy-base:$(KUBE_BASE_TAG)
-GO_RUNNER_IMAGE?=$(IMAGE_REPO)/kubernetes/go-runner:$(KUBE_BASE_TAG)
 RELEASE_AWS_PROFILE?=default
 
 ifdef MAKECMDGOALS
@@ -45,10 +39,7 @@ build:
 		--development=${DEVELOPMENT} \
 		--region=${AWS_REGION} \
 		--account-id=${AWS_ACCOUNT_ID} \
-		--base-image=${BASE_IMAGE} \
 		--image-repo=${IMAGE_REPO} \
-		--go-runner-image=${GO_RUNNER_IMAGE} \
-		--kube-proxy-base=${KUBE_PROXY_BASE_IMAGE} \
 		--dry-run=true
 	@echo 'Done' $(TARGET)
 
@@ -62,10 +53,7 @@ postsubmit-conformance:
 		--development=${DEVELOPMENT} \
 		--region=${AWS_REGION} \
 		--account-id=${AWS_ACCOUNT_ID} \
-		--base-image=${BASE_IMAGE} \
 		--image-repo=${IMAGE_REPO} \
-		--go-runner-image=${GO_RUNNER_IMAGE} \
-		--kube-proxy-base=${KUBE_PROXY_BASE_IMAGE} \
 		--artifact-bucket=$(ARTIFACT_BUCKET) \
 		--dry-run=false
 #	bash development/kops/prow.sh

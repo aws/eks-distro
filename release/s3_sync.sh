@@ -21,7 +21,7 @@ ARTIFACT_BUCKET="${3?Third required argument is artifact bucket name}"
 REPO="${4:-''}"
 BASE_DIRECTORY=$(git rev-parse --show-toplevel)
 
-if aws s3api get-bucket-policy-status --bucket 2>/dev/null
+if [ "$DEVELOPMENT" == "false" ]
 then
   PUBLIC_READ='--acl public-read'
 else
