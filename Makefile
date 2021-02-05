@@ -70,7 +70,7 @@ postsubmit-conformance:
 		--dry-run=false
 #	bash development/kops/prow.sh
 
-.PHONY: upload
+.PHONY: tag
 tag:
 	git tag --force v$(RELEASE_BRANCH)-eks-$(RELEASE)
 	git push --force origin tag v$(RELEASE_BRANCH)-eks-$(RELEASE)
