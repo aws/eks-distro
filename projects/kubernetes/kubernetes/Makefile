@@ -47,7 +47,7 @@ binaries:
 	build/create_binaries.sh $(CLONE_URL) $(RELEASE_BRANCH) $(GIT_TAG)
 
 .PHONY: tarballs
-tarballs: binaries
+tarballs:
 	build/create_tarballs.sh $(RELEASE_BRANCH)
 
 $(PAUSE_DST_DIR)/pause.c:
@@ -55,10 +55,9 @@ $(PAUSE_DST_DIR)/pause.c:
 	cp $(PAUSE_SRC_DIR)/linux/pause.c $(PAUSE_DST_DIR) || cp $(PAUSE_SRC_DIR)/pause.c $(PAUSE_DST_DIR)
 
 pause: $(PAUSE_DST_DIR)/pause.c
-	rm -rf ./kubernetes
 
 .PHONY: local-images
-local-images: binaries pause
+local-images: pause
 	build/create_images.sh $(RELEASE_BRANCH) $(GO_RUNNER_IMAGE) $(KUBE_PROXY_BASE_IMAGE) $(IMAGE_REPO) $(IMAGE_REPO_PREFIX) $(IMAGE_TAG) false
 	buildctl \
 		build \
@@ -101,14 +100,16 @@ docker-push:
 	docker push $(IMAGE_REPO)/$(IMAGE_REPO_PREFIX)/$(PAUSE_IMAGE_NAME):3.2
 
 .PHONY: checksums
-checksums: tarballs
+checksums:
 	build/create_release_checksums.sh $(RELEASE_BRANCH)
 
 .PHONY: build
-build: tarballs test checksums
+build: test local_images tarballs checksums
+	rm -rf ./kubernetes
 
 .PHONY: release
-release: images checksums
+release: images tarballs checksums
+	rm -rf ./kubernetes
 	$(BASE_DIRECTORY)/release/copy_artifacts.sh $(COMPONENT) $(RELEASE_BRANCH) $(RELEASE)
 	$(BASE_DIRECTORY)/release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET) $(REPO)
 	echo "Done $(COMPONENT)"
