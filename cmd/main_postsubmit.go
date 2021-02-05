@@ -57,11 +57,7 @@ func main() {
 	development := flag.Bool("development", false, "Build as a development build")
 	region := flag.String("region", "us-west-2", "AWS region to use")
 	accountId := flag.String("account-id", "", "AWS Account ID to use")
-	baseImage := flag.String("base-image", "", "Base container image")
 	imageRepo := flag.String("image-repo", "", "Container image repository")
-	goRunnerImage := flag.String("go-runner-image", "", "go-runner image")
-	kubeProxyBase := flag.String("kube-proxy-base", "", "kube-proxy base image")
-	imageTag := flag.String("image-tag", "", "tag for build images")
 	artifactBucket := flag.String("artifact-bucket", "", "S3 bucket for artifacts")
 	gitRoot := flag.String("git-root", "", "Git root directory")
 	dryRun := flag.Bool("dry-run", false, "Echo out commands, but don't run them")
@@ -90,11 +86,7 @@ func main() {
 		fmt.Sprintf("DEVELOPMENT=%t", *development),
 		fmt.Sprintf("AWS_REGION=%s", *region),
 		fmt.Sprintf("AWS_ACCOUNT_ID=%s", *accountId),
-		fmt.Sprintf("BASE_IMAGE=%s", *baseImage),
 		fmt.Sprintf("IMAGE_REPO=%s", *imageRepo),
-		fmt.Sprintf("GO_RUNNER_IMAGE=%s", *goRunnerImage),
-		fmt.Sprintf("KUBE_PROXY_BASE_IMAGE=%s", *kubeProxyBase),
-		fmt.Sprintf("IMAGE_TAG=%s", *imageTag),
 	}
 
 	cmd := exec.Command("git", "-C", *gitRoot, "diff", "--name-only", "HEAD^", "HEAD")
