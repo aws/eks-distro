@@ -32,6 +32,7 @@ else
     echo "Using kOps state store: $KOPS_STATE_STORE"
 fi
 
+mkdir -p ./${KOPS_CLUSTER_NAME}
 echo "Creating ./${KOPS_CLUSTER_NAME}/aws-iam-authenticator.yaml"
 cat << EOF > ./${KOPS_CLUSTER_NAME}/aws-iam-authenticator.yaml
 apiVersion: v1
