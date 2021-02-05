@@ -57,7 +57,7 @@ $(PAUSE_DST_DIR)/pause.c:
 pause: $(PAUSE_DST_DIR)/pause.c
 
 .PHONY: local-images
-local-images: pause
+local-images:
 	build/create_images.sh $(RELEASE_BRANCH) $(GO_RUNNER_IMAGE) $(KUBE_PROXY_BASE_IMAGE) $(IMAGE_REPO) $(IMAGE_REPO_PREFIX) $(IMAGE_TAG) false
 	buildctl \
 		build \
@@ -70,7 +70,7 @@ local-images: pause
 		--output type=oci,oci-mediatypes=true,name=$(PAUSE_IMAGE),dest=_output/$(RELEASE_BRANCH)/bin/linux/amd64/pause.tar
 
 .PHONY: images
-images: binaries pause
+images:
 	build/create_images.sh $(RELEASE_BRANCH) $(GO_RUNNER_IMAGE) $(KUBE_PROXY_BASE_IMAGE) $(IMAGE_REPO) $(IMAGE_REPO_PREFIX) $(IMAGE_TAG) true
 	buildctl \
 		build \
@@ -104,12 +104,10 @@ checksums:
 	build/create_release_checksums.sh $(RELEASE_BRANCH)
 
 .PHONY: build
-build: test local_images tarballs checksums
-	rm -rf ./kubernetes
+build: test pause clean-repo local_images tarballs checksums
 
 .PHONY: release
-release: images tarballs checksums
-	rm -rf ./kubernetes
+release: binaries pause clean-repo images tarballs checksums
 	$(BASE_DIRECTORY)/release/copy_artifacts.sh $(COMPONENT) $(RELEASE_BRANCH) $(RELEASE)
 	$(BASE_DIRECTORY)/release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET) $(REPO)
 	echo "Done $(COMPONENT)"
@@ -121,6 +119,10 @@ all: release
 test: binaries
 	build/run_tests.sh $(RELEASE_BRANCH)
 
+.PHONY: clean-repo
+clean-repo:
+	rm -rf ./kubernetes
+
 .PHONY: clean
-clean:
-	rm -rf ./kubernetes ./_output
+clean: clean-repo
+	rm -rf ./_output
