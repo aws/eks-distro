@@ -21,8 +21,7 @@ $PREFLIGHT_CHECK_PASSED || exit 1
 
 echo "Deleting kops store $KOPS_STATE_STORE"
 set -x
-aws s3 rm --recursive "${KOPS_STATE_STORE}" || true
-aws s3api delete-bucket --bucket "${BUCKET_NAME}" || true
+aws s3 rm --recursive "${KOPS_STATE_STORE}/${KOPS_CLUSTER_NAME}" || true
 if [ -n "${KOPS_CLUSTER_NAME}" ]
 then
   rm -rf "./${KOPS_CLUSTER_NAME}"
