@@ -64,6 +64,7 @@ export PREFLIGHT_CHECK_PASSED
 VERSION=$(cat ${BASEDIR}/../../projects/kubernetes/kubernetes/${RELEASE_BRANCH}/GIT_TAG)
 export DEFAULT_REPOSITORY_URI=public.ecr.aws/eks-distro
 export REPOSITORY_URI=${REPOSITORY_URI:-${DEFAULT_REPOSITORY_URI}}
-export CNI_VERSION_URL=https://distro.eks.amazonaws.com/kubernetes-${RELEASE_BRANCH}/releases/${RELEASE}/artifacts/plugins/v0.8.7/cni-plugins-linux-amd64-v0.8.7.tar.gz
-export CNI_ASSET_HASH_STRING=sha256:7426431524c2976f481105b80497238030e1c3eedbfcad00e2a9ccbaaf9eef9d
+export ARTIFACT_URL=${ARTIFACT_URL:-https://distro.eks.amazonaws.com}
+export CNI_VERSION_URL=${ARTIFACT_URL}/kubernetes-${RELEASE_BRANCH}/releases/${RELEASE}/artifacts/plugins/v0.8.7/cni-plugins-linux-amd64-v0.8.7.tar.gz
+export CNI_ASSET_HASH_STRING=${CNI_ASSET_HASH_STRING:-sha256:$(curl ${CNI_VERSION_URL}.sha256 | cut -f1 -d' ')}
 export KOPS=${BASEDIR}/kops-${RELEASE_BRANCH}
