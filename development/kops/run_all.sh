@@ -28,7 +28,7 @@ cd "$BASEDIR"
 source ./create_store_name.sh
 source ./set_environment.sh
 $PREFLIGHT_CHECK_PASSED || exit 1
-./setup_kops.sh
+./install_requirements.sh
 trap cleanup SIGINT SIGTERM ERR EXIT
 ./create_values_yaml.sh
 ./create_configuration.sh

@@ -19,6 +19,15 @@ BASEDIR=$(dirname "$0")
 source ${BASEDIR}/set_environment.sh
 $PREFLIGHT_CHECK_PASSED || exit 1
 
+if [ "$(uname)" == "Darwin" ]
+then
+    OS="darwin"
+    ARCH="amd64"
+else
+    OS="linux"
+    ARCH="amd64"
+fi
+
 if [ ! -x ${KOPS} ]
 then
     echo "Determine kops version"
@@ -30,14 +39,9 @@ then
     fi
 
     echo "Download kops"
-    if [ "$(uname)" == "Darwin" ]
-    then
-        OS_ARCH="darwin-amd64"
-    else
-        OS_ARCH="linux-amd64"
-    fi
-    KOPS_URL="https://github.com/kubernetes/kops/releases/download/${KOPS_VERSION}/kops-${OS_ARCH}"
+    KOPS_URL="https://github.com/kubernetes/kops/releases/download/${KOPS_VERSION}/kops-${OS}-${ARCH}"
     set -x
+    mkdir -p ${BASEDIR}/bin
     curl -L -o ${KOPS} "${KOPS_URL}"
     chmod 755 ${KOPS}
     set +x
@@ -47,11 +51,13 @@ else
 fi
 if ! command -v kubectl &> /dev/null
 then
-    echo "kubectl could not be found"
-    
-    KUBECTL_VERSION=v1.18.9
-    KUBECTL_PATH=/usr/local/bin/kubectl
-    curl -sSL "${ARTIFACT_URL}/kubernetes-${RELEASE_BRANCH}/releases/1/artifacts/kubernetes/${KUBECTL_VERSION}/bin/linux/amd64/kubectl" -o ${KUBECTL_PATH}
+    echo "kubectl could not be found. Downloading..."
+    KUBECTL_VERSION=$(cat ${BASEDIR}/../../projects/kubernetes/kubernetes/${RELEASE_BRANCH}/GIT_TAG)
+    KUBECTL_PATH=${BASEDIR}/bin/kubectl
+    mkdir -p ${BASEDIR}/bin
+    set -x
+    curl -sSL "https://distro.eks.amazonaws.com/kubernetes-${RELEASE_BRANCH}/releases/1/artifacts/kubernetes/${KUBECTL_VERSION}/bin/${OS}/${ARCH}/kubectl" -o ${KUBECTL_PATH}
     chmod +x ${KUBECTL_PATH}
+    set +x
 fi
 exit 0

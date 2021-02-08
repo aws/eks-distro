@@ -1,11 +1,7 @@
 BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
 RELEASE_BRANCH?=1-18
 DEFAULT_RELEASE=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/RELEASE)
-ifneq ("$(PULL_BASE_SHA)","")
-	RELEASE?=$(PULL_BASE_SHA)
-else
-	RELEASE?=$(DEFAULT_RELEASE)
-endif
+RELEASE?=$(or $(BUILD_ID),$(DEFAULT_RELEASE))
 ARTIFACT_BUCKET?=my-s3-bucket
 GIT_TAG?=$(shell cat ./$(RELEASE_BRANCH)/GIT_TAG)
 
@@ -114,7 +110,7 @@ checksums:
 build: test pause tarballs clean-repo local-images checksums
 
 .PHONY: release
-release: binaries pause tarballs clean-repo images checksums
+release: binaries pause tarballs clean-repo local-images images checksums
 	$(BASE_DIRECTORY)/release/copy_artifacts.sh $(COMPONENT) $(RELEASE_BRANCH) $(RELEASE)
 	$(BASE_DIRECTORY)/release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET) $(REPO)
 	echo "Done $(COMPONENT)"

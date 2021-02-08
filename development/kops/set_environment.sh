@@ -67,4 +67,6 @@ export REPOSITORY_URI=${REPOSITORY_URI:-${DEFAULT_REPOSITORY_URI}}
 export ARTIFACT_URL=${ARTIFACT_URL:-https://distro.eks.amazonaws.com}
 export CNI_VERSION_URL=${ARTIFACT_URL}/kubernetes-${RELEASE_BRANCH}/releases/${RELEASE}/artifacts/plugins/v0.8.7/cni-plugins-linux-amd64-v0.8.7.tar.gz
 export CNI_ASSET_HASH_STRING=${CNI_ASSET_HASH_STRING:-sha256:$(curl ${CNI_VERSION_URL}.sha256 | cut -f1 -d' ')}
-export KOPS=${BASEDIR}/kops-${RELEASE_BRANCH}
+export KOPS=${BASEDIR}/bin/kops-${RELEASE_BRANCH}
+mkdir -p ${BASEDIR}/bin
+export PATH=${BASEDIR}/bin:${PATH}

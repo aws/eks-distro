@@ -19,7 +19,7 @@ echo "This script will create a cluster"
 cd "$BASEDIR"
 source ./set_environment.sh
 $PREFLIGHT_CHECK_PASSED || exit 1
-./setup_kops.sh
+./install_requirements.sh
 ./create_values_yaml.sh
 ./create_configuration.sh
 ./create_cluster.sh
