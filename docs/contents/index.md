@@ -31,7 +31,7 @@ EKS-D for now, instructions in this repository describe how to:
 
 Check out EKS Distro's [Starting a cluster](users/index.md) page or
 refer to the [Build](users/build.md) instructions to build a cluster from scratch.
-See the [Partners](community/partners.md) page for links to third-party methods for
+See the [Partners](users/install/partners.md) page for links to third-party methods for
 installing EKS-D.
 
 ## Project Tenets (unless you know better ones)

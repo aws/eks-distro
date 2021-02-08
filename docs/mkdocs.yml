@@ -12,7 +12,7 @@ nav:
   - Overview: 'users/index.md'
   # - Architecture: 'users/architecture.md'
   - Install EKS Distro:
-    - Partners: 'users/partners.md'
+    - Partners: 'users/install/partners.md'
     - Community:
       - Install with kubeadm (bare metal or VM): 'users/install/kubeadm-onsite.md'
       - Install with kubeadm (tested on Raspberry Pi): 'users/install/kubeadm.md'
