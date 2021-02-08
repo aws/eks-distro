@@ -61,7 +61,7 @@ then
 fi
 export PREFLIGHT_CHECK_PASSED
 
-VERSION=$(cat ${BASEDIR}/../../projects/kubernetes/kubernetes/${RELEASE_BRANCH}/GIT_TAG)
+export VERSION=$(cat ${BASEDIR}/../../projects/kubernetes/kubernetes/${RELEASE_BRANCH}/GIT_TAG)
 export DEFAULT_REPOSITORY_URI=public.ecr.aws/eks-distro
 export REPOSITORY_URI=${REPOSITORY_URI:-${DEFAULT_REPOSITORY_URI}}
 export ARTIFACT_URL=${ARTIFACT_URL:-https://distro.eks.amazonaws.com}
