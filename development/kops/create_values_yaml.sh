@@ -85,6 +85,8 @@ kubernetesVersion: ${ARTIFACT_URL}/kubernetes-${RELEASE_BRANCH}/releases/${RELEA
 clusterName: $KOPS_CLUSTER_NAME
 configBase: $KOPS_STATE_STORE/$KOPS_CLUSTER_NAME
 awsRegion: $AWS_DEFAULT_REGION
+controlPlaneInstanceProfileArn: ''
+nodeInstanceProfileArn: ''
 pause:
 $(get_container_yaml kubernetes/pause $RELEASE)
 kube_apiserver:
