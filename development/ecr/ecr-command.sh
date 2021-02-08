@@ -77,35 +77,6 @@ function create_private_repository {
       --image-scanning-configuration scanOnPush=true
 }
 
-function update_public_repository {
-    local -r repository_name="${1?First argument is repository_name}"
-    local -r file_prefix="$(echo $repository_name | awk -F/ '{print $(NF)}')"
-    # requires CLI v2
-    aws ecr-public put-repository-catalog-data \
-        --repository-name $repository_name \
-        --catalog-data operatingSystems=Linux,logoImageBlob=$(cat eks-distro-img-large.png |base64)
-    local -r input="update-public-repo-input.json"
-    cat << EOF > base-$input
-{
-    "repositoryName": "$repository_name",
-    "catalogData": {
-        "architectures": [
-            "x86-64",
-            "ARM 64"
-        ],
-        "operatingSystems": [
-            "Linux"
-        ]
-    }
-}
-EOF
-    jq --arg about "$(<image-docs/${file_prefix}-about.md)" '.catalogData.aboutText=$about' base-${input} > about-$input
-    jq --arg usage "$(<image-docs/${file_prefix}-usage.md)" '.catalogData.usageText=$usage' about-${input} > $input
-    aws ecr-public put-repository-catalog-data \
-      --cli-input-json file://$input
-    rm base-$input about-${input} ${input}
-}
-
 function create_public_repository {
     local -r repository_name="${1?First argument should be repository name}"
     local -r description="${2?Second argument should be repository description}"
@@ -136,7 +107,36 @@ EOF
     aws ecr-public create-repository \
       --repository-name $repository_name \
       --cli-input-json file://$input
-    rm $input
+    rm -f $input
+}
+
+function update_public_repository {
+    local -r repository_name="${1?First argument is repository_name}"
+    local -r file_prefix="$(echo $repository_name | awk -F/ '{print $(NF)}')"
+    # requires CLI v2
+    aws ecr-public put-repository-catalog-data \
+        --repository-name $repository_name \
+        --catalog-data operatingSystems=Linux,logoImageBlob=$(cat eks-distro-img-large.png |base64)
+    local -r input="update-public-repo-input.json"
+    cat << EOF > base-$input
+{
+    "repositoryName": "$repository_name",
+    "catalogData": {
+        "architectures": [
+            "x86-64",
+            "ARM 64"
+        ],
+        "operatingSystems": [
+            "Linux"
+        ]
+    }
+}
+EOF
+    jq --arg about "$(<image-docs/${file_prefix}-about.md)" '.catalogData.aboutText=$about' base-${input} > about-$input
+    jq --arg usage "$(<image-docs/${file_prefix}-usage.md)" '.catalogData.usageText=$usage' about-${input} > $input
+    aws ecr-public put-repository-catalog-data \
+      --cli-input-json file://$input
+    rm base-$input about-${input} ${input}
 }
 
 function delete_public_repository {
@@ -152,6 +152,11 @@ function delete_public_repository {
     #    aws ecr-public batch-delete-image --registry-id  $REGISTRY_ID --repository-name $repository_name --image-ids imageDigest=$digest
     #done
     aws ecr-public delete-repository --registry-id  $REGISTRY_ID --repository-name $repository_name
+}
+
+function create_repository {
+    local -r image_name="${1?First argument should be image name}"
+    local -r description="${2?Second argument should be repository description}"
 }
 
 function retag_private_image {
@@ -170,14 +175,20 @@ install-ecr-public)
   ;;
 create-ecr-public-policy)
   export AWS_DEFAULT_REGION=us-east-1
+  export AWS_REGION=us-east-1
   create_ecr_public_policy
   ;;
 login-ecr-public)
   export AWS_DEFAULT_REGION=us-east-1
+  export AWS_REGION=us-east-1
   login_ecr_public
+  ;;
+create-repository)
+  create_repository ${*}
   ;;
 create-public-repository)
   export AWS_DEFAULT_REGION=us-east-1
+  export AWS_REGION=us-east-1
   create_public_repository ${*}
   ;;
 create-private-repository)
@@ -185,10 +196,12 @@ create-private-repository)
   ;;
 update-public-metadata)
   export AWS_DEFAULT_REGION=us-east-1
+  export AWS_REGION=us-east-1
   update_public_repository ${*}
   ;;
 delete-public-repository)
   export AWS_DEFAULT_REGION=us-east-1
+  export AWS_REGION=us-east-1
   delete_public_repository ${*}
   ;;
 retag-private-image)
