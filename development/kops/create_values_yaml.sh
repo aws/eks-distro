@@ -26,31 +26,33 @@ if [ -f "./${KOPS_CLUSTER_NAME}/values.yaml" ]; then
     exit 1
 fi
 
-
 function get_container_latest_tag() {
     REPOSITORY_NAME="${1}"
-    DEFAULT_TAG="${2}"
+    VERSION="${2}"
     RELEASE="${3}"
+    DEFAULT_TAG="${VERSION}-eks-${RELEASE}"
+
     if [ "${REPOSITORY_URI}" == "${DEFAULT_REPOSITORY_URI}" ]
     then
-        echo "${DEFAULT_TAG}-${RELEASE}"
+        echo "${DEFAULT_TAG}"
         return
     fi
-    QUERY='[.imageDetails[] | select(.imageTags != null)] | sort_by(.imagePushedAt)|reverse|first|.imageTags[0]'
-    if [[ "${REPOSITORY_URI}" != "public.ecr.aws/*" ]] # Public
+    if [[ "${REPOSITORY_URI}" == "public.ecr.aws/*" ]] # Public
     then
-        if aws --region us-east-1 ecr-public describe-images --repository-name "${REPOSITORY_NAME}" --image-ids=imageTag=${DEFAULT_TAG}-${RELEASE} 2>/dev/null >/dev/null
+        if aws --region us-east-1 ecr-public describe-images --repository-name "${REPOSITORY_NAME}" --image-ids=imageTag=${DEFAULT_TAG} 2>/dev/null >/dev/null
         then
-            TAG=${DEFAULT_TAG}-${RELEASE}
+            TAG=${DEFAULT_TAG}
         else
-            TAG=${DEFAULT_TAG}-${DEFAULT_RELEASE}
+            TAG=${VERSION}-eks-${DEFAULT_RELEASE}
         fi
     else # Private
         if aws ecr describe-images --repository-name "${REPOSITORY_NAME}" --image-ids=imageTag=${DEFAULT_TAG}-${RELEASE} 2>/dev/null >/dev/null
         then
             TAG=${DEFAULT_TAG}-${RELEASE}
         else
-            TAG=${DEFAULT_TAG}-1
+            # Get the latest tagged imaged for the given version
+            QUERY="imageDetails[?starts_with(imageTags[0],\`${VERSION}-\`)]|reverse(sort_by(@,&imagePushedAt))[0].imageTags[0]"
+            TAG=$(aws ecr describe-images --filter tagStatus=TAGGED --repository-name "${REPOSITORY_NAME}" --query "${QUERY}")
         fi
     fi
     echo "${TAG:-${DEFAULT_TAG}}"
@@ -58,9 +60,24 @@ function get_container_latest_tag() {
 
 function get_container_yaml() {
     REPOSITORY_NAME="${1}"
+    RELEASE="${2}"
+    VERSION="$(get_project_version $REPOSITORY_NAME)"
     echo "    repository: ${REPOSITORY_URI}/${REPOSITORY_NAME}
-    tag: $(get_container_latest_tag $*)"
+    tag: $(get_container_latest_tag $REPOSITORY_NAME $VERSION $RELEASE)"
 }
+
+function get_project_version(){
+    REPOSITORY_NAME="${1}"
+    if  [[ $REPOSITORY_NAME == kubernetes/* ]] 
+    then
+        VERSION=$(cat ${BASEDIR}/../../projects/kubernetes/kubernetes/${RELEASE_BRANCH}/GIT_TAG)
+    else
+        VERSION=$(cat ${BASEDIR}/../../projects/${REPOSITORY_NAME}/GIT_TAG)
+    fi
+    
+    echo $VERSION
+}
+
 
 echo "Creating ./${KOPS_CLUSTER_NAME}/values.yaml"
 cat << EOF > ./${KOPS_CLUSTER_NAME}/values.yaml
@@ -69,21 +86,21 @@ clusterName: $KOPS_CLUSTER_NAME
 configBase: $KOPS_STATE_STORE/$KOPS_CLUSTER_NAME
 awsRegion: $AWS_DEFAULT_REGION
 pause:
-$(get_container_yaml kubernetes/pause v1.18.9-eks-1-18 $RELEASE)
+$(get_container_yaml kubernetes/pause $RELEASE)
 kube_apiserver:
-$(get_container_yaml kubernetes/kube-apiserver v1.18.9-eks-1-18 $RELEASE)
+$(get_container_yaml kubernetes/kube-apiserver $RELEASE)
 kube_controller_manager:
-$(get_container_yaml kubernetes/kube-controller-manager v1.18.9-eks-1-18 $RELEASE)
+$(get_container_yaml kubernetes/kube-controller-manager $RELEASE)
 kube_scheduler:
-$(get_container_yaml kubernetes/kube-scheduler v1.18.9-eks-1-18 $RELEASE)
+$(get_container_yaml kubernetes/kube-scheduler $RELEASE)
 kube_proxy:
-$(get_container_yaml kubernetes/kube-proxy v1.18.9-eks-1-18 $RELEASE)
+$(get_container_yaml kubernetes/kube-proxy $RELEASE)
 metrics_server:
-$(get_container_yaml kubernetes-sigs/metrics-server v0.4.0-eks-1-18 $RELEASE)
+$(get_container_yaml kubernetes-sigs/metrics-server $RELEASE)
 awsiamauth:
-$(get_container_yaml kubernetes-sigs/aws-iam-authenticator v0.5.2-eks-1-18 $RELEASE)
+$(get_container_yaml kubernetes-sigs/aws-iam-authenticator $RELEASE)
 coredns:
-$(get_container_yaml coredns/coredns v1.7.0-eks-1-18 $RELEASE)
+$(get_container_yaml coredns/coredns $RELEASE)
 EOF
 
 if [ -n "$CONTROL_PLANE_INSTANCE_PROFILE" ]; then
