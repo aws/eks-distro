@@ -15,6 +15,7 @@ TARGET=$(MAKECMDGOALS)
 else
 TARGET=$(DEFAULT_GOAL)
 endif
+
 presubmit-cleanup = \
 	if [ `echo $(1)|awk '{$1==$1};1'` == "build" ]; then \
 		make -C $(2) clean; \
