@@ -81,7 +81,7 @@ function get_project_version(){
 
 echo "Creating ./${KOPS_CLUSTER_NAME}/values.yaml"
 cat << EOF > ./${KOPS_CLUSTER_NAME}/values.yaml
-kubernetesVersion: ${ARTIFACT_URL}/kubernetes-${RELEASE_BRANCH}/releases/${RELEASE}/artifacts/kubernetes/${KUBERNETES_VERSION}
+kubernetesVersion: ${ARTIFACT_URL}/kubernetes/${KUBERNETES_VERSION}
 clusterName: $KOPS_CLUSTER_NAME
 configBase: $KOPS_STATE_STORE/$KOPS_CLUSTER_NAME
 awsRegion: $AWS_DEFAULT_REGION
