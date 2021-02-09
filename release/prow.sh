@@ -35,7 +35,7 @@ web_identity_token_file=/var/run/secrets/eks.amazonaws.com/serviceaccount/token
 
 [profile release-account]
 role_arn=$ARTIFACT_DEPLOYMENT_ROLE_ARN
-region=${AWS_REGION:-${AWS_DEFAULT_REGION:-us-west-2}}
+region=${AWS_REGION:-${AWS_DEFAULT_REGION:-us-east-1}}
 source_profile=default
 EOF
 export AWS_CONFIG_FILE=$(pwd)/awscliconfig
