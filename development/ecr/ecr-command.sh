@@ -148,9 +148,9 @@ function delete_public_repository {
         return
     fi
     REGISTRY_ID=$(aws ecr-public describe-registries --query registries[0].registryId --output text)
-    #for digest in $(aws ecr-public describe-images --registry-id  $REGISTRY_ID --repository-name $repository_name --query imageDetails[*].imageDigest --output text); do
-    #    aws ecr-public batch-delete-image --registry-id  $REGISTRY_ID --repository-name $repository_name --image-ids imageDigest=$digest
-    #done
+    for digest in $(aws ecr-public describe-images --registry-id  $REGISTRY_ID --repository-name $repository_name --query imageDetails[*].imageDigest --output text); do
+        aws ecr-public batch-delete-image --registry-id  $REGISTRY_ID --repository-name $repository_name --image-ids imageDigest=$digest
+    done
     aws ecr-public delete-repository --registry-id  $REGISTRY_ID --repository-name $repository_name
 }
 
@@ -189,7 +189,7 @@ create-repository)
 create-public-repository)
   export AWS_DEFAULT_REGION=us-east-1
   export AWS_REGION=us-east-1
-  create_public_repository ${*}
+  create_public_repository ${1} "${2}"
   ;;
 create-private-repository)
   create_private_repository ${*}
