@@ -120,7 +120,7 @@ cluster from your laptop:
         
         Your Kubernetes control-plane has initialized successfully!
 
-    Your Kubernetes cluster should now be up and running. The kubeadm output should show the exact commands to use. If something goes wrong, correct the problem and run *kubeadm reset* to prepare you system to run *kubeadm init* again:
+    Your Kubernetes cluster should now be up and running. The kubeadm output shows the exact commands to use to add nodes to the cluster. If something goes wrong, correct the problem and run *kubeadm reset* to prepare you system to run *kubeadm init* again:
 
 1. Follow the instructions for configuring the client. To configure the client locally, type:
 
@@ -138,7 +138,7 @@ cluster from your laptop:
         rolebinding.rbac.authorization.k8s.io/weave-net (http://rolebinding.rbac.authorization.k8s.io/weave-net) created
         daemonset.apps/weave-net created
 
-    You can also consider [Calico](https://www.projectcalico.org/) or [Cillium](https://cilium.io/) networks. Calico is popular for on-premises use because Cisco switches talk to it easily.  
+    You can also consider [Calico](https://www.projectcalico.org/) or [Cillium](https://cilium.io/) networks. Calico is popular because it can be used to propagate routes with BGP, which is often used on-prem.
 
 ## Configure the client
 
