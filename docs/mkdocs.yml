@@ -9,14 +9,21 @@ docs_dir: 'contents'
 nav:
 - Home: 'index.md'
 - Users:
+  - Overview: 'users/index.md'
   # - Architecture: 'users/architecture.md'
-  - Start EKS-D: 'users/index.md'
-  - Build Prerequisites: 'users/build-prerequisites.md'
-  - Build EKS-D: 'users/build.md'
+  - Install EKS Distro:
+    - Partners: 'users/install/partners.md'
+    - Community:
+      - Install with kubeadm (bare metal or VM): 'users/install/kubeadm-onsite.md'
+      - Install with kubeadm (tested on Raspberry Pi): 'users/install/kubeadm.md'
+      - Install with kOps: 'users/install/kops.md'
+      - Install with kubeinit (Ansible on Libvirt hosts): 'users/install/kubeinit.md'
+  - Build EKS Distro:
+    - Build Prerequisites: 'users/build-prerequisites.md'
+    - Build EKS-D: 'users/build.md'
 - Community:
   - Overview: 'community/overview.md'
   - Contributing: 'community/contributing.md'
-  - Partners: 'community/partners.md'
   - FAQ: 'community/faq.md'
   - Governance: 'community/governance.md'
   - Code of Conduct: 'community/code_of_conduct.md'
