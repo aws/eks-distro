@@ -27,8 +27,6 @@ spec:
   iam:
     allowContainerRegistry: true
     legacy: false
-  kubelet:
-    anonymousAuth: false
   kubernetesApiAccess:
   - 0.0.0.0/0
   kubernetesVersion: {{ .kubernetesVersion }}
@@ -98,6 +96,7 @@ spec:
   # kubelet might already be defined, append the following config
   kubelet:
     podInfraContainerImage: {{ .pause.repository }}:{{ .pause.tag }}
+    anonymousAuth: false
 
 ---
 
