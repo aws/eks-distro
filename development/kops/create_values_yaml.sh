@@ -64,7 +64,7 @@ function get_container_yaml() {
 
 echo "Creating ./${KOPS_CLUSTER_NAME}/values.yaml"
 cat << EOF > ./${KOPS_CLUSTER_NAME}/values.yaml
-kubernetesVersion: https://distro.eks.amazonaws.com/kubernetes-${RELEASE_BRANCH}/releases/${RELEASE}/artifacts/kubernetes/${VERSION}
+kubernetesVersion: ${ARTIFACT_URL}/kubernetes-${RELEASE_BRANCH}/releases/${RELEASE}/artifacts/kubernetes/${VERSION}
 clusterName: $KOPS_CLUSTER_NAME
 configBase: $KOPS_STATE_STORE/$KOPS_CLUSTER_NAME
 awsRegion: $AWS_DEFAULT_REGION

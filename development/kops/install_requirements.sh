@@ -52,7 +52,6 @@ fi
 if ! command -v kubectl &> /dev/null
 then
     echo "kubectl could not be found. Downloading..."
-    
     KUBECTL_VERSION=$(cat ${BASEDIR}/../../projects/kubernetes/kubernetes/${RELEASE_BRANCH}/GIT_TAG)
     KUBECTL_PATH=${BASEDIR}/bin/kubectl
     mkdir -p ${BASEDIR}/bin
