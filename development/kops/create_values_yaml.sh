@@ -46,9 +46,9 @@ function get_container_latest_tag() {
             TAG=${VERSION}-eks-${RELEASE_BRANCH}-${DEFAULT_RELEASE}
         fi
     else # Private
-        if aws ecr describe-images --repository-name "${REPOSITORY_NAME}" --image-ids=imageTag=${DEFAULT_TAG}-${RELEASE} 2>/dev/null >/dev/null
+        if aws ecr describe-images --repository-name "${REPOSITORY_NAME}" --image-ids=imageTag=${VERSION}-${RELEASE} 2>/dev/null >/dev/null
         then
-            TAG=${DEFAULT_TAG}-${RELEASE}
+            TAG=${VERSION}-${RELEASE}
         else
             # Get the latest tagged imaged for the given version
             QUERY="imageDetails[?starts_with(imageTags[0],\`${VERSION}-\`)]|reverse(sort_by(@,&imagePushedAt))[0].imageTags[0]"
