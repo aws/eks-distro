@@ -30,7 +30,7 @@ function get_container_latest_tag() {
     REPOSITORY_NAME="${1}"
     VERSION="${2}"
     RELEASE="${3}"
-    DEFAULT_TAG="${VERSION}-eks-${RELEASE}"
+    DEFAULT_TAG="${VERSION}-eks-${RELEASE_BRANCH}-${RELEASE}"
 
     if [ "${REPOSITORY_URI}" == "${DEFAULT_REPOSITORY_URI}" ]
     then
@@ -43,7 +43,7 @@ function get_container_latest_tag() {
         then
             TAG=${DEFAULT_TAG}
         else
-            TAG=${VERSION}-eks-${DEFAULT_RELEASE}
+            TAG=${VERSION}-eks-${RELEASE_BRANCH}-${DEFAULT_RELEASE}
         fi
     else # Private
         if aws ecr describe-images --repository-name "${REPOSITORY_NAME}" --image-ids=imageTag=${DEFAULT_TAG}-${RELEASE} 2>/dev/null >/dev/null
@@ -81,10 +81,12 @@ function get_project_version(){
 
 echo "Creating ./${KOPS_CLUSTER_NAME}/values.yaml"
 cat << EOF > ./${KOPS_CLUSTER_NAME}/values.yaml
-kubernetesVersion: ${ARTIFACT_URL}/kubernetes-${RELEASE_BRANCH}/releases/${RELEASE}/artifacts/kubernetes/${VERSION}
+kubernetesVersion: ${ARTIFACT_URL}/kubernetes/${KUBERNETES_VERSION}
 clusterName: $KOPS_CLUSTER_NAME
 configBase: $KOPS_STATE_STORE/$KOPS_CLUSTER_NAME
 awsRegion: $AWS_DEFAULT_REGION
+controlPlaneInstanceProfileArn: $CONTROL_PLANE_INSTANCE_PROFILE
+nodeInstanceProfileArn: $NODE_INSTANCE_PROFILE
 pause:
 $(get_container_yaml kubernetes/pause $RELEASE)
 kube_apiserver:
@@ -102,15 +104,3 @@ $(get_container_yaml kubernetes-sigs/aws-iam-authenticator $RELEASE)
 coredns:
 $(get_container_yaml coredns/coredns $RELEASE)
 EOF
-
-if [ -n "$CONTROL_PLANE_INSTANCE_PROFILE" ]; then
-    cat << EOF >> ./${KOPS_CLUSTER_NAME}/values.yaml
-controlPlaneInstanceProfileArn: $CONTROL_PLANE_INSTANCE_PROFILE
-EOF
-fi
-
-if [ -n "$NODE_INSTANCE_PROFILE" ]; then
-    cat << EOF >> ./${KOPS_CLUSTER_NAME}/values.yaml
-nodeInstanceProfileArn: $NODE_INSTANCE_PROFILE
-EOF
-fi
