@@ -85,8 +85,8 @@ kubernetesVersion: ${ARTIFACT_URL}/kubernetes-${RELEASE_BRANCH}/releases/${RELEA
 clusterName: $KOPS_CLUSTER_NAME
 configBase: $KOPS_STATE_STORE/$KOPS_CLUSTER_NAME
 awsRegion: $AWS_DEFAULT_REGION
-controlPlaneInstanceProfileArn: ''
-nodeInstanceProfileArn: ''
+controlPlaneInstanceProfileArn: $CONTROL_PLANE_INSTANCE_PROFILE
+nodeInstanceProfileArn: $NODE_INSTANCE_PROFILE
 pause:
 $(get_container_yaml kubernetes/pause $RELEASE)
 kube_apiserver:
@@ -104,15 +104,3 @@ $(get_container_yaml kubernetes-sigs/aws-iam-authenticator $RELEASE)
 coredns:
 $(get_container_yaml coredns/coredns $RELEASE)
 EOF
-
-if [ -n "$CONTROL_PLANE_INSTANCE_PROFILE" ]; then
-    cat << EOF >> ./${KOPS_CLUSTER_NAME}/values.yaml
-controlPlaneInstanceProfileArn: $CONTROL_PLANE_INSTANCE_PROFILE
-EOF
-fi
-
-if [ -n "$NODE_INSTANCE_PROFILE" ]; then
-    cat << EOF >> ./${KOPS_CLUSTER_NAME}/values.yaml
-nodeInstanceProfileArn: $NODE_INSTANCE_PROFILE
-EOF
-fi
