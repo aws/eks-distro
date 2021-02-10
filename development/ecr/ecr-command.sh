@@ -94,8 +94,8 @@ function create_public_repository {
         "operatingSystems": [
             "linux"
         ],
-	"aboutText": "$(cat image-docs/${file_prefix}-about.md)",
-	"usageText": "$(cat image-docs/${file_prefix}-usage.md)"
+	"aboutText": "$(awk '{printf "%s\\n", $0}' image-docs/${file_prefix}-about.md)",
+	"usageText": "$(awk '{printf "%s\\n", $0}' image-docs/${file_prefix}-usage.md)"
     }
 }
 EOF
