@@ -1,0 +1,3 @@
+Amazon EKS Distro image for Kubernetes pause container
+
+The Kubernetes pause container serves as the parent container for all of the containers in a pod. The pause container has two core responsibilities. First, it serves as the basis of Linux namespace sharing in the pod. Second, with PID (process ID) namespace sharing enabled, it serves as PID 1 for each pod and reaps zombie processes. It is responsible for creating shared network, assigning IP addresses within the pod for all containers inside this pod. If the pause container is terminated, Kubernetes will consider the whole pod as terminated and kill it and reschedule a new one.
