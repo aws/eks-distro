@@ -88,7 +88,7 @@ function create_public_repository {
 {
     "repositoryName": "$repository_name",
     "catalogData": {
-        "description": "$(cat image-docs/${file_prefix}-description)",
+        "description": "Development $(cat image-docs/${file_prefix}-description)",
         "architectures": [
             "x86-64",
             "ARM 64"
@@ -96,7 +96,7 @@ function create_public_repository {
         "operatingSystems": [
             "linux"
         ],
-	"aboutText": "$(awk '{printf "%s\\n", $0}' image-docs/${file_prefix}-about.md)",
+	"aboutText": "Development $(awk '{printf "%s\\n", $0}' image-docs/${file_prefix}-about.md)",
 	"usageText": "$(awk '{printf "%s\\n", $0}' image-docs/${file_prefix}-usage.md)"
     }
 }
