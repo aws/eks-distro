@@ -71,11 +71,6 @@ docker-push:
 .PHONY: build
 build: local-images
 
-.PHONY: ecr-repos
-release: ecr-repos
-	$(BASE_DIRECTORY)/develop/ecr/ecr-command.sh create-repository $(IMAGE_REPO)
-	echo "Done $(COMPONENT)"
-
 .PHONY: release
 release: images
 	echo "Done $(COMPONENT)"
