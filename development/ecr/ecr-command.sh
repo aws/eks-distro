@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+BASEDIR=$(dirname "$0")
+cd ${BASEDIR}
 
 function install_ecr_public {
     if [ ! -f ~/.aws/models/ecr-public/2020-10-30/service-2.json ]
@@ -109,6 +111,50 @@ EOF
     rm -f $input
 }
 
+function create_all_private_repositories {
+    create_private_repository "coredns/coredns"
+    create_private_repository "etcd-io/etcd"
+    create_private_repository "kubernetes-csi/external-attacher"
+    create_private_repository "kubernetes-csi/external-provisioner"
+    create_private_repository "kubernetes-csi/external-resizer"
+    create_private_repository "kubernetes-csi/external-snapshotter/csi-snapshotter"
+    create_private_repository "kubernetes-csi/external-snapshotter/snapshot-controller"
+    create_private_repository "kubernetes-csi/external-snapshotter/snapshot-validation-webhook"
+    create_private_repository "kubernetes-csi/livenessprobe"
+    create_private_repository "kubernetes-csi/node-driver-registrar"
+    create_private_repository "kubernetes-sigs/aws-iam-authenticator"
+    create_private_repository "kubernetes-sigs/metrics-server"
+    create_private_repository "kubernetes/go-runner"
+    create_private_repository "kubernetes/kube-apiserver"
+    create_private_repository "kubernetes/kube-controller-manager"
+    create_private_repository "kubernetes/kube-proxy"
+    create_private_repository "kubernetes/kube-proxy-base"
+    create_private_repository "kubernetes/kube-scheduler"
+    create_private_repository "kubernetes/pause"
+}
+
+function create_all_public_repositories {
+    create_public_repository "coredns/coredns"
+    create_public_repository "etcd-io/etcd"
+    create_public_repository "kubernetes-csi/external-attacher"
+    create_public_repository "kubernetes-csi/external-provisioner"
+    create_public_repository "kubernetes-csi/external-resizer"
+    create_public_repository "kubernetes-csi/external-snapshotter/csi-snapshotter"
+    create_public_repository "kubernetes-csi/external-snapshotter/snapshot-controller"
+    create_public_repository "kubernetes-csi/external-snapshotter/snapshot-validation-webhook"
+    create_public_repository "kubernetes-csi/livenessprobe"
+    create_public_repository "kubernetes-csi/node-driver-registrar"
+    create_public_repository "kubernetes-sigs/aws-iam-authenticator"
+    create_public_repository "kubernetes-sigs/metrics-server"
+    create_public_repository "kubernetes/go-runner"
+    create_public_repository "kubernetes/kube-apiserver"
+    create_public_repository "kubernetes/kube-controller-manager"
+    create_public_repository "kubernetes/kube-proxy"
+    create_public_repository "kubernetes/kube-proxy-base"
+    create_public_repository "kubernetes/kube-scheduler"
+    create_public_repository "kubernetes/pause"
+}
+
 function update_public_repository {
     local -r repository_name="${1?First argument is repository_name}"
     local -r file_prefix="$(echo $repository_name | awk -F/ '{print $(NF)}')"
@@ -180,7 +226,15 @@ login-ecr-public)
 create-public-repository)
   export AWS_DEFAULT_REGION=us-east-1
   export AWS_REGION=us-east-1
-  create_public_repository ${1} "${2}"
+  create_public_repository ${1}
+  ;;
+create-all-private-repositories)
+  create_all_private_repositories
+  ;;
+create-all-public-repositories)
+  export AWS_DEFAULT_REGION=us-east-1
+  export AWS_REGION=us-east-1
+  create_all_public_repositories
   ;;
 create-private-repository)
   create_private_repository ${*}
