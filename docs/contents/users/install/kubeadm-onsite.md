@@ -21,15 +21,11 @@ following prerequisites:
 
 1. Make sure SELinux is disabled by setting *SELINUX=disabled* in the */etc/syconfig/selinux* file. To turn it off immediately, type:
 
-    ```bash
-    sudo setenforce 0
-    ```
+        sudo setenforce 0
 
 1. Make sure that swap is disabled and that no swap areas are reinstated on reboot. For example, type:
 
-    ```bash
-    sudo swapoff -a
-    ```
+        sudo swapoff -a
 
     Then permanently disable swap by commenting out or deleting any swap areas in */etc/fstab*.
 
