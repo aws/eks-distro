@@ -17,7 +17,7 @@
 ./ecr-command.sh create-ecr-public-policy
 ./ecr-command.sh login-ecr-public
 
-./ecr-command.sh create-public-repository test-repository "Test repository"
+./ecr-command.sh create-public-repository test-repository
 ./ecr-command.sh update-public-metadata test-repository
 ./ecr-command.sh delete-public-repository test-repository
 

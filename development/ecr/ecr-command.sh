@@ -79,7 +79,6 @@ function create_private_repository {
 
 function create_public_repository {
     local -r repository_name="${1?First argument should be repository name}"
-    local -r description="${2?Second argument should be repository description}"
     local -r file_prefix="$(echo $repository_name | awk -F/ '{print $(NF)}')"
     local -r input="create-public-repo-input.json"
     # Yes, they put a _space_ in "ARM 64"
@@ -87,7 +86,7 @@ function create_public_repository {
 {
     "repositoryName": "$repository_name",
     "catalogData": {
-        "description": "$description",
+        "description": "$(cat image-docs/${file_prefix}-description)",
         "architectures": [
             "x86-64",
             "ARM 64"
@@ -154,11 +153,6 @@ function delete_public_repository {
     aws ecr-public delete-repository --registry-id  $REGISTRY_ID --repository-name $repository_name
 }
 
-function create_repository {
-    local -r image_name="${1?First argument should be image name}"
-    local -r description="${2?Second argument should be repository description}"
-}
-
 function retag_private_image {
     local -r repository_name="${1?First argument is repository name}"
     local -r image_tag="${2?Second argument is image tag}"
@@ -182,9 +176,6 @@ login-ecr-public)
   export AWS_DEFAULT_REGION=us-east-1
   export AWS_REGION=us-east-1
   login_ecr_public
-  ;;
-create-repository)
-  create_repository ${*}
   ;;
 create-public-repository)
   export AWS_DEFAULT_REGION=us-east-1
