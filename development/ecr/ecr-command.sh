@@ -20,16 +20,14 @@ function install_ecr_public {
     if [ ! -f ~/.aws/models/ecr-public/2020-10-30/service-2.json ]
     then
         echo "Installing ECR Public plugin"
-        BASEDIR=$(dirname "$0")
         aws configure add-model \
-          --service-model file://${BASEDIR}/ecr-public-2020-10-30.api.json \
+          --service-model file://ecr-public-2020-10-30.api.json \
           --service-name ecr-public
     fi
 }
 
 function create_ecr_public_policy {
     POLICY_NAME=ECRPublicAccess
-    BASEDIR=$(dirname "$0")
     if aws iam list-policies \
          --query "Policies[?PolicyName=='${POLICY_NAME}'].[PolicyName]" \
          --output text | grep "${POLICY_NAME}" >/dev/null
@@ -40,7 +38,7 @@ function create_ecr_public_policy {
     aws iam create-policy \
       --policy-name ${POLICY_NAME} \
       --policy-document \
-      file://${BASEDIR}/ecr-public-policy.json
+      file://ecr-public-policy.json
 }
 
 function login_ecr_public {
