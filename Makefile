@@ -24,7 +24,7 @@ presubmit-cleanup = \
 .PHONY: setup
 setup:
 	development/ecr/ecr-command.sh install-ecr-public
-	AWS_DEFAULT_PROFILE=$(RELEASE_AWS_PROFILE) bash ./development/ecr/ecr-command.sh login-ecr-public
+	development/ecr/ecr-command.sh login-ecr-public
 
 .PHONY: build
 build:
@@ -67,7 +67,7 @@ upload:
 	@echo 'Done' $(TARGET)
 
 .PHONY: release
-release: setup makes upload
+release: makes upload
 	@echo 'Done' $(TARGET)
 
 .PHONY: binaries

@@ -41,3 +41,8 @@ EOF
 export AWS_CONFIG_FILE=$(pwd)/awscliconfig
 export AWS_PROFILE=release-account
 unset AWS_ROLE_ARN AWS_WEB_IDENTITY_TOKEN_FILE
+
+set -x
+${BASE_DIRECTORY}/development/ecr/ecr-command.sh install-ecr-public
+${BASE_DIRECTORY}/development/ecr/ecr-command.sh login-ecr-public
+make release ${*}
