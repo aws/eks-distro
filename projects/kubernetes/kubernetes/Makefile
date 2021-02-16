@@ -107,7 +107,7 @@ checksums:
 	build/create_release_checksums.sh $(RELEASE_BRANCH)
 
 .PHONY: build
-build: test pause tarballs clean-repo local-images
+build: test pause tarballs clean-repo local-images checksums
 
 .PHONY: release
 release: binaries pause tarballs clean-repo local-images images checksums

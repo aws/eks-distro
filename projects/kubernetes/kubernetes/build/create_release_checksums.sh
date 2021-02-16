@@ -44,10 +44,8 @@ echo "Writing artifact hashes to SHA256SUM/SHA512SUM files..."
 cd $ASSET_ROOT
 for file in $(find ${ASSET_ROOT} -type f | grep -v '\.sha[25][51][62]' ); do
     filepath=$(realpath --relative-base=${ASSET_ROOT} $file )
-    sha256sum "$filepath" >> $SHA256SUM
-    sha512sum "$filepath" >> $SHA512SUM
-    sha256sum "$filepath" > "$file.sha256" || return 1
-    sha512sum "$filepath" > "$file.sha512" || return 1
+    sha256sum "$filepath" | tee -a $SHA256SUM > "$file.sha256" || return 1
+    sha512sum "$filepath" | tee -a $SHA512SUM > "$file.sha512" || return 1
 done
 
 mv $SHA256SUM $SHA512SUM "$ASSET_ROOT"
