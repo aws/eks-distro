@@ -42,7 +42,7 @@ rm -f $SHA256SUM
 rm -f $SHA512SUM
 echo "Writing artifact hashes to SHA256SUM/SHA512SUM files..."
 cd $ASSET_ROOT
-for file in $(find ${ASSET_ROOT} -type f ); do
+for file in $(find ${ASSET_ROOT} -type f | grep -v '\.sha[25][51][62]' ); do
     filepath=$(realpath --relative-base=${ASSET_ROOT} $file )
     sha256sum "$filepath" >> $SHA256SUM
     sha512sum "$filepath" >> $SHA512SUM
