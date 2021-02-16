@@ -17,12 +17,32 @@ if [ "$AWS_ROLE_ARN" == "" ]; then
     echo "Empty AWS_ROLE_ARN"
     exit 1
 fi
-echo "Role arn $AWS_ROLE_ARN"
-aws sts get-caller-identity
+
+if [ "$ARTIFACT_DEPLOYMENT_ROLE_ARN" == "" ]; then
+    echo "Empty ARTIFACT_DEPLOYMENT_ROLE_ARN"
+    exit 1
+fi
+
 BASE_DIRECTORY=$(git rev-parse --show-toplevel)
 cd ${BASE_DIRECTORY}
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 export BASE_REPO=${AWS_ACCOUNT_ID}.dkr.ecr.us-west-2.amazonaws.com
+cat << EOF > awscliconfig
+[default]
+output=json
+region=${AWS_REGION:-${AWS_DEFAULT_REGION:-us-west-2}}
+role_arn=$AWS_ROLE_ARN
+web_identity_token_file=/var/run/secrets/eks.amazonaws.com/serviceaccount/token
+
+[profile release-account]
+role_arn=$ARTIFACT_DEPLOYMENT_ROLE_ARN
+region=${AWS_REGION:-${AWS_DEFAULT_REGION:-us-east-1}}
+source_profile=default
+EOF
+export AWS_CONFIG_FILE=$(pwd)/awscliconfig
+export AWS_PROFILE=release-account
+unset AWS_ROLE_ARN AWS_WEB_IDENTITY_TOKEN_FILE
+
 set -x
 cp -r /$HOME/.docker ${BASE_DIRECTORY}
 export DOCKER_CONFIG=${BASE_DIRECTORY}/.docker
