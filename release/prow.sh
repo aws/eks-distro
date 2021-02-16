@@ -26,6 +26,8 @@ fi
 BASE_DIRECTORY=$(git rev-parse --show-toplevel)
 cd ${BASE_DIRECTORY}
 
+AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+export BASE_REPO=${AWS_ACCOUNT_ID}.dkr.ecr.us-west-2.amazonaws.com
 cat << EOF > awscliconfig
 [default]
 output=json
@@ -43,6 +45,8 @@ export AWS_PROFILE=release-account
 unset AWS_ROLE_ARN AWS_WEB_IDENTITY_TOKEN_FILE
 
 set -x
+cp -r $HOME/.docker ${BASE_DIRECTORY}
+export DOCKER_CONFIG=${BASE_DIRECTORY}/.docker
 ${BASE_DIRECTORY}/development/ecr/ecr-command.sh install-ecr-public
 ${BASE_DIRECTORY}/development/ecr/ecr-command.sh login-ecr-public
 make release ${*}
