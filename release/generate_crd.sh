@@ -22,7 +22,7 @@ REPO_OWNER=${REPO_OWNER:-aws}
 BASE_DIRECTORY=$(git rev-parse --show-toplevel)
 DEST_DIR=${BASE_DIRECTORY}/kubernetes-${RELEASE_BRANCH}/releases/${RELEASE}/artifacts
 
-REPOSITORY="git@github.com:${REPO_OWNER}/eks-distro-build-tooling.git"
+REPOSITORY="https://github.com/${REPO_OWNER}/eks-distro-build-tooling.git"
 rm -rf ./eks-distro-build-tooling
 git clone ${REPOSITORY}
 make -C eks-distro-build-tooling/release
