@@ -1,7 +1,6 @@
 BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
 RELEASE_BRANCH?=1-18
-DEFAULT_RELEASE=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/RELEASE)
-RELEASE?=$(or $(BUILD_ID),$(DEFAULT_RELEASE))
+RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/RELEASE)
 ARTIFACT_BUCKET?=my-s3-bucket
 
 DEVELOPMENT?=false
