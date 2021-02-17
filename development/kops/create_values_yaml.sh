@@ -26,44 +26,12 @@ if [ -f "./${KOPS_CLUSTER_NAME}/values.yaml" ]; then
     exit 1
 fi
 
-function get_container_latest_tag() {
-    REPOSITORY_NAME="${1}"
-    VERSION="${2}"
-    RELEASE="${3}"
-    DEFAULT_TAG="${VERSION}-eks-${RELEASE_BRANCH}-${RELEASE}"
-
-    if [ "${REPOSITORY_URI}" == "${DEFAULT_REPOSITORY_URI}" ]
-    then
-        echo "${DEFAULT_TAG}"
-        return
-    fi
-    if [[ "${REPOSITORY_URI}" == "public.ecr.aws/*" ]] # Public
-    then
-        if aws --region us-east-1 ecr-public describe-images --repository-name "${REPOSITORY_NAME}" --image-ids=imageTag=${DEFAULT_TAG} 2>/dev/null >/dev/null
-        then
-            TAG=${DEFAULT_TAG}
-        else
-            TAG=${VERSION}-eks-${RELEASE_BRANCH}-${DEFAULT_RELEASE}
-        fi
-    else # Private
-        if aws ecr describe-images --repository-name "${REPOSITORY_NAME}" --image-ids=imageTag=${VERSION}-${RELEASE} 2>/dev/null >/dev/null
-        then
-            TAG=${VERSION}-${RELEASE}
-        else
-            # Get the latest tagged imaged for the given version
-            QUERY="imageDetails[?starts_with(imageTags[0],\`${VERSION}-\`)]|reverse(sort_by(@,&imagePushedAt))[0].imageTags[0]"
-            TAG=$(aws ecr describe-images --filter tagStatus=TAGGED --repository-name "${REPOSITORY_NAME}" --query "${QUERY}")
-        fi
-    fi
-    echo "${TAG:-${DEFAULT_TAG}}"
-}
-
 function get_container_yaml() {
     REPOSITORY_NAME="${1}"
     RELEASE="${2}"
     VERSION="$(get_project_version $REPOSITORY_NAME)"
     echo "    repository: ${REPOSITORY_URI}/${REPOSITORY_NAME}
-    tag: $(get_container_latest_tag $REPOSITORY_NAME $VERSION $RELEASE)"
+    tag: ${VERSION}-eks-${RELEASE_BRANCH}-${RELEASE}"
 }
 
 function get_project_version(){
