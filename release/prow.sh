@@ -17,13 +17,10 @@ if [ "$AWS_ROLE_ARN" == "" ]; then
     echo "Empty AWS_ROLE_ARN"
     exit 1
 fi
-echo "Role arn $AWS_ROLE_ARN"
-aws sts get-caller-identity
 BASE_DIRECTORY=$(git rev-parse --show-toplevel)
 cd ${BASE_DIRECTORY}
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 export BASE_REPO=${AWS_ACCOUNT_ID}.dkr.ecr.us-west-2.amazonaws.com
-set -x
 cp -r /$HOME/.docker ${BASE_DIRECTORY}
 export DOCKER_CONFIG=${BASE_DIRECTORY}/.docker
 ${BASE_DIRECTORY}/development/ecr/ecr-command.sh install-ecr-public
