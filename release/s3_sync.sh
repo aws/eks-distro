@@ -20,6 +20,7 @@ RELEASE="${2?Second required argument is release for example 1}"
 ARTIFACT_BUCKET="${3?Third required argument is artifact bucket name}"
 REPO="${4:-""}"
 BASE_DIRECTORY=$(git rev-parse --show-toplevel)
+DEVELOPMENT=${DEVELOPMENT:-false}
 
 if [ "$DEVELOPMENT" == "false" ]
 then
