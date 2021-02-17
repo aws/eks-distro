@@ -26,7 +26,7 @@ fi
 BASE_DIRECTORY=$(git rev-parse --show-toplevel)
 cd ${BASE_DIRECTORY}
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-export BASE_REPO=316434458148.dkr.ecr.us-west-2.amazonaws.com/eks-distro/base
+export BASE_REPO=316434458148.dkr.ecr.us-west-2.amazonaws.com
 cat << EOF > awscliconfig
 [default]
 output=json
