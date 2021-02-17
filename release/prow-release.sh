@@ -26,6 +26,9 @@ fi
 BASE_DIRECTORY=$(git rev-parse --show-toplevel)
 cd ${BASE_DIRECTORY}
 
+export RELEASE=$(cat ${BASE_DIRECTORY}/release/${RELEASE_BRANCH}/RELEASE)
+export KUBE_BASE_TAG=$(cat ${BASE_DIRECTORY}/projects/kubernetes/release/GIT_TAG)-eks-${RELEASE_BRANCH}-${RELEASE}
+export PRESUBMIT_KUBE_BASE_TAG=$(cat ${BASE_DIRECTORY}/projects/kubernetes/release/GIT_TAG)-eks-${RELEASE_BRANCH}-${RELEASE}
 export BASE_REPO=${BASE_REPO:-${IMAGE_REPO}}
 export BASE_IMAGE=${BASE_IMAGE:-316434458148.dkr.ecr.us-west-2.amazonaws.com/eks-distro/base:$(cat ${BASE_DIRECTORY}/EKS_DISTRO_BASE_TAG_FILE)}
 
