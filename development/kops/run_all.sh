@@ -25,7 +25,6 @@ function cleanup()
 }
 
 echo "This script will create a cluster, run tests and tear it down"
-cd "$BASEDIR"
 source ${BASEDIR}/set_environment.sh
 $PREFLIGHT_CHECK_PASSED || exit 1
 ${BASEDIR}/install_requirements.sh
