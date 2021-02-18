@@ -5,7 +5,6 @@ This changelog highlights the changes for [v1.19.1](https://github.com/aws/eks-d
 ## Upgrade Kubernetes Versions
 
 * Upgraded Kubernetes to 1.19
-* Upgraded dependencies and components
 
 ## Patches 
 
@@ -50,3 +49,20 @@ but were added in the version._
 For patches that were carried over from the previous release, there were some minor changes in the patch order (and thus
 the start of each impacted patch's filename). These differences are functionally immaterial and do not impact the use or
 application of the patches.
+
+## Component Versions
+
+| Component             | Version           |
+|-----------------------|-------------------|
+| aws-iam-authenticator | 0.5.2             |
+| cni-plugins           | 0.8.7             |
+| coredns               | 1.7.0             |
+| etcd                  | 3.4.14            |
+| external-attacher     | 3.0.1             |
+| external-provisioner  | 2.0.3             |
+| external-resizer      | 1.0.1             |
+| external-snapshotter  | 3.0.2             |
+| kubernetes            | 1.18.9 --> 1.19.6 |
+| livenessprobe         | 2.1.0             |
+| metrics-server        | 0.4.0             |
+| node-driver-registrar | 2.0.1             |
