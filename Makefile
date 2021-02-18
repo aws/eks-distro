@@ -39,8 +39,8 @@ build:
 		--dry-run=true
 	@echo 'Done' $(TARGET)
 
-.PHONY: postsubmit-conformance
-postsubmit-conformance:
+.PHONY: postsubmit-build
+postsubmit-build:
 	go vet cmd/main_postsubmit.go
 	go run cmd/main_postsubmit.go \
 		--target=release \
@@ -52,7 +52,9 @@ postsubmit-conformance:
 		--image-repo=${IMAGE_REPO} \
 		--artifact-bucket=$(ARTIFACT_BUCKET) \
 		--dry-run=false
-#	bash development/kops/prow.sh
+
+.PHONY: postsubmit-conformance
+postsubmit-conformance: postsubmit-build
 
 .PHONY: tag
 tag:
