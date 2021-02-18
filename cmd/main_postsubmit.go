@@ -18,10 +18,10 @@ var (
 )
 
 type Command struct {
-	releaseBranch        string
-	gitRoot              string
-	release              string
-	artifactBucket       string
+	releaseBranch  string
+	gitRoot        string
+	release        string
+	artifactBucket string
 
 	makeTarget string
 	makeArgs   []string
@@ -66,12 +66,12 @@ func main() {
 	log.Printf("Running postsubmit - dry-run: %t", *dryRun)
 
 	c := &Command{
-		releaseBranch:        *releaseBranch,
-		release:              *release,
-		artifactBucket:       *artifactBucket,
-		gitRoot:              *gitRoot,
-		makeTarget:           *target,
-		dryRun:               *dryRun,
+		releaseBranch:  *releaseBranch,
+		release:        *release,
+		artifactBucket: *artifactBucket,
+		gitRoot:        *gitRoot,
+		makeTarget:     *target,
+		dryRun:         *dryRun,
 	}
 	if c.gitRoot == "" {
 		gitRootOutput, err := exec.Command("git", "rev-parse", "--show-toplevel").Output()
@@ -98,7 +98,7 @@ func main() {
 	filesChanged := strings.Fields(string(gitDiffOutput))
 
 	allChanged := false
-	buildOrder := [...]string {
+	buildOrder := [...]string{
 		"kubernetes/release",
 		"kubernetes/kubernetes",
 		"containernetworking/plugins",
@@ -114,7 +114,7 @@ func main() {
 		"kubernetes-csi/external-provisioner",
 	}
 	type changedStruct struct {
-		changed		bool
+		changed bool
 	}
 	projects := make(map[string]*changedStruct)
 	for _, projectPath := range buildOrder {
