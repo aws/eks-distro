@@ -25,7 +25,6 @@ set -exo pipefail
 BASEDIR=$(dirname "$0")
 echo "This script will create a cluster, run tests and tear it down"
 cd "$BASEDIR"
-source ./create_store_name.sh
 source ./set_environment.sh
 $PREFLIGHT_CHECK_PASSED || exit 1
 ./install_requirements.sh
