@@ -55,6 +55,7 @@ postsubmit-build:
 
 .PHONY: postsubmit-conformance
 postsubmit-conformance: postsubmit-build
+	bash development/kops/prow.sh
 
 .PHONY: tag
 tag:

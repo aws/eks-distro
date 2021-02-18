@@ -70,4 +70,4 @@ export CNI_VERSION_URL=${ARTIFACT_URL}/plugins/${CNI_VERSION}/cni-plugins-linux-
 export CNI_ASSET_HASH_STRING=${CNI_ASSET_HASH_STRING:-sha256:$(curl -s ${CNI_VERSION_URL}.sha256 | cut -f1 -d' ')}
 export KOPS=${BASEDIR}/bin/kops-${RELEASE_BRANCH}
 mkdir -p ${BASEDIR}/bin
-export PATH=${BASEDIR}/bin:${PATH}
+export PATH=`pwd`/${BASEDIR}/bin:${PATH}
