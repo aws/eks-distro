@@ -1,0 +1,144 @@
+
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.2.5
+  creationTimestamp: null
+  name: releases.distro.eks.amazonaws.com
+spec:
+  additionalPrinterColumns:
+  - JSONPath: .spec.channel
+    description: The release channel
+    name: Release Channel
+    type: string
+  - JSONPath: .spec.number
+    description: Release number
+    name: Release
+    type: integer
+  - JSONPath: .status.date
+    description: The date the release was published
+    format: date-time
+    name: Release Date
+    type: string
+  group: distro.eks.amazonaws.com
+  names:
+    kind: Release
+    listKind: ReleaseList
+    plural: releases
+    shortNames:
+    - rel
+    singular: release
+  scope: Namespaced
+  subresources: {}
+  validation:
+    openAPIV3Schema:
+      description: Release is the Schema for the releases API
+      properties:
+        apiVersion:
+          description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+          type: string
+        kind:
+          description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+          type: string
+        metadata:
+          type: object
+        spec:
+          description: ReleaseSpec defines the desired state of Release
+          properties:
+            buildRepoCommit:
+              type: string
+            channel:
+              type: string
+            number:
+              description: Monotonically increasing release number
+              minimum: 1
+              type: integer
+          type: object
+        status:
+          description: ReleaseStatus defines the observed state of Release
+          properties:
+            components:
+              items:
+                description: A component of a release
+                properties:
+                  assets:
+                    items:
+                      properties:
+                        arch:
+                          description: Architectures of the asset
+                          items:
+                            type: string
+                          type: array
+                        archive:
+                          properties:
+                            sha256:
+                              description: The sha256 of the asset, only applies for
+                                'file' store
+                              type: string
+                            sha512:
+                              description: The sha512 of the asset, only applies for
+                                'file' store
+                              type: string
+                            uri:
+                              description: The URI where the asset is located
+                              type: string
+                          type: object
+                        description:
+                          type: string
+                        image:
+                          properties:
+                            uri:
+                              description: The image repository, name, and tag
+                              type: string
+                          type: object
+                        name:
+                          description: The asset name
+                          type: string
+                        os:
+                          description: Operating system of the asset
+                          enum:
+                          - linux
+                          - darwin
+                          - windows
+                          type: string
+                        type:
+                          description: The type of the asset
+                          enum:
+                          - Archive
+                          - Image
+                          type: string
+                      type: object
+                    type: array
+                  gitCommit:
+                    description: Git commit the component is built from, before any
+                      patches
+                    type: string
+                  gitTag:
+                    description: Git tag the component is built from, before any patches
+                    type: string
+                  name:
+                    type: string
+                type: object
+              type: array
+            date:
+              format: date-time
+              type: string
+          type: object
+      type: object
+  version: v1alpha1
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []

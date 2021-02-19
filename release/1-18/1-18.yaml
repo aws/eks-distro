@@ -1,0 +1,10 @@
+apiVersion: distro.eks.amazonaws.com/v1alpha1
+kind: ReleaseChannel
+metadata:
+  creationTimestamp: null
+  name: 1-18
+spec:
+  snsTopicARN: "arn:aws:sns:us-east-1:379412251201:eks-distro-updates"
+status:
+  active: true
+  latestRelease: 1
