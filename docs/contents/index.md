@@ -60,8 +60,8 @@ and the schema can be found in the
 [eks-distro-build-tooling](https://github.com/aws/eks-distro-build-tooling/tree/main/release)
 GitHub repository.
 
-You can install the CRD API type, the release channel for EKS-D, and view the release channel
-by running the following commands:
+You can install the CRD API type, the release channel manifest for EKS-D, and
+view the release channel by running the following commands:
 
 ```bash
 RELEASE_BRANCH=1-18
