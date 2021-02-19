@@ -14,7 +14,7 @@
 # limitations under the License.
 
 BASEDIR=$(dirname "$0")
-export RELEASE_BRANCH=${RELEASE_BRANCH:-"1-18"}
+export RELEASE_BRANCH=${RELEASE_BRANCH:-"1-19"}
 export DEFAULT_RELEASE=$(cat ${BASEDIR}/../../release/${RELEASE_BRANCH}/RELEASE)
 export RELEASE=${RELEASE:-${DEFAULT_RELEASE}}
 
