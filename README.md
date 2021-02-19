@@ -1,6 +1,6 @@
 ## EKS Distro Repository
 
-Repository build status: [![Build status](https://prow.eks.amazonaws.com/badge.svg?jobs=[!*tooling-postsubmit]*-postsubmit)](https://prow.eks.amazonaws.com/?repo=aws%2Feks-distro&type=postsubmit)
+Repository build status: [![Release status](https://prow.eks.amazonaws.com/badge.svg?jobs=[!*tooling-postsubmit]*release*-postsubmit)](https://prow.eks.amazonaws.com/?repo=aws%2Feks-distro&type=postsubmit)
 
 Amazon **EKS Distro** (EKS-D) is a Kubernetes distribution based on and used by
 Amazon Elastic Kubernetes Service (EKS) to create reliable and secure Kubernetes
@@ -20,10 +20,17 @@ Full documentation for releases can be found on https://distro.eks.amazonaws.com
 
 ### Kubernetes 1-18
 
-[![Build status](https://prow.eks.amazonaws.com/badge.svg?jobs=main-1-18-postsubmit)](https://prow.eks.amazonaws.com/?job=main-1-18-postsubmit)
+[![Development Build status](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-18-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-18-postsubmit)
 | Release | Manifest |
 | --- | --- |
 | 1 | [kubernetes-1-18-eks-1](https://distro.eks.amazonaws.com/kubernetes-1-18/kubernetes-1-18-eks-1.yaml) |
+
+### Kubernetes 1-19
+
+[![Development Build status](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-19-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-19-postsubmit)
+| Release | Manifest |
+| --- | --- |
+| 1 | [kubernetes-1-19-eks-1](https://distro.eks.amazonaws.com/kubernetes-1-19/kubernetes-1-19-eks-1.yaml) |
 
 ## Development
 
