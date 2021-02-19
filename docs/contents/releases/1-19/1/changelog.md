@@ -56,7 +56,7 @@ application of the patches.
 |-----------------------|-------------------|
 | aws-iam-authenticator | 0.5.2             |
 | cni-plugins           | 0.8.7             |
-| coredns               | 1.7.0             |
+| coredns               | 1.8.0             |
 | etcd                  | 3.4.14            |
 | external-attacher     | 3.0.1             |
 | external-provisioner  | 2.0.3             |
