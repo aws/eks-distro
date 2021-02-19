@@ -8,6 +8,7 @@ AWS_ACCOUNT_ID?=$(shell aws sts get-caller-identity --query Account --output tex
 AWS_REGION?=us-west-2
 IMAGE_REPO?=$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
 RELEASE_AWS_PROFILE?=default
+export DOCKER_CONFIG=${BASE_DIRECTORY}/.docker
 
 ifdef MAKECMDGOALS
 TARGET=$(MAKECMDGOALS)
@@ -22,6 +23,7 @@ presubmit-cleanup = \
 
 .PHONY: setup
 setup:
+	cp -r $(HOME)/.docker $(BASE_DIRECTORY)
 	development/ecr/ecr-command.sh install-ecr-public
 	development/ecr/ecr-command.sh login-ecr-public
 
@@ -40,7 +42,7 @@ build:
 	@echo 'Done' $(TARGET)
 
 .PHONY: postsubmit-build
-postsubmit-build:
+postsubmit-build: setup
 	go vet cmd/main_postsubmit.go
 	go run cmd/main_postsubmit.go \
 		--target=release \
