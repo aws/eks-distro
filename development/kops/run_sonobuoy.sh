@@ -30,7 +30,7 @@ SONOBUOY_DIR="sonobuoy_dir"
 mkdir $SONOBUOY_DIR
 CONFORMANCE_IMAGE=k8s.gcr.io/conformance:${KUBERNETES_VERSION}
 wget -qO- ${SONOBUOY} |tar -xz -C ${SONOBUOY_DIR}
-mv ${SONOBUOY_DIR}/${SONOBUOY}
+mv ${SONOBUOY_DIR}/sonobuoy .
 rm -rf ${SONOBUOY_DIR}
 chmod 755 sonobuoy
 
