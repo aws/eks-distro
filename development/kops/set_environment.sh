@@ -14,7 +14,7 @@
 # limitations under the License.
 
 export RELEASE_BRANCH=${RELEASE_BRANCH:-"1-19"}
-export DEFAULT_RELEASE=$(cat ../../release/${RELEASE_BRANCH}/RELEASE|tr -d ' ')
+export DEFAULT_RELEASE=$(cat ../../release/${RELEASE_BRANCH}/RELEASE)
 export RELEASE=${RELEASE:-${DEFAULT_RELEASE}}
 
 if [ -z "${PREFLIGHT_CHECK_PASSED}" ]
