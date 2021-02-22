@@ -48,7 +48,7 @@ data:
 EOF
 
 echo "Creating ${KOPS_CLUSTER_NAME}.yaml"
-${KOPS} toolbox template --template eks-d.tpl --values ./${KOPS_CLUSTER_NAME}/values.yaml > "./${KOPS_CLUSTER_NAME}/${KOPS_CLUSTER_NAME}.yaml"
+${KOPS} toolbox template --template ${BASEDIR}/eks-d.tpl --values ./${KOPS_CLUSTER_NAME}/values.yaml > "./${KOPS_CLUSTER_NAME}/${KOPS_CLUSTER_NAME}.yaml"
 
 echo "Creating cluster configuration"
 ${KOPS} create -f "./${KOPS_CLUSTER_NAME}/${KOPS_CLUSTER_NAME}.yaml"

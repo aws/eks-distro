@@ -13,6 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+set -exo pipefail
+BASEDIR=$(dirname "$0")
+cd ${BASEDIR}
+
 function cleanup()
 {
   echo 'Deleting...'
@@ -21,14 +25,11 @@ function cleanup()
   exit 255;
 }
 
-set -exo pipefail
-BASEDIR=$(dirname "$0")
 echo "This script will create a cluster, run tests and tear it down"
-cd "$BASEDIR"
 source ./set_environment.sh
 $PREFLIGHT_CHECK_PASSED || exit 1
 ./install_requirements.sh
-trap cleanup SIGINT SIGTERM ERR EXIT
+trap cleanup SIGINT SIGTERM ERR
 ./create_values_yaml.sh
 ./create_configuration.sh
 ./create_cluster.sh
@@ -36,3 +37,5 @@ trap cleanup SIGINT SIGTERM ERR EXIT
 ./cluster_wait.sh
 ./validate_eks.sh
 ./run_sonobuoy.sh
+./delete_cluster.sh || true
+./delete_store.sh

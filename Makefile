@@ -40,7 +40,7 @@ build:
 	@echo 'Done' $(TARGET)
 
 .PHONY: postsubmit-build
-postsubmit-build:
+postsubmit-build: setup
 	go vet cmd/main_postsubmit.go
 	go run cmd/main_postsubmit.go \
 		--target=release \
@@ -55,6 +55,7 @@ postsubmit-build:
 
 .PHONY: postsubmit-conformance
 postsubmit-conformance: postsubmit-build
+	development/kops/prow.sh
 
 .PHONY: tag
 tag:

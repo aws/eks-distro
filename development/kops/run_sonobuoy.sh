@@ -27,8 +27,7 @@ else
   SONOBUOY=https://github.com/vmware-tanzu/sonobuoy/releases/download/v0.19.0/sonobuoy_0.19.0_linux_386.tar.gz
 fi
 CONFORMANCE_IMAGE=k8s.gcr.io/conformance:${KUBERNETES_VERSION}
-wget -qO- ${SONOBUOY} |tar -xz
-rm -f LICENSE
+wget -qO- ${SONOBUOY} |tar -xz sonobuoy
 chmod 755 sonobuoy
 
 echo "Testing cluster $KOPS_STATE_STORE"
