@@ -17,7 +17,7 @@ export RELEASE_BRANCH=${RELEASE_BRANCH:-"1-19"}
 export DEFAULT_RELEASE=$(cat ../../release/${RELEASE_BRANCH}/RELEASE)
 export RELEASE=${RELEASE:-${DEFAULT_RELEASE}}
 
-if [ -z "${PREFLIGHT_CHECK_PASSED}" ]
+if [ "${PREFLIGHT_CHECK_PASSED:-false}" != "true" ]
 then
     PREFLIGHT_CHECK_PASSED=true
     GOOD="\xE2\x9C\x94"
