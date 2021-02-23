@@ -14,5 +14,5 @@
 # limitations under the License.
 
 # Create a unique s3 bucket name
-export KOPS_STATE_STORE="s3://kops-state-store-$(cat /dev/urandom | LC_ALL=C tr -dc "[:alpha:]" | tr '[:upper:]' '[:lower:]' | head -c 32)"
+export KOPS_STATE_STORE=${KOPS_STATE_STORE:-s3://kops-state-store-$(cat /dev/urandom | LC_ALL=C tr -dc "[:alpha:]" | tr '[:upper:]' '[:lower:]' | head -c 32)}
 echo export KOPS_STATE_STORE="${KOPS_STATE_STORE}"

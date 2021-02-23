@@ -56,7 +56,7 @@ then
     KUBECTL_PATH=${BASEDIR}/bin/kubectl
     mkdir -p ${BASEDIR}/bin
     set -x
-    curl -sSL "https://distro.eks.amazonaws.com/kubernetes-${RELEASE_BRANCH}/releases/1/artifacts/kubernetes/${KUBECTL_VERSION}/bin/${OS}/${ARCH}/kubectl" -o ${KUBECTL_PATH}
+    curl -sSL "${ARTIFACT_URL}/kubernetes/${KUBECTL_VERSION}/bin/${OS}/${ARCH}/kubectl" -o ${KUBECTL_PATH}
     chmod +x ${KUBECTL_PATH}
     set +x
 fi

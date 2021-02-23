@@ -13,9 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-BASEDIR=$(dirname "$0")
-export RELEASE_BRANCH=${RELEASE_BRANCH:-"1-18"}
-export DEFAULT_RELEASE=$(cat ${BASEDIR}/../../release/${RELEASE_BRANCH}/RELEASE)
+export RELEASE_BRANCH=${RELEASE_BRANCH:-"1-19"}
+export DEFAULT_RELEASE=$(cat ../../release/${RELEASE_BRANCH}/RELEASE)
 export RELEASE=${RELEASE:-${DEFAULT_RELEASE}}
 
 if [ -z "${PREFLIGHT_CHECK_PASSED}" ]
@@ -61,13 +60,13 @@ then
 fi
 export PREFLIGHT_CHECK_PASSED
 
-export KUBERNETES_VERSION=$(cat ${BASEDIR}/../../projects/kubernetes/kubernetes/${RELEASE_BRANCH}/GIT_TAG)
+export KUBERNETES_VERSION=$(cat ../../projects/kubernetes/kubernetes/${RELEASE_BRANCH}/GIT_TAG)
 export DEFAULT_REPOSITORY_URI=public.ecr.aws/eks-distro
 export REPOSITORY_URI=${REPOSITORY_URI:-${DEFAULT_REPOSITORY_URI}}
 export ARTIFACT_URL=${ARTIFACT_URL:-https://distro.eks.amazonaws.com/kubernetes-${RELEASE_BRANCH}/releases/${RELEASE}/artifacts}
-export CNI_VERSION=$(cat ${BASEDIR}/../../projects/containernetworking/plugins/GIT_TAG)
+export CNI_VERSION=$(cat ../../projects/containernetworking/plugins/GIT_TAG)
 export CNI_VERSION_URL=${ARTIFACT_URL}/plugins/${CNI_VERSION}/cni-plugins-linux-amd64-${CNI_VERSION}.tar.gz
 export CNI_ASSET_HASH_STRING=${CNI_ASSET_HASH_STRING:-sha256:$(curl -s ${CNI_VERSION_URL}.sha256 | cut -f1 -d' ')}
-export KOPS=${BASEDIR}/bin/kops-${RELEASE_BRANCH}
-mkdir -p ${BASEDIR}/bin
-export PATH=${BASEDIR}/bin:${PATH}
+export KOPS=bin/kops-${RELEASE_BRANCH}
+mkdir -p bin
+export PATH=`pwd`/bin:${PATH}

@@ -60,8 +60,9 @@ function build::common::generate_shasum() {
 
   cd $tarpath
   for file in $(find . -name '*.tar.gz'); do
-    sha256sum "$file" > "$file.sha256"
-    sha512sum "$file" > "$file.sha512"
+    filepath=$(basename $file)
+    sha256sum "$filepath" > "$file.sha256"
+    sha512sum "$filepath" > "$file.sha512"
   done
   cd -
 }

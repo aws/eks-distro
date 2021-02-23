@@ -26,12 +26,12 @@ then
 else
   SONOBUOY=https://github.com/vmware-tanzu/sonobuoy/releases/download/v0.19.0/sonobuoy_0.19.0_linux_386.tar.gz
 fi
-wget -qO- ${SONOBUOY} |tar -xz
-rm -f LICENSE
+CONFORMANCE_IMAGE=k8s.gcr.io/conformance:${KUBERNETES_VERSION}
+wget -qO- ${SONOBUOY} |tar -xz sonobuoy
 chmod 755 sonobuoy
 
 echo "Testing cluster $KOPS_STATE_STORE"
-./sonobuoy run --mode=certified-conformance --wait --kube-conformance-image k8s.gcr.io/conformance:v1.18.9
+./sonobuoy run --mode=certified-conformance --wait --kube-conformance-image ${CONFORMANCE_IMAGE}
 results=$(./sonobuoy retrieve)
 mv $results "./${KOPS_CLUSTER_NAME}/$results"
 results="./${KOPS_CLUSTER_NAME}/$results"
