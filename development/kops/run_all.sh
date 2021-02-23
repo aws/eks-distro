@@ -29,6 +29,16 @@ echo "This script will create a cluster, run tests and tear it down"
 source ./set_environment.sh
 $PREFLIGHT_CHECK_PASSED || exit 1
 ./install_requirements.sh
+if [[ "${KOPS_STATE_STORE}" != "" ]]; then
+  for cluster_name in $(aws s3 ls ${KOPS_STATE_STORE}); do
+    if [[ "${cluster_name}" == "${RELEASE_BRANCH}-"* ]]; then
+      cluster_fqdn="$(echo ${cluster_name}|tr -d "/")"
+      echo "Deleting cluster ${cluster_fqdn}"
+      ${KOPS} delete cluster --state "${KOPS_STATE_STORE}" --name ${cluster_fqdn} --yes || true
+      aws s3 rm --recursive "${KOPS_STATE_STORE}/${cluster_name}" || true
+    fi
+  done
+fi
 trap cleanup SIGINT SIGTERM ERR
 ./create_values_yaml.sh
 ./create_configuration.sh
