@@ -42,7 +42,7 @@ export DOCKER_CONFIG=$(pwd)/development
 ```
 
 To create all the required ECR repositories for EKS Distro, run the
-`/development/ecr/setup.sh` script.
+`/development/ecr/ecr-command.sh create-all-private-repositories` script.
 
 ## Qemu
 
