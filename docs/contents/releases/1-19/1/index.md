@@ -6,7 +6,7 @@ immutable Secrets and ConfigMaps. A [change log](CHANGELOG-v1-19-eks-1.md) is av
 describing the patches and versions included in this release.
 
 The [EKS-D v1-19-eks-1](https://distro.eks.amazonaws.com/kubernetes-1-19/kubernetes-1-19-eks-1.yaml)
-CRD (Custom Release Document) defines the release used in EKS-D.
+release manifest defines the release used in EKS-D.
 
 ```yaml
 apiVersion: distro.eks.amazonaws.com/v1alpha1
