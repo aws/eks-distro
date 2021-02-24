@@ -22,7 +22,7 @@ source venv/bin/activate
 pip install mkdocs-material
 ```
 
-Visit the python docs to learn more about [virutal environments (venv)](https://docs.python.org/3/library/venv.html).
+Visit the python docs to learn more about [virtual environments (venv)](https://docs.python.org/3/library/venv.html).
 
 Optionally, use a global `.gitignore` to hide the `venv` directory.
 

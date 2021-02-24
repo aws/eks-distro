@@ -11,7 +11,7 @@ The EKS version is EKS 1.18.  A separate product named [EKS-Anywhere](https://aw
 launches later in 2021 to let you automate your own bare metal and other EKS installations,
 ---
 
-## Prerequisties
+## Prerequisites
 
 Create a Linux system for the Kubernetes control plane and one or more nodes.
 This procedure was tested on an RPM-based Linux system. Start with the
@@ -19,7 +19,7 @@ following prerequisites:
 
 1. Use a Linux system that kubeadm supports, as described in: [Before you begin](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/#before-you-begin). Check that the system has the required amount of memory, CPU, and other resources. 
 
-1. Make sure SELinux is disabled by setting *SELINUX=disabled* in the */etc/syconfig/selinux* file. To turn it off immediately, type:
+1. Make sure SELinux is disabled by setting *SELINUX=disabled* in the */etc/sysconfig/selinux* file. To turn it off immediately, type:
 
         sudo setenforce 0
 
@@ -134,7 +134,7 @@ cluster from your laptop:
         rolebinding.rbac.authorization.k8s.io/weave-net (http://rolebinding.rbac.authorization.k8s.io/weave-net) created
         daemonset.apps/weave-net created
 
-    You can also consider [Calico](https://www.projectcalico.org/) or [Cillium](https://cilium.io/) networks. Calico is popular because it can be used to propagate routes with BGP, which is often used on-prem.
+    You can also consider [Calico](https://www.projectcalico.org/) or [Cilium](https://cilium.io/) networks. Calico is popular because it can be used to propagate routes with BGP, which is often used on-prem.
 
 ## Configure the client
 
