@@ -33,7 +33,7 @@ export KOPS_CLUSTER_NAME=clustername.example.com
 ```
 
 ### 3. Create the Cluster
-Once the cluster configuration has been created succcessfully, create the
+Once the cluster configuration has been created successfully, create the
 EKS-D cluster:
 ```bash
 ./create_cluster.sh 
