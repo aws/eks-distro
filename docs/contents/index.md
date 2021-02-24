@@ -97,7 +97,7 @@ and sha512 sum files provided in release manifests. They are available for downl
 with names similar to the file (ex: `https://distro.eks.amazonaws.com/..../kubectl.sha256`)
 
 A list of all the components and assets that make up a release including URIs
-to all the compressed archives, binaries, and container images are available in
+to all the compressed archives, binaries, and container images is available in
 the release manifests. You can install the CRD API type, the release
 manifest for EKS Distro, and view the release by running the following
 commands:
