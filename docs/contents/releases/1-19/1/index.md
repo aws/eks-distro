@@ -2,7 +2,7 @@
 
 Highlights of the Kubernetes 1.19 release include Ingress API and Pod Topology
 Spread reaching stable status, EndpointSlices being enabled by default, and
-immutable Secrets and ConfigMaps. A [change log](CHANGELOG-1.19.1.md) is available
+immutable Secrets and ConfigMaps. A [change log](CHANGELOG-v1-19-eks-1.md) is available
 describing the patches and versions included in this release.
 
 The [EKS-D v1-19-eks-1](https://distro.eks.amazonaws.com/kubernetes-1-19/kubernetes-1-19-eks-1.yaml)
@@ -650,11 +650,11 @@ status:
       - arm64
       description: coredns container image
       image:
-        uri: /coredns/coredns:v1.7.0-eks-1-19-1
+        uri: /coredns/coredns:v1.8.0-eks-1-19-1
       name: coredns-image
       os: linux
       type: Image
-    gitTag: v1.7.0
+    gitTag: v1.8.0
     name: coredns
   date: "2021-02-18T14:51:30Z"
 
