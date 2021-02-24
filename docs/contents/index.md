@@ -60,20 +60,21 @@ and the schema can be found in the
 [eks-distro-build-tooling](https://github.com/aws/eks-distro-build-tooling/tree/main/release)
 GitHub repository.
 
-You can install the CRD API type, the release channel for Kubernetes 1-18, and
+You can install the CRD API type, the release channel manifest for EKS-D, and
 view the release channel by running the following commands:
 
 ```bash
+RELEASE_BRANCH=1-19
 kubectl apply -f https://distro.eks.amazonaws.com/crds/releasechannels.distro.eks.amazonaws.com-v1alpha1.yaml
-kubectl apply -f https://distro.eks.amazonaws.com/releasechannels/1-18.yaml
+kubectl apply -f https://distro.eks.amazonaws.com/releasechannels/${RELEASE_BRANCH}.yaml
 kubectl get -o yaml releasechannels
 ```
 
 ## Releases
 
-Releases of the EKS Distro are in-step with versions of components used by
-or recommended for use with Amazon EKS beginning with Kubernetes v1.18.9, and
-include the following components:
+Releases of the EKS Distro are in-step with versions of components used by or
+recommended for use with Amazon EKS. EKS Distro also includes the following
+components:
 
 * CNI plugins
 * CoreDNS
@@ -89,23 +90,25 @@ releases will be created when there is an updated component version, a required
 update in the Amazon Linux 2 base image, or a change required in the build
 toolchain (ex: a Go version update).
 
-Components such as CNI, etcd, aws-iam-authenticator, and Kubernetes have
-release artifacts that are not delivered as container images, and are available
-as compressed tar archives and binaries. sha256 and sha512 sum files are
-provided in release manifests and are available as files for download (ex:
-`https://distro.eks.amazonaws.com/..../kubectl.sha256`)
+There are components of Kubernetes, CNI, etcd, and aws-iam-authenticator
+that are not delivered as container images. These components are available as
+compressed tar archive and executable files. The files have associated sha256
+and sha512 sum files provided in release manifests. They are available for download
+with names similar to the file (ex: `https://distro.eks.amazonaws.com/..../kubectl.sha256`)
 
 A list of all the components and assets that make up a release including URIs
-to all the compressed archives, binaries, and container images are available in
-the release manifests. You can install the CRD API type, the first release
-manifest for Kubernetes 1-18, and view the release by running the following
+to all the compressed archives, binaries, and container images is available in
+the release manifests. You can install the CRD API type, the release
+manifest for EKS Distro, and view the release by running the following
 commands:
 
 ```bash
+RELEASE_BRANCH=1-19
+RELEASE=1
 kubectl apply -f https://distro.eks.amazonaws.com/crds/releases.distro.eks.amazonaws.com-v1alpha1.yaml
-kubectl apply -f https://distro.eks.amazonaws.com/kubernetes-1-18/kubernetes-1-18-eks-1.yaml
-kubectl get release kubernetes-1-18-eks-1
-kubectl get release kubernetes-1-18-eks-1 -o yaml
+kubectl apply -f https://distro.eks.amazonaws.com/kubernetes-${RELEASE_BRANCH}/kubernetes-${RELEASE_BRANCH}-eks-${RELEASE}.yaml
+kubectl get release kubernetes-${RELEASE_BRANCH}-eks-${RELEASE}
+kubectl get release kubernetes-${RELEASE_BRANCH}-eks-${RELEASE} -o yaml
 ```
 
 ### Release Version Dependencies
@@ -115,4 +118,5 @@ Machine Images), but it does use the EKS Optimized AMI. See the project
 repository for the [EKS Optimized AMI](https://github.com/awslabs/amazon-eks-ami)
 if you are interested in the AL2 container runtime kernel version.
 
-* [EKS-D v1-18-eks-1 Version Dependencies](releases/v1-18-eks-1.md)
+* [EKS-D v1-18-eks-1 Version Dependencies](releases/1-18/1/index.md)
+* [EKS-D v1-19-eks-1 Version Dependencies](releases/1-19/1/index.md)
