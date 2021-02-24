@@ -1,7 +1,7 @@
 # EKS-D v1-18-eks-1 Release
 
 The [EKS-D v1-18-eks-1](https://distro.eks.amazonaws.com/kubernetes-1-18/kubernetes-1-18-eks-1.yaml)
-CRD (Custom Release Document) defines the release used in EKS-D.
+CRD (Custom Release Definition) defines the release used in EKS-D.
 
 ```yaml
 ---
