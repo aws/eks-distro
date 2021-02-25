@@ -1,10 +1,10 @@
-# Changelog for v1.19.1
+# Changelog for v1-19-eks-1
 
-This changelog highlights the changes for [v1.19.1](https://github.com/aws/eks-distro/tree/v1-19-eks-1).
+This changelog highlights the changes for [v1-19-eks-1)](https://github.com/aws/eks-distro/tree/v1-19-eks-1).
 
 ## Upgrade Kubernetes Versions
 
-* Upgraded Kubernetes to 1.19
+* Upgraded Kubernetes to 1.19.6
 
 ## Patches 
 
