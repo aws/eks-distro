@@ -40,5 +40,5 @@ EOF
 export AWS_CONFIG_FILE=$(pwd)/config
 export AWS_PROFILE=conformance-test
 unset AWS_ROLE_ARN AWS_WEB_IDENTITY_TOKEN_FILE
-export KOPS_CLUSTER_NAME=${RELEASE_BRANCH}-${PROW_JOB_ID}.prod.test.pdx.kops-ci.model-rocket.aws.dev
+export KOPS_CLUSTER_NAME=${RELEASE_BRANCH}-${PROW_JOB_ID}.prod-build-pdx.kops-ci.model-rocket.aws.dev
 ${BASEDIR}/run_all.sh
