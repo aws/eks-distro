@@ -31,10 +31,10 @@ DESTINATION="./kubernetes-${RELEASE_BRANCH}/kubernetes-${RELEASE_BRANCH}-eks-${R
     --release-branch ${RELEASE_BRANCH} \
     --release-number ${RELEASE} | tee ${DESTINATION}
 mkdir -p releasechannels
-sed -e 's/^#.*//' eks-distro-build-tooling/release/config/${RELEASE_BRANCH}/${RELEASE_BRANCH}.yaml \
+grep -v '^#.*' eks-distro-build-tooling/release/config/${RELEASE_BRANCH}/${RELEASE_BRANCH}.yaml \
     >releasechannels/${RELEASE_BRANCH}.yaml
 mkdir -p crds
-sed -e 's/^#.*//' eks-distro-build-tooling/release/config/crds/releasechannels.distro.eks.amazonaws.com-v1alpha1.yaml \
+grep -v '^#.*' eks-distro-build-tooling/release/config/crds/releasechannels.distro.eks.amazonaws.com-v1alpha1.yaml \
     >crds/releasechannels.distro.eks.amazonaws.com-v1alpha1.yaml
-sed -e 's/^#.*//' eks-distro-build-tooling/release/config/crds/distro.eks.amazonaws.com_releases.yaml \
+grep -v '^#.*' eks-distro-build-tooling/release/config/crds/releases.distro.eks.amazonaws.com-v1alpha1.yaml \
     >crds/releases.distro.eks.amazonaws.com-v1alpha1.yaml
