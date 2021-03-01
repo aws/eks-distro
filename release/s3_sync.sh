@@ -36,19 +36,16 @@ then
    DEST_DIR=${DEST_DIR}/${REPO}
 fi
 aws s3 sync $DEST_DIR s3://${ARTIFACT_BUCKET}/${DEST_DIR} ${PUBLIC_READ}
-if [ -z "${REPO}" ]
+if [ -n "${REPO}" ]
 then
-  cd ${PREFIX_DIR}
-  for CRD
-  in *yaml
-  do
-    aws s3 cp ${CRD} s3://${ARTIFACT_BUCKET}/${PREFIX_DIR}/${CRD} ${PUBLIC_READ}
-  done
-  cd ${BASE_DIRECTORY}
-  aws s3 cp release/${RELEASE_BRANCH}/${RELEASE_BRANCH}.yaml \
-      s3://${ARTIFACT_BUCKET}/releasechannels/${RELEASE_BRANCH}.yaml ${PUBLIC_READ}
-  aws s3 cp release/crds/releasechannels.distro.eks.amazonaws.com-v1alpha1.yaml \
-      s3://${ARTIFACT_BUCKET}/crds/releasechannels.distro.eks.amazonaws.com-v1alpha1.yaml ${PUBLIC_READ}
-  aws s3 cp release/crds/releases.distro.eks.amazonaws.com-v1alpha1.yaml \
-      s3://${ARTIFACT_BUCKET}/crds/releases.distro.eks.amazonaws.com-v1alpha1.yaml ${PUBLIC_READ}
+  exit 0
 fi
+cd ${PREFIX_DIR}
+for CRD
+in *yaml
+do
+  aws s3 cp ${CRD} s3://${ARTIFACT_BUCKET}/${PREFIX_DIR}/${CRD} ${PUBLIC_READ}
+done
+cd ${BASE_DIRECTORY}
+aws s3 cp releasechannels/ s3://${ARTIFACT_BUCKET} ${PUBLIC_READ}
+aws s3 cp crds/ s3://${ARTIFACT_BUCKET} ${PUBLIC_READ}
