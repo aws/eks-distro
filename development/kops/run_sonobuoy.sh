@@ -30,7 +30,7 @@ CONFORMANCE_IMAGE=k8s.gcr.io/conformance:${KUBERNETES_VERSION}
 wget -qO- ${SONOBUOY} |tar -xz sonobuoy
 chmod 755 sonobuoy
 
-echo "Testing cluster $KOPS_STATE_STORE"
+echo "Testing cluster ${KOPS_CLUSTER_NAME}"
 ./sonobuoy run --mode=certified-conformance --wait --kube-conformance-image ${CONFORMANCE_IMAGE}
 results=$(./sonobuoy retrieve)
 mv $results "./${KOPS_CLUSTER_NAME}/$results"
