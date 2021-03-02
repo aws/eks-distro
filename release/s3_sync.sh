@@ -47,5 +47,19 @@ do
   aws s3 cp ${CRD} s3://${ARTIFACT_BUCKET}/${PREFIX_DIR}/${CRD} ${PUBLIC_READ}
 done
 cd ${BASE_DIRECTORY}
-aws s3 cp releasechannels/ s3://${ARTIFACT_BUCKET} ${PUBLIC_READ}
-aws s3 cp crds/ s3://${ARTIFACT_BUCKET} ${PUBLIC_READ}
+if [ -d crds ]
+then
+  for CRD
+  in crds/*yaml
+  do
+    aws s3 cp ${CRD} s3://${ARTIFACT_BUCKET}/${CRD} ${PUBLIC_READ}
+  done
+fi
+if [ -d releasechannels ]
+then
+  for CHANNEL
+  in releasechannels/*yaml
+  do
+    aws s3 cp ${CHANNEL} s3://${ARTIFACT_BUCKET}/${CHANNEL} ${PUBLIC_READ}
+  done
+fi
