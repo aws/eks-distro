@@ -36,12 +36,30 @@ then
    DEST_DIR=${DEST_DIR}/${REPO}
 fi
 aws s3 sync $DEST_DIR s3://${ARTIFACT_BUCKET}/${DEST_DIR} ${PUBLIC_READ}
-if [ -z "${REPO}" ]
+if [ -n "${REPO}" ]
 then
-  cd ${PREFIX_DIR}
+  exit 0
+fi
+cd ${PREFIX_DIR}
+for CRD
+in *yaml
+do
+  aws s3 cp ${CRD} s3://${ARTIFACT_BUCKET}/${PREFIX_DIR}/${CRD} ${PUBLIC_READ}
+done
+cd ${BASE_DIRECTORY}
+if [ -d crds ]
+then
   for CRD
-  in *yaml
+  in crds/*yaml
   do
-    aws s3 cp ${CRD} s3://${ARTIFACT_BUCKET}/${PREFIX_DIR}/${CRD} ${PUBLIC_READ}
+    aws s3 cp ${CRD} s3://${ARTIFACT_BUCKET}/${CRD} ${PUBLIC_READ}
+  done
+fi
+if [ -d releasechannels ]
+then
+  for CHANNEL
+  in releasechannels/*yaml
+  do
+    aws s3 cp ${CHANNEL} s3://${ARTIFACT_BUCKET}/${CHANNEL} ${PUBLIC_READ}
   done
 fi

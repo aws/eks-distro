@@ -20,7 +20,7 @@ RELEASE="${2?Second required argument is release for example 1}"
 REPO_OWNER=${REPO_OWNER:-aws}
 
 BASE_DIRECTORY=$(git rev-parse --show-toplevel)
-DEST_DIR=${BASE_DIRECTORY}/kubernetes-${RELEASE_BRANCH}/releases/${RELEASE}/artifacts
+cd ${BASE_DIRECTORY}
 
 REPOSITORY="https://github.com/${REPO_OWNER}/eks-distro-build-tooling.git"
 rm -rf ./eks-distro-build-tooling
@@ -30,3 +30,11 @@ DESTINATION="./kubernetes-${RELEASE_BRANCH}/kubernetes-${RELEASE_BRANCH}-eks-${R
 ./eks-distro-build-tooling/release/bin/eks-distro-release release \
     --release-branch ${RELEASE_BRANCH} \
     --release-number ${RELEASE} | tee ${DESTINATION}
+mkdir -p releasechannels
+grep -v '^#.*' eks-distro-build-tooling/release/config/${RELEASE_BRANCH}/${RELEASE_BRANCH}.yaml \
+    >releasechannels/${RELEASE_BRANCH}.yaml
+mkdir -p crds
+grep -v '^#.*' eks-distro-build-tooling/release/config/crds/releasechannels.distro.eks.amazonaws.com-v1alpha1.yaml \
+    >crds/releasechannels.distro.eks.amazonaws.com-v1alpha1.yaml
+grep -v '^#.*' eks-distro-build-tooling/release/config/crds/releases.distro.eks.amazonaws.com-v1alpha1.yaml \
+    >crds/releases.distro.eks.amazonaws.com-v1alpha1.yaml
