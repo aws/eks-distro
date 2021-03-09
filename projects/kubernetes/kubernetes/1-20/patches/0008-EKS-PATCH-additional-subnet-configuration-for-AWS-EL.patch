@@ -1,18 +1,18 @@
-From 83742f0cc8786d6049a30af19df5c35568dd6794 Mon Sep 17 00:00:00 2001
+From 039fbec8dd1d9d496ba86de1a0047dcd45d5e53f Mon Sep 17 00:00:00 2001
 From: Jyoti Mahapatra <jyotima@amazon.com>
 Date: Tue, 9 Mar 2021 05:43:04 +0000
 Subject: [PATCH] --EKS-PATCH-- additional subnet configuration for AWS ELB
 
 Signed-off-by: Jyoti Mahapatra <jyotima@amazon.com>
 ---
- .../k8s.io/legacy-cloud-providers/aws/aws.go  | 118 ++++-
+ .../k8s.io/legacy-cloud-providers/aws/aws.go  | 110 ++++-
  .../legacy-cloud-providers/aws/aws_test.go    | 402 ++++++++++++++++++
  .../k8s.io/legacy-cloud-providers/aws/tags.go |   9 +
  .../legacy-cloud-providers/aws/tags_test.go   |  50 +++
- 4 files changed, 575 insertions(+), 4 deletions(-)
+ 4 files changed, 567 insertions(+), 4 deletions(-)
 
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-index d273023d437..87c5ba08b1e 100644
+index d273023d437..4f0afe4dc21 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
 @@ -234,6 +234,12 @@ const ServiceAnnotationLoadBalancerEIPAllocations = "service.beta.kubernetes.io/
@@ -72,7 +72,7 @@ index d273023d437..87c5ba08b1e 100644
  		// If we have two subnets for the same AZ we arbitrarily choose the one that is first lexicographically.
  		// TODO: Should this be an error.
  		if strings.Compare(*existing.SubnetId, *subnet.SubnetId) > 0 {
-@@ -3507,6 +3525,98 @@ func (c *Cloud) findELBSubnets(internalELB bool) ([]string, error) {
+@@ -3507,6 +3525,90 @@ func (c *Cloud) findELBSubnets(internalELB bool) ([]string, error) {
  	return subnetIDs, nil
  }
  
@@ -87,14 +87,6 @@ index d273023d437..87c5ba08b1e 100644
 +		result = append(result, part)
 +	}
 +	return result
-+}
-+
-+func parseStringAnnotation(annotations map[string]string, annotation string, value *string) bool {
-+	if v, ok := annotations[annotation]; ok {
-+		*value = v
-+		return true
-+	}
-+	return false
 +}
 +
 +// parses comma separated values from annotation into string slice, returns true if annotation exists
@@ -171,7 +163,7 @@ index d273023d437..87c5ba08b1e 100644
  func isSubnetPublic(rt []*ec2.RouteTable, subnetID string) (bool, error) {
  	var subnetTable *ec2.RouteTable
  	for _, table := range rt {
-@@ -3884,7 +3994,7 @@ func (c *Cloud) EnsureLoadBalancer(ctx context.Context, clusterName string, apiS
+@@ -3884,7 +3986,7 @@ func (c *Cloud) EnsureLoadBalancer(ctx context.Context, clusterName string, apiS
  
  	if isNLB(annotations) {
  		// Find the subnets that the ELB will live in
@@ -180,7 +172,7 @@ index d273023d437..87c5ba08b1e 100644
  		if err != nil {
  			klog.Errorf("Error listing subnets in VPC: %q", err)
  			return nil, err
-@@ -4051,7 +4161,7 @@ func (c *Cloud) EnsureLoadBalancer(ctx context.Context, clusterName string, apiS
+@@ -4051,7 +4153,7 @@ func (c *Cloud) EnsureLoadBalancer(ctx context.Context, clusterName string, apiS
  	}
  
  	// Find the subnets that the ELB will live in
