@@ -1,14 +1,9 @@
-From 75d9ecd2a80809ad99bddfb9e593cc4f461d7d74 Mon Sep 17 00:00:00 2001
-From: Kishor Joshi <joshikis@amazon.com>
-Date: Mon, 21 Dec 2020 12:59:11 -0800
-Subject: --EKS-PATCH-- additional subnet configuration for AWS ELB
+From 83742f0cc8786d6049a30af19df5c35568dd6794 Mon Sep 17 00:00:00 2001
+From: Jyoti Mahapatra <jyotima@amazon.com>
+Date: Tue, 9 Mar 2021 05:43:04 +0000
+Subject: [PATCH] --EKS-PATCH-- additional subnet configuration for AWS ELB
 
-* support subnets without cluster tag for auto-discovery
-* add support for manual subnet configuration via service annotation
-
-ref: https://github.com/kubernetes/kubernetes/pull/97431
-
-Signed-off-by: Kirsten Schumy <ksschumy@amazon.com>
+Signed-off-by: Jyoti Mahapatra <jyotima@amazon.com>
 ---
  .../k8s.io/legacy-cloud-providers/aws/aws.go  | 118 ++++-
  .../legacy-cloud-providers/aws/aws_test.go    | 402 ++++++++++++++++++
@@ -17,10 +12,10 @@ Signed-off-by: Kirsten Schumy <ksschumy@amazon.com>
  4 files changed, 575 insertions(+), 4 deletions(-)
 
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-index 543b44a7c36..763833e128c 100644
+index d273023d437..87c5ba08b1e 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-@@ -218,6 +218,12 @@ const ServiceAnnotationLoadBalancerEIPAllocations = "service.beta.kubernetes.io/
+@@ -234,6 +234,12 @@ const ServiceAnnotationLoadBalancerEIPAllocations = "service.beta.kubernetes.io/
  // For example: "Key1=Val1,Key2=Val2,KeyNoVal1=,KeyNoVal2"
  const ServiceAnnotationLoadBalancerTargetNodeLabels = "service.beta.kubernetes.io/aws-load-balancer-target-node-labels"
  
@@ -33,7 +28,7 @@ index 543b44a7c36..763833e128c 100644
  // Event key when a volume is stuck on attaching state when being attached to a volume
  const volumeAttachmentStuck = "VolumeAttachmentStuck"
  
-@@ -3367,7 +3373,7 @@ func findTag(tags []*ec2.Tag, key string) (string, bool) {
+@@ -3383,7 +3389,7 @@ func findTag(tags []*ec2.Tag, key string) (string, bool) {
  	return "", false
  }
  
@@ -42,7 +37,7 @@ index 543b44a7c36..763833e128c 100644
  // For maximal backwards compatibility, if no subnets are tagged, it will fall-back to the current subnet.
  // However, in future this will likely be treated as an error.
  func (c *Cloud) findSubnets() ([]*ec2.Subnet, error) {
-@@ -3383,6 +3389,8 @@ func (c *Cloud) findSubnets() ([]*ec2.Subnet, error) {
+@@ -3399,6 +3405,8 @@ func (c *Cloud) findSubnets() ([]*ec2.Subnet, error) {
  	for _, subnet := range subnets {
  		if c.tagging.hasClusterTag(subnet.Tags) {
  			matches = append(matches, subnet)
@@ -51,7 +46,7 @@ index 543b44a7c36..763833e128c 100644
  		}
  	}
  
-@@ -3446,7 +3454,7 @@ func (c *Cloud) findELBSubnets(internalELB bool) ([]string, error) {
+@@ -3462,7 +3470,7 @@ func (c *Cloud) findELBSubnets(internalELB bool) ([]string, error) {
  			continue
  		}
  
@@ -60,7 +55,7 @@ index 543b44a7c36..763833e128c 100644
  		var tagName string
  		if internalELB {
  			tagName = TagNameSubnetInternalELB
-@@ -3464,6 +3472,16 @@ func (c *Cloud) findELBSubnets(internalELB bool) ([]string, error) {
+@@ -3480,6 +3488,16 @@ func (c *Cloud) findELBSubnets(internalELB bool) ([]string, error) {
  			continue
  		}
  
@@ -77,7 +72,7 @@ index 543b44a7c36..763833e128c 100644
  		// If we have two subnets for the same AZ we arbitrarily choose the one that is first lexicographically.
  		// TODO: Should this be an error.
  		if strings.Compare(*existing.SubnetId, *subnet.SubnetId) > 0 {
-@@ -3491,6 +3509,98 @@ func (c *Cloud) findELBSubnets(internalELB bool) ([]string, error) {
+@@ -3507,6 +3525,98 @@ func (c *Cloud) findELBSubnets(internalELB bool) ([]string, error) {
  	return subnetIDs, nil
  }
  
@@ -176,16 +171,16 @@ index 543b44a7c36..763833e128c 100644
  func isSubnetPublic(rt []*ec2.RouteTable, subnetID string) (bool, error) {
  	var subnetTable *ec2.RouteTable
  	for _, table := range rt {
-@@ -3801,7 +3911,7 @@ func (c *Cloud) EnsureLoadBalancer(ctx context.Context, clusterName string, apiS
- 		}
+@@ -3884,7 +3994,7 @@ func (c *Cloud) EnsureLoadBalancer(ctx context.Context, clusterName string, apiS
  
+ 	if isNLB(annotations) {
  		// Find the subnets that the ELB will live in
 -		subnetIDs, err := c.findELBSubnets(internalELB)
 +		subnetIDs, err := c.getLoadBalancerSubnets(apiService, internalELB)
  		if err != nil {
  			klog.Errorf("Error listing subnets in VPC: %q", err)
  			return nil, err
-@@ -3968,7 +4078,7 @@ func (c *Cloud) EnsureLoadBalancer(ctx context.Context, clusterName string, apiS
+@@ -4051,7 +4161,7 @@ func (c *Cloud) EnsureLoadBalancer(ctx context.Context, clusterName string, apiS
  	}
  
  	// Find the subnets that the ELB will live in
@@ -195,7 +190,7 @@ index 543b44a7c36..763833e128c 100644
  		klog.Errorf("Error listing subnets in VPC: %q", err)
  		return nil, err
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
-index 096acbd2e86..4baa20b60f4 100644
+index 8508280732c..100b0c19588 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
 @@ -20,6 +20,7 @@ package aws
@@ -563,7 +558,7 @@ index 096acbd2e86..4baa20b60f4 100644
  func TestSubnetIDsinVPC(t *testing.T) {
  	awsServices := newMockedFakeAWSServices(TestClusterID)
  	c, err := newAWSCloud(CloudConfig{}, awsServices)
-@@ -2665,3 +3016,54 @@ func TestCloud_sortELBSecurityGroupList(t *testing.T) {
+@@ -3086,3 +3437,54 @@ func TestCloud_buildNLBHealthCheckConfiguration(t *testing.T) {
  		})
  	}
  }
@@ -704,5 +699,5 @@ index 66e850341f9..22daacc5935 100644
 +	}
 +}
 -- 
-2.29.2
+2.17.1
 

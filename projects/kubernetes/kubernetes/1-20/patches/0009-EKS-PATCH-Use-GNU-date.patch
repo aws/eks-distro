@@ -5,7 +5,7 @@ Subject: --EKS-PATCH-- Use GNU date
 
 Use GNU date if available for builds on darwin
 
-Signed-off-by: Micah Hausler <mhausler@amazon.com>
+Signed-off-by: Jyoti Mahapatra <jyotima@amazon.com>
 ---
  hack/lib/version.sh | 8 +++++++-
  1 file changed, 7 insertions(+), 1 deletion(-)
