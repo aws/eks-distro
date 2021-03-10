@@ -1,7 +1,7 @@
-From 80e286f56ee8071aef1d34230141638ca47277cc Mon Sep 17 00:00:00 2001
+From 9e9908007932eb4fa4efa7ab47b6355f2f6595d9 Mon Sep 17 00:00:00 2001
 From: Jyoti Mahapatra <jyotima@amazon.com>
 Date: Tue, 9 Mar 2021 05:55:57 +0000
-Subject: [PATCH] --EKS-PATCH-- Allow override of kube-proxy base image
+Subject: [PATCH 10/10] --EKS-PATCH-- Allow override of kube-proxy base image
 
 Signed-off-by: Jyoti Mahapatra <jyotima@amazon.com>
 ---
@@ -39,5 +39,5 @@ index 16606b0e481..0b1d2280a6c 100755
  
    echo "${targets[@]}"
 -- 
-2.17.1
+2.24.3 (Apple Git-128)
 
