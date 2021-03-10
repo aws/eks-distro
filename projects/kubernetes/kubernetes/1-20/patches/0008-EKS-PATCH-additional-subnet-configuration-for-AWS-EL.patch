@@ -3,6 +3,11 @@ From: Jyoti Mahapatra <jyotima@amazon.com>
 Date: Tue, 9 Mar 2021 05:43:04 +0000
 Subject: [PATCH] --EKS-PATCH-- additional subnet configuration for AWS ELB
 
+* support subnets without cluster tag for auto-discovery
+* add support for manual subnet configuration via service annotation
+
+ref: https://github.com/kubernetes/kubernetes/pull/97431
+
 Signed-off-by: Jyoti Mahapatra <jyotima@amazon.com>
 ---
  .../k8s.io/legacy-cloud-providers/aws/aws.go  | 110 ++++-
