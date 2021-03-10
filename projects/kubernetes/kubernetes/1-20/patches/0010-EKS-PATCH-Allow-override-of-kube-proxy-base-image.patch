@@ -1,7 +1,7 @@
 From 9e9908007932eb4fa4efa7ab47b6355f2f6595d9 Mon Sep 17 00:00:00 2001
 From: Jyoti Mahapatra <jyotima@amazon.com>
 Date: Tue, 9 Mar 2021 05:55:57 +0000
-Subject: [PATCH 10/10] --EKS-PATCH-- Allow override of kube-proxy base image
+Subject: --EKS-PATCH-- Allow override of kube-proxy base image
 
 Signed-off-by: Jyoti Mahapatra <jyotima@amazon.com>
 ---
