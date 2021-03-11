@@ -79,7 +79,7 @@ creating the following */etc/yum.repos.d/kubernetes.repo* file:
 
         sudo yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
 
-1. Create */etc/modules-load.d/k8.conf* so it appears as follows:
+1. Create */etc/modules-load.d/k8s.conf* so it appears as follows:
 
         br_netfilter
 
