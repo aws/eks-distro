@@ -1,0 +1,1 @@
+Amazon EKS Distro now supports Kubernetes version 1.19. Highlights of the Kubernetes 1.19 release include Ingress API and Pod Topology Spread reaching stable status, EndpointSlices being enabled by default, and immutable Secrets and ConfigMaps. Amazon EKS Distro builds of Kubernetes 1.19 are available through ECR Public Gallery and GitHub.
