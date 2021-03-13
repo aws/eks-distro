@@ -25,6 +25,9 @@ DEST_DIR=${BASE_DIRECTORY}/kubernetes-${RELEASE_BRANCH}/releases/${RELEASE}/arti
 if [ $PROJECT = "kubernetes/kubernetes" ]; then
   SOURCE_DIR=_output/${RELEASE_BRANCH}
   GIT_TAG=$(cat ${RELEASE_BRANCH}/GIT_TAG)
+elif [ ! -f GIT_TAG ]; then
+  SOURCE_DIR=_output/tar/
+  GIT_TAG=$(cat ${RELEASE_BRANCH}/GIT_TAG)
 else
   SOURCE_DIR=_output/tar/
   GIT_TAG=$(cat GIT_TAG)
