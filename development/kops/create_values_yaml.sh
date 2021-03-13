@@ -38,9 +38,14 @@ function get_project_version(){
     REPOSITORY_NAME="${1}"
     if  [[ $REPOSITORY_NAME == kubernetes/* ]] 
     then
-        VERSION=$(cat ${BASEDIR}/../../projects/kubernetes/kubernetes/${RELEASE_BRANCH}/GIT_TAG)
-    else
+        REPOSITORY_NAME="kubernetes/kubernetes"
+    fi
+    
+    TAG_FILE=${BASEDIR}/../../projects/${REPOSITORY_NAME}/GIT_TAG
+    if [ -f "$TAG_FILE" ]; then
         VERSION=$(cat ${BASEDIR}/../../projects/${REPOSITORY_NAME}/GIT_TAG)
+    else
+        VERSION=$(cat ${BASEDIR}/../../projects/${REPOSITORY_NAME}/${RELEASE_BRANCH}/GIT_TAG)
     fi
     
     echo $VERSION

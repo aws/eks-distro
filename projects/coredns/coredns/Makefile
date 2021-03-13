@@ -2,7 +2,7 @@ BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
 RELEASE_BRANCH?=1-18
 RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/RELEASE)
 ARTIFACT_BUCKET?=my-s3-bucket
-GIT_TAG?=$(shell cat GIT_TAG)
+GIT_TAG?=$(shell cat $(RELEASE_BRANCH)/GIT_TAG)
 
 REPO=coredns
 COMPONENT=coredns/$(REPO)
