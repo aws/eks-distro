@@ -34,13 +34,12 @@
 
 RELEASE_BRANCH="${1?First required argument is release branch, e.g. 1-19}"
 SNS_TOPIC_NAME="${2:-"eks-distro-updates"}"
-NOTIFICATION_BODY_FILE_NAME="release-announcement.txt"
 
 # Get release directory
 RELEASE_BRANCH_DIRECTORY="$(git rev-parse --show-toplevel)/release/${RELEASE_BRANCH}"
 
 # Get release notification body
-NOTIFICATION_BODY_FILE_PATH="${RELEASE_BRANCH_DIRECTORY}/${NOTIFICATION_BODY_FILE_NAME}"
+NOTIFICATION_BODY_FILE_PATH="${RELEASE_BRANCH_DIRECTORY}/release-announcement.txt"
 if ! [ -s "$NOTIFICATION_BODY_FILE_PATH" ]; then
   echo "Non-empty text for notification message body expected at ${NOTIFICATION_BODY_FILE_PATH}"
   exit 1
