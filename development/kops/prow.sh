@@ -41,6 +41,11 @@ export AWS_CONFIG_FILE=$(pwd)/config
 export AWS_PROFILE=conformance-test
 unset AWS_ROLE_ARN AWS_WEB_IDENTITY_TOKEN_FILE
 export KOPS_CLUSTER_NAME=${RELEASE_BRANCH}-${PROW_JOB_ID}.prod-build-pdx.kops-ci.model-rocket.aws.dev
+if  [[ $RELEASE_BRANCH == "1-20" ]]
+then
+  # Hack to make sure we create kops clusters for both kubernetes 1-18 and 1-19
+  sleep 2400
+fi
 if  [[ $RELEASE_BRANCH == "1-19" ]]
 then
   # Hack to make sure we create kops clusters for both kubernetes 1-18 and 1-19

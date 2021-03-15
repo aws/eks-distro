@@ -31,11 +31,11 @@ fi
 if [ ! -x ${KOPS} ]
 then
     echo "Determine kops version"
-    if [ "${RELEASE_BRANCH}" == "1-19" ]
+    if [ "${RELEASE_BRANCH}" == "1-18" ]
     then
-        KOPS_VERSION="v1.19.0-beta.3"
-    else
         KOPS_VERSION="v1.18.3"
+    else
+        KOPS_VERSION="v1.19.0-beta.3"
     fi
 
     echo "Download kops"
