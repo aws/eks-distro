@@ -37,7 +37,7 @@ export AWS_PROFILE=release-account
 unset AWS_ROLE_ARN AWS_WEB_IDENTITY_TOKEN_FILE
 
 git -C . diff --name-only HEAD^ HEAD |
-grep '^release' |
+grep '^docs/contents/releases' |
 grep release-announcement.txt |
 while read ANNOUNCEMENT
 do
