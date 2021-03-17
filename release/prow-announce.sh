@@ -15,7 +15,7 @@
 
 AWS_ROLE_ARN="${AWS_ROLE_ARN?The AWS_ROLE_ARN must be set}"
 ARTIFACT_DEPLOYMENT_ROLE_ARN="${ARTIFACT_DEPLOYMENT_ROLE_ARN?The ARTIFACT_DEPLOYMENT_ROLE_ARN must be set}"
-SNS_TOPIC_NAME="${SNS_TOPIC_NAME?The SNS_TOPIC_NAME must be set}"
+SNS_TOPIC_ARN="${SNS_TOPIC_ARN?The SNS_TOPIC_ARN must be set}"
 
 BASE_DIRECTORY=$(git rev-parse --show-toplevel)
 cd ${BASE_DIRECTORY}
@@ -41,5 +41,5 @@ grep '^release' |
 grep release-announcement.txt |
 while read ANNOUNCEMENT
 do
-    ${BASE_DIRECTORY}/release/sns_notification.sh ${ANNOUNCEMENT} ${SNS_TOPIC_NAME}
+    ${BASE_DIRECTORY}/release/sns_notification.sh ${ANNOUNCEMENT} ${SNS_TOPIC_ARN}
 done
