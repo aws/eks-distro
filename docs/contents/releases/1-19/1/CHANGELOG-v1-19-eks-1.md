@@ -23,9 +23,11 @@ but were removed in the version._
   * See [PR #92224](https://github.com/kubernetes/kubernetes/pull/92224)
 * 0011-EKS-PATCH-Allow-UDP-for-AWS-NLB.patch
   * See [PR #92109](https://github.com/kubernetes/kubernetes/pull/92109)
+* 0017-EKS-PATCH-Accept-healthy-instances-in-list-of-active.patch
+  * See [PR #85920](https://github.com/kubernetes/kubernetes/pull/85920)
 
 **Patches that were removed for another reason:**
-* **0013-EKS-PATCH-aws_credentials-update-ecr-url-validation-.patch**
+* 0013-EKS-PATCH-aws_credentials-update-ecr-url-validation-.patch
   * Adds support for ECR endpoints in isolated AWS regions. There is an open PR ([#95415](https://github.com/kubernetes/kubernetes/pull/95415))
     for upstream Kubernetes that applies these changes.
   * This patch will likely be added back to a future release for 1.19.
