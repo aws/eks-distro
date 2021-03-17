@@ -1,7 +1,7 @@
 From 832211212f66c7e1400dcbc5cfc10a0528ac1139 Mon Sep 17 00:00:00 2001
 From: Rob Hoelz <robh@ziprecruiter.com>
 Date: Wed, 4 Dec 2019 16:24:16 -0600
-Subject: --EKS-PATCH-- Use GNU date
+Subject: --EKS-PATCH-- Accept healthy instances in list of active instances
 
 Upstream PR for 1.18 patch release: https://github.com/kubernetes/kubernetes/pull/97164
 
