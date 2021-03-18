@@ -22,10 +22,10 @@ set -o pipefail
 REPO="$1"
 CLONE_URL="$2"
 TAG="$3"
+GOLANG_VERSION="$4"
 BIN_ROOT="_output/bin"
 BIN_PATH=$BIN_ROOT/$REPO
 
-GOLANG_VERSION="1.14"
 
 readonly SUPPORTED_PLATFORMS=(
   linux/amd64
@@ -34,6 +34,22 @@ readonly SUPPORTED_PLATFORMS=(
 
 MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
 source "${MAKE_ROOT}/../../../build/lib/common.sh"
+
+function build::plugins::licenses(){
+  # Pull licenses for the plugins we are building, similiar logic exist in build_linux.sh called above
+  # https://github.com/containernetworking/plugins/blob/master/build_linux.sh#L14
+  PLUGINS="plugins/meta/* plugins/main/* plugins/ipam/*"
+  ALL_PLUGINS=""
+  for d in $PLUGINS; do
+    if [ -d "$d" ]; then
+      plugin="$(basename "$d")"
+      if [ "${plugin}" != "windows" ]; then
+        ALL_PLUGINS+="./$d "
+      fi
+    fi
+  done
+  build::gather_licenses_new $MAKE_ROOT/_output "$ALL_PLUGINS"
+}
 
 function build::plugins::binaries(){
   mkdir -p "$BIN_PATH"
@@ -48,9 +64,10 @@ function build::plugins::binaries(){
     mkdir -p ../${BIN_PATH}/${OS}-${ARCH}
     mv bin/* ../${BIN_PATH}/${OS}-${ARCH}
   done
-  build::gather_licenses ./ $MAKE_ROOT/LICENSES
-  cd ..
-  rm -rf $REPO
 }
 
 build::plugins::binaries
+build::plugins::licenses
+
+cd ..
+rm -rf $REPO
