@@ -66,6 +66,7 @@ spec:
   # Metrics Server will be supported with kops 1.19
   metricsServer:
     enabled: true
+    insecure: true
     image: {{ .metrics_server.repository }}:{{ .metrics_server.tag }}
   authentication:
     aws:

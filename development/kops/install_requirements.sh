@@ -35,7 +35,12 @@ then
     then
         KOPS_VERSION="v1.18.3"
     else
-        KOPS_VERSION="v1.19.0-beta.3"
+        if [ "${RELEASE_BRANCH}" == "1-20" ]
+        then
+            KOPS_VERSION="v1.20.0-beta.2"
+        else
+            KOPS_VERSION="v1.19.0-beta.3"
+        fi
     fi
 
     echo "Download kops"
