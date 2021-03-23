@@ -19,7 +19,10 @@ but were removed in the version._
 **Patches that were removed because their changes were made in upstream Kubernetes 1.20:**
 * 0008-EKS-PATCH-Update-aws-sdk-go-to-v1.34.24.patch
   * See [PR #91513](https://github.com/kubernetes/kubernetes/pull/91513)
-    
+* 0004-EKS-PATCH-volume-plugin-requests-patch.patch
+  * Change is part of upstream 1.20. See [release notes](https://kubernetes.io/docs/setup/release/notes/#api-change).
+  > Kube-controller-manager: volume plugins can be restricted from contacting local and loopback addresses by setting --volume-host-allow-local-loopback=false, or from contacting specific CIDR ranges by setting --volume-host-cidr-denylist (for example, --volume-host-cidr-denylist=127.0.0.1/28,feed::/16) (#91785, @mattcary) [SIG API Machinery, Apps, Auth, CLI, Network, Node, Storage and Testing]
+
 ### Patches Added
 🚨 TODO!! Some clarification about the credential patch being un-removed?
 None.
