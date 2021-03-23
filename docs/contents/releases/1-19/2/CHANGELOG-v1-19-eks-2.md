@@ -19,4 +19,4 @@ but were added in the version._
     in aws-ebs-csi-driver.
   * The changes in this patch fix a bug where a volume could be created during the create process, but the driver does
     not know the status of this volume. The changes in this patch now delete the leaked driver.
-  * This patch was added in 1.18.2, but was left out of 1.19.1, as it did not exist at the time of 1.19.1 release.
+  * This patch was added in 1.18.2 but was left out of 1.19.1, as it did not exist at the time of 1.19.1 release.
