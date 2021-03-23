@@ -17,6 +17,7 @@ set -euxo pipefail
 
 RELEASE_BRANCH="${1?First required argument is release branch for example 1-18}"
 RELEASE="${2?Second required argument is release for example 1}"
+IMAGE_REPO="${3?Third required argument is image repository}"
 REPO_OWNER=${REPO_OWNER:-aws}
 
 BASE_DIRECTORY=$(git rev-parse --show-toplevel)
@@ -28,6 +29,7 @@ git clone ${REPOSITORY}
 make -C eks-distro-build-tooling/release
 DESTINATION="./kubernetes-${RELEASE_BRANCH}/kubernetes-${RELEASE_BRANCH}-eks-${RELEASE}.yaml"
 ./eks-distro-build-tooling/release/bin/eks-distro-release release \
+    --image-repository ${IMAGE_REPO} \
     --release-branch ${RELEASE_BRANCH} \
     --release-number ${RELEASE} | tee ${DESTINATION}
 mkdir -p releasechannels
