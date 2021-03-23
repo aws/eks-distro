@@ -1,7 +1,7 @@
 From 76eb3ef9daa486a262c8c74a4ac7a3413ebcc18e Mon Sep 17 00:00:00 2001
 From: Xiang Li <lixiang1992@gwu.edu>
 Date: Mon, 15 Mar 2021 10:59:32 -0700
-Subject: [PATCH] -- EKS PATCH -- Delete leaked volume if driver doesn't know
+Subject:-- EKS PATCH -- Delete leaked volume if driver doesn't know
  the volume status -- aws
 
 PR: https://github.com/kubernetes/kubernetes/pull/99664
