@@ -123,4 +123,5 @@ makes:
 
 .PHONY: update-attribution-files
 update-attribution-files:
-	build/update-attribution-files/update.sh projects/containernetworking/plugins
+	build/update-attribution-files/make_attribution.sh projects/containernetworking/plugins
+	build/update-attribution-files/create_pr.sh
