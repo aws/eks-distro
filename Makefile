@@ -120,3 +120,8 @@ makes:
 	$(call presubmit-cleanup, $(TARGET), "projects/kubernetes-csi/external-snapshotter")
 	make -C projects/kubernetes-csi/external-provisioner $(TARGET)
 	$(call presubmit-cleanup, $(TARGET), "projects/kubernetes-csi/external-provisioner")
+
+.PHONY: update-attribution-files
+update-attribution-files:
+	build/update-attribution-files/make_attribution.sh projects/containernetworking/plugins
+	build/update-attribution-files/create_pr.sh
