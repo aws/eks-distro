@@ -40,14 +40,17 @@ git config user.name "EKS Distro PR Bot"
 git remote add origin git@github.com:${ORIGIN_ORG}/eks-distro.git
 git remote add upstream https://github.com/${UPSTREAM_ORG}/eks-distro.git
 git checkout -b $PR_BRANCH
-git fetch upstream
-git rebase upstream/main
 
 for FILE in $(find . -type f \( -name ATTRIBUTION.txt ! -path "*/_output/*" \)); do    
     git add $FILE
 done
 
 git commit -m "$COMMIT_MESSAGE" || true
+
+git fetch upstream
+# there will be conflicts before we are on the bots fork at this point
+# -Xtheirs instructs git to favor the changes from the current branch
+git rebase -Xtheirs upstream/main
 
 ssh-agent bash -c 'ssh-add /secrets/ssh-secrets/ssh-key; ssh -o StrictHostKeyChecking=no git@github.com; git push -u origin $PR_BRANCH -f'
 
