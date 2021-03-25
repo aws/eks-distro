@@ -67,7 +67,6 @@ local-images:
 		--local context=./_output/pause \
 		--opt build-arg:BASE_IMAGE=$(PRESUBMIT_GO_RUNNER_IMAGE) \
 		--opt build-arg:VERSION=$(IMAGE_TAG) \
-		--opt build-arg:RELEASE_BRANCH=$(RELEASE_BRANCH) \
 		--output type=oci,oci-mediatypes=true,name=$(PAUSE_IMAGE),dest=_output/$(RELEASE_BRANCH)/bin/linux/amd64/pause.tar
 
 .PHONY: images
@@ -81,7 +80,6 @@ images:
 		--local context=./_output/pause \
 		--opt build-arg:BASE_IMAGE=$(GO_RUNNER_IMAGE) \
 		--opt build-arg:VERSION=$(IMAGE_TAG) \
-		--opt build-arg:RELEASE_BRANCH=$(RELEASE_BRANCH) \
 		--output type=image,oci-mediatypes=true,\"name=$(PAUSE_IMAGE),$(IMAGE_REPO)/$(IMAGE_REPO_PREFIX)/$(PAUSE_IMAGE_NAME):3.2\",push=true
 
 .PHONY: docker
@@ -91,7 +89,6 @@ docker: binaries pause
 		build\
 		--build-arg BASE_IMAGE=$(GO_RUNNER_IMAGE) \
 		--build-arg VERSION=$(IMAGE_TAG) \
-		--build-arg RELEASE_BRANCH=$(RELEASE_BRANCH) \
 		-t $(PAUSE_IMAGE) \
 		-t $(IMAGE_REPO)/$(IMAGE_REPO_PREFIX)/$(PAUSE_IMAGE_NAME):3.2 \
 		-f ./docker/pause/Dockerfile ./_output/pause/
