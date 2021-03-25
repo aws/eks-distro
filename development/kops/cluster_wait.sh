@@ -36,4 +36,4 @@ do
 done
 
 set -x
-${KOPS} validate cluster --wait 20m
+${KOPS} validate cluster --wait 15m
