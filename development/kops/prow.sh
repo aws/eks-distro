@@ -44,11 +44,11 @@ export KOPS_CLUSTER_NAME=${RELEASE_BRANCH}-${PROW_JOB_ID}.prod-build-pdx.kops-ci
 if  [[ $RELEASE_BRANCH == "1-20" ]]
 then
   # Hack to make sure we create kops clusters for both kubernetes 1-18 and 1-19
-  sleep 2400
+  sleep 3000
 fi
 if  [[ $RELEASE_BRANCH == "1-19" ]]
 then
   # Hack to make sure we create kops clusters for both kubernetes 1-18 and 1-19
-  sleep 1200
+  sleep 1800
 fi
 ${BASEDIR}/run_all.sh
