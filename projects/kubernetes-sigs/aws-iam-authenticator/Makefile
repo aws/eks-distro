@@ -72,7 +72,7 @@ docker-push:
 
 .PHONY: tarballs
 tarballs:
-	build/create_tarballs.sh $(REPO) $(GIT_TAG)
+	build/create_tarballs.sh $(REPO) $(GIT_TAG) $(RELEASE_BRANCH)
 
 .PHONY: build
 build: local-images tarballs

@@ -20,6 +20,7 @@ set -o pipefail
 
 REPO="$1"
 TAG="$2"
+RELEASE_BRANCH="$3"
 TAR_PATH="_output/tar"
 BIN_ROOT="_output/bin"
 LICENSES_DIR="_output/LICENSES"
@@ -42,7 +43,7 @@ function build::aws-iam-authenticator::tarball() {
     TAR_FILE="${REPO}-${OS}-${ARCH}-${TAG}.tar.gz"
     
     cp -rf $LICENSES_DIR $BIN_ROOT/$REPO/${OS}-${ARCH} 
-    cp ATTRIBUTION.txt $BIN_ROOT/$REPO/${OS}-${ARCH}/ 
+    cp $RELEASE_BRANCH/ATTRIBUTION.txt $BIN_ROOT/$REPO/${OS}-${ARCH}/ 
     build::common::create_tarball  ${TAR_PATH}/${TAR_FILE} ${BIN_ROOT}/${REPO} ${OS}-${ARCH}
   done
   rm -rf $LICENSES_DIR
