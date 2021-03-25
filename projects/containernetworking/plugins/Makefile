@@ -30,8 +30,8 @@ release: tarballs
 .PHONY: all
 all: release
 
-.PHONY: generate-attribution
-generate-attribution: 
+.PHONY: attribution
+attribution: 
 	build/create_attribution.sh $(GOLANG_VERSION)
 
 docker:

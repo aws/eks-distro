@@ -68,7 +68,7 @@ function build::common::generate_shasum() {
 }
 
 
-function build::gather_licenses_new() {
+function build::gather_licenses() {
   if ! command -v go-licenses &> /dev/null
   then
     echo " go-licenses not found.  If you need license or attribtuion file handling"
@@ -130,16 +130,6 @@ function build::generate_attribution(){
 
   generate-attribution $root_module_name $project_root $golang_version_tag $output_directory 
   cp -f "${output_directory}/attribution/ATTRIBUTION.txt" "${project_root}/ATTRIBUTION.txt"
-}
-
-function build::gather_licenses() {
-  local -r builddir=$1
-  local -r outputdir=$2
-  
-  find $builddir \( -name 'LICENCE' -o -name 'LICENSE' \
-     -o -name 'LICENSE.md' -o -name 'LICENSE.txt' \
-     -o -name 'NOTICE' -o -name 'COPYING' -o -name 'NOTICE.txt' \
-     -o -name 'LICENSE.code' -o -name 'LICENCE.md' \) | while IFS= read -r NAME; do mkdir -p "${outputdir}/$(dirname $NAME)" && cp  "$NAME" "${outputdir}/${NAME}"; done
 }
 
 function build::common::remove_go_path() {

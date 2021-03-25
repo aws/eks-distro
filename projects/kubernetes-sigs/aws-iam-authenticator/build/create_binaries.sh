@@ -22,10 +22,9 @@ set -o pipefail
 REPO="$1"
 CLONE_URL="$2"
 TAG="$3"
+GOLANG_VERSION="$4"
 BIN_ROOT="_output/bin"
 BIN_PATH=$BIN_ROOT/$REPO
-
-GOLANG_VERSION="1.13"
 
 readonly SUPPORTED_PLATFORMS=(
   linux/amd64
@@ -63,7 +62,7 @@ function build::aws-iam-authenticator::binaries(){
     mkdir -p ../"$BIN_PATH"/"$OS"-"$ARCH"
     mv bin/* ../"$BIN_PATH"/"$OS"-"$ARCH"
   done
-  build::gather_licenses ./ $MAKE_ROOT/LICENSES
+  build::gather_licenses $MAKE_ROOT/_output "./cmd/aws-iam-authenticator"
   cd ..
   rm -rf "$REPO"
 }

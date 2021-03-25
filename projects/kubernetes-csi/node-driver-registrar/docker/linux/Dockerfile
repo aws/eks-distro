@@ -18,7 +18,7 @@ FROM $BASE_IMAGE
 ARG TARGETARCH
 ARG TARGETOS
 
-COPY LICENSES /LICENSES
+COPY _output/LICENSES /LICENSES
 COPY ATTRIBUTION.txt /ATTRIBUTION.txt
 COPY _output/bin/node-driver-registrar/$TARGETOS-$TARGETARCH/csi-node-driver-registrar /csi-node-driver-registrar
 ENTRYPOINT ["/csi-node-driver-registrar"]

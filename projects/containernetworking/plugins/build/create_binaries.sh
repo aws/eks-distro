@@ -48,7 +48,7 @@ function build::plugins::licenses(){
       fi
     fi
   done
-  build::gather_licenses_new $MAKE_ROOT/_output "$ALL_PLUGINS"
+  build::gather_licenses $MAKE_ROOT/_output "$ALL_PLUGINS"
 }
 
 function build::plugins::binaries(){

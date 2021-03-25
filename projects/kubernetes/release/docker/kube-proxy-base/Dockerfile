@@ -28,7 +28,7 @@ RUN yum install -y \
     ipset \
     kmod
 
-COPY LICENSES /LICENSES
+COPY _output/LICENSES /LICENSES
 COPY ATTRIBUTION.txt /ATTRIBUTION.txt
 COPY _output/go-runner-$TARGETOS-$TARGETARCH /usr/local/bin/go-runner
 COPY _output/iptables-wrapper /usr/sbin/iptables-wrapper

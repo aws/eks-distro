@@ -31,9 +31,15 @@ if [ ! -d ${OUTPUT_DIR}/${RELEASE_BRANCH} ]; then
     echo "${OUTPUT_DIR}/${RELEASE_BRANCH} not present!"
     exit 1
 fi
-mkdir -p ${OUTPUT_DIR}/${RELEASE_BRANCH}
+
+OUTPUT_RELEASE_DIR="${OUTPUT_DIR}/${RELEASE_BRANCH}"
+BIN="${OUTPUT_RELEASE_DIR}/bin" 
+
+cp -rf "${OUTPUT_RELEASE_DIR}/LICENSES" $BIN 
+cp "${OUTPUT_RELEASE_DIR}/ATTRIBUTION.txt" $BIN  
+
 build::common::ensure_tar
-build::tarballs::create_tarballs "${OUTPUT_DIR}/${RELEASE_BRANCH}/bin" "${OUTPUT_DIR}/${RELEASE_BRANCH}"
+build::tarballs::create_tarballs $BIN $OUTPUT_RELEASE_DIR
 git \
     -C $SOURCE_DIR \
     archive \

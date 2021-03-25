@@ -3,6 +3,7 @@ RELEASE_BRANCH?=$(shell cat $(BASE_DIRECTORY)/release/DEFAULT_RELEASE_BRANCH)
 RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/RELEASE)
 ARTIFACT_BUCKET?=my-s3-bucket
 GIT_TAG?=$(shell cat GIT_TAG)
+GOLANG_VERSION?="1.15"
 
 REPO=release
 COMPONENT=kubernetes/$(REPO)
@@ -34,7 +35,7 @@ endif
 
 .PHONY: binaries
 binaries:
-	build/create_binaries.sh $(CLONE_URL) $(REPO) $(GIT_TAG)
+	build/create_binaries.sh $(CLONE_URL) $(REPO) $(GIT_TAG) $(GOLANG_VERSION)
 
 .PHONY: local-images
 local-images: binaries
@@ -107,6 +108,10 @@ build: local-images
 .PHONY: release
 release: images
 	echo "Done $(COMPONENT)"
+
+.PHONY: attribution
+attribution: 
+	build/create_attribution.sh $(GOLANG_VERSION)
 
 .PHONY: all
 all: release

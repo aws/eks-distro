@@ -22,10 +22,9 @@ set -o pipefail
 REPO="$1"
 CLONE_URL="$2"
 TAG="$3"
+GOLANG_VERSION="$4"
 BIN_ROOT="_output/bin"
 BIN_PATH=$BIN_ROOT/$REPO
-
-GOLANG_VERSION="1.15"
 
 readonly SUPPORTED_PLATFORMS=(
   linux/amd64
@@ -50,7 +49,7 @@ function build::node-driver-registrar::binaries(){
     mv bin/* ../${BIN_PATH}/${OS}-${ARCH}
     make clean
   done
-  build::gather_licenses ./ $MAKE_ROOT/LICENSES
+  build::gather_licenses $MAKE_ROOT/_output "./cmd/csi-node-driver-registrar"
   cd ..  
   rm -rf $REPO
 }

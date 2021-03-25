@@ -22,10 +22,9 @@ set -o pipefail
 REPO="$1"
 CLONE_URL="$2"
 TAG="$3"
+GOLANG_VERSION="$4"
 BIN_ROOT="_output/bin"
 BIN_PATH=$BIN_ROOT/$REPO
-
-GOLANG_VERSION="1.14"
 
 readonly SUPPORTED_PLATFORMS=(
   linux/amd64
@@ -55,7 +54,8 @@ function build::metrics-server::binaries(){
     mv $REPO/metrics-server $BIN_PATH/$OS-$ARCH/metrics-server
     make -C $REPO clean
   done
-  build::gather_licenses ./ $MAKE_ROOT/LICENSES
+  (cd $REPO && go mod vendor)
+  (cd $REPO && build::gather_licenses $MAKE_ROOT/_output "./cmd/metrics-server")
   rm -rf "$REPO"
 }
 

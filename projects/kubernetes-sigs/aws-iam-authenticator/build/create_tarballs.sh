@@ -22,6 +22,7 @@ REPO="$1"
 TAG="$2"
 TAR_PATH="_output/tar"
 BIN_ROOT="_output/bin"
+LICENSES_DIR="_output/LICENSES"
 readonly SUPPORTED_PLATFORMS=(
   linux/amd64
   linux/arm64
@@ -40,11 +41,11 @@ function build::aws-iam-authenticator::tarball() {
     ARCH="$(cut -d '/' -f2 <<< ${platform})"
     TAR_FILE="${REPO}-${OS}-${ARCH}-${TAG}.tar.gz"
     
-    cp -rf LICENSES $BIN_ROOT/$REPO/${OS}-${ARCH} 
+    cp -rf $LICENSES_DIR $BIN_ROOT/$REPO/${OS}-${ARCH} 
     cp ATTRIBUTION.txt $BIN_ROOT/$REPO/${OS}-${ARCH}/ 
     build::common::create_tarball  ${TAR_PATH}/${TAR_FILE} ${BIN_ROOT}/${REPO} ${OS}-${ARCH}
   done
-  rm -rf LICENSES
+  rm -rf $LICENSES_DIR
   rm -rf $BIN_ROOT
 }
 

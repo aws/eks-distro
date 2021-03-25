@@ -28,7 +28,7 @@ function build::attribution::generate(){
         export RELEASE_BRANCH="$1"
     fi
     make -C $PROJECT_ROOT binaries
-    make -C $PROJECT_ROOT generate-attribution
+    make -C $PROJECT_ROOT attribution
     make -C $PROJECT_ROOT clean
 }
 
