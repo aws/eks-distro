@@ -15,7 +15,6 @@ unless there is a change.
    * projects/kuberenetes/kubernetes/${RELEASE_BRANCH}/RELEASE (set to 0)
    * Create GIT_TAG files for other components (etcd, coredns, ...)
    * Add support in kops script for new release
-   * Build new release and generate checksums
 1. **Docs PR**: Create a PR with a empty change log and docs for release
 1. **Prow Presubmit Job**: Create presubmit for new release (kubernetes-1-20-presubmits.yaml)
 1. **Prow Release Jobs**: Create release jobs
