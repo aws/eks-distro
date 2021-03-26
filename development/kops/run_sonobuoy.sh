@@ -32,7 +32,7 @@ chmod 755 sonobuoy
 echo "Making sure cluster ${KOPS_CLUSTER_NAME} is ready to run sonobuoy"
 while ! ./sonobuoy run --mode=certified-conformance --wait --mode quick --kube-conformance-image ${CONFORMANCE_IMAGE}
 do
-  sonobuoy delete --all --wait||true
+  ./sonobuoy delete --all --wait||true
   sleep 5
   COUNT=$(expr $COUNT + 1)
   if [ $COUNT -gt 40 ]
@@ -42,7 +42,7 @@ do
   fi
   echo 'Waiting for the cluster to be ready...'
 done
-sonobuoy delete --all --wait||true
+./sonobuoy delete --all --wait||true
 echo "Testing cluster ${KOPS_CLUSTER_NAME}"
 ./sonobuoy run --mode=certified-conformance --wait --kube-conformance-image ${CONFORMANCE_IMAGE}
 results=$(./sonobuoy retrieve)
