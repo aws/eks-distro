@@ -13,8 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-export RELEASE_BRANCH=${RELEASE_BRANCH:-"1-19"}
-export DEFAULT_RELEASE=$(cat ../../release/${RELEASE_BRANCH}/RELEASE)
+BASE_DIRECTORY=$(git rev-parse --show-toplevel)
+export DEFAULT_RELEASE_BRANCH=$(cat ${BASE_DIRECTORY}/release/DEFAULT_RELEASE_BRANCH)
+export RELEASE_BRANCH=${RELEASE_BRANCH:-"${DEFAULT_RELEASE_BRANCH}"}
+export DEFAULT_RELEASE=$(cat ${BASE_DIRECTORY}/release/${RELEASE_BRANCH}/RELEASE)
 export RELEASE=${RELEASE:-${DEFAULT_RELEASE}}
 
 if [ "${PREFLIGHT_CHECK_PASSED:-false}" != "true" ]
