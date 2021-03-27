@@ -52,7 +52,7 @@ func (c *Command) buildProject(projectPath string) error {
 
 func main() {
 	target := flag.String("target", "release", "Make target")
-	releaseBranch := flag.String("release-branch", "1-18", "Release branch to test")
+	releaseBranch := flag.String("release-branch", "1-19", "Release branch to test")
 	release := flag.String("release", "1", "Release to test")
 	development := flag.Bool("development", false, "Build as a development build")
 	region := flag.String("region", "us-west-2", "AWS region to use")
