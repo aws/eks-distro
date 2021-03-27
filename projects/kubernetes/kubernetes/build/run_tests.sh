@@ -48,10 +48,10 @@ done
 if [ $ret -ne 0 ]; then
   echo "Tests failed after $MAX_RETRIES runs, checking if failures are known flakes"
 
-  latest_log=$(ls -td _artifacts/*.stdout | head -1)
-  gotestsum --jsonfile _artifacts/out.json --raw-command cat "$latest_log"
-  jq -r 'select(.Action=="fail" and .Test) | [.Package, .Test]  | join("/")' _artifacts/out.json > _artifacts/failed_tests
-  non_flakes=$(grep -Fxv -f $MAKE_ROOT/top_flakes _artifacts/failed_tests || true)
+  latest_log=$(ls -td $ARTIFACTS/junit*.stdout | head -1)
+  gotestsum --jsonfile $ARTIFACTS/out.json --raw-command cat "$latest_log"
+  jq -r 'select(.Action=="fail" and .Test) | [.Package, .Test]  | join("/")' $ARTIFACTS/out.json > $ARTIFACTS/failed_tests
+  non_flakes=$(grep -Fxv -f $MAKE_ROOT/top_flakes $ARTIFACTS/failed_tests || true)
 
   if [ ! "$non_flakes" ]
   then
