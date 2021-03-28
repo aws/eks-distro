@@ -22,6 +22,8 @@ REPO="$1"
 TAG="$2"
 TAR_PATH="_output/tar"
 BIN_ROOT="_output/bin"
+LICENSES_PATH="_output/LICENSES"
+
 readonly SUPPORTED_PLATFORMS=(
   linux/amd64
   linux/arm64
@@ -39,12 +41,12 @@ function build::etcd::tarball() {
     ARCH="$(cut -d '/' -f2 <<< ${platform})"
     TAR_FILE="${REPO}-${OS}-${ARCH}-${TAG}.tar.gz"
     
-    cp -rf LICENSES $BIN_ROOT/$REPO/${OS}-${ARCH} 
+    cp -rf "$LICENSES_PATH" $BIN_ROOT/$REPO/${OS}-${ARCH} 
     cp ATTRIBUTION.txt $BIN_ROOT/$REPO/${OS}-${ARCH}/     
     build::common::create_tarball  "${TAR_PATH}/${TAR_FILE}" "${BIN_ROOT}/${REPO}" "$OS"-"$ARCH"
   done
   rm -rf "$BIN_ROOT"
-  rm -rf LICENSES
+  rm -rf "$LICENSES_PATH"
 }
 
 build::etcd::tarball

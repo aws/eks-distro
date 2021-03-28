@@ -119,6 +119,10 @@ all: release
 test: binaries
 	build/run_tests.sh $(RELEASE_BRANCH)
 
+.PHONY: attribution
+attribution: 
+	build/create_attribution.sh $(RELEASE_BRANCH)
+
 .PHONY: clean-repo
 clean-repo:
 	rm -rf ./kubernetes

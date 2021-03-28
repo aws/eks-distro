@@ -3,6 +3,7 @@ RELEASE_BRANCH?=$(shell cat $(BASE_DIRECTORY)/release/DEFAULT_RELEASE_BRANCH)
 RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/RELEASE)
 ARTIFACT_BUCKET?=my-s3-bucket
 GIT_TAG?=$(shell cat $(RELEASE_BRANCH)/GIT_TAG)
+GOLANG_VERSION?=1.13
 
 REPO=coredns
 COMPONENT=coredns/$(REPO)
@@ -30,7 +31,7 @@ endif
 
 .PHONY: binaries
 binaries:
-	build/create_binaries.sh $(CLONE_URL) $(REPO) $(GIT_TAG)
+	build/create_binaries.sh $(CLONE_URL) $(REPO) $(GIT_TAG) $(GOLANG_VERSION)
 
 .PHONY: local-images
 local-images: binaries
@@ -39,6 +40,7 @@ local-images: binaries
 		--frontend dockerfile.v0 \
 		--opt platform=linux/amd64 \
 		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
+		--opt build-arg:RELEASE_BRANCH=$(RELEASE_BRANCH) \
 		--local dockerfile=./docker/linux \
 		--local context=. \
 		--output type=oci,oci-mediatypes=true,name=$(IMAGE),dest=/tmp/coredns.tar
@@ -50,6 +52,7 @@ images: binaries
 		--frontend dockerfile.v0 \
 		--opt platform=linux/amd64,linux/arm64 \
 		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
+		--opt build-arg:RELEASE_BRANCH=$(RELEASE_BRANCH) \
 		--local dockerfile=./docker/linux \
 		--local context=. \
 		--output type=image,oci-mediatypes=true,name=$(IMAGE),push=true
@@ -61,6 +64,7 @@ docker: binaries
 		--build-arg BASE_IMAGE=$(BASE_IMAGE) \
 		--build-arg TARGETARCH=amd64 \
 		--build-arg TARGETOS=linux \
+		--build-arg RELEASE_BRANCH=$(RELEASE_BRANCH) \
 		-f ./docker/linux/Dockerfile .
 
 .PHONY: docker-push
@@ -76,6 +80,10 @@ release: images
 
 .PHONY: all
 all: release
+
+.PHONY: attribution
+attribution: 
+	build/create_attribution.sh $(RELEASE_BRANCH) $(GOLANG_VERSION)
 
 .PHONY: clean
 clean: 

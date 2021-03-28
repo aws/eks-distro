@@ -22,10 +22,10 @@ set -o pipefail
 CLONE_URL="$1"
 REPO="$2"
 TAG="$3"
+GOLANG_VERSION="$4"
 BIN_ROOT="_output/bin"
 BIN_PATH=$BIN_ROOT/$REPO
 
-GOLANG_VERSION="1.13"
 
 readonly SUPPORTED_PLATFORMS=(
   linux/amd64
@@ -51,7 +51,7 @@ function build::coredns::binaries(){
     mv coredns ../${BIN_PATH}/${OS}-${ARCH}
     make clean
   done
-  build::gather_licenses ./ $MAKE_ROOT/LICENSES
+  build::gather_licenses $MAKE_ROOT/_output ./coredns.go
   cd ..
   rm -rf $REPO
 }

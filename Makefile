@@ -121,7 +121,22 @@ makes:
 	make -C projects/kubernetes-csi/external-provisioner $(TARGET)
 	$(call presubmit-cleanup, $(TARGET), "projects/kubernetes-csi/external-provisioner")
 
-.PHONY: update-attribution-files
-update-attribution-files:
+.PHONY: attribution-files
+attribution-files:
 	build/update-attribution-files/make_attribution.sh projects/containernetworking/plugins
+	build/update-attribution-files/make_attribution.sh projects/coredns/coredns
+	build/update-attribution-files/make_attribution.sh projects/etcd-io/etcd
+	build/update-attribution-files/make_attribution.sh projects/kubernetes-csi/external-attacher
+	build/update-attribution-files/make_attribution.sh projects/kubernetes-csi/external-resizer
+	build/update-attribution-files/make_attribution.sh projects/kubernetes-csi/livenessprobe
+	build/update-attribution-files/make_attribution.sh projects/kubernetes-csi/node-driver-registrar
+	build/update-attribution-files/make_attribution.sh projects/kubernetes-sigs/aws-iam-authenticator
+	build/update-attribution-files/make_attribution.sh projects/kubernetes-sigs/metrics-server
+	build/update-attribution-files/make_attribution.sh projects/kubernetes-csi/external-snapshotter
+	build/update-attribution-files/make_attribution.sh projects/kubernetes-csi/external-provisioner
+	build/update-attribution-files/make_attribution.sh projects/kubernetes/release
+	build/update-attribution-files/make_attribution.sh projects/kubernetes/kubernetes
+
+.PHONY: update-attribution-files
+update-attribution-files: attribution-files
 	build/update-attribution-files/create_pr.sh

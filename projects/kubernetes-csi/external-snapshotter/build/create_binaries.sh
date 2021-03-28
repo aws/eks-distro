@@ -22,10 +22,9 @@ set -o pipefail
 REPO="$1"
 CLONE_URL="$2"
 TAG="$3"
+GOLANG_VERSION="$4"
 BIN_ROOT="_output/bin"
 BIN_PATH=$BIN_ROOT/$REPO
-
-GOLANG_VERSION="1.15"
 
 readonly SUPPORTED_PLATFORMS=(
   linux/amd64
@@ -50,7 +49,13 @@ function build::external-snapshotter::binaries(){
     mv bin/* ../${BIN_PATH}/${OS}-${ARCH}
     make clean
   done
-  build::gather_licenses ./ $MAKE_ROOT/LICENSES
+
+  # external-snappshotter ends up vendoring some deps that exist in the main repo, but there
+  # is no license file in the subfolder and go-license is not able to find it
+  # manually copying the root license to the vendor directory
+  cp LICENSE vendor/github.com/kubernetes-csi/external-snapshotter/
+  build::gather_licenses $MAKE_ROOT/_output "./cmd/snapshot-controller ./cmd/csi-snapshotter ./cmd/snapshot-validation-webhook"
+  
   cd ..
   rm -rf $REPO
 }

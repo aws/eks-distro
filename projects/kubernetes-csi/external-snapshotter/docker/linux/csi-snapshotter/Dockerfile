@@ -18,7 +18,7 @@ FROM $BASE_IMAGE
 ARG TARGETARCH
 ARG TARGETOS
 
-COPY LICENSES /LICENSES
+COPY _output/LICENSES /LICENSES
 COPY ATTRIBUTION.txt /ATTRIBUTION.txt
 COPY _output/bin/external-snapshotter/$TARGETOS-$TARGETARCH/csi-snapshotter /csi-snapshotter
 ENTRYPOINT ["/csi-snapshotter"]
