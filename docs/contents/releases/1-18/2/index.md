@@ -4,6 +4,7 @@ The [EKS-D v1-18-eks-2](https://distro.eks.amazonaws.com/kubernetes-1-18/kuberne
 release manifest defines the release used in EKS-D.
 
 ```yaml
+---
 apiVersion: distro.eks.amazonaws.com/v1alpha1
 kind: Release
 metadata:
@@ -652,6 +653,5 @@ status:
       gitTag: v3.1.0
       name: external-attacher
   date: "2021-03-26T22:45:28Z"
-
 
 ```
