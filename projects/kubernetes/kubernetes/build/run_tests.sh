@@ -36,13 +36,15 @@ cd $MAKE_ROOT/kubernetes
 # Install etcd for tests
 ./hack/install-etcd.sh
 
+export PATH="${GOPATH}/bin:${MAKE_ROOT}/kubernetes/third_party/etcd:${PATH}"
+
 MAX_RETRIES=5
 # There are flakes in upstream tests, the process also caches passing results
 # so on rerun it only runs the tests which failed
 for i in $(seq 1 $MAX_RETRIES); 
 do 
   [ $i -gt 1 ] && sleep 5
-  PATH="${GOPATH}/bin:${MAKE_ROOT}/kubernetes/third_party/etcd:${PATH}" make test && ret=0 && break || ret=$?; 
+  make test && ret=0 && break || ret=$?; 
 done
 
 if [ $ret -ne 0 ]; then
