@@ -4,7 +4,7 @@ The [EKS-D v1-18-eks-2](https://distro.eks.amazonaws.com/kubernetes-1-18/kuberne
 release manifest defines the release used in EKS-D.
 
 ```yaml
----apiVersion: distro.eks.amazonaws.com/v1alpha1
+apiVersion: distro.eks.amazonaws.com/v1alpha1
 kind: Release
 metadata:
   creationTimestamp: null
