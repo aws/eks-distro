@@ -394,18 +394,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ** github.com/gogo/protobuf; version v1.2.1 --
 https://github.com/gogo/protobuf
 
-** golang.org/x/net; version v0.0.0-20190813141303-74dc4d7220e7 --
-https://go.googlesource.com/net
-
-** golang.org/x/sys/unix; version v0.0.0-20190826190057-c7b8b68b1456 --
-https://go.googlesource.com/sys
-
-** golang.org/x/text; version v0.3.3 --
-https://go.googlesource.com/text
-
-** golang.org/x/time/rate; version v0.0.0-20180412165947-fbb02b2291d2 --
-https://go.googlesource.com/time
-
 Copyright (c) 2013, The GoGo Authors. All rights reserved.
 
 Protocol Buffers for Go with Gadgets
@@ -578,7 +566,6 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 ------
 
 ** github.com/spf13/pflag; version v1.0.1 --
@@ -615,40 +602,23 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/go; version go1.13.15 --
+** golang.org/go; version go1.14.13 --
 https://github.com/golang/go
-
-Copyright (c) 2009 The Go Authors. All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are
-met:
-
-   * Redistributions of source code must retain the above copyright
-notice, this list of conditions and the following disclaimer.
-   * Redistributions in binary form must reproduce the above
-copyright notice, this list of conditions and the following disclaimer
-in the documentation and/or other materials provided with the
-distribution.
-   * Neither the name of Google Inc. nor the names of its
-contributors may be used to endorse or promote products derived from
-this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-------
 
 ** golang.org/x/crypto; version v0.0.0-20190308221718-c2843e01d9a2 --
 https://go.googlesource.com/crypto
+
+** golang.org/x/net; version v0.0.0-20190813141303-74dc4d7220e7 --
+https://go.googlesource.com/net
+
+** golang.org/x/sys/unix; version v0.0.0-20190826190057-c7b8b68b1456 --
+https://go.googlesource.com/sys
+
+** golang.org/x/text; version v0.3.3 --
+https://go.googlesource.com/text
+
+** golang.org/x/time/rate; version v0.0.0-20180412165947-fbb02b2291d2 --
+https://go.googlesource.com/time
 
 Copyright (c) 2009 The Go Authors. All rights reserved.
 
@@ -699,14 +669,31 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 ** github.com/beorn7/perks/quantile; version v1.0.0 --
 https://github.com/beorn7/perks
+Copyright (C) 2013 Blake Mizerany
+
+** github.com/dgrijalva/jwt-go; version v3.2.0+incompatible --
+https://github.com/dgrijalva/jwt-go
+Copyright (c) 2012 Dave Grijalva
+
+** github.com/json-iterator/go; version v1.1.7 --
+https://github.com/json-iterator/go
+Copyright (c) 2016 json-iterator
 
 ** github.com/mattn/go-runewidth; version v0.0.2 --
 https://github.com/mattn/go-runewidth
 Copyright (c) 2016 Yasuhiro Matsumoto
 
+** github.com/olekukonko/tablewriter; version v0.0.0-20170122224234-a0225b3f23b5 --
+https://github.com/olekukonko/tablewriter
+Copyright (C) 2014 by Oleku Konko
+
 ** github.com/sirupsen/logrus; version v1.4.2 --
 https://github.com/sirupsen/logrus
 Copyright (c) 2014 Simon Eskildsen
+
+** github.com/tmc/grpc-websocket-proxy/wsproxy; version v0.0.0-20170815181823-89b8d40f7ca8 --
+https://github.com/tmc/grpc-websocket-proxy
+Copyright (C) 2016 Travis Cline
 
 ** github.com/urfave/cli; version v1.20.0 --
 https://github.com/urfave/cli
@@ -732,8 +719,6 @@ Copyright (c) 2017 Uber Technologies, Inc.
 https://github.com/uber-go/zap
 Copyright (c) 2016-2017 Uber Technologies, Inc.
 
-Copyright (C) 2013 Blake Mizerany
-
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
 "Software"), to deal in the Software without restriction, including
@@ -758,10 +743,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 https://github.com/bgentry/speakeasy
 Copyright (c) 2017 Blake Gentry
 
-MIT License
-
-
-
 This license applies to the non-Windows portions of this library. The Windows
 portion maintains its own Apache 2.0 license.
 
@@ -782,17 +763,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-------
-
-** github.com/dgrijalva/jwt-go; version v3.2.0+incompatible --
-https://github.com/dgrijalva/jwt-go
-Copyright (c) 2012 Dave Grijalva
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ------
 
 ** github.com/dustin/go-humanize; version v0.0.0-20171111073723-bb3d318650d4 --
@@ -818,69 +788,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 <http://www.opensource.org/licenses/mit-license.php>
-------
-
-** github.com/json-iterator/go; version v1.1.7 --
-https://github.com/json-iterator/go
-Copyright (c) 2016 json-iterator
-
-MIT License
-
-
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-------
-
-** github.com/olekukonko/tablewriter; version v0.0.0-20170122224234-a0225b3f23b5 --
-https://github.com/olekukonko/tablewriter
-
-Copyright (C) 2014 by Oleku Konko
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-------
-
-** github.com/tmc/grpc-websocket-proxy/wsproxy; version v0.0.0-20170815181823-89b8d40f7ca8 --
-https://github.com/tmc/grpc-websocket-proxy
-
-Copyright (C) 2016 Travis Cline
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ------
 
 ** sigs.k8s.io/yaml; version v1.1.0 --
