@@ -23,7 +23,7 @@ $PREFLIGHT_CHECK_PASSED || exit 1
 # Add IAM configmap
 COUNT=0
 echo 'Waiting for cluster to come up...'
-while ! kubectl apply -f ./${KOPS_CLUSTER_NAME}/aws-iam-authenticator.yaml
+while ! kubectl --context $KOPS_CLUSTER_NAME apply -f ./${KOPS_CLUSTER_NAME}/aws-iam-authenticator.yaml
 do
     sleep 5
     COUNT=$(expr $COUNT + 1)

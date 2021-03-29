@@ -63,7 +63,6 @@ spec:
     image: {{ .kube_scheduler.repository }}:{{ .kube_scheduler.tag }}
   kubeProxy:
     image: {{ .kube_proxy.repository }}:{{ .kube_proxy.tag }}
-  # Metrics Server will be supported with kops 1.19
   metricsServer:
     enabled: true
     insecure: true
@@ -74,30 +73,14 @@ spec:
   kubeDNS:
     provider: CoreDNS
     coreDNSImage: {{ .coredns.repository }}:{{ .coredns.tag }}
-    externalCoreFile: |
-      .:53 {
-          errors
-          health {
-            lameduck 5s
-          }
-          kubernetes cluster.local. in-addr.arpa ip6.arpa {
-            pods insecure
-            #upstream
-            fallthrough in-addr.arpa ip6.arpa
-          }
-          prometheus :9153
-          forward . /etc/resolv.conf
-          loop
-          cache 30
-          loadbalance
-          reload
-      }
   masterKubelet:
     podInfraContainerImage: {{ .pause.repository }}:{{ .pause.tag }}
-  # kubelet might already be defined, append the following config
   kubelet:
     podInfraContainerImage: {{ .pause.repository }}:{{ .pause.tag }}
     anonymousAuth: false
+    # for 1.19 and above webhook auth is the default mode
+    authorizationMode: Webhook
+    authenticationTokenWebhook: true
 
 ---
 

@@ -19,9 +19,4 @@ BASEDIR=$(dirname "$0")
 source ${BASEDIR}/set_environment.sh
 $PREFLIGHT_CHECK_PASSED || exit 1
 
-if  [[ $RELEASE_BRANCH == "1-18" ]]
-then
-    ${KOPS} update cluster --name ${KOPS_CLUSTER_NAME} --yes
-else
-    ${KOPS} update cluster --admin --name ${KOPS_CLUSTER_NAME} --yes
-fi
+${KOPS} update cluster --admin --name ${KOPS_CLUSTER_NAME} --yes

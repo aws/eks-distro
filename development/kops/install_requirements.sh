@@ -31,18 +31,7 @@ fi
 if [ ! -x ${KOPS} ]
 then
     echo "Determine kops version"
-    if [ "${RELEASE_BRANCH}" == "1-18" ]
-    then
-        KOPS_VERSION="v1.18.3"
-    else
-        if [ "${RELEASE_BRANCH}" == "1-20" ]
-        then
-            KOPS_VERSION="v1.20.0-beta.2"
-        else
-            KOPS_VERSION="v1.19.0-beta.3"
-        fi
-    fi
-
+    KOPS_VERSION="v1.20.0-beta.2"
     echo "Download kops"
     KOPS_URL="https://github.com/kubernetes/kops/releases/download/${KOPS_VERSION}/kops-${OS}-${ARCH}"
     set -x
