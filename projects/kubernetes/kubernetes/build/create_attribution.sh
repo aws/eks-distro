@@ -22,7 +22,8 @@ source "${MAKE_ROOT}/build/lib/init.sh"
 source "${MAKE_ROOT}/../../../build/lib/common.sh"
 
 RELEASE_BRANCH="$1"
-GOLANG_VERSION=$(build::binaries::get_go_version_k8s "$RELEASE_BRANCH")
+GOLANG_VERSION="$2"
+
 OUTPUT_RELEASE_DIR="${OUTPUT_DIR}/${RELEASE_BRANCH}"
 
 # a number of k8s.io dependencies which come from the main repo show

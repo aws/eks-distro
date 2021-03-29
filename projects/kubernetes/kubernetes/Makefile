@@ -3,6 +3,7 @@ RELEASE_BRANCH?=$(shell cat $(BASE_DIRECTORY)/release/DEFAULT_RELEASE_BRANCH)
 RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/RELEASE)
 ARTIFACT_BUCKET?=my-s3-bucket
 GIT_TAG?=$(shell cat ./$(RELEASE_BRANCH)/GIT_TAG)
+GOLANG_VERSION?=$(shell cat ./$(RELEASE_BRANCH)/GOLANG_VERSION)
 
 REPO=kubernetes
 COMPONENT=kubernetes/$(REPO)
@@ -44,7 +45,7 @@ update-checksums: binaries
 
 .PHONY: binaries
 binaries:
-	build/create_binaries.sh $(CLONE_URL) $(RELEASE_BRANCH) $(GIT_TAG)
+	build/create_binaries.sh $(CLONE_URL) $(RELEASE_BRANCH) $(GIT_TAG) $(GOLANG_VERSION)
 
 .PHONY: tarballs
 tarballs:
@@ -117,11 +118,11 @@ all: release
 
 .PHONY: test
 test: binaries
-	build/run_tests.sh $(RELEASE_BRANCH)
+	build/run_tests.sh $(RELEASE_BRANCH) $(GOLANG_VERSION)
 
 .PHONY: attribution
 attribution: 
-	build/create_attribution.sh $(RELEASE_BRANCH)
+	build/create_attribution.sh $(RELEASE_BRANCH) $(GOLANG_VERSION)
 
 .PHONY: clean-repo
 clean-repo:
