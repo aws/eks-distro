@@ -45,6 +45,7 @@ trap cleanup SIGINT SIGTERM ERR
 ./create_cluster.sh
 ./set_nodeport_access.sh
 ./cluster_wait.sh
+./validate_dns.sh
 ./validate_eks.sh
 ./run_sonobuoy.sh
 ./delete_cluster.sh || true
