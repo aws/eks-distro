@@ -20,4 +20,4 @@ but were added in the version._
     which is open as of the time of EKS-D v1.18.2 release, and is raised in [issue #754](https://github.com/kubernetes-sigs/aws-ebs-csi-driver/issues/754) 
     in aws-ebs-csi-driver.
   * The changes in this patch fix a bug where a volume could be created during the create process, but the driver does 
-    not know the status of this volume. The changes in this patch now delete the leaked driver.
+    not know the status of this volume. The changes in this patch now delete the leaked volume.
