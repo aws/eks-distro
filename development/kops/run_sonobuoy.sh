@@ -22,17 +22,17 @@ $PREFLIGHT_CHECK_PASSED || exit 1
 echo "Download sonobuoy"
 if [ "$(uname)" == "Darwin" ]
 then
-  SONOBUOY=https://github.com/vmware-tanzu/sonobuoy/releases/download/v0.19.0/sonobuoy_0.19.0_darwin_amd64.tar.gz
+  SONOBUOY=https://github.com/vmware-tanzu/sonobuoy/releases/download/v0.50.0/sonobuoy_0.50.0_darwin_amd64.tar.gz
 else
-  SONOBUOY=https://github.com/vmware-tanzu/sonobuoy/releases/download/v0.19.0/sonobuoy_0.19.0_linux_386.tar.gz
+  SONOBUOY=https://github.com/vmware-tanzu/sonobuoy/releases/download/v0.50.0/sonobuoy_0.50.0_linux_386.tar.gz
 fi
 CONFORMANCE_IMAGE=k8s.gcr.io/conformance:${KUBERNETES_VERSION}
 wget -qO- ${SONOBUOY} |tar -xz sonobuoy
 chmod 755 sonobuoy
 echo "Making sure cluster ${KOPS_CLUSTER_NAME} is ready to run sonobuoy"
-while ! ./sonobuoy run --mode=certified-conformance --wait --mode quick --kube-conformance-image ${CONFORMANCE_IMAGE}
+while ! ./sonobuoy --context ${KOPS_CLUSTER_NAME} run --mode=certified-conformance --wait --mode quick --kube-conformance-image ${CONFORMANCE_IMAGE}
 do
-  ./sonobuoy delete --all --wait||true
+  ./sonobuoy --context ${KOPS_CLUSTER_NAME} delete --all --wait||true
   sleep 5
   COUNT=$(expr $COUNT + 1)
   if [ $COUNT -gt 40 ]
@@ -42,10 +42,10 @@ do
   fi
   echo 'Waiting for the cluster to be ready...'
 done
-./sonobuoy delete --all --wait||true
+./sonobuoy --context ${KOPS_CLUSTER_NAME} delete --all --wait||true
 echo "Testing cluster ${KOPS_CLUSTER_NAME}"
-./sonobuoy run --mode=certified-conformance --wait --kube-conformance-image ${CONFORMANCE_IMAGE}
-results=$(./sonobuoy retrieve)
+./sonobuoy --context ${KOPS_CLUSTER_NAME} run --mode=certified-conformance --wait --kube-conformance-image ${CONFORMANCE_IMAGE}
+results=$(./sonobuoy --context ${KOPS_CLUSTER_NAME} retrieve)
 mv $results "./${KOPS_CLUSTER_NAME}/$results"
 results="./${KOPS_CLUSTER_NAME}/$results"
 mkdir ./${KOPS_CLUSTER_NAME}/results
@@ -54,5 +54,5 @@ if [ -w /logs/artifacts ]
 then
   cp ./${KOPS_CLUSTER_NAME}/results/plugins/e2e/results/global/junit_01.xml /logs/artifacts
 fi
-./sonobuoy e2e ${results}
-./sonobuoy e2e ${results} | grep 'failed tests: 0' >/dev/null
+./sonobuoy --context ${KOPS_CLUSTER_NAME} e2e ${results}
+./sonobuoy --context ${KOPS_CLUSTER_NAME} e2e ${results} | grep 'failed tests: 0' >/dev/null
