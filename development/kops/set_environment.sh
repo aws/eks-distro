@@ -68,6 +68,6 @@ export ARTIFACT_URL=${ARTIFACT_URL:-https://distro.eks.amazonaws.com/kubernetes-
 export CNI_VERSION=$(cat ../../projects/containernetworking/plugins/GIT_TAG)
 export CNI_VERSION_URL=${ARTIFACT_URL}/plugins/${CNI_VERSION}/cni-plugins-linux-amd64-${CNI_VERSION}.tar.gz
 export CNI_ASSET_HASH_STRING=${CNI_ASSET_HASH_STRING:-sha256:$(curl -s ${CNI_VERSION_URL}.sha256 | cut -f1 -d' ')}
-export KOPS=bin/kops-${RELEASE_BRANCH}
+export KOPS=bin/kops
 mkdir -p bin
 export PATH=`pwd`/bin:${PATH}
