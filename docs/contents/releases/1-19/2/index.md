@@ -1,4 +1,4 @@
-# EKS-D v1-19-eks-1 Release
+# EKS-D v1-19-eks-2 Release
 
 Highlights of the Kubernetes 1.19 release include Ingress API and Pod Topology
 Spread reaching stable status, EndpointSlices being enabled by default, and
