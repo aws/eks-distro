@@ -21,13 +21,16 @@ MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
 source "${MAKE_ROOT}/build/lib/init.sh"
 source "${MAKE_ROOT}/../../../build/lib/common.sh"
 
+RELEASE_BRANCH="$1"
+GOLANG_VERSION="$2"
+
 export ARTIFACTS=${ARTIFACTS:-"./_artifacts"}
 export KUBE_JUNIT_REPORT_DIR="${ARTIFACTS}"
 export KUBE_KEEP_VERBOSE_TEST_OUTPUT=y
 export LOG_LEVEL=4
 export KUBE_TIMEOUT=${KUBE_TIMEOUT:-"--timeout=600s"}
 
-build::binaries::use_go_version_k8s "$RELEASE_BRANCH"
+build::common::use_go_version $GOLANG_VERSION
 
 go get gotest.tools/gotestsum
 
