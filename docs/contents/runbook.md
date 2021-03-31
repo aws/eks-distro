@@ -7,9 +7,8 @@ unless there is a change.
 
 1. **Prow Build Job**: Create and merge Prow build job for new release (build-1-20-postsubmits.yaml)
 1. **Create EKS Distro PR**: Create various release components:
-   * release/${RELEASE_BRANCH}/RELEASE-DEV (set to 0)
-   * release/${RELEASE_BRANCH}/RELEASE (set to 0)
-   * release/${RELEASE_BRANCH}/RELEASE-PUBLIC (set to 0)
+   * release/${RELEASE_BRANCH}/development/RELEASE (set to 0)
+   * release/${RELEASE_BRANCH}/production/RELEASE (set to 0)
    * projects/kubernetes/kubernetes/${RELEASE_BRANCH}/GIT_TAG
    * projects/kubernetes/kubernetes/${RELEASE_BRANCH}/KUBE_GIT_VERSION_FILE
    * Create GIT_TAG files for other components (etcd, coredns, ...)
@@ -22,10 +21,9 @@ unless there is a change.
 1. **Create EKS Distro Patches PR**: Add patches for new release
 1. **Docs PR**: Add patches info to change log
 1. **Create EKS Distro Develop Release PR**: Modify components to create a release
-   * release/${RELEASE_BRANCH}/RELEASE-DEV (set to 1)
+   * release/${RELEASE_BRANCH}/development/RELEASE (increment)
 1. **Create EKS Distro Release PR**: Modify components to create a release
-   * release/${RELEASE_BRANCH}/RELEASE (set to 1)
-   * release/${RELEASE_BRANCH}/RELEASE-PUBLIC (set to 1)
+   * release/${RELEASE_BRANCH}/production/RELEASE (increment)
 1. **Docs PR**: Do final update to documentation with CRD
    * docs/contents/releases/${RELEASE_BRANCH}/${RELEASE}/index.md
    * docs/contents/releases/${RELEASE_BRANCH}/${RELEASE}/CHANGELOG*
