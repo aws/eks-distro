@@ -10,7 +10,6 @@ REPO=external-attacher
 COMPONENT=kubernetes-csi/$(REPO)
 CLONE_URL=https://github.com/$(COMPONENT).git
 
-DEVELOPMENT?=true
 AWS_ACCOUNT_ID?=$(shell aws sts get-caller-identity --query Account --output text)
 AWS_REGION?=us-west-2
 
@@ -25,9 +24,6 @@ IMAGE_NAME?=$(COMPONENT)
 IMAGE_TAG?=$(GIT_TAG)-eks-${RELEASE_BRANCH}-${RELEASE}
 IMAGE?=$(IMAGE_REPO)/$(IMAGE_NAME):$(IMAGE_TAG)
 
-ifeq ($(DEVELOPMENT),true)
-	BASE_IMAGE=amazonlinux:2
-endif
 
 .PHONY: binaries
 binaries:
