@@ -44,6 +44,10 @@ git checkout -b $PR_BRANCH
 for FILE in $(find . -type f \( -name ATTRIBUTION.txt ! -path "*/_output/*" \)); do    
     git add $FILE
 done
+FILES_ADDED=$(git diff --staged --name-only)
+if [ "$FILES_CHANGED" = "" ]; then
+    exit 0
+fi
 
 git commit -m "$COMMIT_MESSAGE" || true
 
