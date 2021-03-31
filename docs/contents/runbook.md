@@ -31,3 +31,6 @@ unless there is a change.
    * README
 1. **Announcement PR**: When everything is good, create announcement PR
    * docs/contents/releases/${RELEASE_BRANCH}/${RELEASE}/release-announcement.txt
+1. **Tag Repository**: Tag the repository for example
+   * `git tag -a v1-19-eks-1 -m v1-19-eks-1`
+   * `git push origin v1-19-eks-1`
