@@ -45,7 +45,7 @@ for FILE in $(find . -type f \( -name ATTRIBUTION.txt ! -path "*/_output/*" \));
     git add $FILE
 done
 FILES_ADDED=$(git diff --staged --name-only)
-if [ "$FILES_CHANGED" = "" ]; then
+if [ "$FILES_ADDED" = "" ]; then
     exit 0
 fi
 
