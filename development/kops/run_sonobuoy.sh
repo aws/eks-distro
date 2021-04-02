@@ -29,8 +29,8 @@ fi
 CONFORMANCE_IMAGE=k8s.gcr.io/conformance:${KUBERNETES_VERSION}
 wget -qO- ${SONOBUOY} |tar -xz sonobuoy
 chmod 755 sonobuoy
-echo "Making sure cluster ${KOPS_CLUSTER_NAME} is ready to run sonobuoy"
-while ! ./sonobuoy --context ${KOPS_CLUSTER_NAME} run --mode=certified-conformance --wait --mode quick --kube-conformance-image ${CONFORMANCE_IMAGE}
+echo "Testing cluster ${KOPS_CLUSTER_NAME}"
+while ! ./sonobuoy --context ${KOPS_CLUSTER_NAME} run --mode=certified-conformance --wait --kube-conformance-image ${CONFORMANCE_IMAGE}
 do
   ./sonobuoy --context ${KOPS_CLUSTER_NAME} delete --all --wait||true
   sleep 5
@@ -42,9 +42,7 @@ do
   fi
   echo 'Waiting for the cluster to be ready...'
 done
-./sonobuoy --context ${KOPS_CLUSTER_NAME} delete --all --wait||true
-echo "Testing cluster ${KOPS_CLUSTER_NAME}"
-./sonobuoy --context ${KOPS_CLUSTER_NAME} run --mode=certified-conformance --wait --kube-conformance-image ${CONFORMANCE_IMAGE}
+
 results=$(./sonobuoy --context ${KOPS_CLUSTER_NAME} retrieve)
 mv $results "./${KOPS_CLUSTER_NAME}/$results"
 results="./${KOPS_CLUSTER_NAME}/$results"
