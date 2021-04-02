@@ -35,7 +35,7 @@ do
   ./sonobuoy --context ${KOPS_CLUSTER_NAME} delete --all --wait||true
   sleep 5
   COUNT=$(expr $COUNT + 1)
-  if [ $COUNT -gt 40 ]
+  if [ $COUNT -gt 3 ]
   then
     echo "Failed to run sonobuoy"
     exit 1
