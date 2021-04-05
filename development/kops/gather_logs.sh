@@ -19,14 +19,6 @@ BASEDIR=$(dirname "$0")
 source ${BASEDIR}/set_environment.sh
 $PREFLIGHT_CHECK_PASSED || exit 1
 
-UPSTREAM_PATH=$BASE_DIRECTORY/../k8s.io/test-infra/logexporter/cluster/log-dump.sh
-if [ ! -f "$UPSTREAM_PATH" ]; then
-    echo "k8s.io/test-infra is missing, skipping log gathering"
-    exit
-fi
-
-BASE_DIRECTORY=$(git rev-parse --show-toplevel)
-
 export LOG_DUMP_SAVE_SERVICES="kops-configuration"
 export KUBERNETES_PROVIDER="none" # the script from upstream doesnt seem to handle aws exactly right
 export LOG_DUMP_SSH_KEY="~/.ssh/id_rsa"
@@ -62,4 +54,4 @@ function scp() {
 }
 export -f scp
 
-source $UPSTREAM_PATH $ARTIFACTS
+source ./log-dump/log-dump.sh $ARTIFACTS
