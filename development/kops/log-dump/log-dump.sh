@@ -608,7 +608,7 @@ function dump_nodes() {
     linux_nodes_selected_for_logs=( "${node_names[@]}" )
   fi
   all_selected_nodes=( "${linux_nodes_selected_for_logs[@]}" )
-  all_selected_nodes+=( "${windows_node_names[@]}" )
+  
 
   proc=${max_dump_processes}
   start="$(date +%s)"
