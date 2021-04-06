@@ -30,7 +30,7 @@ ARTIFACTS=${ARTIFACTS:-"./_artifacts"}
 function log_dump_custom_get_instances() {
     local -r type=$1
     local filter=''
-    if [ $type == "master" ]; then
+    if [ $type == "control_plane" ]; then
         filter="Name=tag:k8s.io/role/master,Values=1"
     else
         filter="Name=tag:k8s.io/role/node,Values=1"

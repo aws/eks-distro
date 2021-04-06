@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Call this to dump all master and node logs into the folder specified in $1
+# Call this to dump all control_plane and node logs into the folder specified in $1
 # (defaults to _artifacts). Only works if the provider supports SSH.
 
 set -o errexit
@@ -29,7 +29,7 @@ readonly logexporter_namespace="${3:-logexporter}"
 # In order to more trivially extend log-dump for custom deployments,
 # check for a function named log_dump_custom_get_instances. If it's
 # defined, we assume the function can me called with one argument, the
-# role, which is either "master" or "node".
+# role, which is either "control_plane" or "node".
 echo 'Checking for custom logdump instances, if any'
 if [[ $(type -t log_dump_custom_get_instances) == "function" ]]; then
   readonly use_custom_instance_list=yes
@@ -37,11 +37,11 @@ else
   readonly use_custom_instance_list=
 fi
 
-readonly master_ssh_supported_providers="gce aws"
+readonly control_plane_ssh_supported_providers="gce aws"
 readonly node_ssh_supported_providers="gce gke aws"
 readonly gcloud_supported_providers="gce gke"
 
-readonly master_logfiles="kube-apiserver.log kube-apiserver-audit.log kube-scheduler.log kube-controller-manager.log etcd.log etcd-events.log glbc.log cluster-autoscaler.log kube-addon-manager.log konnectivity-server.log fluentd.log kubelet.cov"
+readonly control_plane_logfiles="kube-apiserver.log kube-apiserver-audit.log kube-scheduler.log kube-controller-manager.log etcd.log etcd-events.log glbc.log cluster-autoscaler.log kube-addon-manager.log konnectivity-server.log fluentd.log kubelet.cov"
 readonly node_logfiles="kube-proxy.log fluentd.log node-problem-detector.log kubelet.cov"
 readonly node_systemd_services="node-problem-detector"
 readonly hollow_node_logfiles="kubelet-hollow-node-*.log kubeproxy-hollow-node-*.log npd-hollow-node-*.log"
@@ -197,40 +197,40 @@ function detect-node-names() {
   echo "NODE_NAMES=${NODE_NAMES[*]:-}" >&2
 }
 
-# Detect the IP for the master
+# Detect the IP for the control_plane
 #
 # Assumed vars:
-#   MASTER_NAME
+#   CONTROL_PLANE_NAME
 #   ZONE
 #   REGION
 # Vars set:
-#   KUBE_MASTER
-#   KUBE_MASTER_IP
-function detect-master() {
+#   KUBE_CONTROL_PLANE
+#   KUBE_CONTROL_PLANE_IP
+function detect-control_plane() {
   detect-project
-  KUBE_MASTER=${MASTER_NAME}
-  echo "Trying to find master named '${MASTER_NAME}'" >&2
-  if [[ -z "${KUBE_MASTER_IP-}" ]]; then
-    local master_address_name="${MASTER_NAME}-ip"
-    echo "Looking for address '${master_address_name}'" >&2
-    if ! KUBE_MASTER_IP=$(gcloud compute addresses describe "${master_address_name}" \
+  KUBE_CONTROL_PLANE=${CONTROL_PLANE_NAME}
+  echo "Trying to find control_plane named '${CONTROL_PLANE_NAME}'" >&2
+  if [[ -z "${KUBE_CONTROL_PLANE_IP-}" ]]; then
+    local control_plane_address_name="${CONTROL_PLANE_NAME}-ip"
+    echo "Looking for address '${control_plane_address_name}'" >&2
+    if ! KUBE_CONTROL_PLANE_IP=$(gcloud compute addresses describe "${control_plane_address_name}" \
       --project "${PROJECT}" --region "${REGION}" -q --format='value(address)') || \
-      [[ -z "${KUBE_MASTER_IP-}" ]]; then
-      echo "Could not detect Kubernetes master node.  Make sure you've launched a cluster with 'kube-up.sh'" >&2
+      [[ -z "${KUBE_CONTROL_PLANE_IP-}" ]]; then
+      echo "Could not detect Kubernetes control_plane node.  Make sure you've launched a cluster with 'kube-up.sh'" >&2
       exit 1
     fi
   fi
-  if [[ -z "${KUBE_MASTER_INTERNAL_IP-}" ]] && [[ ${GCE_PRIVATE_CLUSTER:-} == "true" ]]; then
-      local master_address_name="${MASTER_NAME}-internal-ip"
-      echo "Looking for address '${master_address_name}'" >&2
-      if ! KUBE_MASTER_INTERNAL_IP=$(gcloud compute addresses describe "${master_address_name}" \
+  if [[ -z "${KUBE_CONTROL_PLANE_INTERNAL_IP-}" ]] && [[ ${GCE_PRIVATE_CLUSTER:-} == "true" ]]; then
+      local control_plane_address_name="${CONTROL_PLANE_NAME}-internal-ip"
+      echo "Looking for address '${control_plane_address_name}'" >&2
+      if ! KUBE_CONTROL_PLANE_INTERNAL_IP=$(gcloud compute addresses describe "${control_plane_address_name}" \
         --project "${PROJECT}" --region "${REGION}" -q --format='value(address)') || \
-        [[ -z "${KUBE_MASTER_INTERNAL_IP-}" ]]; then
-        echo "Could not detect Kubernetes master node.  Make sure you've launched a cluster with 'kube-up.sh'" >&2
+        [[ -z "${KUBE_CONTROL_PLANE_INTERNAL_IP-}" ]]; then
+        echo "Could not detect Kubernetes control_plane node.  Make sure you've launched a cluster with 'kube-up.sh'" >&2
         exit 1
       fi
   fi
-  echo "Using master: $KUBE_MASTER (external IP: $KUBE_MASTER_IP; internal IP: ${KUBE_MASTER_INTERNAL_IP:-(not set)})" >&2
+  echo "Using control_plane: $KUBE_CONTROL_PLANE (external IP: $KUBE_CONTROL_PLANE_IP; internal IP: ${KUBE_CONTROL_PLANE_INTERNAL_IP:-(not set)})" >&2
 }
 
 # SSH to a node by name ($1) and run a command ($2).
@@ -241,7 +241,7 @@ function setup() {
     REGION="${ZONE%-*}"
     INSTANCE_PREFIX="${KUBE_GCE_INSTANCE_PREFIX:-kubernetes}"
     CLUSTER_NAME="${CLUSTER_NAME:-${INSTANCE_PREFIX}}"
-    MASTER_NAME="${INSTANCE_PREFIX}-master"
+    CONTROL_PLANE_NAME="${INSTANCE_PREFIX}-control_plane"
     GCE_PRIVATE_CLUSTER="${KUBE_GCE_PRIVATE_CLUSTER:-false}"
     detect-project 2>&1
   elif [[ "${KUBERNETES_PROVIDER}" == "gke" ]]; then
@@ -311,7 +311,7 @@ function copy-logs-from-node() {
 # Save logs for node $1 into directory $2. Pass in any non-common files in $3.
 # Pass in any non-common systemd services in $4.
 # $3 and $4 should be a space-separated list of files.
-# Set $5 to true to indicate it is on master. Default to false.
+# Set $5 to true to indicate it is on control_plane. Default to false.
 # This function shouldn't ever trigger errexit
 function save-logs() {
     local -r node_name="${1}"
@@ -319,7 +319,7 @@ function save-logs() {
     local files=()
     IFS=' ' read -r -a files <<< "$3"
     local opt_systemd_services="${4:-""}"
-    local on_master="${5:-"false"}"
+    local on_control_plane="${5:-"false"}"
 
     local extra=()
     IFS=' ' read -r -a extra <<< "$extra_log_files"
@@ -346,9 +346,9 @@ function save-logs() {
     read -r -a services <<< "${systemd_services} ${opt_systemd_services} ${extra_systemd_services}"
 
     if log-dump-ssh "${node_name}" "command -v journalctl" &> /dev/null; then
-        if [[ "${on_master}" == "true" ]]; then
-          log-dump-ssh "${node_name}" "sudo journalctl --output=short-precise -u kube-master-installation.service" > "${dir}/kube-master-installation.log" || true
-          log-dump-ssh "${node_name}" "sudo journalctl --output=short-precise -u kube-master-configuration.service" > "${dir}/kube-master-configuration.log" || true
+        if [[ "${on_control_plane}" == "true" ]]; then
+          log-dump-ssh "${node_name}" "sudo journalctl --output=short-precise -u kube-control_plane-installation.service" > "${dir}/kube-control_plane-installation.log" || true
+          log-dump-ssh "${node_name}" "sudo journalctl --output=short-precise -u kube-control_plane-configuration.service" > "${dir}/kube-control_plane-configuration.log" || true
         else
           log-dump-ssh "${node_name}" "sudo journalctl --output=short-precise -u kube-node-installation.service" > "${dir}/kube-node-installation.log" || true
           log-dump-ssh "${node_name}" "sudo journalctl --output=short-precise -u kube-node-configuration.service" > "${dir}/kube-node-configuration.log" || true
@@ -373,7 +373,7 @@ function save-logs() {
     # Try dumping coverage profiles, if it looks like coverage is enabled in the first place.
     if log-dump-ssh "${node_name}" "stat /var/log/kubelet.cov" &> /dev/null; then
       if log-dump-ssh "${node_name}" "command -v docker" &> /dev/null; then
-        if [[ "${on_master}" == "true" ]]; then
+        if [[ "${on_control_plane}" == "true" ]]; then
           run-in-docker-container "${node_name}" "kube-apiserver" "cat /tmp/k8s-kube-apiserver.cov" > "${dir}/kube-apiserver.cov" || true
           run-in-docker-container "${node_name}" "kube-scheduler" "cat /tmp/k8s-kube-scheduler.cov" > "${dir}/kube-scheduler.cov" || true
           run-in-docker-container "${node_name}" "kube-controller-manager" "cat /tmp/k8s-kube-controller-manager.cov" > "${dir}/kube-controller-manager.cov" || true
@@ -430,7 +430,7 @@ function export-windows-docker-images-list() {
     done
 }
 
-# Saves log files from diagnostics tool.(https://github.com/GoogleCloudPlatform/compute-image-tools/tree/master/cli_tools/diagnostics)
+# Saves log files from diagnostics tool.(https://github.com/GoogleCloudPlatform/compute-image-tools/tree/control_plane/cli_tools/diagnostics)
 function save-windows-logs-via-diagnostics-tool() {
     local node="${1}"
     local dest_dir="${2}"
@@ -517,33 +517,33 @@ function run-in-docker-container() {
   log-dump-ssh "${node_name}" "docker exec \"\$(docker ps -f label=io.kubernetes.container.name=${container} --format \"{{.ID}}\")\" $*"
 }
 
-function dump_masters() {
-  local master_names=()
+function dump_control_planes() {
+  local control_plane_names=()
   if [[ -n "${use_custom_instance_list}" ]]; then
-    while IFS='' read -r line; do master_names+=("$line"); done < <(log_dump_custom_get_instances master)
-  elif [[ ! "${master_ssh_supported_providers}" =~ ${KUBERNETES_PROVIDER} ]]; then
-    echo "Master SSH not supported for ${KUBERNETES_PROVIDER}"
+    while IFS='' read -r line; do control_plane_names+=("$line"); done < <(log_dump_custom_get_instances control_plane)
+  elif [[ ! "${control_plane_ssh_supported_providers}" =~ ${KUBERNETES_PROVIDER} ]]; then
+    echo "Control_Plane SSH not supported for ${KUBERNETES_PROVIDER}"
     return
-  elif [[ -n "${KUBEMARK_MASTER_NAME:-}" ]]; then
-    master_names=( "${KUBEMARK_MASTER_NAME}" )
+  elif [[ -n "${KUBEMARK_CONTROL_PLANE_NAME:-}" ]]; then
+    control_plane_names=( "${KUBEMARK_CONTROL_PLANE_NAME}" )
   else
-    if ! (detect-master); then
-      echo 'Master not detected. Is the cluster up?'
+    if ! (detect-control_plane); then
+      echo 'Control_Plane not detected. Is the cluster up?'
       return
     fi
-    master_names=( "${MASTER_NAME}" )
+    control_plane_names=( "${CONTROL_PLANE_NAME}" )
   fi
 
-  if [[ "${#master_names[@]}" == 0 ]]; then
-    echo 'No masters found?'
+  if [[ "${#control_plane_names[@]}" == 0 ]]; then
+    echo 'No control_planes found?'
     return
   fi
 
   proc=${max_dump_processes}
-  for master_name in "${master_names[@]}"; do
-    master_dir="${report_dir}/${master_name}"
-    mkdir -p "${master_dir}"
-    save-logs "${master_name}" "${master_dir}" "${master_logfiles}" "" "true" &
+  for control_plane_name in "${control_plane_names[@]}"; do
+    control_plane_dir="${report_dir}/${control_plane_name}"
+    mkdir -p "${control_plane_dir}"
+    save-logs "${control_plane_name}" "${control_plane_dir}" "${control_plane_logfiles}" "" "true" &
 
     # We don't want to run more than ${max_dump_processes} at a time, so
     # wait once we hit that many nodes. This isn't ideal, since one might
@@ -836,10 +836,10 @@ function detect_node_failures() {
 }
 
 function dump_logs() {
-  # Copy master logs to artifacts dir locally (through SSH).
-  echo "Dumping logs from master locally to '${report_dir}'"
-  dump_masters
-  if [[ "${DUMP_ONLY_MASTER_LOGS:-}" == "true" ]]; then
+  # Copy control_plane logs to artifacts dir locally (through SSH).
+  echo "Dumping logs from control_plane locally to '${report_dir}'"
+  dump_control_planes
+  if [[ "${DUMP_ONLY_CONTROL_PLANE_LOGS:-}" == "true" ]]; then
     echo 'Skipping dumping of node logs'
     return
   fi
@@ -857,7 +857,7 @@ function dump_logs() {
 # Without ${DUMP_TO_GCS_ONLY} == true:
 # * only logs exported by logexporter will be uploaded to
 #   ${gcs_artifacts_dir}
-# * other logs (master logs, nodes where logexporter failed) will be
+# * other logs (control_plane logs, nodes where logexporter failed) will be
 #   fetched locally to ${report_dir}.
 # If $DUMP_TO_GCS_ONLY == 'true', all logs will be uploaded directly to
 # ${gcs_artifacts_dir}.
@@ -867,7 +867,7 @@ function main() {
   if [[ "${DUMP_TO_GCS_ONLY:-}" == "true" ]] && [[ -n "${gcs_artifacts_dir}" ]]; then
     report_dir="${KUBE_TEMP}/logs"
     mkdir -p "${report_dir}"
-    echo "${gcs_artifacts_dir}" > "${local_report_dir}/master-and-node-logs.link.txt"
+    echo "${gcs_artifacts_dir}" > "${local_report_dir}/control_plane-and-node-logs.link.txt"
     echo "Dumping logs temporarily to '${report_dir}'. Will upload to '${gcs_artifacts_dir}' later."
   else
     report_dir="${local_report_dir}"
