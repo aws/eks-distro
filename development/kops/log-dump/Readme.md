@@ -15,3 +15,7 @@ of sync-ing from upstream, please document them here. The script is unmodified e
    * Note: there are two inconsequential changes made by the above sed commands that actually should not be changed.
      A comment with a github url in it and a file name, which is not create by kops and therefore 
      does not affect the intent of how we are using the script.
+* the version of bash (4.3) we use in our builds does not support using ${arr[@]} when the array is empty.  There is one
+  spot in the script that tries to do this for windows node, which we are not using.
+   * sed -i 's/all_selected_nodes+=( "${windows_node_names\[@\]}" )//' log-dump.sh
+   * Note: https://stackoverflow.com/questions/7577052/bash-empty-array-expansion-with-set-u

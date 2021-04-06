@@ -20,7 +20,7 @@ cd ${BASEDIR}
 function cleanup()
 {
   echo 'Deleting...'
-  ./gather_logs.sh
+  ./gather_logs.sh || true
   ./delete_cluster.sh || true
   ./delete_store.sh
   exit 255;
@@ -49,6 +49,6 @@ trap cleanup SIGINT SIGTERM ERR
 ./validate_dns.sh
 ./validate_eks.sh
 ./run_sonobuoy.sh
-./gather_logs.sh
+./gather_logs.sh || true
 ./delete_cluster.sh || true
 ./delete_store.sh
