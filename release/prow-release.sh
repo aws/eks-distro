@@ -32,6 +32,12 @@ export PRESUBMIT_KUBE_BASE_TAG=$(cat ${BASE_DIRECTORY}/projects/kubernetes/relea
 export BASE_REPO=${BASE_REPO:-${IMAGE_REPO}}
 export BASE_IMAGE=${BASE_IMAGE:-316434458148.dkr.ecr.us-west-2.amazonaws.com/eks-distro/base:$(cat ${BASE_DIRECTORY}/EKS_DISTRO_BASE_TAG_FILE)}
 
+if [ "${RELEASE}" == "0" ]
+then
+    echo "No production release zero"
+    exit 0
+fi
+
 cat << EOF > awscliconfig
 [default]
 output=json
