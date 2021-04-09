@@ -9,7 +9,7 @@ This changelog highlights the changes for [v1-20-eks-1](https://github.com/aws/e
 ## Patches
 
 ### Patches Removed
-_The following patches were in EKS-D [v1.19.1](https://github.com/aws/eks-distro/tree/v1-19-eks-1/projects/kubernetes/kubernetes/1-19/patches)
+_The following patches were in EKS-D [v1.19-2](https://github.com/aws/eks-distro/tree/v1-19-eks-1/projects/kubernetes/kubernetes/1-19/patches)
 but were removed in the version._
 
 🚨 TODO!! Confirm reason for each removal
@@ -34,7 +34,7 @@ application of the patches.
 
 ## Component Versions
 
-🚨 TODO!! All these values are from 1.19.1.
+🚨 TODO!! All these values are from 1.19-1.
 
 | Component             | Version           |
 |-----------------------|-------------------|
