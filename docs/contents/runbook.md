@@ -5,6 +5,9 @@ Last release PR https://github.com/aws/eks-distro/pull/227/files
 After the first release, the process is the same, but not all the steps need to be completed
 unless there is a change.
 
+Prow jobs are in the [eks-distro-prow-jobs repo](https://github.com/aws/eks-distro-prow-jobs/tree/main/jobs/aws/eks-distro).  
+All other changes are to this package. 
+
 1. **Prow Build Job**: Create and merge Prow build job for new release (build-1-20-postsubmits.yaml)
 1. **Create EKS Distro PR**: Create various release components:
    * release/${RELEASE_BRANCH}/development/RELEASE (set to 0)
@@ -26,7 +29,7 @@ unless there is a change.
    * release/${RELEASE_BRANCH}/production/RELEASE (increment)
 1. **Docs PR**: Do final update to documentation with CRD
    * docs/contents/releases/${RELEASE_BRANCH}/${RELEASE}/index.md
-   * docs/contents/releases/${RELEASE_BRANCH}/${RELEASE}/CHANGELOG*
+   * docs/contents/releases/${RELEASE_BRANCH}/${RELEASE}/CHANGELOG
    * docs/contents/index.md
    * README
 1. **Announcement PR**: When everything is good, create announcement PR
