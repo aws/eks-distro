@@ -33,6 +33,10 @@ endif
 binaries:
 	build/create_binaries.sh $(REPO) $(CLONE_URL) $(GIT_TAG) $(GOLANG_VERSION)
 
+.PHONY: image-tars
+image-tars:
+	build/create_image_tars.sh $(BASE_IMAGE) $(IMAGE)
+
 .PHONY: local-images
 local-images: binaries
 	buildctl \
@@ -42,7 +46,7 @@ local-images: binaries
 		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
 		--local dockerfile=./docker/linux \
 		--local context=. \
-		--output type=oci,oci-mediatypes=true,name=$(IMAGE),dest=/tmp/etcd.tar
+		--output type=oci,oci-mediatypes=true,name=$(IMAGE),dest=$(MAKE_ROOT)/_output/bin/etcd/linux-amd64/etcd.tar
 
 .PHONY: images
 images: binaries
@@ -73,10 +77,10 @@ tarballs:
 	build/create_tarballs.sh $(REPO) $(GIT_TAG)
 
 .PHONY: build
-build: local-images tarballs
+build: local-images image-tars tarballs
 
 .PHONY: release
-release: images tarballs
+release: images image-tars tarballs
 	$(BASE_DIRECTORY)/release/copy_artifacts.sh $(COMPONENT) $(RELEASE_BRANCH) $(RELEASE)
 	$(BASE_DIRECTORY)/release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET) $(REPO)
 	echo "Done $(COMPONENT)"

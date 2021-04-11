@@ -34,6 +34,10 @@ endif
 binaries:
 	build/create_binaries.sh $(CLONE_URL) $(REPO) $(GIT_TAG) $(GOLANG_VERSION)
 
+.PHONY: image-tars
+image-tars:
+	build/create_image_tars.sh $(BASE_IMAGE) $(RELEASE_BRANCH) $(IMAGE)
+
 .PHONY: local-images
 local-images: binaries
 	buildctl \
@@ -44,7 +48,7 @@ local-images: binaries
 		--opt build-arg:RELEASE_BRANCH=$(RELEASE_BRANCH) \
 		--local dockerfile=./docker/linux \
 		--local context=. \
-		--output type=oci,oci-mediatypes=true,name=$(IMAGE),dest=/tmp/coredns.tar
+		--output type=oci,oci-mediatypes=true,name=$(IMAGE),dest=$(MAKE_ROOT)/_output/bin/coredns/linux-amd64/coredns.tar
 		
 .PHONY: images
 images: binaries
@@ -73,10 +77,10 @@ docker-push:
 	docker push $(IMAGE)
 
 .PHONY: build
-build: local-images
+build: local-images image-tars
 
 .PHONY: release
-release: images
+release: images image-tars
 	echo "Done $(COMPONENT)"
 
 .PHONY: all
