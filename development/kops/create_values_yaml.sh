@@ -30,7 +30,7 @@ function get_container_yaml() {
     REPOSITORY_NAME="${1}"
     RELEASE="${2}"
     VERSION="$(get_project_version $REPOSITORY_NAME)"
-    echo "    repository: ${REPOSITORY_URI}/${REPOSITORY_NAME}
+    echo "    repository: ${IMAGE_REPO}/${REPOSITORY_NAME}
     tag: ${VERSION}-eks-${RELEASE_BRANCH}-${RELEASE}"
 }
 
