@@ -64,7 +64,7 @@ fi
 export PREFLIGHT_CHECK_PASSED
 
 export KUBERNETES_VERSION=$(cat ../../projects/kubernetes/kubernetes/${RELEASE_BRANCH}/GIT_TAG)
-export REPOSITORY_URI=${REPOSITORY_URI:-public.ecr.aws/eks-distro}
+export IMAGE_REPO=${IMAGE_REPO:-public.ecr.aws/eks-distro}
 export ARTIFACT_URL=${ARTIFACT_URL:-https://distro.eks.amazonaws.com/kubernetes-${RELEASE_BRANCH}/releases/${RELEASE}/artifacts}
 export CNI_VERSION=$(cat ../../projects/containernetworking/plugins/GIT_TAG)
 export CNI_VERSION_URL=${ARTIFACT_URL}/plugins/${CNI_VERSION}/cni-plugins-linux-amd64-${CNI_VERSION}.tar.gz
