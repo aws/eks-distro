@@ -657,6 +657,6 @@ status:
           type: Image
       gitTag: v2.1.0
       name: node-driver-registrar
-  date: "2021-03-27T04:36:52Z"
+  date: "2021-04-14T01:38:06Z"
 
 ```
