@@ -25,7 +25,7 @@ Full documentation for releases can be found on https://distro.eks.amazonaws.com
 
 | Release | Manifest |
 | --- | --- |
-| 2 | [kubernetes-1-18-eks-2](https://distro.eks.amazonaws.com/kubernetes-1-18/kubernetes-1-18-eks-2.yaml) |
+| 3 | [kubernetes-1-18-eks-3](https://distro.eks.amazonaws.com/kubernetes-1-18/kubernetes-1-18-eks-3.yaml) |
 
 ### Kubernetes 1-19
 
