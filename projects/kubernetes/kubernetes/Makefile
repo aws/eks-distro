@@ -31,10 +31,11 @@ PRESUBMIT_GO_RUNNER_IMAGE?=$(KUBE_BASE_REPO)/$(GO_RUNNER_IMAGE_NAME):$(PRESUBMIT
 PRESUBMIT_KUBE_PROXY_BASE_IMAGE?=$(KUBE_BASE_REPO)/$(KUBE_PROXY_BASE_IMAGE_NAME):$(PRESUBMIT_KUBE_BASE_TAG)
 
 PAUSE_SRC_DIR?=kubernetes/build/pause
-PAUSE_DST_DIR?=_output/pause
+PAUSE_DST_DIR?=_output/$(RELEASE_BRANCH)/pause
 PAUSE_IMAGE_NAME?=pause
 PAUSE_IMAGE_TAG?=$(IMAGE_TAG)
 PAUSE_IMAGE?=$(IMAGE_REPO)/$(IMAGE_REPO_PREFIX)/$(PAUSE_IMAGE_NAME):$(PAUSE_IMAGE_TAG)
+PAUSE_IMAGE_3_2="$(IMAGE_REPO)/$(IMAGE_REPO_PREFIX)/$(PAUSE_IMAGE_NAME):3.2"
 
 .PHONY: update-version
 update-version: binaries
@@ -60,30 +61,21 @@ pause: $(PAUSE_DST_DIR)/pause.c
 
 .PHONY: local-images
 local-images:
-	build/create_images.sh $(RELEASE_BRANCH) $(PRESUBMIT_GO_RUNNER_IMAGE) $(PRESUBMIT_KUBE_PROXY_BASE_IMAGE) $(IMAGE_REPO) $(IMAGE_REPO_PREFIX) $(IMAGE_TAG) false
-	buildctl \
-		build \
-		--frontend dockerfile.v0 \
-		--opt platform=linux/amd64 \
-		--local dockerfile=./docker/pause/ \
-		--local context=./_output/pause \
-		--opt build-arg:BASE_IMAGE=$(PRESUBMIT_GO_RUNNER_IMAGE) \
-		--opt build-arg:VERSION=$(IMAGE_TAG) \
-		--output type=oci,oci-mediatypes=true,name=$(PAUSE_IMAGE),dest=_output/$(RELEASE_BRANCH)/bin/linux/amd64/pause.tar
+	build/create_images.sh \
+		$(RELEASE_BRANCH) $(PRESUBMIT_GO_RUNNER_IMAGE) $(PRESUBMIT_KUBE_PROXY_BASE_IMAGE) \
+		$(IMAGE_REPO) $(IMAGE_REPO_PREFIX) $(IMAGE_TAG) "$(PAUSE_IMAGE),$(PAUSE_IMAGE_3_2)" false true
 
 .PHONY: images
 images:
-	build/create_images.sh $(RELEASE_BRANCH) $(GO_RUNNER_IMAGE) $(KUBE_PROXY_BASE_IMAGE) $(IMAGE_REPO) $(IMAGE_REPO_PREFIX) $(IMAGE_TAG) true
-	buildctl \
-		build \
-		--frontend dockerfile.v0 \
-		--opt platform=linux/amd64,linux/arm64  \
-		--local dockerfile=./docker/pause/ \
-		--local context=./_output/pause \
-		--opt build-arg:BASE_IMAGE=$(GO_RUNNER_IMAGE) \
-		--opt build-arg:VERSION=$(IMAGE_TAG) \
-		--output type=image,oci-mediatypes=true,\"name=$(PAUSE_IMAGE),$(IMAGE_REPO)/$(IMAGE_REPO_PREFIX)/$(PAUSE_IMAGE_NAME):3.2\",push=true
-
+	# we publish oci tarballs in release mode in addition to pushing images for use by kops and other installer tools
+	build/create_images.sh \
+		$(RELEASE_BRANCH) $(GO_RUNNER_IMAGE) $(KUBE_PROXY_BASE_IMAGE) \
+		$(IMAGE_REPO) $(IMAGE_REPO_PREFIX) $(IMAGE_TAG) "$(PAUSE_IMAGE),$(PAUSE_IMAGE_3_2)" false
+	
+	build/create_images.sh \
+		$(RELEASE_BRANCH) $(GO_RUNNER_IMAGE) $(KUBE_PROXY_BASE_IMAGE) \
+		$(IMAGE_REPO) $(IMAGE_REPO_PREFIX) $(IMAGE_TAG) "$(PAUSE_IMAGE),$(PAUSE_IMAGE_3_2)" true
+		
 .PHONY: docker
 docker: binaries pause
 	build/create_docker_images.sh $(RELEASE_BRANCH) $(GO_RUNNER_IMAGE) $(KUBE_PROXY_BASE_IMAGE) $(IMAGE_REPO) $(IMAGE_REPO_PREFIX) $(IMAGE_TAG)
@@ -92,14 +84,14 @@ docker: binaries pause
 		--build-arg BASE_IMAGE=$(GO_RUNNER_IMAGE) \
 		--build-arg VERSION=$(IMAGE_TAG) \
 		-t $(PAUSE_IMAGE) \
-		-t $(IMAGE_REPO)/$(IMAGE_REPO_PREFIX)/$(PAUSE_IMAGE_NAME):3.2 \
-		-f ./docker/pause/Dockerfile ./_output/pause/
+		-t $(PAUSE_IMAGE_3_2) \
+		-f ./docker/pause/Dockerfile $(PAUSE_DST_DIR)
 
 .PHONY: docker-push
 docker-push:
 	build/docker_push.sh $(RELEASE_BRANCH) $(GO_RUNNER_IMAGE) $(KUBE_PROXY_BASE_IMAGE) $(IMAGE_REPO) $(IMAGE_REPO_PREFIX) $(IMAGE_TAG)
 	docker push $(PAUSE_IMAGE)
-	docker push $(IMAGE_REPO)/$(IMAGE_REPO_PREFIX)/$(PAUSE_IMAGE_NAME):3.2
+	docker push $(PAUSE_IMAGE_3_2)
 
 .PHONY: checksums
 checksums:
@@ -109,7 +101,7 @@ checksums:
 build: binaries pause tarballs clean-repo local-images checksums
 
 .PHONY: release
-release: binaries pause tarballs clean-repo local-images images checksums
+release: binaries pause tarballs clean-repo images checksums
 	$(BASE_DIRECTORY)/release/copy_artifacts.sh $(COMPONENT) $(RELEASE_BRANCH) $(RELEASE)
 	$(BASE_DIRECTORY)/release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET) $(REPO)
 	echo "Done $(COMPONENT)"
