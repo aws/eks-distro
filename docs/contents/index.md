@@ -120,5 +120,6 @@ if you are interested in the AL2 container runtime kernel version.
 
 * [EKS-D v1-19-eks-2 Version Dependencies](releases/1-19/2/index.md)
 * [EKS-D v1-19-eks-1 Version Dependencies](releases/1-19/1/index.md)
+* [EKS-D v1-18-eks-3 Version Dependencies](releases/1-18/3/index.md)
 * [EKS-D v1-18-eks-2 Version Dependencies](releases/1-18/2/index.md)
 * [EKS-D v1-18-eks-1 Version Dependencies](releases/1-18/1/index.md)
