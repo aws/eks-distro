@@ -141,8 +141,12 @@ function build::images::pause_tar(){
     local -r image_tag="$3"
     local -r context_dir="$4"
     local -r bin_dir="$5"
+    local -r skip_arm="$6"
 
     for platform in "${KUBE_LINUX_IMAGE_PLATFORMS[@]}"; do
+        if [ "$platform" == "arm64" ] && [ $skip_arm == true ]; then
+            continue
+        fi
         buildctl \
             build \
             --frontend dockerfile.v0 \
