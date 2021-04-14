@@ -42,7 +42,6 @@ if [ "$PUSH" != "true" ]; then
     echo "Placing images under in $BIN_DIR"
     build::images::release_image_tar $RELEASE_BRANCH $GO_RUNNER_IMAGE $KUBE_PROXY_BASE_IMAGE $REPOSITORY_BASE $REPO_PREFIX $IMAGE_TAG $BIN_DIR
     build::images::pause_tar $GO_RUNNER_IMAGE $IMAGE_TAG $PAUSE_IMAGE ${OUTPUT_DIR}/${RELEASE_BRANCH}/pause $BIN_DIR $SKIP_ARM
-
 else
     build::images::push $RELEASE_BRANCH $GO_RUNNER_IMAGE $KUBE_PROXY_BASE_IMAGE $REPOSITORY_BASE $REPO_PREFIX $IMAGE_TAG $BIN_DIR
     build::images::pause_push $GO_RUNNER_IMAGE $IMAGE_TAG $PAUSE_IMAGE ${OUTPUT_DIR}/${RELEASE_BRANCH}/pause 
