@@ -1,765 +1,14 @@
-From d760b17d02164237bd7fde77027518f47fc62be2 Mon Sep 17 00:00:00 2001
-From: David Eads <deads@redhat.com>
-Date: Fri, 29 Jan 2021 13:28:44 -0500
-Subject: update fuzzer to create random, but valid nodes
-
-Signed-off-by: CJ Cullen <cjcullen@google.com>
----
- pkg/apis/core/fuzzer/fuzzer.go                | 52 ++++++++++++++++++-
- .../pkg/apis/meta/fuzzer/fuzzer.go            | 24 ++++++++-
- 2 files changed, 73 insertions(+), 3 deletions(-)
-
-diff --git a/pkg/apis/core/fuzzer/fuzzer.go b/pkg/apis/core/fuzzer/fuzzer.go
-index 2d33f44d88f..f025eda3698 100644
---- a/pkg/apis/core/fuzzer/fuzzer.go
-+++ b/pkg/apis/core/fuzzer/fuzzer.go
-@@ -21,10 +21,12 @@ import (
- 	"strconv"
- 	"time"
- 
--	fuzz "github.com/google/gofuzz"
-+	"k8s.io/apimachinery/pkg/util/uuid"
- 
-+	fuzz "github.com/google/gofuzz"
- 	corev1 "k8s.io/api/core/v1"
- 	"k8s.io/apimachinery/pkg/api/resource"
-+	metafuzzer "k8s.io/apimachinery/pkg/apis/meta/fuzzer"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	"k8s.io/apimachinery/pkg/runtime"
- 	"k8s.io/apimachinery/pkg/runtime/schema"
-@@ -301,6 +303,40 @@ var Funcs = func(codecs runtimeserializer.CodecFactory) []interface{} {
- 			ct.TerminationMessagePath = "/" + ct.TerminationMessagePath // Must be non-empty
- 			ct.TerminationMessagePolicy = "File"
- 		},
-+		func(p *core.Taint, c fuzz.Continue) {
-+			c.FuzzNoCustom(p) // fuzz self without calling this function again
-+			if p == nil {
-+				return
-+			}
-+
-+			p.Key = metafuzzer.RandomDNSLabel(c)
-+			switch c.Rand.Int31n(3) {
-+			case 0:
-+				p.Effect = core.TaintEffectNoSchedule
-+			case 1:
-+				p.Effect = core.TaintEffectNoExecute
-+			case 2:
-+				p.Effect = core.TaintEffectPreferNoSchedule
-+			}
-+			p.Value = metafuzzer.RandomDNSLabel(c)
-+		},
-+		func(p *core.ConfigMapNodeConfigSource, c fuzz.Continue) {
-+			c.FuzzNoCustom(p) // fuzz self without calling this function again
-+			if p == nil {
-+				return
-+			}
-+
-+			p.UID = ""
-+			p.ResourceVersion = ""
-+			p.Name = metafuzzer.RandomDNSLabel(c)
-+			p.Namespace = metafuzzer.RandomDNSLabel(c)
-+			p.KubeletConfigKey = metafuzzer.RandomDNSLabel(c)
-+		},
-+		func(ep *core.EphemeralContainer, c fuzz.Continue) {
-+			c.FuzzNoCustom(ep)                                                                   // fuzz self without calling this function again
-+			ep.EphemeralContainerCommon.TerminationMessagePath = "/" + ep.TerminationMessagePath // Must be non-empty
-+			ep.EphemeralContainerCommon.TerminationMessagePolicy = "File"
-+		},
- 		func(p *core.Probe, c fuzz.Continue) {
- 			c.FuzzNoCustom(p)
- 			// These fields have default values.
-@@ -506,7 +542,21 @@ var Funcs = func(codecs runtimeserializer.CodecFactory) []interface{} {
- 		},
- 		func(s *core.NodeStatus, c fuzz.Continue) {
- 			c.FuzzNoCustom(s)
-+
- 			s.Allocatable = s.Capacity
-+
-+			if s.Config != nil && s.Config.LastKnownGood != nil && s.Config.LastKnownGood.ConfigMap != nil {
-+				s.Config.LastKnownGood.ConfigMap.UID = uuid.NewUUID()
-+				s.Config.LastKnownGood.ConfigMap.ResourceVersion = c.RandString()
-+			}
-+			if s.Config != nil && s.Config.Assigned != nil && s.Config.Assigned.ConfigMap != nil {
-+				s.Config.Assigned.ConfigMap.UID = uuid.NewUUID()
-+				s.Config.Assigned.ConfigMap.ResourceVersion = c.RandString()
-+			}
-+			if s.Config != nil && s.Config.Active != nil && s.Config.Active.ConfigMap != nil {
-+				s.Config.Active.ConfigMap.UID = uuid.NewUUID()
-+				s.Config.Active.ConfigMap.ResourceVersion = c.RandString()
-+			}
- 		},
- 		func(e *core.Event, c fuzz.Continue) {
- 			c.FuzzNoCustom(e)
-diff --git a/staging/src/k8s.io/apimachinery/pkg/apis/meta/fuzzer/fuzzer.go b/staging/src/k8s.io/apimachinery/pkg/apis/meta/fuzzer/fuzzer.go
-index bb5e8a2712d..5b2d1453526 100644
---- a/staging/src/k8s.io/apimachinery/pkg/apis/meta/fuzzer/fuzzer.go
-+++ b/staging/src/k8s.io/apimachinery/pkg/apis/meta/fuzzer/fuzzer.go
-@@ -137,7 +137,7 @@ func randomLabelPart(c fuzz.Continue, canBeEmpty bool) string {
- 	return string(runes)
- }
- 
--func randomDNSLabel(c fuzz.Continue) string {
-+func RandomDNSLabel(c fuzz.Continue) string {
- 	validStartEnd := []charRange{{'0', '9'}, {'a', 'z'}}
- 	validMiddle := []charRange{{'0', '9'}, {'a', 'z'}, {'-', '-'}}
- 
-@@ -163,7 +163,7 @@ func randomLabelKey(c fuzz.Continue) string {
- 		prefixPartsLen := c.Rand.Intn(2) + 1
- 		prefixParts := make([]string, prefixPartsLen)
- 		for i := range prefixParts {
--			prefixParts[i] = randomDNSLabel(c)
-+			prefixParts[i] = RandomDNSLabel(c)
- 		}
- 		prefixPart = strings.Join(prefixParts, ".") + "/"
- 	}
-@@ -203,22 +203,42 @@ func v1FuzzerFuncs(codecs runtimeserializer.CodecFactory) []interface{} {
- 			} else {
- 				delete(j.Labels, "")
- 			}
-+			for k := range j.Labels {
-+				j.Labels[RandomDNSLabel(c)] = randomLabelPart(c, true)
-+				delete(j.Labels, k)
-+			}
-+
- 			if len(j.Annotations) == 0 {
- 				j.Annotations = nil
- 			} else {
- 				delete(j.Annotations, "")
- 			}
-+			for k := range j.Annotations {
-+				j.Annotations[RandomDNSLabel(c)] = randomLabelPart(c, true)
-+				delete(j.Annotations, k)
-+			}
-+
- 			if len(j.OwnerReferences) == 0 {
- 				j.OwnerReferences = nil
- 			}
- 			if len(j.Finalizers) == 0 {
- 				j.Finalizers = nil
- 			}
-+			for i := 0; i < len(j.Finalizers); i++ {
-+				j.Finalizers[i] = RandomDNSLabel(c) + "/" + RandomDNSLabel(c)
-+			}
- 		},
- 		func(j *metav1.ResourceVersionMatch, c fuzz.Continue) {
- 			matches := []metav1.ResourceVersionMatch{"", metav1.ResourceVersionMatchExact, metav1.ResourceVersionMatchNotOlderThan}
- 			*j = matches[c.Rand.Intn(len(matches))]
- 		},
-+		func(j *metav1.OwnerReference, c fuzz.Continue) {
-+			c.FuzzNoCustom(j)
-+
-+			if len(j.APIVersion) == 0 {
-+				j.APIVersion = RandomDNSLabel(c)
-+			}
-+		},
- 		func(j *metav1.ListMeta, c fuzz.Continue) {
- 			j.ResourceVersion = strconv.FormatUint(c.RandUint64(), 10)
- 			j.SelfLink = c.RandString()
--- 
-2.30.1.766.gb4fecdf3b7-goog
-
-
-From 97ce8e61a83122a7a3b44c5dbacdfd9df2ff8e26 Mon Sep 17 00:00:00 2001
-From: David Eads <deads@redhat.com>
-Date: Fri, 29 Jan 2021 13:29:04 -0500
-Subject: add test for validation mutation of nodes
-
-Signed-off-by: CJ Cullen <cjcullen@google.com>
----
- pkg/apis/core/fuzzer/BUILD                    |   2 +
- pkg/apis/core/validation/BUILD                |   8 +
- pkg/apis/core/validation/mutation_test.go     | 163 ++++++++++++++++++
- .../apimachinery/pkg/api/apitesting/BUILD     |   1 +
- .../api/apitesting/validationtesting/BUILD    |  30 ++++
- .../validationtesting/validation.go           | 153 ++++++++++++++++
- .../apitesting/validationtesting/wrapper.go   | 132 ++++++++++++++
- 7 files changed, 489 insertions(+)
- create mode 100644 pkg/apis/core/validation/mutation_test.go
- create mode 100644 staging/src/k8s.io/apimachinery/pkg/api/apitesting/validationtesting/BUILD
- create mode 100644 staging/src/k8s.io/apimachinery/pkg/api/apitesting/validationtesting/validation.go
- create mode 100644 staging/src/k8s.io/apimachinery/pkg/api/apitesting/validationtesting/wrapper.go
-
-diff --git a/pkg/apis/core/fuzzer/BUILD b/pkg/apis/core/fuzzer/BUILD
-index c30003bbdd7..963c2fbe312 100644
---- a/pkg/apis/core/fuzzer/BUILD
-+++ b/pkg/apis/core/fuzzer/BUILD
-@@ -13,11 +13,13 @@ go_library(
-         "//pkg/apis/core:go_default_library",
-         "//staging/src/k8s.io/api/core/v1:go_default_library",
-         "//staging/src/k8s.io/apimachinery/pkg/api/resource:go_default_library",
-+        "//staging/src/k8s.io/apimachinery/pkg/apis/meta/fuzzer:go_default_library",
-         "//staging/src/k8s.io/apimachinery/pkg/apis/meta/v1:go_default_library",
-         "//staging/src/k8s.io/apimachinery/pkg/runtime:go_default_library",
-         "//staging/src/k8s.io/apimachinery/pkg/runtime/schema:go_default_library",
-         "//staging/src/k8s.io/apimachinery/pkg/runtime/serializer:go_default_library",
-         "//staging/src/k8s.io/apimachinery/pkg/util/intstr:go_default_library",
-+        "//staging/src/k8s.io/apimachinery/pkg/util/uuid:go_default_library",
-         "//vendor/github.com/google/gofuzz:go_default_library",
-     ],
- )
-diff --git a/pkg/apis/core/validation/BUILD b/pkg/apis/core/validation/BUILD
-index 8fb48c2400b..a07fe6612c5 100644
---- a/pkg/apis/core/validation/BUILD
-+++ b/pkg/apis/core/validation/BUILD
-@@ -51,20 +51,28 @@ go_test(
-     srcs = [
-         "conditional_validation_test.go",
-         "events_test.go",
-+        "mutation_test.go",
-         "validation_test.go",
-     ],
-     embed = [":go_default_library"],
-     deps = [
-+        "//pkg/api/legacyscheme:go_default_library",
-         "//pkg/apis/core:go_default_library",
-+        "//pkg/apis/core/fuzzer:go_default_library",
-         "//pkg/capabilities:go_default_library",
-         "//pkg/features:go_default_library",
-         "//staging/src/k8s.io/api/core/v1:go_default_library",
-         "//staging/src/k8s.io/api/events/v1:go_default_library",
-         "//staging/src/k8s.io/api/events/v1beta1:go_default_library",
-+        "//staging/src/k8s.io/apimachinery/pkg/api/apitesting/fuzzer:go_default_library",
-+        "//staging/src/k8s.io/apimachinery/pkg/api/apitesting/validationtesting:go_default_library",
-         "//staging/src/k8s.io/apimachinery/pkg/api/resource:go_default_library",
-+        "//staging/src/k8s.io/apimachinery/pkg/apis/meta/fuzzer:go_default_library",
-         "//staging/src/k8s.io/apimachinery/pkg/apis/meta/v1:go_default_library",
-+        "//staging/src/k8s.io/apimachinery/pkg/runtime:go_default_library",
-         "//staging/src/k8s.io/apimachinery/pkg/util/diff:go_default_library",
-         "//staging/src/k8s.io/apimachinery/pkg/util/intstr:go_default_library",
-+        "//staging/src/k8s.io/apimachinery/pkg/util/runtime:go_default_library",
-         "//staging/src/k8s.io/apimachinery/pkg/util/validation:go_default_library",
-         "//staging/src/k8s.io/apimachinery/pkg/util/validation/field:go_default_library",
-         "//staging/src/k8s.io/apiserver/pkg/util/feature:go_default_library",
-diff --git a/pkg/apis/core/validation/mutation_test.go b/pkg/apis/core/validation/mutation_test.go
-new file mode 100644
-index 00000000000..2a3dcc66cce
---- /dev/null
-+++ b/pkg/apis/core/validation/mutation_test.go
-@@ -0,0 +1,163 @@
-+/*
-+Copyright 2021 The Kubernetes Authors.
-+
-+Licensed under the Apache License, Version 2.0 (the "License");
-+you may not use this file except in compliance with the License.
-+You may obtain a copy of the License at
-+
-+    http://www.apache.org/licenses/LICENSE-2.0
-+
-+Unless required by applicable law or agreed to in writing, software
-+distributed under the License is distributed on an "AS IS" BASIS,
-+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+See the License for the specific language governing permissions and
-+limitations under the License.
-+*/
-+
-+package validation
-+
-+import (
-+	"math/rand"
-+	"reflect"
-+	"testing"
-+	"time"
-+
-+	"k8s.io/apimachinery/pkg/api/apitesting/fuzzer"
-+	"k8s.io/apimachinery/pkg/api/apitesting/validationtesting"
-+	metafuzzer "k8s.io/apimachinery/pkg/apis/meta/fuzzer"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/runtime"
-+	"k8s.io/apimachinery/pkg/util/diff"
-+	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
-+	"k8s.io/kubernetes/pkg/api/legacyscheme"
-+	coreapi "k8s.io/kubernetes/pkg/apis/core"
-+	corefuzzer "k8s.io/kubernetes/pkg/apis/core/fuzzer"
-+)
-+
-+func getScheme() *runtime.Scheme {
-+	scheme := &runtime.Scheme{}
-+	utilruntime.Must(coreapi.AddToScheme(scheme))
-+	return scheme
-+}
-+
-+func getValidators() *validationtesting.RuntimeObjectsValidator {
-+	validator := validationtesting.NewRuntimeObjectsValidator()
-+
-+	validator.MustRegister(&coreapi.Node{}, false, ValidateNode, ValidateNodeUpdate)
-+	return validator
-+}
-+
-+type validateUpdateCheck struct {
-+	obj    runtime.Object
-+	oldObj runtime.Object
-+}
-+
-+func newClusterScopedObjectMeta(name string) metav1.ObjectMeta {
-+	seed := time.Now().UnixNano()
-+	fuzzer := fuzzer.FuzzerFor(metafuzzer.Funcs, rand.NewSource(seed), legacyscheme.Codecs)
-+
-+	objMeta := metav1.ObjectMeta{}
-+	fuzzer.Fuzz(&objMeta)
-+	objMeta.Name = name
-+	objMeta.Namespace = ""
-+	// we don't validate these in this method
-+	objMeta.ManagedFields = nil
-+
-+	return objMeta
-+}
-+
-+func newClusterScopedObjectMetaUpdate(oldObjMeta metav1.ObjectMeta) metav1.ObjectMeta {
-+	oldObjMetaCopy := oldObjMeta.DeepCopy()
-+	seed := time.Now().UnixNano()
-+	fuzzer := fuzzer.FuzzerFor(metafuzzer.Funcs, rand.NewSource(seed), legacyscheme.Codecs)
-+
-+	objMeta := metav1.ObjectMeta{}
-+	fuzzer.Fuzz(&objMeta)
-+
-+	// many fields are immutable
-+	objMeta.Name = oldObjMetaCopy.Name
-+	objMeta.Namespace = oldObjMetaCopy.Namespace
-+	objMeta.UID = oldObjMetaCopy.UID
-+	objMeta.CreationTimestamp = oldObjMetaCopy.CreationTimestamp
-+	objMeta.DeletionTimestamp = oldObjMetaCopy.DeletionTimestamp
-+	objMeta.DeletionGracePeriodSeconds = oldObjMetaCopy.DeletionGracePeriodSeconds
-+	objMeta.ClusterName = oldObjMetaCopy.ClusterName
-+	objMeta.Generation = oldObjMetaCopy.Generation
-+	objMeta.ManagedFields = oldObjMetaCopy.ManagedFields
-+
-+	return objMeta
-+}
-+
-+func newNode(name string) *coreapi.Node {
-+	ret := &coreapi.Node{}
-+	seed := time.Now().UnixNano()
-+	fuzzer := fuzzer.FuzzerFor(
-+		fuzzer.MergeFuzzerFuncs(metafuzzer.Funcs, corefuzzer.Funcs),
-+		rand.NewSource(seed), legacyscheme.Codecs)
-+	fuzzer.Fuzz(ret)
-+
-+	ret.ObjectMeta = newClusterScopedObjectMeta(name)
-+
-+	return ret
-+}
-+
-+func newNodeUpdate(node *coreapi.Node) *coreapi.Node {
-+	ret := &coreapi.Node{}
-+	seed := time.Now().UnixNano()
-+	fuzzer := fuzzer.FuzzerFor(
-+		fuzzer.MergeFuzzerFuncs(metafuzzer.Funcs, corefuzzer.Funcs),
-+		rand.NewSource(seed), legacyscheme.Codecs)
-+	fuzzer.Fuzz(ret)
-+
-+	nodeCopy := node.DeepCopy()
-+	ret.ObjectMeta = newClusterScopedObjectMetaUpdate(nodeCopy.ObjectMeta)
-+	ret.Spec.ProviderID = nodeCopy.Spec.ProviderID
-+	ret.Spec.PodCIDRs = nodeCopy.Spec.PodCIDRs
-+	ret.Spec.ConfigSource = nodeCopy.Spec.ConfigSource
-+	ret.Spec.DoNotUseExternalID = nodeCopy.Spec.DoNotUseExternalID
-+
-+	return ret
-+}
-+
-+func newNodeValidationUpdateCheck() validateUpdateCheck {
-+	old := newNode("the-node")
-+	return validateUpdateCheck{
-+		obj:    newNodeUpdate(old),
-+		oldObj: old,
-+	}
-+}
-+
-+// this test checks to see if validateUpdate mutates its arguments
-+func TestMutationValidateUpdate(t *testing.T) {
-+	validators := getValidators()
-+
-+	// only test node now, but this is a proof of concept for overall enforcement
-+	mutationObjects := []validateUpdateCheck{
-+		newNodeValidationUpdateCheck(),
-+	}
-+
-+	for _, tt := range mutationObjects {
-+		typeName := reflect.TypeOf(tt.obj)
-+		for i := 0; i < 20; i++ {
-+			t.Run(typeName.Name(), func(t *testing.T) {
-+				validator, exists := validators.GetInfo(tt.obj)
-+				if !exists {
-+					t.Fatal("missing validation func")
-+				}
-+
-+				originalObj := tt.obj.DeepCopyObject()
-+				originalOldObj := tt.oldObj.DeepCopyObject()
-+				errors := validator.Validator.ValidateUpdate(tt.obj, tt.oldObj)
-+				if len(errors) > 0 {
-+					t.Fatal(errors)
-+				}
-+				if !reflect.DeepEqual(tt.oldObj, originalOldObj) {
-+					t.Errorf("mutation of oldObject:\n%v", diff.ObjectGoPrintDiff(originalOldObj, tt.oldObj))
-+				}
-+				if !reflect.DeepEqual(tt.obj, originalObj) {
-+					t.Errorf("mutation of oldObject:\n%v", diff.ObjectGoPrintDiff(originalObj, tt.obj))
-+				}
-+			})
-+		}
-+	}
-+}
-diff --git a/staging/src/k8s.io/apimachinery/pkg/api/apitesting/BUILD b/staging/src/k8s.io/apimachinery/pkg/api/apitesting/BUILD
-index 6144d9be6e4..8abac47d9d1 100644
---- a/staging/src/k8s.io/apimachinery/pkg/api/apitesting/BUILD
-+++ b/staging/src/k8s.io/apimachinery/pkg/api/apitesting/BUILD
-@@ -32,6 +32,7 @@ filegroup(
-         "//staging/src/k8s.io/apimachinery/pkg/api/apitesting/fuzzer:all-srcs",
-         "//staging/src/k8s.io/apimachinery/pkg/api/apitesting/naming:all-srcs",
-         "//staging/src/k8s.io/apimachinery/pkg/api/apitesting/roundtrip:all-srcs",
-+        "//staging/src/k8s.io/apimachinery/pkg/api/apitesting/validationtesting:all-srcs",
-     ],
-     tags = ["automanaged"],
- )
-diff --git a/staging/src/k8s.io/apimachinery/pkg/api/apitesting/validationtesting/BUILD b/staging/src/k8s.io/apimachinery/pkg/api/apitesting/validationtesting/BUILD
-new file mode 100644
-index 00000000000..0570f81a3f6
---- /dev/null
-+++ b/staging/src/k8s.io/apimachinery/pkg/api/apitesting/validationtesting/BUILD
-@@ -0,0 +1,30 @@
-+load("@io_bazel_rules_go//go:def.bzl", "go_library")
-+
-+go_library(
-+    name = "go_default_library",
-+    srcs = [
-+        "validation.go",
-+        "wrapper.go",
-+    ],
-+    importmap = "k8s.io/kubernetes/vendor/k8s.io/apimachinery/pkg/api/apitesting/validationtesting",
-+    importpath = "k8s.io/apimachinery/pkg/api/apitesting/validationtesting",
-+    visibility = ["//visibility:public"],
-+    deps = [
-+        "//staging/src/k8s.io/apimachinery/pkg/runtime:go_default_library",
-+        "//staging/src/k8s.io/apimachinery/pkg/util/validation/field:go_default_library",
-+    ],
-+)
-+
-+filegroup(
-+    name = "package-srcs",
-+    srcs = glob(["**"]),
-+    tags = ["automanaged"],
-+    visibility = ["//visibility:private"],
-+)
-+
-+filegroup(
-+    name = "all-srcs",
-+    srcs = [":package-srcs"],
-+    tags = ["automanaged"],
-+    visibility = ["//visibility:public"],
-+)
-diff --git a/staging/src/k8s.io/apimachinery/pkg/api/apitesting/validationtesting/validation.go b/staging/src/k8s.io/apimachinery/pkg/api/apitesting/validationtesting/validation.go
-new file mode 100644
-index 00000000000..6f751b04cf3
---- /dev/null
-+++ b/staging/src/k8s.io/apimachinery/pkg/api/apitesting/validationtesting/validation.go
-@@ -0,0 +1,153 @@
-+/*
-+Copyright 2021 The Kubernetes Authors.
-+
-+Licensed under the Apache License, Version 2.0 (the "License");
-+you may not use this file except in compliance with the License.
-+You may obtain a copy of the License at
-+
-+    http://www.apache.org/licenses/LICENSE-2.0
-+
-+Unless required by applicable law or agreed to in writing, software
-+distributed under the License is distributed on an "AS IS" BASIS,
-+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+See the License for the specific language governing permissions and
-+limitations under the License.
-+*/
-+
-+package validationtesting
-+
-+import (
-+	"fmt"
-+	"reflect"
-+
-+	"k8s.io/apimachinery/pkg/runtime"
-+	"k8s.io/apimachinery/pkg/util/validation/field"
-+)
-+
-+type RuntimeObjectValidator interface {
-+	Validate(obj runtime.Object) field.ErrorList
-+	ValidateUpdate(obj, old runtime.Object) field.ErrorList
-+}
-+
-+type RuntimeObjectsValidator struct {
-+	typeToValidator map[reflect.Type]RuntimeObjectValidatorInfo
-+}
-+
-+func NewRuntimeObjectsValidator() *RuntimeObjectsValidator {
-+	return &RuntimeObjectsValidator{map[reflect.Type]RuntimeObjectValidatorInfo{}}
-+}
-+
-+type RuntimeObjectValidatorInfo struct {
-+	Validator     RuntimeObjectValidator
-+	IsNamespaced  bool
-+	HasObjectMeta bool
-+	UpdateAllowed bool
-+}
-+
-+func (v *RuntimeObjectsValidator) GetInfoForType(apiType reflect.Type) (RuntimeObjectValidatorInfo, bool) {
-+	ptrType := reflect.PtrTo(apiType)
-+
-+	ret, ok := v.typeToValidator[ptrType]
-+	return ret, ok
-+}
-+
-+func (v *RuntimeObjectsValidator) GetInfo(obj runtime.Object) (RuntimeObjectValidatorInfo, bool) {
-+	ret, ok := v.typeToValidator[reflect.TypeOf(obj)]
-+	return ret, ok
-+}
-+
-+func (v *RuntimeObjectsValidator) MustRegister(obj runtime.Object, namespaceScoped bool, validateFunction interface{}, validateUpdateFunction interface{}) {
-+	if err := v.Register(obj, namespaceScoped, validateFunction, validateUpdateFunction); err != nil {
-+		panic(err)
-+	}
-+}
-+
-+func (v *RuntimeObjectsValidator) Register(obj runtime.Object, namespaceScoped bool, validateFunction interface{}, validateUpdateFunction interface{}) error {
-+	objType := reflect.TypeOf(obj)
-+	if oldValidator, exists := v.typeToValidator[objType]; exists {
-+		panic(fmt.Sprintf("%v is already registered with %v", objType, oldValidator))
-+	}
-+
-+	validator, err := NewValidationWrapper(validateFunction, validateUpdateFunction)
-+	if err != nil {
-+		return err
-+	}
-+
-+	updateAllowed := validateUpdateFunction != nil
-+
-+	v.typeToValidator[objType] = RuntimeObjectValidatorInfo{validator, namespaceScoped, HasObjectMeta(obj), updateAllowed}
-+
-+	return nil
-+}
-+
-+func (v *RuntimeObjectsValidator) Validate(obj runtime.Object) field.ErrorList {
-+	if obj == nil {
-+		return field.ErrorList{}
-+	}
-+
-+	allErrs := field.ErrorList{}
-+
-+	specificValidationInfo, err := v.getSpecificValidationInfo(obj)
-+	if err != nil {
-+		allErrs = append(allErrs, field.InternalError(nil, err))
-+		return allErrs
-+	}
-+
-+	allErrs = append(allErrs, specificValidationInfo.Validator.Validate(obj)...)
-+	return allErrs
-+}
-+
-+func (v *RuntimeObjectsValidator) ValidateUpdate(obj, old runtime.Object) field.ErrorList {
-+	if obj == nil && old == nil {
-+		return field.ErrorList{}
-+	}
-+	if newType, oldType := reflect.TypeOf(obj), reflect.TypeOf(old); newType != oldType {
-+		return field.ErrorList{field.Invalid(field.NewPath("kind"), newType.Kind(), fmt.Sprintf("expected type %s, for field %s, got %s", oldType.Kind().String(), "kind", newType.Kind().String()))}
-+	}
-+
-+	allErrs := field.ErrorList{}
-+
-+	specificValidationInfo, err := v.getSpecificValidationInfo(obj)
-+	if err != nil {
-+		if fieldErr, ok := err.(*field.Error); ok {
-+			allErrs = append(allErrs, fieldErr)
-+		} else {
-+			allErrs = append(allErrs, field.InternalError(nil, err))
-+		}
-+		return allErrs
-+	}
-+
-+	allErrs = append(allErrs, specificValidationInfo.Validator.ValidateUpdate(obj, old)...)
-+
-+	// no errors so far, make sure that the new object is actually valid against the original validator
-+	if len(allErrs) == 0 {
-+		allErrs = append(allErrs, specificValidationInfo.Validator.Validate(obj)...)
-+	}
-+
-+	return allErrs
-+}
-+
-+func (v *RuntimeObjectsValidator) getSpecificValidationInfo(obj runtime.Object) (RuntimeObjectValidatorInfo, error) {
-+	objType := reflect.TypeOf(obj)
-+	specificValidationInfo, exists := v.typeToValidator[objType]
-+	if !exists {
-+		return RuntimeObjectValidatorInfo{}, fmt.Errorf("no validator registered for %v", objType)
-+	}
-+
-+	return specificValidationInfo, nil
-+}
-+
-+func (v *RuntimeObjectsValidator) GetRequiresNamespace(obj runtime.Object) (bool, error) {
-+	objType := reflect.TypeOf(obj)
-+	specificValidationInfo, exists := v.typeToValidator[objType]
-+	if !exists {
-+		return false, fmt.Errorf("no validator registered for %v", objType)
-+	}
-+
-+	return specificValidationInfo.IsNamespaced, nil
-+}
-+
-+func HasObjectMeta(obj runtime.Object) bool {
-+	objValue := reflect.ValueOf(obj).Elem()
-+	return objValue.FieldByName("ObjectMeta").IsValid()
-+}
-diff --git a/staging/src/k8s.io/apimachinery/pkg/api/apitesting/validationtesting/wrapper.go b/staging/src/k8s.io/apimachinery/pkg/api/apitesting/validationtesting/wrapper.go
-new file mode 100644
-index 00000000000..e7b1d48b7e6
---- /dev/null
-+++ b/staging/src/k8s.io/apimachinery/pkg/api/apitesting/validationtesting/wrapper.go
-@@ -0,0 +1,132 @@
-+/*
-+Copyright 2021 The Kubernetes Authors.
-+
-+Licensed under the Apache License, Version 2.0 (the "License");
-+you may not use this file except in compliance with the License.
-+You may obtain a copy of the License at
-+
-+    http://www.apache.org/licenses/LICENSE-2.0
-+
-+Unless required by applicable law or agreed to in writing, software
-+distributed under the License is distributed on an "AS IS" BASIS,
-+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+See the License for the specific language governing permissions and
-+limitations under the License.
-+*/
-+
-+package validationtesting
-+
-+import (
-+	"fmt"
-+	"reflect"
-+
-+	"k8s.io/apimachinery/pkg/runtime"
-+	"k8s.io/apimachinery/pkg/util/validation/field"
-+)
-+
-+type WrappingValidator struct {
-+	validate       *reflect.Value
-+	validateUpdate *reflect.Value
-+}
-+
-+func (v *WrappingValidator) Validate(obj runtime.Object) field.ErrorList {
-+	return callValidate(reflect.ValueOf(obj), *v.validate)
-+}
-+
-+func (v *WrappingValidator) ValidateUpdate(obj, old runtime.Object) field.ErrorList {
-+	if v.validateUpdate == nil {
-+		// if there is no update validation, fail.
-+		return field.ErrorList{field.Forbidden(field.NewPath("obj"), fmt.Sprintf("%v", obj))}
-+	}
-+
-+	return callValidateUpdate(reflect.ValueOf(obj), reflect.ValueOf(old), *v.validateUpdate)
-+}
-+
-+func NewValidationWrapper(validateFunction interface{}, validateUpdateFunction interface{}) (*WrappingValidator, error) {
-+	validateFunctionValue := reflect.ValueOf(validateFunction)
-+	validateType := validateFunctionValue.Type()
-+	if err := verifyValidateFunctionSignature(validateType); err != nil {
-+		return nil, err
-+	}
-+
-+	var validateUpdateFunctionValue *reflect.Value
-+	if validateUpdateFunction != nil {
-+		functionValue := reflect.ValueOf(validateUpdateFunction)
-+		validateUpdateType := functionValue.Type()
-+		if err := verifyValidateUpdateFunctionSignature(validateUpdateType); err != nil {
-+			return nil, err
-+		}
-+
-+		validateUpdateFunctionValue = &functionValue
-+	}
-+
-+	return &WrappingValidator{&validateFunctionValue, validateUpdateFunctionValue}, nil
-+}
-+
-+func verifyValidateFunctionSignature(ft reflect.Type) error {
-+	if ft.Kind() != reflect.Func {
-+		return fmt.Errorf("expected func, got: %v", ft)
-+	}
-+	if ft.NumIn() != 1 {
-+		return fmt.Errorf("expected one 'in' param, got: %v", ft)
-+	}
-+	if ft.NumOut() != 1 {
-+		return fmt.Errorf("expected one 'out' param, got: %v", ft)
-+	}
-+	if ft.In(0).Kind() != reflect.Ptr {
-+		return fmt.Errorf("expected pointer arg for 'in' param 0, got: %v", ft)
-+	}
-+	errorType := reflect.TypeOf(&field.ErrorList{}).Elem()
-+	if ft.Out(0) != errorType {
-+		return fmt.Errorf("expected field.ErrorList return, got: %v", ft)
-+	}
-+	return nil
-+}
-+
-+func verifyValidateUpdateFunctionSignature(ft reflect.Type) error {
-+	if ft.Kind() != reflect.Func {
-+		return fmt.Errorf("expected func, got: %v", ft)
-+	}
-+	if ft.NumIn() != 2 {
-+		return fmt.Errorf("expected two 'in' params, got: %v", ft)
-+	}
-+	if ft.NumOut() != 1 {
-+		return fmt.Errorf("expected one 'out' param, got: %v", ft)
-+	}
-+	if ft.In(0).Kind() != reflect.Ptr {
-+		return fmt.Errorf("expected pointer arg for 'in' param 0, got: %v", ft)
-+	}
-+	if ft.In(1).Kind() != reflect.Ptr {
-+		return fmt.Errorf("expected pointer arg for 'in' param 1, got: %v", ft)
-+	}
-+	errorType := reflect.TypeOf(&field.ErrorList{}).Elem()
-+	if ft.Out(0) != errorType {
-+		return fmt.Errorf("expected field.ErrorList return, got: %v", ft)
-+	}
-+	return nil
-+}
-+
-+// callCustom calls 'custom' with sv & dv. custom must be a conversion function.
-+func callValidate(obj, validateMethod reflect.Value) field.ErrorList {
-+	args := []reflect.Value{obj}
-+	ret := validateMethod.Call(args)[0].Interface()
-+
-+	// This convolution is necessary because nil interfaces won't convert
-+	// to errors.
-+	if ret == nil {
-+		return nil
-+	}
-+	return ret.(field.ErrorList)
-+}
-+
-+func callValidateUpdate(obj, old, validateMethod reflect.Value) field.ErrorList {
-+	args := []reflect.Value{obj, old}
-+	ret := validateMethod.Call(args)[0].Interface()
-+
-+	// This convolution is necessary because nil interfaces won't convert
-+	// to errors.
-+	if ret == nil {
-+		return nil
-+	}
-+	return ret.(field.ErrorList)
-+}
--- 
-2.30.1.766.gb4fecdf3b7-goog
-
-
-From 7685d43b5c03f7e958f62e069f41455eff283014 Mon Sep 17 00:00:00 2001
+From 1f81a3362921d3fa7ff3136f8d0a2997d2a9f912 Mon Sep 17 00:00:00 2001
 From: David Eads <deads@redhat.com>
 Date: Fri, 29 Jan 2021 13:47:31 -0500
-Subject: tweak validation to avoid mutation
+Subject: [PATCH 1/8] tweak validation to avoid mutation
 
-Signed-off-by: CJ Cullen <cjcullen@google.com>
 ---
  pkg/apis/core/validation/validation.go | 46 +++++++++-----------------
  1 file changed, 15 insertions(+), 31 deletions(-)
 
 diff --git a/pkg/apis/core/validation/validation.go b/pkg/apis/core/validation/validation.go
-index 87e946293df..4abb9d951df 100644
+index 87e946293dfab..4abb9d951df0b 100644
 --- a/pkg/apis/core/validation/validation.go
 +++ b/pkg/apis/core/validation/validation.go
 @@ -29,8 +29,6 @@ import (
@@ -845,24 +94,19 @@ index 87e946293df..4abb9d951df 100644
  	return allErrs
  }
  
--- 
-2.30.1.766.gb4fecdf3b7-goog
 
-
-From 8476212dddc881a817c0a807bcbf9c07fcab1b81 Mon Sep 17 00:00:00 2001
+From 8490f0bfc17db6029051720729e570191bdba734 Mon Sep 17 00:00:00 2001
 From: David Eads <deads@redhat.com>
 Date: Mon, 15 Feb 2021 16:21:42 -0500
-Subject: remove unnecessary mutations in validation
+Subject: [PATCH 2/8] remove unnecessary mutations in validation
 
 These mutations are already done in the strategy
-
-Signed-off-by: CJ Cullen <cjcullen@google.com>
 ---
  pkg/apis/core/validation/validation.go | 22 ++--------------------
  1 file changed, 2 insertions(+), 20 deletions(-)
 
 diff --git a/pkg/apis/core/validation/validation.go b/pkg/apis/core/validation/validation.go
-index 4abb9d951df..6503e66869d 100644
+index 4abb9d951df0b..6503e66869d5f 100644
 --- a/pkg/apis/core/validation/validation.go
 +++ b/pkg/apis/core/validation/validation.go
 @@ -1939,13 +1939,11 @@ func ValidatePersistentVolumeUpdate(newPv, oldPv *core.PersistentVolume) field.E
@@ -973,23 +217,19 @@ index 4abb9d951df..6503e66869d 100644
  	return allErrs
  }
  
--- 
-2.30.1.766.gb4fecdf3b7-goog
 
-
-From d00d12f2dd9ca1dc9b3b5b9a550c8329ee0f6e56 Mon Sep 17 00:00:00 2001
+From aaf49c8d907ab45c063212326914fb2f8ca1bc32 Mon Sep 17 00:00:00 2001
 From: David Eads <deads@redhat.com>
 Date: Mon, 15 Feb 2021 16:55:41 -0500
-Subject: move secret mutation from validation to prepareforupdate
+Subject: [PATCH 3/8] move secret mutation from validation to prepareforupdate
 
-Signed-off-by: CJ Cullen <cjcullen@google.com>
 ---
  pkg/apis/core/validation/validation.go | 4 ----
  pkg/registry/core/secret/strategy.go   | 6 ++++++
  2 files changed, 6 insertions(+), 4 deletions(-)
 
 diff --git a/pkg/apis/core/validation/validation.go b/pkg/apis/core/validation/validation.go
-index 6503e66869d..a1f6c8a999b 100644
+index 6503e66869d5f..a1f6c8a999ba0 100644
 --- a/pkg/apis/core/validation/validation.go
 +++ b/pkg/apis/core/validation/validation.go
 @@ -5203,10 +5203,6 @@ func ValidateSecret(secret *core.Secret) field.ErrorList {
@@ -1004,7 +244,7 @@ index 6503e66869d..a1f6c8a999b 100644
  	if oldSecret.Immutable != nil && *oldSecret.Immutable {
  		if newSecret.Immutable == nil || !*newSecret.Immutable {
 diff --git a/pkg/registry/core/secret/strategy.go b/pkg/registry/core/secret/strategy.go
-index 0d5908d8975..aad00387ac1 100644
+index 0d5908d8975f1..aad00387ac11b 100644
 --- a/pkg/registry/core/secret/strategy.go
 +++ b/pkg/registry/core/secret/strategy.go
 @@ -73,6 +73,12 @@ func (strategy) AllowCreateOnUpdate() bool {
@@ -1020,23 +260,19 @@ index 0d5908d8975..aad00387ac1 100644
  	dropDisabledFields(newSecret, oldSecret)
  }
  
--- 
-2.30.1.766.gb4fecdf3b7-goog
 
-
-From 6e85e1a0d2682e3d3be0129f2c92e29690752a5e Mon Sep 17 00:00:00 2001
+From 39e343682779c4def17e979be01c018fadd48def Mon Sep 17 00:00:00 2001
 From: David Eads <deads@redhat.com>
 Date: Mon, 15 Feb 2021 17:18:11 -0500
-Subject: add markers for inspected validation mutation hits
+Subject: [PATCH 4/8] add markers for inspected validation mutation hits
 
-Signed-off-by: CJ Cullen <cjcullen@google.com>
 ---
  pkg/apis/core/validation/validation.go                 | 10 +++++-----
  .../pkg/apis/apiextensions/validation/validation.go    |  2 +-
  2 files changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/pkg/apis/core/validation/validation.go b/pkg/apis/core/validation/validation.go
-index a1f6c8a999b..c131b7e0263 100644
+index a1f6c8a999ba0..c131b7e0263b8 100644
 --- a/pkg/apis/core/validation/validation.go
 +++ b/pkg/apis/core/validation/validation.go
 @@ -2016,7 +2016,7 @@ func ValidatePersistentVolumeClaimUpdate(newPvc, oldPvc *core.PersistentVolumeCl
@@ -1075,7 +311,7 @@ index a1f6c8a999b..c131b7e0263 100644
  
  func ValidateVolumeMounts(mounts []core.VolumeMount, voldevices map[string]string, volumes map[string]core.VolumeSource, container *core.Container, fldPath *field.Path) field.ErrorList {
 diff --git a/staging/src/k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/validation/validation.go b/staging/src/k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/validation/validation.go
-index e25dd1e7a72..32ae5e99436 100644
+index e25dd1e7a72d7..32ae5e9943651 100644
 --- a/staging/src/k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/validation/validation.go
 +++ b/staging/src/k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/validation/validation.go
 @@ -1409,7 +1409,7 @@ func validateAPIApproval(newCRD, oldCRD *apiextensions.CustomResourceDefinition,
@@ -1087,22 +323,18 @@ index e25dd1e7a72..32ae5e99436 100644
  	}
  	newApprovalState, reason := apihelpers.GetAPIApprovalState(newCRD.Annotations)
  
--- 
-2.30.1.766.gb4fecdf3b7-goog
 
-
-From 023cbc81fec462be6085e3347c8f06912266c38c Mon Sep 17 00:00:00 2001
+From 23b5a0be7d237c239621c154bfbcd76b8f82bf20 Mon Sep 17 00:00:00 2001
 From: David Eads <deads@redhat.com>
 Date: Mon, 15 Feb 2021 17:33:34 -0500
-Subject: remove pod toleration toleration seconds mutation
+Subject: [PATCH 5/8] remove pod toleration toleration seconds mutation
 
-Signed-off-by: CJ Cullen <cjcullen@google.com>
 ---
  pkg/apis/core/validation/validation.go | 16 ++++++++--------
  1 file changed, 8 insertions(+), 8 deletions(-)
 
 diff --git a/pkg/apis/core/validation/validation.go b/pkg/apis/core/validation/validation.go
-index c131b7e0263..bf726d34f00 100644
+index c131b7e0263b8..bf726d34f0063 100644
 --- a/pkg/apis/core/validation/validation.go
 +++ b/pkg/apis/core/validation/validation.go
 @@ -3052,10 +3052,11 @@ func validateOnlyAddedTolerations(newTolerations []core.Toleration, oldToleratio
@@ -1142,22 +374,18 @@ index c131b7e0263..bf726d34f00 100644
  	if !apiequality.Semantic.DeepEqual(mungedPod.Spec, oldPod.Spec) {
  		// This diff isn't perfect, but it's a helluva lot better an "I'm not going to tell you what the difference is".
  		//TODO: Pinpoint the specific field that causes the invalid error after we have strategic merge diff
--- 
-2.30.1.766.gb4fecdf3b7-goog
 
-
-From 9f5106c6c039f6bf7be4deb96253ec6a41e4406e Mon Sep 17 00:00:00 2001
+From 9c7ac00e5ce5f4535a95a54817210a57002c0dd5 Mon Sep 17 00:00:00 2001
 From: David Eads <deads@redhat.com>
 Date: Mon, 15 Feb 2021 17:43:57 -0500
-Subject: full deepcopy on munged pod spec
+Subject: [PATCH 6/8] full deepcopy on munged pod spec
 
-Signed-off-by: CJ Cullen <cjcullen@google.com>
 ---
  pkg/apis/core/validation/validation.go | 30 ++++++++++++++++----------
  1 file changed, 19 insertions(+), 11 deletions(-)
 
 diff --git a/pkg/apis/core/validation/validation.go b/pkg/apis/core/validation/validation.go
-index bf726d34f00..2e6a1b317aa 100644
+index bf726d34f0063..2e6a1b317aae7 100644
 --- a/pkg/apis/core/validation/validation.go
 +++ b/pkg/apis/core/validation/validation.go
 @@ -3959,33 +3959,41 @@ func ValidatePodUpdate(newPod, oldPod *core.Pod, opts PodValidationOptions) fiel
@@ -1213,22 +441,18 @@ index bf726d34f00..2e6a1b317aa 100644
  		allErrs = append(allErrs, field.Forbidden(specPath, fmt.Sprintf("pod updates may not change fields other than `spec.containers[*].image`, `spec.initContainers[*].image`, `spec.activeDeadlineSeconds` or `spec.tolerations` (only additions to existing tolerations)\n%v", specDiff)))
  	}
  
--- 
-2.30.1.766.gb4fecdf3b7-goog
 
-
-From 5997de4079a6122151697bd95196f9c773af202c Mon Sep 17 00:00:00 2001
+From 0fdd03d639e1853b4208f119ada310fddd8ff4d9 Mon Sep 17 00:00:00 2001
 From: David Eads <deads@redhat.com>
 Date: Wed, 17 Feb 2021 10:51:38 -0500
-Subject: deepcopy statefulsets
+Subject: [PATCH 7/8] deepcopy statefulsets
 
-Signed-off-by: CJ Cullen <cjcullen@google.com>
 ---
  pkg/apis/apps/validation/validation.go | 20 +++++++-------------
  1 file changed, 7 insertions(+), 13 deletions(-)
 
 diff --git a/pkg/apis/apps/validation/validation.go b/pkg/apis/apps/validation/validation.go
-index 6ac73cb6b7e..03e0d2024dd 100644
+index 6ac73cb6b7eb8..03e0d2024ddec 100644
 --- a/pkg/apis/apps/validation/validation.go
 +++ b/pkg/apis/apps/validation/validation.go
 @@ -144,21 +144,15 @@ func ValidateStatefulSet(statefulSet *apps.StatefulSet) field.ErrorList {
@@ -1260,81 +484,27 @@ index 6ac73cb6b7e..03e0d2024dd 100644
  
  	allErrs = append(allErrs, apivalidation.ValidateNonnegativeField(int64(statefulSet.Spec.Replicas), field.NewPath("spec", "replicas"))...)
  	return allErrs
--- 
-2.30.1.766.gb4fecdf3b7-goog
 
-
-From 0646f64553ac36fa2ac6b8460ba448da1b1e03da Mon Sep 17 00:00:00 2001
+From d97ab9e3b95d0ce5d2c444f30c54596dc6c7213f Mon Sep 17 00:00:00 2001
 From: David Eads <deads@redhat.com>
-Date: Wed, 17 Feb 2021 11:17:18 -0500
-Subject: add verify script to catch most validation mutations
+Date: Wed, 17 Mar 2021 09:11:09 -0400
+Subject: [PATCH 8/8] bazel
 
-Signed-off-by: CJ Cullen <cjcullen@google.com>
 ---
- hack/make-rules/verify.sh              |  1 +
- hack/verify-non-mutating-validation.sh | 41 ++++++++++++++++++++++++++
- 2 files changed, 42 insertions(+)
- create mode 100755 hack/verify-non-mutating-validation.sh
+ pkg/apis/core/validation/BUILD | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/hack/make-rules/verify.sh b/hack/make-rules/verify.sh
-index b91244cb8fd..a4551ed04f6 100755
---- a/hack/make-rules/verify.sh
-+++ b/hack/make-rules/verify.sh
-@@ -81,6 +81,7 @@ QUICK_PATTERNS+=(
-   "verify-vendor-licenses.sh"
-   "verify-gofmt.sh"
-   "verify-imports.sh"
-+  "verify-non-mutating-validation.sh"
-   "verify-pkg-names.sh"
-   "verify-readonly-packages.sh"
-   "verify-spelling.sh"
-diff --git a/hack/verify-non-mutating-validation.sh b/hack/verify-non-mutating-validation.sh
-new file mode 100755
-index 00000000000..5fe3bed2146
---- /dev/null
-+++ b/hack/verify-non-mutating-validation.sh
-@@ -0,0 +1,41 @@
-+#!/usr/bin/env bash
-+
-+# Copyright 2020 The Kubernetes Authors.
-+#
-+# Licensed under the Apache License, Version 2.0 (the "License");
-+# you may not use this file except in compliance with the License.
-+# You may obtain a copy of the License at
-+#
-+#     http://www.apache.org/licenses/LICENSE-2.0
-+#
-+# Unless required by applicable law or agreed to in writing, software
-+# distributed under the License is distributed on an "AS IS" BASIS,
-+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+# See the License for the specific language governing permissions and
-+# limitations under the License.
-+
-+# This script checks that validation files do not mutate their inputs.
-+# Usage: `hack/verify-non-mutating-validation.sh`.
-+
-+set -o errexit
-+set -o nounset
-+set -o pipefail
-+
-+KUBE_ROOT=$(dirname "${BASH_SOURCE[0]}")/..
-+source "${KUBE_ROOT}/hack/lib/init.sh"
-+
-+mutationOutput=$(find . -name validation.go | xargs egrep -n ' = old' | grep -v '// +k8s:verify-mutation:reason=clone' || true)
-+foundMutation=$(echo "${mutationOutput}" | wc -c)
-+# when there's no match, there is a newline
-+if [ "$foundMutation" -gt "1" ]; then
-+  echo "${mutationOutput}"
-+  exit 1
-+fi
-+
-+mutationOutput=$(! find . -name validation.go | xargs egrep -n 'old.* = ' | grep -v '// +k8s:verify-mutation:reason=clone' || true)
-+foundMutation=$(echo "${mutationOutput}" | wc -l)
-+# when there's no match, there is a newline
-+if [ "$foundMutation" -gt "1" ]; then
-+  echo "${mutationOutput}"
-+  exit 1
-+fi
--- 
-2.30.1.766.gb4fecdf3b7-goog
+diff --git a/pkg/apis/core/validation/BUILD b/pkg/apis/core/validation/BUILD
+index 8fb48c2400b6d..c66874e03e4cd 100644
+--- a/pkg/apis/core/validation/BUILD
++++ b/pkg/apis/core/validation/BUILD
+@@ -41,7 +41,6 @@ go_library(
+         "//staging/src/k8s.io/apimachinery/pkg/util/validation:go_default_library",
+         "//staging/src/k8s.io/apimachinery/pkg/util/validation/field:go_default_library",
+         "//staging/src/k8s.io/apiserver/pkg/util/feature:go_default_library",
+-        "//vendor/k8s.io/klog/v2:go_default_library",
+         "//vendor/k8s.io/utils/net:go_default_library",
+     ],
+ )
 
+ 
