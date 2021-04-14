@@ -29,7 +29,7 @@ source "${MAKE_ROOT}/build/lib/init.sh"
 source "${MAKE_ROOT}/../../../build/lib/common.sh"
 
 BASE_DIRECTORY=$(git rev-parse --show-toplevel)
-RELEASE_FILE="${BASE_DIRECTORY}/release/${RELEASE_BRANCH}/RELEASE"
+RELEASE_FILE="${BASE_DIRECTORY}/release/${RELEASE_BRANCH}/${RELEASE_ENVIRONMENT}/RELEASE"
 PATCH_DIR=${MAKE_ROOT}/${RELEASE_BRANCH}/patches
 export KUBE_GIT_VERSION=$(build::version::kube_git_version $GIT_TAG $RELEASE_FILE $RELEASE_BRANCH)
 if [ -d ${OUTPUT_DIR}/${RELEASE_BRANCH}/bin ]; then
