@@ -1,0 +1,1 @@
+Amazon EKS Distro v1.18-3 is now available. This release contains patches to Kubernetes vulnerabilities. Amazon EKS Distro v1.18-3 builds of Kubernetes are available through ECR Public Gallery (https://gallery.ecr.aws/?searchTerm=EKS+Distro) and GitHub (https://github.com/aws/eks-distro)
