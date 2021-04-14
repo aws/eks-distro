@@ -6,3 +6,5 @@ This changelog highlights the changes for [v1-18-eks-3](https://github.com/aws/e
 
 Patches were added to address security vulnerabilities in Kubernetes.
 
+See [GitHub issue #100096](https://github.com/kubernetes/kubernetes/issues/100096) for more details.
+
