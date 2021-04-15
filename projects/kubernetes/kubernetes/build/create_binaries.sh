@@ -24,6 +24,7 @@ CLONE_URL="$1"
 RELEASE_BRANCH="$2"
 GIT_TAG="$3"
 GOLANG_VERSION="$4"
+RELEASE_ENVIRONMENT=${RELEASE_ENVIRONMENT:-development}
 
 source "${MAKE_ROOT}/build/lib/init.sh"
 source "${MAKE_ROOT}/../../../build/lib/common.sh"

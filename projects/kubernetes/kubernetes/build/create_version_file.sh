@@ -28,6 +28,7 @@ if [ ! -d ${BIN_DIR} ] ;  then
     echo "${BIN_DIR} not present! Run 'make binaries'"
     exit 1
 fi
+RELEASE_ENVIRONMENT=${RELEASE_ENVIRONMENT:-development}
 
 VERSION_FILE="${MAKE_ROOT}/${RELEASE_BRANCH}/KUBE_GIT_VERSION_FILE"
 rm -f $VERSION_FILE
