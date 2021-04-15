@@ -19,8 +19,9 @@ if [ "$AWS_ROLE_ARN" == "" ]; then
 fi
 BASE_DIRECTORY=$(git rev-parse --show-toplevel)
 cd ${BASE_DIRECTORY}
+RELEASE_ENVIRONMENT=${RELEASE_ENVIRONMENT:-development}
 
-export RELEASE=$(cat ${BASE_DIRECTORY}/release/${RELEASE_BRANCH}/RELEASE)
+export RELEASE=$(cat ${BASE_DIRECTORY}/release/${RELEASE_BRANCH}/${RELEASE_ENVIRONMENT}/RELEASE)
 export KUBE_BASE_TAG=$(cat ${BASE_DIRECTORY}/projects/kubernetes/release/GIT_TAG)-eks-${RELEASE_BRANCH}-${RELEASE}
 export PRESUBMIT_KUBE_BASE_TAG=$(cat ${BASE_DIRECTORY}/projects/kubernetes/release/GIT_TAG)-eks-${RELEASE_BRANCH}-${RELEASE}
 export BASE_REPO=${BASE_REPO:-${IMAGE_REPO}}
