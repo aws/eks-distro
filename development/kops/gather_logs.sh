@@ -19,11 +19,11 @@ BASEDIR=$(dirname "$0")
 source ${BASEDIR}/set_environment.sh
 $PREFLIGHT_CHECK_PASSED || exit 1
 
-export LOG_DUMP_SAVE_SERVICES="kops-configuration"
+export LOG_DUMP_SAVE_SERVICES="kops-configuration containerd protokube"
 export KUBERNETES_PROVIDER="none" # the script from upstream doesnt seem to handle aws exactly right
 export LOG_DUMP_SSH_KEY="~/.ssh/id_rsa"
 export LOG_DUMP_SSH_USER="ubuntu"
-export LOG_DUMP_EXTRA_FILES="cloud-init-output.log cloud-init.log containers/*"
+export LOG_DUMP_EXTRA_FILES="cloud-init-output.log cloud-init.log kube-proxy.log containers/*"
 export LOG_DUMP_SYSTEMD_JOURNAL=true
 ARTIFACTS=${ARTIFACTS:-"./_artifacts"}
 

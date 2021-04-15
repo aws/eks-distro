@@ -166,15 +166,13 @@ function build::images::pause_push(){
     local -r image_tag="$3"
     local -r context_dir="$4"
 
-    for platform in "${KUBE_LINUX_IMAGE_PLATFORMS[@]}"; do
-        buildctl \
-            build \
-            --frontend dockerfile.v0 \
-            --opt platform=linux/${platform} \
-            --local dockerfile=./docker/pause/ \
-            --local context=${context_dir} \
-            --opt build-arg:BASE_IMAGE=${go_runner_image} \
-            --opt build-arg:VERSION=${version} \
-            --output type=image,oci-mediatypes=true,\"name=${image_tag}\",push=true
-    done
+    buildctl \
+        build \
+        --frontend dockerfile.v0 \
+        --opt platform=linux/amd64,linux/arm64 \
+        --local dockerfile=./docker/pause/ \
+        --local context=${context_dir} \
+        --opt build-arg:BASE_IMAGE=${go_runner_image} \
+        --opt build-arg:VERSION=${version} \
+        --output type=image,oci-mediatypes=true,\"name=${image_tag}\",push=true
 }
