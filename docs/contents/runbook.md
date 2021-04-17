@@ -34,6 +34,6 @@ All other changes are to this package.
    * README
 1. **Announcement PR**: When everything is good, create announcement PR
    * docs/contents/releases/${RELEASE_BRANCH}/${RELEASE}/release-announcement.txt
-1. **Tag Repository**: Tag the repository for example
+1. **Tag Repository**: Tag the repository. For example:
    * `git tag -a v1-19-eks-1 -m v1-19-eks-1`
-   * `git push origin v1-19-eks-1`
+   * `git push origin v1-19-eks-1` # Replace 'origin' if you call the upstream repo something else
