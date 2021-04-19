@@ -289,7 +289,7 @@ status:
             - arm64
           description: kube-apiserver container image
           image:
-            uri: public.ecr.aws/eks-distro/kubernetes/kube-apiserver:v1.19.6-eks-1-18-2
+            uri: public.ecr.aws/eks-distro/kubernetes/kube-apiserver:v1.19.6-eks-1-19-2
           name: kube-apiserver-image
           os: linux
           type: Image
@@ -298,7 +298,7 @@ status:
             - arm64
           description: kube-controller-manager container image
           image:
-            uri: public.ecr.aws/eks-distro/kubernetes/kube-controller-manager:v1.19.6-eks-1-18-2
+            uri: public.ecr.aws/eks-distro/kubernetes/kube-controller-manager:v1.19.6-eks-1-19-2
           name: kube-controller-manager-image
           os: linux
           type: Image
@@ -307,7 +307,7 @@ status:
             - arm64
           description: kube-scheduler container image
           image:
-            uri: public.ecr.aws/eks-distro/kubernetes/kube-scheduler:v1.19.6-eks-1-18-2
+            uri: public.ecr.aws/eks-distro/kubernetes/kube-scheduler:v1.19.6-eks-1-19-2
           name: kube-scheduler-image
           os: linux
           type: Image
@@ -316,7 +316,7 @@ status:
             - arm64
           description: kube-proxy container image
           image:
-            uri: public.ecr.aws/eks-distro/kubernetes/kube-proxy:v1.19.6-eks-1-18-2
+            uri: public.ecr.aws/eks-distro/kubernetes/kube-proxy:v1.19.6-eks-1-19-2
           name: kube-proxy-image
           os: linux
           type: Image
@@ -325,7 +325,7 @@ status:
             - arm64
           description: pause container image
           image:
-            uri: public.ecr.aws/eks-distro/kubernetes/pause:v1.19.6-eks-1-18-2
+            uri: public.ecr.aws/eks-distro/kubernetes/pause:v1.19.6-eks-1-19-2
           name: pause-image
           os: linux
           type: Image
