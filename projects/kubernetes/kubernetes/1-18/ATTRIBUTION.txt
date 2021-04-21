@@ -905,7 +905,7 @@ https://github.com/golang/go
 ** golang.org/x/crypto; version v0.0.0-20200220183623-bac4c82f6975 --
 https://go.googlesource.com/crypto
 
-** golang.org/x/net; version v0.0.0-20200202094626-16171245cfb2 --
+** golang.org/x/net; version v0.0.0-20191004110552-13f9640d40b9 --
 https://go.googlesource.com/net
 
 ** golang.org/x/oauth2; version v0.0.0-20190604053449-0f29369cfe45 --
@@ -914,7 +914,7 @@ https://go.googlesource.com/oauth2
 ** golang.org/x/sync/singleflight; version v0.0.0-20190911185100-cd5d95a43a6e --
 https://go.googlesource.com/sync
 
-** golang.org/x/sys/unix; version v0.0.0-20191022100944-742c48ecaeb7 --
+** golang.org/x/sys/unix; version v0.0.0-20190813064441-fde4db37ae7a --
 https://go.googlesource.com/sys
 
 ** golang.org/x/text; version v0.3.2 --
@@ -923,7 +923,7 @@ https://go.googlesource.com/text
 ** golang.org/x/time/rate; version v0.0.0-20190308202827-9d24e82272b4 --
 https://go.googlesource.com/time
 
-** golang.org/x/tools/container/intsets; version v0.0.0-20190920225731-5eefd052ad72 --
+** golang.org/x/tools/container/intsets; version v0.0.0-20190821162956-65e3620a7ae7 --
 https://go.googlesource.com/tools
 
 ** k8s.io/utils/inotify; version v0.0.0-20200324210504-a9aa75ae1b89 --

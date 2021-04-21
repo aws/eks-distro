@@ -53,10 +53,10 @@ https://github.com/grpc/grpc-go
 ** gopkg.in/yaml.v2; version v2.4.0 --
 https://gopkg.in/yaml.v2
 
-** k8s.io/api; version v0.21.0-alpha.3 --
+** k8s.io/api; version v0.20.4 --
 https://github.com/kubernetes/api
 
-** k8s.io/apimachinery; version v0.21.0-alpha.3 --
+** k8s.io/apimachinery; version v0.20.4 --
 https://github.com/kubernetes/apimachinery
 
 ** k8s.io/apiserver/pkg/util/feature; version v0.20.4 --
@@ -710,7 +710,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/go; version go1.15.10 --
+** golang.org/go; version go1.15.11 --
 https://github.com/golang/go
 
 ** golang.org/x/crypto; version v0.0.0-20201208171446-5f87f3452ae9 --
