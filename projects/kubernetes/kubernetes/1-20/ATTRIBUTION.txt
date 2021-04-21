@@ -933,7 +933,7 @@ https://github.com/aws/aws-sdk-go
 ** github.com/liggitt/tabwriter; version v0.0.0-20181228230101-89fcab3d43de --
 https://github.com/liggitt/tabwriter
 
-** golang.org/go; version go1.15.10 --
+** golang.org/go; version go1.15.11 --
 https://github.com/golang/go
 
 ** golang.org/x/crypto; version v0.0.0-20201002170205-7f63de1d35b0 --

@@ -626,7 +626,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/go; version go1.15.10 --
+** golang.org/go; version go1.15.11 --
 https://github.com/golang/go
 
 ** golang.org/x/crypto/ssh/terminal; version v0.0.0-20201208171446-5f87f3452ae9 --
