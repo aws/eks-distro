@@ -43,14 +43,4 @@ unset AWS_ROLE_ARN AWS_WEB_IDENTITY_TOKEN_FILE
 DEFAULT_KOPS_ZONE_NAME="prod-build-pdx.kops-ci.model-rocket.aws.dev"
 KOPS_ZONE_NAME=${KOPS_ZONE_NAME:-"${DEFAULT_KOPS_ZONE_NAME}"}
 export KOPS_CLUSTER_NAME=${RELEASE_BRANCH}-$(git rev-parse --short HEAD).${KOPS_ZONE_NAME}
-if  [[ $RELEASE_BRANCH == "1-20" ]]
-then
-  # Hack to make sure we create kops clusters for both kubernetes 1-18 and 1-19
-  sleep 3000
-fi
-if  [[ $RELEASE_BRANCH == "1-19" ]]
-then
-  # Hack to make sure we create kops clusters for both kubernetes 1-18 and 1-19
-  sleep 1800
-fi
 ${BASEDIR}/run_all.sh
