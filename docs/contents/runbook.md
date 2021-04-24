@@ -14,7 +14,7 @@ All other changes are to this package.
    * release/${RELEASE_BRANCH}/production/RELEASE (set to 0)
    * projects/kubernetes/kubernetes/${RELEASE_BRANCH}/GIT_TAG
    * projects/kubernetes/kubernetes/${RELEASE_BRANCH}/KUBE_GIT_VERSION_FILE
-   * Create GIT_TAG files for other components (etcd, coredns, ...)
+   * Create GIT_TAG files for other components (etcd, coredns, ...) and change their Golang versions if needed
    * Add support in kops script for new release
 1. **Docs PR**: Create a PR with an empty change log and docs for release
 1. **Prow Presubmit Job**: Create presubmit for new release (kubernetes-1-20-presubmits.yaml)
@@ -32,6 +32,7 @@ All other changes are to this package.
    * docs/contents/releases/${RELEASE_BRANCH}/${RELEASE}/CHANGELOG
    * docs/contents/index.md
    * README
+   * development/pull-all.sh (make sure component versions are correct)
 1. **Announcement PR**: When everything is good, create announcement PR
    * docs/contents/releases/${RELEASE_BRANCH}/${RELEASE}/release-announcement.txt
 1. **Tag Repository**: Tag the repository. For example:
