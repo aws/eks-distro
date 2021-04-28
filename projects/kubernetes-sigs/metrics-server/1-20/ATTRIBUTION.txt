@@ -74,19 +74,19 @@ https://github.com/grpc/grpc-go
 ** gopkg.in/yaml.v2; version v2.2.8 --
 https://gopkg.in/yaml.v2
 
-** k8s.io/api; version v0.19.2 --
+** k8s.io/api; version v0.19.10 --
 https://github.com/kubernetes/api
 
-** k8s.io/apimachinery; version v0.19.2 --
+** k8s.io/apimachinery; version v0.19.10 --
 https://github.com/kubernetes/apimachinery
 
-** k8s.io/apiserver; version v0.19.2 --
+** k8s.io/apiserver; version v0.19.10 --
 https://github.com/kubernetes/apiserver
 
-** k8s.io/client-go; version v0.19.2 --
+** k8s.io/client-go; version v0.19.10 --
 https://github.com/kubernetes/client-go
 
-** k8s.io/component-base; version v0.19.2 --
+** k8s.io/component-base; version v0.19.10 --
 https://github.com/kubernetes/component-base
 
 ** k8s.io/klog/v2; version v2.3.0 --
@@ -95,19 +95,19 @@ https://github.com/kubernetes/klog
 ** k8s.io/kube-openapi/pkg; version v0.0.0-20200805222855-6aeccd4b50c6 --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/metrics/pkg/apis/metrics; version v0.19.2 --
+** k8s.io/metrics/pkg/apis/metrics; version v0.19.10 --
 https://github.com/kubernetes/metrics
 
 ** k8s.io/utils; version v0.0.0-20200729134348-d5654de09c73 --
 https://github.com/kubernetes/utils
 
-** sigs.k8s.io/apiserver-network-proxy/konnectivity-client; version v0.0.9 --
+** sigs.k8s.io/apiserver-network-proxy/konnectivity-client; version v0.0.15 --
 https://github.com/kubernetes-sigs/apiserver-network-proxy
 
-** sigs.k8s.io/metrics-server; version v0.4.0 --
+** sigs.k8s.io/metrics-server; version v0.4.3 --
 https://github.com/kubernetes-sigs/metrics-server
 
-** sigs.k8s.io/structured-merge-diff/v4; version v4.0.1 --
+** sigs.k8s.io/structured-merge-diff/v4; version v4.0.3 --
 https://github.com/kubernetes-sigs/structured-merge-diff
 
 
@@ -479,7 +479,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/gogo/protobuf; version v1.3.1 --
+** github.com/gogo/protobuf; version v1.3.2 --
 https://github.com/gogo/protobuf
 
 Copyright (c) 2013, The GoGo Authors. All rights reserved.
@@ -812,22 +812,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/go; version go1.14.15 --
+** golang.org/go; version go1.15.11 --
 https://github.com/golang/go
 
 ** golang.org/x/crypto; version v0.0.0-20200622213623-75b288015ac9 --
 https://go.googlesource.com/crypto
 
-** golang.org/x/net; version v0.0.0-20200707034311-ab3426394381 --
+** golang.org/x/net; version v0.0.0-20201110031124-69a78807bb2b --
 https://go.googlesource.com/net
 
 ** golang.org/x/oauth2; version v0.0.0-20191202225959-858c2ad4c8b6 --
 https://go.googlesource.com/oauth2
 
-** golang.org/x/sync/singleflight; version v0.0.0-20190911185100-cd5d95a43a6e --
+** golang.org/x/sync/singleflight; version v0.0.0-20201020160332-67f06af15bc9 --
 https://go.googlesource.com/sync
 
-** golang.org/x/sys; version v0.0.0-20200625212154-ddb9806d33ae --
+** golang.org/x/sys; version v0.0.0-20201112073958-5cba982894dd --
 https://go.googlesource.com/sys
 
 ** golang.org/x/text; version v0.3.3 --
