@@ -4,7 +4,6 @@ RELEASE_ENVIRONMENT?=development
 RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/$(RELEASE_ENVIRONMENT)/RELEASE)
 ARTIFACT_BUCKET?=my-s3-bucket
 
-DEVELOPMENT?=false
 AWS_ACCOUNT_ID?=$(shell aws sts get-caller-identity --query Account --output text)
 AWS_REGION?=us-west-2
 IMAGE_REPO?=$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
@@ -33,7 +32,6 @@ build:
 		--target=build \
 		--release-branch=${RELEASE_BRANCH} \
 		--release=${RELEASE} \
-		--development=${DEVELOPMENT} \
 		--region=${AWS_REGION} \
 		--account-id=${AWS_ACCOUNT_ID} \
 		--image-repo=${IMAGE_REPO} \
@@ -47,7 +45,6 @@ postsubmit-build: setup
 		--target=release \
 		--release-branch=${RELEASE_BRANCH} \
 		--release=${RELEASE} \
-		--development=${DEVELOPMENT} \
 		--region=${AWS_REGION} \
 		--account-id=${AWS_ACCOUNT_ID} \
 		--image-repo=${IMAGE_REPO} \

@@ -10,7 +10,6 @@ REPO=external-snapshotter
 COMPONENT=kubernetes-csi/$(REPO)
 CLONE_URL=https://github.com/$(COMPONENT).git
 
-DEVELOPMENT?=true
 AWS_ACCOUNT_ID?=$(shell aws sts get-caller-identity --query Account --output text)
 AWS_REGION?=us-west-2
 
@@ -30,9 +29,6 @@ SNAPSHOT_VALIDATION_WEBHOOK_IMAGE?=$(IMAGE_REPO)/kubernetes-csi/external-snapsho
 GOPROXY_DNS?=direct
 export GOPROXY=$(GOPROXY_DNS)
 
-ifeq ($(DEVELOPMENT),true)
-	BASE_IMAGE=amazonlinux:2
-endif
 
 .PHONY: binaries
 binaries:

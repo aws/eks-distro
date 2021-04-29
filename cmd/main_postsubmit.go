@@ -54,7 +54,6 @@ func main() {
 	target := flag.String("target", "release", "Make target")
 	releaseBranch := flag.String("release-branch", "1-19", "Release branch to test")
 	release := flag.String("release", "1", "Release to test")
-	development := flag.Bool("development", false, "Build as a development build")
 	region := flag.String("region", "us-west-2", "AWS region to use")
 	accountId := flag.String("account-id", "", "AWS Account ID to use")
 	imageRepo := flag.String("image-repo", "", "Container image repository")
@@ -83,7 +82,6 @@ func main() {
 	c.makeArgs = []string{
 		fmt.Sprintf("RELEASE_BRANCH=%s", c.releaseBranch),
 		fmt.Sprintf("RELEASE=%s", c.release),
-		fmt.Sprintf("DEVELOPMENT=%t", *development),
 		fmt.Sprintf("AWS_REGION=%s", *region),
 		fmt.Sprintf("AWS_ACCOUNT_ID=%s", *accountId),
 		fmt.Sprintf("IMAGE_REPO=%s", *imageRepo),
