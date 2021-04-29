@@ -44,6 +44,8 @@ do
 done
 
 results=$(./sonobuoy --context ${KOPS_CLUSTER_NAME} retrieve)
+./sonobuoy e2e --wait $results --rerun-failed --kube-conformance-image k8s.gcr.io/conformance:v1.19.6
+results=$(./sonobuoy --context ${KOPS_CLUSTER_NAME} retrieve)
 mv $results "./${KOPS_CLUSTER_NAME}/$results"
 results="./${KOPS_CLUSTER_NAME}/$results"
 mkdir ./${KOPS_CLUSTER_NAME}/results
