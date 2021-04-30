@@ -20,14 +20,9 @@ RELEASE="${2?Second required argument is release for example 1}"
 ARTIFACT_BUCKET="${3?Third required argument is artifact bucket name}"
 REPO="${4:-""}"
 BASE_DIRECTORY=$(git rev-parse --show-toplevel)
-RELEASE_ENVIRONMENT=${RELEASE_ENVIRONMENT:-development}
 
-if [ "$RELEASE_ENVIRONMENT" == "production" ]
-then
-  PUBLIC_READ='--acl public-read'
-else
-  PUBLIC_READ=''
-fi
+PUBLIC_READ='--acl public-read'
+
 cd ${BASE_DIRECTORY}
 PREFIX_DIR=kubernetes-${RELEASE_BRANCH}
 DEST_DIR=${PREFIX_DIR}/releases/${RELEASE}/artifacts
