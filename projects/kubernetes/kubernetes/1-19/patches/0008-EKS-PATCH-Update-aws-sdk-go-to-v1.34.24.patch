@@ -2115,7 +2115,7 @@ Signed-off-by: Jackson West <jgw@amazon.com>
  delete mode 100644 vendor/vbom.ml/util/sortorder/BUILD
 
 diff --git a/go.mod b/go.mod
-index 3fa61256f34..6667b4fa685 100644
+index 42e67e21418..6b55eefd21d 100644
 --- a/go.mod
 +++ b/go.mod
 @@ -21,7 +21,7 @@ require (
@@ -2172,7 +2172,7 @@ index 3fa61256f34..6667b4fa685 100644
  	github.com/thecodeteam/goscaleio => github.com/thecodeteam/goscaleio v0.1.0
  	github.com/tidwall/pretty => github.com/tidwall/pretty v1.0.0
 diff --git a/go.sum b/go.sum
-index 770221924ab..43ec107966c 100644
+index a8c22523ac7..74e7135ecc2 100644
 --- a/go.sum
 +++ b/go.sum
 @@ -58,8 +58,8 @@ github.com/asaskevich/govalidator v0.0.0-20190424111038-f61b66f89f4a h1:idn718Q4
@@ -79932,7 +79932,7 @@ index 18918e0f0c3..00000000000
 -    visibility = ["//visibility:public"],
 -)
 diff --git a/vendor/modules.txt b/vendor/modules.txt
-index 007ac45d6dd..72deabca010 100644
+index fdd2ea1332d..8e14c1b42b3 100644
 --- a/vendor/modules.txt
 +++ b/vendor/modules.txt
 @@ -126,9 +126,9 @@ github.com/asaskevich/govalidator

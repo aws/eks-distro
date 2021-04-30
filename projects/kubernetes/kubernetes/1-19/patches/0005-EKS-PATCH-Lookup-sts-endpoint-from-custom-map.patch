@@ -300,7 +300,7 @@ index 00000000000..1c496742903
 +		arn.Resource
 +}
 diff --git a/vendor/modules.txt b/vendor/modules.txt
-index 68d9a89f184..007ac45d6dd 100644
+index 0d650f305d6..fdd2ea1332d 100644
 --- a/vendor/modules.txt
 +++ b/vendor/modules.txt
 @@ -130,6 +130,7 @@ github.com/asaskevich/govalidator

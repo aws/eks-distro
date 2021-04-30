@@ -9,7 +9,7 @@ Signed-off-by: Terry Howe <tlhowe@example.com>
  1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/build/common.sh b/build/common.sh
-index 60c1d5d5030..87017c6359f 100755
+index 831b8ea5738..fc8f70164b2 100755
 --- a/build/common.sh
 +++ b/build/common.sh
 @@ -44,6 +44,7 @@ readonly KUBE_BUILD_IMAGE_CROSS_TAG="$(cat "${KUBE_ROOT}/build/build-image/cross
