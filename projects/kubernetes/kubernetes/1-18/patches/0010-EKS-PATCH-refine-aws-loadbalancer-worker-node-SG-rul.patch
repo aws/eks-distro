@@ -114,10 +114,10 @@ index 5c26009196e..58c87c1ef1e 100644
  		return err
  	}
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
-index b4549a80527..720de76d58e 100644
+index 4814bd70eab..8852ae954ed 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
-@@ -2024,3 +2024,62 @@ func TestConstructStsEndpoint(t *testing.T) {
+@@ -2600,3 +2600,62 @@ func TestConstructStsEndpoint(t *testing.T) {
  		require.NoError(t, err)
  	})
  }

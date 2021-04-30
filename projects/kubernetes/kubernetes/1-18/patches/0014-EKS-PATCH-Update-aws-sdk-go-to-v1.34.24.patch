@@ -8,7 +8,7 @@ Signed-off-by: Jackson West <jgw@amazon.com>
 ---
  go.mod                                        |    17 +-
  go.sum                                        |    17 +-
- pkg/kubeapiserver/options/BUILD               |     5 +-
+ pkg/kubeapiserver/options/BUILD               |     3 +-
  pkg/kubelet/lifecycle/BUILD                   |     9 +
  staging/src/k8s.io/api/go.mod                 |     3 +-
  staging/src/k8s.io/api/go.sum                 |     9 +-
@@ -147,7 +147,7 @@ Signed-off-by: Jackson West <jgw@amazon.com>
  .../testify/require/require_forward.go        |   156 +-
  .../stretchr/testify/require/requirements.go  |     2 +-
  vendor/modules.txt                            |    12 +-
- 141 files changed, 20894 insertions(+), 3161 deletions(-)
+ 141 files changed, 20891 insertions(+), 3162 deletions(-)
  create mode 100644 vendor/github.com/aws/aws-sdk-go/aws/credentials/context_background_go1.5.go
  create mode 100644 vendor/github.com/aws/aws-sdk-go/aws/credentials/context_background_go1.7.go
  create mode 100644 vendor/github.com/aws/aws-sdk-go/aws/credentials/context_go1.5.go
@@ -305,7 +305,7 @@ index fbe3cb2607f..319d324589d 100644
  github.com/syndtr/gocapability v0.0.0-20180916011248-d98352740cb2/go.mod h1:hkRG7XYTFWNJGYcbNJQlaLq0fg1yr4J4t/NcTQtrfww=
  github.com/tarm/serial v0.0.0-20180830185346-98f6abe2eb07/go.mod h1:kDXzergiv9cbyO7IOYJZWg1U88JhDg3PB6klq9Hg2pA=
 diff --git a/pkg/kubeapiserver/options/BUILD b/pkg/kubeapiserver/options/BUILD
-index 3dfc3f00a39..824736f2885 100644
+index 3dfc3f00a39..63124082941 100644
 --- a/pkg/kubeapiserver/options/BUILD
 +++ b/pkg/kubeapiserver/options/BUILD
 @@ -82,9 +82,8 @@ go_test(

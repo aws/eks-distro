@@ -22,7 +22,7 @@ Signed-off-by: Jackson West <jgw@amazon.com>
  cmd/kube-apiserver/app/dialer.go             | 46 ++++++++++
  cmd/kube-apiserver/app/options/BUILD         |  1 +
  cmd/kube-apiserver/app/options/options.go    |  9 ++
- .../app/options/options_test.go               |     1 +
+ .../app/options/options_test.go              |  1 +
  cmd/kube-apiserver/app/options/validation.go | 15 ++++
  cmd/kube-apiserver/app/options/allowlist.go  |  9 ++
  cmd/kube-apiserver/app/server.go             |  6 ++

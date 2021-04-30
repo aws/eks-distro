@@ -11,10 +11,10 @@ Signed-off-by: Jackson West <jgw@amazon.com>
  1 file changed, 21 insertions(+)
 
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer.go
-index ded82412d89..1197e7120f6 100644
+index c4b78d112d8..59e05838bfa 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer.go
-@@ -707,6 +707,27 @@ func (c *Cloud) ensureTargetGroup(targetGroup *elbv2.TargetGroup, serviceName ty
+@@ -709,6 +709,27 @@ func (c *Cloud) ensureTargetGroup(targetGroup *elbv2.TargetGroup, serviceName ty
  	return targetGroup, nil
  }
  
