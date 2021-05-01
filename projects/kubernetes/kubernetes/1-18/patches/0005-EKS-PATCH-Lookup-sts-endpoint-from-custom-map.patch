@@ -8,17 +8,17 @@ Signed-off-by: Jackson West <jgw@amazon.com>
 ---
  .../k8s.io/legacy-cloud-providers/aws/BUILD   |  1 +
  .../k8s.io/legacy-cloud-providers/aws/aws.go  | 40 +++++++-
- .../legacy-cloud-providers/aws/aws_test.go    | 58 ++++++++----
+ .../legacy-cloud-providers/aws/aws_test.go    | 56 +++++++----
  vendor/github.com/aws/aws-sdk-go/aws/BUILD    |  1 +
  .../github.com/aws/aws-sdk-go/aws/arn/BUILD   | 23 +++++
  .../github.com/aws/aws-sdk-go/aws/arn/arn.go  | 93 +++++++++++++++++++
  vendor/modules.txt                            |  1 +
- 7 files changed, 198 insertions(+), 19 deletions(-)
+ 7 files changed, 197 insertions(+), 18 deletions(-)
  create mode 100644 vendor/github.com/aws/aws-sdk-go/aws/arn/BUILD
  create mode 100644 vendor/github.com/aws/aws-sdk-go/aws/arn/arn.go
 
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/BUILD b/staging/src/k8s.io/legacy-cloud-providers/aws/BUILD
-index 0a4b5b69107..19af207bee1 100644
+index 4f394bd8ed0..42e3bf0f04c 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/BUILD
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/BUILD
 @@ -52,6 +52,7 @@ go_library(
@@ -92,19 +92,10 @@ index aca86cdade3..a115c547047 100644
 +	return fmt.Sprintf("sts.%s.%s", region, suffix), nil
 +}
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
-index 0cfe6645dcf..ef46452c3bd 100644
+index 57a3ebc0cd2..c309af94ef9 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
-@@ -34,7 +34,7 @@ import (
- 	"github.com/stretchr/testify/mock"
- 	"github.com/stretchr/testify/require"
- 
--	"k8s.io/api/core/v1"
-+	v1 "k8s.io/api/core/v1"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	"k8s.io/apimachinery/pkg/types"
- 	"k8s.io/apimachinery/pkg/util/sets"
-@@ -1983,22 +1983,44 @@ func newMockedFakeAWSServices(id string) *FakeAWSServices {
+@@ -2559,22 +2559,44 @@ func newMockedFakeAWSServices(id string) *FakeAWSServices {
  	return s
  }
  

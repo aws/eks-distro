@@ -13,7 +13,7 @@ Signed-off-by: Jackson West <jgw@amazon.com>
  2 files changed, 128 insertions(+), 3 deletions(-)
 
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer.go
-index 116c6a418a1..ded82412d89 100644
+index 18127181bc7..c4b78d112d8 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer.go
 @@ -452,13 +452,14 @@ var invalidELBV2NameRegex = regexp.MustCompile("[^[:alnum:]]")

@@ -71,7 +71,7 @@ index 1aacba000ba..50e32f5b722 100644
  	if isNLB(service.Annotations) {
  		lb, err := c.describeLoadBalancerv2(loadBalancerName)
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer.go
-index 447913fff11..5c40deba3a1 100644
+index 9efb9951bbf..5c714ea1865 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer.go
 @@ -69,6 +69,13 @@ func isNLB(annotations map[string]string) bool {

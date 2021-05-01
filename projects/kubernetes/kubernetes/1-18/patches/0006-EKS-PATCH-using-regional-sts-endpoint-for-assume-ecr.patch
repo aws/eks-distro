@@ -125,10 +125,10 @@ index a115c547047..d95e0834d79 100644
  	if err != nil {
  		return "", err
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
-index ef46452c3bd..b4549a80527 100644
+index c309af94ef9..4814bd70eab 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
-@@ -1987,7 +1987,7 @@ func TestConstructStsEndpoint(t *testing.T) {
+@@ -2563,7 +2563,7 @@ func TestConstructStsEndpoint(t *testing.T) {
  	t.Run("returns an error when the arn is invalid", func(t *testing.T) {
  		arn := "asdf"
  		region := "us-east-1"
@@ -137,7 +137,7 @@ index ef46452c3bd..b4549a80527 100644
  		assert.Equal(t, endpoint, "")
  		require.Error(t, err)
  	})
-@@ -1995,7 +1995,7 @@ func TestConstructStsEndpoint(t *testing.T) {
+@@ -2571,7 +2571,7 @@ func TestConstructStsEndpoint(t *testing.T) {
  	t.Run("returns sts.us-east-1.amazonaws.com when region/partition is us-east-1/aws", func(t *testing.T) {
  		arn := "arn:aws:eks:us-east-1:1234:cluster/asdf"
  		region := "us-east-1"
@@ -146,7 +146,7 @@ index ef46452c3bd..b4549a80527 100644
  		assert.Equal(t, endpoint, "sts.us-east-1.amazonaws.com")
  		require.NoError(t, err)
  	})
-@@ -2003,7 +2003,7 @@ func TestConstructStsEndpoint(t *testing.T) {
+@@ -2579,7 +2579,7 @@ func TestConstructStsEndpoint(t *testing.T) {
  	t.Run("returns sts.cn-northwest-1.amazonaws.com.cn when region/partition is cn-northwest-1/aws-cn", func(t *testing.T) {
  		arn := "arn:aws-cn:eks:cn-northwest-1:1234:cluster/asdf"
  		region := "cn-northwest-1"
@@ -155,7 +155,7 @@ index ef46452c3bd..b4549a80527 100644
  		assert.Equal(t, endpoint, "sts.cn-northwest-1.amazonaws.com.cn")
  		require.NoError(t, err)
  	})
-@@ -2011,7 +2011,7 @@ func TestConstructStsEndpoint(t *testing.T) {
+@@ -2587,7 +2587,7 @@ func TestConstructStsEndpoint(t *testing.T) {
  	t.Run("returns sts.us-gov-east-1.amazonaws.com when region/partion is us-gov-east-1/aws-us-gov", func(t *testing.T) {
  		arn := "arn:aws-us-gov:eks:us-gov-east-1:1234:cluster/asdf"
  		region := "us-gov-east-1"
@@ -164,7 +164,7 @@ index ef46452c3bd..b4549a80527 100644
  		assert.Equal(t, endpoint, "sts.us-gov-east-1.amazonaws.com")
  		require.NoError(t, err)
  	})
-@@ -2019,7 +2019,7 @@ func TestConstructStsEndpoint(t *testing.T) {
+@@ -2595,7 +2595,7 @@ func TestConstructStsEndpoint(t *testing.T) {
  	t.Run("returns sts.me-south-1.amazonaws.com when region/partion is me-south-1/aws", func(t *testing.T) {
  		arn := "arn:aws:eks:me-south-1:1234:cluster/asdf"
  		region := "me-south-1"
