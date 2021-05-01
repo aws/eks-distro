@@ -13,10 +13,10 @@ Signed-off-by: Kirsten Schumy <ksschumy@amazon.com>
  2 files changed, 68 insertions(+), 4 deletions(-)
 
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-index 6e77f292b4e..f6dc417ff7e 100644
+index 763833e128c..dd19f46adeb 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-@@ -2656,7 +2656,7 @@ func (c *Cloud) CreateDisk(volumeOptions *VolumeOptions) (KubernetesVolumeID, er
+@@ -2550,7 +2550,7 @@ func (c *Cloud) CreateDisk(volumeOptions *VolumeOptions) (KubernetesVolumeID, er
  		createType = DefaultVolumeType
  
  	default:
@@ -25,7 +25,7 @@ index 6e77f292b4e..f6dc417ff7e 100644
  	}
  
  	request := &ec2.CreateVolumeInput{}
-@@ -2688,12 +2688,12 @@ func (c *Cloud) CreateDisk(volumeOptions *VolumeOptions) (KubernetesVolumeID, er
+@@ -2582,12 +2582,12 @@ func (c *Cloud) CreateDisk(volumeOptions *VolumeOptions) (KubernetesVolumeID, er
  
  	response, err := c.ec2.CreateVolume(request)
  	if err != nil {
@@ -40,7 +40,7 @@ index 6e77f292b4e..f6dc417ff7e 100644
  	}
  	volumeName := KubernetesVolumeID("aws://" + aws.StringValue(response.AvailabilityZone) + "/" + string(awsID))
  
-@@ -2706,8 +2706,22 @@ func (c *Cloud) CreateDisk(volumeOptions *VolumeOptions) (KubernetesVolumeID, er
+@@ -2600,8 +2600,22 @@ func (c *Cloud) CreateDisk(volumeOptions *VolumeOptions) (KubernetesVolumeID, er
  		// because Kubernetes may have limited permissions to the key.
  		if isAWSErrorVolumeNotFound(err) {
  			err = fmt.Errorf("failed to create encrypted volume: the volume disappeared after creation, most likely due to inaccessible KMS encryption key")
@@ -65,7 +65,7 @@ index 6e77f292b4e..f6dc417ff7e 100644
  
  	return volumeName, nil
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
-index ac13f17c6f0..68900a30ac5 100644
+index 4baa20b60f4..44a9ac6fcc6 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
 @@ -73,6 +73,11 @@ func (m *MockedFakeEC2) DescribeVolumes(request *ec2.DescribeVolumesInput) ([]*e
