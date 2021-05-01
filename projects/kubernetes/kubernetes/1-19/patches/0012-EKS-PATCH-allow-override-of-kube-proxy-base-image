@@ -26,7 +26,7 @@ index 831b8ea5738..fc8f70164b2 100755
  kube::build::get_docker_wrapped_binaries() {
 -  local debian_iptables_version=v12.1.2
 +  local debian_iptables_version="${KUBE_PROXY_BASE_IMAGE_VERSION:-v12.1.2}"
-   local go_runner_version=buster-v2.2.2
+   local go_runner_version=buster-v2.3.1
    ### If you change any of these lists, please also update DOCKERIZED_BINARIES
    ### in build/BUILD. And kube::golang::server_image_targets
 @@ -101,7 +102,7 @@ kube::build::get_docker_wrapped_binaries() {
