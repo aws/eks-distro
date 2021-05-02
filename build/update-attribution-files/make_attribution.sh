@@ -17,11 +17,15 @@ set -x
 set -o errexit
 set -o nounset
 set -o pipefail
+shopt -s globstar
 
 PROJECT="$1"
 
 MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd -P)"
 PROJECT_ROOT=$MAKE_ROOT/$PROJECT
+
+mkdir -p _output
+touch _output/total_summary.txt
 
 function build::attribution::generate(){
     if [ $# -ge 1 ]; then
@@ -29,6 +33,11 @@ function build::attribution::generate(){
     fi
     make -C $PROJECT_ROOT binaries
     make -C $PROJECT_ROOT attribution
+    for summary in $PROJECT_ROOT/_output/**/summary.txt; do
+        sed -i "s/+.*=/ =/g" $summary
+        awk -F" =\> " '{ count[$1]+=$2} END { for (item in count) printf("%s => %d\n", item, count[item]) }' \
+            $summary _output/total_summary.txt | sort > _output/total_summary.tmp && mv _output/total_summary.tmp _output/total_summary.txt
+    done    
     make -C $PROJECT_ROOT clean
 }
 

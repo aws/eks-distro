@@ -106,6 +106,21 @@ function build::gather_licenses() {
   NOISY_MESSAGES="cannot determine URL for|Error discovering URL|unsupported package host"
   go-licenses csv $patterns > "${outputdir}/attribution/go-license.csv" 2>  >(grep -vE "$NOISY_MESSAGES" >&2)
 
+  if cat "${outputdir}/attribution/go-license.csv" | grep -q "^vendor\/golang.org\/x"; then
+      echo " go-licenses created a file with a std golang package (golang.org/x/*)"
+      echo " prefixed with vendor/.  This most likely will result in an error"
+      echo " when generating the attribution file and is probably due to"
+      echo " to a version mismatch between the current version of go "
+      echo " and the version of go that was used to build go-licenses"
+      exit 1
+  fi
+
+  if cat "${outputdir}/attribution/go-license.csv" | grep -e ",LGPL-" -e ",GPL-"; then
+    echo " one of the dependencies is licensed as LGPL or GPL"
+    echo " which is prohibited at Amazon"
+    echo " please look into removeing the dependency"
+  fi
+
   # go-license is pretty eager to copy src for certain license types
   # when it does, it applies strange permissions to the copied files
   # which makes deleting them later awkward
@@ -127,6 +142,13 @@ function build::generate_attribution(){
   local -r root_module_name=$(cat ${output_directory}/attribution/root-module.txt)
   local -r go_path=$(build::common::get_go_path $golang_verson) 
   local -r golang_version_tag=$($go_path/go version | grep -o "go[0-9].* ")
+
+  if cat "${output_directory}/attribution/go-license.csv" | grep -e ",LGPL-" -e ",GPL-"; then
+    echo " one of the dependencies is licensed as LGPL or GPL"
+    echo " which is prohibited at Amazon"
+    echo " please look into removeing the dependency"
+    exit 1
+  fi
 
   generate-attribution $root_module_name $project_root $golang_version_tag $output_directory 
   cp -f "${output_directory}/attribution/ATTRIBUTION.txt" "${project_root}/ATTRIBUTION.txt"
@@ -153,6 +175,9 @@ function build::common::get_go_path() {
   fi
   if [[ $version == "1.15"* ]]; then
     gobinaryversion="1.15"
+  fi
+  if [[ $version == "1.16"* ]]; then
+    gobinaryversion="1.16"
   fi
 
   if [[ "$gobinaryversion" == "" ]]; then

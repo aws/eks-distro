@@ -89,6 +89,7 @@ update-kubernetes-version:
 .PHONY: clean
 clean: makes
 	@echo 'Done' $(TARGET)
+	rm -rf _output
 
 .PHONY: makes
 makes:
@@ -134,6 +135,8 @@ attribution-files:
 	build/update-attribution-files/make_attribution.sh projects/kubernetes-csi/external-provisioner
 	build/update-attribution-files/make_attribution.sh projects/kubernetes/release
 	build/update-attribution-files/make_attribution.sh projects/kubernetes/kubernetes
+
+	cat _output/total_summary.txt
 
 .PHONY: update-attribution-files
 update-attribution-files: attribution-files
