@@ -49,7 +49,7 @@ function login_ecr_public {
         --query 'authorizationData.authorizationToken')
 
     DOCKER_CONFIG=${DOCKER_CONFIG:-"~/.docker"}
-    if [ "$(which docker)" != "" ]; then
+    if command -v docker &> /dev/null && docker info > /dev/null 2>&1; then
         echo $TOKEN | \
             base64 --decode | \
             cut -d: -f2 | \
