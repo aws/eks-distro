@@ -19,6 +19,180 @@ status:
         - arch:
             - amd64
             - arm64
+          description: external-attacher container image
+          image:
+            uri: public.ecr.aws/eks-distro/kubernetes-csi/external-attacher:v3.1.0-eks-1-18-4
+          name: external-attacher-image
+          os: linux
+          type: Image
+      gitTag: v3.1.0
+      name: external-attacher
+    - assets:
+        - arch:
+            - amd64
+            - arm64
+          description: node-driver-registrar container image
+          image:
+            uri: public.ecr.aws/eks-distro/kubernetes-csi/node-driver-registrar:v2.1.0-eks-1-18-4
+          name: node-driver-registrar-image
+          os: linux
+          type: Image
+      gitTag: v2.1.0
+      name: node-driver-registrar
+    - assets:
+        - arch:
+            - amd64
+            - arm64
+          description: csi-snapshotter container image
+          image:
+            uri: public.ecr.aws/eks-distro/kubernetes-csi/external-snapshotter/csi-snapshotter:v3.0.3-eks-1-18-4
+          name: csi-snapshotter-image
+          os: linux
+          type: Image
+        - arch:
+            - amd64
+            - arm64
+          description: snapshot-controller container image
+          image:
+            uri: public.ecr.aws/eks-distro/kubernetes-csi/external-snapshotter/snapshot-controller:v3.0.3-eks-1-18-4
+          name: snapshot-controller-image
+          os: linux
+          type: Image
+        - arch:
+            - amd64
+            - arm64
+          description: snapshot-validation-webhook container image
+          image:
+            uri: public.ecr.aws/eks-distro/kubernetes-csi/external-snapshotter/snapshot-validation-webhook:v3.0.3-eks-1-18-4
+          name: snapshot-validation-webhook-image
+          os: linux
+          type: Image
+      gitTag: v3.0.3
+      name: external-snapshotter
+    - assets:
+        - arch:
+            - arm64
+          archive:
+            sha256: d56e98895916695567cb3da9057b2746406a1ebb04ed7d7dc01feee36c2b61dc
+            sha512: c8f9455e2f20ef38c03d6a7115033fa9b4b693f7f4d4c5897d98d0aebceeee2b5fcf27aadf929c84e7883c1581e7d5be4b9a810c3a903be74eb7bcc6c3931479
+            uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/etcd/v3.4.14/etcd-linux-arm64-v3.4.14.tar.gz
+          description: etcd tarball for linux/arm64
+          name: etcd-linux-arm64-v3.4.14.tar.gz
+          os: linux
+          type: Archive
+        - arch:
+            - amd64
+          archive:
+            sha256: d63f06f65eb5eb5983d8249cdb39379fa92e837c106b8d60c5d82429220e5234
+            sha512: f3dc52ff88be1b27e946195c0dace17f3c87e307e5272351c500ea9642804a4735cc889ef8d5d2fcfa3fb13f58f8aa572c3c817a7ffac43779d271894a4c6463
+            uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/etcd/v3.4.14/etcd-linux-amd64-v3.4.14.tar.gz
+          description: etcd tarball for linux/amd64
+          name: etcd-linux-amd64-v3.4.14.tar.gz
+          os: linux
+          type: Archive
+        - arch:
+            - amd64
+            - arm64
+          description: etcd container image
+          image:
+            uri: public.ecr.aws/eks-distro/etcd-io/etcd:v3.4.14-eks-1-18-4
+          name: etcd-image
+          os: linux
+          type: Image
+      gitTag: v3.4.14
+      name: etcd
+    - assets:
+        - arch:
+            - arm64
+          archive:
+            sha256: 45d513732938bd2404caeb8ad05181c47489b1b4379a01833558278b4f27a91f
+            sha512: 7ecbd5eef62a916ec531997fbb7601fb77e58ea64d1a16833d59444d4fadd97b0e2c2ef8d94c362696cbbf83bfe01e0380439d8aa06264009724bcd0a96a988b
+            uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/aws-iam-authenticator/v0.5.2/aws-iam-authenticator-linux-arm64-v0.5.2.tar.gz
+          description: aws-iam-authenticator tarball for linux/arm64
+          name: aws-iam-authenticator-linux-arm64-v0.5.2.tar.gz
+          os: linux
+          type: Archive
+        - arch:
+            - amd64
+          archive:
+            sha256: 3d5da686f2fbccadd8fa0693c2e2e8a4f94383aa201eeb01c15b9ef174708f54
+            sha512: f3b5a249a0ea611711a39b027483a77b057243b2ae4e5b73baefb92ee08826e39172b13f351f12dc1db97a1f2aed39cac436d73a342b3d341a93977b33536b99
+            uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/aws-iam-authenticator/v0.5.2/aws-iam-authenticator-linux-amd64-v0.5.2.tar.gz
+          description: aws-iam-authenticator tarball for linux/amd64
+          name: aws-iam-authenticator-linux-amd64-v0.5.2.tar.gz
+          os: linux
+          type: Archive
+        - arch:
+            - amd64
+          archive:
+            sha256: f28a0166a2ddf361a0e454fe24b7afd4b211d416d8488c6452cbc7ddc8619d3f
+            sha512: 20ec19eb08e76a04b60b7d1429e701576b08d5683e504ee205baa789e83e7a6380aabbfdf0450b3497027ade778831d71d251058769750884a8e581c16e6180f
+            uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/aws-iam-authenticator/v0.5.2/aws-iam-authenticator-windows-amd64-v0.5.2.tar.gz
+          description: aws-iam-authenticator tarball for windows/amd64
+          name: aws-iam-authenticator-windows-amd64-v0.5.2.tar.gz
+          os: windows
+          type: Archive
+        - arch:
+            - amd64
+          archive:
+            sha256: 6ce8ab9ff04fb192bc8b32db75e48dbe61f83c44746f602242fda091798fd5bb
+            sha512: 0a6e6ca6cfbd1c7d6baed203a2969182ac838d0e020deb4436b577b0b1d958f89f59c5879976a8511e5df525471a725b1cb92b09dcd70c767a9a2561e1af5b06
+            uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/aws-iam-authenticator/v0.5.2/aws-iam-authenticator-darwin-amd64-v0.5.2.tar.gz
+          description: aws-iam-authenticator tarball for darwin/amd64
+          name: aws-iam-authenticator-darwin-amd64-v0.5.2.tar.gz
+          os: darwin
+          type: Archive
+        - arch:
+            - amd64
+            - arm64
+          description: aws-iam-authenticator container image
+          image:
+            uri: public.ecr.aws/eks-distro/kubernetes-sigs/aws-iam-authenticator:v0.5.2-eks-1-18-4
+          name: aws-iam-authenticator-image
+          os: linux
+          type: Image
+      gitTag: v0.5.2
+      name: aws-iam-authenticator
+    - assets:
+        - arch:
+            - amd64
+            - arm64
+          description: livenessprobe container image
+          image:
+            uri: public.ecr.aws/eks-distro/kubernetes-csi/livenessprobe:v2.2.0-eks-1-18-4
+          name: livenessprobe-image
+          os: linux
+          type: Image
+      gitTag: v2.2.0
+      name: livenessprobe
+    - assets:
+        - arch:
+            - amd64
+            - arm64
+          description: external-provisioner container image
+          image:
+            uri: public.ecr.aws/eks-distro/kubernetes-csi/external-provisioner:v2.1.1-eks-1-18-4
+          name: external-provisioner-image
+          os: linux
+          type: Image
+      gitTag: v2.1.1
+      name: external-provisioner
+    - assets:
+        - arch:
+            - amd64
+            - arm64
+          description: external-resizer container image
+          image:
+            uri: public.ecr.aws/eks-distro/kubernetes-csi/external-resizer:v1.1.0-eks-1-18-4
+          name: external-resizer-image
+          os: linux
+          type: Image
+      gitTag: v1.1.0
+      name: external-resizer
+    - assets:
+        - arch:
+            - amd64
+            - arm64
           description: metrics-server container image
           image:
             uri: public.ecr.aws/eks-distro/kubernetes-sigs/metrics-server:v0.4.0-eks-1-18-4
@@ -31,8 +205,8 @@ status:
         - arch:
             - arm64
           archive:
-            sha256: 58b0bc76af0da6de87a1ef0919b2a88b6415cd42537a75596694d439973b5843
-            sha512: b4bd436698f0bbe70b2688e5f75863a46150244d1df617cfd7f90af5b28e419e6376d813802d4869651b1bd29ef9f36160705a22b4a411fd644170a250c261b8
+            sha256: 20c750336235a1de8af2bc315b8c8e2917d2cbd3e38965e50cbce5b9318ef326
+            sha512: 91439696aef41b5580163a22488c2cf731c9397ac2925d5ccc2838a82ec6b2e8361dd53c6c1b99780579d3378cefa5d7ad43a390538d5a2a2050fb452ad72c0b
             uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/plugins/v0.8.7/cni-plugins-linux-arm64-v0.8.7.tar.gz
           description: cni-plugins tarball for linux/arm64
           name: cni-plugins-linux-arm64-v0.8.7.tar.gz
@@ -41,8 +215,8 @@ status:
         - arch:
             - amd64
           archive:
-            sha256: e391387021f04db4f8cd18231ade4fe98c5d3f08721d2638b54d7ffadc4f03b0
-            sha512: edb770fec6158c547f8713982069713b2fc5407707ff65ba8e6a677afc61a31670192add04792abaf9bd5614ab407ce10cc7c6f99f1daff6268c3551ac03885f
+            sha256: 5be2ee631e3b2fcbf702cc69a7cdaad6eb00d85e008298589e8a592ee79f18f9
+            sha512: bcfeeebaf2dcfae835d6ebed4e3aa4b67ed75eef62267a8e94b639d347d309226248562e44ac48d5e0338c566432d0b6447b15855d5cfd64903a2b99d581c3de
             uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/plugins/v0.8.7/cni-plugins-linux-amd64-v0.8.7.tar.gz
           description: cni-plugins tarball for linux/amd64
           name: cni-plugins-linux-amd64-v0.8.7.tar.gz
@@ -66,8 +240,8 @@ status:
         - arch:
             - arm64
           archive:
-            sha256: 28757af7532450f2f29f6e8c21f07aa4bc428ad50fe13872511ee2405b377297
-            sha512: a29bd884d829574366a2cb789633545dd1e837ce69f54a6344bb27b05cdbdc9528f37e4225ff82aa621edb372c28d524d9a95b3aeccadb83dc4d96fa0cff2873
+            sha256: 23c49fda697ac1a886d709a701249daf27862aea7cae9740b2b44529890e4e9e
+            sha512: 767261ead7078df31ba93af68f181d81b301e659818118085c75431cddb01395ea7fd14dc428092083a72a1245f03854662f6e61300178509579dc2b6c4db775
             uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/kubernetes/v1.18.16/kubernetes-client-linux-arm64.tar.gz
           description: Kubernetes client tarball for linux/arm64
           name: kubernetes-client-linux-arm64.tar.gz
@@ -76,8 +250,8 @@ status:
         - arch:
             - arm64
           archive:
-            sha256: ca52575efb3c2a146fbe5b6d0a91ab5997575184244f52b1e5632a3080df24b7
-            sha512: 9ca1c3dae0654e3ed032e2e469592a621c830c490e940b80b5cc7e0d1fca0218a8d8a7482f7986d84d5215506eebe652a18240872189cd3ab905936697512f29
+            sha256: 4ee2ff0962d015035f736788b7141f56997d46edef482d6e792dccde15ba3af4
+            sha512: 085bf6ac2a21fd0a9b773a23f7f3f42f172ec1b5daee8abf6ee2b5b47c22b53b2c104a23e8bcc02f91f8f152f72ec050f76ebd14afe193767fb2759a11ac1a00
             uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/kubernetes/v1.18.16/kubernetes-server-linux-arm64.tar.gz
           description: Kubernetes server tarball for linux/arm64
           name: kubernetes-server-linux-arm64.tar.gz
@@ -86,8 +260,8 @@ status:
         - arch:
             - arm64
           archive:
-            sha256: 162252cf71f2b4e09f22f2c236fb636acfb986251460a80062f2ff09e54faf70
-            sha512: 22c7483ca3fd31329c2ee47347feec68b9bdaba52331729418fe7d62ec0be94f1dc1348c7caf3b90aadc4ed23adaacdb44dd2faf1f5af9cd2248ff5ba564db51
+            sha256: c1ec737022b5ba450dbae75d5db4b9b0bb7da9a0ef95cf6685fcad2771ce02a6
+            sha512: 2400b6906a8eaf9a56d04ff4d03ca66fbc0f94289e0b6556be26bcd7372a480332346a1cf89a00f66dcefc923906de9b66dc452f0097be56815b851814d61a96
             uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/kubernetes/v1.18.16/kubernetes-node-linux-arm64.tar.gz
           description: Kubernetes node tarball for linux/arm64
           name: kubernetes-node-linux-arm64.tar.gz
@@ -96,8 +270,8 @@ status:
         - arch:
             - amd64
           archive:
-            sha256: 5d0957529f688620e0a97358554aa5988b6fa1462cc72d33815fc55fbed48970
-            sha512: 5e65d1fa25bee44c44d64f7167d5cf03156c7e40980d207ca3cd5c668ceb71600ccbec650dd2b80295cdf377713573216fb139dfa177d537cf417b041b4de364
+            sha256: bb375b729d32fd7baa729ff027f89574dc9315fe6b2fec8331c636f3f5030a4f
+            sha512: cfc90bca0d2f99c9054fbfb85c3c3a50800e39ba7ecca525c22a46d55df096a7e0bfa4b35d6c0bebed1e5cee3e6ae2de5a1949baa14eea72f731e9b84983e654
             uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/kubernetes/v1.18.16/kubernetes-client-linux-amd64.tar.gz
           description: Kubernetes client tarball for linux/amd64
           name: kubernetes-client-linux-amd64.tar.gz
@@ -106,8 +280,8 @@ status:
         - arch:
             - amd64
           archive:
-            sha256: b67785a9ba0ff727879d4af513008f19aa190a2c9ebd1f7741c3e117a0fe15e3
-            sha512: 6938fd814fe3f3194a56c6b99f543b9578ee75555691d300e45645d3c1dd9eb5658f2bb26020f8fa386453d2e763092f118547bea2a87ba06d9097cf5d9e9ef7
+            sha256: 4d69ad7e08e405ddb292deb405501f5d5b7ede9d7a5b6d262587e90f7ddfaba9
+            sha512: c48f8c704b4fb77d0a9e1d7b41a3a9d96ac940c977c6e1105c5304e2778b822ab1f7a0897127b7e140d3af963f05124bd1a7e04c49d04cbebb92ccab1357ea09
             uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/kubernetes/v1.18.16/kubernetes-server-linux-amd64.tar.gz
           description: Kubernetes server tarball for linux/amd64
           name: kubernetes-server-linux-amd64.tar.gz
@@ -116,8 +290,8 @@ status:
         - arch:
             - amd64
           archive:
-            sha256: 089cd6ca88cd52637bf58f64d54d7bba553a45000a0e44b3c62b53bdf91d38ad
-            sha512: d3d8bc87545fe77667bd14cfe28c2948cf4e55d57e8fe0dd7206c0b4f9fd6abe68567a53c19473ce51a0d80709a4cd7b1d93332fc2ddbc61021b1f3882634668
+            sha256: 3bf0be03d4230c5792c424662367066f79e0fd253eb8e550367766b97087e6d7
+            sha512: 82814235015507fb1a21d3eb3de9858a1bd4cf59bbbcf600f681cc4716a6eb82a54f416fd338f554d02875ee7874d6bf964207cf9ace8799233543de441221aa
             uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/kubernetes/v1.18.16/kubernetes-node-linux-amd64.tar.gz
           description: Kubernetes node tarball for linux/amd64
           name: kubernetes-node-linux-amd64.tar.gz
@@ -126,8 +300,8 @@ status:
         - arch:
             - amd64
           archive:
-            sha256: 02146204efe5a86c1412083056ed2a305dce8db0b2d65ef262bd30da89664fef
-            sha512: c1f9d69c8254fd25aa2d98dcfde9eca7ca2c6c39c64cd15ec6605a17d55eecfcfee1669579f9d372581535d75ed1fef1cad09a985c91e4fa3235d1828b3007a1
+            sha256: 394b8c2ed430e4bd5d0b7538cdc6760de95b3ef0884ba7ae84013de526319c3c
+            sha512: 6928a0abcb518497571c1751346db2a6d9df28b0442e1d056a027acd9f6278374551227f0eeb20e3087d86ec78fa231598c952c41f7801599da1b5686a51c182
             uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/kubernetes/v1.18.16/kubernetes-client-windows-amd64.tar.gz
           description: Kubernetes client tarball for windows/amd64
           name: kubernetes-client-windows-amd64.tar.gz
@@ -136,8 +310,8 @@ status:
         - arch:
             - amd64
           archive:
-            sha256: 5a20c3c05204b49462b9515a48af312ede713d2ea2870a656b7af7bc5011347a
-            sha512: b0c84dabe557e72950d4156b3fbeca2fc4ce9897d8d26cfcb5ce2b4e524d73003fd1bea563399dcc681e83b19af0cc2b371024e2d59214d76c6b703d9380a57f
+            sha256: 74508f7ac242282761278bc92ea386940e6e4dab0e1c213fa3b4c143c139cf36
+            sha512: 0c0383a5a9add884e5581a9a181bbd3aef3c154acd1d1a21046a10d0b9cbceb1c64911b0156b1f721f2c240452f3c7735ea5cf98d2688006e044a7f6af611774
             uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/kubernetes/v1.18.16/kubernetes-node-windows-amd64.tar.gz
           description: Kubernetes node tarball for windows/amd64
           name: kubernetes-node-windows-amd64.tar.gz
@@ -146,8 +320,8 @@ status:
         - arch:
             - amd64
           archive:
-            sha256: cfc9e3aa2508dce7c0d4216b54b62d614f915e0d276bc8cd233a6b94228918be
-            sha512: 6b6ef9f91109105cb402c422dc13b96df00472ee42b5c006c8ce756ee9ae851ff1d3e07b8c6494f0bcfc27c3711878642504b48f30ca0bc24c2b5c087ea2d61c
+            sha256: ce32e5abb21396b3d330cf63e9d9889cad3d472b518510a082368d4758241f54
+            sha512: 0056444fb527f1dec29067e2b3a32d3b5631c3303af40ca2f5e92d8c73d7c874722cb3edb4270a6f82ede38cc7c7ffeff9465a0214b9e10e83c29534606e5557
             uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/kubernetes/v1.18.16/kubernetes-client-darwin-amd64.tar.gz
           description: Kubernetes client tarball for darwin/amd64
           name: kubernetes-client-darwin-amd64.tar.gz
@@ -201,8 +375,8 @@ status:
         - arch:
             - arm64
           archive:
-            sha256: 0e75f1e336da3542bfad22d643c8cdc4845c901f21e0baa1611ce6aac9ce7d56
-            sha512: 0aa7483d1728494c75e09f886845f9bef14ac1f1b8eb3f7ffa65d2ad3b06c37acae91a02d6685fd16b3f0a37e351f42fe0d52aa6f66292777b9e3e234d22cb22
+            sha256: 22692a48c4bbb2e08b41b997a26ae97bb0c788b07268b69f89774940ea3c94a3
+            sha512: 1e093a428fb4c96003df2a72ab1f89d0957651e06c5af68c71b67bb0ae7e399a4d79354e06259b96d084dfae8fec43181696c94482d089ad488a48d55f97c591
             uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/kubernetes/v1.18.16/bin/linux/arm64/kube-apiserver
           description: kube-apiserver binary for linux/arm64
           name: bin/linux/arm64/kube-apiserver
@@ -211,8 +385,8 @@ status:
         - arch:
             - arm64
           archive:
-            sha256: 92cdbf916e77dcc1f2f4d4516516151024bdd1cbd998f815d9c9734b855f1f54
-            sha512: 957c13299be9f84bf00d1c08516e651fafec64f2c0b375c1389fb0183169c65412ab115bbfce052479d2343c54d25ec624fccb98a6d73007401a04b8f61d98f8
+            sha256: 5a0ce7de73a1a2a0238e16c24b01fbfd1867136fe627b73ef0fd38927f21a9c5
+            sha512: bb190bc5a1314abd98610d134e94e452e69728f245d5b5d2f8971d2371bea76a279122addfe261a007ebad0d88a414a48e1bcdc3193886df8f3b8fe13862d7c4
             uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/kubernetes/v1.18.16/bin/linux/arm64/kube-controller-manager
           description: kube-controller-manager binary for linux/arm64
           name: bin/linux/arm64/kube-controller-manager
@@ -221,8 +395,8 @@ status:
         - arch:
             - arm64
           archive:
-            sha256: d1913aab3794e9be8eaab95ee2c0f2580dc9f3b28526cb615015363c9ae05a94
-            sha512: a7b4ff10b6500d548595acb97f8ce0a77990e1ecddf3c1440c578a79b410d0b5ec28dbdb9722409379ba37ff837fbb3bfe52865b3969842f76a21320908b2f4d
+            sha256: c5be394be2d755137e78d7b7ca0676d152c1f238ac63d9bc7459973fcb957d16
+            sha512: 9a96d6dd4e8f61d02585e4a3cec6552e22c3f3fea415718d50752143dde5453ebc8f45e955e665f0a85f456abcca7ca5476a678258871c2fc2634a12a6aba6e9
             uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/kubernetes/v1.18.16/bin/linux/arm64/kube-proxy
           description: kube-proxy binary for linux/arm64
           name: bin/linux/arm64/kube-proxy
@@ -231,8 +405,8 @@ status:
         - arch:
             - arm64
           archive:
-            sha256: 07fd71b7acd52ec938df3db69d06febde70d831a59241f79cbf6ba73f1ccd831
-            sha512: a73f0118ba7328cf27384b00be657bcd61bdd6d2c14ce16e2eef57be0d7f4774f1ea31b9f516139ca589d1cd2c823ebb74a84ad06da4b85be7154f4145a41bba
+            sha256: a1721a3c3adbd9c9fb67ab5a0c036d679d06e961902fa9f0a1e387919ce72153
+            sha512: 10e43ae2702736792f4a4e8efab9e2787243db06272d4cfd25a63c3bb16065d45777cc0bdebeb1252e99617a84c7e5490f6161c5fff5936671cf059d838f4769
             uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/kubernetes/v1.18.16/bin/linux/arm64/kube-scheduler
           description: kube-scheduler binary for linux/arm64
           name: bin/linux/arm64/kube-scheduler
@@ -241,8 +415,8 @@ status:
         - arch:
             - arm64
           archive:
-            sha256: 212abb9abdca983a58d6a5bbd6f44a680fb3bee54b097b728e268f96825aa9d5
-            sha512: f9d0aa9f3a3ef29c79f53fec88f2c35829f849c5ce9734447f87dfbc4e2d490ecb4d25f5383ab8471e6e472467dc2554fc4995ae9cea32a1b39dd7fae3f133b0
+            sha256: 9208056ba20abc9528a6788aa18aefce145c6155bc39ce7bbfce9eba405dbfce
+            sha512: b9007ddea4153a86f48f59348cfa5f18a70835eb567f5f23d3e675efdc91eef42af5ac8433983342133e68d45892b676feb8553d5e6e7704985a01424fb9afb8
             uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/kubernetes/v1.18.16/bin/linux/arm64/kubectl
           description: kubectl binary for linux/arm64
           name: bin/linux/arm64/kubectl
@@ -251,8 +425,8 @@ status:
         - arch:
             - arm64
           archive:
-            sha256: 0d3cac4ba956d7515a1ea17a18f1f88e1a1fe2744fed782c05e6017545ea6da1
-            sha512: dca2c3c14849ff0158a8ad50551d3d5c3d67594e30649db4f2c65e06d6d34b393e310b8c0f243e51c5454249a91062c6326c230b1c6cab9c68e6912a8c48d027
+            sha256: 104265ac72702710ab2d6451490abde1dd94cacf14fecb5ef46d26a216c5b8e5
+            sha512: a2d20571400da72c5d098d77568ea0b023667a3e358a619bbddd605174f0aab389086abae67fed9c09fb6ead64ef8a52395d23e22dcf8595b9aca15cff591b37
             uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/kubernetes/v1.18.16/bin/linux/arm64/kubelet
           description: kubelet binary for linux/arm64
           name: bin/linux/arm64/kubelet
@@ -261,8 +435,8 @@ status:
         - arch:
             - arm64
           archive:
-            sha256: 5c2206dc2dc3226484b21bb2ba897aab365fae0b8f4ef784631a6b952417da66
-            sha512: 5cb1093333066156abcf1c0aec5bde2eec444f06e129db54e00ed8724d55400b9a7678578e2b6760dac1fd90b4075757a87b864deb96280eaf9466c6fd2f00e5
+            sha256: c423c11cd9f382178dca66546b3774cbc8828af8a76fe0599e811aa36f6176f1
+            sha512: 7587b173fceba23e337dc2467bc92ccd886721ee0b8ebf3161c748ddba445cbfe2a9c54e227122f1a059d58501b24e49ab35936ff0ac792339fd3cc5d010384e
             uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/kubernetes/v1.18.16/bin/linux/arm64/kubeadm
           description: kubeadm binary for linux/arm64
           name: bin/linux/arm64/kubeadm
@@ -271,8 +445,8 @@ status:
         - arch:
             - amd64
           archive:
-            sha256: 0bc72f960f9a907a0e864ec8c212da253522d6c3022a606a4b7194492ca820c3
-            sha512: aaf9dc8f246f90dc823f793a97aed19296a6afcd4709da60e85fceae44b91c0f3f9bbb934b741be22cb35c3622e72eaa2a108b68b8f7a9d352ed347e832e9424
+            sha256: 215bc24f36444c25695b621254697fb5622c9bb88f4d0abe116afe1b21921b2c
+            sha512: 8dbfe5d4e6813ec9fc06132179ea16c6099278f34aa8002a0e6eb5d7c2d272304c38da79169073b2649f526e293d7388dc214070ec3dea6be76bf1ca2d029720
             uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/kubernetes/v1.18.16/bin/linux/amd64/kube-apiserver
           description: kube-apiserver binary for linux/amd64
           name: bin/linux/amd64/kube-apiserver
@@ -281,8 +455,8 @@ status:
         - arch:
             - amd64
           archive:
-            sha256: bbe3a3a83b1a36f2e05b5727814d7292cd8e713334c8e8652e2aa8a3276fa8e3
-            sha512: ef4773e90e332c20990131018e9da343493a1a890232f49f92eaff8a806ef25eafa0042762e7beaa6f201f09aa46bba0894d562bb551846cd6731ec2f846cf35
+            sha256: 24e4359d28831b8fd69a870ecdbabbe1170512038d5aaa6cf2200c646dac71e5
+            sha512: c083042a2940cf3f44c5f97ed3ffae4dfce8ed03b5aee64b4bd9d06b67c908967844572638c83515ea1bb94bdf5a25d278d53aa5aaac1b5bd25897b5eb2838e1
             uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/kubernetes/v1.18.16/bin/linux/amd64/kube-controller-manager
           description: kube-controller-manager binary for linux/amd64
           name: bin/linux/amd64/kube-controller-manager
@@ -291,8 +465,8 @@ status:
         - arch:
             - amd64
           archive:
-            sha256: bcb077e388fb739a76c6384774760b1fc4663483b27b138c6de2731d1a46482f
-            sha512: 395837e3cf4cf01c8aeeadb5a6ab3af285c57333b46a47f25e909bfa2980ba5f0bc3f2bfdbcb7ac685d7745e38275d944054d26ebd3ef7b39b3b5ba3ec7f5996
+            sha256: d09c2222846bac2071957456a24bf269f1484007fc462d09d6ca7c7af1f27d98
+            sha512: ad469d843c8a5c5e6697cdd43f3cd873de94d9742beb5eb4214878c306828b3e7eee7ac94ee03bc0263ea2792ab5649a5b08a8561698bc829ad90592f3e911e6
             uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/kubernetes/v1.18.16/bin/linux/amd64/kube-proxy
           description: kube-proxy binary for linux/amd64
           name: bin/linux/amd64/kube-proxy
@@ -301,8 +475,8 @@ status:
         - arch:
             - amd64
           archive:
-            sha256: bc10076d6b5a402b663c629522dad7a5f086044e3203c93e7e772e1a154a3aad
-            sha512: 2f2f3f8baf45dc4a0536a4171213ae8c9df20464cb266d95ac6cb31d537d3992d7d6f6ec16e9f275b2d75473d38bdad3d2771abc752dd2ab96561027bdc5d8d0
+            sha256: d46c27a7bb73b198168c2369fae273b358f7014094c34739c974e0008c1d17ff
+            sha512: 2e59eea2bdadc439c8e2924330253b2730928ac2da46f9373327af17417dd8bead36c75d7e8070769546179ac7b35ff245b4ac0d5921cf46431dc677b3eac76b
             uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/kubernetes/v1.18.16/bin/linux/amd64/kube-scheduler
           description: kube-scheduler binary for linux/amd64
           name: bin/linux/amd64/kube-scheduler
@@ -311,8 +485,8 @@ status:
         - arch:
             - amd64
           archive:
-            sha256: 18aec74b07f440a49d3f92e78b15357e47e82a05da2d2cc62e0f19e4cabaaefd
-            sha512: f938fe688caa87c93220b950304ea9c072cedf0b0b3b1ae898981bb864648d21802b4fe50a8706e11967ee15fd61aeb338868c54f4bfedcbfdcf14206eb8e441
+            sha256: 059a40df6641ea4e6917a5f347be9e251ab9c2b8a1e5c7600a32f2d86442602f
+            sha512: 1b3d54bf236b4d381f646d885754e118c965d6591e077fe452c6099ea1d25976073767fed7ef71a66e93aa73e034f5fcf1dcff1fba0db0fd42b0b40a5408969d
             uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/kubernetes/v1.18.16/bin/linux/amd64/kubectl
           description: kubectl binary for linux/amd64
           name: bin/linux/amd64/kubectl
@@ -321,8 +495,8 @@ status:
         - arch:
             - amd64
           archive:
-            sha256: c287773a96ffc29b8aaddd4023d67a1392247f4d9c55d2a67dcba49d36d7d0be
-            sha512: 0c03abda1cee3ad8a07edad94a061a0d6278906fb3c556c62831aa59a219fc776e2b59bb33cc9095c1b304b9f93cda883098ed97b5ce6eb0e6cf9184289423d4
+            sha256: 291971b9d66e8f02dfc128e27ab3749cbbf999bf4e83e0195d1b99e09bf216ff
+            sha512: 10bad80e200907b1e23c61c7f65a0ef6ce259116cbcf4c259719aa05cd8fbfe5f4c088e647d66db8968ffd0b3de12a84ac5384b2d6dff2216742a3d150236881
             uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/kubernetes/v1.18.16/bin/linux/amd64/kubelet
           description: kubelet binary for linux/amd64
           name: bin/linux/amd64/kubelet
@@ -331,8 +505,8 @@ status:
         - arch:
             - amd64
           archive:
-            sha256: 41cd9c0518076e5c2a208053dc58833b2312e3229d40ecb130279bd3494fc8af
-            sha512: 367e8caf7f5da37f671da1270bc3a3a3be1bef10c1deb59cf3f3397076c50999f0f4d3aca4a5112787ff017d45b3ebdb67a2d458bc6c0590b5d62d406cf8f4b6
+            sha256: a9cb2ae9b73283090efbab7b087874d7455150a148477bf6de612db57ff65b5c
+            sha512: 509680fd1d451a3db18387a1366784885b3c69d4deb3f388cee41f403f43d77a781528b3b201627d8e57d60912e2360b4da8d7809e0569222d68c2b2de8facbf
             uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/kubernetes/v1.18.16/bin/linux/amd64/kubeadm
           description: kubeadm binary for linux/amd64
           name: bin/linux/amd64/kubeadm
@@ -341,8 +515,8 @@ status:
         - arch:
             - amd64
           archive:
-            sha256: d303ee261b977e669ac2a95a83ad49788fd0a6ca9152c77e1e27b67690014030
-            sha512: 7fdf5f87da2ead48c85a330ad40741cad6a9f5624684bb885d43fcbd96788be2c8e7918e7d0d2a7f1121150254bc138f3162c334a138058a6c0782d0fe8e0fd9
+            sha256: 86380748a6a16acf0cc5c1b9b3cb3089432d1b0778f7eea7b4d27b8a318b551f
+            sha512: 3e4d43753249dc00177885c68ff6576ad198caf027a47e3dec585bb6e06475ca829a38a089e97ce4f09b43e101abab64904b92c9a12fd812f5fa14b04e466811
             uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/kubernetes/v1.18.16/bin/windows/amd64/kube-proxy.exe
           description: kube-proxy.exe binary for windows/amd64
           name: bin/windows/amd64/kube-proxy.exe
@@ -351,8 +525,8 @@ status:
         - arch:
             - amd64
           archive:
-            sha256: 4ce49030f2003683c5f21403981cd0a0e657c57ca9b49a626741e490d56ce801
-            sha512: b4ee0d5cee56ad5318e222eed87e7fa51545dc8ad62c03b8324211b4be6f53585ba6e3b39f34b3e41e78749fa57890d4b0f94ccda00f2f5b653dc862a297fcf9
+            sha256: 76c64d04a960f79622e0682b5af53804bd1fb1c0907772262761efb71217707f
+            sha512: 9860825bd4274a65076b78708d09f64fe179895f0c1d8d17cd1671b408e4c3530e99afc54db1000cb7f6a7d5c1be7d481d757a14c38068c9aeaaf8fddeb01fae
             uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/kubernetes/v1.18.16/bin/windows/amd64/kubeadm.exe
           description: kubeadm.exe binary for windows/amd64
           name: bin/windows/amd64/kubeadm.exe
@@ -361,8 +535,8 @@ status:
         - arch:
             - amd64
           archive:
-            sha256: 68469dc6bf7345b0fc9fe0e02a7bbbe1794c31885731480dd5ebc3f9595dcbe2
-            sha512: 07ea89ade63374a11c0c732e93bca815d5ac666b1a48a2185c7220f497d0f1216f9acf650fbd46ba52146129f3157b8d29dfb841a4685b7f7cd2f5ea6b18afe1
+            sha256: 8106e569feb5dac424414133cc3708ddc4ed12c4479e9f9c26dd5e0abb426025
+            sha512: e42b026fa2bcd4cf5c7dd1afe5c47d6a43ceeba0c31b622ea1ec483dfb048270683d65df049c936c147b3348d904c7a880147a6557e369bbc55ea14bd620d4b0
             uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/kubernetes/v1.18.16/bin/windows/amd64/kubectl.exe
           description: kubectl.exe binary for windows/amd64
           name: bin/windows/amd64/kubectl.exe
@@ -371,8 +545,8 @@ status:
         - arch:
             - amd64
           archive:
-            sha256: d16b0335e61be8ea71b90a3da71280cef3ce12c0a6106828ca5f7ce66259918c
-            sha512: 957addb40d6915d676785ae89215577c9ba1a482a1c986a3286353b76abb8a5076f56ca7b4c82fb81b86b1ee6f79ff37b7d9d210fbfed031bb2e270a138cc7c7
+            sha256: 831370618b7b9e55921134499a3d19d1d67daf62addec60371d5d593b2e7a97b
+            sha512: 7cdd9f43e9d92964185e983141f82a857eaf76db75cbb7b54ff48cea4f13336960b2f92ccb84c3e3ce4f646d4771abfffe66f2434c13324ec42e588545670e41
             uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/kubernetes/v1.18.16/bin/windows/amd64/kubelet.exe
           description: kubelet.exe binary for windows/amd64
           name: bin/windows/amd64/kubelet.exe
@@ -381,8 +555,8 @@ status:
         - arch:
             - amd64
           archive:
-            sha256: b59b7feef5d8e9aa786a9532563991b36310b4b9964963112e8b8c8d19a57c31
-            sha512: 6e37541c74eba54e9a69978f4d738aca4f920811230703f0d5c39221f32fe33384add2e2a200fd714c57feff53e7601a1dac0b44e0941425908abde3a8fae0b4
+            sha256: 5708178e4139a02bce462a9e293885bd7dd1e4f166067bfa2a6858a9be540451
+            sha512: 4ca81cf7ce52f4b35622793a8e07191acd69fca0e652a9cb0dae57fd805c2a4e81fa2421b5c2546d0550f15b0b3a968564b6fc3903a7a246d399dab9e34b281a
             uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/kubernetes/v1.18.16/bin/darwin/amd64/kubectl
           description: kubectl binary for darwin/amd64
           name: bin/darwin/amd64/kubectl
@@ -391,8 +565,8 @@ status:
         - arch:
             - amd64
           archive:
-            sha256: a45cf9abab25f441138b47fb8b1cbfeef363cd046b49c908c3e15c0fefa1d1dc
-            sha512: a3b78bb3c249cad6e315e6afc5eeb03c9d62ea0229436559aa47a44bd85ec7d39e81480b1b21e779242db8549d3811ccdfbeb347b4d09987bfd6c1f561ed4696
+            sha256: e8c1b8b82fb419ed149e42f38f8cc6ee1f81bf710887a4842b4596f012f57809
+            sha512: 72890f2ee1f72f49ad7af69eac05600746e36fc95a12f3827ec8c6fed50c31c113455907f9552a4e209c3f699139cb04c869f2abaa949f7072980ee34a22bff7
             uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/kubernetes/v1.18.16/bin/linux/amd64/kube-apiserver.tar
           description: kube-apiserver linux/amd64 OCI image tar
           name: bin/linux/amd64/kube-apiserver.tar
@@ -401,8 +575,8 @@ status:
         - arch:
             - arm64
           archive:
-            sha256: 2da180ebea81f03f6cf56cd438ed35febfbe1b1eb7b02f0dac5681df593827a2
-            sha512: c1b3c6c12f30d69a26db1b35c8529674bf81b4ad8a38dbcd27f36fd2184179b7649d082035d624a12ab68f466f2bc6d00cb30f513326ef4c78ef5a716438715e
+            sha256: 5f1cee6d8cc7d0e38d5680c5aed3db5c2dd26f74ff9715ad7ffbddd498f09c2f
+            sha512: d9d824a4f2d96e9ca5f07e22a1ca6bc53bdb2a41417b2a15ac967c586e462bcf7f437edee723d907e69b17d6de2c86ddf03e7d3c55ed6b295b0f0b45414d4360
             uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/kubernetes/v1.18.16/bin/linux/arm64/kube-apiserver.tar
           description: kube-apiserver linux/arm64 OCI image tar
           name: bin/linux/arm64/kube-apiserver.tar
@@ -411,8 +585,8 @@ status:
         - arch:
             - amd64
           archive:
-            sha256: 7a323b12b0b30e8cc3c7cebbe506355a57ec6587333484dabfdb5e0a2698f46a
-            sha512: e9d2197ab2d281209ee2b588311006020143c10d1a7939eb13dd8bc6559f265dfd41c7a97c016147c07bcab62c15f9e2d6aad8348fb6d55d2a290791b6378d53
+            sha256: 56555dd29e017f4493f7e4e3b2b33236710dba5dc866be3a1f0258c4da34e3cb
+            sha512: b1634d9e385af8078b47e3c1f3e5ca15bd23cb5503b6a5263b1f28675a36c8855b0ff67f8e278f54631c2281d4ef064347fdc157990e70cf2122ac7d118b6aaf
             uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/kubernetes/v1.18.16/bin/linux/amd64/kube-controller-manager.tar
           description: kube-controller-manager linux/amd64 OCI image tar
           name: bin/linux/amd64/kube-controller-manager.tar
@@ -421,8 +595,8 @@ status:
         - arch:
             - arm64
           archive:
-            sha256: dde27ecf339846ee3902e29d965c61b31c90d8ad85c099b0336580f549d4a09c
-            sha512: 14cc4d5e38b86b308463bc41c52f2494ab300d1ba2f6b4f6bd1d347318e36263b8137d225bf8e71ccbc242254be15ae9dda6c0af64018984949c86cc8f28c3cd
+            sha256: 3d0a546a3bb26a2f3c52ee5f68c0f0c143817fc0ecdf8217fd4b961b8308cdaf
+            sha512: 6fcb205d3774019ca7a28c56131ce12bead63353bffc4fc82095d5e7c0a09fe7783dac3b57fde3f4b59b2d67668e021a1b19f356098a38d1ca6dc4d052810c47
             uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/kubernetes/v1.18.16/bin/linux/arm64/kube-controller-manager.tar
           description: kube-controller-manager linux/arm64 OCI image tar
           name: bin/linux/arm64/kube-controller-manager.tar
@@ -431,8 +605,8 @@ status:
         - arch:
             - amd64
           archive:
-            sha256: 12506eade45e494f54216dc9c0ee20fbe81edf54fea6be439e88515bcd369eb0
-            sha512: 235e4583cd5d32c925595e8f9fb0a4238e024e929a099fce1755bb39114106345d4acec14f8278d1c0eec51d92024c64443730ccbab67b2520400fcb7d974b55
+            sha256: f527ba6ac224902d1ac90281e4f31799f80793fde231bef32fc7ff9fee3a8245
+            sha512: 05c98ed502963a936a6555029161f8f5ea5d1a4189195de075c7ec02f28db59afb8568ffd98c53093614a24b50f8c5b9a3a374e8431b30d30fba358ee1c1a053
             uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/kubernetes/v1.18.16/bin/linux/amd64/kube-scheduler.tar
           description: kube-scheduler linux/amd64 OCI image tar
           name: bin/linux/amd64/kube-scheduler.tar
@@ -441,8 +615,8 @@ status:
         - arch:
             - arm64
           archive:
-            sha256: 222a6b9f4490cb829017cf3664ca2c1dd726f2aa040f4739d488e392ea15a85b
-            sha512: 16cc932a0bfc8a4ab2af89dc0af10694bacfb2249d790b7be5aba2bbedb14caf3343d933ac1785bf488c96365bd4816c087e7bd9bf00245d94525d36ec80b5ac
+            sha256: fedf1f7ee7ca9e15e633303323ec15b5294a228d46b4ba3f6df6f39c1d9bbed7
+            sha512: db8d17c1629a1c3124a10af793c6f3ef60070c1c27e8429b02734e8b03b958f98f34963c775c922c351ba363987437d8953757adf9569ebd5e797e778734f9db
             uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/kubernetes/v1.18.16/bin/linux/arm64/kube-scheduler.tar
           description: kube-scheduler linux/arm64 OCI image tar
           name: bin/linux/arm64/kube-scheduler.tar
@@ -451,8 +625,8 @@ status:
         - arch:
             - amd64
           archive:
-            sha256: a7ef6b4868255a89f3dcc07d0cbb5c68290285459f5cdb2f8437e8a48bff1ad2
-            sha512: 20c96f14ed98a2309eaebe609340f80a4c7493ec0bd55c52acd55cce1e724f5751e20ecf173758af24f84d09ddb6a9486630813d076954c8b11a5dd82fa45c49
+            sha256: be43e2a6ed7470e34dae384e62cee98b60bef859d29db3e7a5f5420e4a176a4d
+            sha512: 9e2985fbb3fdd2049fb454bcd160f7bfb4669bdd964f3eb0ca5a8299f91eedb6571f3d4b99c499b514a9076f05a007c76543dbc51ce43feeb495662a37f3ea0a
             uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/kubernetes/v1.18.16/bin/linux/amd64/kube-proxy.tar
           description: kube-proxy linux/amd64 OCI image tar
           name: bin/linux/amd64/kube-proxy.tar
@@ -461,197 +635,23 @@ status:
         - arch:
             - arm64
           archive:
-            sha256: 263884abbbd4b1fd2770fb74312d2a9fcf202261e1a1c32f284847193d4278a8
-            sha512: 9041f45ebe2e342371444db3399d86b365414a261e984c4792865ba02c01087521bf13662e8029af3a9dfc74388bea048a6e1ede10693a36e6564619e1c1493f
+            sha256: aa339ade8211be773e9bd6b753a834243a6c637224b62f4b40f3d566f6fab089
+            sha512: ebddea64e366aa6287bc1e63648ee85e77d53fd1c43a7df0de156c856080b4dcae3158c6440a55ea8049b1af86f5d8acbfff5a834f417653d58e336fc93f0f76
             uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/kubernetes/v1.18.16/bin/linux/arm64/kube-proxy.tar
           description: kube-proxy linux/arm64 OCI image tar
           name: bin/linux/arm64/kube-proxy.tar
           os: linux
           type: Archive
         - archive:
-            sha256: 968458c084f89d1e0f09a86bffc318d7d56ffa343f19d4752832c01194c5104e
-            sha512: 010fef210093a99036f985bdbf2e145da593d1c32480a8149ea01e8d8bf2c46a60ef43d82db7fd1dcee830d3700c86235ef5e5ce42364125ad2ca15bc698e4ff
+            sha256: 1425dd5f3977b59ca5e3ae519119154016f8309ba110a64e3bf9b5c1cfd81e9f
+            sha512: 56bd849f5dd09a77b98a4c735f54ac25c66e25ef77e65846d6f5ae255e9b5b981faed7b7e7b16622b378cd95a098eaa74a6d2385c66a8f57328bcb00b21b8934
             uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/kubernetes/v1.18.16/kubernetes-src.tar.gz
           description: Kubernetes source tarball
           name: kubernetes-src.tar.gz
           type: Archive
-      gitCommit: 94f372e501c973a7fa9eb40ec9ebd2fe7ca69848
+      gitCommit: 7a98bb2b7c9112935387825f2fce1b7d40b76236
       gitTag: v1.18.16
       name: kubernetes
-    - assets:
-        - arch:
-            - amd64
-            - arm64
-          description: external-provisioner container image
-          image:
-            uri: public.ecr.aws/eks-distro/kubernetes-csi/external-provisioner:v2.1.1-eks-1-18-4
-          name: external-provisioner-image
-          os: linux
-          type: Image
-      gitTag: v2.1.1
-      name: external-provisioner
-    - assets:
-        - arch:
-            - amd64
-            - arm64
-          description: csi-snapshotter container image
-          image:
-            uri: public.ecr.aws/eks-distro/kubernetes-csi/external-snapshotter/csi-snapshotter:v3.0.3-eks-1-18-4
-          name: csi-snapshotter-image
-          os: linux
-          type: Image
-        - arch:
-            - amd64
-            - arm64
-          description: snapshot-controller container image
-          image:
-            uri: public.ecr.aws/eks-distro/kubernetes-csi/external-snapshotter/snapshot-controller:v3.0.3-eks-1-18-4
-          name: snapshot-controller-image
-          os: linux
-          type: Image
-        - arch:
-            - amd64
-            - arm64
-          description: snapshot-validation-webhook container image
-          image:
-            uri: public.ecr.aws/eks-distro/kubernetes-csi/external-snapshotter/snapshot-validation-webhook:v3.0.3-eks-1-18-4
-          name: snapshot-validation-webhook-image
-          os: linux
-          type: Image
-      gitTag: v3.0.3
-      name: external-snapshotter
-    - assets:
-        - arch:
-            - amd64
-            - arm64
-          description: external-resizer container image
-          image:
-            uri: public.ecr.aws/eks-distro/kubernetes-csi/external-resizer:v1.1.0-eks-1-18-4
-          name: external-resizer-image
-          os: linux
-          type: Image
-      gitTag: v1.1.0
-      name: external-resizer
-    - assets:
-        - arch:
-            - amd64
-            - arm64
-          description: node-driver-registrar container image
-          image:
-            uri: public.ecr.aws/eks-distro/kubernetes-csi/node-driver-registrar:v2.1.0-eks-1-18-4
-          name: node-driver-registrar-image
-          os: linux
-          type: Image
-      gitTag: v2.1.0
-      name: node-driver-registrar
-    - assets:
-        - arch:
-            - arm64
-          archive:
-            sha256: 9fca18f3eab56c11fceb535dbc569e35306900d4ea4bae79a2bf5b26de1e225a
-            sha512: 2353583a13c9f33f00823ccf0ff66acafa8addff3a3873bc658ed5c3a642c04b5ae9828a5897343fff8a9f7e0285df582ba4ffbeae70496861f9dc0090b9f695
-            uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/etcd/v3.4.14/etcd-linux-arm64-v3.4.14.tar.gz
-          description: etcd tarball for linux/arm64
-          name: etcd-linux-arm64-v3.4.14.tar.gz
-          os: linux
-          type: Archive
-        - arch:
-            - amd64
-          archive:
-            sha256: 3a326d99a8865c2173e34e47717d44a76bc47ffba9506c83b22123a79f344bf4
-            sha512: 1847c6d6ead36543f1aff4f7055b0c0fa994d190c5756e352b4b65be0d488269c59873836f33201b90a8c8efd1f01b84bda10eaea20537c5ff29c68ee95179d5
-            uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/etcd/v3.4.14/etcd-linux-amd64-v3.4.14.tar.gz
-          description: etcd tarball for linux/amd64
-          name: etcd-linux-amd64-v3.4.14.tar.gz
-          os: linux
-          type: Archive
-        - arch:
-            - amd64
-            - arm64
-          description: etcd container image
-          image:
-            uri: public.ecr.aws/eks-distro/etcd-io/etcd:v3.4.14-eks-1-18-4
-          name: etcd-image
-          os: linux
-          type: Image
-      gitTag: v3.4.14
-      name: etcd
-    - assets:
-        - arch:
-            - amd64
-          archive:
-            sha256: dd87bc539187f778aa1ef4692a63c828b9a90f9c62df83cd02205622adc87c8c
-            sha512: a8ef1bd2d3a0bf50397e7863a6033d8641543358e0bc8c5eda733f085f35487b4aa53819f8dd06e8f19877f4826f6eb796e9b3c871023daf6a40aa30cd3a5399
-            uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/aws-iam-authenticator/v0.5.2/aws-iam-authenticator-darwin-amd64-v0.5.2.tar.gz
-          description: aws-iam-authenticator tarball for darwin/amd64
-          name: aws-iam-authenticator-darwin-amd64-v0.5.2.tar.gz
-          os: darwin
-          type: Archive
-        - arch:
-            - arm64
-          archive:
-            sha256: 8bdd5612be6b2ebfaa86f69c7e58013fafd6def89b0fe73c9d4eaa49cc8ca54a
-            sha512: 8d9abd60b3721648fb6c35923ce3163677ef86ac246a37dfc63430c16fd5293f33d92be13023216bba441be792d262eb41517489dba600c4b34eeb411a71b2a2
-            uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/aws-iam-authenticator/v0.5.2/aws-iam-authenticator-linux-arm64-v0.5.2.tar.gz
-          description: aws-iam-authenticator tarball for linux/arm64
-          name: aws-iam-authenticator-linux-arm64-v0.5.2.tar.gz
-          os: linux
-          type: Archive
-        - arch:
-            - amd64
-          archive:
-            sha256: 10b6442cdaf5be8d23cd883583572375050a46586872d97e54f5b2a91298c76e
-            sha512: b9065dc3fb1e4909169cef11685b8e9383aca885f8cf45e7f43258800f3277c8cc861110986937835dac13dff070941d4cdb4d95daf0818f1bf4e71fea6e6ca4
-            uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/aws-iam-authenticator/v0.5.2/aws-iam-authenticator-linux-amd64-v0.5.2.tar.gz
-          description: aws-iam-authenticator tarball for linux/amd64
-          name: aws-iam-authenticator-linux-amd64-v0.5.2.tar.gz
-          os: linux
-          type: Archive
-        - arch:
-            - amd64
-          archive:
-            sha256: 3011df0bbfc96c5e68dbbf5a4ec46644186d1ab8f6cd6c1fb06fdbf0885bd286
-            sha512: 7c2b1d247deb6696469140e86ebba3c69e5048422729fb6bfe72fd17bc8e82a58cd394fefae7aaf71c65f09a8c3b8c8f63650b55143bdcc3aeec6b5b8986406d
-            uri: https://distro.eks.amazonaws.com/kubernetes-1-18/releases/4/artifacts/aws-iam-authenticator/v0.5.2/aws-iam-authenticator-windows-amd64-v0.5.2.tar.gz
-          description: aws-iam-authenticator tarball for windows/amd64
-          name: aws-iam-authenticator-windows-amd64-v0.5.2.tar.gz
-          os: windows
-          type: Archive
-        - arch:
-            - amd64
-            - arm64
-          description: aws-iam-authenticator container image
-          image:
-            uri: public.ecr.aws/eks-distro/kubernetes-sigs/aws-iam-authenticator:v0.5.2-eks-1-18-4
-          name: aws-iam-authenticator-image
-          os: linux
-          type: Image
-      gitTag: v0.5.2
-      name: aws-iam-authenticator
-    - assets:
-        - arch:
-            - amd64
-            - arm64
-          description: livenessprobe container image
-          image:
-            uri: public.ecr.aws/eks-distro/kubernetes-csi/livenessprobe:v2.2.0-eks-1-18-4
-          name: livenessprobe-image
-          os: linux
-          type: Image
-      gitTag: v2.2.0
-      name: livenessprobe
-    - assets:
-        - arch:
-            - amd64
-            - arm64
-          description: external-attacher container image
-          image:
-            uri: public.ecr.aws/eks-distro/kubernetes-csi/external-attacher:v3.1.0-eks-1-18-4
-          name: external-attacher-image
-          os: linux
-          type: Image
-      gitTag: v3.1.0
-      name: external-attacher
-  date: "2021-04-14T01:38:06Z"
+  date: "2021-05-05T13:57:00Z"
 
 ```
