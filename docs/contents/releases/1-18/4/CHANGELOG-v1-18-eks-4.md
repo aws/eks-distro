@@ -7,7 +7,7 @@ This changelog highlights the changes for [v1-18-eks-4](https://github.com/aws/e
 
 ### Kubernetes
 
-Upgraded Kubernetes from v1.18.9 to v1.18.16.
+Upgraded Kubernetes from v1.18.9 to [v1.18.16](https://github.com/kubernetes/kubernetes/releases/tag/v1.18.16).
 
 ### Base Image
 
