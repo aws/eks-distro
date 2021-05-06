@@ -19,7 +19,7 @@ up the EKS Distro from source.
 
 ## Releases
 
-Full documentation for releases can be found on https://distro.eks.amazonaws.com.
+Full documentation for releases can be found on [https://distro.eks.amazonaws.com](https://distro.eks.amazonaws.com).
 
 To receive notifications about new EKS-D releases, subscribe to the EKS-D updates SNS topic: 
 `arn:aws:sns:us-east-1:379412251201:eks-distro-updates`
