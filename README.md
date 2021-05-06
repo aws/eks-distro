@@ -10,7 +10,7 @@ Amazon Elastic Kubernetes Service (EKS) to create reliable and secure Kubernetes
 clusters. With EKS-D, you can rely on the same versions of Kubernetes and its
 dependencies deployed by Amazon EKS. This includes the latest upstream updates
 as well as extended security patching support. EKS-D follows the same Kubernetes
-version release cycle as Amazon EKS and we provide the bits here. EKS-D provides
+version release cycle as Amazon EKS, and we provide the bits here. EKS-D provides
 the same software that has enabled tens of thousands of Kubernetes clusters on
 Amazon EKS.
 
@@ -19,7 +19,10 @@ up the EKS Distro from source.
 
 ## Releases
 
-Full documentation for releases can be found on https://distro.eks.amazonaws.com
+Full documentation for releases can be found on https://distro.eks.amazonaws.com.
+
+To receive notifications about new EKS-D releases, subscribe to the EKS-D updates SNS topic: 
+`arn:aws:sns:us-east-1:379412251201:eks-distro-updates`
 
 ### Kubernetes 1-18
 
@@ -37,7 +40,7 @@ Full documentation for releases can be found on https://distro.eks.amazonaws.com
 
 The EKS Distro is built using
 [Prow](https://github.com/kubernetes/test-infra/tree/master/prow), the
-Kubernetes CI/CD system. EKS operates an installation of Prow which is visible
+Kubernetes CI/CD system. EKS operates an installation of Prow, which is visible
 at https://prow.eks.amazonaws.com/. Please read our
 [CONTRIBUTING](CONTRIBUTING.md) guide before making a Pull Request.
 
