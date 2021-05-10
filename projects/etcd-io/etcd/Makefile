@@ -3,7 +3,7 @@ RELEASE_BRANCH?=$(shell cat $(BASE_DIRECTORY)/release/DEFAULT_RELEASE_BRANCH)
 RELEASE_ENVIRONMENT?=development
 RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/$(RELEASE_ENVIRONMENT)/RELEASE)
 ARTIFACT_BUCKET?=my-s3-bucket
-GIT_TAG?=$(shell cat GIT_TAG)
+GIT_TAG?=$(shell cat $(RELEASE_BRANCH)/GIT_TAG)
 GOLANG_VERSION?="1.14"
 
 REPO=etcd
@@ -36,6 +36,7 @@ local-images: binaries
 		--frontend dockerfile.v0 \
 		--opt platform=linux/amd64 \
 		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
+		--opt build-arg:RELEASE_BRANCH=$(RELEASE_BRANCH) \
 		--local dockerfile=./docker/linux \
 		--local context=. \
 		--output type=oci,oci-mediatypes=true,name=$(IMAGE),dest=/tmp/etcd.tar
@@ -47,6 +48,7 @@ images: binaries
 		--frontend dockerfile.v0 \
 		--opt platform=linux/amd64,linux/arm64 \
 		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
+		--opt build-arg:RELEASE_BRANCH=$(RELEASE_BRANCH) \
 		--local dockerfile=./docker/linux \
 		--local context=. \
 		--output type=image,oci-mediatypes=true,name=$(IMAGE),push=true
@@ -56,6 +58,7 @@ docker: binaries
 	docker build \
 		-t $(IMAGE) \
 		--build-arg BASE_IMAGE=$(BASE_IMAGE) \
+		--build-arg RELEASE_BRANCH=$(RELEASE_BRANCH) \
 		--build-arg TARGETARCH=amd64 \
 		--build-arg TARGETOS=linux \
 		-f ./docker/linux/Dockerfile .
@@ -66,7 +69,7 @@ docker-push:
 
 .PHONY: tarballs
 tarballs:
-	build/create_tarballs.sh $(REPO) $(GIT_TAG)
+	build/create_tarballs.sh $(REPO) $(GIT_TAG) $(RELEASE_BRANCH)
 
 .PHONY: build
 build: local-images tarballs
@@ -82,7 +85,7 @@ all: release
 
 .PHONY: attribution
 attribution: 
-	build/create_attribution.sh $(GOLANG_VERSION)
+	build/create_attribution.sh $(RELEASE_BRANCH) $(GOLANG_VERSION)
 
 .PHONY: clean
 clean:
