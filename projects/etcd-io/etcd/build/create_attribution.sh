@@ -20,6 +20,7 @@ set -o pipefail
 MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
 source "${MAKE_ROOT}/../../../build/lib/common.sh"
 
-GOLANG_VERSION="$1"
+RELEASE_BRANCH="$1"
+GOLANG_VERSION="$2"
 
-build::generate_attribution $MAKE_ROOT $GOLANG_VERSION
+build::generate_attribution $MAKE_ROOT/$RELEASE_BRANCH $GOLANG_VERSION $MAKE_ROOT/_output
