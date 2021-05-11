@@ -34,7 +34,7 @@ DESTINATION="./kubernetes-${RELEASE_BRANCH}/kubernetes-${RELEASE_BRANCH}-eks-${R
     --release-number ${RELEASE} | tee ${DESTINATION}
 mkdir -p releasechannels
 grep -v '^#.*' eks-distro-build-tooling/release/config/${RELEASE_BRANCH}/${RELEASE_BRANCH}.yaml \
-    >releasechannels/${RELEASE_BRANCH}.yaml
+    | sed "s/\latestRelease: .*/latestRelease: ${RELEASE}/" >releasechannels/${RELEASE_BRANCH}.yaml
 mkdir -p crds
 grep -v '^#.*' eks-distro-build-tooling/release/config/crds/releasechannels.distro.eks.amazonaws.com-v1alpha1.yaml \
     >crds/releasechannels.distro.eks.amazonaws.com-v1alpha1.yaml
