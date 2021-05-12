@@ -50,7 +50,7 @@ https://github.com/soheilhy/cmux
 ** github.com/spf13/cobra; version v0.0.3 --
 https://github.com/spf13/cobra
 
-** go.etcd.io/etcd; version v3.4.14 --
+** go.etcd.io/etcd; version v3.4.15 --
 https://github.com/etcd-io/etcd
 
 ** google.golang.org/genproto; version v0.0.0-20190819201941-24fa4b261c55 --
@@ -363,7 +363,7 @@ limitations under the License.
 
 ------
 
-** github.com/gorilla/websocket; version v0.0.0-20170926233335-4201258b820c --
+** github.com/gorilla/websocket; version v1.4.2 --
 https://github.com/gorilla/websocket
 
 Copyright (c) 2013 The Gorilla WebSocket Authors. All rights reserved.
@@ -691,7 +691,7 @@ Copyright (C) 2014 by Oleku Konko
 https://github.com/sirupsen/logrus
 Copyright (c) 2014 Simon Eskildsen
 
-** github.com/tmc/grpc-websocket-proxy/wsproxy; version v0.0.0-20170815181823-89b8d40f7ca8 --
+** github.com/tmc/grpc-websocket-proxy/wsproxy; version v0.0.0-20200427203606-3cfed13b9966 --
 https://github.com/tmc/grpc-websocket-proxy
 Copyright (C) 2016 Travis Cline
 
