@@ -141,3 +141,19 @@ attribution-files:
 .PHONY: update-attribution-files
 update-attribution-files: attribution-files
 	build/update-attribution-files/create_pr.sh
+
+
+.PHONY: update-release-number
+update-release-number:
+	#go build cmd/release
+	go vet ./cmd/release/number
+	go run ./cmd/release/number/main.go \
+		--pkg-branch=$(RELEASE_BRANCH) \
+		--pkg-environment=$(RELEASE_ENVIRONMENT)
+
+.PHONY: restore-update-release-number
+restore-update-release-number:
+	git restore release/$(RELEASE_BRANCH)/development/RELEASE
+	git restore projects/kubernetes/kubernetes/$(RELEASE_BRANCH)/KUBE_GIT_VERSION_FILE
+	rm -rf docs/contents/releases/$(RELEASE_BRANCH)/5
+	rm -rf docs/contents/releases/$(RELEASE_BRANCH)/6
