@@ -33,17 +33,17 @@ ORIGIN_ORG=$(git remote get-url origin | sed -n -e "s|git@github.com:\(.*\)/eks-
 #git remote add origin git@github.com:${ORIGIN_ORG}/eks-distro.git
 #git remote add upstream https://github.com/${UPSTREAM_ORG}/eks-distro.git
 
-#PR_TITLE="Increment RELEASE ..."
-COMMIT_MESSAGE="[PR BOT] Increment RELEASE for ..."
+PR_TITLE="TEST!! Increment RELEASE ..."
+COMMIT_MESSAGE="TEST!! [PR BOT] Increment RELEASE for ..."
 #
-#PR_BODY=$(cat <<EOF
-#Bumping RELEASE version
+PR_BODY=$(cat <<EOF
+TEST!! Bumping RELEASE version
+
+By submitting this pull request, I confirm that you can use, modify, copy, and redistribute this contribution, under the terms of your choice.
+EOF
+)
 #
-#By submitting this pull request, I confirm that you can use, modify, copy, and redistribute this contribution, under the terms of your choice.
-#EOF
-#)
-#
-#PR_BRANCH="automated-release-update"
+PR_BRANCH="automate-release-number-final"#"automated-release-update"
 
 #git checkout -b $PR_BRANCH
 
@@ -60,6 +60,8 @@ else
   exit 1
 fi
 
+git push -u origin $PR_BRANCH
+
 #
 #git fetch upstream
 ## there will be conflicts before we are on the bots fork at this point
@@ -70,7 +72,7 @@ fi
 #
 #gh auth login --with-token < /secrets/github-secrets/token
 #
-#PR_EXISTS=$(gh pr list | grep -c "${PR_BRANCH}" || true)
-#if [ $PR_EXISTS -eq 0 ]; then
-#  gh pr create --title "$PR_TITLE" --body "$PR_BODY"
-#fi
+PR_EXISTS=$(gh pr list | grep -c "${PR_BRANCH}" || true)
+if [ $PR_EXISTS -eq 0 ]; then
+  gh pr create --title "$PR_TITLE" --body "$PR_BODY"
+fi
