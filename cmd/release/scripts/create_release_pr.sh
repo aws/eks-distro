@@ -47,7 +47,7 @@ COMMIT_MESSAGE="[PR BOT] Increment RELEASE for ..."
 
 #git checkout -b $PR_BRANCH
 
-if [[ $(git status --porcelain | wc -l) == 1 ]]; then
+if [[ "$(git status --porcelain | wc -l)" -eq 1 ]]; then
   git add "${PATHWAY}"
   if [[ $(git diff --staged --name-only) == "" ]]; then
     exit 0
