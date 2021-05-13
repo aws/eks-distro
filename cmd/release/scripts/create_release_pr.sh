@@ -53,14 +53,16 @@ if [[ "$(git status --porcelain | wc -l)" -eq 1 ]]; then
     exit 0
   fi
   git commit -m "${COMMIT_MESSAGE}" || true
-else
-  git restore "${PATHWAY}"
-  echo "Unexpected files."
-  echo "Restored ${PATHWAY}"
-  exit 1
+
+
+#else
+#  git restore "${PATHWAY}"
+#  echo "Unexpected files."
+#  echo "Restored ${PATHWAY}"
+#  exit 1
 fi
 #
-git push -u origin $PR_BRANCH -f
+#git push -u origin $PR_BRANCH -f
 #
 ##
 ##git fetch upstream
