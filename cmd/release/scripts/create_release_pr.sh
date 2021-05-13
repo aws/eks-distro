@@ -60,7 +60,7 @@ else
   exit 145
 fi
 #
-#git push -u origin $PR_BRANCH -f
+git push -u origin "$PR_BRANCH" -f
 #
 ##
 ##git fetch upstream
