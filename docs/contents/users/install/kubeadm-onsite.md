@@ -177,12 +177,17 @@ If you want to use the *kubectl* client from a system other than your control pl
 
 ## Set up worker nodes to the cluster
 
-Join any number of worker nodes by configuring compatible Linux systems, as described in the Prerequisites section.
-Then run the following procedure on each node as root, using the IP address, token and certificate hash output by the kubeadm:
+Join any number of worker nodes to the control plane, using the IP address, token and certificate hash output by the *kubeadm init* run on the control plane:
 
+1. For each worker node, configure a compatible Linux system, as described in the Prerequisites section.
 
-1. Run the kubeadm command to join the worker node to the cluster, using the command line output when you installed the control plane node:
+1. Pull and retag the *pause* container (copy and paste as one line):
 
-        sudo kubeadm join <IPaddress>:6443  --token xxxx.xxxxxxxxxxxxxxxx  --discovery-token-ca-cert-hash sha256:5732c13c6fb4b992fb4d9e61bd09b33df87bd6394d924ce6ec6bf4ec1fec433c
+        sudo docker pull public.ecr.aws/eks-distro/kubernetes/pause:v1.19.8-eks-1-19-4;\
+        sudo docker tag public.ecr.aws/eks-distro/kubernetes/pause:v1.19.8-eks-1-19-4 public.ecr.aws/eks-distro/kubernetes/pause:3.2;\
+
+1. Run the kubeadm command to join the worker node to the cluster, using the *kubeadm init* output when you installed the control plane node:
+
+        sudo kubeadm join <IPaddress>:6443  --token <xxxx.xxxxxxxxxxxxxxxx>  --discovery-token-ca-cert-hash sha256:<xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx>
 
 You should now have a working cluster that is able to schedule workloads on the nodes you configured.
