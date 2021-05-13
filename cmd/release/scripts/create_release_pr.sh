@@ -43,7 +43,7 @@ By submitting this pull request, I confirm that you can use, modify, copy, and r
 EOF
 )
 #
-#PR_BRANCH="automate-release-number-final"#"automated-release-update"
+PR_BRANCH="automate-release-number-final" #"automated-release-update"
 
 #git checkout -b $PR_BRANCH
 
@@ -57,11 +57,11 @@ else
   git restore "${PATHWAY}"
   echo "Unexpected files."
   echo "Restored ${PATHWAY}"
-  exit 145
+  exit 1
 fi
 
 git status
-git push origin automate-release-number-final
+git push origin "${PR_BRANCH}"
 #
 
 #
