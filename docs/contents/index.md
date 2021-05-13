@@ -64,7 +64,7 @@ You can install the CRD API type, the release channel manifest for EKS-D, and
 view the release channel by running the following commands:
 
 ```bash
-RELEASE_BRANCH=1-19
+RELEASE_BRANCH=1-20
 kubectl apply -f https://distro.eks.amazonaws.com/crds/releasechannels.distro.eks.amazonaws.com-v1alpha1.yaml
 kubectl apply -f https://distro.eks.amazonaws.com/releasechannels/${RELEASE_BRANCH}.yaml
 kubectl get -o yaml releasechannels
@@ -103,8 +103,8 @@ manifest for EKS Distro, and view the release by running the following
 commands:
 
 ```bash
-RELEASE_BRANCH=1-19
-RELEASE=4
+RELEASE_BRANCH=1-20
+RELEASE=1
 kubectl apply -f https://distro.eks.amazonaws.com/crds/releases.distro.eks.amazonaws.com-v1alpha1.yaml
 kubectl apply -f https://distro.eks.amazonaws.com/kubernetes-${RELEASE_BRANCH}/kubernetes-${RELEASE_BRANCH}-eks-${RELEASE}.yaml
 kubectl get release kubernetes-${RELEASE_BRANCH}-eks-${RELEASE}
@@ -117,6 +117,9 @@ The EKS Distro of Kubernetes source repository does not include any AMIs (Amazon
 Machine Images), but it does use the EKS Optimized AMI. See the project
 repository for the [EKS Optimized AMI](https://github.com/awslabs/amazon-eks-ami)
 if you are interested in the AL2 container runtime kernel version.
+
+#### EKS-D 1.20 Version Dependencies
+* [v1-20-eks-1](releases/1-20/1/index.md)
 
 #### EKS-D 1.19 Version Dependencies
 * [v1-19-eks-4](releases/1-19/4/index.md)
