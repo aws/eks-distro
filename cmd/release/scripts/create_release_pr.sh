@@ -13,9 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -e
-set -o pipefail
-set -x
+#set -e
+#set -o pipefail
+#set -x
 
 PATHWAY="${1?....}"
 
