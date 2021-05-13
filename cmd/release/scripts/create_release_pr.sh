@@ -13,9 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#set -e
-#set -o pipefail
-#set -x
+set -e
+set -o pipefail
+set -x
 
 PATHWAY="${1?....}"
 
@@ -59,6 +59,8 @@ else
   echo "Restored ${PATHWAY}"
   exit 145
 fi
+
+git status
 #
 
 #
@@ -68,9 +70,9 @@ fi
 ### -Xtheirs instructs git to favor the changes from the current branch
 #git rebase -Xtheirs upstream/main
 
-HI=$(git push -u origin "$PR_BRANCH" -f)
-
-echo $HI
+#HI=$(git push -u origin "$PR_BRANCH" -f)
+#
+#echo $HI
 #
 ##ssh-agent bash -c 'ssh-add /secrets/ssh-secrets/ssh-key; ssh -o StrictHostKeyChecking=no git@github.com; git push -u origin $PR_BRANCH -f'
 ##
