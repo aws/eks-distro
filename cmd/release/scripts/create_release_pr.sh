@@ -63,12 +63,14 @@ fi
 
 #
 ##
-git fetch upstream
+#git fetch upstream
 ### there will be conflicts before we are on the bots fork at this point
 ### -Xtheirs instructs git to favor the changes from the current branch
-git rebase -Xtheirs upstream/main
+#git rebase -Xtheirs upstream/main
 
-git push -u origin "$PR_BRANCH" -f
+HI=$(git push -u origin "$PR_BRANCH" -f)
+
+echo $HI
 #
 ##ssh-agent bash -c 'ssh-add /secrets/ssh-secrets/ssh-key; ssh -o StrictHostKeyChecking=no git@github.com; git push -u origin $PR_BRANCH -f'
 ##
