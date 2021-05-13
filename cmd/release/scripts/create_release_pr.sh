@@ -60,6 +60,7 @@ else
   exit 145
 fi
 
+git status
 git push origin "$PR_BRANCH"
 #
 
