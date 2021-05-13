@@ -33,8 +33,8 @@ ORIGIN_ORG=$(git remote get-url origin | sed -n -e "s|git@github.com:\(.*\)/eks-
 #git remote add origin git@github.com:${ORIGIN_ORG}/eks-distro.git
 #git remote add upstream https://github.com/${UPSTREAM_ORG}/eks-distro.git
 
-PR_TITLE="TEST!! Increment RELEASE ..."
-COMMIT_MESSAGE="TEST!! [PR BOT] Increment RELEASE for ..."
+PR_TITLE="TEST!! Increment RELEASE"
+COMMIT_MESSAGE="TEST!! [PR BOT] Increment RELEASE for"
 #
 PR_BODY=$(cat <<EOF
 TEST!! Bumping RELEASE version
@@ -81,5 +81,6 @@ git push origin "${PR_BRANCH}"
 ##
 PR_EXISTS=$(gh pr list | grep -c "${PR_BRANCH}" || true)
 if [ "${PR_EXISTS}" -eq 0 ]; then
-  gh pr create --title "${PR_TITLE}" --body "${PR_BODY}"
+  echo "NO PR YET"
+  gh pr create --title "${PR_TITLE}" --body "${PR_BODY}" --draft
 fi
