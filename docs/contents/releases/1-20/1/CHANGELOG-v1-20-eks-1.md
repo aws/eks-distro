@@ -28,4 +28,18 @@ application of the patches.
 
 ## Component Versions
 
-TODO
+| Component             | Version           |
+|-----------------------|-------------------|
+| aws-iam-authenticator | 0.5.2             |
+| cni-plugins           | 0.8.7             |
+| coredns               | 1.8.3             |
+| etcd                  | 3.4.15            |
+| external-attacher     | 3.1.0             |
+| external-provisioner  | 2.1.1             |
+| external-resizer      | 1.1.0             |
+| external-snapshotter  | 3.0.3             |
+| kubernetes            | 1.20.4            |
+| livenessprobe         | 2.1.0             |
+| metrics-server        | 0.4.3             |
+| node-driver-registrar | 2.1.0             |
+| pause                 | 3.2.0             |
