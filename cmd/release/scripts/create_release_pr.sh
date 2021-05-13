@@ -59,20 +59,20 @@ else
   echo "Restored ${PATHWAY}"
   exit 1
 fi
-
-git push -u origin $PR_BRANCH
-
 #
-#git fetch upstream
-## there will be conflicts before we are on the bots fork at this point
-## -Xtheirs instructs git to favor the changes from the current branch
-#git rebase -Xtheirs upstream/main
+#git push -u origin $PR_BRANCH
 #
-#ssh-agent bash -c 'ssh-add /secrets/ssh-secrets/ssh-key; ssh -o StrictHostKeyChecking=no git@github.com; git push -u origin $PR_BRANCH -f'
-#
-#gh auth login --with-token < /secrets/github-secrets/token
-#
-PR_EXISTS=$(gh pr list | grep -c "${PR_BRANCH}" || true)
-if [ $PR_EXISTS -eq 0 ]; then
-  gh pr create --title "$PR_TITLE" --body "$PR_BODY"
-fi
+##
+##git fetch upstream
+### there will be conflicts before we are on the bots fork at this point
+### -Xtheirs instructs git to favor the changes from the current branch
+##git rebase -Xtheirs upstream/main
+##
+##ssh-agent bash -c 'ssh-add /secrets/ssh-secrets/ssh-key; ssh -o StrictHostKeyChecking=no git@github.com; git push -u origin $PR_BRANCH -f'
+##
+##gh auth login --with-token < /secrets/github-secrets/token
+##
+#PR_EXISTS=$(gh pr list | grep -c "${PR_BRANCH}" || true)
+#if [ $PR_EXISTS -eq 0 ]; then
+#  gh pr create --title "$PR_TITLE" --body "$PR_BODY"
+#fi
