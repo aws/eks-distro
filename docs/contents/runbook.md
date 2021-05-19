@@ -37,9 +37,9 @@ All other changes are to this package.
 ### Patch Release
 1. **Make whatever changes you want for this release**
    * Add patches, change Kubernetes versions, etc.
-   * Update whatever Prow Jobs, GIT_TAGs, etc. that are needed for these change
+   * Update whatever Prow Jobs, GIT_TAGs, etc. that are needed for these changes
 1. **Update KUBE_GIT_VERSION**
    * In projects/kubernetes/kubernetes/${RELEASE_BRANCH}/KUBE_GIT_VERSION_FILE
-   * This step came be done as part of the next step(s). It just MUST be done not later than the Prod Release PR, though
+   * This step cane be done as part of the next step(s). It just MUST be done not later than the Prod Release PR, though
    it can be part of that PR.
 1. Do steps 6 - 9 in the above "Minor Release" section
