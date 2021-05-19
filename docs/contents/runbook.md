@@ -42,4 +42,4 @@ All other changes are to this package.
    * In projects/kubernetes/kubernetes/${RELEASE_BRANCH}/KUBE_GIT_VERSION_FILE
    * This step can be done as part of the next step(s). It just MUST be done not later than the Prod Release PR, though
    it can be part of that PR.
-1. Do steps 6 - 9 in the above "Minor Release" section
+1. **Do steps 6 - 9 in the above "Minor Release" section**
