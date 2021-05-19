@@ -40,6 +40,6 @@ All other changes are to this package.
    * Update whatever Prow Jobs, GIT_TAGs, etc. that are needed for these changes
 1. **Update KUBE_GIT_VERSION**
    * In projects/kubernetes/kubernetes/${RELEASE_BRANCH}/KUBE_GIT_VERSION_FILE
-   * This step cane be done as part of the next step(s). It just MUST be done not later than the Prod Release PR, though
+   * This step can be done as part of the next step(s). It just MUST be done not later than the Prod Release PR, though
    it can be part of that PR.
 1. Do steps 6 - 9 in the above "Minor Release" section
