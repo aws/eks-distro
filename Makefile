@@ -141,3 +141,21 @@ attribution-files:
 .PHONY: update-attribution-files
 update-attribution-files: attribution-files
 	build/update-attribution-files/create_pr.sh
+
+.PHONY: update-release-number
+update-release-number:
+	go vet ./cmd/release/number
+	go run ./cmd/release/number/main.go \
+		--branch=$(RELEASE_BRANCH) \
+		--environment=$(RELEASE_ENVIRONMENT)
+
+.PHONY: undo-all-the-things
+undo-all-the-things:
+	git restore release/$(RELEASE_BRANCH)/$(RELEASE_ENVIRONMENT)/RELEASE
+	git restore projects/kubernetes/kubernetes/$(RELEASE_BRANCH)/KUBE_GIT_VERSION_FILE
+
+.PHONY: lazyyy
+lazyyy:
+	make update-release-number
+	sleep 15s
+	make undo-all-the-things
