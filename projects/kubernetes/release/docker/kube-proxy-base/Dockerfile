@@ -18,7 +18,6 @@ FROM $BASE_IMAGE
 ARG TARGETARCH
 ARG TARGETOS
 
-RUN yum update -y
 # Installing dependencies listed in upstream here: https://github.com/kubernetes/release/blob/master/images/build/debian-iptables/buster/Dockerfile
 # Since we rely on AL2, necessary files from netbase are already included, and we aren't making the same optimizations as of now.
 RUN yum install -y \
