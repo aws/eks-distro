@@ -13,3 +13,8 @@ type ReleaseBase interface {
 func GetVersionTag(base ReleaseBase) string {
 	return fmt.Sprintf("eks-%s-%s", base.GetBranch(), base.GetNumber())
 }
+
+// GetReleaseTag returns v<major version>-<minor version>-eks-<patch version> (e.g. v1-20-eks-2)
+func GetReleaseTag(base ReleaseBase) string {
+	return fmt.Sprintf("v%s-eks-%s", base.GetBranch(), base.GetNumber())
+}

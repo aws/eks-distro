@@ -19,6 +19,8 @@ type Release struct {
 	VersionTag         string // e.g. 'eks-1-20-2'
 	PreviousVersionTag string
 
+	ReleaseTag string // e.g. 'v1-20-eks-2'
+
 	EnvironmentReleasePath string
 }
 
@@ -50,6 +52,8 @@ func InitializeRelease(input ReleaseInput) (*Release, error) {
 
 	release.VersionTag = GetVersionTag(release)
 	release.PreviousVersionTag = GetVersionTag(&Release{Branch: release.GetBranch(), Number: release.prevNumber})
+
+	release.ReleaseTag = GetReleaseTag(release)
 
 	releaseJson, _ := json.MarshalIndent(release, "", "\t")
 	log.Printf("populated release with:%v", string(releaseJson))
