@@ -24,14 +24,14 @@ func GetGitRootDirectory() string {
 }
 
 // FormatEnvironmentReleasePath returns path to RELEASE for provided release.
-// Requires release.GetBranch() and release.GetEnvironment() to return non-empty values. Returned path is not guaranteed
+// Expects release.GetBranch() and release.GetEnvironment() to return non-empty values. Returned path is not guaranteed
 // to exist.
 func FormatEnvironmentReleasePath(release ReleaseInput) string {
 	return filepath.Join(gitRootDirectory, "release", release.GetBranch(), release.GetEnvironment(), "RELEASE")
 }
 
 // FormatKubeGitVersionFilePath returns path to KUBE_GIT_VERSION_FILE for provided release.
-// Requires release.GetBranch() to return a non-empty value. Returned path is not guaranteed to exist.
+// Expects release.GetBranch() to return a non-empty value. Returned path is not guaranteed to exist.
 func FormatKubeGitVersionFilePath(release ReleaseInput) string {
 	return filepath.Join(gitRootDirectory, "projects/kubernetes/kubernetes", release.GetBranch(), "KUBE_GIT_VERSION_FILE")
 }
