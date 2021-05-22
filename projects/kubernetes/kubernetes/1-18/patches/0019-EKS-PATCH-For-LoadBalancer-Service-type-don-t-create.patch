@@ -1,0 +1,31 @@
+From fa25778b46bce10618e8d61163fe3e391cc88202 Mon Sep 17 00:00:00 2001
+From: Sravanth Bangari <sbangari@microsoft.com>
+Date: Sun, 31 Jan 2021 11:56:30 -0800
+Subject: --EKS-PATCH-- For LoadBalancer Service type don't create
+ a HNS policy for empty or invalid external loadbalancer IP
+
+https://github.com/kubernetes/kubernetes/pull/99958
+
+Signed-off-by: Kirsten Schumy <ksschumy@amazon.com>
+---
+ pkg/proxy/winkernel/proxier.go | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/pkg/proxy/winkernel/proxier.go b/pkg/proxy/winkernel/proxier.go
+index 51c203b54ab..b5c39ef81bc 100644
+--- a/pkg/proxy/winkernel/proxier.go
++++ b/pkg/proxy/winkernel/proxier.go
+@@ -262,7 +262,9 @@ func newServiceInfo(svcPortName proxy.ServicePortName, port *v1.ServicePort, ser
+ 		info.externalIPs = append(info.externalIPs, &externalIPInfo{ip: eip})
+ 	}
+ 	for _, ingress := range service.Status.LoadBalancer.Ingress {
+-		info.loadBalancerIngressIPs = append(info.loadBalancerIngressIPs, &loadBalancerIngressInfo{ip: ingress.IP})
++		if net.ParseIP(ingress.IP) != nil {
++			info.loadBalancerIngressIPs = append(info.loadBalancerIngressIPs, &loadBalancerIngressInfo{ip: ingress.IP})
++		}
+ 	}
+ 
+ 	if apiservice.NeedsHealthCheck(service) {
+-- 
+2.31.1
+
