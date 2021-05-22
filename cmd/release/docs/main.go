@@ -50,7 +50,7 @@ func main() {
 	}
 
 	docsWriter := io.Writer(f)
-	err = t.Execute(docsWriter, release.EnvironmentReleasePath)
+	err = t.Execute(docsWriter, release)
 	if err != nil {
 		deleteDocsIfError(release)
 		log.Fatalf("Error while writing to changelog file: %v", err)
