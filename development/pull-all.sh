@@ -25,12 +25,12 @@ RELEASE_TAG="eks-${RELEASE_BRANCH}-${RELEASE}"
 RELEASE_CRD="https://distro.eks.amazonaws.com/kubernetes-${RELEASE_BRANCH}/kubernetes-${RELEASE_BRANCH}-eks-${RELEASE}.yaml"
 ECR_BASE="public.ecr.aws/eks-distro"
 
-KUBERNETES_GIT_TAG=$(cat "${BASE_DIRECTORY}"/projects/kubernetes/kubernetes/"${RELEASE_BRANCH}"/GIT_TAG)
-GO_RUNNER_GIT_TAG=$(cat "${BASE_DIRECTORY}"/projects/kubernetes/release/GIT_TAG)
+RELEASE_GIT_TAG=$(cat "${BASE_DIRECTORY}"/projects/kubernetes/release/GIT_TAG)
 
 while read -r image_uri; do
   docker pull "$image_uri"
 done < <(curl "${RELEASE_CRD}" | sed -n -e "s|^.*uri: \\($ECR_BASE\\)|\1|p")
 
-docker pull "${ECR_BASE}/kubernetes/kube-proxy:${KUBERNETES_GIT_TAG}-${RELEASE_TAG}"
-docker pull "${ECR_BASE}/kubernetes/go-runner:${GO_RUNNER_GIT_TAG}-${RELEASE_TAG}"
+# These are not in the CRD
+docker pull "${ECR_BASE}/kubernetes/kube-proxy-base:${RELEASE_GIT_TAG}-${RELEASE_TAG}"
+docker pull "${ECR_BASE}/kubernetes/go-runner:${RELEASE_GIT_TAG}-${RELEASE_TAG}"
