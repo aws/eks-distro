@@ -24,6 +24,13 @@ spec:
       name: a
     memoryRequest: 100Mi
     name: events
+  externalPolicies:
+    node:
+    - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+    master:
+    - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+    bastion:
+    - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
   iam:
     allowContainerRegistry: true
     legacy: false
@@ -104,6 +111,13 @@ spec:
   role: Master
   subnets:
   - {{.awsRegion}}a
+  additionalUserData:
+  - name: ssm-install.sh
+    type: text/x-shellscript
+    content: |
+      #!/bin/sh
+      sudo snap install amazon-ssm-agent --classic
+      sudo snap start amazon-ssm-agent
 
 ---
 
@@ -129,3 +143,10 @@ spec:
   - {{.awsRegion}}a
   - {{.awsRegion}}b
   - {{.awsRegion}}c
+  additionalUserData:
+  - name: ssm-install.sh
+    type: text/x-shellscript
+    content: |
+      #!/bin/sh
+      sudo snap install amazon-ssm-agent --classic
+      sudo snap start amazon-ssm-agent
