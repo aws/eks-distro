@@ -2,13 +2,14 @@ package main
 
 import (
 	utils "../internal"
-	. "../release_manager"
+
 	"bytes"
 	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
+	"os/exec"
 )
 
 type Input struct {
@@ -31,7 +32,7 @@ func main() {
 
 	flag.Parse()
 
-	release, err := InitializeRelease(&Input{branch: *branch, environment: *environment})
+	release, err := utils.InitializeRelease(&Input{branch: *branch, environment: *environment})
 	if err != nil {
 		log.Fatalf("Error initializing release values: %v", err)
 	}
@@ -48,51 +49,51 @@ func main() {
 		log.Fatalf("Error updating KUBE_GIT_VERSION: %v", err)
 	}
 
-	log.Println("Successfully release number for " + release.VersionTag)
+	log.Println("Successfully updated release number for " + release.EKS_Branch_Number)
 }
 
-func updateEnvironmentReleaseNumber(release *Release) error {
-	if len(release.Number) == 0 {
+func updateEnvironmentReleaseNumber(release *utils.Release) error {
+	releaseNumber := release.GetNumber()
+	if len(releaseNumber) == 0 {
 		return fmt.Errorf("failed to update release number file because provided number was empty")
 	}
-	return os.WriteFile(release.EnvironmentReleasePath, []byte(release.Number+"\n"), 0644)
+	return os.WriteFile(release.EnvironmentReleasePath, []byte(releaseNumber+"\n"), 0644)
 }
 
-func updateKubeGitVersionFile(release *Release) error {
-	if len(release.PreviousVersionTag) == 0 {
+func updateKubeGitVersionFile(release *utils.Release) error {
+	if len(release.EKS_Branch_PreviousNumber) == 0 {
 		return fmt.Errorf("failed to update KUBE_GIT_VERSION because previous release version tag is empty")
 	}
-	if len(release.VersionTag) == 0 {
+	if len(release.EKS_Branch_Number) == 0 {
 		return fmt.Errorf("failed to update KUBE_GIT_VERSION because release version tag is empty")
 	}
 
-	kubeGitVersionFilePath := utils.FormatKubeGitVersionFilePath(release)
+	kubeGitVersionFilePath := release.KubeGitVersionFilePath
 	data, err := ioutil.ReadFile(kubeGitVersionFilePath)
 	if err != nil {
 		return fmt.Errorf("failed to read file because error: %v", err)
 	}
 
 	linebreak := []byte("\n")
-
 	splitData := bytes.Split(data, linebreak)
 
 	prefix := []byte("KUBE_GIT_VERSION='")
-	foundPrefix := false
+	hasFoundPrefix := false
 
 	for i, line := range splitData {
 		if bytes.HasPrefix(line, prefix) {
-			foundPrefix = true
+			hasFoundPrefix = true
 
 			// End of line character (') is included to ensure entire version tag is captured
-			versionTagToEndOfLine := []byte(release.VersionTag + "'")
+			versionTagToEndOfLine := []byte(release.EKS_Branch_Number + "'")
 			if bytes.Contains(line, versionTagToEndOfLine) {
-				log.Printf("version tag %q already set", release.VersionTag)
+				log.Printf("version tag %q already set", release.EKS_Branch_Number)
 				return nil
 			}
 
-			prevVersionTagToEndOfLine := []byte(release.PreviousVersionTag + "'")
+			prevVersionTagToEndOfLine := []byte(release.EKS_Branch_PreviousNumber + "'")
 			if !bytes.Contains(line, prevVersionTagToEndOfLine) {
-				return fmt.Errorf("fail to find previous version tag %q to replace", release.PreviousVersionTag)
+				return fmt.Errorf("fail to find previous version tag %q to replace", release.EKS_Branch_PreviousNumber)
 			}
 
 			splitData[i] = bytes.Replace(line, prevVersionTagToEndOfLine, versionTagToEndOfLine, 1)
@@ -100,15 +101,25 @@ func updateKubeGitVersionFile(release *Release) error {
 		}
 	}
 
-	if !foundPrefix {
+	if !hasFoundPrefix {
 		return fmt.Errorf("failed to find line starting with %q that is needed to update version tag", prefix)
 	}
-
 	return os.WriteFile(kubeGitVersionFilePath, bytes.Join(splitData, linebreak), 0644)
 }
 
-func cleanUpIfError(release *Release) {
+func cleanUpIfError(release *utils.Release) {
 	log.Println("Encountered error so all attempting to restore files")
-	utils.RestoreFilePath(release)
+
+	paths := []string{
+		release.EnvironmentReleasePath,
+		release.KubeGitVersionFilePath,
+	}
+
+	for _, path := range paths {
+		err := exec.Command("git", "restore", path).Run()
+		if err == nil {
+			log.Printf("If changes were made, restored %s", path)
+		}
+	}
 	log.Println("Finished attempting to restore files")
 }

@@ -2,7 +2,6 @@ package internal
 
 import (
 	"fmt"
-	"log"
 	"os/exec"
 	"path/filepath"
 	"strings"
@@ -24,29 +23,20 @@ func GetGitRootDirectory() string {
 }
 
 // FormatEnvironmentReleasePath returns path to RELEASE for provided release.
-// Expects release.GetBranch() and release.GetEnvironment() to return non-empty values. Returned path is not guaranteed
-// to exist.
+// Expects release.GetBranch() and release.GetEnvironment() to return non-empty values.  Returned path is not guaranteed
+// to exist or be valid.
 func FormatEnvironmentReleasePath(release ReleaseInput) string {
 	return filepath.Join(gitRootDirectory, "release", release.GetBranch(), release.GetEnvironment(), "RELEASE")
 }
 
 // FormatKubeGitVersionFilePath returns path to KUBE_GIT_VERSION_FILE for provided release.
-// Expects release.GetBranch() to return a non-empty value. Returned path is not guaranteed to exist.
+// Expects release.GetBranch() to return a non-empty value.  Returned path is not guaranteed to exist or be valid.
 func FormatKubeGitVersionFilePath(release ReleaseInput) string {
 	return filepath.Join(gitRootDirectory, "projects/kubernetes/kubernetes", release.GetBranch(), "KUBE_GIT_VERSION_FILE")
 }
 
-// RestoreFilePath attempts to restore filepath known to this package
-func RestoreFilePath(release ReleaseInput) () {
-	paths := []string{
-		FormatEnvironmentReleasePath(release),
-		FormatKubeGitVersionFilePath(release),
-	}
-
-	for _, path := range paths {
-		err := exec.Command("git", "restore", path).Run()
-		if err == nil {
-			log.Printf("If changes were made, restored %s", path)
-		}
-	}
+// FormatReleaseDocsDirectory returns path to the directory for the docs' directory for provided release.
+// Expects release.GetBranch() and number to be non-empty values. Returned path is not guaranteed to exist or be valid.
+func FormatReleaseDocsDirectory(release ReleaseInput, number string) string {
+	return filepath.Join(gitRootDirectory, "docs/contents/releases", release.GetBranch(), number)
 }

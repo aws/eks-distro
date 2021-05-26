@@ -2,13 +2,11 @@ package main
 
 import (
 	utils "../internal"
-	. "../release_manager"
+	. "./internal"
+
 	"flag"
 	"fmt"
-	"io"
 	"log"
-	"os"
-	"text/template"
 )
 
 type Input struct {
@@ -28,39 +26,50 @@ func (input Input) GetEnvironment() string {
 func main() {
 	branch := flag.String("branch", "", "Release branch, e.g. 1-20")
 	environment := flag.String("environment", "development", "Should be 'development' or 'production'")
+	includeChangelog := flag.Bool("includeChangelog", true, "If changelog should be generated")
+	includeBranchIndex := flag.Bool("includeBranchIndex", true, "If index in branch dir should be generated")
+	includeAnnouncement := flag.Bool("includeAnnouncement", true, "If release announcement should be generated")
+	force := flag.Bool("force", false, "Forces the replacement of existing with generated")
 
 	flag.Parse()
 
-	release, err := InitializeRelease(&Input{branch: *branch, environment: *environment})
+	release, err := utils.InitializeRelease(&Input{branch: *branch, environment: *environment})
 	if err != nil {
 		log.Fatalf("Error initializing release values: %v", err)
 	}
 
-	releaseDocsPath := utils.FormatReleaseDocsDirectory(release)
-
-	err = os.Mkdir(releaseDocsPath, 0777)
-	if err != nil {
-		log.Fatalf("Error creating release docs directory: %v", err)
+	docs := []Doc{
+		{
+			Filename:        fmt.Sprintf("CHANGELOG-%s.md", release.V_Branch_EKS_Number),
+			TemplateName:    ChangeLogBaseImage,
+			IsToBeWrittenTo: *includeChangelog,
+		},
+		{
+			Filename:        "index.md",
+			TemplateName:    IndexInBranch,
+			IsToBeWrittenTo: *includeBranchIndex,
+		},
+		{
+			Filename:        "release-announcement.txt",
+			TemplateName:    ReleaseAnnouncement,
+			IsToBeWrittenTo: *includeAnnouncement,
+		},
 	}
 
-	t := template.Must(template.New("changeLogText").Parse(utils.ChangeLogBaseImage))
-	f, err := os.Create(fmt.Sprintf(releaseDocsPath+"/CHANGELOG-%s.md", release.ReleaseTag))
+	docStatuses, err := WriteToDocs(docs, release, *force)
 	if err != nil {
-		log.Fatalf("Error while creating changelog file: %v", err)
+		log.Println("Encountered error while writing to docs. Attempting to undo all changes... ")
+		for _, ds := range docStatuses {
+			errForUndo := ds.UndoChanges()
+			if errForUndo != nil {
+				log.Printf("Error attempting to undo change: %v\n", errForUndo)
+			}
+		}
+		DeleteDocsDirectoryIfEmpty(release)
+		log.Println("Finished attempting to undo all changes\n")
+		log.Fatalf("Error that was encountered while writing to docs : %v", err)
 	}
 
-	docsWriter := io.Writer(f)
-	err = t.Execute(docsWriter, release)
-	if err != nil {
-		deleteDocsIfError(release)
-		log.Fatalf("Error while writing to changelog file: %v", err)
-	}
-
-	log.Println("Successfully generated docs for " + release.ReleaseTag)
-}
-
-func deleteDocsIfError(release *Release) {
-	log.Println("Encountered error so attempting to delete generated docs files")
-	utils.DeleteDocsPath(release)
-	log.Println("Finished attempting to delete generated doc files")
+	DeleteDocsDirectoryIfEmpty(release)
+	log.Printf("Finished writing to %v doc(s)\n", len(docStatuses))
 }
