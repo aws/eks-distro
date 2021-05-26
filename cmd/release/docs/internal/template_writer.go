@@ -12,9 +12,10 @@ import (
 )
 
 type Doc struct {
-	Filename        string
-	TemplateName    string
-	IsToBeWrittenTo bool
+	Filename     string
+	TemplateName string
+	IsIncluded   bool
+	AppendToEnd  func(release *Release) (string, error)
 }
 
 var closeFile = func(f *os.File) {
@@ -25,7 +26,6 @@ var closeFile = func(f *os.File) {
 
 // WriteToDocs writes to each doc in provided docs with the information supplied by release, with overrideIfExisting
 // conditionally replacing existing file content with the generated content.
-// Returns a c
 func WriteToDocs(docs []Doc, release *Release, overrideIfExisting bool) ([]DocStatus, error) {
 	var docStatuses []DocStatus
 
@@ -41,7 +41,7 @@ func WriteToDocs(docs []Doc, release *Release, overrideIfExisting bool) ([]DocSt
 	}
 
 	for _, doc := range docs {
-		if doc.IsToBeWrittenTo {
+		if doc.IsIncluded {
 			ds, err := writeToDoc(&doc, release, overrideIfExisting)
 			if err != nil {
 				return docStatuses, fmt.Errorf("error with writing to docs and failed to finish: %v", err)
@@ -71,33 +71,48 @@ func writeToDoc(doc *Doc, release *Release, overrideIfExisting bool) (DocStatus,
 		return DocStatus{}, fmt.Errorf("encountered error checking file: %v", err)
 	}
 
-	f, err := os.Create(filePath)
+	docFile, err := os.Create(filePath)
 	if err != nil {
 		return ds, fmt.Errorf("error while creating file: %v", err)
 	}
-	defer closeFile(f)
+	defer closeFile(docFile)
 
-	docsWriter := io.Writer(f)
+	docsWriter := io.Writer(docFile)
+
 	t := template.Must(template.New("docTemplate").Parse(doc.TemplateName))
 	err = t.Execute(docsWriter, release)
 	if err != nil {
 		return ds, fmt.Errorf("error while writing to file: %v", err)
 	}
+
+	if doc.AppendToEnd != nil {
+		fmt.Println("Appending additional text to file " + filePath)
+
+		additionalText, err := doc.AppendToEnd(release)
+		if err != nil {
+			return ds, fmt.Errorf("error while trying to get additional text append to file: %v", err)
+		}
+
+		if _, err = docFile.WriteString("\n" + additionalText + "\n"); err != nil {
+			return ds, fmt.Errorf("error while appending additional text to file: %v", err)
+		}
+	}
+
 	log.Printf("Successfully wrote to %v\n", filePath)
 	return ds, nil
 }
 
 // DeleteDocsDirectoryIfEmpty deletes docs directory for provided release if the directory is empty.
 func DeleteDocsDirectoryIfEmpty(release *Release) {
-	f, err := os.Open(release.DocsDirectoryPath)
+	dir, err := os.Open(release.DocsDirectoryPath)
 	if err != nil {
 		fmt.Printf("failed to open docs directory to delete it: %v\n", err)
 		return
 	}
 
-	defer closeFile(f)
+	defer closeFile(dir)
 
-	_, err = f.Readdir(1)
+	_, err = dir.Readdir(1)
 	if err == io.EOF {
 		deleteErr := os.Remove(release.DocsDirectoryPath)
 		if deleteErr != nil {

@@ -2,6 +2,7 @@ package internal
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os/exec"
 	"path/filepath"
 	"strings"
@@ -20,6 +21,15 @@ func GetGitRootDirectory() string {
 		panic(fmt.Sprintf("Unable to get git root directory: %v", err))
 	}
 	return strings.Join(strings.Fields(string(gitRootOutput)), "")
+}
+
+// GetKubernetesReleaseGitTag returns the trimmed value of Kubernetes release GIT_TAG
+func GetKubernetesReleaseGitTag() (string, error) {
+	fileOutput, err := ioutil.ReadFile(gitRootDirectory + "/projects/kubernetes/release/GIT_TAG")
+	if err != nil {
+		return "", err
+	}
+	return strings.TrimSpace(string(fileOutput)), nil
 }
 
 // FormatEnvironmentReleasePath returns path to RELEASE for provided release.

@@ -3,9 +3,7 @@ package internal
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
-	"strconv"
 	"strings"
 )
 
@@ -28,9 +26,23 @@ type Release struct {
 	V_BranchWithDot_Number    string // e.g. v1.20-2
 }
 
-// InitializeRelease returns complete Release based on the provided ReleaseInput
-func InitializeRelease(input ReleaseInput) (*Release, error) {
-	err := checkInput(input)
+// InitReleaseWithOverrideNumber returns complete Release based on the provided ReleaseInput and overrideNumber
+//
+// For default determination of number and prevNumber, use overrideNumber with value of -1.
+// All values over -1 for overrideNumber forces number to be overrideNumber and prevNumber to be one less. However,
+// prevNumber cannot be less than 0, so it is left empty if overrideNumber is 0. The use of overrideNumber should be
+// done with caution. Disrupting the conventional process can result in unintentional and unexpected consequences.
+func InitReleaseWithOverrideNumber(input ReleaseInput, overrideNumber int) (*Release, error) {
+	return initializeRelease(input, overrideNumber)
+}
+
+// InitRelease returns complete Release based on the provided ReleaseInput
+func InitRelease(input ReleaseInput) (*Release, error) {
+	return initializeRelease(input, -1)
+}
+
+func initializeRelease(input ReleaseInput, overrideNumber int) (*Release, error) {
+	err := checkInput(&input)
 	if err != nil {
 		return &Release{}, fmt.Errorf("invlid input for release: %v", err)
 	}
@@ -43,14 +55,17 @@ func InitializeRelease(input ReleaseInput) (*Release, error) {
 	release.EnvironmentReleasePath = FormatEnvironmentReleasePath(release)
 	release.KubeGitVersionFilePath = FormatKubeGitVersionFilePath(release)
 
-	release.prevNumber, err = determinePreviousReleaseNumber(release)
-	if err != nil {
-		return &Release{}, fmt.Errorf("error determining previous number: %v", err)
-	}
-
-	release.number, err = determineReleaseNumber(release)
-	if err != nil {
-		return &Release{}, fmt.Errorf("error determining number: %v", err)
+	if overrideNumber > -1 {
+		release.number, release.prevNumber = determineOverrideNumberAndPrevNumber(overrideNumber)
+	} else {
+		release.prevNumber, err = determinePreviousReleaseNumber(release)
+		if err != nil {
+			return &Release{}, fmt.Errorf("error determining previous number: %v", err)
+		}
+		release.number, err = determineReleaseNumber(release)
+		if err != nil {
+			return &Release{}, fmt.Errorf("error determining number: %v", err)
+		}
 	}
 
 	release.DocsDirectoryPath = FormatReleaseDocsDirectory(release, release.number)
@@ -89,54 +104,14 @@ func (release *Release) GetEnvironment() string {
 	return release.environment
 }
 
-func checkInput(input ReleaseInput) error {
-	if len(input.GetBranch()) == 0 {
+func checkInput(input *ReleaseInput) error {
+	if len((*input).GetBranch()) == 0 {
 		return fmt.Errorf("input.GetBranch() cannot be an empty string")
 	}
-	if len(input.GetEnvironment()) == 0 {
+	if len((*input).GetEnvironment()) == 0 {
 		return fmt.Errorf("input.GetEnvironment() cannot be an empty string")
 	}
 	return nil
-}
-
-func determinePreviousReleaseNumber(release *Release) (string, error) {
-	if len(release.prevNumber) > 0 {
-		log.Printf("previous release number %q already known and is not re-sought\n", release.prevNumber)
-		return release.prevNumber, nil
-	}
-
-	environmentReleasePath := release.EnvironmentReleasePath
-	if len(environmentReleasePath) == 0 {
-		environmentReleasePath = FormatEnvironmentReleasePath(release)
-	}
-
-	fileOutput, err := ioutil.ReadFile(environmentReleasePath)
-	if err != nil {
-		return "", err
-	}
-	return strings.TrimSpace(string(fileOutput)), nil
-}
-
-func determineReleaseNumber(release *Release) (string, error) {
-	if len(release.number) > 0 {
-		log.Printf("release number %q already known and is not re-sought\n", release.number)
-		return release.number, nil
-	}
-
-	prevNumber := release.prevNumber
-	if len(prevNumber) == 0 {
-		prevNumber, err := determinePreviousReleaseNumber(release)
-		if err != nil {
-			return "", err
-		}
-		log.Printf("previous number not provided to determime number. It is assumed to be %q\n", prevNumber)
-	}
-
-	prevNumberAsInt, err := strconv.Atoi(prevNumber)
-	if err != nil {
-		return "", err
-	}
-	return strconv.Itoa(prevNumberAsInt + 1), nil
 }
 
 // getEKSBranchNumber returns eks-<branch>-<patch version> (e.g. eks-1-20-2)

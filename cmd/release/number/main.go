@@ -32,7 +32,7 @@ func main() {
 
 	flag.Parse()
 
-	release, err := utils.InitializeRelease(&Input{branch: *branch, environment: *environment})
+	release, err := utils.InitRelease(&Input{branch: *branch, environment: *environment})
 	if err != nil {
 		log.Fatalf("Error initializing release values: %v", err)
 	}

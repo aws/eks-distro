@@ -3,9 +3,9 @@ package main
 import (
 	utils "../internal"
 	. "./internal"
+	"fmt"
 
 	"flag"
-	"fmt"
 	"log"
 )
 
@@ -26,35 +26,29 @@ func (input Input) GetEnvironment() string {
 func main() {
 	branch := flag.String("branch", "", "Release branch, e.g. 1-20")
 	environment := flag.String("environment", "development", "Should be 'development' or 'production'")
-	includeChangelog := flag.Bool("includeChangelog", true, "If changelog should be generated")
-	includeBranchIndex := flag.Bool("includeBranchIndex", true, "If index in branch dir should be generated")
-	includeAnnouncement := flag.Bool("includeAnnouncement", true, "If release announcement should be generated")
-	force := flag.Bool("force", false, "Forces the replacement of existing with generated")
+	force := flag.Bool("force", true, "Forces the replacement of existing with generated")
+
+	includeChangelog := *flag.Bool("includeChangelog", true, "If changelog should be generated")
+	includeIndex := *flag.Bool("includeIndex", true, "If index in branch dir should be generated")
+	includeIndexAppendedText := *flag.Bool("includeIndexAppendedText", false, "If Markdown table should be generated")
+	includeAnnouncement := *flag.Bool("includeAnnouncement", true, "If release announcement should be generated")
+
+	overrideNumber := flag.Int("overrideNumber", -1, "Overrides default logic for number, which is not recommended")
 
 	flag.Parse()
 
-	release, err := utils.InitializeRelease(&Input{branch: *branch, environment: *environment})
+	release, err := utils.InitReleaseWithOverrideNumber(&Input{branch: *branch, environment: *environment}, *overrideNumber)
 	if err != nil {
 		log.Fatalf("Error initializing release values: %v", err)
 	}
 
-	docs := []Doc{
-		{
-			Filename:        fmt.Sprintf("CHANGELOG-%s.md", release.V_Branch_EKS_Number),
-			TemplateName:    ChangeLogBaseImage,
-			IsToBeWrittenTo: *includeChangelog,
-		},
-		{
-			Filename:        "index.md",
-			TemplateName:    IndexInBranch,
-			IsToBeWrittenTo: *includeBranchIndex,
-		},
-		{
-			Filename:        "release-announcement.txt",
-			TemplateName:    ReleaseAnnouncement,
-			IsToBeWrittenTo: *includeAnnouncement,
-		},
+	includeDocs := include{
+		changelog:         includeChangelog,
+		index:             includeIndex,
+		indexAppendedText: includeIndexAppendedText,
+		announcement:      includeAnnouncement,
 	}
+	docs := createDocsInfo(&includeDocs, release.V_Branch_EKS_Number)
 
 	docStatuses, err := WriteToDocs(docs, release, *force)
 	if err != nil {
@@ -66,10 +60,40 @@ func main() {
 			}
 		}
 		DeleteDocsDirectoryIfEmpty(release)
-		log.Println("Finished attempting to undo all changes\n")
+		log.Println("Finished attempting to undo all changes")
 		log.Fatalf("Error that was encountered while writing to docs : %v", err)
 	}
 
 	DeleteDocsDirectoryIfEmpty(release)
 	log.Printf("Finished writing to %v doc(s)\n", len(docStatuses))
+}
+
+type include struct {
+	changelog, index, announcement bool
+	indexAppendedText              bool
+}
+
+func createDocsInfo(includeDocs *include, formattedReleaseVersion string) []Doc {
+	var indexAppendToEndFunc func(*utils.Release) (string, error)
+	if includeDocs.indexAppendedText {
+		indexAppendToEndFunc = GetComponentVersionsTable
+	}
+	return []Doc{
+		{
+			Filename:     fmt.Sprintf("CHANGELOG-%s.md", formattedReleaseVersion),
+			TemplateName: ChangeLogBaseImage,
+			IsIncluded:   includeDocs.changelog,
+		},
+		{
+			Filename:     "index.md",
+			TemplateName: IndexInBranch,
+			IsIncluded:   includeDocs.index,
+			AppendToEnd:  indexAppendToEndFunc,
+		},
+		{
+			Filename:     "release-announcement.txt",
+			TemplateName: ReleaseAnnouncement,
+			IsIncluded:   includeDocs.announcement,
+		},
+	}
 }
