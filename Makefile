@@ -149,7 +149,7 @@ update-release-number:
 		--branch=$(RELEASE_BRANCH) \
 		--environment=$(RELEASE_ENVIRONMENT)
 
-.PHONY: release-docsg
+.PHONY: release-docs
 release-docs:
 	go vet ./cmd/release/docs
 	go run ./cmd/release/docs/main.go \
