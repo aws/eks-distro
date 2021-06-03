@@ -8,7 +8,6 @@ assignees: ''
 ---
 
 <!--
-
 If you are having an issue with EKS on AWS, please to go to https://aws.amazon.com/eks/ for documentation and support.
 
 If you are having issues using EKS-D binaries or container images to create non-EKS clusters, you're in the right place!  
