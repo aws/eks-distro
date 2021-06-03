@@ -8,7 +8,9 @@ assignees: ''
 ---
 
 <!--
-This is not the place to report an issue running EKS on AWS! Please go to https://aws.amazon.com/eks/
+If you are having an issue with EKS on AWS, please to go to https://aws.amazon.com/eks/ for documentation and support.
+
+If you are having issues using EKS-D binaries or container images to create non-EKS clusters, you're in the right place!  
 
 Please use this template while reporting a bug and provide as much info as possible. Please also search for existing open and closed issues that may answer your question. Thanks!-->
 
