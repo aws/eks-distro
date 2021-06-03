@@ -1,10 +1,16 @@
 ---
 name: Bug Report
 about: Report a bug encountered using the EKS Distro
+title: ''
+labels: ''
+assignees: ''
 
 ---
 
-<!-- Please use this template while reporting a bug and provide as much info as possible. Please also search for existing open and closed issues that may answer your question. Thanks!-->
+<!--
+This is not the place to report an issue running EKS on AWS! Please go to https://aws.amazon.com/eks/
+
+Please use this template while reporting a bug and provide as much info as possible. Please also search for existing open and closed issues that may answer your question. Thanks!-->
 
 **What happened**:
 

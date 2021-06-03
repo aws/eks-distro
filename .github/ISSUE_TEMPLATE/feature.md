@@ -1,8 +1,12 @@
 ---
 name: Feature Request
 about: Suggest a feature
+title: ''
+labels: ''
+assignees: ''
 
 ---
+
 <!-- Please only use this template for feature requests. Please also search for existing open and closed issues that may answer your question. Thanks!-->
 
 **What would you like to be added**:
