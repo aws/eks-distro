@@ -43,3 +43,4 @@ All other changes are to this package.
 1. **Tag Repository**: Tag the repository. For example:
    * `git tag -a v1-19-eks-1 -m v1-19-eks-1`
    * `git push origin v1-19-eks-1` # Replace 'origin' if you call the upstream repo something else
+1. **k8s Conformance**: Submit PR similar to https://github.com/cncf/k8s-conformance/pull/1499
