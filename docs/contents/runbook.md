@@ -7,10 +7,22 @@ Prow jobs are in the [eks-distro-prow-jobs repo](https://github.com/aws/eks-dist
 All other changes are to this package. 
 
 ### Create new Kubernetes minor version
-1. **Prow Build Job**: Create and merge Prow build job for new release
-   * copy previous job, ex: build-1-20-postsubmits.yaml, and change RELEASE_BRANCH
-1. **Prow Presubmit Job**: Create presubmit for new release
-   * copy previous job, ex: kubernetes-1-20-presubmits.yaml, and change RELEASE_BRANCH
+1. **Prow Build Postsubmits Job**: In the
+   [eks-distro-prow-jobs](https://github.com/aws/eks-distro-prow-jobs/tree/main/jobs/aws/eks-distro) repo, create and
+   merge Prow build-${RELEASE_BRANCH}-postsubmits job for new release
+    * In the [jobs/aws/eks-distro](https://github.com/aws/eks-distro-prow-jobs/tree/main/jobs/aws/eks-distro) directory,
+      copy the previous build job (ex: build-1-21-postsubmits.yaml)
+    * Paste the copied yaml file in the directory and change the filename to match the new version
+    * In the file, change value under `RELEASE_BRANCH` to match the new version (ex:
+      [here](https://github.com/aws/eks-distro-prow-jobs/blob/49377e50748a9bec611aec7bb23873a14aa84e11/jobs/aws/eks-distro/build-1-21-postsubmits.yaml#L51))
+1. **Prow Presubmits Job**: In the
+   [eks-distro-prow-jobs](https://github.com/aws/eks-distro-prow-jobs/tree/main/jobs/aws/eks-distro) repo, create and
+   merge Prow kubernetes-${RELEASE_BRANCH}-presubmits job for new release
+    * In the [jobs/aws/eks-distro](https://github.com/aws/eks-distro-prow-jobs/tree/main/jobs/aws/eks-distro) directory,
+      copy the previous presubmits job (ex: kubernetes-1-21-presubmits.yaml)
+    * Paste the copied yaml file in the directory and change the filename to match the new version
+    * In the file, change value under `RELEASE_BRANCH` to match the new version (ex:
+      [here](https://github.com/aws/eks-distro-prow-jobs/blob/49377e50748a9bec611aec7bb23873a14aa84e11/jobs/aws/eks-distro/kubernetes-1-21-presubmits.yaml#L39))
 1. **Create EKS Distro PR**: Create kubernetes RELEASE_BRANCH:
    * release/${RELEASE_BRANCH}/development/RELEASE (set to 0)
    * release/${RELEASE_BRANCH}/production/RELEASE (set to 0)
