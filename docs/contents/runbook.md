@@ -35,6 +35,11 @@ All other changes are to this package.
       * Work with EKS team to gather these requirements based on the EKS release, by default use same version as previous release
       * Create new presubmit jobs for each project with the new RELEASE_BRANCH
    * Update kops `cluster_wait.sh` to apply the coredns fix to new version
+1. **Build tooling PR**: Add release channel to release tooling
+   * In the [config](https://github.com/aws/eks-distro-build-tooling/tree/main/release/config) directory,
+     create the new `RELEASE_BRANCH` folder and create a `${RELEASE_BRANCH}.yaml`, copied from the previous 
+     release yaml and change `metadata.name` to the new `RELEASE_BRANCH`
+      * the rest of the file can stay the same, including the `snsTopicARN`
 1. **Prow Release Jobs**: Create dev + prod release jobs from previous release jobs
    * dev-release-1-20-postsubmits.yaml
    * prod-release-1-20-postsubmits.yaml   
