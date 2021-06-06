@@ -52,6 +52,7 @@ All other changes are to this package.
    * docs/contents/releases/${RELEASE_BRANCH}/${RELEASE}/release-announcement.txt
    * docs/contents/index.md
    * README
+   * release/DEFAULT_RELEASE_BRANCH (if a minor release)
 1. **Tag Repository**: Tag the repository. For example:
    * `git tag -a v1-19-eks-1 -m v1-19-eks-1`
    * `git push origin v1-19-eks-1` # Replace 'origin' if you call the upstream repo something else
