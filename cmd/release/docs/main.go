@@ -30,7 +30,7 @@ func main() {
 
 	includeChangelog := *flag.Bool("includeChangelog", true, "If changelog should be generated")
 	includeIndex := *flag.Bool("includeIndex", true, "If index in branch dir should be generated")
-	includeIndexAppendedText := *flag.Bool("includeIndexAppendedText", false, "If Markdown table should be generated")
+	includeIndexAppendedText := *flag.Bool("includeIndexAppendedText", true, "If Markdown table should be generated")
 	includeAnnouncement := *flag.Bool("includeAnnouncement", true, "If release announcement should be generated")
 
 	overrideNumber := flag.Int("overrideNumber", -1, "Overrides default logic for number, which is not recommended")
