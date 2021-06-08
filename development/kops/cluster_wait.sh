@@ -38,7 +38,7 @@ done
 # In 1-20 since we are using coredns 1.8.3 which now watches endpointslices
 # instead of endpoints, we need to add additional permissions that kops
 # does not currently add since it still supports coredns 1.7.x
-if [ "${RELEASE_BRANCH}" == "1-20" ]; then
+if [[ "${RELEASE_BRANCH}" == "1-20" || "${RELEASE_BRANCH}" == "1-21" ]]; then
 while ! kubectl --context $KOPS_CLUSTER_NAME apply -f ./core_dns_cluster_role.yaml
 do
     sleep 5
