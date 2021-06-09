@@ -21,7 +21,7 @@ func main() {
 
 	flag.Parse()
 
-	release, err := utils.InitRelease(*branch, *environment)
+	release, err := utils.NewRelease(*branch, *environment)
 	if err != nil {
 		log.Fatalf("Error initializing release values: %v", err)
 	}

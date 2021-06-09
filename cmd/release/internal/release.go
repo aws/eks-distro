@@ -30,22 +30,22 @@ type Release struct {
 	ManifestURL string
 }
 
-// InitReleaseWithOverrideNumber returns complete Release based on the provided ReleaseInput and overrideNumber
+// NewReleaseWithOverrideNumber returns complete Release based on the provided ReleaseInput and overrideNumber
 //
 // For default determination of number and prevNumber, use overrideNumber with value of -1.
 // All values over -1 for overrideNumber forces number to be overrideNumber and prevNumber to be one less. However,
 // prevNumber cannot be less than 0, so it is left empty if overrideNumber is 0. The use of overrideNumber should be
 // done with caution. Disrupting the conventional process can result in unintentional and unexpected consequences.
-func InitReleaseWithOverrideNumber(inputBranch, inputEnvironment string, overrideNumber int) (*Release, error) {
-	return initializeRelease(inputBranch, inputEnvironment, overrideNumber)
+func NewReleaseWithOverrideNumber(inputBranch, inputEnvironment string, overrideNumber int) (*Release, error) {
+	return newRelease(inputBranch, inputEnvironment, overrideNumber)
 }
 
-// InitRelease returns complete Release based on the provided ReleaseInput
-func InitRelease(inputBranch, inputEnvironment string) (*Release, error) {
-	return initializeRelease(inputBranch, inputEnvironment, -1)
+// NewRelease returns complete Release based on the provided ReleaseInput
+func NewRelease(inputBranch, inputEnvironment string) (*Release, error) {
+	return newRelease(inputBranch, inputEnvironment, -1)
 }
 
-func initializeRelease(inputBranch, inputEnvironment string, overrideNumber int) (*Release, error) {
+func newRelease(inputBranch, inputEnvironment string, overrideNumber int) (*Release, error) {
 	err := checkInput(inputBranch, inputEnvironment)
 	if err != nil {
 		return &Release{}, fmt.Errorf("invlid input for release: %v", err)
@@ -94,23 +94,14 @@ func initializeRelease(inputBranch, inputEnvironment string, overrideNumber int)
 }
 
 func (release *Release) Branch() string {
-	if len(release.branch) == 0 {
-		log.Fatal("attempted to get release branch, but value has not been set")
-	}
 	return release.branch
 }
 
 func (release *Release) Number() string {
-	if len(release.number) == 0 {
-		log.Fatal("attempted to get release number, but value has not been set")
-	}
 	return release.number
 }
 
 func (release *Release) Environment() string {
-	if len(release.environment) == 0 {
-		log.Fatal("attempted to get release environment, but value has not been set")
-	}
 	return release.environment
 }
 

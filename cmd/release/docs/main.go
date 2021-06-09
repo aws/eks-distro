@@ -28,7 +28,7 @@ func main() {
 
 	flag.Parse()
 
-	release, err := utils.InitReleaseWithOverrideNumber(*branch, *environment, *overrideNumber)
+	release, err := utils.NewReleaseWithOverrideNumber(*branch, *environment, *overrideNumber)
 	if err != nil {
 		log.Fatalf("Error initializing release values: %v", err)
 	}
