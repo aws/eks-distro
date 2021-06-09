@@ -26,8 +26,12 @@ func GetComponentVersionsTable(release *Release) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("error getting release manifest: %v", err)
 	}
-
+	
 	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return "", fmt.Errorf("error status code %v getting release manifest (expected 200)", resp.StatusCode)
+	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
