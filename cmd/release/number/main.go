@@ -2,6 +2,7 @@ package main
 
 import (
 	utils "../internal"
+	"errors"
 
 	"bytes"
 	"flag"
@@ -12,27 +13,15 @@ import (
 	"os/exec"
 )
 
-type Input struct {
-	branch      string
-	environment string
-}
-
-func (input Input) GetBranch() string {
-	return input.branch
-}
-
-func (input Input) GetEnvironment() string {
-	return input.environment
-}
-
 // Updates RELEASE and KUBE_GIT_VERSION
+// If a failure is encounter, attempts to undo any changes to RELEASE and KUBE_GIT_VERSION.
 func main() {
 	branch := flag.String("branch", "", "Release branch, e.g. 1-20")
 	environment := flag.String("environment", "development", "Should be 'development' or 'production'")
 
 	flag.Parse()
 
-	release, err := utils.InitRelease(&Input{branch: *branch, environment: *environment})
+	release, err := utils.InitRelease(*branch, *environment)
 	if err != nil {
 		log.Fatalf("Error initializing release values: %v", err)
 	}
@@ -49,23 +38,23 @@ func main() {
 		log.Fatalf("Error updating KUBE_GIT_VERSION: %v", err)
 	}
 
-	log.Println("Successfully updated release number for " + release.EKS_Branch_Number)
+	log.Println("Successfully updated release number for " + release.EKSBranchNumber)
 }
 
 func updateEnvironmentReleaseNumber(release *utils.Release) error {
-	releaseNumber := release.GetNumber()
+	releaseNumber := release.Number()
 	if len(releaseNumber) == 0 {
-		return fmt.Errorf("failed to update release number file because provided number was empty")
+		return errors.New("failed to update release number file because provided number was empty")
 	}
 	return os.WriteFile(release.EnvironmentReleasePath, []byte(releaseNumber+"\n"), 0644)
 }
 
 func updateKubeGitVersionFile(release *utils.Release) error {
-	if len(release.EKS_Branch_PreviousNumber) == 0 {
-		return fmt.Errorf("failed to update KUBE_GIT_VERSION because previous release version tag is empty")
+	if len(release.EKSBranchPreviousNumber) == 0 {
+		return errors.New("failed to update KUBE_GIT_VERSION because previous release version tag is empty")
 	}
-	if len(release.EKS_Branch_Number) == 0 {
-		return fmt.Errorf("failed to update KUBE_GIT_VERSION because release version tag is empty")
+	if len(release.EKSBranchNumber) == 0 {
+		return errors.New("failed to update KUBE_GIT_VERSION because release version tag is empty")
 	}
 
 	kubeGitVersionFilePath := release.KubeGitVersionFilePath
@@ -81,24 +70,25 @@ func updateKubeGitVersionFile(release *utils.Release) error {
 	hasFoundPrefix := false
 
 	for i, line := range splitData {
-		if bytes.HasPrefix(line, prefix) {
-			hasFoundPrefix = true
-
-			// End of line character (') is included to ensure entire version tag is captured
-			versionTagToEndOfLine := []byte(release.EKS_Branch_Number + "'")
-			if bytes.Contains(line, versionTagToEndOfLine) {
-				log.Printf("version tag %q already set", release.EKS_Branch_Number)
-				return nil
-			}
-
-			prevVersionTagToEndOfLine := []byte(release.EKS_Branch_PreviousNumber + "'")
-			if !bytes.Contains(line, prevVersionTagToEndOfLine) {
-				return fmt.Errorf("fail to find previous version tag %q to replace", release.EKS_Branch_PreviousNumber)
-			}
-
-			splitData[i] = bytes.Replace(line, prevVersionTagToEndOfLine, versionTagToEndOfLine, 1)
-			break
+		if !bytes.HasPrefix(line, prefix) {
+			continue
 		}
+		hasFoundPrefix = true
+
+		// End of line character (') is included to ensure entire version tag is captured
+		versionTagToEndOfLine := []byte(release.EKSBranchNumber + "'")
+		if bytes.Contains(line, versionTagToEndOfLine) {
+			log.Printf("version tag %q already set", release.EKSBranchNumber)
+			return nil
+		}
+
+		prevVersionTagToEndOfLine := []byte(release.EKSBranchPreviousNumber + "'")
+		if !bytes.Contains(line, prevVersionTagToEndOfLine) {
+			return fmt.Errorf("fail to find previous version tag %q to replace", release.EKSBranchPreviousNumber)
+		}
+
+		splitData[i] = bytes.Replace(line, prevVersionTagToEndOfLine, versionTagToEndOfLine, 1)
+		break
 	}
 
 	if !hasFoundPrefix {

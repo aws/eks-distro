@@ -18,12 +18,6 @@ type Doc struct {
 	AppendToEnd  func(release *Release) (string, error)
 }
 
-var closeFile = func(f *os.File) {
-	if err := f.Close(); err != nil {
-		log.Printf("Encountered error when attempting to close file: %v\n", err)
-	}
-}
-
 // WriteToDocs writes to each doc in provided docs with the information supplied by release, with overrideIfExisting
 // conditionally replacing existing file content with the generated content.
 func WriteToDocs(docs []Doc, release *Release, overrideIfExisting bool) ([]DocStatus, error) {
@@ -124,5 +118,11 @@ func DeleteDocsDirectoryIfEmpty(release *Release) {
 		log.Printf("Error while attempting to read docs directory to possibly delete it: %v\n", err)
 	} else {
 		log.Println("Docs directory is not empty, so will not delete it as part of clean up")
+	}
+}
+
+func closeFile(f *os.File) {
+	if err := f.Close(); err != nil {
+		log.Printf("Encountered error when attempting to close file: %v\n", err)
 	}
 }

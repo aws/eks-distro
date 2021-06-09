@@ -9,20 +9,11 @@ import (
 	"log"
 )
 
-type Input struct {
-	branch      string
-	environment string
-}
-
-func (input Input) GetBranch() string {
-	return input.branch
-}
-
-func (input Input) GetEnvironment() string {
-	return input.environment
-}
-
-// Generate docs for release
+// Generate docs for release. Value for 'branch' flag much be provided.
+// If a failure is encounter, attempts to undo any changes to files in branch doc directory, including deleting the
+// directory if it was created.
+// The 'overrideNumber' flag should not be used unless there is a very specific need to override expected behavior. Using
+// this flag may result in errors or bugs in release number sequencing, which may not be apparent or easily identified.
 func main() {
 	branch := flag.String("branch", "", "Release branch, e.g. 1-20")
 	environment := flag.String("environment", "development", "Should be 'development' or 'production'")
@@ -37,7 +28,7 @@ func main() {
 
 	flag.Parse()
 
-	release, err := utils.InitReleaseWithOverrideNumber(&Input{branch: *branch, environment: *environment}, *overrideNumber)
+	release, err := utils.InitReleaseWithOverrideNumber(*branch, *environment, *overrideNumber)
 	if err != nil {
 		log.Fatalf("Error initializing release values: %v", err)
 	}
@@ -48,7 +39,7 @@ func main() {
 		indexAppendedText: includeIndexAppendedText,
 		announcement:      includeAnnouncement,
 	}
-	docs := createDocsInfo(&includeDocs, release.V_Branch_EKS_Number)
+	docs := createDocsInfo(&includeDocs, release.VBranchEKSNumber)
 
 	docStatuses, err := WriteToDocs(docs, release, *force)
 	if err != nil {

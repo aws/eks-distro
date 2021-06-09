@@ -2,13 +2,14 @@ package internal
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"strings"
 )
 
 type Release struct {
-	Branch      string
+	branch      string
 	environment string
 	number      string
 	prevNumber  string
@@ -19,11 +20,14 @@ type Release struct {
 	DocsDirectoryPath      string
 
 	// Version notations
-	EKS_Branch_Number         string // e.g. eks-1-20-2
-	EKS_Branch_PreviousNumber string // e.g. eks-1-20-1
-	V_Branch_EKS_Number       string // e.g. v1-20-eks-2
-	Branch_EKS_Number         string // e.g. 1-20-eks-2
-	V_BranchWithDot_Number    string // e.g. v1.20-2
+	EKSBranchNumber         string // e.g. eks-1-20-2
+	EKSBranchPreviousNumber string // e.g. eks-1-20-1
+	VBranchEKSNumber        string // e.g. v1-20-eks-2
+	BranchEKSNumber         string // e.g. 1-20-eks-2
+	VBranchWithDotNumber    string // e.g. v1.20-2
+
+	// Expected url but release manifest may not exist
+	ManifestURL string
 }
 
 // InitReleaseWithOverrideNumber returns complete Release based on the provided ReleaseInput and overrideNumber
@@ -32,24 +36,24 @@ type Release struct {
 // All values over -1 for overrideNumber forces number to be overrideNumber and prevNumber to be one less. However,
 // prevNumber cannot be less than 0, so it is left empty if overrideNumber is 0. The use of overrideNumber should be
 // done with caution. Disrupting the conventional process can result in unintentional and unexpected consequences.
-func InitReleaseWithOverrideNumber(input ReleaseInput, overrideNumber int) (*Release, error) {
-	return initializeRelease(input, overrideNumber)
+func InitReleaseWithOverrideNumber(inputBranch, inputEnvironment string, overrideNumber int) (*Release, error) {
+	return initializeRelease(inputBranch, inputEnvironment, overrideNumber)
 }
 
 // InitRelease returns complete Release based on the provided ReleaseInput
-func InitRelease(input ReleaseInput) (*Release, error) {
-	return initializeRelease(input, -1)
+func InitRelease(inputBranch, inputEnvironment string) (*Release, error) {
+	return initializeRelease(inputBranch, inputEnvironment, -1)
 }
 
-func initializeRelease(input ReleaseInput, overrideNumber int) (*Release, error) {
-	err := checkInput(&input)
+func initializeRelease(inputBranch, inputEnvironment string, overrideNumber int) (*Release, error) {
+	err := checkInput(inputBranch, inputEnvironment)
 	if err != nil {
 		return &Release{}, fmt.Errorf("invlid input for release: %v", err)
 	}
 
 	release := &Release{
-		Branch:      input.GetBranch(),
-		environment: input.GetEnvironment(),
+		branch:      inputBranch,
+		environment: inputEnvironment,
 	}
 
 	release.EnvironmentReleasePath = FormatEnvironmentReleasePath(release)
@@ -70,12 +74,18 @@ func initializeRelease(input ReleaseInput, overrideNumber int) (*Release, error)
 
 	release.DocsDirectoryPath = FormatReleaseDocsDirectory(release, release.number)
 
-	release.EKS_Branch_Number = getEKSBranchNumber(release.Branch, release.number)
-	release.EKS_Branch_PreviousNumber = getEKSBranchNumber(release.Branch, release.prevNumber)
-	release.Branch_EKS_Number = fmt.Sprintf("%s-eks-%s", release.Branch, release.number)
-	release.V_Branch_EKS_Number = "v" + release.Branch_EKS_Number
-	release.V_BranchWithDot_Number =
-		fmt.Sprintf("v%s-%s", strings.Replace(release.Branch, "-", ".", 1), release.number)
+	release.EKSBranchNumber = getEKSBranchNumber(release.branch, release.number)
+	release.EKSBranchPreviousNumber = getEKSBranchNumber(release.branch, release.prevNumber)
+	release.BranchEKSNumber = fmt.Sprintf("%s-eks-%s", release.branch, release.number)
+	release.VBranchEKSNumber = "v" + release.BranchEKSNumber
+	release.VBranchWithDotNumber =
+		fmt.Sprintf("v%s-%s", strings.Replace(release.branch, "-", ".", 1), release.number)
+
+	release.ManifestURL = fmt.Sprintf(
+		"https://distro.eks.amazonaws.com/kubernetes-%s/kubernetes-%s.yaml",
+		release.branch,
+		release.BranchEKSNumber,
+	)
 
 	releaseJson, _ := json.MarshalIndent(release, "", "\t")
 	log.Printf("populated release with:%v", string(releaseJson))
@@ -83,33 +93,33 @@ func initializeRelease(input ReleaseInput, overrideNumber int) (*Release, error)
 	return release, nil
 }
 
-func (release *Release) GetBranch() string {
-	if len(release.Branch) == 0 {
-		log.Fatal("attempted to get release Branch, but value has not been set")
+func (release *Release) Branch() string {
+	if len(release.branch) == 0 {
+		log.Fatal("attempted to get release branch, but value has not been set")
 	}
-	return release.Branch
+	return release.branch
 }
 
-func (release *Release) GetNumber() string {
+func (release *Release) Number() string {
 	if len(release.number) == 0 {
 		log.Fatal("attempted to get release number, but value has not been set")
 	}
 	return release.number
 }
 
-func (release *Release) GetEnvironment() string {
+func (release *Release) Environment() string {
 	if len(release.environment) == 0 {
 		log.Fatal("attempted to get release environment, but value has not been set")
 	}
 	return release.environment
 }
 
-func checkInput(input *ReleaseInput) error {
-	if len((*input).GetBranch()) == 0 {
-		return fmt.Errorf("input.GetBranch() cannot be an empty string")
+func checkInput(inputBranch, inputEnvironment string) error {
+	if len(inputBranch) == 0 {
+		return errors.New("inputBranch cannot be an empty string")
 	}
-	if len((*input).GetEnvironment()) == 0 {
-		return fmt.Errorf("input.GetEnvironment() cannot be an empty string")
+	if len(inputEnvironment) == 0 {
+		return errors.New("inputEnvironment cannot be an empty string")
 	}
 	return nil
 }

@@ -21,7 +21,7 @@ func (DocStatus *DocStatus) UndoChanges() error {
 	_, err := os.Stat(docPath)
 	if err != nil {
 		if errors.Is(err, fs.ErrNotExist) {
-			log.Printf("Did not delete file because it does not existant: %s", docPath)
+			log.Printf("Did not delete file because it does not exist: %s", docPath)
 			return nil
 		}
 		return fmt.Errorf("failed to delete file because encountered error: %v", err)

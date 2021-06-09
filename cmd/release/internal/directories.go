@@ -10,11 +10,6 @@ import (
 
 var gitRootDirectory = GetGitRootDirectory()
 
-type ReleaseInput interface {
-	GetBranch() string
-	GetEnvironment() string
-}
-
 func GetGitRootDirectory() string {
 	gitRootOutput, err := exec.Command("git", "rev-parse", "--show-toplevel").Output()
 	if err != nil {
@@ -33,20 +28,20 @@ func GetKubernetesReleaseGitTag() (string, error) {
 }
 
 // FormatEnvironmentReleasePath returns path to RELEASE for provided release.
-// Expects release.GetBranch() and release.GetEnvironment() to return non-empty values.  Returned path is not guaranteed
+// Expects release.Branch() and release.Environment() to return non-empty values.  Returned path is not guaranteed
 // to exist or be valid.
-func FormatEnvironmentReleasePath(release ReleaseInput) string {
-	return filepath.Join(gitRootDirectory, "release", release.GetBranch(), release.GetEnvironment(), "RELEASE")
+func FormatEnvironmentReleasePath(release *Release) string {
+	return filepath.Join(gitRootDirectory, "release", release.Branch(), release.Environment(), "RELEASE")
 }
 
 // FormatKubeGitVersionFilePath returns path to KUBE_GIT_VERSION_FILE for provided release.
-// Expects release.GetBranch() to return a non-empty value.  Returned path is not guaranteed to exist or be valid.
-func FormatKubeGitVersionFilePath(release ReleaseInput) string {
-	return filepath.Join(gitRootDirectory, "projects/kubernetes/kubernetes", release.GetBranch(), "KUBE_GIT_VERSION_FILE")
+// Expects release.Branch() to return a non-empty value.  Returned path is not guaranteed to exist or be valid.
+func FormatKubeGitVersionFilePath(release *Release) string {
+	return filepath.Join(gitRootDirectory, "projects/kubernetes/kubernetes", release.Branch(), "KUBE_GIT_VERSION_FILE")
 }
 
 // FormatReleaseDocsDirectory returns path to the directory for the docs' directory for provided release.
-// Expects release.GetBranch() and number to be non-empty values. Returned path is not guaranteed to exist or be valid.
-func FormatReleaseDocsDirectory(release ReleaseInput, number string) string {
-	return filepath.Join(gitRootDirectory, "docs/contents/releases", release.GetBranch(), number)
+// Expects release.Branch() and number to be non-empty values. Returned path is not guaranteed to exist or be valid.
+func FormatReleaseDocsDirectory(release *Release, number string) string {
+	return filepath.Join(gitRootDirectory, "docs/contents/releases", release.Branch(), number)
 }
