@@ -1,30 +1,21 @@
-From b726fe687efc8b06299672a37a506416d80a2f2e Mon Sep 17 00:00:00 2001
+From a735b5c09de7b6925267d2ff6514a9ba06be921d Mon Sep 17 00:00:00 2001
 From: Jyoti Mahapatra <jyotima@amazon.com>
 Date: Tue, 9 Mar 2021 05:55:57 +0000
 Subject: --EKS-PATCH-- Allow override of kube-proxy base image
 
 Signed-off-by: Jyoti Mahapatra <jyotima@amazon.com>
 ---
- build/common.sh | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ build/common.sh | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
 diff --git a/build/common.sh b/build/common.sh
-index f3cb40448c8..479ce9f2d9a 100755
+index f3cb40448c8..4bda958b0a4 100755
 --- a/build/common.sh
 +++ b/build/common.sh
-@@ -42,6 +42,7 @@ readonly KUBE_BUILD_IMAGE_CROSS_TAG="$(cat "${KUBE_ROOT}/build/build-image/cross
- 
- readonly KUBE_DOCKER_REGISTRY="${KUBE_DOCKER_REGISTRY:-k8s.gcr.io}"
- readonly KUBE_BASE_IMAGE_REGISTRY="${KUBE_BASE_IMAGE_REGISTRY:-k8s.gcr.io/build-image}"
-+readonly KUBE_PROXY_BASE_IMAGE_REGISTRY="${KUBE_PROXY_BASE_IMAGE_REGISTRY:-$KUBE_BASE_IMAGE_REGISTRY}"
- 
- # This version number is used to cause everyone to rebuild their data containers
- # and build image.  This is especially useful for automated build systems like
-@@ -107,13 +108,15 @@ readonly KUBE_BUILD_SETCAP_IMAGE="${KUBE_BUILD_SETCAP_IMAGE:-$KUBE_BASE_IMAGE_RE
+@@ -107,12 +107,13 @@ readonly KUBE_BUILD_SETCAP_IMAGE="${KUBE_BUILD_SETCAP_IMAGE:-$KUBE_BASE_IMAGE_RE
  #
  # $1 - server architecture
  kube::build::get_docker_wrapped_binaries() {
-+  local debian_iptables_version="${KUBE_PROXY_BASE_IMAGE_VERSION:-buster-v1.3.0}"
 +  local go_runner_version=buster-v2.3.1
    ### If you change any of these lists, please also update DOCKERIZED_BINARIES
    ### in build/BUILD. And kube::golang::server_image_targets
@@ -32,14 +23,12 @@ index f3cb40448c8..479ce9f2d9a 100755
 -    "kube-apiserver,${KUBE_APISERVER_BASE_IMAGE}"
 -    "kube-controller-manager,${KUBE_CONTROLLER_MANAGER_BASE_IMAGE}"
 -    "kube-scheduler,${KUBE_SCHEDULER_BASE_IMAGE}"
--    "kube-proxy,${KUBE_PROXY_BASE_IMAGE}"
 +    "kube-apiserver,${KUBE_BASE_IMAGE_REGISTRY}/go-runner:${go_runner_version}"
 +    "kube-controller-manager,${KUBE_BASE_IMAGE_REGISTRY}/go-runner:${go_runner_version}"
 +    "kube-scheduler,${KUBE_BASE_IMAGE_REGISTRY}/go-runner:${go_runner_version}"
-+    "kube-proxy,${KUBE_PROXY_BASE_IMAGE_REGISTRY}/debian-iptables:${debian_iptables_version}"
+     "kube-proxy,${KUBE_PROXY_BASE_IMAGE}"
    )
- 
-   echo "${targets[@]}"
--- 
-2.17.1
+
+--
+2.16.6
 
