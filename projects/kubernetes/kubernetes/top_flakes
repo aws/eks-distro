@@ -6,3 +6,4 @@ k8s.io/kubernetes/pkg/kubelet/volumemanager/reconciler Test_Run_Positive_VolumeA
 k8s.io/kubernetes/vendor/k8s.io/legacy-cloud-providers/vsphere TestSecretUpdated
 k8s.io/kubernetes/vendor/k8s.io/apiserver/pkg/server/filters TestMain
 k8s.io/kubernetes/vendor/k8s.io/legacy-cloud-providers/vsphere TestSecretUpdated/Secrets_are_equal
+k8s.io/kubernetes/vendor/k8s.io/kube-aggregator/pkg/apiserver TestProxyCertReload
