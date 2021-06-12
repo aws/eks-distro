@@ -1,4 +1,4 @@
-From 7b619f13984860a8f12221c8eb6b0af2b9485498 Mon Sep 17 00:00:00 2001
+From 4f3413820595b6245656f9e2f50dc88d8d6f2eee Mon Sep 17 00:00:00 2001
 From: Micah Hausler <mhausler@amazon.com>
 Date: Wed, 19 Sep 2018 18:16:23 -0700
 Subject: --EKS-PATCH-- Added allowlist CIDR flag, use "klog"
@@ -103,7 +103,7 @@ index 00000000000..3b67af3e45a
 +	}
 +}
 diff --git a/cmd/kube-apiserver/app/options/BUILD b/cmd/kube-apiserver/app/options/BUILD
-index 5d7dc156eff..d1d6373e381 100644
+index 89f557911e8..0d24ab56da4 100644
 --- a/cmd/kube-apiserver/app/options/BUILD
 +++ b/cmd/kube-apiserver/app/options/BUILD
 @@ -13,6 +13,7 @@ go_library(
@@ -164,10 +164,10 @@ index 68a714bfe58..125c4969b45 100644
  		"A port range to reserve for services with NodePort visibility. "+
  		"Example: '30000-32767'. Inclusive at both ends of the range.")
 diff --git a/cmd/kube-apiserver/app/options/options_test.go b/cmd/kube-apiserver/app/options/options_test.go
-index 8ad927bbe8f..ec3b9802381 100644
+index d506ddb7274..3a833ff188f 100644
 --- a/cmd/kube-apiserver/app/options/options_test.go
 +++ b/cmd/kube-apiserver/app/options/options_test.go
-@@ -126,6 +126,7 @@ func TestAddFlags(t *testing.T) {
+@@ -127,6 +127,7 @@ func TestAddFlags(t *testing.T) {
  		MasterCount:            5,
  		EndpointReconcilerType: string(reconcilers.LeaseEndpointReconcilerType),
  		AllowPrivileged:        false,
@@ -441,5 +441,5 @@ index aaddb69e72a..56fed8cb5ae 100644
  	// - no port is specified in request (Kubelet's port is default)
  	// - the requested port matches the kubelet port for this node
 -- 
-2.17.1
+2.31.1
 

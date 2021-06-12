@@ -1,4 +1,4 @@
-From ffc32da1b17e74953b020c13b0aaaaa4bfd950eb Mon Sep 17 00:00:00 2001
+From 22586ff51628e968971a9538f0e7be5e599dcca9 Mon Sep 17 00:00:00 2001
 From: Micah Hausler <mhausler@amazon.com>
 Date: Sun, 1 Nov 2020 09:24:08 -0800
 Subject: --EKS-PATCH-- Use GNU date
@@ -11,10 +11,10 @@ Signed-off-by: Jyoti Mahapatra<jyotima@amazon.com>
  1 file changed, 7 insertions(+), 1 deletion(-)
 
 diff --git a/hack/lib/version.sh b/hack/lib/version.sh
-index 0231460168a..c5488be2d03 100644
+index 4dec8dadb4f..56bd7890ef4 100644
 --- a/hack/lib/version.sh
 +++ b/hack/lib/version.sh
-@@ -162,8 +162,14 @@ kube::version::ldflags() {
+@@ -161,8 +161,14 @@ kube::version::ldflags() {
        "-X '${KUBE_GO_PACKAGE}/vendor/k8s.io/component-base/version.${key}=${val}'"
      )
    }
@@ -31,5 +31,5 @@ index 0231460168a..c5488be2d03 100644
      add_ldflag "gitCommit" "${KUBE_GIT_COMMIT}"
      add_ldflag "gitTreeState" "${KUBE_GIT_TREE_STATE}"
 -- 
-2.25.1
+2.31.1
 

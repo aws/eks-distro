@@ -1,4 +1,4 @@
-From abcd34690ee11b646175f68b09681bf3d4c6ec2c Mon Sep 17 00:00:00 2001
+From b1b9124c7e00099a9e35abadb9c428221e51cf72 Mon Sep 17 00:00:00 2001
 From: Aleksandr Melnik <melnikal@amazon.com>
 Date: Wed, 8 Jan 2020 17:23:06 -0800
 Subject: --EKS-PATCH-- Lookup sts endpoint from custom map
@@ -29,7 +29,7 @@ index 47d1f0ff5a7..eb96ef59b59 100644
          "//vendor/github.com/aws/aws-sdk-go/aws/credentials:go_default_library",
          "//vendor/github.com/aws/aws-sdk-go/aws/credentials/ec2rolecreds:go_default_library",
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-index 49c4e29813c..6d1811221ef 100644
+index 6f280c19320..ab40e0e4937 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
 @@ -33,6 +33,7 @@ import (
@@ -40,7 +40,7 @@ index 49c4e29813c..6d1811221ef 100644
  	"github.com/aws/aws-sdk-go/aws/awserr"
  	"github.com/aws/aws-sdk-go/aws/credentials"
  	"github.com/aws/aws-sdk-go/aws/credentials/ec2rolecreds"
-@@ -757,7 +758,10 @@ func newAWSSDKProvider(cfg *CloudConfig) (*awsSDKProvider, error) {
+@@ -767,7 +768,10 @@ func newAWSSDKProvider(cfg *CloudConfig) (*awsSDKProvider, error) {
  		if err != nil {
  			return nil, err
  		}
@@ -52,7 +52,7 @@ index 49c4e29813c..6d1811221ef 100644
  		provider = &stscreds.AssumeRoleProvider{
  			Client:  sts.New(sess, aws.NewConfig().WithRegion(regionName).WithEndpoint(stsEndpoint)),
  			RoleARN: cfg.Global.RoleARN,
-@@ -4926,3 +4930,37 @@ func getInitialAttachDetachDelay(status string) time.Duration {
+@@ -5031,3 +5035,37 @@ func getInitialAttachDetachDelay(status string) time.Duration {
  	}
  	return volumeAttachmentStatusInitialDelay
  }
@@ -91,10 +91,10 @@ index 49c4e29813c..6d1811221ef 100644
 +	return fmt.Sprintf("sts.%s.%s", region, suffix), nil
 +}
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
-index 56fd43dd12c..2b664884cac 100644
+index cee17b26bf1..b1590a59c1e 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
-@@ -2696,24 +2696,46 @@ func newMockedFakeAWSServices(id string) *FakeAWSServices {
+@@ -3047,24 +3047,46 @@ func newMockedFakeAWSServices(id string) *FakeAWSServices {
  	return s
  }
  
@@ -299,7 +299,7 @@ index 00000000000..1c496742903
 +		arn.Resource
 +}
 diff --git a/vendor/modules.txt b/vendor/modules.txt
-index 6a263b51686..8670f98b5a3 100644
+index 49fb21ec713..4b3a7fdd757 100644
 --- a/vendor/modules.txt
 +++ b/vendor/modules.txt
 @@ -135,6 +135,7 @@ github.com/asaskevich/govalidator
@@ -311,5 +311,5 @@ index 6a263b51686..8670f98b5a3 100644
  github.com/aws/aws-sdk-go/aws/awsutil
  github.com/aws/aws-sdk-go/aws/client
 -- 
-2.17.1
+2.31.1
 

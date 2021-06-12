@@ -1,4 +1,4 @@
-From 9e9908007932eb4fa4efa7ab47b6355f2f6595d9 Mon Sep 17 00:00:00 2001
+From 224ddfedbddcbf372ac8f694cae3dd601735092c Mon Sep 17 00:00:00 2001
 From: Jyoti Mahapatra <jyotima@amazon.com>
 Date: Tue, 9 Mar 2021 05:55:57 +0000
 Subject: --EKS-PATCH-- Allow override of kube-proxy base image
@@ -9,7 +9,7 @@ Signed-off-by: Jyoti Mahapatra <jyotima@amazon.com>
  1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/build/common.sh b/build/common.sh
-index 16606b0e481..0b1d2280a6c 100755
+index a3681e2518e..d9034132ae0 100755
 --- a/build/common.sh
 +++ b/build/common.sh
 @@ -44,6 +44,7 @@ readonly KUBE_BUILD_IMAGE_CROSS_TAG="$(cat "${KUBE_ROOT}/build/build-image/cross
@@ -26,7 +26,7 @@ index 16606b0e481..0b1d2280a6c 100755
  kube::build::get_docker_wrapped_binaries() {
 -  local debian_iptables_version=buster-v1.3.0
 +  local debian_iptables_version="${KUBE_PROXY_BASE_IMAGE_VERSION:-buster-v1.3.0}"
-   local go_runner_version=buster-v2.3.1
+   local go_runner_version=v2.3.1-go1.15.12-buster.0
    ### If you change any of these lists, please also update DOCKERIZED_BINARIES
    ### in build/BUILD. And kube::golang::server_image_targets
 @@ -101,7 +102,7 @@ kube::build::get_docker_wrapped_binaries() {
@@ -39,5 +39,5 @@ index 16606b0e481..0b1d2280a6c 100755
  
    echo "${targets[@]}"
 -- 
-2.24.3 (Apple Git-128)
+2.31.1
 
