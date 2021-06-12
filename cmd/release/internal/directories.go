@@ -45,3 +45,7 @@ func FormatKubeGitVersionFilePath(release *Release) string {
 func FormatReleaseDocsDirectory(release *Release, number string) string {
 	return filepath.Join(gitRootDirectory, "docs/contents/releases", release.Branch(), number)
 }
+
+func GetREADMEPath() string {
+	return filepath.Join(gitRootDirectory, "README.md")
+}

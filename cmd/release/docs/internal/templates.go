@@ -17,7 +17,7 @@ const IndexInBranch = `# EKS-D {{.VBranchEKSNumber}} Release
 For additional information, see the [changelog](CHANGELOG-{{.VBranchEKSNumber}}.md) for this release.
 
 ## Release Manifest
-Download the release manifest here: [kubernetes-{{.BranchEKSNumber}}.yaml]({{.ManifestURL}})
+Download the release manifest here: [{{.K8sBranchEKSNumber}}.yaml]({{.ManifestURL}})
 `
 
 // Template for release announcement
