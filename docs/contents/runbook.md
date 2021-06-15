@@ -35,6 +35,8 @@ All other changes are to this package.
       * Work with EKS team to gather these requirements based on the EKS release, by default use same version as previous release
       * Create new presubmit jobs for each project with the new RELEASE_BRANCH
    * Update kops `cluster_wait.sh` to apply the coredns fix to new version
+   * Create projects/kubernetes/kubernetes/${RELEASE_BRANCH}/PAUSE_TAG
+      * update value to match the new upstream version (ex: [here](https://github.com/kubernetes/kubernetes/blob/v1.21.0/build/pause/Makefile#L20))
 1. **Build tooling PR**: Add release channel to release tooling
    * In the [config](https://github.com/aws/eks-distro-build-tooling/tree/main/release/config) directory,
      create the new `RELEASE_BRANCH` folder and create a `${RELEASE_BRANCH}.yaml`, copied from the previous 
