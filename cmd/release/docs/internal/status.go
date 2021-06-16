@@ -67,8 +67,8 @@ func (docStatus *DocStatus) undoChanges() error {
 	}
 }
 
-func GetEmptyDocStatus() *DocStatus {
-	return &DocStatus{path: "", isAlreadyExisting: true}
+func GetEmptyDocStatus() DocStatus {
+	return DocStatus{path: "", isAlreadyExisting: true}
 }
 
 

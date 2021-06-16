@@ -19,7 +19,7 @@ func main() {
 	environment := flag.String("environment", "development", "Should be 'development' or 'production'")
 
 	// Generate new files
-	includeChangelog := *flag.Bool("includeChangelog", true, "If changelog should be generated")
+	includeChangelog := *flag.Bool("includeChangelog", false, "If changelog should be generated")
 	includeIndex := *flag.Bool("includeIndex", true, "If index in branch dir should be generated")
 	includeIndexAppendedText := *flag.Bool("includeIndexAppendedText", false, "If Markdown table should be generated")
 	includeAnnouncement := *flag.Bool("includeAnnouncement", true, "If release announcement should be generated")
@@ -61,7 +61,7 @@ func main() {
 	// Update existing files
 	if includeREADME {
 		docStatusREADME, err := UpdateREADME(release, *force)
-		docStatuses = append(docStatuses, *docStatusREADME)
+		docStatuses = append(docStatuses, docStatusREADME)
 		if err != nil {
 			UndoChanges(docStatuses)
 			DeleteDocsDirectoryIfEmpty(release)
@@ -70,7 +70,7 @@ func main() {
 	}
 	if includeDocsIndex {
 		docStatusDocsIndex, err := UpdateDocsIndex(release, *force)
-		docStatuses = append(docStatuses, *docStatusDocsIndex)
+		docStatuses = append(docStatuses, docStatusDocsIndex)
 		if err != nil {
 			UndoChanges(docStatuses)
 			DeleteDocsDirectoryIfEmpty(release)

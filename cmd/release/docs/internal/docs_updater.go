@@ -15,14 +15,15 @@ var (
 )
 
 // UpdateREADME updates the README to replace release manifest from previous patch release with the new one.
-// Requires the to-be-replaced line to match expected format.
-// If the value of provided 'force' if 'true', skips checks for sequential numbering; otherwise returns error if it
-// detects non-sequential numbering.
-func UpdateREADME(release *Release, force bool) (*DocStatus, error)  {
+// If the value of provided 'force' is 'true', does not check for sequential numbering; otherwise, returns error if
+// updating the doc would result in non-sequential number.
+func UpdateREADME(release *Release, force bool) (DocStatus, error) {
+	ds := GetEmptyDocStatus()
+
 	readmePath := GetREADMEPath()
 	data, err := ioutil.ReadFile(readmePath)
 	if err != nil {
-		return  GetEmptyDocStatus(), fmt.Errorf("failed to read file because error: %v", err)
+		return ds, fmt.Errorf("failed to read file because error: %v", err)
 	}
 
 	splitData := bytes.Split(data, linebreak)
@@ -53,21 +54,23 @@ func UpdateREADME(release *Release, force bool) (*DocStatus, error)  {
 	}
 
 	if !hasFoundLine {
-		return GetEmptyDocStatus(), errors.New("failed to find line needed to update version tag in README")
+		return ds, errors.New("failed to find line needed to update version tag in README")
 	}
 
-	ds := DocStatus{path: readmePath, isAlreadyExisting: true}
-	return &ds, os.WriteFile(readmePath, bytes.Join(splitData, linebreak), 0644)
+	ds = DocStatus{path: readmePath, isAlreadyExisting: true}
+	return ds, os.WriteFile(readmePath, bytes.Join(splitData, linebreak), 0644)
 }
 
 // UpdateDocsIndex updates the doc's directory index.md file for the current release.
-// If the value of provided 'force' if 'true', skips checks for sequential numbering; otherwise, returns error if
+// If the value of provided 'force' is 'true', does not check for sequential numbering; otherwise, returns error if
 // updating the doc would result in non-sequential number.
-func UpdateDocsIndex(release *Release, force bool) (*DocStatus, error)  {
+func UpdateDocsIndex(release *Release, force bool) (DocStatus, error) {
+	ds := GetEmptyDocStatus()
+
 	docsIndexPath := GetDocsIndexPath()
 	data, err := ioutil.ReadFile(docsIndexPath)
 	if err != nil {
-		return  GetEmptyDocStatus(), fmt.Errorf("failed to read file because error: %v", err)
+		return ds, fmt.Errorf("failed to read file because error: %v", err)
 	}
 
 	splitData := bytes.Split(data, linebreak)
@@ -82,19 +85,19 @@ func UpdateDocsIndex(release *Release, force bool) (*DocStatus, error)  {
 			continue
 		}
 		if bytes.Compare(lineToUpdate, splitData[i+1]) != 0 && !force {
-			return  GetEmptyDocStatus(), fmt.Errorf("expected line %q but found %q", lineToUpdate, splitData[i+1])
+			return ds, fmt.Errorf("expected line %q but found %q", lineToUpdate, splitData[i+1])
 		}
 		splitData[i+1] = []byte("RELEASE=" + release.Number())
 	}
 
-	// Adds number in 'RELEASE=<number>' if branch matches "RELEASE_BRANCH=<branch>". Checks for sequential numbering
-	// unless provided 'force' is 'true'
+	// Adds link to index.md for the new release in the section for its release branch. Enforces sequential numbering
+	// unless provided 'force' is 'true'.
 	sectionHeader := []byte(fmt.Sprintf("#### EKS-D %s Version Dependencies", release.BranchWithDot))
 	nextLineMatch := regexp.MustCompile(fmt.Sprintf(`\[%s\]`, release.VBranchEKSPreviousNumber))
 	for i := 0; i < len(splitData)-1; i++ {
 		if bytes.Compare(sectionHeader, splitData[i]) == 0 {
 			if !nextLineMatch.Match(splitData[i+1]) && !force {
-				return  GetEmptyDocStatus(), errors.New("non-sequential Version Dependencies list")
+				return ds, errors.New("non-sequential Version Dependencies list")
 			}
 			appendLine := fmt.Sprintf(
 				`* [%s](%s/index.md)`,
@@ -102,10 +105,10 @@ func UpdateDocsIndex(release *Release, force bool) (*DocStatus, error)  {
 				FormatRelativeReleaseDocsDirectory(release.Branch(), release.Number()),
 			)
 			splitData[i] = append(append(splitData[i], linebreak...), appendLine...)
-			fmt.Println(release.DocsDirectoryPath)
 			break
 		}
 	}
-	ds := DocStatus{path: docsIndexPath, isAlreadyExisting: true}
-	return &ds, os.WriteFile(docsIndexPath, bytes.Join(splitData, linebreak), 0644)
+
+	ds = DocStatus{path: docsIndexPath, isAlreadyExisting: true}
+	return ds, os.WriteFile(docsIndexPath, bytes.Join(splitData, linebreak), 0644)
 }
