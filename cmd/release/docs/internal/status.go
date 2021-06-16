@@ -15,8 +15,23 @@ type DocStatus struct {
 	isAlreadyExisting bool
 }
 
-func (DocStatus *DocStatus) UndoChanges() error {
-	docPath := DocStatus.path
+func UndoChanges(docStatuses []DocStatus) {
+	log.Println("Encountered error processing docs. Attempting to undo all changes... ")
+	for _, ds := range docStatuses {
+		errForUndo := ds.undoChanges()
+		if errForUndo != nil {
+			log.Printf("Error attempting to undo change: %v\n", errForUndo)
+		}
+	}
+	log.Println("Finished attempting to undo all changes")
+}
+
+func (docStatus *DocStatus) undoChanges() error {
+	if docStatus.isEmpty() {
+		return nil
+	}
+
+	docPath := docStatus.path
 
 	_, err := os.Stat(docPath)
 	if err != nil {
@@ -27,7 +42,7 @@ func (DocStatus *DocStatus) UndoChanges() error {
 		return fmt.Errorf("failed to delete file because encountered error: %v", err)
 	}
 
-	if DocStatus.isAlreadyExisting {
+	if docStatus.isAlreadyExisting {
 		err := exec.Command("git", "ls-files", "--error-unmatch", docPath).Run()
 		if err != nil && strings.Compare(err.Error(), "exit status 1") == 0 {
 			return fmt.Errorf("unable to restore existing file %v because it is not known to git", docPath)
@@ -50,4 +65,13 @@ func (DocStatus *DocStatus) UndoChanges() error {
 		log.Printf("Deleted newly-created file %s", docPath)
 		return nil
 	}
+}
+
+func GetEmptyDocStatus() *DocStatus {
+	return &DocStatus{path: "", isAlreadyExisting: true}
+}
+
+
+func (docStatus *DocStatus) isEmpty() bool {
+	return len(docStatus.path) == 0
 }

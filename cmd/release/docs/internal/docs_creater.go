@@ -11,7 +11,7 @@ import (
 	"text/template"
 )
 
-type Doc struct {
+type GeneratedDoc struct {
 	Filename     string
 	TemplateName string
 	IsIncluded   bool
@@ -20,7 +20,7 @@ type Doc struct {
 
 // WriteToDocs writes to each doc in provided docs with the information supplied by release, with overrideIfExisting
 // conditionally replacing existing file content with the generated content.
-func WriteToDocs(docs []Doc, release *Release, overrideIfExisting bool) ([]DocStatus, error) {
+func WriteToDocs(docs []GeneratedDoc, release *Release, overrideIfExisting bool) ([]DocStatus, error) {
 	var docStatuses []DocStatus
 
 	err := os.Mkdir(release.DocsDirectoryPath, 0777)
@@ -46,7 +46,7 @@ func WriteToDocs(docs []Doc, release *Release, overrideIfExisting bool) ([]DocSt
 	return docStatuses, nil
 }
 
-func writeToDoc(doc *Doc, release *Release, overrideIfExisting bool) (DocStatus, error) {
+func writeToDoc(doc *GeneratedDoc, release *Release, overrideIfExisting bool) (DocStatus, error) {
 	filePath := fmt.Sprintf(release.DocsDirectoryPath + "/" + doc.Filename)
 
 	ds := DocStatus{path: filePath}

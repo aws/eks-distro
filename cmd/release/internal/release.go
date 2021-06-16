@@ -22,11 +22,14 @@ type Release struct {
 	// Version notations
 	BranchEKSNumber            string // e.g. 1-20-eks-2
 	BranchEKSPreviousNumber    string // e.g. 1-20-eks-1
+	BranchWithDot              string // e.g. 1.20
 	EKSBranchNumber            string // e.g. eks-1-20-2
 	EKSBranchPreviousNumber    string // e.g. eks-1-20-1
+	K8sBranchEKS               string // e.g. Kubernetes-1-20-eks
 	K8sBranchEKSNumber         string // e.g. Kubernetes-1-20-eks-2
 	K8sBranchEKSPreviousNumber string // e.g. Kubernetes-1-20-eks-1
 	VBranchEKSNumber           string // e.g. v1-20-eks-2
+	VBranchEKSPreviousNumber   string // e.g. v1-20-eks-1
 	VBranchWithDotNumber       string // e.g. v1.20-2
 
 	// Expected url but release manifest may not exist
@@ -75,16 +78,20 @@ func newRelease(inputBranch, inputEnvironment string, overrideNumber int) (*Rele
 		}
 	}
 
-	release.DocsDirectoryPath = FormatReleaseDocsDirectory(release, release.number)
+	release.DocsDirectoryPath = FormatReleaseDocsDirectory(release)
 
-	release.BranchEKSNumber = formatBranchEKSNumber(release.branch, release.number)
-	release.BranchEKSPreviousNumber = formatBranchEKSNumber(release.branch, release.prevNumber)
-	release.EKSBranchNumber = formatEKSBranchNumber(release.branch, release.number)
-	release.EKSBranchPreviousNumber = formatEKSBranchNumber(release.branch, release.prevNumber)
-	release.K8sBranchEKSNumber = "kubernetes-" + release.BranchEKSNumber
-	release.K8sBranchEKSPreviousNumber = "kubernetes-" + release.BranchEKSPreviousNumber
+	branchEKS := release.branch + "-eks"
+	release.BranchEKSNumber = fmt.Sprintf("%s-%s", branchEKS, release.number)
+	release.BranchEKSPreviousNumber = fmt.Sprintf("%s-%s", branchEKS, release.prevNumber)
+	release.BranchWithDot = strings.Replace(release.branch, "-", ".", 1)
+	release.EKSBranchNumber = fmt.Sprintf("eks-%s-%s", release.branch, release.number)
+	release.EKSBranchPreviousNumber = fmt.Sprintf("eks-%s-%s", release.branch, release.prevNumber)
+	release.K8sBranchEKS = "kubernetes-" + branchEKS
+	release.K8sBranchEKSNumber = fmt.Sprintf("%s-%s", release.K8sBranchEKS, release.number)
+	release.K8sBranchEKSPreviousNumber =  fmt.Sprintf("%s-%s", release.K8sBranchEKS, release.prevNumber)
 	release.VBranchEKSNumber = "v" + release.BranchEKSNumber
-	release.VBranchWithDotNumber = fmt.Sprintf("v%s-%s", strings.Replace(release.branch, "-", ".", 1), release.number)
+	release.VBranchEKSPreviousNumber = "v" + release.BranchEKSPreviousNumber
+	release.VBranchWithDotNumber = fmt.Sprintf("v%s-%s", release.BranchWithDot, release.number)
 
 	release.ManifestURL = fmt.Sprintf(
 		"https://distro.eks.amazonaws.com/kubernetes-%s/kubernetes-%s.yaml",
@@ -110,6 +117,10 @@ func (release *Release) Environment() string {
 	return release.environment
 }
 
+func (release *Release) PreviousNumber() string {
+	return release.prevNumber
+}
+
 func checkInput(inputBranch, inputEnvironment string) error {
 	if len(inputBranch) == 0 {
 		return errors.New("inputBranch cannot be an empty string")
@@ -118,14 +129,4 @@ func checkInput(inputBranch, inputEnvironment string) error {
 		return errors.New("inputEnvironment cannot be an empty string")
 	}
 	return nil
-}
-
-// formatEKSBranchNumber returns eks-<branch>-<number> (e.g. eks-1-20-2)
-func formatEKSBranchNumber(branch, number string) string {
-	return fmt.Sprintf("eks-%s-%s", branch, number)
-}
-
-// formatBranchEKSNumber returns <branch>-eks-<number> (e.g. 1-20-eks-2)
-func formatBranchEKSNumber(branch, number string) string {
-	return fmt.Sprintf("%s-eks-%s", branch, number)
 }
