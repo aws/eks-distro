@@ -5,6 +5,7 @@ RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/$(RELEASE_ENVIR
 ARTIFACT_BUCKET?=my-s3-bucket
 GIT_TAG?=$(shell cat ./$(RELEASE_BRANCH)/GIT_TAG)
 GOLANG_VERSION?=$(shell cat ./$(RELEASE_BRANCH)/GOLANG_VERSION)
+PAUSE_TAG?=$(shell cat ./$(RELEASE_BRANCH)/PAUSE_TAG)
 
 REPO=kubernetes
 COMPONENT=kubernetes/$(REPO)
@@ -30,7 +31,7 @@ PAUSE_DST_DIR?=_output/$(RELEASE_BRANCH)/pause
 PAUSE_IMAGE_NAME?=pause
 PAUSE_IMAGE_TAG?=$(IMAGE_TAG)
 PAUSE_IMAGE?=$(IMAGE_REPO)/$(IMAGE_REPO_PREFIX)/$(PAUSE_IMAGE_NAME):$(PAUSE_IMAGE_TAG)
-PAUSE_IMAGE_3_2="$(IMAGE_REPO)/$(IMAGE_REPO_PREFIX)/$(PAUSE_IMAGE_NAME):3.2"
+PAUSE_IMAGE_3_X=$(IMAGE_REPO)/$(IMAGE_REPO_PREFIX)/$(PAUSE_IMAGE_NAME):PAUSE_TAG
 
 .PHONY: update-version
 update-version: binaries
@@ -59,18 +60,18 @@ local-images:
 	build/create_images.sh $(RELEASE_BRANCH) \
 		"$(shell build/determine_presubmit_base_image.sh $(GO_RUNNER_IMAGE))" \
 		"$(shell build/determine_presubmit_base_image.sh $(KUBE_PROXY_BASE_IMAGE))" \
-		$(IMAGE_REPO) $(IMAGE_REPO_PREFIX) $(IMAGE_TAG) "$(PAUSE_IMAGE),$(PAUSE_IMAGE_3_2)" false true
+		$(IMAGE_REPO) $(IMAGE_REPO_PREFIX) $(IMAGE_TAG) "$(PAUSE_IMAGE),$(PAUSE_IMAGE_3_X)" false true
 
 .PHONY: images
 images:
 	# we publish oci tarballs in release mode in addition to pushing images for use by kops and other installer tools
 	build/create_images.sh \
 		$(RELEASE_BRANCH) $(GO_RUNNER_IMAGE) $(KUBE_PROXY_BASE_IMAGE) \
-		$(IMAGE_REPO) $(IMAGE_REPO_PREFIX) $(IMAGE_TAG) "$(PAUSE_IMAGE),$(PAUSE_IMAGE_3_2)" false
+		$(IMAGE_REPO) $(IMAGE_REPO_PREFIX) $(IMAGE_TAG) "$(PAUSE_IMAGE),$(PAUSE_IMAGE_3_X)" false
 	
 	build/create_images.sh \
 		$(RELEASE_BRANCH) $(GO_RUNNER_IMAGE) $(KUBE_PROXY_BASE_IMAGE) \
-		$(IMAGE_REPO) $(IMAGE_REPO_PREFIX) $(IMAGE_TAG) "$(PAUSE_IMAGE),$(PAUSE_IMAGE_3_2)" true
+		$(IMAGE_REPO) $(IMAGE_REPO_PREFIX) $(IMAGE_TAG) "$(PAUSE_IMAGE),$(PAUSE_IMAGE_3_X)" true
 		
 .PHONY: docker
 docker: binaries pause
@@ -80,14 +81,14 @@ docker: binaries pause
 		--build-arg BASE_IMAGE=$(GO_RUNNER_IMAGE) \
 		--build-arg VERSION=$(IMAGE_TAG) \
 		-t $(PAUSE_IMAGE) \
-		-t $(PAUSE_IMAGE_3_2) \
+		-t $(PAUSE_IMAGE_3_X) \
 		-f ./docker/pause/Dockerfile $(PAUSE_DST_DIR)
 
 .PHONY: docker-push
 docker-push:
 	build/docker_push.sh $(RELEASE_BRANCH) $(GO_RUNNER_IMAGE) $(KUBE_PROXY_BASE_IMAGE) $(IMAGE_REPO) $(IMAGE_REPO_PREFIX) $(IMAGE_TAG)
 	docker push $(PAUSE_IMAGE)
-	docker push $(PAUSE_IMAGE_3_2)
+	docker push $(PAUSE_IMAGE_3_X)
 
 .PHONY: checksums
 checksums:
