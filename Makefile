@@ -141,3 +141,17 @@ attribution-files:
 .PHONY: update-attribution-files
 update-attribution-files: attribution-files
 	build/update-attribution-files/create_pr.sh
+
+.PHONY: update-release-number
+update-release-number:
+	go vet ./cmd/release/number
+	go run ./cmd/release/number/main.go \
+		--branch=$(RELEASE_BRANCH) \
+		--environment=$(RELEASE_ENVIRONMENT)
+
+.PHONY: release-docs
+release-docs:
+	go vet ./cmd/release/docs
+	go run ./cmd/release/docs/main.go \
+		--branch=$(RELEASE_BRANCH) \
+		--environment=$(RELEASE_ENVIRONMENT)
