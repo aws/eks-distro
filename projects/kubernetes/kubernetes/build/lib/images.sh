@@ -34,13 +34,18 @@ function build::images::release_image_tar(){
     local -r repo_prefix="$5"
     local -r image_tag="$6"
     local -r context_dir="$7"
-
+    local -r skip_arm="$8"
+    
     for binary in "${KUBE_IMAGE_BINARIES[@]}"; do
         local base_image=$go_runner_image
         if [ "$binary" == "kube-proxy" ]; then
             base_image=$kube_proxy_base_image
         fi
         for platform in "${KUBE_LINUX_IMAGE_PLATFORMS[@]}"; do
+            if [ "$platform" == "arm64" ] && [ $skip_arm == true ]; then
+                continue
+            fi
+
             image=${repository}/${repo_prefix}/${binary}:${image_tag}
             image_dir=${context_dir}/linux/${platform}
             buildctl \
