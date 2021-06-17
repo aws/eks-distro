@@ -33,6 +33,10 @@ function build::version::create_env_file() {
     export KUBE_GIT_VERSION=$tag
     
     cd $repository
+    # make sure the tree is clean, there are a couple cases during the license generation
+    # were we copy things into the tree that should be ignored
+    git restore .
+
     source "${MAKE_ROOT}/$repository/hack/lib/init.sh"
     source "${MAKE_ROOT}/$repository/hack/lib/version.sh"
     kube::version::get_version_vars
