@@ -1,4 +1,4 @@
-From 34c8f523b01670a781e8bb5b674cdcbc875bc236 Mon Sep 17 00:00:00 2001
+From fc7a4b5467196c0b2268df2ca72d46488942c91a Mon Sep 17 00:00:00 2001
 From: Yang Yang <yyyng@amazon.com>
 Date: Mon, 20 Jan 2020 11:59:08 -0800
 Subject: --EKS-PATCH-- using regional sts endpoint for assume ecr
@@ -105,10 +105,10 @@ index 8f85237e8f3..4358789f62d 100644
  	getter.svc.Handlers.Build.PushFrontNamed(request.NamedHandler{
  		Name: "k8s/user-agent",
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-index d4f52f455ca..63d90a44ca5 100644
+index f6517674b2f..90ad5539698 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-@@ -742,7 +742,7 @@ func newAWSSDKProvider(cfg *CloudConfig) (*awsSDKProvider, error) {
+@@ -752,7 +752,7 @@ func newAWSSDKProvider(cfg *CloudConfig) (*awsSDKProvider, error) {
  		if err != nil {
  			return nil, err
  		}
@@ -117,7 +117,7 @@ index d4f52f455ca..63d90a44ca5 100644
  		if err != nil {
  			return nil, err
  		}
-@@ -4861,7 +4861,7 @@ func arnToAwsUrlSuffix(arnString string) (string, error) {
+@@ -4984,7 +4984,7 @@ func arnToAwsUrlSuffix(arnString string) (string, error) {
  	}
  }
  
@@ -127,10 +127,10 @@ index d4f52f455ca..63d90a44ca5 100644
  	if err != nil {
  		return "", err
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
-index bfa66fadb1f..096acbd2e86 100644
+index abac429f394..4baa20b60f4 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
-@@ -2569,7 +2569,7 @@ func TestConstructStsEndpoint(t *testing.T) {
+@@ -2920,7 +2920,7 @@ func TestConstructStsEndpoint(t *testing.T) {
  	t.Run("returns an error when the arn is invalid", func(t *testing.T) {
  		arn := "asdf"
  		region := "us-east-1"
@@ -139,7 +139,7 @@ index bfa66fadb1f..096acbd2e86 100644
  		assert.Equal(t, endpoint, "")
  		require.Error(t, err)
  	})
-@@ -2577,7 +2577,7 @@ func TestConstructStsEndpoint(t *testing.T) {
+@@ -2928,7 +2928,7 @@ func TestConstructStsEndpoint(t *testing.T) {
  	t.Run("returns sts.us-east-1.amazonaws.com when region/partition is us-east-1/aws", func(t *testing.T) {
  		arn := "arn:aws:eks:us-east-1:1234:cluster/asdf"
  		region := "us-east-1"
@@ -148,7 +148,7 @@ index bfa66fadb1f..096acbd2e86 100644
  		assert.Equal(t, endpoint, "sts.us-east-1.amazonaws.com")
  		require.NoError(t, err)
  	})
-@@ -2585,7 +2585,7 @@ func TestConstructStsEndpoint(t *testing.T) {
+@@ -2936,7 +2936,7 @@ func TestConstructStsEndpoint(t *testing.T) {
  	t.Run("returns sts.cn-northwest-1.amazonaws.com.cn when region/partition is cn-northwest-1/aws-cn", func(t *testing.T) {
  		arn := "arn:aws-cn:eks:cn-northwest-1:1234:cluster/asdf"
  		region := "cn-northwest-1"
@@ -157,7 +157,7 @@ index bfa66fadb1f..096acbd2e86 100644
  		assert.Equal(t, endpoint, "sts.cn-northwest-1.amazonaws.com.cn")
  		require.NoError(t, err)
  	})
-@@ -2593,7 +2593,7 @@ func TestConstructStsEndpoint(t *testing.T) {
+@@ -2944,7 +2944,7 @@ func TestConstructStsEndpoint(t *testing.T) {
  	t.Run("returns sts.us-gov-east-1.amazonaws.com when region/partion is us-gov-east-1/aws-us-gov", func(t *testing.T) {
  		arn := "arn:aws-us-gov:eks:us-gov-east-1:1234:cluster/asdf"
  		region := "us-gov-east-1"
@@ -166,7 +166,7 @@ index bfa66fadb1f..096acbd2e86 100644
  		assert.Equal(t, endpoint, "sts.us-gov-east-1.amazonaws.com")
  		require.NoError(t, err)
  	})
-@@ -2601,7 +2601,7 @@ func TestConstructStsEndpoint(t *testing.T) {
+@@ -2952,7 +2952,7 @@ func TestConstructStsEndpoint(t *testing.T) {
  	t.Run("returns sts.me-south-1.amazonaws.com when region/partion is me-south-1/aws", func(t *testing.T) {
  		arn := "arn:aws:eks:me-south-1:1234:cluster/asdf"
  		region := "me-south-1"
@@ -176,5 +176,5 @@ index bfa66fadb1f..096acbd2e86 100644
  		require.NoError(t, err)
  	})
 -- 
-2.29.2
+2.31.1
 

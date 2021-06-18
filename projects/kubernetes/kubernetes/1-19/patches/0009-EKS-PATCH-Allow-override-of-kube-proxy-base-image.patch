@@ -1,7 +1,7 @@
-From 98654063cdf69659d0557f366b51fccecd00374d Mon Sep 17 00:00:00 2001
-From: Kishor Joshi <joshikis@example.com>
+From 998ae59785c53e95d983df95b2008f6d0edb9ef3 Mon Sep 17 00:00:00 2001
+From: Kishor Joshi <joshikis@amazon.com>
 Date: Thu, 14 Jan 2021 22:05:52 -0800
-Subject: [PATCH] --EKS-PATCH-- Allow override of kube-proxy base image
+Subject: --EKS-PATCH-- Allow override of kube-proxy base image
 
 Signed-off-by: Terry Howe <tlhowe@example.com>
 ---
@@ -9,7 +9,7 @@ Signed-off-by: Terry Howe <tlhowe@example.com>
  1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/build/common.sh b/build/common.sh
-index 831b8ea5738..fc8f70164b2 100755
+index abfafc4f7b5..106962f3897 100755
 --- a/build/common.sh
 +++ b/build/common.sh
 @@ -44,6 +44,7 @@ readonly KUBE_BUILD_IMAGE_CROSS_TAG="$(cat "${KUBE_ROOT}/build/build-image/cross
@@ -24,9 +24,9 @@ index 831b8ea5738..fc8f70164b2 100755
  #
  # $1 - server architecture
  kube::build::get_docker_wrapped_binaries() {
--  local debian_iptables_version=v12.1.2
-+  local debian_iptables_version="${KUBE_PROXY_BASE_IMAGE_VERSION:-v12.1.2}"
-   local go_runner_version=buster-v2.3.1
+-  local debian_iptables_version=buster-v1.6.1
++  local debian_iptables_version="${KUBE_PROXY_BASE_IMAGE_VERSION:-buster-v1.6.1}"
+   local go_runner_version=v2.3.1-go1.15.13-buster.0
    ### If you change any of these lists, please also update DOCKERIZED_BINARIES
    ### in build/BUILD. And kube::golang::server_image_targets
 @@ -101,7 +102,7 @@ kube::build::get_docker_wrapped_binaries() {
@@ -39,5 +39,5 @@ index 831b8ea5738..fc8f70164b2 100755
  
    echo "${targets[@]}"
 -- 
-2.29.2
+2.31.1
 
