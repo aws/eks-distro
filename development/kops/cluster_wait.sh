@@ -52,6 +52,24 @@ do
 done
 fi
 
+# In kops 1-21 the metrics addon is not configurable enough for 1.18 based clusters
+# manually add -kubelet-insecure-tls
+# https://github.com/kubernetes/kops/blob/v1.21.0-beta.3/upup/models/cloudup/resources/addons/metrics-server.addons.k8s.io/k8s-1.11.yaml.template#L140
+# UseKopsControllerForNodeBootstrap is only true when 1.19 and above
+if [ "${RELEASE_BRANCH}" == "1-18" ]; then
+    PATCH='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--kubelet-insecure-tls" }]'
+    while ! kubectl -n kube-system patch deployments metrics-server --type=json -p="$PATCH"
+    do
+        sleep 5
+        COUNT=$(expr $COUNT + 1)
+        if [ $COUNT -gt 120 ]
+        then
+            echo "Failed to configure metrics server"
+            exit 1
+        fi
+        echo 'Waiting for cluster to come up...'
+    done
+fi
 
 set -x
 ${KOPS} validate cluster --wait 15m

@@ -21,8 +21,13 @@ function cleanup()
 {
   echo 'Deleting...'
   ./gather_logs.sh || true
-  ./delete_cluster.sh || true
+  ./delete_cluster.sh
   ./delete_store.sh
+}
+
+function cleanup_and_error()
+{
+  cleanup
   exit 255;
 }
 
@@ -35,12 +40,12 @@ if [[ "${KOPS_STATE_STORE}" != "" ]]; then
     if [[ "${cluster_name}" == "${RELEASE_BRANCH}-"* ]]; then
       cluster_fqdn="$(echo ${cluster_name}|tr -d "/")"
       echo "Deleting cluster ${cluster_fqdn}"
-      ${KOPS} delete cluster --state "${KOPS_STATE_STORE}" --name ${cluster_fqdn} --yes || true
-      aws s3 rm --recursive "${KOPS_STATE_STORE}/${cluster_name}" || true
+      ${KOPS} delete cluster --state "${KOPS_STATE_STORE}" --name ${cluster_fqdn} --yes
+      aws s3 rm --recursive "${KOPS_STATE_STORE}/${cluster_name}"
     fi
   done
 fi
-trap cleanup SIGINT SIGTERM ERR
+trap cleanup_and_error SIGINT SIGTERM ERR
 ./create_values_yaml.sh
 ./create_configuration.sh
 ./create_cluster.sh
@@ -49,6 +54,8 @@ trap cleanup SIGINT SIGTERM ERR
 ./validate_dns.sh
 ./validate_eks.sh
 ./run_sonobuoy.sh
-./gather_logs.sh || true
-./delete_cluster.sh
-./delete_store.sh
+
+# avoid trying to clean up twice
+trap '' SIGINT SIGTERM ERR
+
+cleanup
