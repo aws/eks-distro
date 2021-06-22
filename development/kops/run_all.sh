@@ -50,5 +50,5 @@ trap cleanup SIGINT SIGTERM ERR
 ./validate_eks.sh
 ./run_sonobuoy.sh
 ./gather_logs.sh || true
-./delete_cluster.sh || true
+./delete_cluster.sh
 ./delete_store.sh
