@@ -1,4 +1,4 @@
-From d2b2d5e7216651db712f78285e7dc8331252a866 Mon Sep 17 00:00:00 2001
+From 7d1d8dd2bb69cd7417bcb50461e8aa27a1777f30 Mon Sep 17 00:00:00 2001
 From: Yang Yang <yyyng@amazon.com>
 Date: Sun, 22 Dec 2019 13:32:27 -0800
 Subject: --EKS-PATCH-- volume plugin requests patch
@@ -21,7 +21,7 @@ Signed-off-by: Jackson West <jgw@amazon.com>
  5 files changed, 109 insertions(+), 5 deletions(-)
 
 diff --git a/pkg/proxy/util/utils.go b/pkg/proxy/util/utils.go
-index c2bf2c97d15..d78f8c35108 100644
+index c2bf2c97d15..232421c3567 100644
 --- a/pkg/proxy/util/utils.go
 +++ b/pkg/proxy/util/utils.go
 @@ -20,8 +20,12 @@ import (
@@ -230,7 +230,7 @@ index 4a95516b14b..c5698db6947 100644
  		DisableKeepAlives:   false,
  		MaxIdleConnsPerHost: 1,
 diff --git a/vendor/github.com/thecodeteam/goscaleio/api.go b/vendor/github.com/thecodeteam/goscaleio/api.go
-index 2b17c8886c1..5a6a6c1b800 100644
+index 2b17c8886c1..4d6314ef060 100644
 --- a/vendor/github.com/thecodeteam/goscaleio/api.go
 +++ b/vendor/github.com/thecodeteam/goscaleio/api.go
 @@ -9,6 +9,8 @@ import (
@@ -268,5 +268,5 @@ index 2b17c8886c1..5a6a6c1b800 100644
  			TLSClientConfig: &tls.Config{
  				RootCAs:            pool,
 -- 
-2.29.2
+2.31.1
 

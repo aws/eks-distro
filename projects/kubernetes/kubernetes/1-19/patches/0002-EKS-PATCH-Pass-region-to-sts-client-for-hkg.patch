@@ -1,4 +1,4 @@
-From 34bdb2e3ecf5c7b524182ca02aaf912cf7462ca1 Mon Sep 17 00:00:00 2001
+From 36abeee50d9b068ea6fc46218c0c1554d0c302de Mon Sep 17 00:00:00 2001
 From: M00nF1sh <yyyng@amazon.com>
 Date: Tue, 2 Jul 2019 10:44:42 -0700
 Subject: --EKS-PATCH-- Pass region to sts client for ap-east-1
@@ -10,10 +10,10 @@ Signed-off-by: Jackson West <jgw@amazon.com>
  1 file changed, 43 insertions(+), 32 deletions(-)
 
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-index d0cc73a17fc..acc1d427fe7 100644
+index 8c594714416..1545a456540 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-@@ -712,12 +712,50 @@ type awsSDKProvider struct {
+@@ -722,12 +722,50 @@ type awsSDKProvider struct {
  	regionDelayers map[string]*CrossRequestRetryDelay
  }
  
@@ -67,7 +67,7 @@ index d0cc73a17fc..acc1d427fe7 100644
  }
  
  func (p *awsSDKProvider) addHandlers(regionName string, h *request.Handlers) {
-@@ -1144,32 +1182,10 @@ func init() {
+@@ -1154,32 +1192,10 @@ func init() {
  			return nil, fmt.Errorf("unable to validate custom endpoint overrides: %v", err)
  		}
  
@@ -102,7 +102,7 @@ index d0cc73a17fc..acc1d427fe7 100644
  		return newAWSCloud(*cfg, aws)
  	})
  }
-@@ -1238,16 +1254,11 @@ func newAWSCloud(cfg CloudConfig, awsServices Services) (*Cloud, error) {
+@@ -1248,16 +1264,11 @@ func newAWSCloud(cfg CloudConfig, awsServices Services) (*Cloud, error) {
  	if err != nil {
  		return nil, fmt.Errorf("error creating AWS metadata client: %q", err)
  	}
@@ -120,5 +120,5 @@ index d0cc73a17fc..acc1d427fe7 100644
  	if err != nil {
  		return nil, err
 -- 
-2.29.2
+2.31.1
 
