@@ -1,4 +1,4 @@
-From 118e43e6004593f0734d30fe4ebdb5d89664c0a7 Mon Sep 17 00:00:00 2001
+From 2b41fe0b1200126717d5075d3a1dd8d37d7af89a Mon Sep 17 00:00:00 2001
 From: Qing Ju <juqing@amazon.com>
 Date: Sun, 18 Oct 2020 10:31:39 -0700
 Subject: --EKS-PATCH-- Bypassed admission controller webhook for
@@ -13,10 +13,10 @@ Signed-off-by: Jyoti Mahapatra <jyotima@amazon.com>
  2 files changed, 159 insertions(+)
 
 diff --git a/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/webhook.go b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/webhook.go
-index 6fc0eff297d..41414070860 100644
+index c04225e94f7..58b725d3ad4 100644
 --- a/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/webhook.go
 +++ b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/webhook.go
-@@ -215,9 +215,39 @@ func (a *Webhook) Dispatch(ctx context.Context, attr admission.Attributes, o adm
+@@ -222,9 +222,39 @@ func (a *Webhook) Dispatch(ctx context.Context, attr admission.Attributes, o adm
  	if rules.IsWebhookConfigurationResource(attr) {
  		return nil
  	}
@@ -57,7 +57,7 @@ index 6fc0eff297d..41414070860 100644
 +	return false
 +}
 diff --git a/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/webhook_test.go b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/webhook_test.go
-index 1f34f1242ab..4166ee305cf 100644
+index 26dbefc1991..f2db46707b2 100644
 --- a/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/webhook_test.go
 +++ b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/webhook_test.go
 @@ -17,6 +17,7 @@ limitations under the License.
@@ -68,7 +68,7 @@ index 1f34f1242ab..4166ee305cf 100644
  	"fmt"
  	"strings"
  	"testing"
-@@ -31,6 +32,134 @@ import (
+@@ -34,6 +35,134 @@ import (
  	"k8s.io/apiserver/pkg/admission/plugin/webhook/object"
  )
  
@@ -204,5 +204,5 @@ index 1f34f1242ab..4166ee305cf 100644
  	a := &Webhook{namespaceMatcher: &namespace.Matcher{}, objectMatcher: &object.Matcher{}}
  
 -- 
-2.29.2
+2.31.1
 

@@ -1,22 +1,22 @@
-From cc83fe7a26ba69d3d00494f3c180021f5b192601 Mon Sep 17 00:00:00 2001
+From 8be107e517a77bde856aced857f3428e4f344969 Mon Sep 17 00:00:00 2001
 From: Xiang Li <lixiang1992@gwu.edu>
 Date: Mon, 15 Mar 2021 10:59:32 -0700
-Subject: -- EKS PATCH -- delete leaked volume if driver doesn't know the
- volume status -- aws
+Subject: -- EKS PATCH -- Delete leaked volume if driver doesn't know
+ the volume status -- aws
 
 PR: https://github.com/kubernetes/kubernetes/pull/99664
 
-Signed-off-by: Taylor Neyland <tneyla@amazon.com>
+Signed-off-by: Kirsten Schumy <ksschumy@amazon.com>
 ---
  .../k8s.io/legacy-cloud-providers/aws/aws.go  | 22 ++++++--
  .../legacy-cloud-providers/aws/aws_test.go    | 50 +++++++++++++++++++
  2 files changed, 68 insertions(+), 4 deletions(-)
 
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-index 6e77f292b4e..f6dc417ff7e 100644
+index 1a643950dcd..c9c628afd01 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-@@ -2656,7 +2656,7 @@ func (c *Cloud) CreateDisk(volumeOptions *VolumeOptions) (KubernetesVolumeID, er
+@@ -2676,7 +2676,7 @@ func (c *Cloud) CreateDisk(volumeOptions *VolumeOptions) (KubernetesVolumeID, er
  		createType = DefaultVolumeType
  
  	default:
@@ -25,7 +25,7 @@ index 6e77f292b4e..f6dc417ff7e 100644
  	}
  
  	request := &ec2.CreateVolumeInput{}
-@@ -2688,12 +2688,12 @@ func (c *Cloud) CreateDisk(volumeOptions *VolumeOptions) (KubernetesVolumeID, er
+@@ -2708,12 +2708,12 @@ func (c *Cloud) CreateDisk(volumeOptions *VolumeOptions) (KubernetesVolumeID, er
  
  	response, err := c.ec2.CreateVolume(request)
  	if err != nil {
@@ -40,7 +40,7 @@ index 6e77f292b4e..f6dc417ff7e 100644
  	}
  	volumeName := KubernetesVolumeID("aws://" + aws.StringValue(response.AvailabilityZone) + "/" + string(awsID))
  
-@@ -2706,8 +2706,22 @@ func (c *Cloud) CreateDisk(volumeOptions *VolumeOptions) (KubernetesVolumeID, er
+@@ -2726,8 +2726,22 @@ func (c *Cloud) CreateDisk(volumeOptions *VolumeOptions) (KubernetesVolumeID, er
  		// because Kubernetes may have limited permissions to the key.
  		if isAWSErrorVolumeNotFound(err) {
  			err = fmt.Errorf("failed to create encrypted volume: the volume disappeared after creation, most likely due to inaccessible KMS encryption key")
@@ -65,7 +65,7 @@ index 6e77f292b4e..f6dc417ff7e 100644
  
  	return volumeName, nil
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
-index ac13f17c6f0..68900a30ac5 100644
+index a1235665259..d0d05d76603 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
 @@ -73,6 +73,11 @@ func (m *MockedFakeEC2) DescribeVolumes(request *ec2.DescribeVolumesInput) ([]*e
@@ -80,7 +80,7 @@ index ac13f17c6f0..68900a30ac5 100644
  func (m *MockedFakeEC2) DescribeSecurityGroups(request *ec2.DescribeSecurityGroupsInput) ([]*ec2.SecurityGroup, error) {
  	args := m.Called(request)
  	return args.Get(0).([]*ec2.SecurityGroup), nil
-@@ -2248,6 +2253,51 @@ func TestCreateDisk(t *testing.T) {
+@@ -2363,6 +2368,51 @@ func TestCreateDisk(t *testing.T) {
  	awsServices.ec2.(*MockedFakeEC2).AssertExpectations(t)
  }
  
@@ -133,5 +133,5 @@ index ac13f17c6f0..68900a30ac5 100644
  	fake := newMockedFakeAWSServices("fakeCluster")
  	fake.selfInstance.Placement = &ec2.Placement{
 -- 
-2.30.1
+2.31.1
 
