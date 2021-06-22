@@ -17,6 +17,7 @@ FROM $BASE_IMAGE
 
 ARG TARGETARCH
 ARG TARGETOS
+ARG RELEASE_BRANCH
 
 # Installing dependencies listed in upstream here: https://github.com/kubernetes/release/blob/master/images/build/debian-iptables/buster/Dockerfile
 # Since we rely on AL2, necessary files from netbase are already included, and we aren't making the same optimizations as of now.
@@ -28,7 +29,7 @@ RUN yum install -y \
     kmod
 
 COPY _output/LICENSES /LICENSES
-COPY ATTRIBUTION.txt /ATTRIBUTION.txt
+COPY $RELEASE_BRANCH/ATTRIBUTION.txt /ATTRIBUTION.txt
 COPY _output/go-runner-$TARGETOS-$TARGETARCH /usr/local/bin/go-runner
 COPY _output/iptables-wrapper /usr/sbin/iptables-wrapper
 
