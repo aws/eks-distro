@@ -35,12 +35,19 @@ All other changes are to this package.
     * Add release/${RELEASE_BRANCH}/patches with the patches from the EKS team
     * Create projects/kubernetes/kubernetes/${RELEASE_BRANCH}/KUBE_GIT_VERSION_FILE using
         * `RELEASE_BRANCH=${RELEASE_BRANCH} make update-version`
-    * Create ${RELASE_BRANCH}/GIT_TAG files for other versioned components (etcd, coredns, metrics-server,
+    * Create ${RELEASE_BRANCH}/GIT_TAG files for other versioned components (etcd, coredns, metrics-server,
       aws-iam-authenticator)
         * Work with EKS team to gather these requirements based on the EKS release, by default use same version as
           previous release
         * Create new presubmit jobs for each project with the new RELEASE_BRANCH
+    * Create ${RELEASE_BRANCH}/GIT_TAG files for the `kubernetes/release` project
+        * Use [common.sh](https://github.com/kubernetes/kubernetes/blob/master/build/common.sh) from upstream for the correct RELEASE_BRANCH
+          tag to determine `__default_go_runner_version`
+        * Find the [release](https://github.com/kubernetes/release/releases) which provided that base image and update the GIT_TAG
+        * Create new presubmit jobs for project
     * Update kops `cluster_wait.sh` to apply the coredns fix to new version
+    * Update kops version to version of kops which supports new kubernetes version
+        * Typically it will be a beta version because kops stable releases lag a bit behind kubernetes releases
     * Create projects/kubernetes/kubernetes/${RELEASE_BRANCH}/PAUSE_TAG and set to upstream tag
         * (ex: [here](https://github.com/kubernetes/kubernetes/blob/v1.21.0/build/pause/Makefile#L20))
 1. **Build tooling PR**: Add release channel to release tooling

@@ -3,8 +3,8 @@ RELEASE_BRANCH?=$(shell cat $(BASE_DIRECTORY)/release/DEFAULT_RELEASE_BRANCH)
 RELEASE_ENVIRONMENT?=development
 RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/$(RELEASE_ENVIRONMENT)/RELEASE)
 ARTIFACT_BUCKET?=my-s3-bucket
-GIT_TAG?=$(shell cat GIT_TAG)
-GOLANG_VERSION?="1.15"
+GIT_TAG?=$(shell cat ./$(RELEASE_BRANCH)/GIT_TAG)
+GOLANG_VERSION?=$(shell cat ./$(RELEASE_BRANCH)/GOLANG_VERSION)
 
 REPO=release
 COMPONENT=kubernetes/$(REPO)
@@ -42,6 +42,7 @@ local-images: binaries
 		--frontend dockerfile.v0 \
 		--opt platform=linux/amd64,linux/arm64  \
 		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
+		--opt build-arg:RELEASE_BRANCH=$(RELEASE_BRANCH) \
 		--local dockerfile=./docker/go-runner/ \
 		--local context=. \
 		--output type=oci,oci-mediatypes=true,name=$(GO_RUNNER_IMAGE),dest=/tmp/go-runner.tar
@@ -50,6 +51,7 @@ local-images: binaries
 		--frontend dockerfile.v0 \
 		--opt platform=linux/amd64 \
 		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
+		--opt build-arg:RELEASE_BRANCH=$(RELEASE_BRANCH) \
 		--local dockerfile=./docker/kube-proxy-base/ \
 		--local context=. \
 		--output type=oci,oci-mediatypes=true,name=$(KUBE_PROXY_BASE_IMAGE),dest=/tmp/kube-proxy-base.tar
@@ -62,6 +64,7 @@ images: binaries
 		--frontend dockerfile.v0 \
 		--opt platform=linux/amd64,linux/arm64  \
 		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
+		--opt build-arg:RELEASE_BRANCH=$(RELEASE_BRANCH) \
 		--local dockerfile=./docker/go-runner/ \
 		--local context=. \
 		--output type=image,oci-mediatypes=true,name=$(GO_RUNNER_IMAGE),push=true
@@ -70,6 +73,7 @@ images: binaries
 		--frontend dockerfile.v0 \
 		--opt platform=linux/amd64,linux/arm64  \
 		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
+		--opt build-arg:RELEASE_BRANCH=$(RELEASE_BRANCH) \
 		--local dockerfile=./docker/kube-proxy-base/ \
 		--local context=. \
 		--output type=image,oci-mediatypes=true,name=$(KUBE_PROXY_BASE_IMAGE),push=true
@@ -80,12 +84,14 @@ docker: binaries
 	docker build \
 		-t $(GO_RUNNER_IMAGE) \
 		--build-arg BASE_IMAGE=$(BASE_IMAGE) \
+		--build-arg RELEASE_BRANCH=$(RELEASE_BRANCH) \
 		--build-arg TARGETARCH=amd64 \
 		--build-arg TARGETOS=linux \
 		-f ./docker/go-runner/Dockerfile .
 	docker build \
 		-t $(KUBE_PROXY_BASE_IMAGE) \
 		--build-arg BASE_IMAGE=$(BASE_IMAGE) \
+		--build-arg RELEASE_BRANCH=$(RELEASE_BRANCH) \
 		--build-arg TARGETARCH=amd64 \
 		--build-arg TARGETOS=linux \
 		-f ./docker/kube-proxy-base/Dockerfile .
