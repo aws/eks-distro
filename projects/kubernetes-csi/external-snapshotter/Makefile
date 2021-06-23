@@ -116,7 +116,7 @@ docker-push:
 	docker push $(SNAPSHOT_VALIDATION_WEBHOOK_IMAGE)
 
 .PHONY: build
-build: local-images
+build: local-images attribution
 
 .PHONY: release
 release: images

@@ -45,8 +45,6 @@ function build::plugins::tarball() {
     cp ATTRIBUTION.txt $BIN_ROOT/$REPO/${OS}-${ARCH}/ 
     build::common::create_tarball ${TAR_PATH}/${TAR_FILE} $BIN_ROOT/$REPO/${OS}-${ARCH} .
   done
-  rm -rf $BIN_ROOT
-  rm -rf $LICENSES_PATH
 }
 
 build::plugins::tarball
