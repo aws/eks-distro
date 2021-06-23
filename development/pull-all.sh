@@ -25,7 +25,7 @@ RELEASE_TAG="eks-${RELEASE_BRANCH}-${RELEASE}"
 RELEASE_CRD="https://distro.eks.amazonaws.com/kubernetes-${RELEASE_BRANCH}/kubernetes-${RELEASE_BRANCH}-eks-${RELEASE}.yaml"
 ECR_BASE="public.ecr.aws/eks-distro"
 
-RELEASE_GIT_TAG=$(cat "${BASE_DIRECTORY}"/projects/kubernetes/release/GIT_TAG)
+RELEASE_GIT_TAG=$(cat "${BASE_DIRECTORY}"/projects/kubernetes/release/${RELEASE_BRANCH}/GIT_TAG)
 
 while read -r image_uri; do
   docker pull "$image_uri"
