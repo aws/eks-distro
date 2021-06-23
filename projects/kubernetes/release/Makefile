@@ -114,7 +114,7 @@ release: images
 
 .PHONY: attribution
 attribution: 
-	build/create_attribution.sh $(GOLANG_VERSION)
+	build/create_attribution.sh $(GOLANG_VERSION) $(RELEASE_BRANCH)
 
 .PHONY: all
 all: release
