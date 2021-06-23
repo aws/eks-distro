@@ -25,8 +25,8 @@ func GetGitRootDirectory() string {
 }
 
 // GetKubernetesReleaseGitTag returns the trimmed value of Kubernetes release GIT_TAG
-func GetKubernetesReleaseGitTag() (string, error) {
-	fileOutput, err := ioutil.ReadFile(gitRootDirectory + "/projects/kubernetes/release/GIT_TAG")
+func GetKubernetesReleaseGitTag(releaseBranch string) (string, error) {
+	fileOutput, err := ioutil.ReadFile(fmt.Sprintf("%s/projects/kubernetes/release/%s/GIT_TAG", gitRootDirectory, releaseBranch))
 	if err != nil {
 		return "", err
 	}
