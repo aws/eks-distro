@@ -28,8 +28,8 @@ cd ${BASE_DIRECTORY}
 RELEASE_ENVIRONMENT=${RELEASE_ENVIRONMENT:-development}
 
 export RELEASE=$(cat ${BASE_DIRECTORY}/release/${RELEASE_BRANCH}/${RELEASE_ENVIRONMENT}/RELEASE)
-export KUBE_BASE_TAG=$(cat ${BASE_DIRECTORY}/projects/kubernetes/release/GIT_TAG)-eks-${RELEASE_BRANCH}-${RELEASE}
-export PRESUBMIT_KUBE_BASE_TAG=$(cat ${BASE_DIRECTORY}/projects/kubernetes/release/GIT_TAG)-eks-${RELEASE_BRANCH}-${RELEASE}
+export KUBE_BASE_TAG=$(cat ${BASE_DIRECTORY}/projects/kubernetes/release/${RELEASE_BRANCH}/GIT_TAG)-eks-${RELEASE_BRANCH}-${RELEASE}
+export PRESUBMIT_KUBE_BASE_TAG=$(cat ${BASE_DIRECTORY}/projects/kubernetes/release/${RELEASE_BRANCH}/GIT_TAG)-eks-${RELEASE_BRANCH}-${RELEASE}
 export BASE_REPO=${BASE_REPO:-${IMAGE_REPO}}
 export BASE_IMAGE=${BASE_IMAGE:-public.ecr.aws/eks-distro-build-tooling/eks-distro-base:$(cat ${BASE_DIRECTORY}/EKS_DISTRO_BASE_TAG_FILE)}
 
