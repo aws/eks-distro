@@ -19,7 +19,7 @@ func main() {
 	environment := flag.String("environment", "development", "Should be 'development' or 'production'")
 
 	// Generate new files
-	includeChangelog := *flag.Bool("includeChangelog", false, "If changelog should be generated")
+	includeChangelog := *flag.Bool("includeChangelog", true, "If changelog should be generated")
 	includeIndex := *flag.Bool("includeIndex", true, "If index in branch dir should be generated")
 	includeIndexAppendedText := *flag.Bool("includeIndexAppendedText", false, "If Markdown table should be generated")
 	includeAnnouncement := *flag.Bool("includeAnnouncement", true, "If release announcement should be generated")
