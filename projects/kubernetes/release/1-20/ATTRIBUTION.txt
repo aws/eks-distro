@@ -1,5 +1,5 @@
 
-** k8s.io/release/images/build/go-runner; version v0.4.2 --
+** k8s.io/release/images/build/go-runner; version v0.8.0 --
 https://github.com/kubernetes/release
 
 
