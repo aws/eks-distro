@@ -106,7 +106,7 @@ clean:
 	rm -rf ./_output ./release
 
 .PHONY: build
-build: local-images
+build: local-images attribution
 
 .PHONY: release
 release: images

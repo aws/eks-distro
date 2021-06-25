@@ -19,7 +19,7 @@ tarballs:  binaries
 	build/create_tarballs.sh $(REPO) $(GIT_TAG)
 
 .PHONY: build
-build: tarballs
+build: tarballs attribution
 	echo "Done $(COMPONENT)"
 
 .PHONY: release

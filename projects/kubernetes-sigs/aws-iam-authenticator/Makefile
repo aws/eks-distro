@@ -72,7 +72,7 @@ tarballs:
 	build/create_tarballs.sh $(REPO) $(GIT_TAG) $(RELEASE_BRANCH)
 
 .PHONY: build
-build: local-images tarballs
+build: local-images tarballs attribution
 
 .PHONY: release
 release: images local-images tarballs

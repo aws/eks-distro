@@ -69,7 +69,7 @@ docker-push:
 	docker push $(IMAGE)
 
 .PHONY: build
-build: local-images
+build: local-images attribution
 
 .PHONY: release
 release: images
