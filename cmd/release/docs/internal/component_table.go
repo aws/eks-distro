@@ -60,7 +60,7 @@ func GetComponentVersionsTable(release *Release) (string, error) {
 		tableRows = append(tableRows, tableRow)
 	}
 
-	otherAssetsVersion, _ := GetKubernetesReleaseGitTag(release.branch)
+	otherAssetsVersion, _ := GetKubernetesReleaseGitTag(release.Branch())
 	for _, asset := range assetsNotInReleaseManifest {
 		uri := fmt.Sprintf("%s/kubernetes/%s:%s-%s", ecrBase, asset, otherAssetsVersion, release.EKSBranchNumber)
 		tableRow := fmt.Sprintf("| %s | %s | %s |", asset, otherAssetsVersion[1:], uri) // [1:] removes 'v'
