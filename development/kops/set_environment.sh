@@ -20,6 +20,10 @@ RELEASE_ENVIRONMENT=${RELEASE_ENVIRONMENT:-development}
 export DEFAULT_RELEASE=$(cat ${BASE_DIRECTORY}/release/${RELEASE_BRANCH}/${RELEASE_ENVIRONMENT}/RELEASE)
 export RELEASE=${RELEASE:-${DEFAULT_RELEASE}}
 export ARTIFACT_BASE_URL="https://distro.eks.amazonaws.com"
+export DEFAULT_KUBERNETES_VERSION=$(cat ../../projects/kubernetes/kubernetes/${RELEASE_BRANCH}/GIT_TAG)
+export KUBERNETES_VERSION=${KUBERNETES_VERSION:-${DEFAULT_KUBERNETES_VERSION}}
+export DEFAULT_CNI_VERSION=$(cat ../../projects/containernetworking/plugins/GIT_TAG)
+export CNI_VERSION=${CNI_VERSION:-${DEFAULT_CNI_VERSION}}
 
 if [ -n "$ARTIFACT_BUCKET" ]; then
     export ARTIFACT_BASE_URL="https://$ARTIFACT_BUCKET.s3.amazonaws.com"
@@ -68,10 +72,9 @@ then
 fi
 export PREFLIGHT_CHECK_PASSED
 
-export KUBERNETES_VERSION=$(cat ../../projects/kubernetes/kubernetes/${RELEASE_BRANCH}/GIT_TAG)
 export IMAGE_REPO=${IMAGE_REPO:-public.ecr.aws/eks-distro}
 export ARTIFACT_URL=${ARTIFACT_URL:-$ARTIFACT_BASE_URL/kubernetes-${RELEASE_BRANCH}/releases/${RELEASE}/artifacts}
-export CNI_VERSION=$(cat ../../projects/containernetworking/plugins/GIT_TAG)
+
 export CNI_VERSION_URL=${ARTIFACT_URL}/plugins/${CNI_VERSION}/cni-plugins-linux-amd64-${CNI_VERSION}.tar.gz
 export CNI_ASSET_HASH_STRING=${CNI_ASSET_HASH_STRING:-sha256:$(curl -s ${CNI_VERSION_URL}.sha256 | cut -f1 -d' ')}
 export KOPS=bin/kops
