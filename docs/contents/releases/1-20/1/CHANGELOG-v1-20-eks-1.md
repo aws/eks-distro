@@ -18,7 +18,7 @@ Upgraded Kubernetes to [v1.20.4](https://github.com/kubernetes/kubernetes/releas
 
 ### Base Image
 
-Ungraded base image (Amazon Linux 2) version to include the latest security fixes.
+Upgraded base image (Amazon Linux 2) version to include the latest security fixes.
 
 
 ## Patches

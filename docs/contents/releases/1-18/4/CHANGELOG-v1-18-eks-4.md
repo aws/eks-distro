@@ -11,7 +11,7 @@ Upgraded Kubernetes from v1.18.9 to [v1.18.16](https://github.com/kubernetes/kub
 
 ### Base Image
 
-Ungraded base image (Amazon Linux 2) version to include the latest security fixes.
+Upgraded base image (Amazon Linux 2) version to include the latest security fixes.
 
 
 ## Patches 
