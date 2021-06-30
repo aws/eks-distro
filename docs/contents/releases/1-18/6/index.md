@@ -14,12 +14,12 @@ Download the release manifest here: [kubernetes-1-18-eks-6.yaml](https://distro.
 | external-attacher | 3.1.0 | public.ecr.aws/eks-distro/kubernetes-csi/external-attacher:v3.1.0-eks-1-18-6 |
 | external-provisioner | 2.1.1 | public.ecr.aws/eks-distro/kubernetes-csi/external-provisioner:v2.1.1-eks-1-18-6 |
 | external-resizer | 1.1.0 | public.ecr.aws/eks-distro/kubernetes-csi/external-resizer:v1.1.0-eks-1-18-6 |
+| go-runner | 0.4.2 | public.ecr.aws/eks-distro/kubernetes/go-runner:v0.4.2-eks-1-18-6 |
 | kube-apiserver | 1.18.16 | public.ecr.aws/eks-distro/kubernetes/kube-apiserver:v1.18.16-eks-1-18-6 |
 | kube-controller-manager | 1.18.16 | public.ecr.aws/eks-distro/kubernetes/kube-controller-manager:v1.18.16-eks-1-18-6 |
 | kube-proxy | 1.18.16 | public.ecr.aws/eks-distro/kubernetes/kube-proxy:v1.18.16-eks-1-18-6 |
+| kube-proxy-base | 0.4.2 | public.ecr.aws/eks-distro/kubernetes/kube-proxy-base:v0.4.2-eks-1-18-6 |
 | kube-scheduler | 1.18.16 | public.ecr.aws/eks-distro/kubernetes/kube-scheduler:v1.18.16-eks-1-18-6 |
-| kubernetes/go-runner | 0.4.2 | public.ecr.aws/eks-distro/kubernetes/go-runner:v0.4.2-eks-1-18-6 |
-| kubernetes/kube-proxy-base | 0.4.2 | public.ecr.aws/eks-distro/kubernetes/kube-proxy-base:v0.4.2-eks-1-18-6 |
 | livenessprobe | 2.2.0 | public.ecr.aws/eks-distro/kubernetes-csi/livenessprobe:v2.2.0-eks-1-18-6 |
 | metrics-server | 0.4.0 | public.ecr.aws/eks-distro/kubernetes-sigs/metrics-server:v0.4.0-eks-1-18-6 |
 | node-driver-registrar | 2.1.0 | public.ecr.aws/eks-distro/kubernetes-csi/node-driver-registrar:v2.1.0-eks-1-18-6 |
