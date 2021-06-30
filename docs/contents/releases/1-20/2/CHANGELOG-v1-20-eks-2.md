@@ -22,7 +22,7 @@ but were removed in the version.
 * **0006-EKS-PATCH-additional-subnet-configuration-for-AWS-EL.patch**
     * Merged in upstream Kubernetes [PR #97431](https://github.com/kubernetes/kubernetes/pull/97431)
 * **0011-2020-25735_1_20.patch**
-    * Merged in upstream Kubernetes [See issue #100096](https://github.com/kubernetes/kubernetes/issues/100096)
+    * Merged in upstream Kubernetes. See [issue #100096](https://github.com/kubernetes/kubernetes/issues/100096)
 
 ### Patches Added
 
