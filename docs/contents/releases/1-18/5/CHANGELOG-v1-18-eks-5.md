@@ -6,7 +6,7 @@ This changelog highlights the changes for [v1-18-eks-5](https://github.com/aws/e
 
 ### Base Image
 
-Ungraded base image (Amazon Linux 2) version to include the latest security fixes.
+Upgraded base image (Amazon Linux 2) version to include the latest security fixes.
 
 ## Patches 
 
