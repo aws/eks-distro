@@ -10,7 +10,7 @@ Upgraded Kubernetes from v1.19.8 to [v1.19.12](https://github.com/kubernetes/kub
 
 ### Base Image
 
-Ungraded base image (Amazon Linux 2) version to include the latest security fixes.
+Upgraded base image (Amazon Linux 2) version to include the latest security fixes.
 
 ## Patches
 
@@ -21,7 +21,7 @@ Ungraded base image (Amazon Linux 2) version to include the latest security fixe
 * **0010-EKS-PATCH-additional-subnet-configuration-for-AWS-el.patch**
     * Cherry-picked by upstream Kubernetes [PR #100416](https://github.com/kubernetes/kubernetes/pull/100416)
 * **0015-2021-25735_1_19.patch**
-    * Merged in upstream Kubernetes [Issue #100096](https://github.com/kubernetes/kubernetes/issues/100096)
+    * Merged in upstream Kubernetes. See [Issue #100096](https://github.com/kubernetes/kubernetes/issues/100096)
     
 ### Minor Changes to Patches
 
