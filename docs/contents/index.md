@@ -119,20 +119,20 @@ repository for the [EKS Optimized AMI](https://github.com/awslabs/amazon-eks-ami
 if you are interested in the AL2 container runtime kernel version.
 
 #### EKS-D 1.20 Version Dependencies
-* [v1-20-eks-2](releases/1-20/2/index.md)
-* [v1-20-eks-1](releases/1-20/1/index.md)
+* [v1-20-eks-2](releases/1-20/2/index.md) (June 30, 2021)
+* [v1-20-eks-1](releases/1-20/1/index.md) (May 18, 2021)
 
 #### EKS-D 1.19 Version Dependencies
-* [v1-19-eks-5](releases/1-19/5/index.md)
-* [v1-19-eks-4](releases/1-19/4/index.md)
-* [v1-19-eks-3](releases/1-19/3/index.md)
-* [v1-19-eks-2](releases/1-19/2/index.md)
-* [v1-19-eks-1](releases/1-19/1/index.md)
+* [v1-19-eks-5](releases/1-19/5/index.md) (June 30, 2021)
+* [v1-19-eks-4](releases/1-19/4/index.md) (May 6, 2021)
+* [v1-19-eks-3](releases/1-19/3/index.md) (April 16, 2021)
+* [v1-19-eks-2](releases/1-19/2/index.md) (March 30, 2021)
+* [v1-19-eks-1](releases/1-19/1/index.md) (March 4, 2021)
 
 #### EKS-D 1.18 Version Dependencies
-* [v1-18-eks-6](releases/1-18/6/index.md)
-* [v1-18-eks-5](releases/1-18/5/index.md)
-* [v1-18-eks-4](releases/1-18/4/index.md)
-* [v1-18-eks-3](releases/1-18/3/index.md)
-* [v1-18-eks-2](releases/1-18/2/index.md)
-* [v1-18-eks-1](releases/1-18/1/index.md)
+* [v1-18-eks-6](releases/1-18/6/index.md) (June 30, 2021)
+* [v1-18-eks-5](releases/1-18/5/index.md) (May 27, 2021)
+* [v1-18-eks-4](releases/1-18/4/index.md) (May 5, 2021)
+* [v1-18-eks-3](releases/1-18/3/index.md) (April 16, 2021)
+* [v1-18-eks-2](releases/1-18/2/index.md) (March 30, 2021)
+* [v1-18-eks-1](releases/1-18/1/index.md) (December 9, 2020)
