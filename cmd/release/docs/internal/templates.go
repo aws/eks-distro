@@ -21,5 +21,5 @@ Download the release manifest here: [{{.K8sBranchEKSNumber}}.yaml]({{.ManifestUR
 `
 
 // Template for release announcement
-const ReleaseAnnouncement = `Amazon EKS Distro {{.VBranchWithDotNumber}} is now available. This release includes an update to Amazon Linux 2, which contains the latest security fixes. Amazon EKS Distro {{.VBranchWithDotNumber}} builds of Kubernetes are available through ECR Public Gallery (https://gallery.ecr.aws/?searchTerm=EKS+Distro) and GitHub (https://github.com/aws/eks-distro)
+const ReleaseAnnouncement = `Amazon EKS Distro {{.VBranchWithDotNumber}} is now available. This release includes an update to Amazon Linux 2, which contains the latest security fixes. Amazon EKS Distro {{.VBranchWithDotNumber}} builds are available through ECR Public Gallery (https://gallery.ecr.aws/?searchTerm=EKS+Distro) and GitHub (https://github.com/aws/eks-distro)
 `
