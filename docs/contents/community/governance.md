@@ -3,7 +3,7 @@
 This document lays out the guidelines under which the 
 EKS Distro (EKS-D) project will be governed. The goal 
 is to make sure that the roles and responsibilities
-are well-defined and clarify on how decisions are made.
+are well-defined and clarify how decisions are made.
 
 ## Roles
 
