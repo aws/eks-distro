@@ -43,7 +43,7 @@ The tenets of the EKS Distro (EKS-D) project are:
 3. **Opinionated Modularity**: Provide opinionated defaults about the best components to include with Kubernetes but give customers the ability to swap them out
 4. **Open**: Provide open source tooling backed, validated and maintained by Amazon
 5. **Ubiquitous**: Enable customers and partners to integrate a Kubernetes distribution in the most common tooling (Kubernetes installers and distributions, infrastructure as code, and more)
-6. **Stand Alone**: Provide for use anywhere without AWS dependencies
+6. **Stand Alone**: Provided for use anywhere without AWS dependencies
 7. **Better with AWS**: Enable AWS customers to adopt additional AWS services easily
 
 ## Release Channels
