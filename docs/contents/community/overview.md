@@ -1,6 +1,6 @@
 # Overview
 
-We work hard to provide a high-quality Kubernetes distribution for EKS,
+We work hard to provide a high-quality Kubernetes distribution like EKS,
 and we greatly value feedback and contributions from our community. Please
 review our [contribution guidelines](contributing.md) before
 submitting any [issues](https://github.com/aws/eks-distro/issues) or
