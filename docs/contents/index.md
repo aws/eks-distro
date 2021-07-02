@@ -3,9 +3,9 @@
 Amazon **EKS Distro** (EKS-D) is a Kubernetes distribution based on and used by
 Amazon Elastic Kubernetes Service (EKS) to create reliable and secure Kubernetes
 clusters. With EKS-D, you can rely on the same versions of Kubernetes and its
-dependencies deployed by Amazon EKS. This includes the latest upstream updates
+dependencies deployed by Amazon EKS. This includes the latest upstream updates,
 as well as extended security patching support. EKS-D follows the same Kubernetes
-version release cycle as Amazon EKS and we provide the bits here.  EKS-D
+version release cycle as Amazon EKS, and we provide the bits here. EKS-D
 provides the same software that has enabled tens of thousands of Kubernetes
 clusters on Amazon EKS.
 
@@ -39,23 +39,24 @@ installing EKS-D.
 The tenets of the EKS Distro (EKS-D) project are:
 
 1. **The Source**: The goal of the EKS Distro is to be the Kubernetes source for EKS and EKS Anywhere
-2. **Simple**: Make using a Kubernetes distribution simple and boring (reliable and secure).
-3. **Opinionated Modularity**: Provide opinionated defaults about the best components to include with Kubernetes, but give customers the ability to swap them out
+2. **Simple**: Make using a Kubernetes distribution simple and boring (reliable and secure)
+3. **Opinionated Modularity**: Provide opinionated defaults about the best components to include with Kubernetes but give customers the ability to swap them out
 4. **Open**: Provide open source tooling backed, validated and maintained by Amazon
-5. **Ubiquitous**: Enable customers and partners to integrate a Kubernetes distribution in the most common tooling (Kubernetes installers and distributions, infrastructure as code, and more).
-6. **Stand Alone**: Provided for use anywhere without AWS dependencies
-7. **Better with AWS**: Enable AWS customers to easily adopt additional AWS services
+5. **Ubiquitous**: Enable customers and partners to integrate a Kubernetes distribution in the most common tooling (Kubernetes installers and distributions, infrastructure as code, and more)
+6. **Stand Alone**: Provide for use anywhere without AWS dependencies
+7. **Better with AWS**: Enable AWS customers to adopt additional AWS services easily
 
 ## Release Channels
 
-The EKS Distro releases Kubernetes versions at the same pace as EKS, and updates
-are issued as releases in release channels. A release channel tracks minor
+The EKS Distro releases Kubernetes versions at the same pace as EKS and issues 
+updates as releases in release channels. A release channel tracks minor
 versions (`v<major>.<minor>.<point>`) of Kubernetes, and a channel will be
 retired when EKS ceases supporting a particular minor version of Kubernetes.
-New releases and release channels will be announced via an SNS topic when they
-are launched. Releases and release channels are structured as Kubernetes Custom
+EKS Distro announces new releases and release channels via an SNS topic 
+(arn:aws:sns:us-east-1:379412251201:eks-distro-updates) at their launched.
+Releases and release channels are structured as Kubernetes Custom
 Resource Definitions
-([CRDs](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/))
+([CRDs](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/)),
 and the schema can be found in the
 [eks-distro-build-tooling](https://github.com/aws/eks-distro-build-tooling/tree/main/release)
 GitHub repository.
@@ -84,10 +85,10 @@ components:
 * Kubernetes Metrics Server
 * Kubernetes
 
-All container images for these components are based on Amazon Linux 2, and are
-available on the ECR public registry for amd64 and arm64 architectures. New
-releases will be created when there is an updated component version, a required
-update in the Amazon Linux 2 base image, or a change required in the build
+All container images for these components are based on Amazon Linux 2 and are
+available on the ECR Public Gallery for amd64 and arm64 architectures. New
+releases of EKS Distro will be created when there is an updated component version,
+a required update in the Amazon Linux 2 base image, or a change required in the build
 toolchain (ex: a Go version update).
 
 There are components of Kubernetes, CNI, etcd, and aws-iam-authenticator
@@ -96,8 +97,8 @@ compressed tar archive and executable files. The files have associated sha256
 and sha512 sum files provided in release manifests. They are available for download
 with names similar to the file (ex: `https://distro.eks.amazonaws.com/..../kubectl.sha256`)
 
-A list of all the components and assets that make up a release including URIs
-to all the compressed archives, binaries, and container images is available in
+A list of all the components and assets that make up a release, including URIs
+to all the compressed archives, binaries, and container images, is available in
 the release manifests. You can install the CRD API type, the release
 manifest for EKS Distro, and view the release by running the following
 commands:
