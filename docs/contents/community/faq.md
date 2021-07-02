@@ -68,6 +68,6 @@
     operating system vendors have tested and confirmed to work with Kubernetes
     and will work the same way. As a result, EKS Distro works with common operating
     systems already used to create Kubernetes clusters, such as CentOS, 
-    Canonical Ubuntu, Red Hat Enterprise Linux, Suse, and more. We are testing 
-    EKS Distro with select vendors to ensure support on Bottlerocket, Amazon Linux 2,
-    and Canonical has tested EKS Distro for compatibility with Ubuntu.
+    Canonical Ubuntu, Red Hat Enterprise Linux, Suse, and more. EKS Distro is 
+    tested by select vendors on various operating systems including Bottlerocket, 
+    Amazon Linux 2 and Ubuntu.
