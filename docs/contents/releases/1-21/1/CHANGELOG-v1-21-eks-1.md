@@ -9,7 +9,7 @@ this version's initial release and may not reflect differences between future re
 
 ### Kubernetes
 
-Upgraded Kubernetes to [v1.21.1](https://github.com/kubernetes/kubernetes/releases/tag/v1.21.1)
+Upgraded Kubernetes to [v1.21.2](https://github.com/kubernetes/kubernetes/releases/tag/v1.21.2)
 
 ### Kubernetes Components
 * etcd 3.4.15 —> 3.4.16
@@ -50,7 +50,7 @@ application of the patches.
 | external-provisioner  | 2.1.1     |
 | external-resizer      | 1.1.0     |
 | external-snapshotter  | 3.0.3     |
-| kubernetes            | 1.21.1    |
+| kubernetes            | 1.21.2    |
 | livenessprobe         | 2.2.0     |
 | metrics-server        | 0.5.0     |
 | node-driver-registrar | 2.1.0     |
