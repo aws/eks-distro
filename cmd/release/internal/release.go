@@ -8,14 +8,17 @@ import (
 	"strings"
 )
 
+const (
+	defaultEnvironment = DevelopmentRelease
+)
+
 type Release struct {
-	branch      string
-	environment string
-	number      string
-	prevNumber  string
+	branch         string
+	environment    string
+	number         string
+	previousNumber string
 
 	// File paths, which are not guaranteed to be valid or existing
-	EnvironmentReleasePath string
 	KubeGitVersionFilePath string
 	DocsDirectoryPath      string
 
@@ -36,11 +39,10 @@ type Release struct {
 	ManifestURL string
 }
 
-// NewReleaseWithOverrideNumber returns complete Release based on the provided ReleaseInput and overrideNumber
-//
-// For default determination of number and prevNumber, use overrideNumber with value of -1.
-// All values over -1 for overrideNumber forces number to be overrideNumber and prevNumber to be one less. However,
-// prevNumber cannot be less than 0, so it is left empty if overrideNumber is 0. The use of overrideNumber should be
+// NewReleaseWithOverrideNumber returns complete Release based on the provided ReleaseInput and overrideNumber.
+// For default determination of number and previousNumber, use overrideNumber with value of -1.
+// All values over -1 for overrideNumber forces number to be overrideNumber and previousNumber to be one less. However,
+// previousNumber cannot be less than 0, so it is left empty if overrideNumber is 0. The use of overrideNumber should be
 // done with caution. Disrupting the conventional process can result in unintentional and unexpected consequences.
 func NewReleaseWithOverrideNumber(inputBranch, inputEnvironment string, overrideNumber int) (*Release, error) {
 	return newRelease(inputBranch, inputEnvironment, overrideNumber)
@@ -49,6 +51,11 @@ func NewReleaseWithOverrideNumber(inputBranch, inputEnvironment string, override
 // NewRelease returns complete Release based on the provided ReleaseInput
 func NewRelease(inputBranch, inputEnvironment string) (*Release, error) {
 	return newRelease(inputBranch, inputEnvironment, -1)
+}
+
+// NewReleaseWithDefaultEnvironment returns complete Release based on the provided inputBranch
+func NewReleaseWithDefaultEnvironment(inputBranch string) (*Release, error) {
+	return NewRelease(inputBranch, defaultEnvironment.String())
 }
 
 func newRelease(inputBranch, inputEnvironment string, overrideNumber int) (*Release, error) {
@@ -62,13 +69,12 @@ func newRelease(inputBranch, inputEnvironment string, overrideNumber int) (*Rele
 		environment: inputEnvironment,
 	}
 
-	release.EnvironmentReleasePath = FormatEnvironmentReleasePath(release)
 	release.KubeGitVersionFilePath = FormatKubeGitVersionFilePath(release)
 
 	if overrideNumber > -1 {
-		release.number, release.prevNumber = determineOverrideNumberAndPrevNumber(overrideNumber)
+		release.number, release.previousNumber = determineOverrideNumberAndPrevNumber(overrideNumber)
 	} else {
-		release.prevNumber, err = determinePreviousReleaseNumber(release)
+		release.previousNumber, err = determinePreviousReleaseNumber(release)
 		if err != nil {
 			return &Release{}, fmt.Errorf("error determining previous number: %v", err)
 		}
@@ -82,13 +88,13 @@ func newRelease(inputBranch, inputEnvironment string, overrideNumber int) (*Rele
 
 	branchEKS := release.branch + "-eks"
 	release.BranchEKSNumber = fmt.Sprintf("%s-%s", branchEKS, release.number)
-	release.BranchEKSPreviousNumber = fmt.Sprintf("%s-%s", branchEKS, release.prevNumber)
+	release.BranchEKSPreviousNumber = fmt.Sprintf("%s-%s", branchEKS, release.previousNumber)
 	release.BranchWithDot = strings.Replace(release.branch, "-", ".", 1)
 	release.EKSBranchNumber = fmt.Sprintf("eks-%s-%s", release.branch, release.number)
-	release.EKSBranchPreviousNumber = fmt.Sprintf("eks-%s-%s", release.branch, release.prevNumber)
+	release.EKSBranchPreviousNumber = fmt.Sprintf("eks-%s-%s", release.branch, release.previousNumber)
 	release.K8sBranchEKS = "kubernetes-" + branchEKS
 	release.K8sBranchEKSNumber = fmt.Sprintf("%s-%s", release.K8sBranchEKS, release.number)
-	release.K8sBranchEKSPreviousNumber =  fmt.Sprintf("%s-%s", release.K8sBranchEKS, release.prevNumber)
+	release.K8sBranchEKSPreviousNumber =  fmt.Sprintf("%s-%s", release.K8sBranchEKS, release.previousNumber)
 	release.VBranchEKSNumber = "v" + release.BranchEKSNumber
 	release.VBranchEKSPreviousNumber = "v" + release.BranchEKSPreviousNumber
 	release.VBranchWithDotNumber = fmt.Sprintf("v%s-%s", release.BranchWithDot, release.number)
@@ -118,7 +124,7 @@ func (release *Release) Environment() string {
 }
 
 func (release *Release) PreviousNumber() string {
-	return release.prevNumber
+	return release.previousNumber
 }
 
 func checkInput(inputBranch, inputEnvironment string) error {

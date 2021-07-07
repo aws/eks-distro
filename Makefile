@@ -146,8 +146,7 @@ update-attribution-files: attribution-files
 update-release-number:
 	go vet ./cmd/release/number
 	go run ./cmd/release/number/main.go \
-		--branch=$(RELEASE_BRANCH) \
-		--environment=$(RELEASE_ENVIRONMENT)
+		--branch=$(RELEASE_BRANCH)
 
 .PHONY: release-docs
 release-docs:

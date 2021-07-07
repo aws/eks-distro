@@ -1,7 +1,7 @@
 package main
 
 import (
-	utils "../internal"
+	. "../internal"
 	"errors"
 
 	"bytes"
@@ -13,43 +13,73 @@ import (
 	"os/exec"
 )
 
-// Updates RELEASE and KUBE_GIT_VERSION
+// Updates RELEASE and KUBE_GIT_VERSION (if includeDev is true)
 // If a failure is encounter, attempts to undo any changes to RELEASE and KUBE_GIT_VERSION.
 func main() {
 	branch := flag.String("branch", "", "Release branch, e.g. 1-20")
-	environment := flag.String("environment", "development", "Should be 'development' or 'production'")
+	includeProd := *flag.Bool("includeProd", true, "If production RELEASE should be incremented")
+	includeDev := *flag.Bool("includeDev", true, "If development RELEASE should be incremented")
 
 	flag.Parse()
 
-	release, err := utils.NewRelease(*branch, *environment)
+	release, err := initializeRelease(includeProd, includeDev, *branch)
 	if err != nil {
 		log.Fatalf("Error initializing release values: %v", err)
 	}
 
-	err = updateEnvironmentReleaseNumber(release)
-	if err != nil {
-		cleanUpIfError(release)
-		log.Fatalf("Error writing to RELEASE: %v", err)
+	var changedFilePaths []string
+
+	if includeProd {
+		numberPath := FormatProductionReleasePath(release.Branch())
+		changedFilePaths = append(changedFilePaths, numberPath)
+		err = updateEnvironmentReleaseNumber(release.Number(), numberPath)
+		if err != nil {
+			cleanUpIfError(changedFilePaths)
+			log.Fatalf("Error writing to prod RELEASE: %v", err)
+		}
 	}
 
-	err = updateKubeGitVersionFile(release)
-	if err != nil {
-		cleanUpIfError(release)
-		log.Fatalf("Error updating KUBE_GIT_VERSION: %v", err)
+	if includeDev {
+		numberPath := FormatDevelopmentReleasePath(release.Branch())
+		changedFilePaths = append(changedFilePaths, numberPath)
+		err = updateEnvironmentReleaseNumber(release.Number(), numberPath)
+		if err != nil {
+			cleanUpIfError(changedFilePaths)
+			log.Fatalf("Error writing to dev RELEASE: %v", err)
+		}
+
+		changedFilePaths = append(changedFilePaths, release.KubeGitVersionFilePath)
+		err = updateKubeGitVersionFile(release)
+		if err != nil {
+			cleanUpIfError(changedFilePaths)
+			log.Fatalf("Error updating KUBE_GIT_VERSION: %v", err)
+		}
 	}
 
-	log.Println("Successfully updated release number for " + release.EKSBranchNumber)
+	log.Printf("Successfully updated release number for %d file(s)\n", len(changedFilePaths))
 }
 
-func updateEnvironmentReleaseNumber(release *utils.Release) error {
-	releaseNumber := release.Number()
-	if len(releaseNumber) == 0 {
+func initializeRelease(includeProd, includeDev bool, branch string) (*Release, error) {
+	if includeProd {
+		if includeDev {
+			return NewReleaseWithDefaultEnvironment(branch)
+		}
+		return NewRelease(branch, ProductionRelease.String())
+	}
+	if includeDev {
+		return NewRelease(branch, DevelopmentRelease.String())
+	}
+	return &Release{},errors.New("cannot make release if no environment is indicated")
+}
+
+func updateEnvironmentReleaseNumber(number, numberFilePath string) error {
+	if len(number) == 0 {
 		return errors.New("failed to update release number file because provided number was empty")
 	}
-	return os.WriteFile(release.EnvironmentReleasePath, []byte(releaseNumber+"\n"), 0644)
+	return os.WriteFile(numberFilePath, []byte(number+"\n"), 0644)
 }
 
-func updateKubeGitVersionFile(release *utils.Release) error {
+func updateKubeGitVersionFile(release *Release) error {
 	if len(release.EKSBranchPreviousNumber) == 0 {
 		return errors.New("failed to update KUBE_GIT_VERSION because previous release version tag is empty")
 	}
@@ -97,13 +127,8 @@ func updateKubeGitVersionFile(release *utils.Release) error {
 	return os.WriteFile(kubeGitVersionFilePath, bytes.Join(splitData, linebreak), 0644)
 }
 
-func cleanUpIfError(release *utils.Release) {
+func cleanUpIfError(paths []string) {
 	log.Println("Encountered error so all attempting to restore files")
-
-	paths := []string{
-		release.EnvironmentReleasePath,
-		release.KubeGitVersionFilePath,
-	}
 
 	for _, path := range paths {
 		err := exec.Command("git", "restore", path).Run()
