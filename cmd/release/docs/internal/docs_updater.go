@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"os"
 	"regexp"
+	"time"
 )
 
 var (
@@ -100,9 +101,10 @@ func UpdateDocsIndex(release *Release, force bool) (DocStatus, error) {
 				return ds, errors.New("non-sequential Version Dependencies list")
 			}
 			appendLine := fmt.Sprintf(
-				`* [%s](%s/index.md)`,
+				`* [%s](%s/index.md) (%s)`,
 				release.VBranchEKSNumber,
 				FormatRelativeReleaseDocsDirectory(release.Branch(), release.Number()),
+				getDate(),
 			)
 			splitData[i] = append(append(splitData[i], linebreak...), appendLine...)
 			break
@@ -111,4 +113,9 @@ func UpdateDocsIndex(release *Release, force bool) (DocStatus, error) {
 
 	ds = DocStatus{path: docsIndexPath, isAlreadyExisting: true}
 	return ds, os.WriteFile(docsIndexPath, bytes.Join(splitData, linebreak), 0644)
+}
+
+func getDate() string {
+	currentTime := time.Now()
+	return fmt.Sprintf("%s %d, %d", currentTime.Month(), currentTime.Day(), currentTime.Year())
 }
