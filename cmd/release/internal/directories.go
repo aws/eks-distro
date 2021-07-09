@@ -74,3 +74,7 @@ func GetREADMEPath() string {
 func GetDocsIndexPath() string {
 	return filepath.Join(docsContentsDirectory, "index.md")
 }
+
+func GetPRScriptPath() string {
+	return filepath.Join(gitRootDirectory, "/cmd/release/pull_request/create_release_pr.sh")
+}

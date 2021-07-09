@@ -2,9 +2,9 @@ package main
 
 import (
 	. "../internal"
-	"errors"
-
+	. "./internal"
 	"bytes"
+	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -17,7 +17,7 @@ import (
 // If a failure is encounter, attempts to undo any changes to RELEASE and KUBE_GIT_VERSION.
 func main() {
 	branch := flag.String("branch", "", "Release branch, e.g. 1-20")
-	includeProd := *flag.Bool("includeProd", true, "If production RELEASE should be incremented")
+	includeProd := *flag.Bool("includeProd", false, "If production RELEASE should be incremented")
 	includeDev := *flag.Bool("includeDev", true, "If development RELEASE should be incremented")
 
 	flag.Parse()
@@ -57,6 +57,7 @@ func main() {
 	}
 
 	log.Printf("Successfully updated release number for %d file(s)\n", len(changedFilePaths))
+	OpenPR(release, changedFilePaths)
 }
 
 func initializeRelease(includeProd, includeDev bool, branch string) (*Release, error) {
