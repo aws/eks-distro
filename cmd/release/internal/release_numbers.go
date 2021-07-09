@@ -8,16 +8,12 @@ import (
 )
 
 func determinePreviousReleaseNumber(release *Release) (string, error) {
-	if len(release.prevNumber) > 0 {
-		log.Printf("previous release number %q already known and is not re-sought\n", release.prevNumber)
-		return release.prevNumber, nil
+	if len(release.previousNumber) > 0 {
+		log.Printf("previous release number %q already known and is not re-sought\n", release.previousNumber)
+		return release.previousNumber, nil
 	}
 
-	environmentReleasePath := release.EnvironmentReleasePath
-	if len(environmentReleasePath) == 0 {
-		environmentReleasePath = FormatEnvironmentReleasePath(release)
-	}
-
+	environmentReleasePath := formatEnvironmentReleasePath(release.branch, release.environment)
 	fileOutput, err := ioutil.ReadFile(environmentReleasePath)
 	if err != nil {
 		return "", err
@@ -31,7 +27,7 @@ func determineReleaseNumber(release *Release) (string, error) {
 		return release.number, nil
 	}
 
-	prevNumber := release.prevNumber
+	prevNumber := release.previousNumber
 	if len(prevNumber) == 0 {
 		prevNumber, err := determinePreviousReleaseNumber(release)
 		if err != nil {
