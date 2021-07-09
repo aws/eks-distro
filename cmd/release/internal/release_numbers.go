@@ -12,7 +12,7 @@ func determinePreviousReleaseNumber(release *Release) (string, error) {
 		log.Printf("previous release number %q already known and is not re-sought\n", release.previousNumber)
 		return release.previousNumber, nil
 	}
-
+	// TODO: resolve case where update number could be for both environments
 	environmentReleasePath := formatEnvironmentReleasePath(release.branch, release.environment)
 	fileOutput, err := ioutil.ReadFile(environmentReleasePath)
 	if err != nil {

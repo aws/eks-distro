@@ -2,6 +2,7 @@ package main
 
 import (
 	. "../internal"
+	. "../pull_request"
 	. "./internal"
 	"fmt"
 
@@ -28,6 +29,8 @@ func main() {
 	// Update existing files
 	includeREADME := *flag.Bool("includeREADME", true, "If README should be updated")
 	includeDocsIndex := *flag.Bool("includeDocsIndex", true, "If index.md in docs should be updated")
+
+	openPR := *flag.Bool("openPR", true, "If a PR should be opened for changed")
 
 	// Circumvent standard workflow. Use with caution!
 	force := flag.Bool("force", false, "Forces the replacement of existing with generated")
@@ -81,6 +84,21 @@ func main() {
 
 	DeleteDocsDirectoryIfEmpty(&release)
 	log.Printf("Finished writing to %v doc(s)\n", len(docStatuses))
+
+	if openPR {
+		err = createPR(&release, GetPaths(docStatuses))
+		if err != nil {
+			log.Fatalf("error opending PR: %v", err)
+		}
+	}
+}
+
+func createPR(prReq *Release, filesChanged []string) error {
+	pr, err := NewPullRequestForDocs(prReq, filesChanged)
+	if err != nil {
+		return err
+	}
+	return pr.Open()
 }
 
 func initializeRelease(branch string, overrideNumber int) (Release, error) {

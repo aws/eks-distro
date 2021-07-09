@@ -21,7 +21,7 @@ var (
 func UpdateREADME(release *Release, force bool) (DocStatus, error) {
 	ds := GetEmptyDocStatus()
 
-	readmePath := GetREADMEPath()
+	readmePath := READMEPath
 	data, err := ioutil.ReadFile(readmePath)
 	if err != nil {
 		return ds, fmt.Errorf("failed to read file because error: %v", err)
@@ -68,7 +68,7 @@ func UpdateREADME(release *Release, force bool) (DocStatus, error) {
 func UpdateDocsIndex(release *Release, force bool) (DocStatus, error) {
 	ds := GetEmptyDocStatus()
 
-	docsIndexPath := GetDocsIndexPath()
+	docsIndexPath := DocsIndexPath
 	data, err := ioutil.ReadFile(docsIndexPath)
 	if err != nil {
 		return ds, fmt.Errorf("failed to read file because error: %v", err)

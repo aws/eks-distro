@@ -10,5 +10,3 @@ const (
 func (re ReleaseEnvironment) String() string {
 	return string(re)
 }
-
-

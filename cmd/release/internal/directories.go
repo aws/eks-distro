@@ -9,12 +9,16 @@ import (
 )
 
 var (
-	gitRootDirectory = GetGitRootDirectory()
+	gitRootDirectory = getGitRootDirectory()
+
+	CreateReleasePRScriptPath = filepath.Join(gitRootDirectory, "cmd/release/pull_request/create_release_pr.sh")
+	READMEPath                = filepath.Join(gitRootDirectory, "README.md")
+
 	docsContentsDirectory = filepath.Join(gitRootDirectory, "docs/contents")
+	DocsIndexPath         = filepath.Join(docsContentsDirectory, "index.md")
 )
 
-
-func GetGitRootDirectory() string {
+func getGitRootDirectory() string {
 	gitRootOutput, err := exec.Command("git", "rev-parse", "--show-toplevel").Output()
 	if err != nil {
 		panic(fmt.Sprintf("Unable to get git root directory: %v", err))
@@ -53,12 +57,4 @@ func formatReleaseDocsDirectory(branch, number string) string {
 // Expects release.Branch() and release.Number() to be non-empty values.
 func FormatRelativeReleaseDocsDirectory(branch, number string) string {
 	return filepath.Join("releases", branch, number)
-}
-
-func GetREADMEPath() string {
-	return filepath.Join(gitRootDirectory, "README.md")
-}
-
-func GetDocsIndexPath() string {
-	return filepath.Join(docsContentsDirectory, "index.md")
 }
