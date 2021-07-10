@@ -8,8 +8,6 @@ import (
 	"strings"
 )
 
-//const docsContentsDirectory = "docs/contents"
-
 var (
 	gitRootDirectory = GetGitRootDirectory()
 	docsContentsDirectory = filepath.Join(gitRootDirectory, "docs/contents")
@@ -57,11 +55,10 @@ func FormatKubeGitVersionFilePath(release *Release) string {
 	return filepath.Join(gitRootDirectory, "projects/kubernetes/kubernetes", release.Branch(), "KUBE_GIT_VERSION_FILE")
 }
 
-// FormatReleaseDocsDirectory returns path to the directory for the docs' directory for provided release.
-// Expects release.Branch() and release.Branch() to be non-empty values. Returned path is not guaranteed to exist or be
-// valid.
-func FormatReleaseDocsDirectory(release *Release) string {
-	return filepath.Join(docsContentsDirectory, FormatRelativeReleaseDocsDirectory(release.Branch(), release.Number()))
+// formatReleaseDocsDirectory returns path to the directory for the docs' directory for provided release.
+// Expects branch and number to be non-empty values. Returned path is not guaranteed to exist or be valid.
+func formatReleaseDocsDirectory(branch, number string) string {
+	return filepath.Join(docsContentsDirectory, FormatRelativeReleaseDocsDirectory(branch, number))
 }
 
 // FormatRelativeReleaseDocsDirectory return relative path to (example: "releases/1-20/1").
@@ -76,4 +73,8 @@ func GetREADMEPath() string {
 
 func GetDocsIndexPath() string {
 	return filepath.Join(docsContentsDirectory, "index.md")
+}
+
+func GetPreviousReleaseIndexFilePath(branch, number string) string {
+	return filepath.Join(formatReleaseDocsDirectory(branch, number), "index.md")
 }

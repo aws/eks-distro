@@ -35,8 +35,8 @@ type Release struct {
 	VBranchEKSPreviousNumber   string // e.g. v1-20-eks-1
 	VBranchWithDotNumber       string // e.g. v1.20-2
 
-	// Expected url but release manifest may not exist
-	ManifestURL string
+	// URL for release manifest, which is not guaranteed to be valid or existing
+	ManifestURL string // e.g. https://distro.eks.amazonaws.com/kubernetes-1-20/kubernetes-1-20-eks-2.yaml
 }
 
 // NewReleaseWithOverrideNumber returns complete Release based on the provided ReleaseInput and overrideNumber.
@@ -48,7 +48,7 @@ func NewReleaseWithOverrideNumber(inputBranch, inputEnvironment string, override
 	return newRelease(inputBranch, inputEnvironment, overrideNumber)
 }
 
-// NewRelease returns complete Release based on the provided ReleaseInput
+// NewRelease returns complete Release based on the provided input
 func NewRelease(inputBranch, inputEnvironment string) (*Release, error) {
 	return newRelease(inputBranch, inputEnvironment, -1)
 }
@@ -84,7 +84,7 @@ func newRelease(inputBranch, inputEnvironment string, overrideNumber int) (*Rele
 		}
 	}
 
-	release.DocsDirectoryPath = FormatReleaseDocsDirectory(release)
+	release.DocsDirectoryPath = formatReleaseDocsDirectory(release.branch, release.number)
 
 	branchEKS := release.branch + "-eks"
 	release.BranchEKSNumber = fmt.Sprintf("%s-%s", branchEKS, release.number)
