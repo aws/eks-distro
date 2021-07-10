@@ -36,7 +36,9 @@ type Release struct {
 	VBranchWithDotNumber       string // e.g. v1.20-2
 
 	// URL for release manifest, which is not guaranteed to be valid or existing
-	ManifestURL string // e.g. https://distro.eks.amazonaws.com/kubernetes-1-20/kubernetes-1-20-eks-2.yaml
+	// e.g. https://distro.eks.amazonaws.com/kubernetes-1-20/kubernetes-1-20-eks-2.yaml
+	ManifestURL         string
+	PreviousManifestURL string
 }
 
 // NewReleaseWithOverrideNumber returns complete Release based on the provided ReleaseInput and overrideNumber.
@@ -94,16 +96,13 @@ func newRelease(inputBranch, inputEnvironment string, overrideNumber int) (*Rele
 	release.EKSBranchPreviousNumber = fmt.Sprintf("eks-%s-%s", release.branch, release.previousNumber)
 	release.K8sBranchEKS = "kubernetes-" + branchEKS
 	release.K8sBranchEKSNumber = fmt.Sprintf("%s-%s", release.K8sBranchEKS, release.number)
-	release.K8sBranchEKSPreviousNumber =  fmt.Sprintf("%s-%s", release.K8sBranchEKS, release.previousNumber)
+	release.K8sBranchEKSPreviousNumber = fmt.Sprintf("%s-%s", release.K8sBranchEKS, release.previousNumber)
 	release.VBranchEKSNumber = "v" + release.BranchEKSNumber
 	release.VBranchEKSPreviousNumber = "v" + release.BranchEKSPreviousNumber
 	release.VBranchWithDotNumber = fmt.Sprintf("v%s-%s", release.BranchWithDot, release.number)
 
-	release.ManifestURL = fmt.Sprintf(
-		"https://distro.eks.amazonaws.com/kubernetes-%s/kubernetes-%s.yaml",
-		release.branch,
-		release.BranchEKSNumber,
-	)
+	release.ManifestURL = formatReleaseManifestURL(release.branch, release.BranchEKSNumber)
+	release.PreviousManifestURL = formatReleaseManifestURL(release.branch, release.BranchEKSPreviousNumber)
 
 	releaseJson, _ := json.MarshalIndent(release, "", "\t")
 	log.Printf("populated release with:%v", string(releaseJson))
@@ -135,4 +134,11 @@ func checkInput(inputBranch, inputEnvironment string) error {
 		return errors.New("inputEnvironment cannot be an empty string")
 	}
 	return nil
+}
+
+func formatReleaseManifestURL(branch, branchEKSNumber string) string {
+	return fmt.Sprintf(
+		"https://distro.eks.amazonaws.com/kubernetes-%s/kubernetes-%s.yaml",
+		branch,
+		branchEKSNumber)
 }

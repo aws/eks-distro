@@ -74,7 +74,3 @@ func GetREADMEPath() string {
 func GetDocsIndexPath() string {
 	return filepath.Join(docsContentsDirectory, "index.md")
 }
-
-func GetPreviousReleaseIndexFilePath(branch, number string) string {
-	return filepath.Join(formatReleaseDocsDirectory(branch, number), "index.md")
-}

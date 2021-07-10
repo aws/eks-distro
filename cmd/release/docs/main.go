@@ -91,7 +91,7 @@ func createGeneratedDocsInfo(includeGenerated *includeGenerated, formattedReleas
 	var indexAppendToEndFunc func(*utils.Release) (string, error)
 	if includeGenerated.indexAppendedText {
 		// Use 'GetComponentVersionsTable' to generate the table using the release manifest, which must exist.
-		indexAppendToEndFunc = GetComponentVersionsTableWithSameComponentVersionsAsPrevRelease
+		indexAppendToEndFunc = GetComponentVersionsTableIfNoReleaseManifest
 	}
 	return []GeneratedDoc{
 		{
