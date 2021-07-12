@@ -50,7 +50,7 @@ mkdir ./${KOPS_CLUSTER_NAME}/results
 tar xzf $results -C ./${KOPS_CLUSTER_NAME}/results
 if [ -w /logs/artifacts ]
 then
-  cp ./${KOPS_CLUSTER_NAME}/results/plugins/e2e/results/global/junit_01.xml /logs/artifacts
+  cp ./${KOPS_CLUSTER_NAME}/results/plugins/e2e/results/global/* /logs/artifacts
 fi
 ./sonobuoy --context ${KOPS_CLUSTER_NAME} e2e ${results}
 ./sonobuoy --context ${KOPS_CLUSTER_NAME} e2e ${results} | grep 'failed tests: 0' >/dev/null
