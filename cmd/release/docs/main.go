@@ -21,7 +21,7 @@ func main() {
 	// Generate new files
 	includeChangelog := *flag.Bool("includeChangelog", true, "If changelog should be generated")
 	includeIndex := *flag.Bool("includeIndex", true, "If index in branch dir should be generated")
-	includeIndexAppendedText := *flag.Bool("includeIndexAppendedText", false, "If Markdown table should be generated")
+	includeIndexAppendedText := *flag.Bool("includeIndexAppendedText", true, "If Markdown table should be generated")
 	includeAnnouncement := *flag.Bool("includeAnnouncement", true, "If release announcement should be generated")
 
 	// Update existing files
@@ -90,7 +90,8 @@ type includeGenerated struct {
 func createGeneratedDocsInfo(includeGenerated *includeGenerated, formattedReleaseVersion string) []GeneratedDoc {
 	var indexAppendToEndFunc func(*utils.Release) (string, error)
 	if includeGenerated.indexAppendedText {
-		indexAppendToEndFunc = GetComponentVersionsTable
+		// Use 'GetComponentVersionsTable' to generate the table using the release manifest, which must exist.
+		indexAppendToEndFunc = GetComponentVersionsTableIfNoReleaseManifest
 	}
 	return []GeneratedDoc{
 		{
