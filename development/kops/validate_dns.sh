@@ -26,8 +26,17 @@ source ./set_environment.sh
 $PREFLIGHT_CHECK_PASSED || exit 1
 
 APISERVER="api.$KOPS_CLUSTER_NAME"
-for i in {1..12}
+SUCCESS_COUNT=0
+while [ $SUCCESS_COUNT -lt 8 ]
 do
-  echo "$APISERVER resolves to $(dig +short $APISERVER)"
+  ip=$(dig +short $APISERVER)
+  if [ -z "$ip" ]; then
+    echo "$APISERVER did not resolve!"
+    SUCCESS_COUNT=0
+  else
+    echo "$APISERVER resolves to $ip"
+    SUCCESS_COUNT=$((SUCCESS_COUNT+1))
+  fi
+  
   sleep 5s
 done
