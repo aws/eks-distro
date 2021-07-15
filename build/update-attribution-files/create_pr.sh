@@ -26,7 +26,7 @@ PR_TITLE="Update ATTRIBUTION.txt files"
 COMMIT_MESSAGE="[PR BOT] Update ATTRIBUTION.txt files"
 
 PR_BODY=$(cat <<EOF
-This PR updates the ATTRIBUTION.txt files across all depedency projects if there have been changes.
+This PR updates the ATTRIBUTION.txt files across all dependency projects if there have been changes.
 
 By submitting this pull request, I confirm that you can use, modify, copy, and redistribute this contribution, under the terms of your choice.
 EOF
