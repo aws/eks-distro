@@ -49,7 +49,7 @@ done
 git commit -m "${PR_COMMIT_MESSAGE}" || true
 
 echo "pushing..."
-git push origin "${PR_BRANCH}" -f #--verbose | grep "distro" #--porcelain
+git push origin "${PR_BRANCH}"
 echo "pushed!"
 
 gh pr create \

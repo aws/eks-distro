@@ -75,3 +75,12 @@ func GetEmptyDocStatus() DocStatus {
 func (docStatus *DocStatus) isEmpty() bool {
 	return len(docStatus.path) == 0
 }
+
+func GetPaths(docStatuses []DocStatus) []string {
+	docPaths := []string{}
+
+	for _, ds := range docStatuses {
+		docPaths = append(docPaths, ds.path)
+	}
+	return docPaths
+}

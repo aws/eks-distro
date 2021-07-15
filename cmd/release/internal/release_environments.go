@@ -1,5 +1,6 @@
 package internal
 
+// TODO: replace all uses of strings with ReleaseEnvironment types
 type ReleaseEnvironment string
 
 const (
@@ -10,5 +11,3 @@ const (
 func (re ReleaseEnvironment) String() string {
 	return string(re)
 }
-
-

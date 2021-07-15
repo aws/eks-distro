@@ -9,23 +9,26 @@ import (
 
 const filePathDelimiter = " "
 
-type PullRequestInput interface {
+type DocsPullRequestInput interface {
 	Branch() string
-	Environment() string
 	Version() string
 }
 
-//// TODO: add this in subsequent PR
-//func NewPullRequestForDocs(input PullRequestInput, filesPaths []string) (PullRequest, error) {
-//	pullRequest, err := getUniversalPullRequest(input.Version()+"-docs", filesPaths)
-//	if err != nil {
-//		return PullRequest{}, err
-//	}
-//	pullRequest.commitMessage = fmt.Sprintf("Created and updated docs for %s", input.Version())
-//	return pullRequest, nil
-//}
+type NumberPullRequestInput interface {
+	DocsPullRequestInput
+	Environment() string
+}
 
-func NewPullRequestForNumber(input PullRequestInput, filesPaths []string) (PullRequest, error) {
+func NewPullRequestForDocs(input DocsPullRequestInput, filesPaths []string) (PullRequest, error) {
+	pullRequest, err := getUniversalPullRequest(input.Version()+"-docs", filesPaths)
+	if err != nil {
+		return PullRequest{}, err
+	}
+	pullRequest.commitMessage = fmt.Sprintf("Created and updated docs for %s", input.Version())
+	return pullRequest, nil
+}
+
+func NewPullRequestForNumber(input NumberPullRequestInput, filesPaths []string) (PullRequest, error) {
 	pullRequest, err := getUniversalPullRequest(input.Version()+"-"+input.Environment(), filesPaths)
 	if err != nil {
 		return PullRequest{}, err
@@ -54,17 +57,14 @@ func convertFilePaths(filesPaths []string) (string, error) {
 	for _, filepath := range filesPaths {
 		trimmedFilePath := strings.TrimSpace(filepath)
 		if len(trimmedFilePath) == 0 {
-			continue
+			return "", errors.New("encountered an empty file path")
 		}
 		filePathsAsString = filePathsAsString + trimmedFilePath + filePathDelimiter
 	}
 
-	if len(filePathsAsString) == 0 {
-		return "", errors.New("no non-empty file paths provided")
-	}
 	return strings.TrimSuffix(filePathsAsString, filePathDelimiter), nil
 }
 
 func formatBranch(branchNameBase string) string {
-	return fmt.Sprintf("\"%s-%d\"", branchNameBase, time.Now().Unix())
+	return fmt.Sprintf("%s-%d", branchNameBase, time.Now().Unix())
 }

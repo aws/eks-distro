@@ -28,7 +28,10 @@ func OpenProdPR(release *Release, filesChanged []string) error {
 }
 
 func openPR(prReq *prRequest, filesChanged []string) error {
-	pr, _ := NewPullRequestForNumber(prReq, filesChanged)
+	pr, err := NewPullRequestForNumber(prReq, filesChanged)
+	if err != nil {
+		return err
+	}
 	return pr.Open()
 }
 

@@ -28,6 +28,5 @@ func (pr PullRequest) Open() error {
 	if err := cmd.Run(); err != nil {
 		return fmt.Errorf("error opending PR: %v", err)
 	}
-
 	return nil
 }
