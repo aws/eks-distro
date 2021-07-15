@@ -2,7 +2,7 @@ package main
 
 import (
 	. "../internal"
-	. "./internal"
+	. "../pull_request"
 	"bytes"
 	"errors"
 	"flag"
@@ -11,13 +11,14 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"strings"
 )
 
 // Updates RELEASE and KUBE_GIT_VERSION (if includeDev is true)
 // If a failure is encounter, attempts to undo any changes to RELEASE and KUBE_GIT_VERSION.
 func main() {
 	branch := flag.String("branch", "", "Release branch, e.g. 1-20")
-	includeProd := *flag.Bool("includeProd", false, "If production RELEASE should be incremented")
+	includeProd := *flag.Bool("includeProd", true, "If production RELEASE should be incremented")
 	includeDev := *flag.Bool("includeDev", true, "If development RELEASE should be incremented")
 
 	flag.Parse()
@@ -27,37 +28,45 @@ func main() {
 		log.Fatalf("Error initializing release values: %v", err)
 	}
 
-	var changedFilePaths []string
+	var changedProdFilePaths []string
+	var changedDevFilePaths []string
 
 	if includeProd {
 		numberPath := FormatProductionReleasePath(release.Branch())
-		changedFilePaths = append(changedFilePaths, numberPath)
+		changedProdFilePaths = append(changedProdFilePaths, numberPath)
 		err = updateEnvironmentReleaseNumber(release.Number(), numberPath)
 		if err != nil {
-			cleanUpIfError(changedFilePaths)
+			cleanUpIfError(changedProdFilePaths)
 			log.Fatalf("Error writing to prod RELEASE: %v", err)
 		}
 	}
 
 	if includeDev {
 		numberPath := FormatDevelopmentReleasePath(release.Branch())
-		changedFilePaths = append(changedFilePaths, numberPath)
+		changedDevFilePaths = append(changedDevFilePaths, numberPath)
 		err = updateEnvironmentReleaseNumber(release.Number(), numberPath)
 		if err != nil {
-			cleanUpIfError(changedFilePaths)
+			cleanUpIfError(append(changedDevFilePaths, changedProdFilePaths...))
 			log.Fatalf("Error writing to dev RELEASE: %v", err)
 		}
 
-		changedFilePaths = append(changedFilePaths, release.KubeGitVersionFilePath)
+		changedDevFilePaths = append(changedDevFilePaths, release.KubeGitVersionFilePath)
 		err = updateKubeGitVersionFile(release)
 		if err != nil {
-			cleanUpIfError(changedFilePaths)
+			cleanUpIfError(append(changedDevFilePaths, changedProdFilePaths...))
 			log.Fatalf("Error updating KUBE_GIT_VERSION: %v", err)
 		}
 	}
 
-	log.Printf("Successfully updated release number for %d file(s)\n", len(changedFilePaths))
-	OpenPR(release, changedFilePaths)
+	log.Printf("Successfully updated number for %d file(s)\n", len(changedDevFilePaths)+len(changedProdFilePaths))
+
+	if includeProd {
+		openPr(release, changedProdFilePaths)
+	}
+
+	if includeDev {
+		openPr(release, changedDevFilePaths)
+	}
 }
 
 func initializeRelease(includeProd, includeDev bool, branch string) (*Release, error) {
@@ -138,4 +147,10 @@ func cleanUpIfError(paths []string) {
 		}
 	}
 	log.Println("Finished attempting to restore files")
+}
+
+func openPr(release *Release, filesChanged []string) {
+	pr,_ := NewPullRequestForNumber(release, filesChanged)
+	pr.Open()
+	log.Printf("Opened PRs for %s\n", strings.Join(filesChanged, " "))
 }
