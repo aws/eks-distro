@@ -1,0 +1,45 @@
+package internal
+
+import (
+	. "../../internal"
+	. "../../pull_request"
+)
+
+type prRequest struct {
+	branch, environment, version string
+}
+
+func OpenDevPR(release *Release, filesChanged []string) error {
+	return openPR(
+		&prRequest{
+			branch:      release.Branch(),
+			environment: DevelopmentRelease.String(),
+			version:     release.Version(),
+		}, filesChanged)
+}
+
+func OpenProdPR(release *Release, filesChanged []string) error {
+	return openPR(
+		&prRequest{
+			branch:      release.Branch(),
+			environment: ProductionRelease.String(),
+			version:     release.Version(),
+		}, filesChanged)
+}
+
+func openPR(prReq *prRequest, filesChanged []string) error {
+	pr, _ := NewPullRequestForNumber(prReq, filesChanged)
+	return pr.Open()
+}
+
+func (prReq *prRequest) Branch() string {
+	return prReq.branch
+}
+
+func (prReq *prRequest) Environment() string {
+	return prReq.environment
+}
+
+func (prReq *prRequest) Version() string {
+	return prReq.version
+}

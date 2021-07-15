@@ -2,8 +2,8 @@ package pull_request
 
 import (
 	. "../internal"
+	"fmt"
 	"io"
-	"log"
 	"os"
 	"os/exec"
 )
@@ -13,31 +13,21 @@ var (
 	errStream    io.Writer = os.Stderr
 )
 
-func (pr PullRequest) Open() {
+type PullRequest struct {
+	branch        string
+	commitMessage string
+	filesPaths    string
+}
+
+func (pr PullRequest) Open() error {
 	prScriptPath := GetPRScriptPath()
 	cmd := exec.Command("/bin/bash", prScriptPath, pr.branch, pr.commitMessage, pr.filesPaths)
 
 	cmd.Stdout = outputStream
 	cmd.Stderr = errStream
-	err := cmd.Run()
-	if err != nil {
-		//println(string(out))
-		log.Fatal(err)
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("error opending PR: %v", err)
 	}
 
-	//stderr := &bytes.Buffer{}
-	//stdout := &bytes.Buffer{}
-	//cmd.Stderr = stderr
-	//cmd.Stdout = stdout
-	//if err := cmd.Run(); err != nil {
-	//	fmt.Println("Error: ", err, "|", stderr.String())
-	//} else {
-	//	fmt.Println(stdout.String())
-	//}
-	//os.Exit(0)
-
-	//resetPath := "checkout HEAD^ -- " + release.EnvironmentReleasePath
-	//exec.Command("git", resetPath)
-	//log.Fatalf("Error running make: %v", err)
-
+	return nil
 }

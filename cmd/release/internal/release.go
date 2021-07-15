@@ -57,6 +57,7 @@ func NewRelease(inputBranch, inputEnvironment string) (*Release, error) {
 }
 
 // NewReleaseWithDefaultEnvironment returns complete Release based on the provided inputBranch
+// TODO: rename to indicate it's both environments and check that numbers are the same.
 func NewReleaseWithDefaultEnvironment(inputBranch string) (*Release, error) {
 	return NewRelease(inputBranch, defaultEnvironment.String())
 }
@@ -118,10 +119,6 @@ func (release *Release) Branch() string {
 
 func (release *Release) Number() string {
 	return release.number
-}
-
-func (release *Release) Environment() string {
-	return release.environment
 }
 
 func (release *Release) PreviousNumber() string {

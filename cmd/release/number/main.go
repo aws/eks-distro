@@ -2,7 +2,7 @@ package main
 
 import (
 	. "../internal"
-	. "../pull_request"
+	. "./internal"
 	"bytes"
 	"errors"
 	"flag"
@@ -20,6 +20,7 @@ func main() {
 	branch := flag.String("branch", "", "Release branch, e.g. 1-20")
 	includeProd := *flag.Bool("includeProd", true, "If production RELEASE should be incremented")
 	includeDev := *flag.Bool("includeDev", true, "If development RELEASE should be incremented")
+	includePR := *flag.Bool("includePR", true, "If a PR should be opened for changed")
 
 	flag.Parse()
 
@@ -60,12 +61,21 @@ func main() {
 
 	log.Printf("Successfully updated number for %d file(s)\n", len(changedDevFilePaths)+len(changedProdFilePaths))
 
-	if includeProd {
-		openPr(release, changedProdFilePaths)
-	}
-
-	if includeDev {
-		openPr(release, changedDevFilePaths)
+	if includePR {
+		if includeProd {
+			if err = OpenProdPR(release, changedProdFilePaths); err != nil {
+				log.Fatal(err)
+			}
+			log.Printf("Opened PRs for %s\n", strings.Join(changedProdFilePaths, " "))
+		}
+		
+		if includeDev {
+			if err = OpenDevPR(release, changedDevFilePaths); err != nil {
+				log.Fatal(err)
+			}
+			log.Printf("Opened PRs for %s\n", strings.Join(changedDevFilePaths, " "))
+		}
+		log.Println("Successfully opened PRs for changed files")
 	}
 }
 
@@ -147,10 +157,4 @@ func cleanUpIfError(paths []string) {
 		}
 	}
 	log.Println("Finished attempting to restore files")
-}
-
-func openPr(release *Release, filesChanged []string) {
-	pr,_ := NewPullRequestForNumber(release, filesChanged)
-	pr.Open()
-	log.Printf("Opened PRs for %s\n", strings.Join(filesChanged, " "))
 }

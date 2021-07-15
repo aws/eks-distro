@@ -9,27 +9,21 @@ import (
 
 const filePathDelimiter = " "
 
-type PullRequest struct {
-	branch        string
-	commitMessage string
-	filesPaths    string
-}
-
 type PullRequestInput interface {
 	Branch() string
-	Number() string
 	Environment() string
 	Version() string
 }
 
-func NewPullRequestForDocs(input PullRequestInput, filesPaths []string) (PullRequest, error) {
-	pullRequest, err := getUniversalPullRequest(input.Version()+"-docs", filesPaths)
-	if err != nil {
-		return PullRequest{}, err
-	}
-	pullRequest.commitMessage = fmt.Sprintf("Created and updated docs for %s", input.Version())
-	return pullRequest, nil
-}
+//// TODO: add this in subsequent PR
+//func NewPullRequestForDocs(input PullRequestInput, filesPaths []string) (PullRequest, error) {
+//	pullRequest, err := getUniversalPullRequest(input.Version()+"-docs", filesPaths)
+//	if err != nil {
+//		return PullRequest{}, err
+//	}
+//	pullRequest.commitMessage = fmt.Sprintf("Created and updated docs for %s", input.Version())
+//	return pullRequest, nil
+//}
 
 func NewPullRequestForNumber(input PullRequestInput, filesPaths []string) (PullRequest, error) {
 	pullRequest, err := getUniversalPullRequest(input.Version()+"-"+input.Environment(), filesPaths)
