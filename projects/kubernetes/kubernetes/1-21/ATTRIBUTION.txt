@@ -35,8 +35,8 @@ https://github.com/Azure/go-autorest/tracing
 ** github.com/caddyserver/caddy/caddyfile; version v1.0.3 --
 https://github.com/caddyserver/caddy
 
-** github.com/checkpoint-restore/go-criu/v4; version v4.1.0 --
-https://github.com/checkpoint-restore/go-criu/v4
+** github.com/checkpoint-restore/go-criu/v5; version v5.0.0 --
+https://github.com/checkpoint-restore/go-criu/v5
 
 ** github.com/clusterhq/flocker-go; version v0.0.0-20160920122132-2b8b7259d313 --
 https://github.com/ClusterHQ/flocker-go
@@ -44,7 +44,7 @@ https://github.com/ClusterHQ/flocker-go
 ** github.com/container-storage-interface/spec/lib/go/csi; version v1.3.0 --
 https://github.com/container-storage-interface/spec
 
-** github.com/containerd/console; version v1.0.1 --
+** github.com/containerd/console; version v1.0.2 --
 https://github.com/containerd/console
 
 ** github.com/containerd/containerd; version v1.4.4 --
@@ -68,7 +68,7 @@ https://github.com/coreos/go-semver
 ** github.com/coreos/go-systemd; version v0.0.0-20190321100706-95778dfbb74e --
 https://github.com/coreos/go-systemd
 
-** github.com/coreos/go-systemd/v22/dbus; version v22.1.0 --
+** github.com/coreos/go-systemd/v22/dbus; version v22.3.1 --
 https://github.com/coreos/go-systemd/v22
 
 ** github.com/coreos/pkg/capnslog; version v0.0.0-20180928190104-399ea9e2e55f --
@@ -161,7 +161,7 @@ https://github.com/moby/ipvs
 ** github.com/moby/spdystream; version v0.2.0 --
 https://github.com/moby/spdystream
 
-** github.com/moby/sys/mountinfo; version v0.4.0 --
+** github.com/moby/sys/mountinfo; version v0.4.1 --
 https://github.com/moby/sys/mountinfo
 
 ** github.com/moby/term; version v0.0.0-20201216013528-df9cb8a40635 --
@@ -185,10 +185,10 @@ https://github.com/opencontainers/go-digest
 ** github.com/opencontainers/image-spec/specs-go; version v1.0.1 --
 https://github.com/opencontainers/image-spec
 
-** github.com/opencontainers/runc; version v1.0.0-rc93 --
+** github.com/opencontainers/runc; version v1.0.0-rc95 --
 https://github.com/opencontainers/runc
 
-** github.com/opencontainers/runtime-spec/specs-go; version v1.0.3-0.20200929063507-e6143ca7d51d --
+** github.com/opencontainers/runtime-spec/specs-go; version v1.0.3-0.20210326190908-1c3f411f0417 --
 https://github.com/opencontainers/runtime-spec
 
 ** github.com/opencontainers/selinux; version v1.8.0 --
@@ -245,40 +245,40 @@ https://gopkg.in/square/go-jose.v2
 ** gopkg.in/yaml.v2; version v2.4.0 --
 https://gopkg.in/yaml.v2
 
-** k8s.io/api; version v1.21.1 --
+** k8s.io/api; version v1.21.2 --
 https://github.com/kubernetes/api
 
-** k8s.io/apiextensions-apiserver/pkg; version v1.21.1 --
+** k8s.io/apiextensions-apiserver/pkg; version v1.21.2 --
 https://github.com/kubernetes/apiextensions-apiserver
 
-** k8s.io/apimachinery; version v1.21.1 --
+** k8s.io/apimachinery; version v1.21.2 --
 https://github.com/kubernetes/apimachinery
 
-** k8s.io/apiserver; version v1.21.1 --
+** k8s.io/apiserver; version v1.21.2 --
 https://github.com/kubernetes/apiserver
 
-** k8s.io/cli-runtime/pkg; version v1.21.1 --
+** k8s.io/cli-runtime/pkg; version v1.21.2 --
 https://github.com/kubernetes/cli-runtime
 
-** k8s.io/client-go; version v1.21.1 --
+** k8s.io/client-go; version v1.21.2 --
 https://github.com/kubernetes/client-go
 
 ** k8s.io/cloud-provider; version v0.0.0 --
 https://github.com/kubernetes/cloud-provider
 
-** k8s.io/cluster-bootstrap; version v1.21.1 --
+** k8s.io/cluster-bootstrap; version v1.21.2 --
 https://github.com/kubernetes/cluster-bootstrap
 
-** k8s.io/component-base; version v1.21.1 --
+** k8s.io/component-base; version v1.21.2 --
 https://github.com/kubernetes/component-base
 
-** k8s.io/component-helpers; version v1.21.1 --
+** k8s.io/component-helpers; version v1.21.2 --
 https://github.com/kubernetes/component-helpers
 
-** k8s.io/controller-manager; version v1.21.1 --
+** k8s.io/controller-manager; version v1.21.2 --
 https://github.com/kubernetes/controller-manager
 
-** k8s.io/cri-api/pkg/apis; version v1.21.1 --
+** k8s.io/cri-api/pkg/apis; version v1.21.2 --
 https://github.com/kubernetes/cri-api
 
 ** k8s.io/csi-translation-lib; version v0.0.0 --
@@ -290,10 +290,10 @@ https://github.com/kubernetes/heapster
 ** k8s.io/klog/v2; version v2.8.0 --
 https://github.com/kubernetes/klog
 
-** k8s.io/kube-aggregator/pkg; version v1.21.1 --
+** k8s.io/kube-aggregator/pkg; version v1.21.2 --
 https://github.com/kubernetes/kube-aggregator
 
-** k8s.io/kube-controller-manager/config/v1alpha1; version v1.21.1 --
+** k8s.io/kube-controller-manager/config/v1alpha1; version v1.21.2 --
 https://github.com/kubernetes/kube-controller-manager
 
 ** k8s.io/kube-openapi/pkg; version v0.0.0-20210305001622-591a79e4bda7 --
@@ -311,25 +311,25 @@ https://github.com/kubernetes/kube-openapi
 ** k8s.io/kube-openapi/pkg/validation/validate; version v0.0.0-20210305001622-591a79e4bda7 --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kube-proxy/config/v1alpha1; version v1.21.1 --
+** k8s.io/kube-proxy/config/v1alpha1; version v1.21.2 --
 https://github.com/kubernetes/kube-proxy
 
-** k8s.io/kube-scheduler; version v1.21.1 --
+** k8s.io/kube-scheduler; version v1.21.2 --
 https://github.com/kubernetes/kube-scheduler
 
-** k8s.io/kubectl/pkg; version v1.21.1 --
+** k8s.io/kubectl/pkg; version v1.21.2 --
 https://github.com/kubernetes/kubectl
 
-** k8s.io/kubelet; version v1.21.1 --
+** k8s.io/kubelet; version v1.21.2 --
 https://github.com/kubernetes/kubelet
 
-** k8s.io/kubernetes; version v1.21.1 --
+** k8s.io/kubernetes; version v1.21.2 --
 https://github.com/kubernetes/kubernetes
 
-** k8s.io/legacy-cloud-providers; version v1.21.1 --
+** k8s.io/legacy-cloud-providers; version v1.21.2 --
 https://github.com/kubernetes/legacy-cloud-providers
 
-** k8s.io/metrics/pkg; version v1.21.1 --
+** k8s.io/metrics/pkg; version v1.21.2 --
 https://github.com/kubernetes/metrics
 
 ** k8s.io/mount-utils; version v0.0.0 --
@@ -341,7 +341,7 @@ https://github.com/kubernetes/system-validators
 ** k8s.io/utils; version v0.0.0-20201110183641-67b214c5f920 --
 https://github.com/kubernetes/utils
 
-** sigs.k8s.io/apiserver-network-proxy/konnectivity-client; version v0.0.15 --
+** sigs.k8s.io/apiserver-network-proxy/konnectivity-client; version v0.0.19 --
 https://github.com/kubernetes-sigs/apiserver-network-proxy
 
 ** sigs.k8s.io/kustomize/api; version v0.8.8 --
@@ -758,7 +758,7 @@ limitations under the License.
 
 ------
 
-** github.com/godbus/dbus/v5; version v5.0.3 --
+** github.com/godbus/dbus/v5; version v5.0.4 --
 https://github.com/godbus/dbus/v5
 
 Copyright (c) 2013, Georg Reinke (<guelfey at gmail dot com>), Google
@@ -965,7 +965,7 @@ https://go.googlesource.com/oauth2
 ** golang.org/x/sync/singleflight; version v0.0.0-20201020160332-67f06af15bc9 --
 https://go.googlesource.com/sync
 
-** golang.org/x/sys; version v0.0.0-20210225134936-a50acf3fe073 --
+** golang.org/x/sys; version v0.0.0-20210426230700-d19ff857e887 --
 https://go.googlesource.com/sys
 
 ** golang.org/x/term; version v0.0.0-20210220032956-6a3ed077a48d --
@@ -1220,7 +1220,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/google/go-cmp/cmp; version v0.5.2 --
+** github.com/google/go-cmp/cmp; version v0.5.4 --
 https://github.com/google/go-cmp
 
 Copyright (c) 2017 The Go Authors. All rights reserved.
@@ -1521,7 +1521,7 @@ https://github.com/vmware/govmomi
 ** gopkg.in/square/go-jose.v2/json; version v2.2.2 --
 https://gopkg.in/square/go-jose.v2
 
-** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.21.1 --
+** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.21.2 --
 https://github.com/kubernetes/kubernetes
 
 Copyright (c) 2012 The Go Authors. All rights reserved.
@@ -1887,7 +1887,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.21.1 --
+** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.21.2 --
 https://github.com/kubernetes/kubernetes
 
 Copyright ©2013 The gonum Authors. All rights reserved.
@@ -1956,7 +1956,7 @@ Copyright (c) 2014 Benedikt Lang <github at benediktlang.de>
 https://github.com/cespare/xxhash/v2
 Copyright (c) 2016 Caleb Spare
 
-** github.com/cilium/ebpf; version v0.2.0 --
+** github.com/cilium/ebpf; version v0.5.0 --
 https://github.com/cilium/ebpf
 Copyright (c) 2017 Nathan Sweet
 Copyright (c) 2018, 2019 Cloudflare
