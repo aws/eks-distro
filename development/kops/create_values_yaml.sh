@@ -60,6 +60,8 @@ configBase: $KOPS_STATE_STORE/$KOPS_CLUSTER_NAME
 awsRegion: $AWS_DEFAULT_REGION
 controlPlaneInstanceProfileArn: $CONTROL_PLANE_INSTANCE_PROFILE
 nodeInstanceProfileArn: $NODE_INSTANCE_PROFILE
+instanceType: $NODE_INSTANCE_TYPE
+architecture: $NODE_ARCHITECTURE
 pause:
 $(get_container_yaml kubernetes/pause $RELEASE)
 kube_apiserver:

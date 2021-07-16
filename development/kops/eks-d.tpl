@@ -102,8 +102,8 @@ spec:
   iam:
     profile: {{ .controlPlaneInstanceProfileArn }}
   {{- end }}
-  image: 099720109477/ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-20201026
-  machineType: t3.medium
+  image: 099720109477/ubuntu/images/hvm-ssd/ubuntu-focal-20.04-{{ .architecture }}-server-20201026
+  machineType: {{ .instanceType }}
   maxSize: 1
   minSize: 1
   nodeLabels:
@@ -132,8 +132,8 @@ spec:
   iam:
     profile: {{ .nodeInstanceProfileArn }}
   {{- end }}
-  image: 099720109477/ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-20201026
-  machineType: t3.medium
+  image: 099720109477/ubuntu/images/hvm-ssd/ubuntu-focal-20.04-{{ .architecture }}-server-20201026
+  machineType: {{ .instanceType }}
   maxSize: 3
   minSize: 3
   nodeLabels:

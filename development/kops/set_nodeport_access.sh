@@ -25,4 +25,10 @@ $PREFLIGHT_CHECK_PASSED || exit 1
 export KOPS_FEATURE_FLAGS=SpecOverrideFlag
 ${KOPS} set cluster "${KOPS_CLUSTER_NAME}" 'cluster.spec.nodePortAccess=0.0.0.0/0'
 
-${KOPS} update cluster --yes --lifecycle-overrides IAMRole=ExistsAndWarnIfChanges,IAMRolePolicy=ExistsAndWarnIfChanges,IAMInstanceProfileRole=ExistsAndWarnIfChanges
+
+ADDITIONAL_ARGS=""
+if [ -n "$NODE_INSTANCE_PROFILE" ]; then
+    ADDITIONAL_ARGS="--lifecycle-overrides IAMRole=ExistsAndWarnIfChanges,IAMRolePolicy=ExistsAndWarnIfChanges,IAMInstanceProfileRole=ExistsAndWarnIfChanges"
+fi
+
+${KOPS} update cluster --yes $ADDITIONAL_ARGS
