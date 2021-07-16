@@ -31,7 +31,7 @@ fi
 if [ ! -x ${KOPS} ]
 then
     echo "Determine kops version"
-    KOPS_VERSION="v1.21.0-beta.3"
+    KOPS_VERSION="v1.21.0"
     echo "Download kops"
     KOPS_URL="https://github.com/kubernetes/kops/releases/download/${KOPS_VERSION}/kops-${OS}-${ARCH}"
     set -x
