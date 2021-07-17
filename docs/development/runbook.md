@@ -46,8 +46,10 @@ All other changes are to this package.
         * Find the [release](https://github.com/kubernetes/release/releases) which provided that base image and update the GIT_TAG
         * Create new presubmit jobs for project
     * Update kops `cluster_wait.sh` to apply the coredns fix to new version
-    * Update kops version to version of kops which supports new kubernetes version
-        * Typically it will be a beta version because kops stable releases lag a bit behind kubernetes releases
+    * Update kops version to version of kops, which supports new kubernetes version
+         * Typically, it will be a beta version because kops stable releases lag a bit behind kubernetes releases. See
+           [kOps Releases & Versioning](https://kops.sigs.k8s.io/welcome/releases/) and
+           [releases](https://github.com/kubernetes/kops/releases/).
     * Create projects/kubernetes/kubernetes/${RELEASE_BRANCH}/PAUSE_TAG and set to upstream tag
         * (ex: [here](https://github.com/kubernetes/kubernetes/blob/v1.21.0/build/pause/Makefile#L20))
 1. **Build tooling PR**: Add release channel to release tooling
