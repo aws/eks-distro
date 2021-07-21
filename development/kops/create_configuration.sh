@@ -73,3 +73,15 @@ fi
 if [ -n "$NODE_INSTANCE_PROFILE" ]; then
     echo "export NODE_INSTANCE_PROFILE=$NODE_INSTANCE_PROFILE" | tee -a ./${KOPS_CLUSTER_NAME}/env.sh
 fi
+if [ -n "$NODE_INSTANCE_TYPE" ]; then
+    echo "export NODE_INSTANCE_TYPE=$NODE_INSTANCE_TYPE" | tee -a ./${KOPS_CLUSTER_NAME}/env.sh
+fi
+if [ -n "$NODE_ARCHITECTURE" ]; then
+    echo "export NODE_ARCHITECTURE=$NODE_ARCHITECTURE" | tee -a ./${KOPS_CLUSTER_NAME}/env.sh
+fi
+if [ -n "$ARTIFACT_BUCKET" ]; then
+    echo "export ARTIFACT_BUCKET=$ARTIFACT_BUCKET" | tee -a ./${KOPS_CLUSTER_NAME}/env.sh
+fi
+if [ -n "$IMAGE_REPO" ]; then
+    echo "export IMAGE_REPO=$IMAGE_REPO" | tee -a ./${KOPS_CLUSTER_NAME}/env.sh
+fi
