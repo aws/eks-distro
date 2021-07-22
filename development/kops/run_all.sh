@@ -38,10 +38,17 @@ $PREFLIGHT_CHECK_PASSED || exit 1
 if [[ "${KOPS_STATE_STORE}" != "" ]]; then
   for cluster_name in $(aws s3 ls ${KOPS_STATE_STORE}); do
     if [[ "${cluster_name}" == "${RELEASE_BRANCH}-"* ]]; then
+      # Only delete if older than a day, get timestemp from config file in s3
       cluster_fqdn="$(echo ${cluster_name}|tr -d "/")"
-      echo "Deleting cluster ${cluster_fqdn}"
-      ${KOPS} delete cluster --state "${KOPS_STATE_STORE}" --name ${cluster_fqdn} --yes
-      aws s3 rm --recursive "${KOPS_STATE_STORE}/${cluster_name}"
+      config=$(aws s3 ls ${KOPS_STATE_STORE}/${cluster_fqdn}/config)
+      createDate=$(echo $config | awk {'print $1" "$2'})
+      createDate=$(date -d"$createDate" +%s)
+      olderThan=$(date --date "1 day ago" +%s)
+      if [[ $createDate -lt $olderThan ]]; then
+        echo "Deleting cluster ${cluster_fqdn}"
+        ${KOPS} delete cluster --state "${KOPS_STATE_STORE}" --name ${cluster_fqdn} --yes
+        aws s3 rm --recursive "${KOPS_STATE_STORE}/${cluster_name}"
+      fi
     fi
   done
 fi
