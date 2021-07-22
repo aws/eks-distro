@@ -17,7 +17,7 @@ Download the release manifest here: [kubernetes-1-21-eks-1.yaml](https://distro.
 | go-runner | 0.8.0 | public.ecr.aws/eks-distro/kubernetes/go-runner:v0.8.0-eks-1-21-1 |
 | kube-apiserver | 1.21.2 | public.ecr.aws/eks-distro/kubernetes/kube-apiserver:v1.21.2-eks-1-21-1 |
 | kube-controller-manager | 1.21.2 | public.ecr.aws/eks-distro/kubernetes/kube-controller-manager:v1.21.2-eks-1-21-1 |
-| kube-proxy | 1.21.1 | public.ecr.aws/eks-distro/kubernetes/kube-proxy:v1.21.2-eks-1-21-1 |
+| kube-proxy | 1.21.2 | public.ecr.aws/eks-distro/kubernetes/kube-proxy:v1.21.2-eks-1-21-1 |
 | kube-proxy-base | 0.8.0 | public.ecr.aws/eks-distro/kubernetes/kube-proxy-base:v0.8.0-eks-1-21-1 |
 | kube-scheduler | 1.21.2 | public.ecr.aws/eks-distro/kubernetes/kube-scheduler:v1.21.2-eks-1-21-1 |
 | livenessprobe | 2.2.0 | public.ecr.aws/eks-distro/kubernetes-csi/livenessprobe:v2.2.0-eks-1-21-1 |
