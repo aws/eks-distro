@@ -42,5 +42,6 @@ export AWS_PROFILE=conformance-test
 unset AWS_ROLE_ARN AWS_WEB_IDENTITY_TOKEN_FILE
 DEFAULT_KOPS_ZONE_NAME="prod-build-pdx.kops-ci.model-rocket.aws.dev"
 KOPS_ZONE_NAME=${KOPS_ZONE_NAME:-"${DEFAULT_KOPS_ZONE_NAME}"}
-export KOPS_CLUSTER_NAME=${RELEASE_BRANCH}-$(git rev-parse --short HEAD).${KOPS_ZONE_NAME}
+export NODE_ARCHITECTURE=${NODE_ARCHITECTURE:-amd64}
+export KOPS_CLUSTER_NAME=${RELEASE_BRANCH}-$(git rev-parse --short HEAD)-${NODE_ARCHITECTURE}.${KOPS_ZONE_NAME}
 ${BASEDIR}/run_all.sh
