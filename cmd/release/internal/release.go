@@ -26,6 +26,7 @@ type Release struct {
 	BranchEKSNumber            string // e.g. 1-20-eks-2
 	BranchEKSPreviousNumber    string // e.g. 1-20-eks-1
 	BranchWithDot              string // e.g. 1.20
+	BranchWithDotNumber        string // e.g. 1.20-2
 	EKSBranchNumber            string // e.g. eks-1-20-2
 	EKSBranchPreviousNumber    string // e.g. eks-1-20-1
 	K8sBranchEKS               string // e.g. Kubernetes-1-20-eks
@@ -56,6 +57,7 @@ func NewRelease(inputBranch, inputEnvironment string) (*Release, error) {
 }
 
 // NewReleaseWithDefaultEnvironment returns complete Release based on the provided inputBranch
+// TODO: rename to indicate it's both environments and check that numbers are the same.
 func NewReleaseWithDefaultEnvironment(inputBranch string) (*Release, error) {
 	return NewRelease(inputBranch, defaultEnvironment.String())
 }
@@ -92,6 +94,7 @@ func newRelease(inputBranch, inputEnvironment string, overrideNumber int) (*Rele
 	release.BranchEKSNumber = fmt.Sprintf("%s-%s", branchEKS, release.number)
 	release.BranchEKSPreviousNumber = fmt.Sprintf("%s-%s", branchEKS, release.previousNumber)
 	release.BranchWithDot = strings.Replace(release.branch, "-", ".", 1)
+	release.BranchWithDotNumber = fmt.Sprintf("%s-%s", release.BranchWithDot, release.number)
 	release.EKSBranchNumber = fmt.Sprintf("eks-%s-%s", release.branch, release.number)
 	release.EKSBranchPreviousNumber = fmt.Sprintf("eks-%s-%s", release.branch, release.previousNumber)
 	release.K8sBranchEKS = "kubernetes-" + branchEKS
@@ -99,7 +102,7 @@ func newRelease(inputBranch, inputEnvironment string, overrideNumber int) (*Rele
 	release.K8sBranchEKSPreviousNumber = fmt.Sprintf("%s-%s", release.K8sBranchEKS, release.previousNumber)
 	release.VBranchEKSNumber = "v" + release.BranchEKSNumber
 	release.VBranchEKSPreviousNumber = "v" + release.BranchEKSPreviousNumber
-	release.VBranchWithDotNumber = fmt.Sprintf("v%s-%s", release.BranchWithDot, release.number)
+	release.VBranchWithDotNumber = "v" + release.BranchWithDotNumber
 
 	release.ManifestURL = formatReleaseManifestURL(release.branch, release.BranchEKSNumber)
 	release.PreviousManifestURL = formatReleaseManifestURL(release.branch, release.BranchEKSPreviousNumber)
@@ -118,12 +121,12 @@ func (release *Release) Number() string {
 	return release.number
 }
 
-func (release *Release) Environment() string {
-	return release.environment
-}
-
 func (release *Release) PreviousNumber() string {
 	return release.previousNumber
+}
+
+func (release *Release) Version() string {
+	return release.BranchWithDotNumber
 }
 
 func checkInput(inputBranch, inputEnvironment string) error {
