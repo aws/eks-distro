@@ -23,6 +23,6 @@ Download the release manifest here: [kubernetes-1-21-eks-1.yaml](https://distro.
 | livenessprobe | 2.2.0 | public.ecr.aws/eks-distro/kubernetes-csi/livenessprobe:v2.2.0-eks-1-21-1 |
 | metrics-server | 0.5.0 | public.ecr.aws/eks-distro/kubernetes-sigs/metrics-server:v0.5.0-eks-1-21-1 |
 | node-driver-registrar | 2.1.0 | public.ecr.aws/eks-distro/kubernetes-csi/node-driver-registrar:v2.1.0-eks-1-21-1 |
-| pause | 3.5.0 | public.ecr.aws/eks-distro/kubernetes/pause:v3.5.0-eks-1-21-1 |
+| pause | 1.21.2 | public.ecr.aws/eks-distro/kubernetes/pause:v1.21.2-eks-1-21-1 |
 | snapshot-controller | 3.0.3 | public.ecr.aws/eks-distro/kubernetes-csi/external-snapshotter/snapshot-controller:v3.0.3-eks-1-21-1 |
 | snapshot-validation-webhook | 3.0.3 | public.ecr.aws/eks-distro/kubernetes-csi/external-snapshotter/snapshot-validation-webhook:v3.0.3-eks-1-21-1 |
