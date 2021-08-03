@@ -153,4 +153,3 @@ release-docs:
 	go vet ./cmd/release/docs
 	go run ./cmd/release/docs/main.go \
 		--branch=$(RELEASE_BRANCH) \
-		--environment=$(RELEASE_ENVIRONMENT)

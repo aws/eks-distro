@@ -9,18 +9,22 @@ import (
 )
 
 const (
-	defaultEnvironment = DevelopmentRelease
+	defaultEnvironment = Production
+	minNumber          = 1
 )
 
 type Release struct {
 	branch         string
-	environment    string
 	number         string
 	previousNumber string
+
+	environment    ReleaseEnvironment
 
 	// File paths, which are not guaranteed to be valid or existing
 	KubeGitVersionFilePath string
 	DocsDirectoryPath      string
+	ProductionReleasePath  string
+	DevelopmentReleasePath string
 
 	// Version notations
 	BranchEKSNumber            string // e.g. 1-20-eks-2
@@ -41,52 +45,56 @@ type Release struct {
 	PreviousManifestURL string
 }
 
-// NewReleaseWithOverrideNumber returns complete Release based on the provided ReleaseInput and overrideNumber.
-// For default determination of number and previousNumber, use overrideNumber with value of -1.
-// All values over -1 for overrideNumber forces number to be overrideNumber and previousNumber to be one less. However,
-// previousNumber cannot be less than 0, so it is left empty if overrideNumber is 0. The use of overrideNumber should be
-// done with caution. Disrupting the conventional process can result in unintentional and unexpected consequences.
-func NewReleaseWithOverrideNumber(inputBranch, inputEnvironment string, overrideNumber int) (*Release, error) {
-	return newRelease(inputBranch, inputEnvironment, overrideNumber)
-}
-
-// NewRelease returns complete Release based on the provided input
-func NewRelease(inputBranch, inputEnvironment string) (*Release, error) {
-	return newRelease(inputBranch, inputEnvironment, -1)
-}
-
-// NewReleaseWithDefaultEnvironment returns complete Release based on the provided inputBranch
-func NewReleaseWithDefaultEnvironment(inputBranch string) (*Release, error) {
-	return NewRelease(inputBranch, defaultEnvironment.String())
-}
-
-func newRelease(inputBranch, inputEnvironment string, overrideNumber int) (*Release, error) {
-	err := checkInput(inputBranch, inputEnvironment)
-	if err != nil {
-		return &Release{}, fmt.Errorf("invlid input for release: %v", err)
+// NewReleaseWithOverrideNumber returns complete Release based on the provided inputBranch and overrideNumber.
+// The use of overrideNumber should be done with caution. Disrupting the conventional process can result in
+// unintentional and unexpected consequences. There is no check to ensure this Release is valid with overrideNumber.
+func NewReleaseWithOverrideNumber(inputBranch string, overrideNumber int) (Release, error) {
+	if overrideNumber < minNumber {
+		return Release{}, fmt.Errorf("override number %d cannot be less than %d", overrideNumber, minNumber)
 	}
+	return newRelease(inputBranch, defaultEnvironment, &overrideNumber)
+}
 
-	release := &Release{
+// NewReleaseWithOverrideEnvironment returns complete Release based on the provided input.
+func NewReleaseWithOverrideEnvironment(inputBranch string, inputEnvironment ReleaseEnvironment) (Release, error) {
+	return newRelease(inputBranch, inputEnvironment, nil)
+}
+
+// NewRelease returns complete Release based on the provided inputBranch
+func NewRelease(inputBranch string) (Release, error) {
+	return NewReleaseWithOverrideEnvironment(inputBranch, defaultEnvironment)
+}
+
+func newRelease(inputBranch string, inputEnvironment ReleaseEnvironment, overrideNumber *int) (Release, error) {
+	inputBranch = strings.TrimSpace(inputBranch)
+	if len(inputBranch) == 0 {
+		return Release{}, errors.New("branch cannot be an empty string")
+	}
+	var err error
+
+	release := Release{
 		branch:      inputBranch,
 		environment: inputEnvironment,
 	}
 
-	release.KubeGitVersionFilePath = FormatKubeGitVersionFilePath(release)
+	release.KubeGitVersionFilePath = FormatKubeGitVersionFilePath(&release)
 
-	if overrideNumber > -1 {
-		release.number, release.previousNumber = determineOverrideNumberAndPrevNumber(overrideNumber)
+	if overrideNumber != nil {
+		release.number, release.previousNumber = convertToNumberAndPrevNumber(*overrideNumber)
 	} else {
-		release.previousNumber, err = determinePreviousReleaseNumber(release)
+		release.previousNumber, err = determinePreviousReleaseNumber(&release)
 		if err != nil {
-			return &Release{}, fmt.Errorf("error determining previous number: %v", err)
+			return Release{}, fmt.Errorf("error determining previous number: %v", err)
 		}
-		release.number, err = determineReleaseNumber(release)
+		release.number, err = determineReleaseNumber(&release)
 		if err != nil {
-			return &Release{}, fmt.Errorf("error determining number: %v", err)
+			return Release{}, fmt.Errorf("error determining number: %v", err)
 		}
 	}
 
 	release.DocsDirectoryPath = formatReleaseDocsDirectory(release.branch, release.number)
+	release.ProductionReleasePath = formatEnvironmentReleasePath(release.branch, Production)
+	release.DevelopmentReleasePath = formatEnvironmentReleasePath(release.branch, Development)
 
 	branchEKS := release.branch + "-eks"
 	release.BranchEKSNumber = fmt.Sprintf("%s-%s", branchEKS, release.number)
@@ -118,22 +126,8 @@ func (release *Release) Number() string {
 	return release.number
 }
 
-func (release *Release) Environment() string {
-	return release.environment
-}
-
 func (release *Release) PreviousNumber() string {
 	return release.previousNumber
-}
-
-func checkInput(inputBranch, inputEnvironment string) error {
-	if len(inputBranch) == 0 {
-		return errors.New("inputBranch cannot be an empty string")
-	}
-	if len(inputEnvironment) == 0 {
-		return errors.New("inputEnvironment cannot be an empty string")
-	}
-	return nil
 }
 
 func formatReleaseManifestURL(branch, branchEKSNumber string) string {

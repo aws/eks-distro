@@ -30,7 +30,7 @@ func main() {
 	var changedFilePaths []string
 
 	if includeProd {
-		numberPath := FormatProductionReleasePath(release.Branch())
+		numberPath := release.ProductionReleasePath
 		changedFilePaths = append(changedFilePaths, numberPath)
 		err = updateEnvironmentReleaseNumber(release.Number(), numberPath)
 		if err != nil {
@@ -40,7 +40,7 @@ func main() {
 	}
 
 	if includeDev {
-		numberPath := FormatDevelopmentReleasePath(release.Branch())
+		numberPath := release.DevelopmentReleasePath
 		changedFilePaths = append(changedFilePaths, numberPath)
 		err = updateEnvironmentReleaseNumber(release.Number(), numberPath)
 		if err != nil {
@@ -49,7 +49,7 @@ func main() {
 		}
 
 		changedFilePaths = append(changedFilePaths, release.KubeGitVersionFilePath)
-		err = updateKubeGitVersionFile(release)
+		err = updateKubeGitVersionFile(&release)
 		if err != nil {
 			cleanUpIfError(changedFilePaths)
 			log.Fatalf("Error updating KUBE_GIT_VERSION: %v", err)
@@ -59,17 +59,13 @@ func main() {
 	log.Printf("Successfully updated release number for %d file(s)\n", len(changedFilePaths))
 }
 
-func initializeRelease(includeProd, includeDev bool, branch string) (*Release, error) {
+func initializeRelease(includeProd, includeDev bool, branch string) (Release, error) {
 	if includeProd {
-		if includeDev {
-			return NewReleaseWithDefaultEnvironment(branch)
-		}
-		return NewRelease(branch, ProductionRelease.String())
+		return NewRelease(branch)
+	} else if includeDev {
+		return NewReleaseWithOverrideEnvironment(branch, Development)
 	}
-	if includeDev {
-		return NewRelease(branch, DevelopmentRelease.String())
-	}
-	return &Release{},errors.New("cannot make release if no environment is indicated")
+	return Release{},errors.New("cannot make release if no environment is indicated")
 }
 
 func updateEnvironmentReleaseNumber(number, numberFilePath string) error {
