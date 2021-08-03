@@ -1,13 +1,15 @@
 package main
 
 import (
-	utils "../internal"
+	. "../internal"
 	. "./internal"
 	"fmt"
 
 	"flag"
 	"log"
 )
+
+const skipOverrideNumber = -1
 
 // Generate docs for release. Value for 'branch' flag much be provided.
 // If a failure is encounter, attempts to undo any changes to files in branch doc directory, including deleting the
@@ -16,7 +18,6 @@ import (
 // this flag may result in errors or bugs in release number sequencing, which may not be apparent or easily identified.
 func main() {
 	branch := flag.String("branch", "", "Release branch, e.g. 1-20")
-	environment := flag.String("environment", "development", "Should be 'development' or 'production'")
 
 	// Generate new files
 	includeChangelog := *flag.Bool("includeChangelog", true, "If changelog should be generated")
@@ -30,11 +31,11 @@ func main() {
 
 	// Circumvent standard workflow. Use with caution!
 	force := flag.Bool("force", false, "Forces the replacement of existing with generated")
-	overrideNumber := flag.Int("overrideNumber", -1, "Overrides default logic for number, which is not recommended")
+	overrideNumber := flag.Int("overrideNumber", skipOverrideNumber, "Overrides default logic for number, which is not recommended")
 
 	flag.Parse()
 
-	release, err := utils.NewReleaseWithOverrideNumber(*branch, *environment, *overrideNumber)
+	release, err := initializeRelease(*branch, *overrideNumber)
 	if err != nil {
 		log.Fatalf("Error initializing release values: %v", err)
 	}
@@ -50,36 +51,43 @@ func main() {
 	}
 	generatedDocsInfo := createGeneratedDocsInfo(&includeGeneratedDocs, release.VBranchEKSNumber)
 
-	docStatusesWriteToDocs, err := WriteToDocs(generatedDocsInfo, release, *force)
+	docStatusesWriteToDocs, err := WriteToDocs(generatedDocsInfo, &release, *force)
 	docStatuses = append(docStatuses, docStatusesWriteToDocs...)
 	if err != nil {
 		UndoChanges(docStatuses)
-		DeleteDocsDirectoryIfEmpty(release)
+		DeleteDocsDirectoryIfEmpty(&release)
 		log.Fatalf("Error that was encountered while writing to docs : %v", err)
 	}
 
 	// Update existing files
 	if includeREADME {
-		docStatusREADME, err := UpdateREADME(release, *force)
+		docStatusREADME, err := UpdateREADME(&release, *force)
 		docStatuses = append(docStatuses, docStatusREADME)
 		if err != nil {
 			UndoChanges(docStatuses)
-			DeleteDocsDirectoryIfEmpty(release)
+			DeleteDocsDirectoryIfEmpty(&release)
 			log.Fatalf("Error that was encountered while updating README: %v", err)
 		}
 	}
 	if includeDocsIndex {
-		docStatusDocsIndex, err := UpdateDocsIndex(release, *force)
+		docStatusDocsIndex, err := UpdateDocsIndex(&release, *force)
 		docStatuses = append(docStatuses, docStatusDocsIndex)
 		if err != nil {
 			UndoChanges(docStatuses)
-			DeleteDocsDirectoryIfEmpty(release)
+			DeleteDocsDirectoryIfEmpty(&release)
 			log.Fatalf("Error that was encountered while updating index: %v", err)
 		}
 	}
 
-	DeleteDocsDirectoryIfEmpty(release)
+	DeleteDocsDirectoryIfEmpty(&release)
 	log.Printf("Finished writing to %v doc(s)\n", len(docStatuses))
+}
+
+func initializeRelease(branch string, overrideNumber int) (Release, error) {
+	if overrideNumber == skipOverrideNumber {
+		return NewRelease(branch)
+	}
+	return NewReleaseWithOverrideNumber(branch, overrideNumber)
 }
 
 type includeGenerated struct {
@@ -88,7 +96,7 @@ type includeGenerated struct {
 }
 
 func createGeneratedDocsInfo(includeGenerated *includeGenerated, formattedReleaseVersion string) []GeneratedDoc {
-	var indexAppendToEndFunc func(*utils.Release) (string, error)
+	var indexAppendToEndFunc func(*Release) (string, error)
 	if includeGenerated.indexAppendedText {
 		// Use 'GetComponentVersionsTable' to generate the table using the release manifest, which must exist.
 		indexAppendToEndFunc = GetComponentVersionsTableIfNoReleaseManifest

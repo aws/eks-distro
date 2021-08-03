@@ -31,22 +31,10 @@ func GetKubernetesReleaseGitTag(releaseBranch string) (string, error) {
 	return strings.TrimSpace(string(fileOutput)), nil
 }
 
-// FormatDevelopmentReleasePath returns path to RELEASE in development for provided branch.
-// Returned path is not guaranteed to exist or be valid.
-func FormatDevelopmentReleasePath(branch string) string {
-	return formatEnvironmentReleasePath(branch, DevelopmentRelease.String())
-}
-
-// FormatProductionReleasePath returns path to RELEASE in production for provided branch.
-// Returned path is not guaranteed to exist or be valid.
-func FormatProductionReleasePath(branch string) string {
-	return formatEnvironmentReleasePath(branch, ProductionRelease.String())
-}
-
-// formatEnvironmentReleasePath returns path to RELEASE for provided branch and environment, which is expected to be
-// "production" or "development". Returned path is not guaranteed to exist or be valid.
-func formatEnvironmentReleasePath(branch, environment string) string {
-	return filepath.Join(gitRootDirectory, "release", branch, environment, "RELEASE")
+// formatEnvironmentReleasePath returns path to RELEASE for provided branch and environment. Returned path is not
+// guaranteed to exist or be valid.
+func formatEnvironmentReleasePath(branch string, environment ReleaseEnvironment) string {
+	return filepath.Join(gitRootDirectory, "release", branch, environment.String(), "RELEASE")
 }
 
 // FormatKubeGitVersionFilePath returns path to KUBE_GIT_VERSION_FILE for provided release.

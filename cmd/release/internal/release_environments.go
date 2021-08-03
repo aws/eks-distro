@@ -3,8 +3,8 @@ package internal
 type ReleaseEnvironment string
 
 const (
-	DevelopmentRelease ReleaseEnvironment = "development"
-	ProductionRelease  ReleaseEnvironment = "production"
+	Development ReleaseEnvironment = "development"
+	Production  ReleaseEnvironment = "production"
 )
 
 func (re ReleaseEnvironment) String() string {

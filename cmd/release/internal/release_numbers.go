@@ -43,13 +43,6 @@ func determineReleaseNumber(release *Release) (string, error) {
 	return strconv.Itoa(prevNumberAsInt + 1), nil
 }
 
-func determineOverrideNumberAndPrevNumber(overrideNumber int) (num, prevNum string) {
-	num = strconv.Itoa(overrideNumber)
-	if overrideNumber <= 0 {
-		log.Printf("Number overrode to be %q. Previous number cannot be negative, so it is left empty", num)
-	} else {
-		prevNum = strconv.Itoa(overrideNumber - 1)
-		log.Printf("Number overrode to be %q, and previous number set to %q\n", num, prevNum)
-	}
-	return
+func convertToNumberAndPrevNumber(overrideNumber int) (num, prevNum string) {
+	return strconv.Itoa(overrideNumber), strconv.Itoa(overrideNumber -1)
 }
