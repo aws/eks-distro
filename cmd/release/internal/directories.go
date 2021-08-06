@@ -11,6 +11,7 @@ import (
 var (
 	gitRootDirectory = GetGitRootDirectory()
 	docsContentsDirectory = filepath.Join(gitRootDirectory, "docs/contents")
+	baseImagePath = filepath.Join(gitRootDirectory, "EKS_DISTRO_BASE_TAG_FILE")
 )
 
 

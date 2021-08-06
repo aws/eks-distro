@@ -28,27 +28,27 @@ To receive notifications about new EKS-D releases, subscribe to the EKS-D update
 
 ### Kubernetes 1-18
 
-| Release | Manifest |
-| --- | --- |
-| 8 | [kubernetes-1-18-eks-8](https://distro.eks.amazonaws.com/kubernetes-1-18/kubernetes-1-18-eks-8.yaml) |
+| Release | Manifest | Base Image Tag |
+| --- | --- | --- |
+| 8 | [kubernetes-1-18-eks-8](https://distro.eks.amazonaws.com/kubernetes-1-18/kubernetes-1-18-eks-8.yaml) | |
 
 ### Kubernetes 1-19
 
-| Release | Manifest |
-| --- | --- |
-| 7 | [kubernetes-1-19-eks-7](https://distro.eks.amazonaws.com/kubernetes-1-19/kubernetes-1-19-eks-7.yaml) |
+| Release | Manifest | Base Image Tag |
+| --- | --- | --- |
+| 7 | [kubernetes-1-19-eks-7](https://distro.eks.amazonaws.com/kubernetes-1-19/kubernetes-1-19-eks-7.yaml) | |
 
 ### Kubernetes 1-20
 
-| Release | Manifest |
-| --- | --- |
-| 4 | [kubernetes-1-20-eks-4](https://distro.eks.amazonaws.com/kubernetes-1-20/kubernetes-1-20-eks-4.yaml) |
+| Release | Manifest | Base Image Tag |
+| --- | --- | --- |
+| 4 | [kubernetes-1-20-eks-4](https://distro.eks.amazonaws.com/kubernetes-1-20/kubernetes-1-20-eks-4.yaml) | |
 
 ### Kubernetes 1-21
 
-| Release | Manifest |
-| --- | --- |
-| 2 | [kubernetes-1-21-eks-2](https://distro.eks.amazonaws.com/kubernetes-1-21/kubernetes-1-21-eks-2.yaml) |
+| Release | Manifest | Base Image Tag |
+| --- | --- | --- |
+| 2 | [kubernetes-1-21-eks-2](https://distro.eks.amazonaws.com/kubernetes-1-21/kubernetes-1-21-eks-2.yaml) | |
 
 ## Development
 

@@ -43,12 +43,19 @@ func UpdateREADME(release *Release, force bool) (DocStatus, error) {
 			continue
 		}
 		hasFoundLine = true
+
+		baseImageTag, err := GetBaseImageTag()
+		if err != nil {
+			return ds, fmt.Errorf("error when getting image tag: %v", err)
+		}
+
 		newLine := fmt.Sprintf(
-			"%s %s | [%s](%s) |",
+			"%s %s | [%s](%s) | %s |",
 			prefix,
 			release.Number(),
 			release.K8sBranchEKSNumber,
 			release.ManifestURL,
+			baseImageTag,
 		)
 		splitData[i] = []byte(newLine)
 		break

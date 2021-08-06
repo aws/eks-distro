@@ -152,4 +152,4 @@ update-release-number:
 release-docs:
 	go vet ./cmd/release/docs
 	go run ./cmd/release/docs/main.go \
-		--branch=$(RELEASE_BRANCH) \
+		--branch=$(RELEASE_BRANCH)
