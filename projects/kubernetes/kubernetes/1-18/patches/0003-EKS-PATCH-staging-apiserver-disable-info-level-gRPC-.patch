@@ -1,4 +1,4 @@
-From fe795f5896c475b0a36e5997caedf0a77b01c373 Mon Sep 17 00:00:00 2001
+From baa09c7e4c29d0aa0e0b20c20a5a947d28beb120 Mon Sep 17 00:00:00 2001
 From: Gyuho Lee <leegyuho@amazon.com>
 Date: Thu, 17 Oct 2019 13:02:49 -0700
 Subject: --EKS-PATCH-- staging/*/apiserver: disable info level gRPC
@@ -55,5 +55,5 @@ index f2cf0e1b26c..f514c47d656 100644
  
  type klogWrapper struct{}
 -- 
-2.29.2
+2.32.0
 

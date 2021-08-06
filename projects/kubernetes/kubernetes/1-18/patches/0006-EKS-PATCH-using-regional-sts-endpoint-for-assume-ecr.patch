@@ -1,4 +1,4 @@
-From 5bb639aa3e06157ef86d6fcfa057c6914ff3c775 Mon Sep 17 00:00:00 2001
+From 61343c04390352b13c6bd0222226e54a3cdba357 Mon Sep 17 00:00:00 2001
 From: Yang Yang <yyyng@amazon.com>
 Date: Mon, 20 Jan 2020 11:59:08 -0800
 Subject: --EKS-PATCH-- using regional sts endpoint for assume ecr
@@ -103,7 +103,7 @@ index 82a990dc4a1..5ea6ec24115 100644
  	getter.svc.Handlers.Build.PushFrontNamed(request.NamedHandler{
  		Name: "k8s/user-agent",
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-index a115c547047..d95e0834d79 100644
+index 44de7d17d2f..2bd22ee1528 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
 @@ -736,7 +736,7 @@ func newAWSSDKProvider(cfg *CloudConfig) (*awsSDKProvider, error) {
@@ -115,7 +115,7 @@ index a115c547047..d95e0834d79 100644
  		if err != nil {
  			return nil, err
  		}
-@@ -4807,7 +4807,7 @@ func arnToAwsUrlSuffix(arnString string) (string, error) {
+@@ -4817,7 +4817,7 @@ func arnToAwsUrlSuffix(arnString string) (string, error) {
  	}
  }
  
@@ -174,5 +174,5 @@ index c309af94ef9..4814bd70eab 100644
  		require.NoError(t, err)
  	})
 -- 
-2.29.2
+2.32.0
 

@@ -1,4 +1,4 @@
-From 1021b2d436d16367b693fdf204680f857d8bec33 Mon Sep 17 00:00:00 2001
+From b4797dd4f63eec9a55c1af8907e24f8a3b79eb55 Mon Sep 17 00:00:00 2001
 From: Aleksandr Melnik <melnikal@amazon.com>
 Date: Wed, 8 Jan 2020 17:23:06 -0800
 Subject: --EKS-PATCH-- Lookup sts endpoint from custom map
@@ -30,7 +30,7 @@ index 4f394bd8ed0..42e3bf0f04c 100644
          "//vendor/github.com/aws/aws-sdk-go/aws/credentials:go_default_library",
          "//vendor/github.com/aws/aws-sdk-go/aws/credentials/ec2rolecreds:go_default_library",
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-index aca86cdade3..a115c547047 100644
+index 9b42bc5829a..44de7d17d2f 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
 @@ -33,6 +33,7 @@ import (
@@ -53,7 +53,7 @@ index aca86cdade3..a115c547047 100644
  		provider = &stscreds.AssumeRoleProvider{
  			Client:  sts.New(sess, aws.NewConfig().WithRegion(regionName).WithEndpoint(stsEndpoint)),
  			RoleARN: cfg.Global.RoleARN,
-@@ -4776,3 +4780,37 @@ func getInitialAttachDetachDelay(status string) time.Duration {
+@@ -4786,3 +4790,37 @@ func getInitialAttachDetachDelay(status string) time.Duration {
  	}
  	return volumeAttachmentStatusInitialDelay
  }
@@ -298,7 +298,7 @@ index 00000000000..1c496742903
 +		arn.Resource
 +}
 diff --git a/vendor/modules.txt b/vendor/modules.txt
-index c85fbc08062..45f38259028 100644
+index 95a505f294e..e2a19d411f4 100644
 --- a/vendor/modules.txt
 +++ b/vendor/modules.txt
 @@ -74,6 +74,7 @@ github.com/armon/circbuf
@@ -310,5 +310,5 @@ index c85fbc08062..45f38259028 100644
  github.com/aws/aws-sdk-go/aws/awsutil
  github.com/aws/aws-sdk-go/aws/client
 -- 
-2.29.2
+2.32.0
 

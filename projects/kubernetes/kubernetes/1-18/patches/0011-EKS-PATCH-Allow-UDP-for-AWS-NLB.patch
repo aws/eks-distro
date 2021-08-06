@@ -1,4 +1,4 @@
-From e63496276d8410de2f6b5522d42f292eb45d363a Mon Sep 17 00:00:00 2001
+From a41b63ea160c1a375c5e47b02931d0b2d29cd601 Mon Sep 17 00:00:00 2001
 From: Kishor Joshi <joshikis@amazon.com>
 Date: Fri, 12 Jun 2020 12:57:37 -0700
 Subject: --EKS-PATCH-- Allow UDP for AWS NLB
@@ -15,10 +15,10 @@ Signed-off-by: Jackson West <jgw@amazon.com>
  3 files changed, 95 insertions(+), 22 deletions(-)
 
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-index 58c87c1ef1e..1aacba000ba 100644
+index 6a43cb0082c..96e7780963d 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-@@ -3711,9 +3711,10 @@ func (c *Cloud) EnsureLoadBalancer(ctx context.Context, clusterName string, apiS
+@@ -3819,9 +3819,10 @@ func (c *Cloud) EnsureLoadBalancer(ctx context.Context, clusterName string, apiS
  
  	sslPorts := getPortSets(annotations[ServiceAnnotationLoadBalancerSSLPorts])
  	for _, port := range apiService.Spec.Ports {
@@ -31,7 +31,7 @@ index 58c87c1ef1e..1aacba000ba 100644
  		if port.NodePort == 0 {
  			klog.Errorf("Ignoring port without NodePort defined: %v", port)
  			continue
-@@ -3733,7 +3734,7 @@ func (c *Cloud) EnsureLoadBalancer(ctx context.Context, clusterName string, apiS
+@@ -3841,7 +3842,7 @@ func (c *Cloud) EnsureLoadBalancer(ctx context.Context, clusterName string, apiS
  			}
  
  			certificateARN := annotations[ServiceAnnotationLoadBalancerCertificate]
@@ -40,7 +40,7 @@ index 58c87c1ef1e..1aacba000ba 100644
  				portMapping.FrontendProtocol = elbv2.ProtocolEnumTls
  				portMapping.SSLCertificateARN = certificateARN
  				portMapping.SSLPolicy = annotations[ServiceAnnotationLoadBalancerSSLNegotiationPolicy]
-@@ -3744,12 +3745,13 @@ func (c *Cloud) EnsureLoadBalancer(ctx context.Context, clusterName string, apiS
+@@ -3852,12 +3853,13 @@ func (c *Cloud) EnsureLoadBalancer(ctx context.Context, clusterName string, apiS
  			}
  
  			v2Mappings = append(v2Mappings, portMapping)
@@ -59,7 +59,7 @@ index 58c87c1ef1e..1aacba000ba 100644
  	}
  
  	if apiService.Spec.LoadBalancerIP != "" {
-@@ -4788,6 +4790,18 @@ func (c *Cloud) nodeNameToProviderID(nodeName types.NodeName) (InstanceID, error
+@@ -4905,6 +4907,18 @@ func (c *Cloud) nodeNameToProviderID(nodeName types.NodeName) (InstanceID, error
  	return KubernetesInstanceID(node.Spec.ProviderID).MapToAWSInstanceID()
  }
  
@@ -79,10 +79,10 @@ index 58c87c1ef1e..1aacba000ba 100644
  	nodeDiskMap map[types.NodeName]map[KubernetesVolumeID]bool,
  	volumeID KubernetesVolumeID,
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer.go
-index 59e05838bfa..9efb9951bbf 100644
+index d648409dc03..5c714ea1865 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer.go
-@@ -186,9 +186,12 @@ func (c *Cloud) ensureLoadBalancerv2(namespacedName types.NamespacedName, loadBa
+@@ -193,9 +193,12 @@ func (c *Cloud) ensureLoadBalancerv2(namespacedName types.NamespacedName, loadBa
  			}
  
  			// actual maps FrontendPort to an elbv2.Listener
@@ -97,7 +97,7 @@ index 59e05838bfa..9efb9951bbf 100644
  			}
  
  			actualTargetGroups, err := c.elbv2.DescribeTargetGroups(
-@@ -208,10 +211,11 @@ func (c *Cloud) ensureLoadBalancerv2(namespacedName types.NamespacedName, loadBa
+@@ -215,10 +218,11 @@ func (c *Cloud) ensureLoadBalancerv2(namespacedName types.NamespacedName, loadBa
  			// Handle additions/modifications
  			for _, mapping := range mappings {
  				frontendPort := mapping.FrontendPort
@@ -110,7 +110,7 @@ index 59e05838bfa..9efb9951bbf 100644
  					listenerNeedsModification := false
  
  					if aws.StringValue(listener.Protocol) != mapping.FrontendProtocol {
-@@ -316,23 +320,27 @@ func (c *Cloud) ensureLoadBalancerv2(namespacedName types.NamespacedName, loadBa
+@@ -323,23 +327,27 @@ func (c *Cloud) ensureLoadBalancerv2(namespacedName types.NamespacedName, loadBa
  				dirty = true
  			}
  
@@ -147,7 +147,7 @@ index 59e05838bfa..9efb9951bbf 100644
  		if err := c.reconcileLBAttributes(aws.StringValue(loadBalancer.LoadBalancerArn), annotations); err != nil {
  			return nil, err
  		}
-@@ -769,10 +777,14 @@ func (c *Cloud) updateInstanceSecurityGroupsForNLB(lbName string, instances map[
+@@ -776,10 +784,14 @@ func (c *Cloud) updateInstanceSecurityGroupsForNLB(lbName string, instances map[
  
  	{
  		clientPorts := sets.Int64{}
@@ -162,7 +162,7 @@ index 59e05838bfa..9efb9951bbf 100644
  		}
  		clientRuleAnnotation := fmt.Sprintf("%s=%s", NLBClientRuleDescription, lbName)
  		healthRuleAnnotation := fmt.Sprintf("%s=%s", NLBHealthCheckRuleDescription, lbName)
-@@ -782,14 +794,14 @@ func (c *Cloud) updateInstanceSecurityGroupsForNLB(lbName string, instances map[
+@@ -789,14 +801,14 @@ func (c *Cloud) updateInstanceSecurityGroupsForNLB(lbName string, instances map[
  				if err := c.updateInstanceSecurityGroupForNLBTraffic(sgID, sgPerms, healthRuleAnnotation, "tcp", healthCheckPorts, subnetCIDRs); err != nil {
  					return err
  				}
@@ -180,7 +180,7 @@ index 59e05838bfa..9efb9951bbf 100644
  				}
  			}
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
-index 8852ae954ed..370967d3bc4 100644
+index 681aecd6dc9..53c9071af94 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
 @@ -1395,6 +1395,53 @@ func TestDescribeLoadBalancerOnEnsure(t *testing.T) {
@@ -238,5 +238,5 @@ index 8852ae954ed..370967d3bc4 100644
  	tests := []struct {
  		name string
 -- 
-2.29.2
+2.32.0
 

@@ -1,4 +1,4 @@
-From 9d3d7d5066a7164251abd5fd86ab5aaff5eaec15 Mon Sep 17 00:00:00 2001
+From 21c8211b021d820bccadb1fa54062ad3b18738a6 Mon Sep 17 00:00:00 2001
 From: Angus Lees <gus@inodes.org>
 Date: Mon, 8 Jun 2020 15:12:35 +1000
 Subject: --EKS-PATCH-- aws: Fix address sorting of multiple
@@ -16,10 +16,10 @@ Signed-off-by: Jackson West <jgw@amazon.com>
  2 files changed, 20 insertions(+), 9 deletions(-)
 
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-index d95e0834d79..5c26009196e 100644
+index 2ea7fc03379..d094816bdbf 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-@@ -1439,7 +1439,9 @@ func (c *Cloud) NodeAddresses(ctx context.Context, name types.NodeName) ([]v1.No
+@@ -1496,7 +1496,9 @@ func (c *Cloud) NodeAddresses(ctx context.Context, name types.NodeName) ([]v1.No
  		// We want the IPs to end up in order by interface (in particular, we want eth0's
  		// IPs first), but macs isn't necessarily sorted in that order so we have to
  		// explicitly order by device-number (device-number == the "0" in "eth0").
@@ -30,7 +30,7 @@ index d95e0834d79..5c26009196e 100644
  		for _, macID := range strings.Split(macs, "\n") {
  			if macID == "" {
  				continue
-@@ -1454,18 +1456,22 @@ func (c *Cloud) NodeAddresses(ctx context.Context, name types.NodeName) ([]v1.No
+@@ -1511,18 +1513,22 @@ func (c *Cloud) NodeAddresses(ctx context.Context, name types.NodeName) ([]v1.No
  				klog.Warningf("Bad device-number %q for interface %s\n", numStr, macID)
  				continue
  			}
@@ -61,10 +61,10 @@ index d95e0834d79..5c26009196e 100644
  				if internalIP == "" {
  					continue
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_fakes.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_fakes.go
-index 17383e52b6b..66aca4e00a4 100644
+index ef992bfae6b..3d0ffe5fec4 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_fakes.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_fakes.go
-@@ -358,7 +358,12 @@ func (m *FakeMetadata) GetMetadata(key string) (string, error) {
+@@ -387,7 +387,12 @@ func (m *FakeMetadata) GetMetadata(key string) (string, error) {
  		if len(keySplit) == 5 && keySplit[4] == "device-number" {
  			for i, macElem := range m.aws.networkInterfacesMacs {
  				if macParam == macElem {
@@ -79,5 +79,5 @@ index 17383e52b6b..66aca4e00a4 100644
  			}
  		}
 -- 
-2.29.2
+2.32.0
 
