@@ -31,6 +31,11 @@ elif [ $PROJECT = "etcd-io/etcd" ] || [ $PROJECT = "coredns/coredns" ]; then
   KUBERNETES_ARTIFACT_DIR=${DEST_DIR}/kubernetes/${KUBERNETES_GIT_TAG}
   mkdir -p $KUBERNETES_ARTIFACT_DIR
   cp -r _output/images/* $KUBERNETES_ARTIFACT_DIR
+  
+  # coredns has no tars to upload, just the oci target which is uploaded above
+  if [ $PROJECT = "coredns/coredns" ]; then
+    exit 0
+  fi
 
   SOURCE_DIR=_output/tar/
   GIT_TAG=$(cat ${RELEASE_BRANCH}/GIT_TAG)
