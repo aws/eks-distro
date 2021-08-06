@@ -1,4 +1,4 @@
-From f369a57d1942d4e56ff905c30d80c4c06f9386bd Mon Sep 17 00:00:00 2001
+From 59ac169c7993b5f87c41bdce2f8edf293e480547 Mon Sep 17 00:00:00 2001
 From: Yang Yang <yyyng@amazon.com>
 Date: Thu, 26 Mar 2020 20:28:40 -0700
 Subject: --EKS-PATCH-- fix aws loadbalancer nodePort cannot
@@ -13,10 +13,10 @@ Signed-off-by: Jackson West <jgw@amazon.com>
  2 files changed, 128 insertions(+), 3 deletions(-)
 
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer.go
-index 18127181bc7..c4b78d112d8 100644
+index a0b759efead..4b7a07dcdcb 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer.go
-@@ -452,13 +452,14 @@ var invalidELBV2NameRegex = regexp.MustCompile("[^[:alnum:]]")
+@@ -459,13 +459,14 @@ var invalidELBV2NameRegex = regexp.MustCompile("[^[:alnum:]]")
  
  // buildTargetGroupName will build unique name for targetGroup of service & port.
  // the name is in format k8s-{namespace:8}-{name:8}-{uuid:10} (chosen to benefit most common use cases).
@@ -33,7 +33,7 @@ index 18127181bc7..c4b78d112d8 100644
  	_, _ = hasher.Write([]byte(targetProtocol))
  	_, _ = hasher.Write([]byte(targetType))
  	tgUUID := hex.EncodeToString(hasher.Sum(nil))
-@@ -527,7 +528,7 @@ func (c *Cloud) ensureTargetGroup(targetGroup *elbv2.TargetGroup, serviceName ty
+@@ -534,7 +535,7 @@ func (c *Cloud) ensureTargetGroup(targetGroup *elbv2.TargetGroup, serviceName ty
  	dirty := false
  	if targetGroup == nil {
  		targetType := "instance"
@@ -43,7 +43,7 @@ index 18127181bc7..c4b78d112d8 100644
  		input := &elbv2.CreateTargetGroupInput{
  			VpcId:                      aws.String(vpcID),
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer_test.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer_test.go
-index a437e3d3ad0..16574b058c0 100644
+index f4fb71e5bbd..3faf328474f 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer_test.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer_test.go
 @@ -19,6 +19,7 @@ limitations under the License.
@@ -54,7 +54,7 @@ index a437e3d3ad0..16574b058c0 100644
  	"testing"
  
  	"github.com/aws/aws-sdk-go/aws"
-@@ -296,3 +297,126 @@ func TestElbListenersAreEqual(t *testing.T) {
+@@ -333,3 +334,126 @@ func TestElbListenersAreEqual(t *testing.T) {
  		})
  	}
  }
@@ -182,5 +182,5 @@ index a437e3d3ad0..16574b058c0 100644
 +	}
 +}
 -- 
-2.29.2
+2.32.0
 

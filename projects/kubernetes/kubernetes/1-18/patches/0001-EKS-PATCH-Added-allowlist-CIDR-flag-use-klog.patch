@@ -1,4 +1,4 @@
-From 86a72356c233c36dab0a6878e20f3e94f2197ab2 Mon Sep 17 00:00:00 2001
+From ae542b0b5de8399a7110171d9fe3b6968ac1e40d Mon Sep 17 00:00:00 2001
 From: Micah Hausler <mhausler@amazon.com>
 Date: Wed, 19 Sep 2018 18:16:23 -0700
 Subject: --EKS-PATCH-- Added allowlist CIDR flag, use "klog"
@@ -103,7 +103,7 @@ index 00000000000..4a0486baa8a
 +	}
 +}
 diff --git a/cmd/kube-apiserver/app/options/BUILD b/cmd/kube-apiserver/app/options/BUILD
-index b833a85aeba..e66e8058e4b 100644
+index 484c8dbe01b..dfbcc6c4bb1 100644
 --- a/cmd/kube-apiserver/app/options/BUILD
 +++ b/cmd/kube-apiserver/app/options/BUILD
 @@ -13,6 +13,7 @@ go_library(
@@ -441,5 +441,5 @@ index 1ca914b6a49..7a5c7b49ae7 100644
  	// - no port is specified in request (Kubelet's port is default)
  	// - the requested port matches the kubelet port for this node
 -- 
-2.29.2
+2.32.0
 

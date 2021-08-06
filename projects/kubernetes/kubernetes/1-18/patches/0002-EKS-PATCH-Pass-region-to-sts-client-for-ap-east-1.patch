@@ -1,4 +1,4 @@
-From 370504b5fc4b12d18d9c4bb38b35c84bab6ff547 Mon Sep 17 00:00:00 2001
+From 0cb856515156c360fd2fd588014c246ea07af8e2 Mon Sep 17 00:00:00 2001
 From: M00nF1sh <yyyng@amazon.com>
 Date: Tue, 2 Jul 2019 10:44:42 -0700
 Subject: --EKS-PATCH-- Pass region to sts client for ap-east-1
@@ -10,7 +10,7 @@ Signed-off-by: Jackson West <jgw@amazon.com>
  1 file changed, 43 insertions(+), 32 deletions(-)
 
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-index c44c5872564..aca86cdade3 100644
+index 4f992ea86e5..9b42bc5829a 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
 @@ -706,12 +706,50 @@ type awsSDKProvider struct {
@@ -120,5 +120,5 @@ index c44c5872564..aca86cdade3 100644
  	if err != nil {
  		return nil, err
 -- 
-2.29.2
+2.32.0
 
