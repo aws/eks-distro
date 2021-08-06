@@ -302,10 +302,10 @@ https://github.com/kubernetes/kubectl
 ** k8s.io/kubelet; version v0.0.0 --
 https://github.com/kubernetes/kubelet
 
-** k8s.io/kubernetes; version v1.18.16 --
+** k8s.io/kubernetes; version v1.18.20 --
 https://github.com/kubernetes/kubernetes
 
-** k8s.io/kubernetes/third_party/forked/ipvs; version v1.18.16 --
+** k8s.io/kubernetes/third_party/forked/ipvs; version v1.18.20 --
 https://github.com/kubernetes/kubernetes
 
 ** k8s.io/legacy-cloud-providers; version v0.0.0 --
@@ -326,7 +326,7 @@ https://github.com/kubernetes-sigs/apiserver-network-proxy
 ** sigs.k8s.io/kustomize/pkg; version v2.0.3+incompatible --
 https://github.com/kubernetes-sigs/kustomize
 
-** sigs.k8s.io/structured-merge-diff/v3; version v3.0.0 --
+** sigs.k8s.io/structured-merge-diff/v3; version v3.0.1 --
 https://github.com/kubernetes-sigs/structured-merge-diff
 
 
@@ -905,7 +905,7 @@ https://github.com/golang/go
 ** golang.org/x/crypto; version v0.0.0-20200220183623-bac4c82f6975 --
 https://go.googlesource.com/crypto
 
-** golang.org/x/net; version v0.0.0-20191004110552-13f9640d40b9 --
+** golang.org/x/net; version v0.0.0-20201110031124-69a78807bb2b --
 https://go.googlesource.com/net
 
 ** golang.org/x/oauth2; version v0.0.0-20190604053449-0f29369cfe45 --
@@ -914,7 +914,7 @@ https://go.googlesource.com/oauth2
 ** golang.org/x/sync/singleflight; version v0.0.0-20190911185100-cd5d95a43a6e --
 https://go.googlesource.com/sync
 
-** golang.org/x/sys/unix; version v0.0.0-20190813064441-fde4db37ae7a --
+** golang.org/x/sys; version v0.0.0-20201112073958-5cba982894dd --
 https://go.googlesource.com/sys
 
 ** golang.org/x/text; version v0.3.2 --
@@ -1091,7 +1091,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/gogo/protobuf; version v1.3.1 --
+** github.com/gogo/protobuf; version v1.3.2 --
 https://github.com/gogo/protobuf
 
 Copyright (c) 2013, The GoGo Authors. All rights reserved.
@@ -1434,7 +1434,7 @@ https://github.com/vmware/govmomi
 ** gopkg.in/square/go-jose.v2/json; version v2.2.2 --
 https://gopkg.in/square/go-jose.v2
 
-** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.18.16 --
+** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.18.20 --
 https://github.com/kubernetes/kubernetes
 
 Copyright (c) 2012 The Go Authors. All rights reserved.
@@ -1633,7 +1633,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.18.16 --
+** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.18.20 --
 https://github.com/kubernetes/kubernetes
 
 Copyright ©2013 The gonum Authors. All rights reserved.
