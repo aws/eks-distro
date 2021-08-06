@@ -20,6 +20,7 @@ BASE_TAG?=$(shell cat $(MAKE_ROOT)/../../../EKS_DISTRO_BASE_TAG_FILE)
 BASE_IMAGE?=$(BASE_REPO)/$(BASE_IMAGE_NAME):$(BASE_TAG)
 
 IMAGE_REPO?=$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
+IMAGE_REPO_PREFIX=etcd-io
 IMAGE_NAME?=$(COMPONENT)
 IMAGE_TAG?=$(GIT_TAG)-eks-${RELEASE_BRANCH}-${RELEASE}
 IMAGE?=$(IMAGE_REPO)/$(IMAGE_NAME):$(IMAGE_TAG)
@@ -31,27 +32,17 @@ binaries:
 
 .PHONY: local-images
 local-images: binaries
-	buildctl \
-		build \
-		--frontend dockerfile.v0 \
-		--opt platform=linux/amd64 \
-		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
-		--opt build-arg:RELEASE_BRANCH=$(RELEASE_BRANCH) \
-		--local dockerfile=./docker/linux \
-		--local context=. \
-		--output type=oci,oci-mediatypes=true,name=$(IMAGE),dest=/tmp/etcd.tar
+	build/create_images.sh $(RELEASE_BRANCH) $(BASE_IMAGE) \
+		$(IMAGE_REPO) $(IMAGE_REPO_PREFIX) $(IMAGE_TAG) false true
 
 .PHONY: images
 images: binaries
-	buildctl \
-		build \
-		--frontend dockerfile.v0 \
-		--opt platform=linux/amd64,linux/arm64 \
-		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
-		--opt build-arg:RELEASE_BRANCH=$(RELEASE_BRANCH) \
-		--local dockerfile=./docker/linux \
-		--local context=. \
-		--output type=image,oci-mediatypes=true,name=$(IMAGE),push=true
+	# we publish oci tarballs in release mode in addition to pushing images for installer tools
+	build/create_images.sh $(RELEASE_BRANCH) $(BASE_IMAGE) \
+		$(IMAGE_REPO) $(IMAGE_REPO_PREFIX) $(IMAGE_TAG) false
+
+	build/create_images.sh $(RELEASE_BRANCH) $(BASE_IMAGE) \
+		$(IMAGE_REPO) $(IMAGE_REPO_PREFIX) $(IMAGE_TAG) true
 
 .PHONY: docker
 docker: binaries
