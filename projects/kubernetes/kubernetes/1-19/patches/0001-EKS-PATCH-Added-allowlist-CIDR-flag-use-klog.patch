@@ -1,4 +1,4 @@
-From 3f372033feb77ed4e5481fe0ec13d5f7157cddb4 Mon Sep 17 00:00:00 2001
+From 0430dec07e69d8448d8291fa3aaa4616d91a978e Mon Sep 17 00:00:00 2001
 From: Micah Hausler <mhausler@amazon.com>
 Date: Wed, 19 Sep 2018 18:16:23 -0700
 Subject: --EKS-PATCH-- Added allowlist CIDR flag, use "klog"
@@ -441,5 +441,5 @@ index aaddb69e72a..56fed8cb5ae 100644
  	// - no port is specified in request (Kubelet's port is default)
  	// - the requested port matches the kubelet port for this node
 -- 
-2.31.1
+2.32.0
 

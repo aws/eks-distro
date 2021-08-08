@@ -1,4 +1,4 @@
-From fc7a4b5467196c0b2268df2ca72d46488942c91a Mon Sep 17 00:00:00 2001
+From 5277172ab78ef4ca11655c4f62b387c5948a4e9a Mon Sep 17 00:00:00 2001
 From: Yang Yang <yyyng@amazon.com>
 Date: Mon, 20 Jan 2020 11:59:08 -0800
 Subject: --EKS-PATCH-- using regional sts endpoint for assume ecr
@@ -176,5 +176,5 @@ index abac429f394..4baa20b60f4 100644
  		require.NoError(t, err)
  	})
 -- 
-2.31.1
+2.32.0
 
