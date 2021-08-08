@@ -263,34 +263,34 @@ https://gopkg.in/square/go-jose.v2
 ** gopkg.in/yaml.v2; version v2.2.8 --
 https://gopkg.in/yaml.v2
 
-** k8s.io/api; version v1.19.12 --
+** k8s.io/api; version v1.19.13 --
 https://github.com/kubernetes/api
 
-** k8s.io/apiextensions-apiserver/pkg; version v1.19.12 --
+** k8s.io/apiextensions-apiserver/pkg; version v1.19.13 --
 https://github.com/kubernetes/apiextensions-apiserver
 
-** k8s.io/apimachinery; version v1.19.12 --
+** k8s.io/apimachinery; version v1.19.13 --
 https://github.com/kubernetes/apimachinery
 
-** k8s.io/apiserver; version v1.19.12 --
+** k8s.io/apiserver; version v1.19.13 --
 https://github.com/kubernetes/apiserver
 
-** k8s.io/cli-runtime/pkg; version v1.19.12 --
+** k8s.io/cli-runtime/pkg; version v1.19.13 --
 https://github.com/kubernetes/cli-runtime
 
-** k8s.io/client-go; version v1.19.12 --
+** k8s.io/client-go; version v1.19.13 --
 https://github.com/kubernetes/client-go
 
 ** k8s.io/cloud-provider; version v0.0.0 --
 https://github.com/kubernetes/cloud-provider
 
-** k8s.io/cluster-bootstrap; version v1.19.12 --
+** k8s.io/cluster-bootstrap; version v1.19.13 --
 https://github.com/kubernetes/cluster-bootstrap
 
-** k8s.io/component-base; version v1.19.12 --
+** k8s.io/component-base; version v1.19.13 --
 https://github.com/kubernetes/component-base
 
-** k8s.io/cri-api/pkg/apis; version v1.19.12 --
+** k8s.io/cri-api/pkg/apis; version v1.19.13 --
 https://github.com/kubernetes/cri-api
 
 ** k8s.io/csi-translation-lib; version v0.0.0 --
@@ -302,34 +302,34 @@ https://github.com/kubernetes/heapster
 ** k8s.io/klog/v2; version v2.2.0 --
 https://github.com/kubernetes/klog
 
-** k8s.io/kube-aggregator/pkg; version v1.19.12 --
+** k8s.io/kube-aggregator/pkg; version v1.19.13 --
 https://github.com/kubernetes/kube-aggregator
 
-** k8s.io/kube-controller-manager/config/v1alpha1; version v1.19.12 --
+** k8s.io/kube-controller-manager/config/v1alpha1; version v1.19.13 --
 https://github.com/kubernetes/kube-controller-manager
 
 ** k8s.io/kube-openapi/pkg; version v0.0.0-20200805222855-6aeccd4b50c6 --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kube-proxy/config/v1alpha1; version v1.19.12 --
+** k8s.io/kube-proxy/config/v1alpha1; version v1.19.13 --
 https://github.com/kubernetes/kube-proxy
 
-** k8s.io/kube-scheduler; version v1.19.12 --
+** k8s.io/kube-scheduler; version v1.19.13 --
 https://github.com/kubernetes/kube-scheduler
 
-** k8s.io/kubectl/pkg; version v1.19.12 --
+** k8s.io/kubectl/pkg; version v1.19.13 --
 https://github.com/kubernetes/kubectl
 
-** k8s.io/kubelet; version v1.19.12 --
+** k8s.io/kubelet; version v1.19.13 --
 https://github.com/kubernetes/kubelet
 
-** k8s.io/kubernetes; version v1.19.12 --
+** k8s.io/kubernetes; version v1.19.13 --
 https://github.com/kubernetes/kubernetes
 
-** k8s.io/legacy-cloud-providers; version v1.19.12 --
+** k8s.io/legacy-cloud-providers; version v1.19.13 --
 https://github.com/kubernetes/legacy-cloud-providers
 
-** k8s.io/metrics/pkg; version v1.19.12 --
+** k8s.io/metrics/pkg; version v1.19.13 --
 https://github.com/kubernetes/metrics
 
 ** k8s.io/system-validators/validators; version v1.1.2 --
@@ -344,7 +344,7 @@ https://github.com/kubernetes-sigs/apiserver-network-proxy
 ** sigs.k8s.io/kustomize/pkg; version v2.0.3+incompatible --
 https://github.com/kubernetes-sigs/kustomize
 
-** sigs.k8s.io/structured-merge-diff/v4; version v4.0.3 --
+** sigs.k8s.io/structured-merge-diff/v4; version v4.1.2 --
 https://github.com/kubernetes-sigs/structured-merge-diff
 
 
@@ -1501,7 +1501,7 @@ https://github.com/vmware/govmomi
 ** gopkg.in/square/go-jose.v2/json; version v2.2.2 --
 https://gopkg.in/square/go-jose.v2
 
-** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.19.12 --
+** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.19.13 --
 https://github.com/kubernetes/kubernetes
 
 Copyright (c) 2012 The Go Authors. All rights reserved.
@@ -1766,7 +1766,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.19.12 --
+** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.19.13 --
 https://github.com/kubernetes/kubernetes
 
 Copyright ©2013 The gonum Authors. All rights reserved.
