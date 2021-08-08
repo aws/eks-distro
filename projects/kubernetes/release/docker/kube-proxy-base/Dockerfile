@@ -26,7 +26,9 @@ RUN yum install -y \
     iptables \
     conntrack \
     ipset \
-    kmod
+    kmod && \
+    yum clean all && \
+    rm -rf /var/cache/yum
 
 COPY _output/LICENSES /LICENSES
 COPY $RELEASE_BRANCH/ATTRIBUTION.txt /ATTRIBUTION.txt
