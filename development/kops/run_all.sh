@@ -59,6 +59,7 @@ trap cleanup_and_error SIGINT SIGTERM ERR
 ./set_nodeport_access.sh
 ./cluster_wait.sh
 ./validate_dns.sh
+./run_tests.sh
 ./validate_eks.sh
 ./run_sonobuoy.sh
 

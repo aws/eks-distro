@@ -30,6 +30,11 @@ function get_container_yaml() {
     REPOSITORY_NAME="${1}"
     RELEASE="${2}"
     VERSION="$(get_project_version $REPOSITORY_NAME)"
+
+    if  [[ $REPOSITORY_NAME == "kubernetes-csi/external-snapshotter" ]] 
+    then
+        REPOSITORY_NAME="kubernetes-csi/external-snapshotter/csi-snapshotter"
+    fi
     echo "    repository: ${IMAGE_REPO}/${REPOSITORY_NAME}
     tag: ${VERSION}-eks-${RELEASE_BRANCH}-${RELEASE}"
 }
@@ -78,4 +83,18 @@ awsiamauth:
 $(get_container_yaml kubernetes-sigs/aws-iam-authenticator $RELEASE)
 coredns:
 $(get_container_yaml coredns/coredns $RELEASE)
+node_driver_registrar:
+$(get_container_yaml kubernetes-csi/node-driver-registrar $RELEASE)
+csi_resizer:
+$(get_container_yaml kubernetes-csi/external-resizer $RELEASE)
+csi_attacher:
+$(get_container_yaml kubernetes-csi/external-attacher $RELEASE)
+csi_snapshotter:
+$(get_container_yaml kubernetes-csi/external-snapshotter $RELEASE)
+csi_provisioner:
+$(get_container_yaml kubernetes-csi/external-provisioner $RELEASE)
+csi_livenessprobe:
+$(get_container_yaml kubernetes-csi/livenessprobe $RELEASE)
+etcd:
+$(get_container_yaml etcd-io/etcd $RELEASE)
 EOF
