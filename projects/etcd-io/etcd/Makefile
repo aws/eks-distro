@@ -31,27 +31,17 @@ binaries:
 
 .PHONY: local-images
 local-images: binaries
-	buildctl \
-		build \
-		--frontend dockerfile.v0 \
-		--opt platform=linux/amd64 \
-		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
-		--opt build-arg:RELEASE_BRANCH=$(RELEASE_BRANCH) \
-		--local dockerfile=./docker/linux \
-		--local context=. \
-		--output type=oci,oci-mediatypes=true,name=$(IMAGE),dest=/tmp/etcd.tar
+	build/create_images.sh $(RELEASE_BRANCH) $(BASE_IMAGE) \
+		$(IMAGE_REPO) $(COMPONENT) $(IMAGE_TAG) false true
 
 .PHONY: images
 images: binaries
-	buildctl \
-		build \
-		--frontend dockerfile.v0 \
-		--opt platform=linux/amd64,linux/arm64 \
-		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
-		--opt build-arg:RELEASE_BRANCH=$(RELEASE_BRANCH) \
-		--local dockerfile=./docker/linux \
-		--local context=. \
-		--output type=image,oci-mediatypes=true,name=$(IMAGE),push=true
+	# we publish oci tarballs in release mode in addition to pushing images for installer tools
+	build/create_images.sh $(RELEASE_BRANCH) $(BASE_IMAGE) \
+		$(IMAGE_REPO) $(COMPONENT) $(IMAGE_TAG) false
+
+	build/create_images.sh $(RELEASE_BRANCH) $(BASE_IMAGE) \
+		$(IMAGE_REPO) $(COMPONENT) $(IMAGE_TAG) true
 
 .PHONY: docker
 docker: binaries

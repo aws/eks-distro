@@ -25,6 +25,20 @@ DEST_DIR=${BASE_DIRECTORY}/kubernetes-${RELEASE_BRANCH}/releases/${RELEASE}/arti
 if [ $PROJECT = "kubernetes/kubernetes" ]; then
   SOURCE_DIR=_output/${RELEASE_BRANCH}
   GIT_TAG=$(cat ${RELEASE_BRANCH}/GIT_TAG)
+elif [ $PROJECT = "etcd-io/etcd" ] || [ $PROJECT = "coredns/coredns" ]; then
+  # Copy oci tars into kubernetes directory for use by capi image-builder
+  KUBERNETES_GIT_TAG=$(cat ${BASE_DIRECTORY}/projects/kubernetes/kubernetes/${RELEASE_BRANCH}/GIT_TAG)
+  KUBERNETES_ARTIFACT_DIR=${DEST_DIR}/kubernetes/${KUBERNETES_GIT_TAG}
+  mkdir -p $KUBERNETES_ARTIFACT_DIR
+  cp -r _output/images/* $KUBERNETES_ARTIFACT_DIR
+  
+  # coredns has no tars to upload, just the oci target which is uploaded above
+  if [ $PROJECT = "coredns/coredns" ]; then
+    exit 0
+  fi
+
+  SOURCE_DIR=_output/tar/
+  GIT_TAG=$(cat ${RELEASE_BRANCH}/GIT_TAG)
 elif [ ! -f GIT_TAG ]; then
   SOURCE_DIR=_output/tar/
   GIT_TAG=$(cat ${RELEASE_BRANCH}/GIT_TAG)
