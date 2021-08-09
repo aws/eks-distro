@@ -24,7 +24,7 @@ function build::images::release_image_tar(){
     local -r release_branch="$1"
     local -r base_image="$2"
     local -r repository="$3"
-    local -r repo_prefix="$4"
+    local -r component="$4"
     local -r image_tag="$5"
     local -r context_dir="$6"
     local -r skip_arm="$7"
@@ -34,7 +34,7 @@ function build::images::release_image_tar(){
             continue
         fi
 
-        image=${repository}/${repo_prefix}/coredns:${image_tag}
+        image=${repository}/${component}:${image_tag}
         image_dir=${context_dir}/_output/images/bin/linux/${platform}
         mkdir -p ${image_dir}
         buildctl \
@@ -58,11 +58,11 @@ function build::images::push(){
     local -r release_branch="$1"
     local -r base_image="$2"
     local -r repository="$3"
-    local -r repo_prefix="$4"
+    local -r component="$4"
     local -r image_tag="$5"
     local -r context_dir="$6"
 
-    image=${repository}/${repo_prefix}/coredns:${image_tag}
+    image=${repository}/${component}:${image_tag}
     buildctl \
         build \
         --frontend dockerfile.v0 \
