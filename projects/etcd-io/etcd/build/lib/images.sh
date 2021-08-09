@@ -23,8 +23,8 @@ readonly KUBE_LINUX_IMAGE_PLATFORMS=(
 function build::images::release_image_tar(){
     local -r release_branch="$1"
     local -r base_image="$2"
-    local -r component="$3"
-    local -r repo_prefix="$4"
+    local -r repository="$3"
+    local -r component="$4"
     local -r image_tag="$5"
     local -r context_dir="$6"
     local -r skip_arm="$7"
