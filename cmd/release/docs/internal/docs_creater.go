@@ -37,10 +37,10 @@ func WriteToDocs(docs []GeneratedDoc, release *Release, overrideIfExisting bool)
 	for _, doc := range docs {
 		if doc.IsIncluded {
 			ds, err := writeToDoc(&doc, release, overrideIfExisting)
+			docStatuses = append(docStatuses, ds)
 			if err != nil {
 				return docStatuses, fmt.Errorf("error with writing to docs and failed to finish: %v", err)
 			}
-			docStatuses = append(docStatuses, ds)
 		}
 	}
 	return docStatuses, nil
