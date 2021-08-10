@@ -55,7 +55,8 @@ postsubmit-build: setup
 kops-prow-arm: export NODE_INSTANCE_TYPE=t4g.medium
 kops-prow-arm: export NODE_ARCHITECTURE=arm64
 kops-prow-arm: postsubmit-build
-	if [[ ! " 1-18 1-19 1-20 " =~ " ${RELEASE_BRANCH} " ]]; then \
+	$(eval MINOR_VERSION=$(subst 1-,,$(RELEASE_BRANCH)))
+	if [[ $(MINOR_VERSION) -ge 21 ]]; then \
 		development/kops/prow.sh; \
 	fi;
 
