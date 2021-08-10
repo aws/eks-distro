@@ -58,7 +58,7 @@ fi
 # UseKopsControllerForNodeBootstrap is only true when 1.19 and above
 if [ "${RELEASE_BRANCH}" == "1-18" ]; then
     PATCH='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--kubelet-insecure-tls" }]'
-    while ! kubectl -n kube-system patch deployments metrics-server --type=json -p="$PATCH"
+    while ! kubectl --context $KOPS_CLUSTER_NAME  -n kube-system patch deployments metrics-server --type=json -p="$PATCH"
     do
         sleep 5
         COUNT=$(expr $COUNT + 1)

@@ -13,4 +13,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-kubectl get po --all-namespaces -o json | jq -r '.items[].spec.containers[].image' | sort -u
+kubectl --context $KOPS_CLUSTER_NAME get po --all-namespaces -o json | jq -r '.items[].spec.containers[].image' | sort -u
