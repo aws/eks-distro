@@ -46,7 +46,7 @@ function build::etcd::binaries(){
   do
     OS="$(cut -d '/' -f1 <<< ${platform})"
     ARCH="$(cut -d '/' -f2 <<< ${platform})"
-    GOOS=$OS GOARCH=$ARCH GO_LDFLAGS="-s -w -buildid=''" ./build
+    CGO_ENABLED=0 GOOS=$OS GOARCH=$ARCH GO_LDFLAGS="-s -w -buildid=''" ./build
     mkdir -p ../${BIN_PATH}/${OS}-${ARCH}
     mv bin/* ../${BIN_PATH}/${OS}-${ARCH}
     make clean
