@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"strconv"
 )
 
 var (
@@ -17,10 +18,18 @@ type PullRequest struct {
 	branch        string
 	commitMessage string
 	filesPaths    string
+	isBot         bool
 }
 
 func (pr PullRequest) Open() error {
-	cmd := exec.Command("/bin/bash", CreateReleasePRScriptPath, pr.branch, pr.commitMessage, pr.filesPaths)
+	cmd := exec.Command(
+		"/bin/bash",
+		CreateReleasePRScriptPath,
+		pr.branch,
+		pr.commitMessage,
+		pr.filesPaths,
+		strconv.FormatBool(pr.isBot),
+	)
 
 	cmd.Stdout = outputStream
 	cmd.Stderr = errStream

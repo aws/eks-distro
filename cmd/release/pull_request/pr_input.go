@@ -9,18 +9,20 @@ import (
 
 const filePathDelimiter = " "
 
-type DocsPullRequestInput interface {
+type PullRequestInputBase interface {
 	Branch() string
 	Version() string
+	FilePaths() []string
+	IsBot() bool
 }
 
 type NumberPullRequestInput interface {
-	DocsPullRequestInput
+	PullRequestInputBase
 	Environment() string
 }
 
-func NewPullRequestForDocs(input DocsPullRequestInput, filesPaths []string) (PullRequest, error) {
-	pullRequest, err := getCommonPullRequest(input.Version()+"-docs", filesPaths)
+func NewPullRequestForDocs(input PullRequestInputBase) (PullRequest, error) {
+	pullRequest, err := getCommonPullRequest(input.Version()+"-docs", input)
 	if err != nil {
 		return PullRequest{}, err
 	}
@@ -28,8 +30,8 @@ func NewPullRequestForDocs(input DocsPullRequestInput, filesPaths []string) (Pul
 	return pullRequest, nil
 }
 
-func NewPullRequestForNumber(input NumberPullRequestInput, filesPaths []string) (PullRequest, error) {
-	pullRequest, err := getCommonPullRequest(input.Version()+"-"+input.Environment(), filesPaths)
+func NewPullRequestForNumber(input NumberPullRequestInput) (PullRequest, error) {
+	pullRequest, err := getCommonPullRequest(input.Version()+"-"+input.Environment(), input)
 	if err != nil {
 		return PullRequest{}, err
 	}
@@ -37,14 +39,15 @@ func NewPullRequestForNumber(input NumberPullRequestInput, filesPaths []string) 
 	return pullRequest, nil
 }
 
-func getCommonPullRequest(branchBase string, filesPaths []string) (PullRequest, error) {
-	convertedFilePaths, err := convertFilePaths(filesPaths)
+func getCommonPullRequest(branchBase string, input PullRequestInputBase) (PullRequest, error) {
+	convertedFilePaths, err := convertFilePaths(input.FilePaths())
 	if err != nil {
 		return PullRequest{}, fmt.Errorf("failed to make new pull request due to error with file paths: %v", err)
 	}
 	return PullRequest{
 		branch:     formatBranch(branchBase),
 		filesPaths: convertedFilePaths,
+		isBot:      input.IsBot(),
 	}, nil
 }
 

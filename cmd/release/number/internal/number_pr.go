@@ -7,28 +7,32 @@ import (
 
 type prRequest struct {
 	branch, environment, version string
+	filesChanged                 []string
+	bot                          bool
 }
 
-func OpenDevPR(release *Release, filesChanged []string) error {
-	return openPR(
-		&prRequest{
-			branch:      release.Branch(),
-			environment: Development.String(),
-			version:     release.Version(),
-		}, filesChanged)
+func OpenDevPR(release *Release, filesChanged []string, isBot bool) error {
+	request := newPRRequest(release, filesChanged, isBot, Development)
+	return openNumberPR(&request)
 }
 
-func OpenProdPR(release *Release, filesChanged []string) error {
-	return openPR(
-		&prRequest{
-			branch:      release.Branch(),
-			environment: Production.String(),
-			version:     release.Version(),
-		}, filesChanged)
+func OpenProdPR(release *Release, filesChanged []string, isBot bool) error {
+	request := newPRRequest(release, filesChanged, isBot, Production)
+	return openNumberPR(&request)
 }
 
-func openPR(prReq *prRequest, filesChanged []string) error {
-	pr, err := NewPullRequestForNumber(prReq, filesChanged)
+func newPRRequest(release *Release, files []string, isBot bool, environment ReleaseEnvironment) prRequest {
+	return prRequest{
+		branch:      release.Branch(),
+		environment: environment.String(),
+		version:     release.Version(),
+		filesChanged: files,
+		bot:         isBot,
+	}
+}
+
+func openNumberPR(prReq *prRequest) error {
+	pr, err := NewPullRequestForNumber(prReq)
 	if err != nil {
 		return err
 	}
@@ -45,4 +49,12 @@ func (prReq *prRequest) Environment() string {
 
 func (prReq *prRequest) Version() string {
 	return prReq.version
+}
+
+func (prReq *prRequest) FilePaths() []string {
+	return prReq.filesChanged
+}
+
+func (prReq *prRequest) IsBot() bool {
+	return prReq.bot
 }

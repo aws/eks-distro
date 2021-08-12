@@ -8,6 +8,7 @@ AWS_ACCOUNT_ID?=$(shell aws sts get-caller-identity --query Account --output tex
 AWS_REGION?=us-west-2
 IMAGE_REPO?=$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
 RELEASE_AWS_PROFILE?=default
+IS_BOT?=false
 
 ifdef MAKECMDGOALS
 TARGET=$(MAKECMDGOALS)
@@ -163,10 +164,12 @@ update-attribution-files: attribution-files
 update-release-number:
 	go vet ./cmd/release/number
 	go run ./cmd/release/number/main.go \
-		--branch=$(RELEASE_BRANCH)
+		--branch=$(RELEASE_BRANCH) \
+		--isBot=$(IS_BOT)
 
 .PHONY: release-docs
 release-docs:
 	go vet ./cmd/release/docs
 	go run ./cmd/release/docs/main.go \
 		--branch=$(RELEASE_BRANCH) \
+		--isBot=$(IS_BOT)
