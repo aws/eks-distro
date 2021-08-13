@@ -68,8 +68,12 @@ kops-prow-amd: postsubmit-build
 kops-prow: kops-prow-amd kops-prow-arm
 	@echo 'Done kops-prow'
 
+.PHONT: generate-ssh-key
+generate-ssh-key: 
+	ssh-keygen -b 2048 -t rsa -f ~/.ssh/id_rsa -q -N ""
+
 .PHONY: postsubmit-conformance
-postsubmit-conformance: postsubmit-build kops-prow 
+postsubmit-conformance: postsubmit-build generate-ssh-key kops-prow 
 	@echo 'Done postsubmit-conformance'
 
 .PHONY: tag
