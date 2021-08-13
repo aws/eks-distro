@@ -51,9 +51,26 @@ postsubmit-build: setup
 		--artifact-bucket=$(ARTIFACT_BUCKET) \
 		--dry-run=false
 
-.PHONY: postsubmit-conformance
-postsubmit-conformance: postsubmit-build
+.PHONY: kops-prow-arm
+kops-prow-arm: export NODE_INSTANCE_TYPE=t4g.medium
+kops-prow-arm: export NODE_ARCHITECTURE=arm64
+kops-prow-arm: postsubmit-build
+	$(eval MINOR_VERSION=$(subst 1-,,$(RELEASE_BRANCH)))
+	if [[ $(MINOR_VERSION) -ge 21 ]]; then \
+		development/kops/prow.sh; \
+	fi;
+
+.PHONY: kops-prow-amd
+kops-prow-amd: postsubmit-build
 	development/kops/prow.sh
+
+.PHONY: kops-prow
+kops-prow: kops-prow-amd kops-prow-arm
+	@echo 'Done kops-prow'
+
+.PHONY: postsubmit-conformance
+postsubmit-conformance: postsubmit-build kops-prow 
+	@echo 'Done postsubmit-conformance'
 
 .PHONY: tag
 tag:

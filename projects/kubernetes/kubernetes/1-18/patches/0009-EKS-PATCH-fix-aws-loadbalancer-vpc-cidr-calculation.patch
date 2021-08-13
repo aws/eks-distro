@@ -1,4 +1,4 @@
-From 2c8aaad4951c0b2375f6678ad3591202bdfd5d84 Mon Sep 17 00:00:00 2001
+From bee6e5b83e9da5029a358c7b1e487d66b305e849 Mon Sep 17 00:00:00 2001
 From: Yang Yang <yyyng@amazon.com>
 Date: Wed, 17 Jun 2020 06:38:49 -0700
 Subject: --EKS-PATCH-- fix aws loadbalancer vpc cidr calculation
@@ -11,10 +11,10 @@ Signed-off-by: Jackson West <jgw@amazon.com>
  1 file changed, 21 insertions(+)
 
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer.go
-index c4b78d112d8..59e05838bfa 100644
+index 4b7a07dcdcb..d648409dc03 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_loadbalancer.go
-@@ -709,6 +709,27 @@ func (c *Cloud) ensureTargetGroup(targetGroup *elbv2.TargetGroup, serviceName ty
+@@ -716,6 +716,27 @@ func (c *Cloud) ensureTargetGroup(targetGroup *elbv2.TargetGroup, serviceName ty
  	return targetGroup, nil
  }
  
@@ -43,5 +43,5 @@ index c4b78d112d8..59e05838bfa 100644
  // TIP: if either instances or clientCIDRs or portMappings are nil, then the securityGroup rules for lbName are cleared.
  func (c *Cloud) updateInstanceSecurityGroupsForNLB(lbName string, instances map[InstanceID]*ec2.Instance, subnetCIDRs []string, clientCIDRs []string, portMappings []nlbPortMapping) error {
 -- 
-2.29.2
+2.32.0
 

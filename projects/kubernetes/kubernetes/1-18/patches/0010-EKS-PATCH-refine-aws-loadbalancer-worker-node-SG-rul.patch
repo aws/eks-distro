@@ -1,4 +1,4 @@
-From 5c9f71a4f94adbfdf4f7d19905e0411cc3b429ed Mon Sep 17 00:00:00 2001
+From f8872a394ec2cdc7fd4bc7fb96ee960fe3336c9d Mon Sep 17 00:00:00 2001
 From: Yang Yang <yyyng@amazon.com>
 Date: Wed, 17 Jun 2020 06:38:31 -0700
 Subject: --EKS-PATCH-- refine aws loadbalancer worker node SG rule
@@ -13,10 +13,10 @@ Signed-off-by: Jackson West <jgw@amazon.com>
  2 files changed, 152 insertions(+), 16 deletions(-)
 
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-index 5c26009196e..58c87c1ef1e 100644
+index d094816bdbf..6a43cb0082c 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-@@ -3602,6 +3602,37 @@ func (c *Cloud) buildELBSecurityGroupList(serviceName types.NamespacedName, load
+@@ -3708,6 +3708,37 @@ func (c *Cloud) buildELBSecurityGroupList(serviceName types.NamespacedName, load
  	return sgList, setupSg, nil
  }
  
@@ -54,7 +54,7 @@ index 5c26009196e..58c87c1ef1e 100644
  // buildListener creates a new listener from the given port, adding an SSL certificate
  // if indicated by the appropriate annotations.
  func buildListener(port v1.ServicePort, annotations map[string]string, sslPorts *portSets) (*elb.Listener, error) {
-@@ -4041,7 +4072,7 @@ func (c *Cloud) EnsureLoadBalancer(ctx context.Context, clusterName string, apiS
+@@ -4149,7 +4180,7 @@ func (c *Cloud) EnsureLoadBalancer(ctx context.Context, clusterName string, apiS
  		}
  	}
  
@@ -63,7 +63,7 @@ index 5c26009196e..58c87c1ef1e 100644
  	if err != nil {
  		klog.Warningf("Error opening ingress rules for the load balancer to the instances: %q", err)
  		return nil, err
-@@ -4199,26 +4230,18 @@ func (c *Cloud) getTaggedSecurityGroups() (map[string]*ec2.SecurityGroup, error)
+@@ -4310,26 +4341,18 @@ func (c *Cloud) getTaggedSecurityGroups() (map[string]*ec2.SecurityGroup, error)
  
  // Open security group ingress rules on the instances so that the load balancer can talk to them
  // Will also remove any security groups ingress rules for the load balancer that are _not_ needed for allInstances
@@ -95,7 +95,7 @@ index 5c26009196e..58c87c1ef1e 100644
  
  	// Get the actual list of groups that allow ingress from the load-balancer
  	var actualGroups []*ec2.SecurityGroup
-@@ -4394,7 +4417,7 @@ func (c *Cloud) EnsureLoadBalancerDeleted(ctx context.Context, clusterName strin
+@@ -4508,7 +4531,7 @@ func (c *Cloud) EnsureLoadBalancerDeleted(ctx context.Context, clusterName strin
  
  	{
  		// De-authorize the load balancer security group from the instances security group
@@ -104,7 +104,7 @@ index 5c26009196e..58c87c1ef1e 100644
  		if err != nil {
  			klog.Errorf("Error deregistering load balancer from instance security groups: %q", err)
  			return err
-@@ -4559,7 +4582,7 @@ func (c *Cloud) UpdateLoadBalancer(ctx context.Context, clusterName string, serv
+@@ -4675,7 +4698,7 @@ func (c *Cloud) UpdateLoadBalancer(ctx context.Context, clusterName string, serv
  		return nil
  	}
  
@@ -114,7 +114,7 @@ index 5c26009196e..58c87c1ef1e 100644
  		return err
  	}
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
-index 4814bd70eab..8852ae954ed 100644
+index 70b455d2335..681aecd6dc9 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
 @@ -2600,3 +2600,62 @@ func TestConstructStsEndpoint(t *testing.T) {
@@ -181,5 +181,5 @@ index 4814bd70eab..8852ae954ed 100644
 +	}
 +}
 -- 
-2.29.2
+2.32.0
 

@@ -1,4 +1,4 @@
-From 167980945f2c0ab1068013ca8ebbceeeacc2a0e6 Mon Sep 17 00:00:00 2001
+From 1070f703c593284944bac070846aa5e88e48dc52 Mon Sep 17 00:00:00 2001
 From: Aleksandr Melnik <melnikal@amazon.com>
 Date: Wed, 8 Jan 2020 17:23:06 -0800
 Subject: --EKS-PATCH-- Lookup sts endpoint from custom map
@@ -300,7 +300,7 @@ index 00000000000..1c496742903
 +		arn.Resource
 +}
 diff --git a/vendor/modules.txt b/vendor/modules.txt
-index 3479f760b98..7782f6def0b 100644
+index a08fc47173e..aeb521b3b2c 100644
 --- a/vendor/modules.txt
 +++ b/vendor/modules.txt
 @@ -130,6 +130,7 @@ github.com/asaskevich/govalidator
@@ -312,5 +312,5 @@ index 3479f760b98..7782f6def0b 100644
  github.com/aws/aws-sdk-go/aws/awsutil
  github.com/aws/aws-sdk-go/aws/client
 -- 
-2.31.1
+2.32.0
 

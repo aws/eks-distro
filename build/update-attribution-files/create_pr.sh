@@ -37,6 +37,7 @@ PR_BRANCH="attribution-files-update"
 cd ${SCRIPT_ROOT}/../../
 git config --global push.default current
 git config user.name "EKS Distro PR Bot"
+git config user.email "aws-model-rocket-bots+eksdistroprbot@amazon.com"
 git remote add origin git@github.com:${ORIGIN_ORG}/eks-distro.git
 git remote add upstream https://github.com/${UPSTREAM_ORG}/eks-distro.git
 git checkout -b $PR_BRANCH

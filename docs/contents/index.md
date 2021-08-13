@@ -105,7 +105,7 @@ commands:
 
 ```bash
 RELEASE_BRANCH=1-21
-RELEASE=2
+RELEASE=3
 kubectl apply -f https://distro.eks.amazonaws.com/crds/releases.distro.eks.amazonaws.com-v1alpha1.yaml
 kubectl apply -f https://distro.eks.amazonaws.com/kubernetes-${RELEASE_BRANCH}/kubernetes-${RELEASE_BRANCH}-eks-${RELEASE}.yaml
 kubectl get release kubernetes-${RELEASE_BRANCH}-eks-${RELEASE}
@@ -120,16 +120,19 @@ repository for the [EKS Optimized AMI](https://github.com/awslabs/amazon-eks-ami
 if you are interested in the AL2 container runtime kernel version.
 
 #### EKS-D 1.21 Version Dependencies
+* [v1-21-eks-3](releases/1-21/3/index.md) (August 6, 2021)
 * [v1-21-eks-2](releases/1-21/2/index.md) (July 27, 2021)
 * [v1-21-eks-1](releases/1-21/1/index.md) (July 19, 2021)
 
 #### EKS-D 1.20 Version Dependencies
+* [v1-20-eks-5](releases/1-20/5/index.md) (August 6, 2021)
 * [v1-20-eks-4](releases/1-20/4/index.md) (July 27, 2021)
 * [v1-20-eks-3](releases/1-20/3/index.md) (July 13, 2021)
 * [v1-20-eks-2](releases/1-20/2/index.md) (June 30, 2021)
 * [v1-20-eks-1](releases/1-20/1/index.md) (May 18, 2021)
 
 #### EKS-D 1.19 Version Dependencies
+* [v1-19-eks-8](releases/1-19/8/index.md) (August 8, 2021)
 * [v1-19-eks-7](releases/1-19/7/index.md) (July 27, 2021)
 * [v1-19-eks-6](releases/1-19/6/index.md) (July 13, 2021)
 * [v1-19-eks-5](releases/1-19/5/index.md) (June 30, 2021)
@@ -139,6 +142,7 @@ if you are interested in the AL2 container runtime kernel version.
 * [v1-19-eks-1](releases/1-19/1/index.md) (March 4, 2021)
 
 #### EKS-D 1.18 Version Dependencies
+* [v1-18-eks-9](releases/1-18/9/index.md) (August 6, 2021)
 * [v1-18-eks-8](releases/1-18/8/index.md) (July 27, 2021)
 * [v1-18-eks-7](releases/1-18/7/index.md) (July 13, 2021)
 * [v1-18-eks-6](releases/1-18/6/index.md) (June 30, 2021)
