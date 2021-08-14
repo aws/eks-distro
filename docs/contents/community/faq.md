@@ -3,7 +3,7 @@
 ## A Kubernetes distribution?
 
 !!! question "Question"
-    What is a Kubernetes distribution and why do you call EKS Distro?
+    Why do you call EKS Distro a Kubernetes distribution?
 
 !!! quote "Answer"
     EKS Distro is a distro of the same open source Kubernetes and dependencies
