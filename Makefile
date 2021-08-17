@@ -69,8 +69,12 @@ kops-prow-amd: postsubmit-build
 kops-prow: kops-prow-amd kops-prow-arm
 	@echo 'Done kops-prow'
 
+.PHONT: generate-ssh-key
+generate-ssh-key: 
+	ssh-keygen -b 2048 -t rsa -f ~/.ssh/id_rsa -q -N ""
+
 .PHONY: postsubmit-conformance
-postsubmit-conformance: postsubmit-build kops-prow 
+postsubmit-conformance: postsubmit-build generate-ssh-key kops-prow 
 	@echo 'Done postsubmit-conformance'
 
 .PHONY: tag
@@ -173,3 +177,17 @@ release-docs:
 	go run ./cmd/release/docs/main.go \
 		--branch=$(RELEASE_BRANCH) \
 		--isBot=$(IS_BOT)
+
+.PHONY: index-md-from-existing-release-manifest
+index-md-from-existing-release-manifest:
+	go vet ./cmd/release/docs
+	go run ./cmd/release/docs/main.go \
+		--branch=$(RELEASE_BRANCH) \
+		--includeIndex=true \
+		--includeIndexComponentTable=true \
+		--usePrevReleaseManifestForComponentTable=false \
+		--includeChangelog=false \
+		--includeAnnouncement=false \
+		--includeREADME=false \
+		--includeDocsIndex=false \
+		--force=true
