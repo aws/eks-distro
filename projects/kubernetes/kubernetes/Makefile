@@ -5,7 +5,7 @@ RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/$(RELEASE_ENVIR
 ARTIFACT_BUCKET?=my-s3-bucket
 GIT_TAG?=$(shell cat ./$(RELEASE_BRANCH)/GIT_TAG)
 GOLANG_VERSION?=$(shell cat ./$(RELEASE_BRANCH)/GOLANG_VERSION)
-PAUSE_TAG?=$(shell cat ./$(RELEASE_BRANCH)/PAUSE_TAG)
+PAUSE_TAG?=$(shell cat $(wildcard ./$(RELEASE_BRANCH)/PAUSE_*TAG))
 
 REPO=kubernetes
 COMPONENT=kubernetes/$(REPO)
