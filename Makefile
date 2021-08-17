@@ -174,3 +174,17 @@ release-docs:
 	go vet ./cmd/release/docs
 	go run ./cmd/release/docs/main.go \
 		--branch=$(RELEASE_BRANCH) \
+
+.PHONY: index-md-from-existing-release-manifest
+index-md-from-existing-release-manifest:
+	go vet ./cmd/release/docs
+	go run ./cmd/release/docs/main.go \
+		--branch=$(RELEASE_BRANCH) \
+		--includeIndex=true \
+		--includeIndexComponentTable=true \
+		--usePrevReleaseManifestForComponentTable=false \
+		--includeChangelog=false \
+		--includeAnnouncement=false \
+		--includeREADME=false \
+		--includeDocsIndex=false \
+		--force=true
