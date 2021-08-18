@@ -64,15 +64,13 @@ if "$IS_BOT"; then
   PR_TITLE="[BOT RELEASE] ${PR_TITLE}"
 fi
 
-labels="do-not-merge/hold release"
-
 pr_arguments=(
   --title "${PR_TITLE}"
   --body "${PR_BODY}"
   --head "${ORIGIN_ORG}:${PR_BRANCH}"
   --repo "${PR_ORG_REPO}"
 )
-
+labels="do-not-merge/hold release"
 for label in $labels; do
      pr_arguments+=(--label "${label}")
 done
