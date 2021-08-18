@@ -34,15 +34,15 @@ ORIGINAL_BRANCH=$(git branch --show-current)
 function cleanup {
   echo "Encountered error! Cleaning up..."
   if "$IS_BOT"; then
+    git checkout "${ORIGINAL_BRANCH}"
+    git push -d origin "${PR_BRANCH}"
+    echo "Cleaned up minimally for bot submitter"
+  else
     git checkout HEAD^ -- "${PR_FILE_PATHS}"
     git checkout "${ORIGINAL_BRANCH}"
     git push -d origin "${PR_BRANCH}"
     git branch -D "${PR_BRANCH}"
     echo "Cleaned up as much as possible for non-bot submitter"
-  else
-    git checkout "${ORIGINAL_BRANCH}"
-    git push -d origin "${PR_BRANCH}"
-    echo "Cleaned up minimally for bot submitter"
   fi
 }
 
