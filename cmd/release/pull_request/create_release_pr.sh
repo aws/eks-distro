@@ -70,6 +70,11 @@ pr_arguments=(
   --head "${ORIGIN_ORG}:${PR_BRANCH}"
   --repo "${PR_ORG_REPO}"
 )
+labels="do-not-merge/hold release"
+for label in $labels; do
+     pr_arguments+=(--label "${label}")
+done
+
 if ! "$IS_BOT"; then
     pr_arguments+=(--web)
 fi
