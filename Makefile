@@ -69,12 +69,13 @@ kops-prow-amd: postsubmit-build
 kops-prow: kops-prow-amd kops-prow-arm
 	@echo 'Done kops-prow'
 
-.PHONT: generate-ssh-key
-generate-ssh-key: 
+.PHONT: kops-prereqs
+kops-prereqs: 
 	ssh-keygen -b 2048 -t rsa -f ~/.ssh/id_rsa -q -N ""
+	development/kops/install_requirements.sh
 
 .PHONY: postsubmit-conformance
-postsubmit-conformance: postsubmit-build generate-ssh-key kops-prow 
+postsubmit-conformance: postsubmit-build kops-prereqs kops-prow 
 	@echo 'Done postsubmit-conformance'
 
 .PHONY: tag
