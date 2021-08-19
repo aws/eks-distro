@@ -20,7 +20,6 @@
 
 set -eo pipefail
 BASEDIR=$(dirname "$0")
-echo "This script will create a cluster"
 cd "$BASEDIR"
 source ./set_environment.sh
 $PREFLIGHT_CHECK_PASSED || exit 1
@@ -29,14 +28,17 @@ APISERVER="api.$KOPS_CLUSTER_NAME"
 SUCCESS_COUNT=0
 while [ $SUCCESS_COUNT -lt 8 ]
 do
-  ip=$(dig +short $APISERVER)
-  if [ -z "$ip" ]; then
+  API_SERVER_IP=$(dig +short $APISERVER)
+  if [ -z "$API_SERVER_IP" ]; then
     echo "$APISERVER did not resolve!"
     SUCCESS_COUNT=0
   else
-    echo "$APISERVER resolves to $ip"
+    echo "$APISERVER resolves to $API_SERVER_IP"
     SUCCESS_COUNT=$((SUCCESS_COUNT+1))
   fi
   
   sleep 5s
 done
+
+kubectl --context ${KOPS_CLUSTER_NAME} config set-cluster ${KOPS_CLUSTER_NAME} \
+    --insecure-skip-tls-verify=true --server=https://${API_SERVER_IP}
