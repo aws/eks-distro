@@ -30,6 +30,8 @@ CONFORMANCE_IMAGE=k8s.gcr.io/conformance:${KUBERNETES_VERSION}
 wget -qO- ${SONOBUOY} |tar -xz sonobuoy
 chmod 755 sonobuoy
 echo "Testing cluster ${KOPS_CLUSTER_NAME}"
+
+COUNT=0
 while ! ./sonobuoy --context ${KOPS_CLUSTER_NAME} run --mode=certified-conformance --wait --kube-conformance-image ${CONFORMANCE_IMAGE}
 do
   ./sonobuoy --context ${KOPS_CLUSTER_NAME} delete --all --wait||true
@@ -43,15 +45,38 @@ do
   echo 'Waiting for the cluster to be ready...'
 done
 
-results=$(./sonobuoy --context ${KOPS_CLUSTER_NAME} retrieve)
-mv $results "./${KOPS_CLUSTER_NAME}/$results"
-results="./${KOPS_CLUSTER_NAME}/$results"
-mkdir ./${KOPS_CLUSTER_NAME}/results
-tar xzf $results -C ./${KOPS_CLUSTER_NAME}/results
-if [ -w /logs/artifacts ]
-then
-  mkdir -p /logs/artifacts/$NODE_ARCHITECTURE
-  cp ./${KOPS_CLUSTER_NAME}/results/plugins/e2e/results/global/* /logs/artifacts/$NODE_ARCHITECTURE
-fi
-./sonobuoy --context ${KOPS_CLUSTER_NAME} e2e ${results}
-./sonobuoy --context ${KOPS_CLUSTER_NAME} e2e ${results} | grep 'failed tests: 0' >/dev/null
+results=''
+function save_results() {
+  local run=$1
+  
+  results=$(./sonobuoy --context ${KOPS_CLUSTER_NAME} retrieve)
+  mv $results "./${KOPS_CLUSTER_NAME}/$results"
+  results="./${KOPS_CLUSTER_NAME}/$results"
+  mkdir -p ./${KOPS_CLUSTER_NAME}/results
+  tar xzf $results -C ./${KOPS_CLUSTER_NAME}/results
+  if [ -w /logs/artifacts ]
+  then
+    mkdir -p /logs/artifacts/$NODE_ARCHITECTURE-$run
+    cp ./${KOPS_CLUSTER_NAME}/results/plugins/e2e/results/global/* /logs/artifacts/$NODE_ARCHITECTURE-$run
+  fi
+
+  ./sonobuoy --context ${KOPS_CLUSTER_NAME} e2e ${results}
+  if ./sonobuoy --context ${KOPS_CLUSTER_NAME} e2e ${results} | grep 'failed tests: 0'; then
+    return 0
+  else
+    return 1
+  fi
+}
+
+COUNT=1
+while save_results $COUNT || failure=$?; do
+  # retry failed conformance tests up to 3 times
+  echo "Rerunning failed conformace tests"
+  COUNT=$(expr $COUNT + 1)
+  if [ $COUNT -gt 4 ]; then
+    echo "Conformance test still failing after reruns"
+    exit 1
+  fi
+  ./sonobuoy --context ${KOPS_CLUSTER_NAME} delete --all --wait
+  ./sonobuoy --context ${KOPS_CLUSTER_NAME} e2e ${results} --rerun-failed --wait --kube-conformance-image ${CONFORMANCE_IMAGE}  
+done

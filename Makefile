@@ -72,7 +72,7 @@ kops-prow: kops-prow-amd kops-prow-arm
 .PHONT: kops-prereqs
 kops-prereqs: 
 	ssh-keygen -b 2048 -t rsa -f ~/.ssh/id_rsa -q -N ""
-	development/kops/install_requirements.sh
+	cd development/kops && install_requirements.sh
 
 .PHONY: postsubmit-conformance
 postsubmit-conformance: postsubmit-build kops-prereqs kops-prow 
