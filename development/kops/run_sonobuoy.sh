@@ -69,7 +69,7 @@ function save_results() {
 }
 
 COUNT=1
-while save_results $COUNT || failure=$?; do
+while ! save_results $COUNT; do
   # retry failed conformance tests up to 3 times
   echo "Rerunning failed conformace tests"
   COUNT=$(expr $COUNT + 1)
