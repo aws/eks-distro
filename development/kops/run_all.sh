@@ -37,7 +37,7 @@ $PREFLIGHT_CHECK_PASSED || exit 1
 ./install_requirements.sh
 if [[ "${KOPS_STATE_STORE}" != "" ]]; then
   for cluster_name in $(aws s3 ls ${KOPS_STATE_STORE}); do
-    if [[ "${cluster_name}" == "${RELEASE_BRANCH}-"* ]]; then
+    if [[ "${cluster_name}" == "${RELEASE_BRANCH}-${NODE_ARCHITECTURE}-"* ]]; then
       # Only delete if older than a day, get timestemp from config file in s3
       cluster_fqdn="$(echo ${cluster_name}|tr -d "/")"
       config=$(aws s3 ls ${KOPS_STATE_STORE}/${cluster_fqdn}/config)
