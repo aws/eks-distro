@@ -2,15 +2,15 @@
 
 The best way to try out EKS Distro (EKS-D) is to use one of the
 [Partners](../users/install/partners.md) procedures to install and start an EKS-D cluster.
-You may also find a community supported installation method useful. Community
-supported installation methods are found on our
-[community supported installation page](../users/install/index.md).
+You may also find a community-supported installation method useful. Community-supported 
+installation methods are found on our
+[community-supported installation page](../users/install/index.md).
 If you want to build EKS-D from source code, follow the instructions
 in [Build Prerequisites](build-prerequisites.md) and [Build EKS-D](build.md).
 
 ## Exploring EKS Distro
 
-Explore the EKS-D containers and source code directly, if you want to better
+Explore the EKS-D containers and source code directly if you want to better
 understand the components that make up EKS-D.
 
 You can pull the images that make up the EKS Distro from the Public ECR Gallery.

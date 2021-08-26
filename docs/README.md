@@ -30,7 +30,7 @@ Optionally, use a global `.gitignore` to hide the `venv` directory.
 
 🟧 Test locally, including both the content and the navigation structure.
 
-The docs are just Markdown files and in order to see the rendered preview locally (before PRing the repo), do:
+The docs are just Markdown files, and in order to see the rendered preview locally (before PRing the repo), do:
 
 ```
  $ mkdocs serve

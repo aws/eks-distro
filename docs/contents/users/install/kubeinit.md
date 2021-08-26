@@ -11,8 +11,8 @@ The following sections will describe a 3 controllers,
 
 Libvirt deployments are based in multiple guests VMs
 deployed on a common hypervisor host.
-There are multiple use cases that can fit this scenario
-for instance continuous integration deployments or
+There are multiple use cases that can fit this scenario,
+such as continuous integration deployments or
 development environments.
 
 ### Components
@@ -42,7 +42,7 @@ The deployment procedure is the same as it is for the other
 Kubernetes distributions that can be deployed with KubeInit.
 
 Please follow the [usage documentation](http://docs.kubeinit.com/usage.html)
-to understand the system's requirements and the required host supported
+to understand the system's requirements and the required host-supported
 Linux distributions.
 
 ```bash
@@ -171,5 +171,5 @@ Containers:
     Image:         eks-service-01.clustername0.kubeinit.local:5000/etcd:v3.4.14-eks-1-18-1
 ```
 
-As long as other container images are published for EKS-D they will be added to the
+As long as other container images are published for EKS-D, they will be added to the
 deployment automation from KubeInit.

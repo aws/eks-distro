@@ -67,7 +67,7 @@ The default target for make files builds with
 [buildkit](https://github.com/moby/buildkit).
 You can install the latest buildkit client from the [GitHub releases
 page](https://github.com/moby/buildkit/releases). To run a buildkit server
-locally, you can use [docker-compose](https://docs.docker.com/compose/)
+locally, you can use [docker-compose](https://docs.docker.com/compose/).
 
 ```bash
 docker-compose -f development/buildkit-compose.yaml up -d
@@ -93,6 +93,6 @@ scutil --dns
 
 ### Build with Docker
 
-If you don't want to use `buildkit` you will need
+If you don't want to use `buildkit`, you will need
 to install [Docker](https://docs.docker.com/get-docker/) to build containers.
 Use the `docker` target for make files.

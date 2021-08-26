@@ -1,6 +1,6 @@
 # Overview of Partners
 
-A number of partners are providing install methods as well a integrations
+A number of partners are providing install methods as well as integrations
 with EKS Distro.
 
 ## Alcide
@@ -29,22 +29,22 @@ applications.
 
 Canonical allows you to take Amazon EKS Distro and combine it with the MicroK8s
 experience to get an opinionated, self-healing, highly available EKS-compatible
-Kubernetes for use anywhere you can get Ubuntu. Just snap install EKS and you 
+Kubernetes for use anywhere you can get Ubuntu. Just snap install EKS, and you 
 are up and running.
 
 [Learn more](https://snapcraft.io/eks)
 
 ## Datadog
 
-Datadog provides visibility into the health of VMs, containers and serverless 
-environments across on-premise, hybrid and cloud compute infrastructure.
+Datadog provides visibility into the health of VMs, containers, and serverless 
+environments across on-premise, hybrid, and cloud compute infrastructure.
 
 [Learn more](https://www.datadoghq.com/blog/amazon-eks-distro-monitoring/)
 
 ## Epsagon
 
-Epsagon enables you to monitor Amazon EKS Distro workloads including control
-plane metrics. Customers can leverage Epsagon to instantly monitor, troubleshoot
+Epsagon enables you to monitor Amazon EKS Distro workloads, including control
+plane metrics. Customers can leverage Epsagon to instantly monitor, troubleshoot,
 and trace issues in their EKS-D or EKS workloads seamlessly.
 
 [Learn more](https://epsagon.com/announcements/amazon-eks-distro/)
@@ -93,7 +93,7 @@ bastion_user                       = "ec2-user"
 Next, create the infrastructure using Terraform using `terraform apply`.
 
 Now create the KubeOne Config manifest. Make sure to populate the `assetConfiguration`
-part with the real images.  Here's an example:
+part with the real images. Here's an example:
 
 ```yaml
 apiVersion: kubeone.io/v1beta1
@@ -137,7 +137,7 @@ EKS clusters and cluster services.
 Kubestack's auto-updating local development environment uses EKS-D to mirror 
 your EKS clusters on `localhost`.
 
-```
+```bash
 # Use the Kubestack CLI to scaffold a new repository using the EKS starter:
 kbst repo init eks
 
@@ -147,14 +147,14 @@ kbst local apply
 
 ### Learn more about Kubestack
 
-For more detailed instructions, including how to install the CLI follow the
+For more detailed instructions, including how to install the CLI, follow the
 [Kubestack tutorial](https://www.kubestack.com/framework/documentation/tutorial-get-started)
 or check out the [demo video](https://www.youtube.com/watch?v=TcVwtfFww4w) that
 shows the Kubestack workflow from local development powered by EKS-D to production
 on EKS using GitLab CI/CD.
 
 [Learn
-more](https://dev.to/kubestack/localhost-eks-development-environments-with-eks-d-and-kubestack-2le6)
+more](https://dev.to/kubestack/localhost-eks-development-environments-with-eks-d-and-kubestack-4p6)
 
 ## Nirmata
 
@@ -217,17 +217,17 @@ validate compliance, and monitor and troubleshoot containers on EKS-D.
 Tetrate Service Bridge from Tetrate provides enterprise-grade Istio and Envoy 
 Proxy, supports multi-cluster application connectivity and multi-tenancy.
 
-[Learn more](https://www.tetrate.io/blog/tetrate-expands-aws-partnershi-to-bring-enterprise-grade-istio-for-eks-and-eks-distro/)
+[Learn more](https://www.tetrate.io/blog/tetrate-expands-aws-partnership-to-bring-enterprise-grade-istio-for-eks-and-eks-distro/)
 
 ## Tigera
 
-Tigera is the home of the leading solutions for Kubernetes networking, security
+Tigera is the home of the leading solutions for Kubernetes networking, security,
 and observability in hybrid and multi-cloud environments: [Calico](https://docs.projectcalico.org/about/about-calico)
 and [Calico Enterprise](https://dev-tigera-2019.pantheonsite.io/tigera-products/calico-enterprise/).
 Many of the world’s largest enterprises rely on Tigera to secure both their 
 EKS and self-managed Kubernetes clusters running on AWS.
 
-[Learn more](https://www.tigera.io/blog/tigera-amazon-eks-distro)
+[Learn more](https://www.tigera.io/blog/tigera-to-support-amazon-eks-distro/)
 
 
 ## Upbound
@@ -240,6 +240,6 @@ manage EKS-D via the Cluster API (CAPI).
 ## Weaveworks
 
 Weave Kubernetes Platform brings GitOps support to [Amazon EKS Distro](https://weave.works/blog/on-prem-kubernetes-gitops-eks-distro),
-providing support for installing, creating and managing EKS-D clusters on-premise. 
+providing support for installing, creating, and managing EKS-D clusters on-premise. 
 
 [Learn more](https://weave.works/blog/multicluster-gitops-eks-d-wkp)
