@@ -1,8 +1,8 @@
 # EKS Distro kOps Cluster
 
 Follow these instructions to create an EKS-D Kubernetes cluster using
-kOps.  Refer to the [kops documentation](https://kops.sigs.k8s.io/getting_started/aws/)
-for full instructions.  Most of these commands require that you have
+kOps. Refer to the [kops documentation](https://kops.sigs.k8s.io/getting_started/aws/)
+for full instructions. Most of these commands require that you have
 `KOPS_STATE_STORE` and `KOPS_CLUSTER_NAME` set and exported.
 
 ## kOps Cluster Create
@@ -42,7 +42,7 @@ EKS-D cluster:
 
 ### 4. Wait for the Cluster
 It may take a while for the cluster. You can use the `cluster_wait.sh`
-script to wait for the cluster to be ready. Once the cluster is ready this
+script to wait for the cluster to be ready. Once the cluster is ready, this
 script will add the AWS IAM authenticator.
 ```bash
 ./cluster_wait.sh

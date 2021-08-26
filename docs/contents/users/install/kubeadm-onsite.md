@@ -1,14 +1,16 @@
 # Starting EKS-D with kubeadm (VM/bare metal)
 
-Installing and running an Elastic Kubernetes Service Distro (EKS-D) on
+Installing and running Elastic Kubernetes Service Distro (EKS-D) on
 a VM or bare metal system requires setting up a few services and running
 kubeadm, as described below. 
 
 ---
 **WARNING**:
 This procedure is provided for demonstration purposes and is not a supported product.
-The EKS version is EKS v1.19.8-eks-1-19-4.  A separate product named [EKS-Anywhere](https://aws.amazon.com/eks/eks-anywhere/) 
-launches later in 2021 to let you automate different types of EKS installations.
+These directions use the EKS version v1.19.8-eks-1-19-4, but you should adjust them
+accordingly for the version you with to use. A separate product named 
+[EKS-Anywhere](https://aws.amazon.com/eks/eks-anywhere/) launches later in 2021 
+to let you automate different types of EKS installations.
 ---
 
 ## Prerequisites
@@ -80,7 +82,7 @@ This procedure sets up a single control plane node by installing a few services 
 1. As noted in [Initializing your control-plane node](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#initializing-your-control-plane-node),
 kubeadm uses the network interface associated with the default gateway to set the advertise address for the API server.
 If that default gateway is to an IPv6 network, the address shown with the *kubeadm join* command described later may point to the wrong address.
-To get around this, you can either can disable IPv6 networking as described in
+To get around this, you can either disable IPv6 networking as described in
 [How to disable IPv6](https://www.thegeekdiary.com/centos-rhel-7-how-to-disable-ipv6/)
 or use a command such as *netstat -tlpn* to see which addresses *kube-apiserver* is listening on.
 
@@ -131,7 +133,7 @@ See [Working with security groups](https://docs.aws.amazon.com/vpc/latest/usergu
         
         Your Kubernetes control-plane has initialized successfully!
 
-    Your Kubernetes cluster should now be up and running. The kubeadm output shows the exact commands to use to add nodes to the cluster. If something goes wrong, correct the problem and run *kubeadm reset* to prepare you system to run *kubeadm init* again:
+    Your Kubernetes cluster should now be up and running. The kubeadm output shows the exact commands to use to add nodes to the cluster. If something goes wrong, correct the problem and run *kubeadm reset* to prepare your system to run *kubeadm init* again:
 
 1. Follow the instructions for configuring the client. To configure the client locally, type:
 
@@ -163,7 +165,7 @@ See [Working with security groups](https://docs.aws.amazon.com/vpc/latest/usergu
 
 If you want to use the *kubectl* client from a system other than your control plane node, such as your personal laptop, follow these instructions:
 
-1. Log into your laptop and copy credentials and the *kubectl* command and there. On a Linux system, you would do the following:
+1. Log into your laptop and copy your credentials and the *kubectl* command and there. On a Linux system, you would do the following:
 
         cd /usr/bin/
         sudo wget https://distro.eks.amazonaws.com/kubernetes-1-19/releases/4/artifacts/kubernetes/v1.19.8/bin/linux/amd64/kubectl
@@ -177,9 +179,9 @@ If you want to use the *kubectl* client from a system other than your control pl
 
 ## Set up worker nodes to the cluster
 
-Join any number of worker nodes to the control plane, using the IP address, token and certificate hash output by the *kubeadm init* run on the control plane:
+Join any number of worker nodes to the control plane, using the IP address, token, and certificate hash output by the *kubeadm init* run on the control plane:
 
-1. For each worker node, configure a compatible Linux system, as described in the Prerequisites section.
+1. For each worker node, configure a compatible Linux system, as described in the Prerequisites section above.
 
 1. Pull and retag the *pause* container (copy and paste as one line):
 

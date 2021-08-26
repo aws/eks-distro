@@ -32,9 +32,8 @@ make docker-push
 
 The second step of the build is to build the rest of the containers out
 of the [EKS Distro Repository](https://github.com/aws/eks-distro).
-In the project root directory is a `Makefile` which assumes
+The project root directory contains a `Makefile`, which assumes
 you are using ECR and have created ECR repositories. Run the script with:
-
 
 ```shell
 make release

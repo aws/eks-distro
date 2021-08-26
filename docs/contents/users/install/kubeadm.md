@@ -8,7 +8,7 @@ Start with the following configuration example and modify it to your
 needs. You will need to provide the values for variables surrounded
 by `{{` and `}}`
 
-```
+```yaml
 apiVersion: kubeadm.k8s.io/v1beta2
 bootstrapTokens:
 - groups:
