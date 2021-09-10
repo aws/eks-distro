@@ -22,9 +22,9 @@ $PREFLIGHT_CHECK_PASSED || exit 1
 echo "Download sonobuoy"
 if [ "$(uname)" == "Darwin" ]
 then
-  SONOBUOY=https://github.com/vmware-tanzu/sonobuoy/releases/download/v0.50.0/sonobuoy_0.50.0_darwin_amd64.tar.gz
+  SONOBUOY=https://github.com/vmware-tanzu/sonobuoy/releases/download/v0.53.2/sonobuoy_0.53.2_darwin_amd64.tar.gz
 else
-  SONOBUOY=https://github.com/vmware-tanzu/sonobuoy/releases/download/v0.50.0/sonobuoy_0.50.0_linux_386.tar.gz
+  SONOBUOY=https://github.com/vmware-tanzu/sonobuoy/releases/download/v0.53.2/sonobuoy_0.53.2_linux_amd64.tar.gz
 fi
 CONFORMANCE_IMAGE=k8s.gcr.io/conformance:${KUBERNETES_VERSION}
 wget -qO- ${SONOBUOY} |tar -xz sonobuoy
