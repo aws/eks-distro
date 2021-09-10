@@ -26,17 +26,11 @@ Full documentation for releases can be found on [https://distro.eks.amazonaws.co
 To receive notifications about new EKS-D releases, subscribe to the EKS-D updates SNS topic: 
 `arn:aws:sns:us-east-1:379412251201:eks-distro-updates`
 
-### Kubernetes 1-18
+### Kubernetes 1-21
 
 | Release | Manifest |
 | --- | --- |
-| 10 | [kubernetes-1-18-eks-10](https://distro.eks.amazonaws.com/kubernetes-1-18/kubernetes-1-18-eks-10.yaml) |
-
-### Kubernetes 1-19
-
-| Release | Manifest |
-| --- | --- |
-| 9 | [kubernetes-1-19-eks-9](https://distro.eks.amazonaws.com/kubernetes-1-19/kubernetes-1-19-eks-9.yaml) |
+| 4 | [kubernetes-1-21-eks-4](https://distro.eks.amazonaws.com/kubernetes-1-21/kubernetes-1-21-eks-4.yaml) |
 
 ### Kubernetes 1-20
 
@@ -44,11 +38,17 @@ To receive notifications about new EKS-D releases, subscribe to the EKS-D update
 | --- | --- |
 | 6 | [kubernetes-1-20-eks-6](https://distro.eks.amazonaws.com/kubernetes-1-20/kubernetes-1-20-eks-6.yaml) |
 
-### Kubernetes 1-21
+### Kubernetes 1-19
 
 | Release | Manifest |
 | --- | --- |
-| 4 | [kubernetes-1-21-eks-4](https://distro.eks.amazonaws.com/kubernetes-1-21/kubernetes-1-21-eks-4.yaml) |
+| 9 | [kubernetes-1-19-eks-9](https://distro.eks.amazonaws.com/kubernetes-1-19/kubernetes-1-19-eks-9.yaml) |
+
+### Kubernetes 1-18
+
+| Release | Manifest |
+| --- | --- |
+| 10 | [kubernetes-1-18-eks-10](https://distro.eks.amazonaws.com/kubernetes-1-18/kubernetes-1-18-eks-10.yaml) |
 
 ## Development
 
