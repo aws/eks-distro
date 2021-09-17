@@ -36,11 +36,11 @@ buildctl \
 if [ $? == 0 ]; then
     echo $IMAGE
 else
-    # If the image does not exist in the registry, default to al2
-    # This can happen when adding a new version of kubernetes
-    # where the release project hasnt be built in postsubmit yet
-    # but the kubernetes presubmit is trying to build an image
-    # based on it.  Using al2 should be fine since this is 
-    # a temporary situation
+    # If the image does not exist in the registry, default to AL2
+    # This can happen when adding a new version of Kubernetes
+    # where the release project hasn't been built in postsubmit yet,
+    # but the Kubernetes presubmit is trying to build an image
+    # based on it.  Using AL2 should be fine since this is
+    # a temporary situation.
     echo "public.ecr.aws/amazonlinux/amazonlinux:2"
 fi

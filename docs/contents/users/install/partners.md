@@ -59,7 +59,7 @@ With Instana customers can automatically monitor and visualize EKS-D and EKS wor
 ## Kubermatic
 
 Amazon EKS Distro can be installed using KubeOne by Kubermatic. KubeOne is an
-infrastructure-agonistic and open source Kubernetes cluster lifecycle management
+infrastructure-agnostic and open source Kubernetes cluster lifecycle management
 tool that automates the deployment and Day 2 operations of single Kubernetes
 clusters. Thanks to KubeOne’s Terraform integration and ease of use, 
 infrastructure responsibles can install EKS Distro on AWS and Amazon Linux 2 

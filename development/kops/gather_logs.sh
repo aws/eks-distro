@@ -39,7 +39,7 @@ function log_dump_custom_get_instances() {
         --filters "Name=tag:KubernetesCluster,Values=${KOPS_CLUSTER_NAME}" "$filter" \
         --query "Reservations[*].Instances[*].PublicDnsName" --output text)
 
-    # contaner logs are symlinks and need a slightly differnet chmod
+    # Container logs are symlinks and need a slightly different chmod
     # log-dump-ssh comes the upstream log-dump.sh script
     for node in $nodes ; do log-dump-ssh $node "sudo chmod a+r /var/log/containers/*" || true ; done
 

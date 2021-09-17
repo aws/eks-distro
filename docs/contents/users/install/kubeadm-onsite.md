@@ -183,7 +183,7 @@ Join any number of worker nodes to the control plane, using the IP address, toke
 
 1. For each worker node, configure a compatible Linux system, as described in the Prerequisites section above.
 
-1. Pull and retag the *pause* container (copy and paste as one line):
+1. Pull and re-tag the *pause* container (copy and paste as one line):
 
         sudo docker pull public.ecr.aws/eks-distro/kubernetes/pause:v1.19.8-eks-1-19-4;\
         sudo docker tag public.ecr.aws/eks-distro/kubernetes/pause:v1.19.8-eks-1-19-4 public.ecr.aws/eks-distro/kubernetes/pause:3.2;\
