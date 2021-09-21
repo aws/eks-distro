@@ -1,0 +1,28 @@
+From 35729499f07125603da10cebb63b615fc5c3a179 Mon Sep 17 00:00:00 2001
+From: Mauricio Poppe <mauriciopoppe@google.com>
+Date: Mon, 9 Aug 2021 22:43:14 +0000
+Subject: [PATCH 2/4] Add missing interface method in mount_unsupported.go
+
+---
+ staging/src/k8s.io/mount-utils/mount_unsupported.go | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/staging/src/k8s.io/mount-utils/mount_unsupported.go b/staging/src/k8s.io/mount-utils/mount_unsupported.go
+index 0e8e683ae3a..d2aac9a7483 100644
+--- a/staging/src/k8s.io/mount-utils/mount_unsupported.go
++++ b/staging/src/k8s.io/mount-utils/mount_unsupported.go
+@@ -53,6 +53,11 @@ func (mounter *Mounter) MountSensitiveWithoutSystemd(source string, target strin
+ 	return errUnsupported
+ }
+ 
++// MountSensitiveWithoutSystemdWithMountFlags always returns an error on unsupported platforms
++func (mounter *Mounter) MountSensitiveWithoutSystemdWithMountFlags(source string, target string, fstype string, options []string, sensitiveOptions []string, mountFlags []string) error {
++	return errUnsupported
++}
++
+ // Unmount always returns an error on unsupported platforms
+ func (mounter *Mounter) Unmount(target string) error {
+ 	return errUnsupported
+-- 
+2.32.0
+
