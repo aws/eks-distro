@@ -44,5 +44,5 @@ Special thanks to [jonathan-conder-sm](https://github.com/jonathan-conder-sm)
 for their contributions to this release, specifically their 
 thoroughly-investigated [issue](https://github.com/aws/eks-distro/issues/545) 
 and subsequent [PR](https://github.com/aws/eks-distro/issues/545) 
-adding a [patch](https://github.com/aws/eks-distro/blob/v1-21-eks-5/projects/kubernetes/kubernetes/1-21/patches/0010-PATCH-kubeadm-CoreDNS-permissions-for-endpointslices.patch)
-that fixed the bug.
+that added a [patch](https://github.com/aws/eks-distro/blob/v1-21-eks-5/projects/kubernetes/kubernetes/1-21/patches/0010-PATCH-kubeadm-CoreDNS-permissions-for-endpointslices.patch)
+and fixed the bug.
