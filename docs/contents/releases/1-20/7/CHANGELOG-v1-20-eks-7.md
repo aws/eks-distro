@@ -25,6 +25,6 @@ Security updates to Amazon Linux 2.
 Special thanks to [jonathan-conder-sm](https://github.com/jonathan-conder-sm)
 for their contributions to this release, specifically their
 thoroughly-investigated [issue](https://github.com/aws/eks-distro/issues/545)
-and subsequent [PR](https://github.com/aws/eks-distro/issues/545) that
+and subsequent [PR](https://github.com/aws/eks-distro/pull/547) that
 added a [patch](https://github.com/aws/eks-distro/blob/v1-20-eks-7/projects/kubernetes/kubernetes/1-20/patches/0012-PATCH-kubeadm-CoreDNS-permissions-for-endpointslices.patch)
 and fixed the bug.
