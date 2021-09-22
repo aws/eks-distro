@@ -1,4 +1,5 @@
 BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
+BUILD_LIB=$(BASE_DIRECTORY)/build/lib
 RELEASE_BRANCH?=$(shell cat $(BASE_DIRECTORY)/release/DEFAULT_RELEASE_BRANCH)
 RELEASE_ENVIRONMENT?=development
 RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/$(RELEASE_ENVIRONMENT)/RELEASE)
@@ -36,7 +37,7 @@ binaries:
 
 .PHONY: local-images
 local-images: binaries
-	buildctl \
+	$(BUILD_LIB)/buildkit.sh \
 		build \
 		--frontend dockerfile.v0 \
 		--opt platform=linux/amd64 \
@@ -44,7 +45,7 @@ local-images: binaries
 		--local dockerfile=./docker/linux/csi-snapshotter \
 		--local context=. \
 		--output type=oci,oci-mediatypes=true,name=$(CSI_SNAPSHOTTER_IMAGE),dest=/tmp/csi-snapshotter.tar
-	buildctl \
+	$(BUILD_LIB)/buildkit.sh \
 		build \
 		--frontend dockerfile.v0 \
 		--opt platform=linux/amd64 \
@@ -52,7 +53,7 @@ local-images: binaries
 		--local dockerfile=./docker/linux/snapshot-controller \
 		--local context=. \
 		--output type=oci,oci-mediatypes=true,name=$(SNAPSHOT_CONTROLLER_IMAGE),dest=/tmp/snapshot-controller.tar
-	buildctl \
+	$(BUILD_LIB)/buildkit.sh \
 		build \
 		--frontend dockerfile.v0 \
 		--opt platform=linux/amd64 \
@@ -63,7 +64,7 @@ local-images: binaries
 
 .PHONY: images
 images: binaries
-	buildctl \
+	$(BUILD_LIB)/buildkit.sh \
 		build \
 		--frontend dockerfile.v0 \
 		--opt platform=linux/amd64,linux/arm64 \
@@ -71,7 +72,7 @@ images: binaries
 		--local dockerfile=./docker/linux/csi-snapshotter \
 		--local context=. \
 		--output type=image,oci-mediatypes=true,name=$(CSI_SNAPSHOTTER_IMAGE),push=true
-	buildctl \
+	$(BUILD_LIB)/buildkit.sh \
 		build \
 		--frontend dockerfile.v0 \
 		--opt platform=linux/amd64,linux/arm64 \
@@ -79,7 +80,7 @@ images: binaries
 		--local dockerfile=./docker/linux/snapshot-controller \
 		--local context=. \
 		--output type=image,oci-mediatypes=true,name=$(SNAPSHOT_CONTROLLER_IMAGE),push=true
-	buildctl \
+	$(BUILD_LIB)/buildkit.sh \
 		build \
 		--frontend dockerfile.v0 \
 		--opt platform=linux/amd64,linux/arm64 \

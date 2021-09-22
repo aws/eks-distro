@@ -14,6 +14,8 @@
 
 #/usr/bin/env bash
 
+BUILD_LIB="${MAKE_ROOT}/../../../build/lib"
+
 readonly KUBE_LINUX_IMAGE_PLATFORMS=(
     amd64
     arm64
@@ -48,7 +50,7 @@ function build::images::release_image_tar(){
 
             image=${repository}/${repo_prefix}/${binary}:${image_tag}
             image_dir=${context_dir}/linux/${platform}
-            buildctl \
+            $BUILD_LIB/buildkit.sh \
                 build \
                 --frontend dockerfile.v0 \
                 --opt platform=linux/${platform} \
@@ -82,7 +84,7 @@ function build::images::push(){
             base_image=$kube_proxy_base_image
         fi
         image=${repository}/${repo_prefix}/${binary}:${image_tag}
-        buildctl \
+        $BUILD_LIB/buildkit.sh \
             build \
             --frontend dockerfile.v0 \
             --opt platform=linux/amd64,linux/arm64 \
@@ -152,7 +154,7 @@ function build::images::pause_tar(){
         if [ "$platform" == "arm64" ] && [ $skip_arm == true ]; then
             continue
         fi
-        buildctl \
+        $BUILD_LIB/buildkit.sh \
             build \
             --frontend dockerfile.v0 \
             --opt platform=linux/${platform} \
@@ -171,7 +173,7 @@ function build::images::pause_push(){
     local -r image_tag="$3"
     local -r context_dir="$4"
 
-    buildctl \
+    $BUILD_LIB/buildkit.sh \
         build \
         --frontend dockerfile.v0 \
         --opt platform=linux/amd64,linux/arm64 \

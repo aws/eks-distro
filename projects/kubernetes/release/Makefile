@@ -1,4 +1,5 @@
 BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
+BUILD_LIB=$(BASE_DIRECTORY)/build/lib
 RELEASE_BRANCH?=$(shell cat $(BASE_DIRECTORY)/release/DEFAULT_RELEASE_BRANCH)
 RELEASE_ENVIRONMENT?=development
 RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/$(RELEASE_ENVIRONMENT)/RELEASE)
@@ -37,7 +38,7 @@ binaries:
 .PHONY: local-images
 local-images: binaries
 	cp release/images/build/debian-iptables/buster/iptables-wrapper _output/
-	buildctl \
+	$(BUILD_LIB)/buildkit.sh \
 		build \
 		--frontend dockerfile.v0 \
 		--opt platform=linux/amd64,linux/arm64  \
@@ -46,7 +47,7 @@ local-images: binaries
 		--local dockerfile=./docker/go-runner/ \
 		--local context=. \
 		--output type=oci,oci-mediatypes=true,name=$(GO_RUNNER_IMAGE),dest=/tmp/go-runner.tar
-	buildctl \
+	$(BUILD_LIB)/buildkit.sh \
 		build \
 		--frontend dockerfile.v0 \
 		--opt platform=linux/amd64 \
@@ -59,7 +60,7 @@ local-images: binaries
 .PHONY: images
 images: binaries
 	cp release/images/build/debian-iptables/buster/iptables-wrapper _output/
-	buildctl \
+	$(BUILD_LIB)/buildkit.sh \
 		build \
 		--frontend dockerfile.v0 \
 		--opt platform=linux/amd64,linux/arm64  \
@@ -68,7 +69,7 @@ images: binaries
 		--local dockerfile=./docker/go-runner/ \
 		--local context=. \
 		--output type=image,oci-mediatypes=true,name=$(GO_RUNNER_IMAGE),push=true
-	buildctl \
+	$(BUILD_LIB)/buildkit.sh \
 		build \
 		--frontend dockerfile.v0 \
 		--opt platform=linux/amd64,linux/arm64  \
