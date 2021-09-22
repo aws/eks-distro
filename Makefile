@@ -10,8 +10,8 @@ IMAGE_REPO?=$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
 RELEASE_AWS_PROFILE?=default
 IS_BOT?=false
 
-GIT_TAG?=v$(RELEASE_BRANCH)-eks-$(RELEASE)
-GIT_COMMIT_HASH?=$(shell git rev-parse @)
+RELEASE_GIT_TAG?=v$(RELEASE_BRANCH)-eks-$(RELEASE)
+RELEASE_GIT_COMMIT_HASH?=$(shell git rev-parse @)
 
 ifdef MAKECMDGOALS
 TARGET=$(MAKECMDGOALS)
@@ -83,8 +83,8 @@ postsubmit-conformance: postsubmit-build kops-prereqs kops-prow
 
 .PHONY: tag
 tag:
-	git tag --a $(GIT_TAG) -m $(GIT_TAG) $(GIT_COMMIT_HASH)
-	git push upstream $(GIT_TAG)
+	git tag --a $(RELEASE_GIT_TAG) -m $(RELEASE_GIT_TAG) $(RELEASE_GIT_COMMIT_HASH)
+	git push upstream $(RELEASE_GIT_TAG)
 
 .PHONY: upload
 upload:
