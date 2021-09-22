@@ -181,7 +181,7 @@ release-docs:
 	go run ./cmd/release/docs/main.go \
 		--branch=$(RELEASE_BRANCH) \
 		--isBot=$(IS_BOT) \
-		--usePrevReleaseManifestForComponentTable=$(USE_PREV_RELEASE_MANIFEST)
+		--usePrevReleaseManifestForComponentTable=$(USE_PREV_RELEASE_MANIFEST) \
 		--openPR=$(OPEN_PR)
 
 .PHONY: only-index-md-from-existing-release-manifest
