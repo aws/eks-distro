@@ -68,7 +68,7 @@ func main() {
 	includeREADME := flag.Bool("includeREADME", true, "If README should be updated")
 	includeDocsIndex := flag.Bool("includeDocsIndex", true, "If index.md in docs should be updated")
 
-	openPR := *flag.Bool("openPR", true, "If a PR should be opened for changed")
+	openPR := flag.Bool("openPR", true, "If a PR should be opened for changed")
 	isBot := flag.Bool("isBot", false, "If a PR is created by bot")
 
 	// WARNING: use of these flags can produce errors that are not easily identifiable. See comment at top.
@@ -127,7 +127,7 @@ func main() {
 	log.Printf("Finished writing to %v doc(s)\n", len(docStatuses))
 
 	fmt.Printf("OPEN PR: %v\n\n", openPR)
-	if openPR {
+	if *openPR {
 		err = OpenDocsPR(&release, docStatuses, *isBot)
 		if err != nil {
 			log.Fatalf("error opending PR: %v", err)
