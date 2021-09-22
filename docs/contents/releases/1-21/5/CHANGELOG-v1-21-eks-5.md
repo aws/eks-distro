@@ -31,7 +31,7 @@ but were removed in the version.
   * About the patches
     * Security fix for upstream Kubernetes
     [issue #104980](https://github.com/kubernetes/kubernetes/issues/104980). 
-    The Kubernetes version used by this EKS-D release is v1.21.4, which is falls
+    The Kubernetes version used by this EKS-D release is v1.21.4, which falls
     within the range of versions impacted by this security vulnerability.
     * Patches are from the commit in upstream Kubernetes 
     [PR #104253](https://github.com/kubernetes/kubernetes/pull/104253), which 
