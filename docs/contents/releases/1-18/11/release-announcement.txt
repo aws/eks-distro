@@ -1,0 +1,1 @@
+Amazon EKS Distro v1.18-11 is now available. This release includes an update to Amazon Linux 2, which contains the latest security fixes. Amazon EKS Distro v1.18-11 builds are available through ECR Public Gallery (https://gallery.ecr.aws/eks-distro) and GitHub (https://github.com/aws/eks-distro)
