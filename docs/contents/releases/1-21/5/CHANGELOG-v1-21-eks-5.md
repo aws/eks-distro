@@ -36,7 +36,7 @@ but were removed in the version.
     * Patches are from the commits in upstream Kubernetes 
     [PR #104253](https://github.com/kubernetes/kubernetes/pull/104253), which 
     should be part of Kubernetes v1.23. Upstream Kubernetes v1.21.5
-    [cherry-picked](https://github.com/kubernetes/kubernetes/pull/104347) the commit.
+    [cherry-picked](https://github.com/kubernetes/kubernetes/pull/104347) the PR.
 
 ## Contributor Shout Out
 
