@@ -126,6 +126,7 @@ func main() {
 	DeleteDocsDirectoryIfEmpty(&release)
 	log.Printf("Finished writing to %v doc(s)\n", len(docStatuses))
 
+	fmt.Printf("OPEN PR: %v\n\n", openPR)
 	if openPR {
 		err = OpenDocsPR(&release, docStatuses, *isBot)
 		if err != nil {
