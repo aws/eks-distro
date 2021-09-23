@@ -30,37 +30,9 @@ SNAPSHOT_VALIDATION_WEBHOOK_IMAGE?=$(IMAGE_REPO)/kubernetes-csi/external-snapsho
 GOPROXY_DNS?=direct
 export GOPROXY=$(GOPROXY_DNS)
 
-
 .PHONY: binaries
 binaries:
 	build/create_binaries.sh $(REPO) $(CLONE_URL) $(GIT_TAG) $(GOLANG_VERSION)
-
-.PHONY: local-images
-local-images: binaries
-	$(BUILD_LIB)/buildkit.sh \
-		build \
-		--frontend dockerfile.v0 \
-		--opt platform=linux/amd64 \
-		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
-		--local dockerfile=./docker/linux/csi-snapshotter \
-		--local context=. \
-		--output type=oci,oci-mediatypes=true,name=$(CSI_SNAPSHOTTER_IMAGE),dest=/tmp/csi-snapshotter.tar
-	$(BUILD_LIB)/buildkit.sh \
-		build \
-		--frontend dockerfile.v0 \
-		--opt platform=linux/amd64 \
-		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
-		--local dockerfile=./docker/linux/snapshot-controller \
-		--local context=. \
-		--output type=oci,oci-mediatypes=true,name=$(SNAPSHOT_CONTROLLER_IMAGE),dest=/tmp/snapshot-controller.tar
-	$(BUILD_LIB)/buildkit.sh \
-		build \
-		--frontend dockerfile.v0 \
-		--opt platform=linux/amd64 \
-		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
-		--local dockerfile=./docker/linux/snapshot-validation-webhook \
-		--local context=. \
-		--output type=oci,oci-mediatypes=true,name=$(SNAPSHOT_VALIDATION_WEBHOOK_IMAGE),dest=/tmp/snapshot-validation-webhook.tar
 
 .PHONY: images
 images: binaries
@@ -71,7 +43,7 @@ images: binaries
 		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
 		--local dockerfile=./docker/linux/csi-snapshotter \
 		--local context=. \
-		--output type=image,oci-mediatypes=true,name=$(CSI_SNAPSHOTTER_IMAGE),push=true
+		--output type=$(OUTPUT_TYPE),oci-mediatypes=true,name=$(CSI_SNAPSHOTTER_IMAGE),$(CSI_SNAPSHOTTER_OUTPUT)
 	$(BUILD_LIB)/buildkit.sh \
 		build \
 		--frontend dockerfile.v0 \
@@ -79,7 +51,7 @@ images: binaries
 		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
 		--local dockerfile=./docker/linux/snapshot-controller \
 		--local context=. \
-		--output type=image,oci-mediatypes=true,name=$(SNAPSHOT_CONTROLLER_IMAGE),push=true
+		--output type=$(OUTPUT_TYPE),oci-mediatypes=true,name=$(SNAPSHOT_CONTROLLER_IMAGE),$(SNAPSHOT_CONTROLLER_OUTPUT)
 	$(BUILD_LIB)/buildkit.sh \
 		build \
 		--frontend dockerfile.v0 \
@@ -87,7 +59,7 @@ images: binaries
 		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
 		--local dockerfile=./docker/linux/snapshot-validation-webhook \
 		--local context=. \
-		--output type=image,oci-mediatypes=true,name=$(SNAPSHOT_VALIDATION_WEBHOOK_IMAGE),push=true
+		--output type=$(OUTPUT_TYPE),oci-mediatypes=true,name=$(SNAPSHOT_VALIDATION_WEBHOOK_IMAGE),$(SNAPSHOT_VALIDATION_WEBHOOK_OUTPUT)
 
 .PHONY: docker
 docker: binaries
@@ -116,19 +88,31 @@ docker-push:
 	docker push $(SNAPSHOT_CONTROLLER_IMAGE)
 	docker push $(SNAPSHOT_VALIDATION_WEBHOOK_IMAGE)
 
-.PHONY: build
-build: local-images attribution
-
-.PHONY: release
-release: images
+.PHONY: build release
+build: OUTPUT_TYPE=oci
+build: CSI_SNAPSHOTTER_OUTPUT=dest=/tmp/csi-snapshotter.tar
+build: SNAPSHOT_CONTROLLER_OUTPUT=dest=/tmp/snapshot-controller.tar
+build: SNAPSHOT_VALIDATION_WEBHOOK_OUTPUT=dest=/tmp/snapshot-validation-webhook.tar
+release: OUTPUT_TYPE=image
+release: CSI_SNAPSHOTTER_OUTPUT=push=true
+release: SNAPSHOT_CONTROLLER_OUTPUT=push=true
+release: SNAPSHOT_VALIDATION_WEBHOOK_OUTPUT=push=true
+build release:
+	make images OUTPUT_TYPE=$(OUTPUT_TYPE) \
+		CSI_SNAPSHOTTER_OUTPUT=$(CSI_SNAPSHOTTER_OUTPUT) \
+		SNAPSHOT_CONTROLLER_OUTPUT=$(SNAPSHOT_CONTROLLER_OUTPUT) \
+		SNAPSHOT_VALIDATION_WEBHOOK_OUTPUT=$(SNAPSHOT_VALIDATION_WEBHOOK_OUTPUT)
+	if [ $@ = "build" ]; then \
+		make attribution; \
+	fi
 	echo "Done $(COMPONENT)"
-
-.PHONY: all
-all: release
 
 .PHONY: attribution
 attribution: 
 	build/create_attribution.sh $(GOLANG_VERSION)
+
+.PHONY: all
+all: release
 
 .PHONY: clean
 clean:

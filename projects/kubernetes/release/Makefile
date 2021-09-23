@@ -30,32 +30,9 @@ KUBE_PROXY_BASE_IMAGE_NAME?=kubernetes/kube-proxy-base
 KUBE_PROXY_BASE_IMAGE_TAG?=${GIT_TAG}-eks-${RELEASE_BRANCH}-${RELEASE}
 KUBE_PROXY_BASE_IMAGE?=$(IMAGE_REPO)/$(KUBE_PROXY_BASE_IMAGE_NAME):$(KUBE_PROXY_BASE_IMAGE_TAG)
 
-
 .PHONY: binaries
 binaries:
 	build/create_binaries.sh $(CLONE_URL) $(REPO) $(GIT_TAG) $(GOLANG_VERSION)
-
-.PHONY: local-images
-local-images: binaries
-	cp release/images/build/debian-iptables/buster/iptables-wrapper _output/
-	$(BUILD_LIB)/buildkit.sh \
-		build \
-		--frontend dockerfile.v0 \
-		--opt platform=linux/amd64,linux/arm64  \
-		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
-		--opt build-arg:RELEASE_BRANCH=$(RELEASE_BRANCH) \
-		--local dockerfile=./docker/go-runner/ \
-		--local context=. \
-		--output type=oci,oci-mediatypes=true,name=$(GO_RUNNER_IMAGE),dest=/tmp/go-runner.tar
-	$(BUILD_LIB)/buildkit.sh \
-		build \
-		--frontend dockerfile.v0 \
-		--opt platform=linux/amd64 \
-		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
-		--opt build-arg:RELEASE_BRANCH=$(RELEASE_BRANCH) \
-		--local dockerfile=./docker/kube-proxy-base/ \
-		--local context=. \
-		--output type=oci,oci-mediatypes=true,name=$(KUBE_PROXY_BASE_IMAGE),dest=/tmp/kube-proxy-base.tar
 
 .PHONY: images
 images: binaries
@@ -68,7 +45,7 @@ images: binaries
 		--opt build-arg:RELEASE_BRANCH=$(RELEASE_BRANCH) \
 		--local dockerfile=./docker/go-runner/ \
 		--local context=. \
-		--output type=image,oci-mediatypes=true,name=$(GO_RUNNER_IMAGE),push=true
+		--output type=$(OUTPUT_TYPE),oci-mediatypes=true,name=$(GO_RUNNER_IMAGE),$(GO_RUNNER_OUTPUT)
 	$(BUILD_LIB)/buildkit.sh \
 		build \
 		--frontend dockerfile.v0 \
@@ -77,7 +54,7 @@ images: binaries
 		--opt build-arg:RELEASE_BRANCH=$(RELEASE_BRANCH) \
 		--local dockerfile=./docker/kube-proxy-base/ \
 		--local context=. \
-		--output type=image,oci-mediatypes=true,name=$(KUBE_PROXY_BASE_IMAGE),push=true
+		--output type=$(OUTPUT_TYPE),oci-mediatypes=true,name=$(KUBE_PROXY_BASE_IMAGE),$(KUBE_PROXY_BASE_OUTPUT)
 
 .PHONY: docker
 docker: binaries
@@ -102,15 +79,18 @@ docker-push:
 	docker push $(GO_RUNNER_IMAGE)
 	docker push $(KUBE_PROXY_BASE_IMAGE)
 
-.PHONY: clean
-clean:
-	rm -rf ./_output ./release
-
-.PHONY: build
-build: local-images attribution
-
-.PHONY: release
-release: images
+.PHONY: build release
+build: OUTPUT_TYPE=oci
+build: GO_RUNNER_OUTPUT=dest=/tmp/go-runner.tar
+build: KUBE_PROXY_BASE_OUTPUT=dest=/tmp/kube-proxy-base.tar
+release: OUTPUT_TYPE=image
+release: GO_RUNNER_OUTPUT=push=true
+release: KUBE_PROXY_BASE_OUTPUT=push=true
+build release:
+	make images OUTPUT_TYPE=$(OUTPUT_TYPE) GO_RUNNER_OUTPUT=$(GO_RUNNER_OUTPUT) KUBE_PROXY_BASE_OUTPUT=$(KUBE_PROXY_BASE_OUTPUT)
+	if [ $@ = "build" ]; then \
+		make attribution; \
+	fi
 	echo "Done $(COMPONENT)"
 
 .PHONY: attribution
@@ -119,3 +99,7 @@ attribution:
 
 .PHONY: all
 all: release
+
+.PHONY: clean
+clean:
+	rm -rf ./_output ./release

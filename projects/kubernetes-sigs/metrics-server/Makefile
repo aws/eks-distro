@@ -27,23 +27,9 @@ IMAGE?=$(IMAGE_REPO)/$(IMAGE_NAME):$(IMAGE_TAG)
 GOPROXY_DNS?=direct
 export GOPROXY=$(GOPROXY_DNS)
 
-
-#Make sure GOPATH is set
 .PHONY: binaries
 binaries:
 	build/create_binaries.sh $(REPO) $(CLONE_URL) $(GIT_TAG) $(GOLANG_VERSION)
-
-.PHONY: local-images
-local-images: binaries
-	$(BUILD_LIB)/buildkit.sh \
-		build \
-		--frontend dockerfile.v0 \
-		--opt platform=linux/amd64 \
-		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
-		--opt build-arg:RELEASE_BRANCH=$(RELEASE_BRANCH) \
-		--local dockerfile=./docker/linux \
-		--local context=. \
-		--output type=oci,oci-mediatypes=true,name=$(IMAGE),dest=/tmp/metrics-server.tar
 
 .PHONY: images
 images: binaries
@@ -55,7 +41,7 @@ images: binaries
 		--opt build-arg:RELEASE_BRANCH=$(RELEASE_BRANCH) \
 		--local dockerfile=./docker/linux \
 		--local context=. \
-		--output type=image,oci-mediatypes=true,name=$(IMAGE),push=true
+		--output type=$(OUTPUT_TYPE),oci-mediatypes=true,name=$(IMAGE),$(OUTPUT)
 
 .PHONY: docker
 docker: binaries
@@ -71,26 +57,26 @@ docker: binaries
 docker-push:
 	docker push $(IMAGE)
 
-.PHONY: tarballs
-tarballs:
-	# empty target
-
-.PHONY: build
-build: local-images tarballs attribution
-
-.PHONY: release
-release: images tarballs
+.PHONY: build release
+build: OUTPUT_TYPE=oci
+build: OUTPUT=dest=/tmp/metrics-server.tar
+release: OUTPUT_TYPE=image
+release: OUTPUT=push=true
+build release:
+	make images OUTPUT_TYPE=$(OUTPUT_TYPE) OUTPUT=$(OUTPUT)
+	if [ $@ = "build" ]; then \
+		make attribution; \
+	fi
 	echo "Done $(COMPONENT)"
-
-.PHONY: all
-all: release
 
 .PHONY: attribution
 attribution: 
 	build/create_attribution.sh $(RELEASE_BRANCH) $(GOLANG_VERSION)
+
+.PHONY: all
+all: release
 	
 .PHONY: clean
 clean:
 	rm -rf $(REPO)
 	rm -rf "_output"
-
