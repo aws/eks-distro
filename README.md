@@ -60,7 +60,7 @@ at https://prow.eks.amazonaws.com/. Please read our
 
 ## Security
 
-If you discover a potential security issue in this project, or think you may
+If you discover a potential security issue in this project or think you may
 have discovered a security issue, we ask that you notify AWS Security via our
 [vulnerability reporting
 page](http://aws.amazon.com/security/vulnerability-reporting/). Please do
