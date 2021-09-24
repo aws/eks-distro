@@ -30,6 +30,7 @@ IMAGE?=$(IMAGE_REPO)/$(IMAGE_NAME):$(IMAGE_TAG)
 binaries:
 	build/create_binaries.sh $(REPO) $(CLONE_URL) $(GIT_TAG) $(GOLANG_VERSION)
 
+
 .PHONY: local-images
 local-images: binaries
 	$(BUILD_LIB)/buildkit.sh \
