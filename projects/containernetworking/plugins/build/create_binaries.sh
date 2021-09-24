@@ -60,7 +60,7 @@ function build::plugins::binaries(){
   for platform in "${SUPPORTED_PLATFORMS[@]}"; do
     OS="$(cut -d '/' -f1 <<< ${platform})"
     ARCH="$(cut -d '/' -f2 <<< ${platform})"
-    CGO_ENABLED=0 GOOS=$OS GOARCH=$ARCH sh build_linux.sh -ldflags "-s -w -buildid='' -extldflags -static -X github.com/containernetworking/plugins/pkg/utils/buildversion.BuildVersion=${TAG}"
+    CGO_ENABLED=0 GOOS=$OS GOARCH=$ARCH sh build_linux.sh -trimpath -ldflags "-s -w -buildid='' -extldflags -static -X github.com/containernetworking/plugins/pkg/utils/buildversion.BuildVersion=${TAG}"
     mkdir -p ../${BIN_PATH}/${OS}-${ARCH}
     mv bin/* ../${BIN_PATH}/${OS}-${ARCH}
   done

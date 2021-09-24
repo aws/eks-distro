@@ -44,18 +44,19 @@ function build::metrics-server::binaries(){
   local -r build_date=$(git -C $REPO show -s --format=format:%ct HEAD)
   local -r goldflags="-X ${pkg}/version.gitVersion=$TAG -X ${pkg}/version.gitCommit=$git_commit -X ${pkg}/version.buildDate=$build_date"
   git -C $REPO checkout "$TAG"
+  cd $REPO
   build::common::use_go_version $GOLANG_VERSION
+  go mod vendor
   for platform in "${SUPPORTED_PLATFORMS[@]}";
   do
     OS="$(cut -d '/' -f1 <<< ${platform})"
     ARCH="$(cut -d '/' -f2 <<< ${platform})"
-    GOOS=$OS make -C $REPO ARCH=$ARCH LDFLAGS="-s -w -buildid='' $goldflags"
-    mkdir -p $BIN_PATH/$OS-$ARCH
-    mv $REPO/metrics-server $BIN_PATH/$OS-$ARCH/metrics-server
-    make -C $REPO clean
+	GOARCH=$ARCH GOOS=$OS CGO_ENABLED=0 go build -trimpath -ldflags "-s -w -buildid='' $goldflags" -o metrics-server sigs.k8s.io/metrics-server/cmd/metrics-server
+    mkdir -p ../$BIN_PATH/$OS-$ARCH
+    mv metrics-server ../$BIN_PATH/$OS-$ARCH/metrics-server
   done
-  (cd $REPO && go mod vendor)
-  (cd $REPO && build::gather_licenses $MAKE_ROOT/_output "./cmd/metrics-server")
+  build::gather_licenses $MAKE_ROOT/_output "./cmd/metrics-server"
+  cd ..
   rm -rf "$REPO"
 }
 

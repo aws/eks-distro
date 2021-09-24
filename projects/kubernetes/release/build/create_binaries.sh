@@ -24,7 +24,7 @@ TAG=$3
 GOLANG_VERSION="$4"
 
 MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
-OUTPUT_DIR="${OUTPUT_DIR:-${MAKE_ROOT}/_output}"
+OUTPUT_DIR="${OUTPUT_DIR:-${MAKE_ROOT}/_output/bin}"
 
 source "${MAKE_ROOT}/build/lib/clone.sh"
 source "${MAKE_ROOT}/build/lib/binaries.sh"

@@ -45,7 +45,7 @@ function build::livenessprobe::binaries(){
   do
     OS="$(cut -d '/' -f1 <<< ${platform})"
     ARCH="$(cut -d '/' -f2 <<< ${platform})"
-    make BUILD_PLATFORMS="$OS $ARCH"
+    make BUILD_PLATFORMS="$OS $ARCH" LDFLAGS="-s -w -buildid=\"\"" GOFLAGS_VENDOR="-trimpath"
     mkdir -p ../${BIN_PATH}/${OS}-${ARCH}
     mv bin/* ../${BIN_PATH}/${OS}-${ARCH}
     make clean

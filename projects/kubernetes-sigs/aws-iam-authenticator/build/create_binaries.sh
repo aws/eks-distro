@@ -37,7 +37,6 @@ MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
 source "${MAKE_ROOT}/../../../build/lib/common.sh"
 
 function build::aws-iam-authenticator::binaries(){
-
   mkdir -p "$BIN_PATH"
   git clone "$CLONE_URL" "$REPO"
   cd "$REPO"
@@ -56,7 +55,7 @@ function build::aws-iam-authenticator::binaries(){
     ld_flags="-buildid='' -s -w -X main.version=$TAG -X main.commit=$rev"
 
     CGO_ENABLED=0 GOOS="$OS" GOARCH="$ARCH"\
-    go build -ldflags "$ld_flags"\
+    go build -trimpath -ldflags "$ld_flags"\
     -o "./bin/$REPO$suffix" ./cmd/aws-iam-authenticator/
 
     mkdir -p ../"$BIN_PATH"/"$OS"-"$ARCH"
@@ -65,6 +64,7 @@ function build::aws-iam-authenticator::binaries(){
   build::gather_licenses $MAKE_ROOT/_output "./cmd/aws-iam-authenticator"
   cd ..
   rm -rf "$REPO"
+
 }
 
 build::aws-iam-authenticator::binaries

@@ -42,11 +42,12 @@ function build::coredns::binaries(){
   git checkout $TAG
   build::common::use_go_version $GOLANG_VERSION
   go mod vendor
+  GITCOMMIT="$(git describe --dirty --always)"
   for platform in "${SUPPORTED_PLATFORMS[@]}";
   do
     OS="$(cut -d '/' -f1 <<< ${platform})"
     ARCH="$(cut -d '/' -f2 <<< ${platform})"
-    make SYSTEM="GOOS=\"$OS\" GOARCH=\"$ARCH\""
+    CGO_ENABLED=0 GOOS=$OS GOARCH=$ARCH go build -v -trimpath -ldflags="-s -w -buildid='' -X github.com/coredns/coredns/coremain.GitCommit=$GITCOMMIT" -o coredns
     mkdir -p ../${BIN_PATH}/${OS}-${ARCH}
     mv coredns ../${BIN_PATH}/${OS}-${ARCH}
     make clean

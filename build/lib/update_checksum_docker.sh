@@ -13,20 +13,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+set -o errexit
+set -o nounset
+set -o pipefail
 
-function build::binaries::bins() {
-    local -r repository_dir="$1"
-    local -r output_dir="$2"
-    cd $repository_dir/images/build/go-runner
-    export CGO_ENABLED=0
-    export GOLDFLAGS='-s -w --buildid=""'
+PROJECT="$1"
+RELEASE_BRANCH="$2"
 
-    export GOOS=linux
-    export GOARCH=amd64
-    go build -trimpath -v -ldflags="$GOLDFLAGS" \
-        -o $output_dir/go-runner-linux-amd64
+MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd -P)"
 
-    export GOARCH=arm64
-    go build -trimpath -v -ldflags="$GOLDFLAGS" \
-        -o $output_dir/go-runner-linux-arm64
-}
+$MAKE_ROOT/build/lib/run_target_docker.sh $PROJECT "clean binaries checksums" $RELEASE_BRANCH
+
+PROJECT_CHECKSUM=$PROJECT/CHECKSUMS
+
+if [ -d $MAKE_ROOT/projects/$PROJECT/$RELEASE_BRANCH ]; then
+	PROJECT_CHECKSUM=$PROJECT/$RELEASE_BRANCH/CHECKSUMS
+fi
+
+docker cp eks-d-builder:/eks-distro/projects/$PROJECT_CHECKSUM $MAKE_ROOT/projects/$PROJECT_CHECKSUM

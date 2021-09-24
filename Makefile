@@ -115,6 +115,18 @@ docker-push: makes
 update-kubernetes-version:
 	build/update-kubernetes-version/update.sh $(RELEASE_BRANCH)
 
+.PHONY: run-target-in-docker
+run-target-in-docker:
+	build/lib/run_target_docker.sh $(PROJECT) $(MAKE_TARGET) $(RELEASE_BRANCH) $(IMAGE_REPO)
+
+.PHONY: update-checksums-docker
+update-checksums-docker:
+	build/lib/update_checksum_docker.sh $(PROJECT) $(RELEASE_BRANCH)
+
+.PHONE: stop-docker-builder
+stop-docker-builder:
+	docker rm -f -v eks-d-builder
+
 .PHONY: clean
 clean: makes
 	@echo 'Done' $(TARGET)
