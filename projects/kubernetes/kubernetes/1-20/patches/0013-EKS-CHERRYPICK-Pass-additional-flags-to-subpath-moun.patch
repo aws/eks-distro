@@ -1,7 +1,7 @@
 From 7775e27c0aad37993b5212dee92dd9330f3cc9bb Mon Sep 17 00:00:00 2001
 From: Kubernetes Prow Robot <k8s-ci-robot@users.noreply.github.com>
 Date: Mon, 16 Aug 2021 04:37:47 -0700
-Subject: [PATCH] --EKS-CHERRYPICK-- Pass additional flags to subpath mount to
+Subject: [PATCH] Pass additional flags to subpath mount to
  avoid flakes in
 
 Automated cherry pick of #104253: Pass additional flags to subpath mount to avoid flakes in

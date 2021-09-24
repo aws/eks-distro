@@ -56,6 +56,7 @@ rm -rf ${SOURCE_DIR}/_output
 # https://github.com/kubernetes/kubernetes/pull/70828
 # Copy the apache2 license into place in the vendor directory
 cp $REPOSITORY/vendor/github.com/heketi/heketi/LICENSE-APACHE2 $REPOSITORY/vendor/github.com/heketi/heketi/LICENSE 
+rm $REPOSITORY/vendor/github.com/heketi/heketi/COPYING-*
 
 PATTERNS="./cmd/kubelet ./cmd/kube-proxy ./cmd/kubeadm ./cmd/kubectl ./cmd/kube-apiserver ./cmd/kube-controller-manager ./cmd/kube-scheduler"
 (cd $REPOSITORY && build::gather_licenses ${OUTPUT_DIR}/${RELEASE_BRANCH} "$PATTERNS")
