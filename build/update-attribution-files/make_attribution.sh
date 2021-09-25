@@ -42,7 +42,7 @@ function build::attribution::generate(){
 }
 
 # Some projects have specific folders for different kubernetes release
-# dynmically find all versions to avoid having to update with every release
+# dynamically find all versions to avoid having to update with every release
 RELEASE_FOLDER=$(find $PROJECT_ROOT -type d -name "1-*")
 
 if [ -z "${RELEASE_FOLDER}" ]; then

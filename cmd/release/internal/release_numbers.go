@@ -33,7 +33,7 @@ func determineReleaseNumber(release *Release) (string, error) {
 		if err != nil {
 			return "", err
 		}
-		log.Printf("previous number not provided to determime number. It is assumed to be %q\n", prevNumber)
+		log.Printf("previous number not provided to determine number. It is assumed to be %q\n", prevNumber)
 	}
 
 	prevNumberAsInt, err := strconv.Atoi(prevNumber)

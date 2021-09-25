@@ -71,7 +71,7 @@ function build::common::generate_shasum() {
 function build::gather_licenses() {
   if ! command -v go-licenses &> /dev/null
   then
-    echo " go-licenses not found.  If you need license or attribtuion file handling"
+    echo " go-licenses not found.  If you need license or attribution file handling"
     echo " please refer to the doc in docs/development/attribution-files.md"
     exit
   fi
@@ -93,7 +93,7 @@ function build::gather_licenses() {
   export GOARCH=amd64 
 
   mkdir -p "${outputdir}/attribution"
-  # attribution file generated uses the output go-deps and go-license to gather the neccessary
+  # attribution file generated uses the output go-deps and go-license to gather the necessary
   # data about each dependency to generate the amazon approved attribution.txt files
   # go-deps is needed for module versions
   # go-licenses are all the dependencies found from the module(s) that were passed in via patterns
@@ -102,7 +102,7 @@ function build::gather_licenses() {
   go-licenses save --force $patterns --save_path="${outputdir}/LICENSES"
   
   # go-licenses can be a bit noisy with its output and lot of it can be confusing 
-  # the following messags are safe to ignore since we do not need the license url for our process
+  # the following messages are safe to ignore since we do not need the license url for our process
   NOISY_MESSAGES="cannot determine URL for|Error discovering URL|unsupported package host"
   go-licenses csv $patterns > "${outputdir}/attribution/go-license.csv" 2>  >(grep -vE "$NOISY_MESSAGES" >&2)
 
@@ -118,7 +118,7 @@ function build::gather_licenses() {
   if cat "${outputdir}/attribution/go-license.csv" | grep -e ",LGPL-" -e ",GPL-"; then
     echo " one of the dependencies is licensed as LGPL or GPL"
     echo " which is prohibited at Amazon"
-    echo " please look into removeing the dependency"
+    echo " please look into removing the dependency"
   fi
 
   # go-license is pretty eager to copy src for certain license types
@@ -136,17 +136,17 @@ function build::gather_licenses() {
 
 function build::generate_attribution(){
   local -r project_root=$1
-  local -r golang_verson=$2
+  local -r golang_version=$2
   local -r output_directory=${3:-"${project_root}/_output"}
 
   local -r root_module_name=$(cat ${output_directory}/attribution/root-module.txt)
-  local -r go_path=$(build::common::get_go_path $golang_verson) 
+  local -r go_path=$(build::common::get_go_path $golang_version)
   local -r golang_version_tag=$($go_path/go version | grep -o "go[0-9].* ")
 
   if cat "${output_directory}/attribution/go-license.csv" | grep -e ",LGPL-" -e ",GPL-"; then
     echo " one of the dependencies is licensed as LGPL or GPL"
     echo " which is prohibited at Amazon"
-    echo " please look into removeing the dependency"
+    echo " please look into removing the dependency"
     exit 1
   fi
 

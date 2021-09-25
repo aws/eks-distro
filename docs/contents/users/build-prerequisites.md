@@ -47,7 +47,7 @@ To create all the required ECR repositories for EKS Distro, run the
 ## Qemu
 
 In order to build and run multi-architecture containers, you will need to
-install [Qemu](https://www.qemu.org/download/). On amazonlinux2, this can be
+install [Qemu](https://www.qemu.org/download/). On AmazonLinux2, this can be
 installed with the `qemu-user-static` package, and then updating your host's
 `binfmt_misc` configuration.
 

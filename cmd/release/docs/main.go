@@ -129,7 +129,7 @@ func main() {
 	if *openPR {
 		err = OpenDocsPR(&release, docStatuses, *isBot)
 		if err != nil {
-			log.Fatalf("error opending PR: %v", err)
+			log.Fatalf("error opening PR: %v", err)
 		}
 	}
 }

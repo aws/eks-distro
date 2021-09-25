@@ -49,8 +49,8 @@ cp -r ${SOURCE_DIR}/_output/local/bin/* ${OUTPUT_DIR}/${RELEASE_BRANCH}/bin
 rm -rf ${SOURCE_DIR}/_output
 
 # The heketi/heketi dependency is dual licensed between Apache 2.0 or LGPLv3+
-# this was done at the request of the kubernetes project since the orginial licese
-# was not one that all redistro.  The pieces used by the kubernetes project follow under
+# this was done at the request of the kubernetes project since the original license
+# was not one that allowed redistro.  The pieces used by the kubernetes project follow under
 # the apache2 license.
 # https://github.com/heketi/heketi/pull/1419
 # https://github.com/kubernetes/kubernetes/pull/70828

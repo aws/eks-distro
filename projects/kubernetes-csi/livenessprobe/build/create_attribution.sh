@@ -24,7 +24,7 @@ source "${MAKE_ROOT}/../../../build/lib/common.sh"
 
 GOLANG_VERSION="$1"
 
-# go-licenses calls adds an additonal cmd/livenessprobe 
+# go-licenses calls adds an additional cmd/livenessprobe
 # to the main module name in the csv output
 MODULE_NAME=$(cat "${ATTRIBUTION_DIR}/root-module.txt")
 SEARCH=$(build::common::re_quote "$MODULE_NAME/cmd/livenessprobe")
