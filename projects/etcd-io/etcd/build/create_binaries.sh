@@ -41,6 +41,7 @@ function build::etcd::binaries(){
   cd $REPO
   git checkout $TAG
   build::common::use_go_version $GOLANG_VERSION
+  build::common::set_go_cache etcd $TAG
   go mod vendor
   for platform in "${SUPPORTED_PLATFORMS[@]}";
   do

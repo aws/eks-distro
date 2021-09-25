@@ -26,14 +26,8 @@ if [ ! -d ${BIN_DIR} ] ;  then
     exit 1
 fi
 
-if [ "$(go env GOROOT)" == "/root/sdk/go*" ]; then
-    echo "GOROOT mismatch from CI environment!"
-    echo "In your environment, GOROOT=$(go env GOROOT), expected \"/root/sdk/go\""
-    echo "This is required for reproducible builds"
-fi
-
 rm -f $CHECKSUMS_FILE
-for file in $(find ${BIN_DIR} -type f ); do
+for file in $(find ${BIN_DIR} -type f | sort); do
     filepath=$(realpath --relative-base=$PROJECT_ROOT $file)
     sha256sum $filepath >> $CHECKSUMS_FILE
 done

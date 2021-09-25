@@ -33,6 +33,7 @@ source "${MAKE_ROOT}/../../../build/lib/common.sh"
 mkdir -p $OUTPUT_DIR
 build::clone::release $CLONE_URL $REPOSITORY $TAG
 build::common::use_go_version $GOLANG_VERSION
+build::common::set_go_cache kubernetes-release $TAG
 build::binaries::bins $MAKE_ROOT/$REPOSITORY $OUTPUT_DIR
 
 (cd $MAKE_ROOT/$REPOSITORY/images/build/go-runner && build::gather_licenses $MAKE_ROOT/_output "./go-runner.go") 

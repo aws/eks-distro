@@ -39,21 +39,23 @@ function build::metrics-server::binaries(){
   if [ ! -d $REPO ]; then
     git clone "$CLONE_URL" "$REPO"
   fi
+  git -C $REPO checkout "$TAG"
+  cd $REPO
   local -r pkg="sigs.k8s.io/metrics-server/pkg"
   local -r git_commit="$(git -C $REPO describe --always --abbrev=0)"
   local -r build_date=$(git -C $REPO show -s --format=format:%ct HEAD)
   local -r goldflags="-X ${pkg}/version.gitVersion=$TAG -X ${pkg}/version.gitCommit=$git_commit -X ${pkg}/version.buildDate=$build_date"
-  git -C $REPO checkout "$TAG"
-  cd $REPO
   build::common::use_go_version $GOLANG_VERSION
+  build::common::set_go_cache metrics-server $TAG
   go mod vendor
   for platform in "${SUPPORTED_PLATFORMS[@]}";
   do
     OS="$(cut -d '/' -f1 <<< ${platform})"
     ARCH="$(cut -d '/' -f2 <<< ${platform})"
-	GOARCH=$ARCH GOOS=$OS CGO_ENABLED=0 go build -trimpath -ldflags "-s -w -buildid='' $goldflags" -o metrics-server sigs.k8s.io/metrics-server/cmd/metrics-server
+    GOARCH=$ARCH GOOS=$OS CGO_ENABLED=0 go build -trimpath -ldflags "-s -w -buildid='' $goldflags" -o metrics-server sigs.k8s.io/metrics-server/cmd/metrics-server
     mkdir -p ../$BIN_PATH/$OS-$ARCH
     mv metrics-server ../$BIN_PATH/$OS-$ARCH/metrics-server
+    make clean
   done
   build::gather_licenses $MAKE_ROOT/_output "./cmd/metrics-server"
   cd ..
