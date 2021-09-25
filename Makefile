@@ -8,7 +8,10 @@ AWS_ACCOUNT_ID?=$(shell aws sts get-caller-identity --query Account --output tex
 AWS_REGION?=us-west-2
 IMAGE_REPO?=$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
 RELEASE_AWS_PROFILE?=default
+
 IS_BOT?=false
+USE_PREV_RELEASE_MANIFEST?=true
+OPEN_PR?=true
 
 RELEASE_GIT_TAG?=v$(RELEASE_BRANCH)-eks-$(RELEASE)
 RELEASE_GIT_COMMIT_HASH?=$(shell git rev-parse @)
@@ -180,10 +183,12 @@ release-docs:
 	go vet ./cmd/release/docs
 	go run ./cmd/release/docs/main.go \
 		--branch=$(RELEASE_BRANCH) \
-		--isBot=$(IS_BOT)
+		--isBot=$(IS_BOT) \
+		--usePrevReleaseManifestForComponentTable=$(USE_PREV_RELEASE_MANIFEST) \
+		--openPR=$(OPEN_PR)
 
-.PHONY: index-md-from-existing-release-manifest
-index-md-from-existing-release-manifest:
+.PHONY: only-index-md-from-existing-release-manifest
+only-index-md-from-existing-release-manifest:
 	go vet ./cmd/release/docs
 	go run ./cmd/release/docs/main.go \
 		--branch=$(RELEASE_BRANCH) \
