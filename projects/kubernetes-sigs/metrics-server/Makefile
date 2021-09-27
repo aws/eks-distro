@@ -74,10 +74,10 @@ tarballs:
 	# empty target
 
 .PHONY: build
-build: local-images tarballs attribution
+build: local-images tarballs attribution validate-checksums
 
 .PHONY: release
-release: images tarballs
+release: images tarballs validate-checksums
 	echo "Done $(COMPONENT)"
 
 .PHONY: all
@@ -87,6 +87,14 @@ all: release
 attribution: 
 	build/create_attribution.sh $(RELEASE_BRANCH) $(GOLANG_VERSION)
 	
+.PHONY: checksums
+checksums:
+	$(BUILD_LIB)/update_checksums.sh $(MAKE_ROOT) $(MAKE_ROOT)/_output/bin $(MAKE_ROOT)/$(RELEASE_BRANCH)/CHECKSUMS
+
+.PHONY: validate-checksums
+validate-checksums:
+	sha256sum -c $(MAKE_ROOT)/$(RELEASE_BRANCH)/CHECKSUMS
+
 .PHONY: clean
 clean:
 	rm -rf $(REPO)

@@ -66,10 +66,10 @@ docker-push:
 	docker push $(IMAGE)
 
 .PHONY: build
-build: local-images attribution
+build: local-images attribution validate-checksums
 
 .PHONY: release
-release: images
+release: images validate-checksums
 	echo "Done $(COMPONENT)"
 
 .PHONY: all
@@ -78,6 +78,14 @@ all: release
 .PHONY: attribution
 attribution: 
 	build/create_attribution.sh $(GOLANG_VERSION)
+
+.PHONY: checksums
+checksums:
+	$(BUILD_LIB)/update_checksums.sh $(MAKE_ROOT) $(MAKE_ROOT)/_output/bin $(MAKE_ROOT)/CHECKSUMS
+
+.PHONY: validate-checksums
+validate-checksums:
+	sha256sum -c $(MAKE_ROOT)/CHECKSUMS
 
 .PHONY: clean
 clean:

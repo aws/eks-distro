@@ -1,4 +1,5 @@
 BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
+BUILD_LIB=$(BASE_DIRECTORY)/build/lib
 RELEASE_BRANCH?=$(shell cat $(BASE_DIRECTORY)/release/DEFAULT_RELEASE_BRANCH)
 RELEASE_ENVIRONMENT?=development
 RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/$(RELEASE_ENVIRONMENT)/RELEASE)
@@ -62,10 +63,10 @@ tarballs:
 	build/create_tarballs.sh $(REPO) $(GIT_TAG) $(RELEASE_BRANCH)
 
 .PHONY: build
-build: local-images tarballs attribution
+build: local-images tarballs attribution validate-checksums
 
 .PHONY: release
-release: images tarballs
+release: images tarballs validate-checksums
 	$(BASE_DIRECTORY)/release/copy_artifacts.sh $(COMPONENT) $(RELEASE_BRANCH) $(RELEASE)
 	$(BASE_DIRECTORY)/release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET) $(REPO)
 	# Also sync kubernetes directory for oci tars
@@ -78,6 +79,14 @@ all: release
 .PHONY: attribution
 attribution: 
 	build/create_attribution.sh $(RELEASE_BRANCH) $(GOLANG_VERSION)
+
+.PHONY: checksums
+checksums:
+	$(BUILD_LIB)/update_checksums.sh $(MAKE_ROOT) $(MAKE_ROOT)/_output/bin $(MAKE_ROOT)/$(RELEASE_BRANCH)/CHECKSUMS
+
+.PHONY: validate-checksums
+validate-checksums:
+	sha256sum -c $(MAKE_ROOT)/$(RELEASE_BRANCH)/CHECKSUMS
 
 .PHONY: clean
 clean:

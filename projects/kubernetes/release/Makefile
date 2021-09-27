@@ -107,15 +107,23 @@ clean:
 	rm -rf ./_output ./release
 
 .PHONY: build
-build: local-images attribution
+build: local-images attribution validate-checksums
 
 .PHONY: release
-release: images
+release: images validate-checksums
 	echo "Done $(COMPONENT)"
 
 .PHONY: attribution
 attribution: 
 	build/create_attribution.sh $(GOLANG_VERSION) $(RELEASE_BRANCH)
+
+.PHONY: checksums
+checksums:
+	$(BUILD_LIB)/update_checksums.sh $(MAKE_ROOT) $(MAKE_ROOT)/_output/bin $(MAKE_ROOT)/$(RELEASE_BRANCH)/CHECKSUMS
+
+.PHONY: validate-checksums
+validate-checksums:
+	sha256sum -c $(MAKE_ROOT)/$(RELEASE_BRANCH)/CHECKSUMS
 
 .PHONY: all
 all: release

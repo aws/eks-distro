@@ -41,11 +41,12 @@ function build::livenessprobe::binaries(){
   cd $REPO
   git checkout $TAG
   build::common::use_go_version $GOLANG_VERSION
+  build::common::set_go_cache livenessprobe $TAG
   for platform in "${SUPPORTED_PLATFORMS[@]}";
   do
     OS="$(cut -d '/' -f1 <<< ${platform})"
     ARCH="$(cut -d '/' -f2 <<< ${platform})"
-    make BUILD_PLATFORMS="$OS $ARCH"
+    make BUILD_PLATFORMS="$OS $ARCH" LDFLAGS="-s -w -buildid=''" GOFLAGS_VENDOR="-trimpath"
     mkdir -p ../${BIN_PATH}/${OS}-${ARCH}
     mv bin/* ../${BIN_PATH}/${OS}-${ARCH}
     make clean

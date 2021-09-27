@@ -13,20 +13,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+set -o errexit
+set -o nounset
+set -o pipefail
 
-function build::binaries::bins() {
-    local -r repository_dir="$1"
-    local -r output_dir="$2"
-    cd $repository_dir/images/build/go-runner
-    export CGO_ENABLED=0
-    export GOLDFLAGS='-s -w --buildid=""'
+PROJECT_ROOT="$1"
+BIN_DIR="$2"
+CHECKSUMS_FILE="$3"
 
-    export GOOS=linux
-    export GOARCH=amd64
-    go build -trimpath -v -ldflags="$GOLDFLAGS" \
-        -o $output_dir/go-runner-linux-amd64
+if [ ! -d ${BIN_DIR} ] ;  then
+    echo "${BIN_DIR} not present! Run 'make binaries'"
+    exit 1
+fi
 
-    export GOARCH=arm64
-    go build -trimpath -v -ldflags="$GOLDFLAGS" \
-        -o $output_dir/go-runner-linux-arm64
-}
+rm -f $CHECKSUMS_FILE
+for file in $(find ${BIN_DIR} -type f | sort); do
+    filepath=$(realpath --relative-base=$PROJECT_ROOT $file)
+    sha256sum $filepath >> $CHECKSUMS_FILE
+done

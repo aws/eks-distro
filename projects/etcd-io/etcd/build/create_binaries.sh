@@ -41,12 +41,13 @@ function build::etcd::binaries(){
   cd $REPO
   git checkout $TAG
   build::common::use_go_version $GOLANG_VERSION
+  build::common::set_go_cache etcd $TAG
   go mod vendor
   for platform in "${SUPPORTED_PLATFORMS[@]}";
   do
     OS="$(cut -d '/' -f1 <<< ${platform})"
     ARCH="$(cut -d '/' -f2 <<< ${platform})"
-    CGO_ENABLED=0 GOOS=$OS GOARCH=$ARCH GO_LDFLAGS="-s -w -buildid=''" ./build
+    CGO_ENABLED=0 GOOS=$OS GOARCH=$ARCH GO_BUILD_FLAGS="-trimpath" GO_LDFLAGS="-s -w -buildid=''" ./build
     mkdir -p ../${BIN_PATH}/${OS}-${ARCH}
     mv bin/* ../${BIN_PATH}/${OS}-${ARCH}
     make clean
