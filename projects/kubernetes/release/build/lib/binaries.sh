@@ -18,6 +18,7 @@ function build::binaries::bins() {
     local -r repository_dir="$1"
     local -r output_dir="$2"
     cd $repository_dir/images/build/go-runner
+    go mod vendor
     export CGO_ENABLED=0
     export GOLDFLAGS='-s -w --buildid=""'
 

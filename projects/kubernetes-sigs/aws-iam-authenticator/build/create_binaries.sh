@@ -43,6 +43,7 @@ function build::aws-iam-authenticator::binaries(){
   git checkout "$TAG"
   build::common::use_go_version $GOLANG_VERSION
   build::common::set_go_cache aws-iam-authenticator $TAG
+  go mod vendor
   for platform in "${SUPPORTED_PLATFORMS[@]}";
   do
     OS="$(cut -d '/' -f1 <<< ${platform})"
