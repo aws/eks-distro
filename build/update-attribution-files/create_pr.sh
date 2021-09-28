@@ -106,7 +106,7 @@ pr::create::attribution
 git checkout main
 
 git stash pop
-# Add attribution files
+# Add checksum files
 for FILE in $(find . -type f -name CHECKSUMS); do    
     git add $FILE
 done
