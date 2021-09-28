@@ -42,8 +42,8 @@ function build::metrics-server::binaries(){
   git -C $REPO checkout "$TAG"
   cd $REPO
   local -r pkg="sigs.k8s.io/metrics-server/pkg"
-  local -r git_commit="$(git -C $REPO describe --always --abbrev=0)"
-  local -r build_date=$(git -C $REPO show -s --format=format:%ct HEAD)
+  local -r git_commit="$(git describe --always --abbrev=0)"
+  local -r build_date=$(git show -s --format=format:%ct HEAD)
   local -r goldflags="-X ${pkg}/version.gitVersion=$TAG -X ${pkg}/version.gitCommit=$git_commit -X ${pkg}/version.buildDate=$build_date"
   build::common::use_go_version $GOLANG_VERSION
   build::common::set_go_cache metrics-server $TAG
