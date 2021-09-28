@@ -208,7 +208,6 @@ function build::common::use_go_version() {
   # Adding to the beginning of PATH to allow for builds on specific version if it exists
   export PATH=${gobinarypath}:$PATH
   export GOCACHE=$(go env GOCACHE)/$version
-  export GOMODCACHE=$(go env GOMODCACHE)/$version
 }
 
 # Use a seperate build cache for each project/version to ensure there are no
@@ -219,7 +218,6 @@ function build::common::set_go_cache() {
   local -r project=$1
   local -r git_tag=$2
   export GOCACHE=$(go env GOCACHE)/$project/$git_tag
-  export GOMODCACHE=$(go env GOMODCACHE)/$project/$git_tag
 }
 
 function build::common::re_quote() {
