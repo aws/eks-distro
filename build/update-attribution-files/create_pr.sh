@@ -57,7 +57,7 @@ function pr:create()
 
 	ssh-agent bash -c 'ssh-add /secrets/ssh-secrets/ssh-key; ssh -o StrictHostKeyChecking=no git@github.com; git push -u origin $pr_branch -f'
 
-	local -r pr_exists=$(gh pr list | grep -c "${PR_BRANCH}" || true)
+	local -r pr_exists=$(gh pr list | grep -c "$pr_branch" || true)
 	if [ $pr_exists -eq 0 ]; then
 		gh pr create --title "$pr_title" --body "$pr_body"
 	fi
