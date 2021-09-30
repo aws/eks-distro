@@ -29,6 +29,7 @@ also generate the cluster configuration:
 ```bash
 export KOPS_STATE_STORE=s3://kops-state-store
 export KOPS_CLUSTER_NAME=clustername.example.com
+./install_requirements.sh
 ./create_values_yaml.sh
 ./create_configuration.sh 
 ```
