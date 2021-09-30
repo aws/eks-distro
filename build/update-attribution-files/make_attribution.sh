@@ -31,7 +31,7 @@ function build::attribution::generate(){
     if [ $# -ge 1 ]; then
         export RELEASE_BRANCH="$1"
     fi
-    make -C $PROJECT_ROOT binaries attribution checksums    
+    make -C $PROJECT_ROOT clean binaries attribution checksums    
     for summary in $PROJECT_ROOT/_output/**/summary.txt; do
         sed -i "s/+.*=/ =/g" $summary
         awk -F" =\> " '{ count[$1]+=$2} END { for (item in count) printf("%s => %d\n", item, count[item]) }' \

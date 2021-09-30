@@ -40,10 +40,12 @@ fi
 build::git::clone "$CLONE_URL" "$SOURCE_DIR"
 build::git::patch "$SOURCE_DIR" "$GIT_TAG" "$PATCH_DIR"
 build::common::use_go_version $GOLANG_VERSION
-build::binaries::kube_bins "$SOURCE_DIR"
+build::common::set_go_cache kubernetes $GIT_TAG
+build::binaries::kube_bins "$SOURCE_DIR" $RELEASE_BRANCH $GIT_TAG
 
 mkdir -p ${OUTPUT_DIR}/${RELEASE_BRANCH}/bin
-cp -r ${SOURCE_DIR}/_output/local/bin/* ${OUTPUT_DIR}/${RELEASE_BRANCH}/bin
+rsync -a --include '*/' --include 'kube-*' --include 'kubelet*' \
+	--include 'kubeadm*' --include 'kubectl*' --exclude '*' ${SOURCE_DIR}/_output/local/bin ${OUTPUT_DIR}/${RELEASE_BRANCH}
 
 # In presubmit builds space is very limited
 rm -rf ${SOURCE_DIR}/_output

@@ -1,4 +1,5 @@
 BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
+BUILD_LIB=$(BASE_DIRECTORY)/build/lib
 RELEASE_BRANCH?=$(shell cat $(BASE_DIRECTORY)/release/DEFAULT_RELEASE_BRANCH)
 RELEASE_ENVIRONMENT?=development
 RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/$(RELEASE_ENVIRONMENT)/RELEASE)
@@ -14,6 +15,7 @@ CLONE_URL=https://github.com/$(COMPONENT).git
 AWS_ACCOUNT_ID?=$(shell aws sts get-caller-identity --query Account --output text)
 AWS_REGION?=us-west-2
 
+MAKE_ROOT=$(shell cd "$(shell dirname "${BASH_SOURCE[0]}")" && pwd -P)
 IMAGE_REPO?=$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
 IMAGE_REPO_PREFIX=kubernetes
 IMAGE_TAG?=$(GIT_TAG)-eks-${RELEASE_BRANCH}-${RELEASE}
@@ -37,10 +39,6 @@ PAUSE_IMAGE_3_X=$(shell echo $(PAUSE_TAGS) | sed "s/ \+/,/g")
 .PHONY: update-version
 update-version: binaries
 	build/create_version_file.sh $(GIT_TAG) $(RELEASE_BRANCH)
-
-.PHONY: update-checksums
-update-checksums: binaries
-	build/update_checksums.sh $(RELEASE_BRANCH)
 
 .PHONY: binaries
 binaries:
@@ -91,15 +89,15 @@ docker-push:
 	docker push $(PAUSE_IMAGE)
 	docker push $(PAUSE_IMAGE_3_X)
 
-.PHONY: checksums
-checksums:
+.PHONY: release-checksums
+release-checksums:
 	build/create_release_checksums.sh $(RELEASE_BRANCH)
 
 .PHONY: build
-build: binaries pause tarballs clean-repo local-images checksums attribution
+build: binaries validate-checksums pause tarballs clean-repo local-images release-checksums attribution 
 
 .PHONY: release
-release: binaries pause tarballs clean-repo images checksums
+release: binaries validate-checksums pause tarballs clean-repo images release-checksums 
 	$(BASE_DIRECTORY)/release/copy_artifacts.sh $(COMPONENT) $(RELEASE_BRANCH) $(RELEASE)
 	$(BASE_DIRECTORY)/release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET) $(REPO)
 	echo "Done $(COMPONENT)"
@@ -114,6 +112,14 @@ test: binaries
 .PHONY: attribution
 attribution: 
 	build/create_attribution.sh $(RELEASE_BRANCH) $(GOLANG_VERSION)
+
+.PHONY: checksums
+checksums:
+	$(BUILD_LIB)/update_checksums.sh $(MAKE_ROOT) $(MAKE_ROOT)/_output/$(RELEASE_BRANCH)/bin $(MAKE_ROOT)/$(RELEASE_BRANCH)/CHECKSUMS
+
+.PHONY: validate-checksums
+validate-checksums:	
+	sha256sum -c $(MAKE_ROOT)/$(RELEASE_BRANCH)/CHECKSUMS
 
 .PHONY: clean-repo
 clean-repo:

@@ -15,24 +15,30 @@
 
 function build::binaries::kube_bins() {
     local -r repository="$1"
-    # Build all core components for linux arm64 and amd64
+	local -r release_branch="$2"
+	local -r git_tag="$3"
+
+	# ensure consistent build date tag on final binary based on
+	# last change in the patches directory
+	export SOURCE_DATE_EPOCH=$(git log -n 1 --pretty=format:%ct $release_branch/patches)
+	export KUBE_GIT_COMMIT=$(git -C $repository rev-list -n 1 $git_tag)
+	
+	cd $repository
+
+	# avoid checksum differences due to modules being installed on 
+	# build machine before building kubernetes since that will sometimes
+	# add additional hashs for vendor modules in the final binary
+	./hack/update-vendor.sh
+    
+	# Build all core components for linux arm64 and amd64
     # GOLDFLASGS
     # * strip symbol, debug, and DWARF tables
     # * set an empty build id for reproducibility
     # * build static binaries
-    make \
-      -C $repository \
-      CGO_ENABLED=0 \
-      GOLDFLAGS='-s -w --buildid=""' \
-      KUBE_BUILD_PLATFORMS="linux/amd64 linux/arm64" \
-      KUBE_STATIC_OVERRIDES="cmd/kubelet \
-        cmd/kube-proxy \
-        cmd/kubeadm \
-        cmd/kubectl \
-        cmd/kube-apiserver \
-        cmd/kube-controller-manager \
-        cmd/kube-scheduler" \
-      WHAT="cmd/kubelet \
+	# Run in two steps to support passing -trimpath
+	export CGO_ENABLED=0
+	export GOLDFLAGS='-s -w -buildid=""'
+	export KUBE_STATIC_OVERRIDES="cmd/kubelet \
         cmd/kube-proxy \
         cmd/kubeadm \
         cmd/kubectl \
@@ -40,27 +46,28 @@ function build::binaries::kube_bins() {
         cmd/kube-controller-manager \
         cmd/kube-scheduler"
 
+	make generated_files
+
+	# Linux
+    export KUBE_BUILD_PLATFORMS="linux/amd64 linux/arm64"
+	hack/make-rules/build.sh -trimpath cmd/kubelet \
+        cmd/kube-proxy \
+        cmd/kubeadm \
+        cmd/kubectl \
+        cmd/kube-apiserver \
+        cmd/kube-controller-manager \
+        cmd/kube-scheduler
+
     # Windows
-    make \
-      -C $repository \
-      CGO_ENABLED=0 \
-      GOLDFLAGS='-s -w --buildid=""' \
-      KUBE_BUILD_PLATFORMS="windows/amd64" \
-      KUBE_STATIC_OVERRIDES="cmd/kubelet \
-        cmd/kube-proxy \
+    export KUBE_BUILD_PLATFORMS="windows/amd64"
+    hack/make-rules/build.sh -trimpath cmd/kubelet \
+    	cmd/kube-proxy \
         cmd/kubeadm \
-        cmd/kubectl" \
-      WHAT="cmd/kubelet \
-        cmd/kube-proxy \
-        cmd/kubeadm \
-        cmd/kubectl"
+        cmd/kubectl
 
     # Darwin
-    make \
-      -C $repository \
-      CGO_ENABLED=0 \
-      GOLDFLAGS='-s -w --buildid=""' \
-      KUBE_BUILD_PLATFORMS="darwin/amd64" \
-      KUBE_STATIC_OVERRIDES="cmd/kubectl" \
-      WHAT="cmd/kubectl"
+    export KUBE_BUILD_PLATFORMS="darwin/amd64" 
+    hack/make-rules/build.sh -trimpath cmd/kubectl
+
+    cd ..
 }
