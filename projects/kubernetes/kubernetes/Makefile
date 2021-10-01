@@ -57,8 +57,8 @@ pause: $(PAUSE_DST_DIR)/pause.c
 .PHONY: local-images
 local-images:
 	build/create_images.sh $(RELEASE_BRANCH) \
-		"$(shell build/determine_presubmit_base_image.sh $(GO_RUNNER_IMAGE))" \
-		"$(shell build/determine_presubmit_base_image.sh $(KUBE_PROXY_BASE_IMAGE))" \
+		$(GO_RUNNER_IMAGE) \
+		$(KUBE_PROXY_BASE_IMAGE) \
 		$(IMAGE_REPO) $(IMAGE_REPO_PREFIX) $(IMAGE_TAG) "$(PAUSE_IMAGE),$(PAUSE_IMAGE_3_X)" false true
 
 .PHONY: images

@@ -30,6 +30,8 @@ KUBE_PROXY_BASE_IMAGE_NAME?=kubernetes/kube-proxy-base
 KUBE_PROXY_BASE_IMAGE_TAG?=${GIT_TAG}-eks-${RELEASE_BRANCH}-${RELEASE}
 KUBE_PROXY_BASE_IMAGE?=$(IMAGE_REPO)/$(KUBE_PROXY_BASE_IMAGE_NAME):$(KUBE_PROXY_BASE_IMAGE_TAG)
 
+IMAGE_OUTPUT_TYPE?=oci
+IMAGE_OUTPUT?=dest=/tmp/release-image.tar
 
 .PHONY: binaries
 binaries:
@@ -46,7 +48,7 @@ local-images: binaries
 		--opt build-arg:RELEASE_BRANCH=$(RELEASE_BRANCH) \
 		--local dockerfile=./docker/go-runner/ \
 		--local context=. \
-		--output type=oci,oci-mediatypes=true,name=$(GO_RUNNER_IMAGE),dest=/tmp/go-runner.tar
+		--output type=$(IMAGE_OUTPUT_TYPE),oci-mediatypes=true,name=$(GO_RUNNER_IMAGE),$(IMAGE_OUTPUT)
 	$(BUILD_LIB)/buildkit.sh \
 		build \
 		--frontend dockerfile.v0 \
@@ -55,7 +57,7 @@ local-images: binaries
 		--opt build-arg:RELEASE_BRANCH=$(RELEASE_BRANCH) \
 		--local dockerfile=./docker/kube-proxy-base/ \
 		--local context=. \
-		--output type=oci,oci-mediatypes=true,name=$(KUBE_PROXY_BASE_IMAGE),dest=/tmp/kube-proxy-base.tar
+		--output type=$(IMAGE_OUTPUT_TYPE),oci-mediatypes=true,name=$(KUBE_PROXY_BASE_IMAGE),$(IMAGE_OUTPUT)
 
 .PHONY: images
 images: binaries

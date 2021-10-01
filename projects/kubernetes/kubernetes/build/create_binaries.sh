@@ -44,7 +44,7 @@ build::common::set_go_cache kubernetes $GIT_TAG
 build::binaries::kube_bins "$SOURCE_DIR" $RELEASE_BRANCH $GIT_TAG
 
 mkdir -p ${OUTPUT_DIR}/${RELEASE_BRANCH}/bin
-rsync -a --include '*/' --include 'kube-*' --include 'kubelet*' \
+rsync --remove-source-files -a --include '*/' --include 'kube-*' --include 'kubelet*' \
 	--include 'kubeadm*' --include 'kubectl*' --exclude '*' ${SOURCE_DIR}/_output/local/bin ${OUTPUT_DIR}/${RELEASE_BRANCH}
 
 # In presubmit builds space is very limited
