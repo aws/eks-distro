@@ -42,7 +42,7 @@ rm -f $SHA256SUM
 rm -f $SHA512SUM
 echo "Writing artifact hashes to SHA256SUM/SHA512SUM files..."
 cd $ASSET_ROOT
-for file in $(find ${ASSET_ROOT} -type f -not -path '*\.sha[25][51][62]' ); do
+for file in $(find ${ASSET_ROOT} -type f -not -path '*\.sha[25][51][62]' -not -path '*\.docker_*' \( -path '*bin/linux*' -o -path '*bin/windows*' -o -path '*bin/darwin*' -o -name '*tar\.gz' \) ); do
     filepath=$(realpath --relative-base=${ASSET_ROOT} $file )
     sha256sum "$filepath" | tee -a $SHA256SUM > "$file.sha256" || return 1
     sha512sum "$filepath" | tee -a $SHA512SUM > "$file.sha512" || return 1
@@ -53,4 +53,6 @@ sha256sum SHA256SUM > "SHA256SUM.sha256" || return 1
 sha512sum SHA256SUM > "SHA256SUM.sha512" || return 1
 sha256sum SHA512SUM > "SHA512SUM.sha256" || return 1
 sha512sum SHA512SUM > "SHA512SUM.sha512" || return 1
+
+cat SHA256SUM
 cd -
