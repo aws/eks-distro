@@ -58,6 +58,9 @@ function build::binaries::kube_bins() {
         cmd/kube-controller-manager \
         cmd/kube-scheduler
 
+    # In presubmit builds space is very limited
+    rm -rf ./_output/local/go/cache
+    
     # Windows
     export KUBE_BUILD_PLATFORMS="windows/amd64"
     hack/make-rules/build.sh -trimpath cmd/kubelet \
