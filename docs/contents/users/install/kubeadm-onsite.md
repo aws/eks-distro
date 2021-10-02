@@ -8,9 +8,9 @@ kubeadm, as described below.
 **WARNING**:
 This procedure is provided for demonstration purposes and is not a supported product.
 These directions use the EKS version v1.19.8-eks-1-19-4, but you should adjust them
-accordingly for the version you with to use. A separate product named 
-[EKS-Anywhere](https://aws.amazon.com/eks/eks-anywhere/) launches later in 2021 
-to let you automate different types of EKS installations.
+accordingly for the version you wish to use. A separate product named 
+[EKS-Anywhere](https://aws.amazon.com/eks/eks-anywhere/) 
+lets you automate different types of EKS installations.
 ---
 
 ## Prerequisites
