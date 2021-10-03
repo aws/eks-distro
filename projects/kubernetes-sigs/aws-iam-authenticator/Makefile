@@ -73,13 +73,17 @@ tarballs:
 	build/create_tarballs.sh $(REPO) $(GIT_TAG) $(RELEASE_BRANCH)
 
 .PHONY: build
-build: local-images tarballs attribution validate-checksums
+build: local-images tarballs copy-artifacts attribution validate-checksums
 
 .PHONY: release
-release: images local-images tarballs validate-checksums
-	$(BASE_DIRECTORY)/release/copy_artifacts.sh $(COMPONENT) $(RELEASE_BRANCH) $(RELEASE)
+release: images local-images tarballs copy-artifacts validate-checksums
 	$(BASE_DIRECTORY)/release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET) $(REPO)
 	echo "Done $(COMPONENT)"
+
+.PHONY: copy-artifacts
+copy-artifacts: tarballs
+	$(BASE_DIRECTORY)/release/copy_artifacts.sh $(COMPONENT) $(RELEASE_BRANCH) $(RELEASE)
+	$(BUILD_LIB)/validate_artifacts.sh $(MAKE_ROOT) $(RELEASE_BRANCH) $(RELEASE) $(GIT_TAG) 'aws-iam-authenticator'
 
 .PHONY: all
 all: release

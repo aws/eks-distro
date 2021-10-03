@@ -37,13 +37,13 @@ elif [ $PROJECT = "etcd-io/etcd" ] || [ $PROJECT = "coredns/coredns" ]; then
     exit 0
   fi
 
-  SOURCE_DIR=_output/tar/
+  SOURCE_DIR=_output/tar
   GIT_TAG=$(cat ${RELEASE_BRANCH}/GIT_TAG)
 elif [ ! -f GIT_TAG ]; then
-  SOURCE_DIR=_output/tar/
+  SOURCE_DIR=_output/tar
   GIT_TAG=$(cat ${RELEASE_BRANCH}/GIT_TAG)
 else
-  SOURCE_DIR=_output/tar/
+  SOURCE_DIR=_output/tar
   GIT_TAG=$(cat GIT_TAG)
 fi
 REPO="$(cut -d '/' -f2 <<< ${PROJECT})"

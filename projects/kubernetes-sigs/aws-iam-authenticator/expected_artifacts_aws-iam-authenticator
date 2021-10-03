@@ -1,0 +1,12 @@
+kubernetes-$RELEASE_BRANCH/releases/$RELEASE/artifacts/aws-iam-authenticator/$GIT_TAG/aws-iam-authenticator-darwin-amd64-$GIT_TAG.tar.gz
+kubernetes-$RELEASE_BRANCH/releases/$RELEASE/artifacts/aws-iam-authenticator/$GIT_TAG/aws-iam-authenticator-darwin-amd64-$GIT_TAG.tar.gz.sha256
+kubernetes-$RELEASE_BRANCH/releases/$RELEASE/artifacts/aws-iam-authenticator/$GIT_TAG/aws-iam-authenticator-darwin-amd64-$GIT_TAG.tar.gz.sha512
+kubernetes-$RELEASE_BRANCH/releases/$RELEASE/artifacts/aws-iam-authenticator/$GIT_TAG/aws-iam-authenticator-linux-amd64-$GIT_TAG.tar.gz
+kubernetes-$RELEASE_BRANCH/releases/$RELEASE/artifacts/aws-iam-authenticator/$GIT_TAG/aws-iam-authenticator-linux-amd64-$GIT_TAG.tar.gz.sha256
+kubernetes-$RELEASE_BRANCH/releases/$RELEASE/artifacts/aws-iam-authenticator/$GIT_TAG/aws-iam-authenticator-linux-amd64-$GIT_TAG.tar.gz.sha512
+kubernetes-$RELEASE_BRANCH/releases/$RELEASE/artifacts/aws-iam-authenticator/$GIT_TAG/aws-iam-authenticator-linux-arm64-$GIT_TAG.tar.gz
+kubernetes-$RELEASE_BRANCH/releases/$RELEASE/artifacts/aws-iam-authenticator/$GIT_TAG/aws-iam-authenticator-linux-arm64-$GIT_TAG.tar.gz.sha256
+kubernetes-$RELEASE_BRANCH/releases/$RELEASE/artifacts/aws-iam-authenticator/$GIT_TAG/aws-iam-authenticator-linux-arm64-$GIT_TAG.tar.gz.sha512
+kubernetes-$RELEASE_BRANCH/releases/$RELEASE/artifacts/aws-iam-authenticator/$GIT_TAG/aws-iam-authenticator-windows-amd64-$GIT_TAG.tar.gz
+kubernetes-$RELEASE_BRANCH/releases/$RELEASE/artifacts/aws-iam-authenticator/$GIT_TAG/aws-iam-authenticator-windows-amd64-$GIT_TAG.tar.gz.sha256
+kubernetes-$RELEASE_BRANCH/releases/$RELEASE/artifacts/aws-iam-authenticator/$GIT_TAG/aws-iam-authenticator-windows-amd64-$GIT_TAG.tar.gz.sha512
