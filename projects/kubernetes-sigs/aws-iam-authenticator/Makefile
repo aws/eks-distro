@@ -73,10 +73,10 @@ tarballs:
 	build/create_tarballs.sh $(REPO) $(GIT_TAG) $(RELEASE_BRANCH)
 
 .PHONY: build
-build: local-images tarballs copy-artifacts attribution validate-checksums
+build: local-images copy-artifacts attribution validate-checksums
 
 .PHONY: release
-release: images local-images tarballs copy-artifacts validate-checksums
+release: images local-images copy-artifacts validate-checksums
 	$(BASE_DIRECTORY)/release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET) $(REPO)
 	echo "Done $(COMPONENT)"
 

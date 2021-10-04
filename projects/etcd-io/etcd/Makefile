@@ -65,10 +65,10 @@ tarballs:
 
 .PHONY: build
 build: FAKE_ARM_IMAGES_FOR_VALIDATION=true
-build: local-images tarballs copy-artifacts attribution validate-checksums
+build: local-images copy-artifacts attribution validate-checksums
 
 .PHONY: release
-release: images tarballs copy-artifacts validate-checksums
+release: images copy-artifacts validate-checksums
 	$(BASE_DIRECTORY)/release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET) $(REPO)
 	# Also sync kubernetes directory for oci tars
 	$(BASE_DIRECTORY)/release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET) kubernetes
