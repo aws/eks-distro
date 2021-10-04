@@ -36,6 +36,8 @@ PAUSE_IMAGE?=$(IMAGE_REPO)/$(IMAGE_REPO_PREFIX)/$(PAUSE_IMAGE_NAME):$(PAUSE_IMAG
 PAUSE_TAGS=$(foreach tag, $(PAUSE_TAG), $(IMAGE_REPO)/$(IMAGE_REPO_PREFIX)/$(PAUSE_IMAGE_NAME):$(tag))
 PAUSE_IMAGE_3_X=$(shell echo $(PAUSE_TAGS) | sed "s/ \+/,/g")
 
+FAKE_ARM_IMAGES_FOR_VALIDATION?=false
+
 .PHONY: update-version
 update-version: binaries
 	build/create_version_file.sh $(GIT_TAG) $(RELEASE_BRANCH)
@@ -94,13 +96,19 @@ release-checksums:
 	build/create_release_checksums.sh $(RELEASE_BRANCH)
 
 .PHONY: build
-build: binaries validate-checksums pause tarballs clean-repo local-images release-checksums attribution 
+build: FAKE_ARM_IMAGES_FOR_VALIDATION=true
+build: binaries validate-checksums pause tarballs clean-repo local-images release-checksums attribution copy-artifacts
 
 .PHONY: release
-release: binaries validate-checksums pause tarballs clean-repo images release-checksums 
-	$(BASE_DIRECTORY)/release/copy_artifacts.sh $(COMPONENT) $(RELEASE_BRANCH) $(RELEASE)
+release: binaries validate-checksums pause tarballs clean-repo images release-checksums copy-artifacts
 	$(BASE_DIRECTORY)/release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET) $(REPO)
 	echo "Done $(COMPONENT)"
+
+.PHONY: copy-artifacts
+copy-artifacts: tarballs
+	rm -rf _output/$(RELEASE_BRANCH)/{attribution,LICENSES,pause} _output/$(RELEASE_BRANCH)/bin/{LICENSES,ATTRIBUTION.txt}
+	$(BASE_DIRECTORY)/release/copy_artifacts.sh $(COMPONENT) $(RELEASE_BRANCH) $(RELEASE)
+	$(BUILD_LIB)/validate_artifacts.sh $(MAKE_ROOT) $(RELEASE_BRANCH) $(RELEASE) $(GIT_TAG) 'kubernetes' $(FAKE_ARM_IMAGES_FOR_VALIDATION) "-not -path *coredns* -not -path *etcd*"
 
 .PHONY: all
 all: release

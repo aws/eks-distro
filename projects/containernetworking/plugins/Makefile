@@ -21,14 +21,19 @@ tarballs:  binaries
 	build/create_tarballs.sh $(REPO) $(GIT_TAG)
 
 .PHONY: build
-build: tarballs attribution validate-checksums
+build: copy-artifacts attribution validate-checksums
 	echo "Done $(COMPONENT)"
 
 .PHONY: release
-release: tarballs validate-checksums
-	$(BASE_DIRECTORY)/release/copy_artifacts.sh $(COMPONENT) $(RELEASE_BRANCH) $(RELEASE)
+release: copy-artifacts validate-checksums
 	$(BASE_DIRECTORY)/release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET) $(REPO)
 	echo "Done $(COMPONENT)"
+
+.PHONY: copy-artifacts
+copy-artifacts: tarballs
+	$(BASE_DIRECTORY)/release/copy_artifacts.sh $(COMPONENT) $(RELEASE_BRANCH) $(RELEASE)
+	$(BUILD_LIB)/validate_artifacts.sh $(MAKE_ROOT) $(RELEASE_BRANCH) $(RELEASE) $(GIT_TAG) 'plugins'
+
 
 .PHONY: all
 all: release
