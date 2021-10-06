@@ -22,7 +22,8 @@ function build::binaries::kube_bins() {
     # last change in the patches directory
     export SOURCE_DATE_EPOCH=$(git log -n 1 --pretty=format:%ct $release_branch/patches)
     export KUBE_GIT_COMMIT=$(git -C $repository rev-list -n 1 $git_tag)
-	
+    export KUBE_GIT_TREE_STATE=clean
+
     cd $repository
     
     # avoid checksum differences due to modules being installed on 

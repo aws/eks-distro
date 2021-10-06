@@ -126,7 +126,7 @@ checksums:
 	$(BUILD_LIB)/update_checksums.sh $(MAKE_ROOT) $(MAKE_ROOT)/_output/$(RELEASE_BRANCH)/bin $(MAKE_ROOT)/$(RELEASE_BRANCH)/CHECKSUMS
 
 .PHONY: validate-checksums
-validate-checksums:	
+validate-checksums:
 	sha256sum -c $(MAKE_ROOT)/$(RELEASE_BRANCH)/CHECKSUMS
 
 .PHONY: clean-repo
