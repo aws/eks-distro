@@ -8,6 +8,7 @@ GIT_TAG?=$(shell cat ./$(RELEASE_BRANCH)/GIT_TAG)
 GOLANG_VERSION?=$(shell cat ./$(RELEASE_BRANCH)/GOLANG_VERSION)
 PAUSE_TAG?=$(shell cat $(wildcard ./$(RELEASE_BRANCH)/PAUSE_*TAG))
 
+
 REPO=kubernetes
 COMPONENT=kubernetes/$(REPO)
 CLONE_URL=https://github.com/$(COMPONENT).git
