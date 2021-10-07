@@ -19,43 +19,14 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-CLONE_URL="$1"
-REPO="$2"
-TAG="$3"
-GOLANG_VERSION="$4"
-BIN_ROOT="_output/bin"
-BIN_PATH=$BIN_ROOT/$REPO
+TAG="$1"
+BIN_PATH="$2"
+OS="$3"
+ARCH="$4"
 
+GITCOMMIT="$(git describe --dirty --always)"
+CGO_ENABLED=0 GOOS=$OS GOARCH=$ARCH \
+	go build -trimpath -ldflags="-s -w -buildid='' -X github.com/coredns/coredns/coremain.GitCommit=$GITCOMMIT" \
+	-o $BIN_PATH/coredns
 
-readonly SUPPORTED_PLATFORMS=(
-  linux/amd64
-  linux/arm64
-)
-
-MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
-source "${MAKE_ROOT}/../../../build/lib/common.sh"
-
-function build::coredns::binaries(){
-  mkdir -p $BIN_PATH
-  git clone $CLONE_URL $REPO
-  cd "$REPO"
-  git checkout $TAG
-  build::common::use_go_version $GOLANG_VERSION
-  build::common::set_go_cache coredns $TAG
-  go mod vendor
-  GITCOMMIT="$(git describe --dirty --always)"
-  for platform in "${SUPPORTED_PLATFORMS[@]}";
-  do
-    OS="$(cut -d '/' -f1 <<< ${platform})"
-    ARCH="$(cut -d '/' -f2 <<< ${platform})"
-    CGO_ENABLED=0 GOOS=$OS GOARCH=$ARCH go build -trimpath -ldflags="-s -w -buildid='' -X github.com/coredns/coredns/coremain.GitCommit=$GITCOMMIT" -o coredns
-    mkdir -p ../${BIN_PATH}/${OS}-${ARCH}
-    mv coredns ../${BIN_PATH}/${OS}-${ARCH}
-    make clean
-  done
-  build::gather_licenses $MAKE_ROOT/_output ./coredns.go
-  cd ..
-  rm -rf $REPO
-}
-
-build::coredns::binaries
+make clean
