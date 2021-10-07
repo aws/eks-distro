@@ -22,7 +22,6 @@ OUTPUT_DIR="${MAKE_ROOT}/_output"
 ATTRIBUTION_DIR="${OUTPUT_DIR}/attribution"
 source "${MAKE_ROOT}/../../../build/lib/common.sh"
 
-GOLANG_VERSION="$1"
 
 # go-licenses calls adds an additional cmd/livenessprobe
 # to the main module name in the csv output
@@ -30,5 +29,3 @@ MODULE_NAME=$(cat "${ATTRIBUTION_DIR}/root-module.txt")
 SEARCH=$(build::common::re_quote "$MODULE_NAME/cmd/livenessprobe")
 REPLACE=$(build::common::re_quote $MODULE_NAME)
 sed -i.bak "s/^$SEARCH/$REPLACE/" "${ATTRIBUTION_DIR}/go-license.csv"
-
-build::generate_attribution $MAKE_ROOT $GOLANG_VERSION

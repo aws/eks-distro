@@ -19,41 +19,12 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-REPO="$1"
-CLONE_URL="$2"
-TAG="$3"
-GOLANG_VERSION="$4"
-BIN_ROOT="_output/bin"
-BIN_PATH=$BIN_ROOT/$REPO
+TAG="$1"
+BIN_PATH="$2"
+OS="$3"
+ARCH="$4"
 
-readonly SUPPORTED_PLATFORMS=(
-  linux/amd64
-  linux/arm64
-)
+make BUILD_PLATFORMS="$OS $ARCH" LDFLAGS="-s -w -buildid=''" GOFLAGS_VENDOR="-trimpath"
+mv bin/* $BIN_PATH
 
-MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
-source "${MAKE_ROOT}/../../../build/lib/common.sh"
-
-function build::external-resizer::binaries(){
-  mkdir -p $BIN_PATH
-  git clone $CLONE_URL $REPO
-  cd $REPO
-  git checkout $TAG
-  build::common::use_go_version $GOLANG_VERSION
-  build::common::set_go_cache csi-resizer $TAG
-  go mod vendor
-  for platform in "${SUPPORTED_PLATFORMS[@]}";
-  do
-    OS="$(cut -d '/' -f1 <<< ${platform})"
-    ARCH="$(cut -d '/' -f2 <<< ${platform})"
-    make BUILD_PLATFORMS="$OS $ARCH" LDFLAGS="-s -w -buildid=''" GOFLAGS_VENDOR="-trimpath"
-    mkdir -p ../${BIN_PATH}/${OS}-${ARCH}
-    mv bin/* ../${BIN_PATH}/${OS}-${ARCH}
-    make clean
-  done
-  build::gather_licenses $MAKE_ROOT/_output "./cmd/csi-resizer"
-  cd ..
-  rm -rf $REPO
-}
-
-build::external-resizer::binaries
+make clean

@@ -19,47 +19,12 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-REPO="$1"
-CLONE_URL="$2"
-TAG="$3"
-GOLANG_VERSION="$4"
-BIN_ROOT="_output/bin"
-BIN_PATH=$BIN_ROOT/$REPO
+TAG="$1"
+BIN_PATH="$2"
+OS="$3"
+ARCH="$4"
 
-readonly SUPPORTED_PLATFORMS=(
-  linux/amd64
-  linux/arm64
-)
+make BUILD_PLATFORMS="$OS $ARCH" LDFLAGS="-s -w -buildid=''" GOFLAGS_VENDOR="-trimpath"
+mv bin/* $BIN_PATH
 
-MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
-source "${MAKE_ROOT}/../../../build/lib/common.sh"
-
-function build::external-snapshotter::binaries(){
-  mkdir -p $BIN_PATH
-  git clone $CLONE_URL $REPO
-  cd $REPO
-  git checkout $TAG
-  build::common::use_go_version $GOLANG_VERSION
-  build::common::set_go_cache csi-snapshotter $TAG
-  go mod vendor
-  for platform in "${SUPPORTED_PLATFORMS[@]}";
-  do
-    OS="$(cut -d '/' -f1 <<< ${platform})"
-    ARCH="$(cut -d '/' -f2 <<< ${platform})"
-    make BUILD_PLATFORMS="$OS $ARCH" LDFLAGS="-s -w -buildid=''" GOFLAGS_VENDOR="-trimpath"
-    mkdir -p ../${BIN_PATH}/${OS}-${ARCH}
-    mv bin/* ../${BIN_PATH}/${OS}-${ARCH}
-    make clean
-  done
-
-  # external-snappshotter ends up vendoring some deps that exist in the main repo, but there
-  # is no license file in the subfolder and go-license is not able to find it
-  # manually copying the root license to the vendor directory
-  cp LICENSE vendor/github.com/kubernetes-csi/external-snapshotter/
-  build::gather_licenses $MAKE_ROOT/_output "./cmd/snapshot-controller ./cmd/csi-snapshotter ./cmd/snapshot-validation-webhook"
-  
-  cd ..
-  rm -rf $REPO
-}
-
-build::external-snapshotter::binaries
+make clean

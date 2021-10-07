@@ -19,47 +19,19 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-REPO="$1"
-CLONE_URL="$2"
-TAG="$3"
-GOLANG_VERSION="$4"
-BIN_ROOT="_output/bin"
-BIN_PATH=$BIN_ROOT/$REPO
+TAG="$1"
+BIN_PATH="$2"
+OS="$3"
+ARCH="$4"
 
-readonly SUPPORTED_PLATFORMS=(
-  linux/amd64
-  linux/arm64
-)
+PKG="sigs.k8s.io/metrics-server/pkg"
+GIT_COMMIT="$(git describe --always --abbrev=0)"
+BUILD_DATE=$(git show -s --format=format:%ct HEAD)
+GOLDFLAGS="-X $PKG/version.gitVersion=$TAG -X $PKG/version.gitCommit=$GIT_COMMIT -X $PKG/version.buildDate=$BUILD_DATE"
 
-MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
-source "${MAKE_ROOT}/../../../build/lib/common.sh"
-
-function build::metrics-server::binaries(){
-  mkdir -p "$BIN_PATH"
-  if [ ! -d $REPO ]; then
-    git clone "$CLONE_URL" "$REPO"
-  fi
-  git -C $REPO checkout "$TAG"
-  cd $REPO
-  local -r pkg="sigs.k8s.io/metrics-server/pkg"
-  local -r git_commit="$(git describe --always --abbrev=0)"
-  local -r build_date=$(git show -s --format=format:%ct HEAD)
-  local -r goldflags="-X ${pkg}/version.gitVersion=$TAG -X ${pkg}/version.gitCommit=$git_commit -X ${pkg}/version.buildDate=$build_date"
-  build::common::use_go_version $GOLANG_VERSION
-  build::common::set_go_cache metrics-server $TAG
-  go mod vendor
-  for platform in "${SUPPORTED_PLATFORMS[@]}";
-  do
-    OS="$(cut -d '/' -f1 <<< ${platform})"
-    ARCH="$(cut -d '/' -f2 <<< ${platform})"
-    GOARCH=$ARCH GOOS=$OS CGO_ENABLED=0 go build -trimpath -ldflags "-s -w -buildid='' $goldflags" -o metrics-server sigs.k8s.io/metrics-server/cmd/metrics-server
-    mkdir -p ../$BIN_PATH/$OS-$ARCH
-    mv metrics-server ../$BIN_PATH/$OS-$ARCH/metrics-server
-    make clean
-  done
-  build::gather_licenses $MAKE_ROOT/_output "./cmd/metrics-server"
-  cd ..
-  rm -rf "$REPO"
-}
-
-build::metrics-server::binaries
+GOARCH=$ARCH GOOS=$OS CGO_ENABLED=0 \
+	go build -trimpath \
+	-ldflags "-s -w -buildid='' $GOLDFLAGS" \
+	-o $BIN_PATH/metrics-server sigs.k8s.io/metrics-server/cmd/metrics-server
+    
+make clean

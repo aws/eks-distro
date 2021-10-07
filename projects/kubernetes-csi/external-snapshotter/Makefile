@@ -1,142 +1,39 @@
 BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
-BUILD_LIB=$(BASE_DIRECTORY)/build/lib
-RELEASE_BRANCH?=$(shell cat $(BASE_DIRECTORY)/release/DEFAULT_RELEASE_BRANCH)
-RELEASE_ENVIRONMENT?=development
-RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/$(RELEASE_ENVIRONMENT)/RELEASE)
-ARTIFACT_BUCKET?=my-s3-bucket
 GIT_TAG?=$(shell cat GIT_TAG)
 GOLANG_VERSION?="1.15"
 
 REPO=external-snapshotter
 COMPONENT=kubernetes-csi/$(REPO)
-CLONE_URL=https://github.com/$(COMPONENT).git
 
-AWS_ACCOUNT_ID?=$(shell aws sts get-caller-identity --query Account --output text)
-AWS_REGION?=us-west-2
+CSI_SNAPSHOTTER_IMAGE?=$(IMAGE_REPO)/kubernetes-csi/external-snapshotter/csi-snapshotter:$(IMAGE_TAG)
+SNAPSHOT_CONTROLLER_IMAGE?=$(IMAGE_REPO)/kubernetes-csi/external-snapshotter/snapshot-controller:$(IMAGE_TAG)
+SNAPSHOT_VALIDATION_WEBHOOK_IMAGE?=$(IMAGE_REPO)/kubernetes-csi/external-snapshotter/snapshot-validation-webhook:$(IMAGE_TAG)
 
-MAKE_ROOT=$(shell cd "$(shell dirname "${BASH_SOURCE[0]}")" && pwd -P)
-BASE_REPO?=public.ecr.aws/eks-distro-build-tooling
-BASE_IMAGE_NAME?=eks-distro-base
-BASE_TAG?=$(shell cat $(MAKE_ROOT)/../../../EKS_DISTRO_BASE_TAG_FILE)
-BASE_IMAGE?=$(BASE_REPO)/$(BASE_IMAGE_NAME):$(BASE_TAG)
+IMAGES=csi-snapshotter snapshot-controller snapshot-validation-webhook
+LOCAL_IMAGE_TARGETS=$(addsuffix /images/amd64, $(IMAGES))
+IMAGE_TARGETS=$(addsuffix /images/push, $(IMAGES))
 
-IMAGE_REPO?=$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
-CSI_SNAPSHOTTER_IMAGE_TAG=${GIT_TAG}-eks-${RELEASE_BRANCH}-${RELEASE}
-CSI_SNAPSHOTTER_IMAGE?=$(IMAGE_REPO)/kubernetes-csi/external-snapshotter/csi-snapshotter:$(CSI_SNAPSHOTTER_IMAGE_TAG)
-SNAPSHOT_CONTROLLER_IMAGE_TAG=${GIT_TAG}-eks-${RELEASE_BRANCH}-${RELEASE}
-SNAPSHOT_CONTROLLER_IMAGE?=$(IMAGE_REPO)/kubernetes-csi/external-snapshotter/snapshot-controller:$(SNAPSHOT_CONTROLLER_IMAGE_TAG)
-SNAPSHOT_VALIDATION_WEBHOOK_IMAGE_TAG=${GIT_TAG}-eks-${RELEASE_BRANCH}-${RELEASE}
-SNAPSHOT_VALIDATION_WEBHOOK_IMAGE?=$(IMAGE_REPO)/kubernetes-csi/external-snapshotter/snapshot-validation-webhook:$(SNAPSHOT_VALIDATION_WEBHOOK_IMAGE_TAG)
+SNAPSHOOTER_LICENSE=$(REPO)/vendor/github.com/kubernetes-csi/external-snapshotter/LICENSE
+
+LICENSE_PACKAGE_FILTER=./cmd/snapshot-controller ./cmd/csi-snapshotter ./cmd/snapshot-validation-webhook
+
+BINARY_TARGET=$(OUTPUT_BIN_DIR)/linux-amd64/csi-snapshotter
+
+DOCKERFILE_FOLDER=./docker/linux/$(IMAGE_NAME)
+
+include $(BASE_DIRECTORY)/Common.mk
 
 
-.PHONY: binaries
-binaries:
-	build/create_binaries.sh $(REPO) $(CLONE_URL) $(GIT_TAG) $(GOLANG_VERSION)
+$(GATHER_LICENSES_TARGET): $(SNAPSHOOTER_LICENSE)
+
+# external-snappshotter ends up vendoring some deps that exist in the main repo, but there
+# is no license file in the subfolder and go-license is not able to find it
+# manually copying the root license to the vendor directory
+$(SNAPSHOOTER_LICENSE): $(GIT_CHECKOUT_TARGET)
+	cp $(REPO)/LICENSE $@
 
 .PHONY: local-images
-local-images: binaries
-	$(BUILD_LIB)/buildkit.sh \
-		build \
-		--frontend dockerfile.v0 \
-		--opt platform=linux/amd64 \
-		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
-		--local dockerfile=./docker/linux/csi-snapshotter \
-		--local context=. \
-		--output type=oci,oci-mediatypes=true,name=$(CSI_SNAPSHOTTER_IMAGE),dest=/tmp/csi-snapshotter.tar
-	$(BUILD_LIB)/buildkit.sh \
-		build \
-		--frontend dockerfile.v0 \
-		--opt platform=linux/amd64 \
-		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
-		--local dockerfile=./docker/linux/snapshot-controller \
-		--local context=. \
-		--output type=oci,oci-mediatypes=true,name=$(SNAPSHOT_CONTROLLER_IMAGE),dest=/tmp/snapshot-controller.tar
-	$(BUILD_LIB)/buildkit.sh \
-		build \
-		--frontend dockerfile.v0 \
-		--opt platform=linux/amd64 \
-		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
-		--local dockerfile=./docker/linux/snapshot-validation-webhook \
-		--local context=. \
-		--output type=oci,oci-mediatypes=true,name=$(SNAPSHOT_VALIDATION_WEBHOOK_IMAGE),dest=/tmp/snapshot-validation-webhook.tar
+local-images: $(LOCAL_IMAGE_TARGETS)
 
 .PHONY: images
-images: binaries
-	$(BUILD_LIB)/buildkit.sh \
-		build \
-		--frontend dockerfile.v0 \
-		--opt platform=linux/amd64,linux/arm64 \
-		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
-		--local dockerfile=./docker/linux/csi-snapshotter \
-		--local context=. \
-		--output type=image,oci-mediatypes=true,name=$(CSI_SNAPSHOTTER_IMAGE),push=true
-	$(BUILD_LIB)/buildkit.sh \
-		build \
-		--frontend dockerfile.v0 \
-		--opt platform=linux/amd64,linux/arm64 \
-		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
-		--local dockerfile=./docker/linux/snapshot-controller \
-		--local context=. \
-		--output type=image,oci-mediatypes=true,name=$(SNAPSHOT_CONTROLLER_IMAGE),push=true
-	$(BUILD_LIB)/buildkit.sh \
-		build \
-		--frontend dockerfile.v0 \
-		--opt platform=linux/amd64,linux/arm64 \
-		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
-		--local dockerfile=./docker/linux/snapshot-validation-webhook \
-		--local context=. \
-		--output type=image,oci-mediatypes=true,name=$(SNAPSHOT_VALIDATION_WEBHOOK_IMAGE),push=true
-
-.PHONY: docker
-docker: binaries
-	docker build \
-		-t $(CSI_SNAPSHOTTER_IMAGE) \
-		--build-arg BASE_IMAGE=$(BASE_IMAGE) \
-		--build-arg TARGETARCH=amd64 \
-		--build-arg TARGETOS=linux \
-		-f ./docker/linux/csi-snapshotter/Dockerfile .
-	docker build \
-		-t $(SNAPSHOT_CONTROLLER_IMAGE) \
-		--build-arg BASE_IMAGE=$(BASE_IMAGE) \
-		--build-arg TARGETARCH=amd64 \
-		--build-arg TARGETOS=linux \
-		-f ./docker/linux/snapshot-controller/Dockerfile .
-	docker build \
-		-t $(SNAPSHOT_VALIDATION_WEBHOOK_IMAGE) \
-		--build-arg BASE_IMAGE=$(BASE_IMAGE) \
-		--build-arg TARGETARCH=amd64 \
-		--build-arg TARGETOS=linux \
-		-f ./docker/linux/snapshot-validation-webhook/Dockerfile .
-
-.PHONY: docker-push
-docker-push:
-	docker push $(CSI_SNAPSHOTTER_IMAGE)
-	docker push $(SNAPSHOT_CONTROLLER_IMAGE)
-	docker push $(SNAPSHOT_VALIDATION_WEBHOOK_IMAGE)
-
-.PHONY: build
-build: local-images attribution validate-checksums
-
-.PHONY: release
-release: images validate-checksums
-	echo "Done $(COMPONENT)"
-
-.PHONY: all
-all: release
-
-.PHONY: attribution
-attribution: 
-	build/create_attribution.sh $(GOLANG_VERSION)
-
-.PHONY: checksums
-checksums:
-	$(BUILD_LIB)/update_checksums.sh $(MAKE_ROOT) $(MAKE_ROOT)/_output/bin $(MAKE_ROOT)/CHECKSUMS
-
-.PHONY: validate-checksums
-validate-checksums:
-	sha256sum -c $(MAKE_ROOT)/CHECKSUMS
-
-.PHONY: clean
-clean:
-	rm -rf $(REPO)
-	rm -rf "_output"
+images: $(IMAGE_TARGETS)

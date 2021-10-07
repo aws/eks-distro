@@ -13,40 +13,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-set -x
 set -o errexit
 set -o nounset
 set -o pipefail
 
-REPO="$1"
-TAG="$2"
-TAR_PATH="_output/tar"
-BIN_ROOT="_output/bin"
-LICENSES_PATH="_output/LICENSES"
-
-readonly SUPPORTED_PLATFORMS=(
-  linux/amd64
-  linux/arm64
-)
 MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
+OUTPUT_DIR="${MAKE_ROOT}/_output"
+ATTRIBUTION_DIR="${OUTPUT_DIR}/attribution"
 source "${MAKE_ROOT}/../../../build/lib/common.sh"
 
-function build::plugins::tarball() {
-  build::common::ensure_tar
-  mkdir -p "$TAR_PATH"
 
-  for platform in "${SUPPORTED_PLATFORMS[@]}"; do
-    OS="$(cut -d '/' -f1 <<< ${platform})"
-    ARCH="$(cut -d '/' -f2 <<< ${platform})"
-    TAR_FILE="cni-plugins-${OS}-${ARCH}-${TAG}.tar.gz"
-
-    cp -rf $LICENSES_PATH $BIN_ROOT/$REPO/${OS}-${ARCH}/ 
-    cp ATTRIBUTION.txt $BIN_ROOT/$REPO/${OS}-${ARCH}/ 
-    build::common::create_tarball ${TAR_PATH}/${TAR_FILE} $BIN_ROOT/$REPO/${OS}-${ARCH} .
-  done
-}
-
-build::plugins::tarball
-
-build::common::generate_shasum "${TAR_PATH}"
+# go-licenses calls adds an additonal cmd/csi-node-driver-registrar 
+# to the main module name in the csv output
+MODULE_NAME=$(cat "${ATTRIBUTION_DIR}/root-module.txt")
+SEARCH=$(build::common::re_quote "$MODULE_NAME/cmd/csi-node-driver-registrar")
+REPLACE=$(build::common::re_quote $MODULE_NAME)
+sed -i.bak "s/^$SEARCH/$REPLACE/" "${ATTRIBUTION_DIR}/go-license.csv"

@@ -19,54 +19,19 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-REPO="$1"
-CLONE_URL="$2"
-TAG="$3"
-GOLANG_VERSION="$4"
-BIN_ROOT="_output/bin"
-BIN_PATH=$BIN_ROOT/$REPO
+TAG="$1"
+BIN_PATH="$2"
+OS="$3"
+ARCH="$4"
 
-readonly SUPPORTED_PLATFORMS=(
-  linux/amd64
-  linux/arm64
-  darwin/amd64
-  windows/amd64
-)
+SUFFIX=""
+if [ $OS == "windows" ];
+then
+	SUFFIX=".exe"
+fi
+REV=`git rev-list -n1 HEAD`
+LDFLAGS="-buildid='' -s -w -X main.version=$TAG -X main.commit=$REV"
 
-MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
-source "${MAKE_ROOT}/../../../build/lib/common.sh"
-
-function build::aws-iam-authenticator::binaries(){
-  mkdir -p "$BIN_PATH"
-  git clone "$CLONE_URL" "$REPO"
-  cd "$REPO"
-  git checkout "$TAG"
-  build::common::use_go_version $GOLANG_VERSION
-  build::common::set_go_cache aws-iam-authenticator $TAG
-  go mod vendor
-  for platform in "${SUPPORTED_PLATFORMS[@]}";
-  do
-    OS="$(cut -d '/' -f1 <<< ${platform})"
-    ARCH="$(cut -d '/' -f2 <<< ${platform})"
-    suffix=""
-    if [ $OS == "windows" ];
-    then
-      suffix=".exe"
-    fi
-    rev=`git rev-list -n1 HEAD`
-    ld_flags="-buildid='' -s -w -X main.version=$TAG -X main.commit=$rev"
-
-    CGO_ENABLED=0 GOOS="$OS" GOARCH="$ARCH"\
-    go build -trimpath -ldflags "$ld_flags"\
-    -o "./bin/$REPO$suffix" ./cmd/aws-iam-authenticator/
-
-    mkdir -p ../"$BIN_PATH"/"$OS"-"$ARCH"
-    mv bin/* ../"$BIN_PATH"/"$OS"-"$ARCH"
-  done
-  build::gather_licenses $MAKE_ROOT/_output "./cmd/aws-iam-authenticator"
-  cd ..
-  rm -rf "$REPO"
-
-}
-
-build::aws-iam-authenticator::binaries
+CGO_ENABLED=0 GOOS=$OS GOARCH=$ARCH \
+	go build -trimpath -ldflags "$LDFLAGS" \
+	-o $BIN_PATH/aws-iam-authenticator$SUFFIX ./cmd/aws-iam-authenticator/
