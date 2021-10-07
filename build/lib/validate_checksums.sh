@@ -21,10 +21,9 @@ PROJECT_ROOT="$1"
 OUTPUT_BIN_DIR="$2"
 RELEASE_BRANCH="$3"
 
-if [ ! -d ${OUTPUT_BIN_DIR} ] ;  then
-    echo "${OUTPUT_BIN_DIR} not present! Run 'make binaries'"
-    exit 1
-fi
+SCRIPT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+
+cd $PROJECT_ROOT
 
 CHECKSUMS_FILE=$PROJECT_ROOT/CHECKSUMS
 
@@ -32,12 +31,10 @@ if [ -d $PROJECT_ROOT/$RELEASE_BRANCH ]; then
 	CHECKSUMS_FILE=$PROJECT_ROOT/$RELEASE_BRANCH/CHECKSUMS
 fi
 
-rm -f $CHECKSUMS_FILE
-for file in $(find ${OUTPUT_BIN_DIR} -type f | sort); do
-    filepath=$(realpath --relative-base=$PROJECT_ROOT $file)
-    sha256sum $filepath >> $CHECKSUMS_FILE
-done
-
-echo "*************** CHECKSUMS ***************"
-cat $CHECKSUMS_FILE
-echo "*****************************************"
+if ! sha256sum -c $CHECKSUMS_FILE; then
+	echo "Checksums do not match!"
+	echo "The correct checksums are printed below"
+	echo "Please only update if changing GIT_TAG or build flags."
+	$SCRIPT_ROOT/update_checksums.sh $PROJECT_ROOT $OUTPUT_BIN_DIR $RELEASE_BRANCH
+	exit 1
+fi

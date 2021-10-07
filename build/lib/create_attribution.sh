@@ -17,27 +17,16 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+SCRIPT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+source "${SCRIPT_ROOT}/common.sh"
+
 PROJECT_ROOT="$1"
-OUTPUT_BIN_DIR="$2"
-RELEASE_BRANCH="$3"
+GOLANG_VERSION="$2"
+OUTPUT_DIR="$3"
+RELEASE_BRANCH="${4:-}"
 
-if [ ! -d ${OUTPUT_BIN_DIR} ] ;  then
-    echo "${OUTPUT_BIN_DIR} not present! Run 'make binaries'"
-    exit 1
+if [ -d "$PROJECT_ROOT/$RELEASE_BRANCH" ]; then
+	PROJECT_ROOT=$PROJECT_ROOT/$RELEASE_BRANCH
 fi
 
-CHECKSUMS_FILE=$PROJECT_ROOT/CHECKSUMS
-
-if [ -d $PROJECT_ROOT/$RELEASE_BRANCH ]; then
-	CHECKSUMS_FILE=$PROJECT_ROOT/$RELEASE_BRANCH/CHECKSUMS
-fi
-
-rm -f $CHECKSUMS_FILE
-for file in $(find ${OUTPUT_BIN_DIR} -type f | sort); do
-    filepath=$(realpath --relative-base=$PROJECT_ROOT $file)
-    sha256sum $filepath >> $CHECKSUMS_FILE
-done
-
-echo "*************** CHECKSUMS ***************"
-cat $CHECKSUMS_FILE
-echo "*****************************************"
+build::generate_attribution $PROJECT_ROOT $GOLANG_VERSION $OUTPUT_DIR

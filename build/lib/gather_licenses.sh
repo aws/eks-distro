@@ -17,27 +17,13 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-PROJECT_ROOT="$1"
-OUTPUT_BIN_DIR="$2"
-RELEASE_BRANCH="$3"
+REPO="$1"
+OUTPUT_DIR="$2"
+PACKAGE_FILTER="$3"
+REPO_SUBPATH="${4:-}"
 
-if [ ! -d ${OUTPUT_BIN_DIR} ] ;  then
-    echo "${OUTPUT_BIN_DIR} not present! Run 'make binaries'"
-    exit 1
-fi
+SCRIPT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+source "${SCRIPT_ROOT}/common.sh"
 
-CHECKSUMS_FILE=$PROJECT_ROOT/CHECKSUMS
-
-if [ -d $PROJECT_ROOT/$RELEASE_BRANCH ]; then
-	CHECKSUMS_FILE=$PROJECT_ROOT/$RELEASE_BRANCH/CHECKSUMS
-fi
-
-rm -f $CHECKSUMS_FILE
-for file in $(find ${OUTPUT_BIN_DIR} -type f | sort); do
-    filepath=$(realpath --relative-base=$PROJECT_ROOT $file)
-    sha256sum $filepath >> $CHECKSUMS_FILE
-done
-
-echo "*************** CHECKSUMS ***************"
-cat $CHECKSUMS_FILE
-echo "*****************************************"
+cd $REPO/$REPO_SUBPATH
+build::gather_licenses $OUTPUT_DIR "$PACKAGE_FILTER"

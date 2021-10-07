@@ -79,10 +79,9 @@ function build::gather_licenses() {
   local -r outputdir=$1
   local -r patterns=$2
 
-  # reset the gopath change to make sure and always use
-  # the latest go for generating deps list
-  # older versions behave differently in some cases
-  build::common::remove_go_path
+  # use go 1.16 since 1.17 seems to be more agressive about wanting to update
+  # the go.mod/sum file
+  build::common::use_go_version 1.16
 
   # Force deps to only be pulled form vendor directories
   # this is important in a couple cases where license files
@@ -119,6 +118,7 @@ function build::gather_licenses() {
     echo " one of the dependencies is licensed as LGPL or GPL"
     echo " which is prohibited at Amazon"
     echo " please look into removing the dependency"
+    exit 1
   fi
 
   # go-license is pretty eager to copy src for certain license types
@@ -131,7 +131,9 @@ function build::gather_licenses() {
   # most of the packages show up the go-license.csv file as the module name
   # from the go.mod file, storing that away since the source dirs usually get deleted
   MODULE_NAME=$(go mod edit -json | jq -r '.Module.Path')
-  echo $MODULE_NAME > ${outputdir}/attribution/root-module.txt
+  if [ ! -f ${outputdir}/attribution/root-module.txt ]; then
+  	echo $MODULE_NAME > ${outputdir}/attribution/root-module.txt
+  fi
 }
 
 function build::generate_attribution(){
@@ -152,15 +154,6 @@ function build::generate_attribution(){
 
   generate-attribution $root_module_name $project_root $golang_version_tag $output_directory 
   cp -f "${output_directory}/attribution/ATTRIBUTION.txt" "${project_root}/ATTRIBUTION.txt"
-}
-
-function build::common::remove_go_path() {
-  # This is the path where the specific go binary versions reside in our builder-base image
-  export PATH=$(echo "$PATH" | sed -e "s/^\/go\/go[0-9\.]*\/bin://")
-
-  # This is the path that will most likely be correct if running locally
-  local -r quoted_go_path=$(build::common::re_quote $GOPATH)
-  export PATH=$(echo "$PATH" | sed -e "s/^$quoted_go_path\/go[0-9\.]*\/bin://")
 }
 
 function build::common::get_go_path() {

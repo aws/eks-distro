@@ -103,18 +103,6 @@ release: makes upload
 binaries: makes
 	@echo 'Done' $(TARGET)
 
-.PHONY: docker
-docker: makes
-	@echo 'Done' $(TARGET)
-
-.PHONY: docker-push
-docker-push: makes
-	@echo 'Done' $(TARGET)
-
-.PHONY: update-kubernetes-version
-update-kubernetes-version:
-	build/update-kubernetes-version/update.sh $(RELEASE_BRANCH)
-
 .PHONY: run-target-in-docker
 run-target-in-docker:
 	build/lib/run_target_docker.sh $(PROJECT) $(MAKE_TARGET) $(RELEASE_BRANCH) $(IMAGE_REPO)
