@@ -13,21 +13,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+set -x
+set -o errexit
+set -o nounset
+set -o pipefail
 
-function build::binaries::bins() {
-    local -r repository_dir="$1"
-    local -r output_dir="$2"
-    cd $repository_dir/images/build/go-runner
-    go mod vendor
-    export CGO_ENABLED=0
-    export GOLDFLAGS='-s -w --buildid=""'
+MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
 
-    export GOOS=linux
-    export GOARCH=amd64
-    go build -trimpath -v -ldflags="$GOLDFLAGS" \
-        -o $output_dir/go-runner-linux-amd64
+REPO="$1"
+GIT_TAG="$2"
+RELEASE_BRANCH="$3"
 
-    export GOARCH=arm64
-    go build -trimpath -v -ldflags="$GOLDFLAGS" \
-        -o $output_dir/go-runner-linux-arm64
-}
+source "${MAKE_ROOT}/build/lib/init.sh"
+source "${MAKE_ROOT}/../../../build/lib/common.sh"
+
+PATCH_DIR=${MAKE_ROOT}/${RELEASE_BRANCH}/patches
+OUTPUT_DIR=${MAKE_ROOT}/_output/${RELEASE_BRANCH}
+
+build::git::patch "$SOURCE_DIR" "$GIT_TAG" "$PATCH_DIR"

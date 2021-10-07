@@ -20,46 +20,23 @@ set -o pipefail
 
 MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
 
-CLONE_URL="$1"
-RELEASE_BRANCH="$2"
+REPO="$1"
+GOLANG_VERSION="$2"
 GIT_TAG="$3"
-GOLANG_VERSION="$4"
-RELEASE_ENVIRONMENT=${RELEASE_ENVIRONMENT:-development}
+RELEASE_BRANCH="$4"
 
 source "${MAKE_ROOT}/build/lib/init.sh"
 source "${MAKE_ROOT}/../../../build/lib/common.sh"
 
-BASE_DIRECTORY=$(git rev-parse --show-toplevel)
-RELEASE_FILE="${BASE_DIRECTORY}/release/${RELEASE_BRANCH}/${RELEASE_ENVIRONMENT}/RELEASE"
-PATCH_DIR=${MAKE_ROOT}/${RELEASE_BRANCH}/patches
-export KUBE_GIT_VERSION=$(build::version::kube_git_version $GIT_TAG $RELEASE_FILE $RELEASE_BRANCH)
-if [ -d ${OUTPUT_DIR}/${RELEASE_BRANCH}/bin ]; then
-    echo "${OUTPUT_DIR}/${RELEASE_BRANCH}/bin already exists. Run 'make clean' before rebuilding"
-    exit 0
-fi
-build::git::clone "$CLONE_URL" "$SOURCE_DIR"
-build::git::patch "$SOURCE_DIR" "$GIT_TAG" "$PATCH_DIR"
+OUTPUT_DIR=${MAKE_ROOT}/_output/${RELEASE_BRANCH}
+
 build::common::use_go_version $GOLANG_VERSION
 build::common::set_go_cache kubernetes $GIT_TAG
 build::binaries::kube_bins "$SOURCE_DIR" $RELEASE_BRANCH $GIT_TAG
 
-mkdir -p ${OUTPUT_DIR}/${RELEASE_BRANCH}/bin
+mkdir -p ${OUTPUT_DIR}/bin
 rsync --remove-source-files -a --include '*/' --include 'kube-*' --include 'kubelet*' \
-	--include 'kubeadm*' --include 'kubectl*' --exclude '*' ${SOURCE_DIR}/_output/local/bin ${OUTPUT_DIR}/${RELEASE_BRANCH}
+	--include 'kubeadm*' --include 'kubectl*' --exclude '*' ${SOURCE_DIR}/_output/local/bin ${OUTPUT_DIR}
 
 # In presubmit builds space is very limited
 rm -rf ${SOURCE_DIR}/_output
-
-# The heketi/heketi dependency is dual licensed between Apache 2.0 or LGPLv3+
-# this was done at the request of the kubernetes project since the original license
-# was not one that allowed redistro.  The pieces used by the kubernetes project follow under
-# the apache2 license.
-# https://github.com/heketi/heketi/pull/1419
-# https://github.com/kubernetes/kubernetes/pull/70828
-# Copy the apache2 license into place in the vendor directory
-cp $REPOSITORY/vendor/github.com/heketi/heketi/LICENSE-APACHE2 $REPOSITORY/vendor/github.com/heketi/heketi/LICENSE 
-rm $REPOSITORY/vendor/github.com/heketi/heketi/COPYING-*
-
-PATTERNS="./cmd/kubelet ./cmd/kube-proxy ./cmd/kubeadm ./cmd/kubectl ./cmd/kube-apiserver ./cmd/kube-controller-manager ./cmd/kube-scheduler"
-(cd $REPOSITORY && build::gather_licenses ${OUTPUT_DIR}/${RELEASE_BRANCH} "$PATTERNS")
-cp $MAKE_ROOT/${RELEASE_BRANCH}/ATTRIBUTION.txt ${OUTPUT_DIR}/${RELEASE_BRANCH}

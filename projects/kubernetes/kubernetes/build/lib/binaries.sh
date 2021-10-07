@@ -73,5 +73,8 @@ function build::binaries::kube_bins() {
     export KUBE_BUILD_PLATFORMS="darwin/amd64" 
     hack/make-rules/build.sh -trimpath cmd/kubectl
 
+    # In presubmit builds space is very limited
+    rm -rf ./_output/local/go/cache
+	
     cd ..
 }

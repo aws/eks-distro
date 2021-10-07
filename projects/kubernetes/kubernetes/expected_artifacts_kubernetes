@@ -49,6 +49,8 @@ kubernetes-$RELEASE_BRANCH/releases/$RELEASE/artifacts/kubernetes/$GIT_TAG/bin/l
 kubernetes-$RELEASE_BRANCH/releases/$RELEASE/artifacts/kubernetes/$GIT_TAG/bin/linux/amd64/kubelet
 kubernetes-$RELEASE_BRANCH/releases/$RELEASE/artifacts/kubernetes/$GIT_TAG/bin/linux/amd64/kubelet.sha256
 kubernetes-$RELEASE_BRANCH/releases/$RELEASE/artifacts/kubernetes/$GIT_TAG/bin/linux/amd64/kubelet.sha512
+kubernetes-$RELEASE_BRANCH/releases/$RELEASE/artifacts/kubernetes/$GIT_TAG/bin/linux/amd64/pause.docker_image_name
+kubernetes-$RELEASE_BRANCH/releases/$RELEASE/artifacts/kubernetes/$GIT_TAG/bin/linux/amd64/pause.docker_tag
 kubernetes-$RELEASE_BRANCH/releases/$RELEASE/artifacts/kubernetes/$GIT_TAG/bin/linux/amd64/pause.tar
 kubernetes-$RELEASE_BRANCH/releases/$RELEASE/artifacts/kubernetes/$GIT_TAG/bin/linux/amd64/pause.tar.sha256
 kubernetes-$RELEASE_BRANCH/releases/$RELEASE/artifacts/kubernetes/$GIT_TAG/bin/linux/amd64/pause.tar.sha512
@@ -93,6 +95,8 @@ kubernetes-$RELEASE_BRANCH/releases/$RELEASE/artifacts/kubernetes/$GIT_TAG/bin/l
 kubernetes-$RELEASE_BRANCH/releases/$RELEASE/artifacts/kubernetes/$GIT_TAG/bin/linux/arm64/kubelet
 kubernetes-$RELEASE_BRANCH/releases/$RELEASE/artifacts/kubernetes/$GIT_TAG/bin/linux/arm64/kubelet.sha256
 kubernetes-$RELEASE_BRANCH/releases/$RELEASE/artifacts/kubernetes/$GIT_TAG/bin/linux/arm64/kubelet.sha512
+kubernetes-$RELEASE_BRANCH/releases/$RELEASE/artifacts/kubernetes/$GIT_TAG/bin/linux/arm64/pause.docker_image_name
+kubernetes-$RELEASE_BRANCH/releases/$RELEASE/artifacts/kubernetes/$GIT_TAG/bin/linux/arm64/pause.docker_tag
 kubernetes-$RELEASE_BRANCH/releases/$RELEASE/artifacts/kubernetes/$GIT_TAG/bin/linux/arm64/pause.tar
 kubernetes-$RELEASE_BRANCH/releases/$RELEASE/artifacts/kubernetes/$GIT_TAG/bin/linux/arm64/pause.tar.sha256
 kubernetes-$RELEASE_BRANCH/releases/$RELEASE/artifacts/kubernetes/$GIT_TAG/bin/linux/arm64/pause.tar.sha512

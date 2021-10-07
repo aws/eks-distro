@@ -12,24 +12,19 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-set -x
+
 set -o errexit
 set -o nounset
 set -o pipefail
 
 MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
-source "${MAKE_ROOT}/build/lib/init.sh"
+OUTPUT_DIR="${MAKE_ROOT}/_output"
+ATTRIBUTION_DIR="${OUTPUT_DIR}/attribution"
 source "${MAKE_ROOT}/../../../build/lib/common.sh"
 
-RELEASE_BRANCH="$1"
-GOLANG_VERSION="$2"
 
-OUTPUT_RELEASE_DIR="${OUTPUT_DIR}/${RELEASE_BRANCH}"
-
-# a number of k8s.io dependencies which come from the main repo show
-# up in the list and since they are in the repo they have no version
-# set the rootmodule name to k8s.io to force all projects with that 
-# prefix and no version to use the k8s git_tag version
-echo "k8s.io" > ${OUTPUT_RELEASE_DIR}/attribution/root-module.txt
-
-build::generate_attribution $MAKE_ROOT/$RELEASE_BRANCH $GOLANG_VERSION $OUTPUT_RELEASE_DIR
+# go-licenses calls the main module command-line-arguments in the csv output
+MODULE_NAME=$(cat "${ATTRIBUTION_DIR}/root-module.txt")
+SEARCH='command-line-arguments'
+REPLACE=$(build::common::re_quote $MODULE_NAME)
+sed -i.bak "s/^$SEARCH/$REPLACE/" "${ATTRIBUTION_DIR}/go-license.csv"

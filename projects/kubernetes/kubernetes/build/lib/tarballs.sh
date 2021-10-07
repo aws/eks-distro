@@ -89,8 +89,8 @@ function build::tarballs::create_tarballs(){
         for bin in ${KUBE_SERVER_BINARIES[@]}; do
             cp ${bin_root}/${platform}/${bin} $bin_dir
         done
-        cp -rf $bin_root/LICENSES $ch_dir/kubernetes
-        cp $bin_root/ATTRIBUTION.txt $ch_dir/kubernetes
+        cp -rf $output_dir/LICENSES $ch_dir/kubernetes
+        cp $output_dir/ATTRIBUTION.txt $ch_dir/kubernetes
         build::common::create_tarball $tarball $ch_dir kubernetes
         rm -rf $ch_dir
         rmdir $(dirname $ch_dir)
@@ -113,8 +113,8 @@ function build::tarballs::create_tarballs(){
                 cp ${bin_root}/${platform}/${bin} $bin_dir
             done
         fi
-        cp -rf $bin_root/LICENSES $ch_dir/kubernetes
-        cp $bin_root/ATTRIBUTION.txt $ch_dir/kubernetes
+        cp -rf $output_dir/LICENSES $ch_dir/kubernetes
+        cp $output_dir/ATTRIBUTION.txt $ch_dir/kubernetes
         build::common::create_tarball $tarball $ch_dir kubernetes
         rm -rf $ch_dir
         rmdir $(dirname $ch_dir)
@@ -137,8 +137,8 @@ function build::tarballs::create_tarballs(){
                 cp ${bin_root}/${platform}/${bin} $bin_dir
             done
         fi
-        cp -rf $bin_root/LICENSES $ch_dir/kubernetes
-        cp $bin_root/ATTRIBUTION.txt $ch_dir/kubernetes
+        cp -rf $output_dir/LICENSES $ch_dir/kubernetes
+        cp $output_dir/ATTRIBUTION.txt $ch_dir/kubernetes
         build::common::create_tarball $tarball $ch_dir kubernetes
         rm -rf $ch_dir
         rmdir $(dirname $ch_dir)

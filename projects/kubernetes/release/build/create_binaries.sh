@@ -18,22 +18,11 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-CLONE_URL=$1
-REPOSITORY=$2
-TAG=$3
-GOLANG_VERSION="$4"
+TAG="$1"
+BIN_PATH="$2"
+OS="$3"
+ARCH="$4"
 
-MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
-OUTPUT_DIR="${OUTPUT_DIR:-${MAKE_ROOT}/_output/bin}"
-
-source "${MAKE_ROOT}/build/lib/clone.sh"
-source "${MAKE_ROOT}/build/lib/binaries.sh"
-source "${MAKE_ROOT}/../../../build/lib/common.sh"
-
-mkdir -p $OUTPUT_DIR
-build::clone::release $CLONE_URL $REPOSITORY $TAG
-build::common::use_go_version $GOLANG_VERSION
-build::common::set_go_cache kubernetes-release $TAG
-build::binaries::bins $MAKE_ROOT/$REPOSITORY $OUTPUT_DIR
-
-(cd $MAKE_ROOT/$REPOSITORY/images/build/go-runner && build::gather_licenses $MAKE_ROOT/_output "./go-runner.go") 
+CGO_ENABLED=0 GOOS=$OS GOARCH=$ARCH \
+	go build -trimpath -v -ldflags='-s -w --buildid=""' \
+        -o $BIN_PATH/go-runner

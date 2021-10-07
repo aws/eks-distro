@@ -14,15 +14,6 @@
 # limitations under the License.
 
 
-function build::git::clone() {
-    local -r clone_url="$1"
-    local -r repository="$2"
-
-    if [ ! -d $repository ]; then
-        git clone $clone_url $repository
-    fi
-}
-
 function build::git::patch() {
     local -r source_dir="$1"
     local -r git_ref="$2"

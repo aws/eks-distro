@@ -1,131 +1,38 @@
 BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
-BUILD_LIB=$(BASE_DIRECTORY)/build/lib
-RELEASE_BRANCH?=$(shell cat $(BASE_DIRECTORY)/release/DEFAULT_RELEASE_BRANCH)
-RELEASE_ENVIRONMENT?=development
-RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/$(RELEASE_ENVIRONMENT)/RELEASE)
-ARTIFACT_BUCKET?=my-s3-bucket
 GIT_TAG?=$(shell cat ./$(RELEASE_BRANCH)/GIT_TAG)
 GOLANG_VERSION?=$(shell cat ./$(RELEASE_BRANCH)/GOLANG_VERSION)
 
-REPO=release
-COMPONENT=kubernetes/$(REPO)
-CLONE_URL=https://github.com/$(COMPONENT).git
+REPO=release-src
+COMPONENT=kubernetes/release
 
-AWS_REGION?=us-west-2
-AWS_ACCOUNT_ID?=$(shell aws sts get-caller-identity --query Account --output text)
+GO_RUNNER_IMAGE?=$(IMAGE_REPO)/kubernetes/go-runner:$(IMAGE_TAG)
+KUBE_PROXY_BASE_IMAGE?=$(IMAGE_REPO)/kubernetes/kube-proxy-base:$(IMAGE_TAG)
 
-MAKE_ROOT=$(shell cd "$(shell dirname "${BASH_SOURCE[0]}")" && pwd -P)
-BASE_REPO?=public.ecr.aws/eks-distro-build-tooling
-BASE_IMAGE_NAME?=eks-distro-base
-BASE_TAG?=$(shell cat $(MAKE_ROOT)/../../../EKS_DISTRO_BASE_TAG_FILE)
-BASE_IMAGE?=$(BASE_REPO)/$(BASE_IMAGE_NAME):$(BASE_TAG)
+LICENSE_PACKAGE_FILTER=./go-runner.go
+IPTABLES_WRAPPER=$(OUTPUT_DIR)/iptables-wrapper
 
-IMAGE_REPO?=$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
-GO_RUNNER_IMAGE_NAME?=kubernetes/go-runner
-# This tag is overwritten in the prow job to point to the upstream git tag and this repo's commit hash
-GO_RUNNER_IMAGE_TAG?=${GIT_TAG}-eks-${RELEASE_BRANCH}-${RELEASE}
-GO_RUNNER_IMAGE?=$(IMAGE_REPO)/$(GO_RUNNER_IMAGE_NAME):$(GO_RUNNER_IMAGE_TAG)
-KUBE_PROXY_BASE_IMAGE_NAME?=kubernetes/kube-proxy-base
-# This tag is overwritten in the prow job to point to the upstream git tag and this repo's commit hash
-KUBE_PROXY_BASE_IMAGE_TAG?=${GIT_TAG}-eks-${RELEASE_BRANCH}-${RELEASE}
-KUBE_PROXY_BASE_IMAGE?=$(IMAGE_REPO)/$(KUBE_PROXY_BASE_IMAGE_NAME):$(KUBE_PROXY_BASE_IMAGE_TAG)
+REPO_SUBPATH=images/build/go-runner
+BINARY_TARGET=$(OUTPUT_BIN_DIR)/linux-amd64/go-runner
 
-IMAGE_OUTPUT_TYPE?=oci
-IMAGE_OUTPUT?=dest=/tmp/release-image.tar
+DOCKERFILE_FOLDER=./docker/$(IMAGE_NAME)
 
-.PHONY: binaries
-binaries:
-	build/create_binaries.sh $(CLONE_URL) $(REPO) $(GIT_TAG) $(GOLANG_VERSION)
+include $(BASE_DIRECTORY)/Common.mk
+
+
+$(call IMAGE_TARGETS_FOR_NAME, kube-proxy-base): $(IPTABLES_WRAPPER)
+
+$(ATTRIBUTION_TARGET): fix-licenses
+
+$(IPTABLES_WRAPPER): $(GIT_CHECKOUT_TARGET)
+	@mkdir -p $(@D)
+	cp $(REPO)/images/build/debian-iptables/buster/iptables-wrapper $@
 
 .PHONY: local-images
-local-images: binaries
-	cp release/images/build/debian-iptables/buster/iptables-wrapper _output/
-	$(BUILD_LIB)/buildkit.sh \
-		build \
-		--frontend dockerfile.v0 \
-		--opt platform=linux/amd64,linux/arm64  \
-		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
-		--opt build-arg:RELEASE_BRANCH=$(RELEASE_BRANCH) \
-		--local dockerfile=./docker/go-runner/ \
-		--local context=. \
-		--output type=$(IMAGE_OUTPUT_TYPE),oci-mediatypes=true,name=$(GO_RUNNER_IMAGE),$(IMAGE_OUTPUT)
-	$(BUILD_LIB)/buildkit.sh \
-		build \
-		--frontend dockerfile.v0 \
-		--opt platform=linux/amd64 \
-		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
-		--opt build-arg:RELEASE_BRANCH=$(RELEASE_BRANCH) \
-		--local dockerfile=./docker/kube-proxy-base/ \
-		--local context=. \
-		--output type=$(IMAGE_OUTPUT_TYPE),oci-mediatypes=true,name=$(KUBE_PROXY_BASE_IMAGE),$(IMAGE_OUTPUT)
+local-images: go-runner/images/amd64 kube-proxy-base/images/amd64
 
 .PHONY: images
-images: binaries
-	cp release/images/build/debian-iptables/buster/iptables-wrapper _output/
-	$(BUILD_LIB)/buildkit.sh \
-		build \
-		--frontend dockerfile.v0 \
-		--opt platform=linux/amd64,linux/arm64  \
-		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
-		--opt build-arg:RELEASE_BRANCH=$(RELEASE_BRANCH) \
-		--local dockerfile=./docker/go-runner/ \
-		--local context=. \
-		--output type=image,oci-mediatypes=true,name=$(GO_RUNNER_IMAGE),push=true
-	$(BUILD_LIB)/buildkit.sh \
-		build \
-		--frontend dockerfile.v0 \
-		--opt platform=linux/amd64,linux/arm64  \
-		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
-		--opt build-arg:RELEASE_BRANCH=$(RELEASE_BRANCH) \
-		--local dockerfile=./docker/kube-proxy-base/ \
-		--local context=. \
-		--output type=image,oci-mediatypes=true,name=$(KUBE_PROXY_BASE_IMAGE),push=true
+images: go-runner/images/push kube-proxy-base/images/push
 
-.PHONY: docker
-docker: binaries
-	cp release/images/build/debian-iptables/buster/iptables-wrapper _output/
-	docker build \
-		-t $(GO_RUNNER_IMAGE) \
-		--build-arg BASE_IMAGE=$(BASE_IMAGE) \
-		--build-arg RELEASE_BRANCH=$(RELEASE_BRANCH) \
-		--build-arg TARGETARCH=amd64 \
-		--build-arg TARGETOS=linux \
-		-f ./docker/go-runner/Dockerfile .
-	docker build \
-		-t $(KUBE_PROXY_BASE_IMAGE) \
-		--build-arg BASE_IMAGE=$(BASE_IMAGE) \
-		--build-arg RELEASE_BRANCH=$(RELEASE_BRANCH) \
-		--build-arg TARGETARCH=amd64 \
-		--build-arg TARGETOS=linux \
-		-f ./docker/kube-proxy-base/Dockerfile .
-
-.PHONY: docker-push
-docker-push:
-	docker push $(GO_RUNNER_IMAGE)
-	docker push $(KUBE_PROXY_BASE_IMAGE)
-
-.PHONY: clean
-clean:
-	rm -rf ./_output ./release
-
-.PHONY: build
-build: local-images attribution validate-checksums
-
-.PHONY: release
-release: images validate-checksums
-	echo "Done $(COMPONENT)"
-
-.PHONY: attribution
-attribution: 
-	build/create_attribution.sh $(GOLANG_VERSION) $(RELEASE_BRANCH)
-
-.PHONY: checksums
-checksums:
-	$(BUILD_LIB)/update_checksums.sh $(MAKE_ROOT) $(MAKE_ROOT)/_output/bin $(MAKE_ROOT)/$(RELEASE_BRANCH)/CHECKSUMS
-
-.PHONY: validate-checksums
-validate-checksums:
-	sha256sum -c $(MAKE_ROOT)/$(RELEASE_BRANCH)/CHECKSUMS
-
-.PHONY: all
-all: release
+.PHONE: fix-licenses
+fix-licenses: $(GATHER_LICENSES_TARGET)
+	build/fix_licenses.sh

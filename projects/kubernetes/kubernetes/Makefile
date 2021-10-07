@@ -1,138 +1,118 @@
 BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
-BUILD_LIB=$(BASE_DIRECTORY)/build/lib
-RELEASE_BRANCH?=$(shell cat $(BASE_DIRECTORY)/release/DEFAULT_RELEASE_BRANCH)
-RELEASE_ENVIRONMENT?=development
-RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/$(RELEASE_ENVIRONMENT)/RELEASE)
-ARTIFACT_BUCKET?=my-s3-bucket
 GIT_TAG?=$(shell cat ./$(RELEASE_BRANCH)/GIT_TAG)
 GOLANG_VERSION?=$(shell cat ./$(RELEASE_BRANCH)/GOLANG_VERSION)
 PAUSE_TAG?=$(shell cat $(wildcard ./$(RELEASE_BRANCH)/PAUSE_*TAG))
 
 REPO=kubernetes
 COMPONENT=kubernetes/$(REPO)
-CLONE_URL=https://github.com/$(COMPONENT).git
 
-AWS_ACCOUNT_ID?=$(shell aws sts get-caller-identity --query Account --output text)
-AWS_REGION?=us-west-2
+OUTPUT_DIR=_output/$(RELEASE_BRANCH)
+OUTPUT_BIN_DIR?=$(OUTPUT_DIR)/bin
 
-MAKE_ROOT=$(shell cd "$(shell dirname "${BASH_SOURCE[0]}")" && pwd -P)
-IMAGE_REPO?=$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
-IMAGE_REPO_PREFIX=kubernetes
-IMAGE_TAG?=$(GIT_TAG)-eks-${RELEASE_BRANCH}-${RELEASE}
-
-KUBE_BASE_REPO?=$(IMAGE_REPO)
-GO_RUNNER_IMAGE_NAME?=kubernetes/go-runner
-KUBE_PROXY_BASE_IMAGE_NAME?=kubernetes/kube-proxy-base
 KUBE_BASE_GIT_TAG?=$(shell cat $(BASE_DIRECTORY)/projects/kubernetes/release/$(RELEASE_BRANCH)/GIT_TAG)
 KUBE_BASE_TAG?=${KUBE_BASE_GIT_TAG}-eks-${RELEASE_BRANCH}-${RELEASE}
-GO_RUNNER_IMAGE?=$(KUBE_BASE_REPO)/$(GO_RUNNER_IMAGE_NAME):$(KUBE_BASE_TAG)
-KUBE_PROXY_BASE_IMAGE?=$(KUBE_BASE_REPO)/$(KUBE_PROXY_BASE_IMAGE_NAME):$(KUBE_BASE_TAG)
+GO_RUNNER_IMAGE?=$(IMAGE_REPO)/kubernetes/go-runner:$(KUBE_BASE_TAG)
+KUBE_PROXY_BASE_IMAGE?=$(IMAGE_REPO)/kubernetes/kube-proxy-base:$(KUBE_BASE_TAG)
+BUILDER_IMAGE=$(GO_RUNNER_IMAGE) # for pause
 
 PAUSE_SRC_DIR?=kubernetes/build/pause
-PAUSE_DST_DIR?=_output/$(RELEASE_BRANCH)/pause
-PAUSE_IMAGE_NAME?=pause
-PAUSE_IMAGE_TAG?=$(IMAGE_TAG)
-PAUSE_IMAGE?=$(IMAGE_REPO)/$(IMAGE_REPO_PREFIX)/$(PAUSE_IMAGE_NAME):$(PAUSE_IMAGE_TAG)
-PAUSE_TAGS=$(foreach tag, $(PAUSE_TAG), $(IMAGE_REPO)/$(IMAGE_REPO_PREFIX)/$(PAUSE_IMAGE_NAME):$(tag))
-PAUSE_IMAGE_3_X=$(shell echo $(PAUSE_TAGS) | sed "s/ \+/,/g")
+PAUSE_DST=_output/$(RELEASE_BRANCH)/pause/pause.c
+PAUSE_TAG+=$(IMAGE_TAG)
+PAUSE_TAGS=$(foreach tag, $(PAUSE_TAG), $(IMAGE_REPO)/kubernetes/pause:$(tag))
+PAUSE_IMAGE=$(shell echo $(PAUSE_TAGS) | sed "s/ \+/,/g")
 
-FAKE_ARM_IMAGES_FOR_VALIDATION?=false
+KUBE_APISERVER_IMAGE=$(IMAGE_REPO)/kubernetes/kube-apiserver:$(IMAGE_TAG)
+KUBE_CONTROLLER_MANAGER_IMAGE=$(IMAGE_REPO)/kubernetes/kube-controller-manager:$(IMAGE_TAG)
+KUBE_SCHEDULER_IMAGE=$(IMAGE_REPO)/kubernetes/kube-scheduler:$(IMAGE_TAG)
+KUBE_PROXY_IMAGE=$(IMAGE_REPO)/kubernetes/kube-proxy:$(IMAGE_TAG)
 
-.PHONY: update-version
-update-version: binaries
-	build/create_version_file.sh $(GIT_TAG) $(RELEASE_BRANCH)
+IMAGES=pause kube-proxy kube-apiserver kube-controller-manager kube-scheduler
+LOCAL_IMAGE_TARGETS_AMD64=$(addsuffix /images/amd64, $(IMAGES))
+LOCAL_IMAGE_TARGETS_ARM64=$(addsuffix /images/arm64, $(IMAGES))
+IMAGE_TARGETS=$(addsuffix /images/push, $(IMAGES))
 
-.PHONY: binaries
-binaries:
-	build/create_binaries.sh $(CLONE_URL) $(RELEASE_BRANCH) $(GIT_TAG) $(GOLANG_VERSION)
+IMAGE_CONTEXT_DIR=$(OUTPUT_DIR)
+DOCKERFILE_FOLDER=./docker
+BASE_IMAGE=$(GO_RUNNER_IMAGE)
+IMAGE_BUILD_ARGS=BINARY PAUSE_VERSION
+BINARY=$(IMAGE_NAME)
+PAUSE_VERSION=$(IMAGE_TAG)
+# When creating a local image IMAGE_PLATFORMS will be either linux/amd64 or linux/arm64
+IMAGE_OUTPUT_DIR=$(OUTPUT_BIN_DIR)/$(IMAGE_PLATFORMS)
 
-.PHONY: tarballs
-tarballs:
-	build/create_tarballs.sh $(RELEASE_BRANCH)
+LICENSE_PACKAGE_FILTER=./cmd/kubelet ./cmd/kube-proxy ./cmd/kubeadm ./cmd/kubectl ./cmd/kube-apiserver ./cmd/kube-controller-manager ./cmd/kube-scheduler
 
-$(PAUSE_DST_DIR)/pause.c:
-	mkdir -p $(PAUSE_DST_DIR)
-	cp $(PAUSE_SRC_DIR)/linux/pause.c $(PAUSE_DST_DIR) || cp $(PAUSE_SRC_DIR)/pause.c $(PAUSE_DST_DIR)
+SIMPLE_CREATE_BINARIES=false
+SIMPLE_CREATE_TARBALLS=false
 
-pause: $(PAUSE_DST_DIR)/pause.c
+BINARY_TARGET=$(OUTPUT_BIN_DIR)/linux/amd64/kubelet
+GIT_PATCH_TARGET=$(REPO)/eks-distro-patched
+
+include $(BASE_DIRECTORY)/Common.mk
+
+# Run tarballs before images so we arent including the image.tar files in the binary tars
+build: tarballs local-images validate-version-file s3-artifacts 
+release: tarballs images validate-version-file upload-artifacts 
+
+# Override KUBE_GIT_VERSION for reproducible builds
+$(BINARY_TARGET): export KUBE_GIT_VERSION=$(IMAGE_TAG)
+
+# Do not pass down overrides we add in common makefile
+$(BINARY_TARGET): MAKEFLAGS=
+
+# Patch source before building
+$(BINARY_TARGET): $(GIT_PATCH_TARGET)
+
+# There are a couple of fixes needed to the licenses and root-module name before running gather licenses
+$(GATHER_LICENSES_TARGET): fix-licenses
+
+# For kube proxy images, use the kube proxy base
+kube-proxy/images/%: BASE_IMAGE=$(KUBE_PROXY_BASE_IMAGE)
+
+# For pause change the dockerfile and base off scratch
+# wildcard match doesnt work for add pre-req so have to use helper
+pause/images/%: DOCKERFILE_FOLDER=./docker/pause
+pause/images/%: BASE_IMAGE=scratch
+$(call IMAGE_TARGETS_FOR_NAME, pause): $(PAUSE_DST)
+
+$(GIT_PATCH_TARGET): $(GIT_CHECKOUT_TARGET)
+	build/patch_repo.sh $(REPO) $(GIT_TAG) $(RELEASE_BRANCH)
+	@touch $@ 
+
+$(PAUSE_DST): $(GIT_PATCH_TARGET)
+	@mkdir -p $(dir $(PAUSE_DST))
+	cp $(PAUSE_SRC_DIR)/linux/pause.c $(PAUSE_DST) || cp $(PAUSE_SRC_DIR)/pause.c $(PAUSE_DST)
 
 .PHONY: local-images
-local-images:
-	build/create_images.sh $(RELEASE_BRANCH) \
-		$(GO_RUNNER_IMAGE) \
-		$(KUBE_PROXY_BASE_IMAGE) \
-		$(IMAGE_REPO) $(IMAGE_REPO_PREFIX) $(IMAGE_TAG) "$(PAUSE_IMAGE),$(PAUSE_IMAGE_3_X)" false true
+local-images: $(LOCAL_IMAGE_TARGETS_AMD64)
 
+# we publish oci tarballs in release mode in addition to pushing images for use by kops and other installer tools
 .PHONY: images
-images:
-	# we publish oci tarballs in release mode in addition to pushing images for use by kops and other installer tools
-	build/create_images.sh \
-		$(RELEASE_BRANCH) $(GO_RUNNER_IMAGE) $(KUBE_PROXY_BASE_IMAGE) \
-		$(IMAGE_REPO) $(IMAGE_REPO_PREFIX) $(IMAGE_TAG) "$(PAUSE_IMAGE),$(PAUSE_IMAGE_3_X)" false
-	
-	build/create_images.sh \
-		$(RELEASE_BRANCH) $(GO_RUNNER_IMAGE) $(KUBE_PROXY_BASE_IMAGE) \
-		$(IMAGE_REPO) $(IMAGE_REPO_PREFIX) $(IMAGE_TAG) "$(PAUSE_IMAGE),$(PAUSE_IMAGE_3_X)" true
+images: $(IMAGE_TARGETS) $(LOCAL_IMAGE_TARGETS_AMD64) $(LOCAL_IMAGE_TARGETS_ARM64)
 		
-.PHONY: docker
-docker: binaries pause
-	build/create_docker_images.sh $(RELEASE_BRANCH) $(GO_RUNNER_IMAGE) $(KUBE_PROXY_BASE_IMAGE) $(IMAGE_REPO) $(IMAGE_REPO_PREFIX) $(IMAGE_TAG)
-	docker \
-		build\
-		--build-arg BASE_IMAGE=$(GO_RUNNER_IMAGE) \
-		--build-arg VERSION=$(IMAGE_TAG) \
-		-t $(PAUSE_IMAGE) \
-		-t $(PAUSE_IMAGE_3_X) \
-		-f ./docker/pause/Dockerfile $(PAUSE_DST_DIR)
+.PHONY: s3-artifacts
+s3-artifacts: tarballs
+	rm -rf _output/$(RELEASE_BRANCH)/{attribution,LICENSES,pause} _output/$(RELEASE_BRANCH)/bin/{LICENSES,ATTRIBUTION.txt}
+	$(BASE_DIRECTORY)/release/copy_artifacts.sh $(REPO) $(OUTPUT_DIR) $(RELEASE_BRANCH) $(RELEASE) $(GIT_TAG)
+	$(BUILD_LIB)/validate_artifacts.sh $(MAKE_ROOT) $(RELEASE_BRANCH) $(RELEASE) $(GIT_TAG) 'kubernetes' $(FAKE_ARM_IMAGES_FOR_VALIDATION) "-not -path *coredns* -not -path *etcd*"
 
-.PHONY: docker-push
-docker-push:
-	build/docker_push.sh $(RELEASE_BRANCH) $(GO_RUNNER_IMAGE) $(KUBE_PROXY_BASE_IMAGE) $(IMAGE_REPO) $(IMAGE_REPO_PREFIX) $(IMAGE_TAG)
-	docker push $(PAUSE_IMAGE)
-	docker push $(PAUSE_IMAGE_3_X)
-
-.PHONY: release-checksums
-release-checksums:
-	build/create_release_checksums.sh $(RELEASE_BRANCH)
-
-.PHONY: build
-build: FAKE_ARM_IMAGES_FOR_VALIDATION=true
-build: binaries validate-checksums pause tarballs clean-repo local-images release-checksums attribution copy-artifacts
-
-.PHONY: release
-release: binaries validate-checksums pause tarballs clean-repo images release-checksums copy-artifacts
+.PHONY: upload-artifacts
+upload-artifacts: s3-artifacts
 	$(BASE_DIRECTORY)/release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET) $(REPO)
 	echo "Done $(COMPONENT)"
 
-.PHONY: copy-artifacts
-copy-artifacts: tarballs
-	rm -rf _output/$(RELEASE_BRANCH)/{attribution,LICENSES,pause} _output/$(RELEASE_BRANCH)/bin/{LICENSES,ATTRIBUTION.txt}
-	$(BASE_DIRECTORY)/release/copy_artifacts.sh $(COMPONENT) $(RELEASE_BRANCH) $(RELEASE)
-	$(BUILD_LIB)/validate_artifacts.sh $(MAKE_ROOT) $(RELEASE_BRANCH) $(RELEASE) $(GIT_TAG) 'kubernetes' $(FAKE_ARM_IMAGES_FOR_VALIDATION) "-not -path *coredns* -not -path *etcd*"
-
-.PHONY: all
-all: release
-
 .PHONY: test
-test: binaries
+test: $(BINARY_TARGET)
 	build/run_tests.sh $(RELEASE_BRANCH) $(GOLANG_VERSION)
 
-.PHONY: attribution
-attribution: 
-	build/create_attribution.sh $(RELEASE_BRANCH) $(GOLANG_VERSION)
+.PHONY: fix-licenses
+fix-licenses:
+	build/fix_licenses.sh $(REPO) $(OUTPUT_DIR)
 
-.PHONY: checksums
-checksums:
-	$(BUILD_LIB)/update_checksums.sh $(MAKE_ROOT) $(MAKE_ROOT)/_output/$(RELEASE_BRANCH)/bin $(MAKE_ROOT)/$(RELEASE_BRANCH)/CHECKSUMS
+.PHONY: update-version
+update-version:
+	build/create_version_file.sh $(GIT_TAG) $(RELEASE_BRANCH) $(IMAGE_TAG)
 
-.PHONY: validate-checksums
-validate-checksums:
-	sha256sum -c $(MAKE_ROOT)/$(RELEASE_BRANCH)/CHECKSUMS
-
-.PHONY: clean-repo
-clean-repo:
-	rm -rf ./kubernetes
-
-.PHONY: clean
-clean: clean-repo
-	rm -rf ./_output
+.PHONY: validate-version-file
+validate-version-file: update-version
+	git diff --exit-code $(MAKE_ROOT)/$(RELEASE_BRANCH)/KUBE_GIT_VERSION_FILE

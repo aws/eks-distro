@@ -18,7 +18,9 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-RELEASE_BRANCH="$1"
+REPO="$1"
+GIT_TAG="$2"
+RELEASE_BRANCH="$3"
 
 MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
 GIT_TAG="$(cat ${MAKE_ROOT}/${RELEASE_BRANCH}/GIT_TAG)"
@@ -34,9 +36,6 @@ fi
 
 OUTPUT_RELEASE_DIR="${OUTPUT_DIR}/${RELEASE_BRANCH}"
 BIN="${OUTPUT_RELEASE_DIR}/bin" 
-
-cp -rf "${OUTPUT_RELEASE_DIR}/LICENSES" $BIN 
-cp "${OUTPUT_RELEASE_DIR}/ATTRIBUTION.txt" $BIN  
 
 build::common::ensure_tar
 build::tarballs::create_tarballs $BIN $OUTPUT_RELEASE_DIR
