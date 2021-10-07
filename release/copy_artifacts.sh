@@ -13,40 +13,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -euxo pipefail
+set -x
+set -o errexit
+set -o nounset
+set -o pipefail
 
 PROJECT="${1?First required argument is project}"
-RELEASE_BRANCH="${2?Second required argument is release branch for example 1-18}"
-RELEASE="${3?Third required argument is release for example 1}"
+SOURCE_ARTIFACT_DIR="${2?Second required argument is source artifact directory}"
+RELEASE_BRANCH="${3?Third required argument is release branch for example 1-18}"
+RELEASE="${4?Fourth required argument is release for example 1}"
+GIT_TAG="${5:-}"
+
+SCRIPT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 
 BASE_DIRECTORY=$(git rev-parse --show-toplevel)
 DEST_DIR=${BASE_DIRECTORY}/kubernetes-${RELEASE_BRANCH}/releases/${RELEASE}/artifacts
 
-if [ $PROJECT = "kubernetes/kubernetes" ]; then
-  SOURCE_DIR=_output/${RELEASE_BRANCH}
-  GIT_TAG=$(cat ${RELEASE_BRANCH}/GIT_TAG)
-elif [ $PROJECT = "etcd-io/etcd" ] || [ $PROJECT = "coredns/coredns" ]; then
-  # Copy oci tars into kubernetes directory for use by capi image-builder
-  KUBERNETES_GIT_TAG=$(cat ${BASE_DIRECTORY}/projects/kubernetes/kubernetes/${RELEASE_BRANCH}/GIT_TAG)
-  KUBERNETES_ARTIFACT_DIR=${DEST_DIR}/kubernetes/${KUBERNETES_GIT_TAG}
-  mkdir -p $KUBERNETES_ARTIFACT_DIR
-  cp -r _output/images/* $KUBERNETES_ARTIFACT_DIR
-  
-  # coredns has no tars to upload, just the oci target which is uploaded above
-  if [ $PROJECT = "coredns/coredns" ]; then
-    exit 0
-  fi
-
-  SOURCE_DIR=_output/tar
-  GIT_TAG=$(cat ${RELEASE_BRANCH}/GIT_TAG)
-elif [ ! -f GIT_TAG ]; then
-  SOURCE_DIR=_output/tar
-  GIT_TAG=$(cat ${RELEASE_BRANCH}/GIT_TAG)
-else
-  SOURCE_DIR=_output/tar
-  GIT_TAG=$(cat GIT_TAG)
+# For when calling from projects other than kubernetes
+if [ $PROJECT = "kubernetes" ]; then
+  GIT_TAG=$(cat ${BASE_DIRECTORY}/projects/kubernetes/kubernetes/${RELEASE_BRANCH}/GIT_TAG)
 fi
-REPO="$(cut -d '/' -f2 <<< ${PROJECT})"
-ARTIFACT_DIR=${DEST_DIR}/${REPO}/${GIT_TAG}
+
+ARTIFACT_DIR=${DEST_DIR}/${PROJECT}/${GIT_TAG}
 mkdir -p $ARTIFACT_DIR
-cp -r $SOURCE_DIR/* $ARTIFACT_DIR
+cp -r $SOURCE_ARTIFACT_DIR/* $ARTIFACT_DIR
+
+$SCRIPT_ROOT/create_release_checksums.sh $ARTIFACT_DIR
+
