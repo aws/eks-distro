@@ -2,6 +2,8 @@
 
 After the first release, the process is the same, but not all the steps need to be completed unless there is a change.
 
+Reference [build-locally](building-locally.md) for additional machine setup and make targets.
+
 Prow jobs are in the 
 [eks-distro-prow-jobs repo](https://github.com/aws/eks-distro-prow-jobs/tree/main/jobs/aws/eks-distro).  
 All other changes are to this package.
@@ -52,6 +54,8 @@ All other changes are to this package.
            [releases](https://github.com/kubernetes/kops/releases/).
     * Create projects/kubernetes/kubernetes/${RELEASE_BRANCH}/PAUSE_TAG and set to upstream tag
         * (ex: [here](https://github.com/kubernetes/kubernetes/blob/v1.21.0/build/pause/Makefile#L20))
+	* Create projects/kubernetes/kubernetes/${RELEASE_BRANCH}/CHECKSUMS using
+		*  `RELEASE_BRANCH=${RELEASE_BRANCH} make checksums`
 1. **Build tooling PR**: Add release channel to release tooling
     * In the [config](https://github.com/aws/eks-distro-build-tooling/tree/main/release/config) directory, create the
       new `RELEASE_BRANCH` folder and create a `${RELEASE_BRANCH}.yaml`, copied from the previous release yaml and

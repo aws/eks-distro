@@ -22,12 +22,15 @@ RELEASE_BRANCH="$2"
 
 MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd -P)"
 
-$MAKE_ROOT/build/lib/run_target_docker.sh $PROJECT "clean binaries checksums" $RELEASE_BRANCH
+$MAKE_ROOT/build/lib/run_target_docker.sh $PROJECT "clean binaries attribution checksums" $RELEASE_BRANCH
 
 PROJECT_CHECKSUM=$PROJECT/CHECKSUMS
+PROJECT_ATTRIBUTION=$PROJECT/ATTRIBUTION.txt
 
 if [ -d $MAKE_ROOT/projects/$PROJECT/$RELEASE_BRANCH ]; then
 	PROJECT_CHECKSUM=$PROJECT/$RELEASE_BRANCH/CHECKSUMS
+	PROJECT_ATTRIBUTION=$PROJECT/$RELEASE_BRANCH/ATTRIBUTION.txt
 fi
 
 docker cp eks-d-builder:/eks-distro/projects/$PROJECT_CHECKSUM $MAKE_ROOT/projects/$PROJECT_CHECKSUM
+docker cp eks-d-builder:/eks-distro/projects/$PROJECT_ATTRIBUTION $MAKE_ROOT/projects/$PROJECT_ATTRIBUTION

@@ -50,7 +50,7 @@ If trying to generate these files outside of CI and have them match what CI prod
 
 1. `go get github.com/google/go-licenses`
 1. The `golang` version is included in the attribution file, so the different golang versions used to build 
-the various projects are required. Follow the [steps](https://github.com/aws/eks-distro-build-tooling/blob/main/builder-base/install.sh#L129) 
-from `builder-base` to set up the golang versions.
+the various projects are required. Run `build/lib/install_go_versions.sh` to install all golang versions locally.
+Patch versions must match so validate versions in above scripts match those in [builder-base](https://github.com/aws/eks-distro-build-tooling/blob/main/builder-base/install.sh#L172).
 1. Follow the [Readme](https://github.com/aws/eks-distro-build-tooling/blob/main/generate-attribution/Readme.md) 
 to set up the `generate-attribution` script.
