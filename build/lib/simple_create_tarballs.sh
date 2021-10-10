@@ -13,41 +13,36 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -x
 set -o errexit
 set -o nounset
 set -o pipefail
 
-REPO="$1"
-TAG="$2"
-RELEASE_BRANCH="$3"
+TAR_FILE_PREFIX="$1"
+OUTPUT_BIN_DIR="$2"
+TAG="$3"
+BINARY_PLATFORMS="$4"
+
 TAR_PATH="_output/tar"
-BIN_ROOT="_output/bin"
-LICENSES_DIR="_output/LICENSES"
-readonly SUPPORTED_PLATFORMS=(
-  linux/amd64
-  linux/arm64
-  darwin/amd64
-  windows/amd64
-)
-MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
-source "${MAKE_ROOT}/../../../build/lib/common.sh"
+LICENSES_PATH="_output/LICENSES"
+ATTRIBUTION_PATH="_output/ATTRIBUTION.txt"
 
-function build::aws-iam-authenticator::tarball() {
+
+SCRIPT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+source "${SCRIPT_ROOT}/common.sh"
+
+function build::simple::tarball() {
   build::common::ensure_tar
-  mkdir -p $TAR_PATH
-
+  mkdir -p "$TAR_PATH"
+  SUPPORTED_PLATFORMS=(${BINARY_PLATFORMS// / })
   for platform in "${SUPPORTED_PLATFORMS[@]}"; do
     OS="$(cut -d '/' -f1 <<< ${platform})"
     ARCH="$(cut -d '/' -f2 <<< ${platform})"
-    TAR_FILE="${REPO}-${OS}-${ARCH}-${TAG}.tar.gz"
-    
-    cp -rf $LICENSES_DIR $BIN_ROOT/$REPO/${OS}-${ARCH} 
-    cp $RELEASE_BRANCH/ATTRIBUTION.txt $BIN_ROOT/$REPO/${OS}-${ARCH}/ 
-    build::common::create_tarball  ${TAR_PATH}/${TAR_FILE} ${BIN_ROOT}/${REPO} ${OS}-${ARCH}
+    TAR_FILE="${TAR_FILE_PREFIX}-${OS}-${ARCH}-${TAG}.tar.gz"
+
+    cp -rf $LICENSES_PATH ${OUTPUT_BIN_DIR}/${OS}-${ARCH}/ 
+    cp $ATTRIBUTION_PATH ${OUTPUT_BIN_DIR}/${OS}-${ARCH}/ 
+    build::common::create_tarball ${TAR_PATH}/${TAR_FILE} ${OUTPUT_BIN_DIR}/${OS}-${ARCH} .
   done
 }
 
-build::aws-iam-authenticator::tarball
-
-build::common::generate_shasum "${TAR_PATH}"
+build::simple::tarball

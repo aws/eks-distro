@@ -1,93 +1,20 @@
 BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
-BUILD_LIB=$(BASE_DIRECTORY)/build/lib
-RELEASE_BRANCH?=$(shell cat $(BASE_DIRECTORY)/release/DEFAULT_RELEASE_BRANCH)
-RELEASE_ENVIRONMENT?=development
-RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/$(RELEASE_ENVIRONMENT)/RELEASE)
-ARTIFACT_BUCKET?=my-s3-bucket
 GIT_TAG?=$(shell cat GIT_TAG)
 GOLANG_VERSION?="1.15"
 
 REPO=external-attacher
 COMPONENT=kubernetes-csi/$(REPO)
-CLONE_URL=https://github.com/$(COMPONENT).git
 
-AWS_ACCOUNT_ID?=$(shell aws sts get-caller-identity --query Account --output text)
-AWS_REGION?=us-west-2
+LICENSE_PACKAGE_FILTER?=./cmd/csi-attacher
 
-MAKE_ROOT=$(shell cd "$(shell dirname "${BASH_SOURCE[0]}")" && pwd -P)
-BASE_REPO?=public.ecr.aws/eks-distro-build-tooling
-BASE_IMAGE_NAME?=eks-distro-base
-BASE_TAG?=$(shell cat $(MAKE_ROOT)/../../../EKS_DISTRO_BASE_TAG_FILE)
-BASE_IMAGE?=$(BASE_REPO)/$(BASE_IMAGE_NAME):$(BASE_TAG)
+BINARY_TARGET=$(OUTPUT_BIN_DIR)/linux-amd64/csi-attacher
 
-IMAGE_REPO?=$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
-IMAGE_NAME?=$(COMPONENT)
-IMAGE_TAG?=$(GIT_TAG)-eks-${RELEASE_BRANCH}-${RELEASE}
-IMAGE?=$(IMAGE_REPO)/$(IMAGE_NAME):$(IMAGE_TAG)
+CSI_ATTACHER_IMAGE?=$(IMAGE_REPO)/$(IMAGE_NAME):$(IMAGE_TAG)
 
-
-.PHONY: binaries
-binaries:
-	build/create_binaries.sh $(REPO) $(CLONE_URL) $(GIT_TAG) $(GOLANG_VERSION)
-
-.PHONY: local-images
-local-images: binaries
-	$(BUILD_LIB)/buildkit.sh \
-		build \
-		--frontend dockerfile.v0 \
-		--opt platform=linux/amd64 \
-		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
-		--local dockerfile=./docker/linux \
-		--local context=. \
-		--output type=oci,oci-mediatypes=true,name=$(IMAGE),dest=/tmp/external-attacher.tar
+include $(BASE_DIRECTORY)/Common.mk
 
 .PHONY: images
-images: binaries
-	$(BUILD_LIB)/buildkit.sh \
-		build \
-		--frontend dockerfile.v0 \
-		--opt platform=linux/amd64,linux/arm64 \
-		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
-		--local dockerfile=./docker/linux \
-		--local context=. \
-		--output type=image,oci-mediatypes=true,name=$(IMAGE),push=true
+images: csi-attacher/images/arm64
 
-.PHONY: docker
-docker: binaries
-	docker build \
-		-t $(IMAGE) \
-		--build-arg BASE_IMAGE=$(BASE_IMAGE) \
-		--build-arg TARGETARCH=amd64 \
-		--build-arg TARGETOS=linux \
-		-f ./docker/linux/Dockerfile .
-
-.PHONY: docker-push
-docker-push:
-	docker push $(IMAGE)
-
-.PHONY: build
-build: local-images attribution validate-checksums
-	
-.PHONY: release
-release: images validate-checksums
-	echo "Done $(COMPONENT)"
-
-.PHONY: all
-all: release
-
-.PHONY: attribution
-attribution: 
-	build/create_attribution.sh $(GOLANG_VERSION)
-
-.PHONY: checksums
-checksums:
-	$(BUILD_LIB)/update_checksums.sh $(MAKE_ROOT) $(MAKE_ROOT)/_output/bin $(MAKE_ROOT)/CHECKSUMS
-
-.PHONY: validate-checksums
-validate-checksums:
-	sha256sum -c $(MAKE_ROOT)/CHECKSUMS
-
-.PHONY: clean
-clean:
-	rm -rf $(REPO)
-	rm -rf "_output"
+.PHONY: local-images
+local-images: csi-attacher/images/amd64

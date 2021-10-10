@@ -13,22 +13,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
+set -x
 set -o errexit
 set -o nounset
 set -o pipefail
 
-MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
-OUTPUT_DIR="${MAKE_ROOT}/_output"
-ATTRIBUTION_DIR="${OUTPUT_DIR}/attribution"
-source "${MAKE_ROOT}/../../../build/lib/common.sh"
+REPO="$1"
 
-GOLANG_VERSION="$1"
+function build::plugins::licenses(){
+  cd $REPO
+  # Pull licenses for the plugins we are building, similiar logic exist in build_linux.sh called above
+  # https://github.com/containernetworking/plugins/blob/master/build_linux.sh#L14
+  PLUGINS="plugins/meta/* plugins/main/* plugins/ipam/*"
+  ALL_PLUGINS=""
+  for d in $PLUGINS; do
+    if [ -d "$d" ]; then
+      plugin="$(basename "$d")"
+      if [ "${plugin}" != "windows" ]; then
+        ALL_PLUGINS+="./$d "
+      fi
+    fi
+  done
+  echo "$ALL_PLUGINS"
+}
 
-# go-licenses calls adds an additonal cmd/csi-node-driver-registrar 
-# to the main module name in the csv output
-MODULE_NAME=$(cat "${ATTRIBUTION_DIR}/root-module.txt")
-SEARCH=$(build::common::re_quote "$MODULE_NAME/cmd/csi-node-driver-registrar")
-REPLACE=$(build::common::re_quote $MODULE_NAME)
-sed -i.bak "s/^$SEARCH/$REPLACE/" "${ATTRIBUTION_DIR}/go-license.csv"
-
-build::generate_attribution $MAKE_ROOT $GOLANG_VERSION
+build::plugins::licenses

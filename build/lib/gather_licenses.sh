@@ -12,24 +12,18 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-set -x
+
 set -o errexit
 set -o nounset
 set -o pipefail
 
-MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
-source "${MAKE_ROOT}/build/lib/init.sh"
-source "${MAKE_ROOT}/../../../build/lib/common.sh"
+REPO="$1"
+OUTPUT_DIR="$2"
+PACKAGE_FILTER="$3"
+REPO_SUBPATH="${4:-}"
 
-RELEASE_BRANCH="$1"
-GOLANG_VERSION="$2"
+SCRIPT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+source "${SCRIPT_ROOT}/common.sh"
 
-OUTPUT_RELEASE_DIR="${OUTPUT_DIR}/${RELEASE_BRANCH}"
-
-# a number of k8s.io dependencies which come from the main repo show
-# up in the list and since they are in the repo they have no version
-# set the rootmodule name to k8s.io to force all projects with that 
-# prefix and no version to use the k8s git_tag version
-echo "k8s.io" > ${OUTPUT_RELEASE_DIR}/attribution/root-module.txt
-
-build::generate_attribution $MAKE_ROOT/$RELEASE_BRANCH $GOLANG_VERSION $OUTPUT_RELEASE_DIR
+cd $REPO/$REPO_SUBPATH
+build::gather_licenses $OUTPUT_DIR "$PACKAGE_FILTER"

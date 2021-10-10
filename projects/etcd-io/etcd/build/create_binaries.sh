@@ -19,42 +19,13 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-REPO="$1"
-CLONE_URL="$2"
-TAG="$3"
-GOLANG_VERSION="$4"
+TAG="$1"
+BIN_PATH="$2"
+OS="$3"
+ARCH="$4"
 
-BIN_ROOT="_output/bin"
-BIN_PATH=$BIN_ROOT/$REPO
+CGO_ENABLED=0 GOOS=$OS GOARCH=$ARCH BINDIR=$BIN_PATH \
+	GO_BUILD_FLAGS="-trimpath" GO_LDFLAGS="-s -w -buildid=''" \
+	./build
 
-readonly SUPPORTED_PLATFORMS=(
-  linux/amd64
-  linux/arm64
-)
-
-MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
-source "${MAKE_ROOT}/../../../build/lib/common.sh"
-
-function build::etcd::binaries(){
-  mkdir -p $BIN_PATH
-  git clone $CLONE_URL $REPO
-  cd $REPO
-  git checkout $TAG
-  build::common::use_go_version $GOLANG_VERSION
-  build::common::set_go_cache etcd $TAG
-  go mod vendor
-  for platform in "${SUPPORTED_PLATFORMS[@]}";
-  do
-    OS="$(cut -d '/' -f1 <<< ${platform})"
-    ARCH="$(cut -d '/' -f2 <<< ${platform})"
-    CGO_ENABLED=0 GOOS=$OS GOARCH=$ARCH GO_BUILD_FLAGS="-trimpath" GO_LDFLAGS="-s -w -buildid=''" ./build
-    mkdir -p ../${BIN_PATH}/${OS}-${ARCH}
-    mv bin/* ../${BIN_PATH}/${OS}-${ARCH}
-    make clean
-  done
-  build::gather_licenses $MAKE_ROOT/_output "./ ./etcdctl" 
-  cd ..
-  rm -rf $REPO
-}
-
-build::etcd::binaries
+make clean

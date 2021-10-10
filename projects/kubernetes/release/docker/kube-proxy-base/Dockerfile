@@ -32,7 +32,7 @@ RUN yum install -y \
 
 COPY _output/LICENSES /LICENSES
 COPY $RELEASE_BRANCH/ATTRIBUTION.txt /ATTRIBUTION.txt
-COPY _output/bin/go-runner-$TARGETOS-$TARGETARCH /usr/local/bin/go-runner
+COPY _output/bin/release-src/$TARGETOS-$TARGETARCH/go-runner /usr/local/bin/go-runner
 COPY _output/iptables-wrapper /usr/sbin/iptables-wrapper
 
 RUN update-alternatives \

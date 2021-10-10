@@ -12,22 +12,20 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+set -x
+set -o errexit
+set -o nounset
+set -o pipefail
+
+MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
+OUTPUT_DIR="${MAKE_ROOT}/_output"
+ATTRIBUTION_DIR="${OUTPUT_DIR}/attribution"
+source "${MAKE_ROOT}/../../../build/lib/common.sh"
 
 
-function build::binaries::bins() {
-    local -r repository_dir="$1"
-    local -r output_dir="$2"
-    cd $repository_dir/images/build/go-runner
-    go mod vendor
-    export CGO_ENABLED=0
-    export GOLDFLAGS='-s -w --buildid=""'
-
-    export GOOS=linux
-    export GOARCH=amd64
-    go build -trimpath -v -ldflags="$GOLDFLAGS" \
-        -o $output_dir/go-runner-linux-amd64
-
-    export GOARCH=arm64
-    go build -trimpath -v -ldflags="$GOLDFLAGS" \
-        -o $output_dir/go-runner-linux-arm64
-}
+# go-licenses calls adds an additional cmd/livenessprobe
+# to the main module name in the csv output
+MODULE_NAME=$(cat "${ATTRIBUTION_DIR}/root-module.txt")
+SEARCH=$(build::common::re_quote "$MODULE_NAME/cmd/livenessprobe")
+REPLACE=$(build::common::re_quote $MODULE_NAME)
+sed -i.bak "s/^$SEARCH/$REPLACE/" "${ATTRIBUTION_DIR}/go-license.csv"

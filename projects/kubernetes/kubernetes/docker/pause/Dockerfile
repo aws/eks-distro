@@ -13,16 +13,17 @@
 # limitations under the License.
 
 ARG BASE_IMAGE
-FROM ${BASE_IMAGE}
+ARG BUILDER_IMAGE
+FROM ${BUILDER_IMAGE}
 
-ARG VERSION
+ARG PAUSE_VERSION
 
 RUN yum update -y
 RUN yum install -y gcc glibc-static
 # Use as small a context as possible so Docker doesn't read all of _output
-COPY pause.c /pause.c
-RUN gcc -Os -Wall -Werror -static -DVERSION=${VERSION} -o /pause /pause.c
+COPY pause/pause.c /pause.c
+RUN gcc -Os -Wall -Werror -static -DVERSION=${PAUSE_VERSION} -o /pause /pause.c
 
-FROM scratch
+FROM ${BASE_IMAGE}
 COPY --from=0 /pause /pause
 ENTRYPOINT ["/pause"]

@@ -1,60 +1,28 @@
 BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
-BUILD_LIB=$(BASE_DIRECTORY)/build/lib
-MAKE_ROOT=$(shell cd "$(shell dirname "${BASH_SOURCE[0]}")" && pwd -P)
-RELEASE_BRANCH?=$(shell cat $(BASE_DIRECTORY)/release/DEFAULT_RELEASE_BRANCH)
-RELEASE_ENVIRONMENT?=development
-RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/$(RELEASE_ENVIRONMENT)/RELEASE)
-ARTIFACT_BUCKET?=my-s3-bucket
 GIT_TAG?=$(shell cat GIT_TAG)
 GOLANG_VERSION?=1.14
 
 REPO=plugins
 COMPONENT=containernetworking/$(REPO)
-CLONE_URL=https://github.com/$(COMPONENT).git
 
-.PHONY: binaries
-binaries:
-	build/create_binaries.sh $(REPO) $(CLONE_URL) $(GIT_TAG) $(GOLANG_VERSION)
+LICENSE_PACKAGE_FILTER?=$(shell build/license_patterns.sh $(REPO))
+TAR_FILE_PREFIX=cni-plugins
 
-.PHONY: tarballs
-tarballs:  binaries
-	build/create_tarballs.sh $(REPO) $(GIT_TAG)
+BINARY_TARGET=$(OUTPUT_BIN_DIR)/linux-amd64/host-device
 
-.PHONY: build
-build: copy-artifacts attribution validate-checksums
-	echo "Done $(COMPONENT)"
+include $(BASE_DIRECTORY)/Common.mk
 
-.PHONY: release
-release: copy-artifacts validate-checksums
+build: s3-artifacts
+release: upload-artifacts
+
+.PHONY: s3-artifacts
+s3-artifacts: tarballs
+	$(BASE_DIRECTORY)/release/copy_artifacts.sh $(REPO) $(OUTPUT_DIR)/tar $(RELEASE_BRANCH) $(RELEASE) $(GIT_TAG)
+	$(BUILD_LIB)/validate_artifacts.sh $(MAKE_ROOT) $(RELEASE_BRANCH) $(RELEASE) $(GIT_TAG) $(REPO)
+
+.PHONY: upload-artifacts
+upload-artifacts: s3-artifacts
 	$(BASE_DIRECTORY)/release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET) $(REPO)
-	echo "Done $(COMPONENT)"
 
-.PHONY: copy-artifacts
-copy-artifacts: tarballs
-	$(BASE_DIRECTORY)/release/copy_artifacts.sh $(COMPONENT) $(RELEASE_BRANCH) $(RELEASE)
-	$(BUILD_LIB)/validate_artifacts.sh $(MAKE_ROOT) $(RELEASE_BRANCH) $(RELEASE) $(GIT_TAG) 'plugins'
-
-
-.PHONY: all
-all: release
-
-.PHONY: attribution
-attribution: 
-	build/create_attribution.sh $(GOLANG_VERSION)
-
-docker:
-
-docker-push:
-
-.PHONY: checksums
-checksums:
-	$(BUILD_LIB)/update_checksums.sh $(MAKE_ROOT) $(MAKE_ROOT)/_output/bin $(MAKE_ROOT)/CHECKSUMS
-
-.PHONY: validate-checksums
-validate-checksums:
-	sha256sum -c $(MAKE_ROOT)/CHECKSUMS
-
-.PHONY: clean
-clean:
-	rm -rf $(REPO)
-	rm -rf "_output"
+local-images: # noop
+images: # noop

@@ -18,16 +18,26 @@ set -o nounset
 set -o pipefail
 
 PROJECT_ROOT="$1"
-BIN_DIR="$2"
-CHECKSUMS_FILE="$3"
+OUTPUT_BIN_DIR="$2"
+RELEASE_BRANCH="$3"
 
-if [ ! -d ${BIN_DIR} ] ;  then
-    echo "${BIN_DIR} not present! Run 'make binaries'"
+if [ ! -d ${OUTPUT_BIN_DIR} ] ;  then
+    echo "${OUTPUT_BIN_DIR} not present! Run 'make binaries'"
     exit 1
 fi
 
+CHECKSUMS_FILE=$PROJECT_ROOT/CHECKSUMS
+
+if [ -d $PROJECT_ROOT/$RELEASE_BRANCH ]; then
+	CHECKSUMS_FILE=$PROJECT_ROOT/$RELEASE_BRANCH/CHECKSUMS
+fi
+
 rm -f $CHECKSUMS_FILE
-for file in $(find ${BIN_DIR} -type f | sort); do
+for file in $(find ${OUTPUT_BIN_DIR} -type f | sort); do
     filepath=$(realpath --relative-base=$PROJECT_ROOT $file)
     sha256sum $filepath >> $CHECKSUMS_FILE
 done
+
+echo "*************** CHECKSUMS ***************"
+cat $CHECKSUMS_FILE
+echo "*****************************************"

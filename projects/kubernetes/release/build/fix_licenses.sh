@@ -13,21 +13,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-set -x
 set -o errexit
 set -o nounset
 set -o pipefail
 
-RELEASE_BRANCH="$1"
-GO_RUNNER_IMAGE="$2"
-KUBE_PROXY_BASE_IMAGE="$3"
-IMAGE_REPOSITORY="$4"
-REPO_PREFIX="$5"
-IMAGE_TAG="$6"
-
 MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
+OUTPUT_DIR="${MAKE_ROOT}/_output"
+ATTRIBUTION_DIR="${OUTPUT_DIR}/attribution"
+source "${MAKE_ROOT}/../../../build/lib/common.sh"
 
-source "${MAKE_ROOT}/build/lib/init.sh"
 
-build::images::docker::push $RELEASE_BRANCH $GO_RUNNER_IMAGE $KUBE_PROXY_BASE_IMAGE $IMAGE_REPOSITORY $REPO_PREFIX $IMAGE_TAG
+# go-licenses calls the main module command-line-arguments in the csv output
+MODULE_NAME=$(cat "${ATTRIBUTION_DIR}/root-module.txt")
+SEARCH='command-line-arguments'
+REPLACE=$(build::common::re_quote $MODULE_NAME)
+sed -i.bak "s/^$SEARCH/$REPLACE/" "${ATTRIBUTION_DIR}/go-license.csv"

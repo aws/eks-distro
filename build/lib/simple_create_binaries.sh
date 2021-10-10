@@ -13,41 +13,37 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -x
+
 set -o errexit
 set -o nounset
 set -o pipefail
 
-REPO="$1"
-TAG="$2"
-RELEASE_BRANCH="$3"
-TAR_PATH="_output/tar"
-BIN_ROOT="_output/bin"
-LICENSES_PATH="_output/LICENSES"
+PROJECT_ROOT="$1"
+OUTPUT_BIN_DIR="$2"
+REPO="$3"
+GOLANG_VERSION="$4"
+TAG="$5"
+BINARY_PLATFORMS="$6"
+REPO_SUBPATH="${7:-}"
 
-readonly SUPPORTED_PLATFORMS=(
-  linux/amd64
-  linux/arm64
-)
-MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
-source "${MAKE_ROOT}/../../../build/lib/common.sh"
 
-function build::etcd::tarball() {
-  build::common::ensure_tar
-  mkdir -p "$TAR_PATH"
+SCRIPT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+source "${SCRIPT_ROOT}/common.sh"
 
-  for platform in "${SUPPORTED_PLATFORMS[@]}";
-  do
+function build::simple::binaries(){
+  mkdir -p $OUTPUT_BIN_DIR
+  cd "$PROJECT_ROOT/$REPO/$REPO_SUBPATH"
+  local -r cache_key=$(echo $PROJECT_ROOT | sed 's/\(.*\)\//\1-/' | xargs basename)
+  build::common::use_go_version $GOLANG_VERSION
+  build::common::set_go_cache $cache_key $TAG
+  go mod vendor
+  SUPPORTED_PLATFORMS=(${BINARY_PLATFORMS// / })
+  for platform in "${SUPPORTED_PLATFORMS[@]}"; do
     OS="$(cut -d '/' -f1 <<< ${platform})"
     ARCH="$(cut -d '/' -f2 <<< ${platform})"
-    TAR_FILE="${REPO}-${OS}-${ARCH}-${TAG}.tar.gz"
-    
-    cp -rf "$LICENSES_PATH" $BIN_ROOT/$REPO/${OS}-${ARCH} 
-    cp "$RELEASE_BRANCH"/ATTRIBUTION.txt $BIN_ROOT/$REPO/${OS}-${ARCH}/
-    build::common::create_tarball  "${TAR_PATH}/${TAR_FILE}" "${BIN_ROOT}/${REPO}" "$OS"-"$ARCH"
+	mkdir -p ${OUTPUT_BIN_DIR}/${OS}-${ARCH}
+	$PROJECT_ROOT/build/create_binaries.sh $TAG ${OUTPUT_BIN_DIR}/${OS}-${ARCH} $OS $ARCH
   done
 }
 
-build::etcd::tarball
-
-build::common::generate_shasum "${TAR_PATH}"
+build::simple::binaries

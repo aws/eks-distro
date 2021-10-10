@@ -125,7 +125,7 @@ func main() {
 				projects[projectPath].changed = true
 			}
 		}
-		r := regexp.MustCompile("^Makefile$|cmd/main_postsubmit.go|EKS_DISTRO_BASE_TAG_FILE|^release/.*")
+		r := regexp.MustCompile("^Makefile$|^Common.mk$|cmd/main_postsubmit.go|EKS_DISTRO_BASE_TAG_FILE|^release/.*|^build/lib/.*")
 		if r.MatchString(file) {
 			allChanged = true
 		}
