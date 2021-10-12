@@ -9,7 +9,7 @@ LICENSE_PACKAGE_FILTER?=./coredns.go
 
 BINARY_TARGET=$(OUTPUT_BIN_DIR)/linux-amd64/coredns
 
-COREDNS_IMAGE?=$(IMAGE_REPO)/$(IMAGE_NAME):$(IMAGE_TAG)
+COREDNS_IMAGE?=$(IMAGE_REPO)/$(ECR_IMAGE_NAME):$(IMAGE_TAG)
 
 # When creating a local image IMAGE_PLATFORMS will be either linux/amd64 or linux/arm64
 IMAGE_OUTPUT_DIR=$(OUTPUT_DIR)/images/bin/$(IMAGE_PLATFORMS)
