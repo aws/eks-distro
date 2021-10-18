@@ -107,13 +107,23 @@ binaries: makes
 run-target-in-docker:
 	build/lib/run_target_docker.sh $(PROJECT) $(MAKE_TARGET) $(RELEASE_BRANCH) $(IMAGE_REPO)
 
-.PHONY: update-checksums-docker
-update-checksums-docker:
+.PHONY: update-attribution-checksums-docker
+update-attribution-checksums-docker:
 	build/lib/update_checksum_docker.sh $(PROJECT) $(RELEASE_BRANCH)
 
-.PHONE: stop-docker-builder
+.PHONY: stop-docker-builder
 stop-docker-builder:
 	docker rm -f -v eks-d-builder
+
+.PHONY: run-buildkit-and-registry
+run-buildkit-and-registry:
+	docker run -d --name buildkitd --net host --privileged moby/buildkit:v0.9.0-rootless
+	docker run -d --name registry  --net host registry:2
+
+.PHONY: stop-buildkit-and-registry
+stop-buildkit-and-registry:
+	docker rm -v --force buildkitd
+	docker rm -v --force registry
 
 .PHONY: clean
 clean: makes
