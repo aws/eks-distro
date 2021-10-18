@@ -89,7 +89,7 @@ help: ## Display this help
 $(REPO):
 	git clone $(CLONE_URL) $(REPO)
 
-$(GIT_CHECKOUT_TARGET): $(REPO)
+$(GIT_CHECKOUT_TARGET): | $(REPO)
 	git -C $(REPO) checkout -f $(GIT_TAG)
 	touch $@
 
