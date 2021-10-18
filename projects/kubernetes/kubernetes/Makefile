@@ -61,7 +61,7 @@ $(BINARY_TARGET): export KUBE_GIT_VERSION=$(IMAGE_TAG)
 $(BINARY_TARGET): MAKEFLAGS=
 
 # Patch source before building
-$(BINARY_TARGET): $(GIT_PATCH_TARGET)
+$(BINARY_TARGET): | $(GIT_PATCH_TARGET)
 
 # There are a couple of fixes needed to the licenses and root-module name before running gather licenses
 $(GATHER_LICENSES_TARGET): fix-licenses

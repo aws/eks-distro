@@ -6,13 +6,13 @@ REPO=livenessprobe
 COMPONENT=kubernetes-csi/$(REPO)
 
 LICENSE_PACKAGE_FILTER=./cmd/livenessprobe
-ADDITIONAL_ATTRIBUTION_DEPS=fix-licenses
-
 BINARY_TARGET=$(OUTPUT_BIN_DIR)/linux-amd64/livenessprobe
 
 LIVENESSPROBE_IMAGE?=$(IMAGE_REPO)/$(ECR_IMAGE_NAME):$(IMAGE_TAG)
 
 include $(BASE_DIRECTORY)/Common.mk
+
+$(ATTRIBUTION_TARGET): fix-licenses
 
 .PHONY: images
 images: livenessprobe/images/push
@@ -21,5 +21,5 @@ images: livenessprobe/images/push
 local-images: livenessprobe/images/amd64
 
 .PHONE: fix-licenses
-fix-licenses: gather-licenses
+fix-licenses: $(GATHER_LICENSES_TARGET)
 	build/fix_licenses.sh
