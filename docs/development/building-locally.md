@@ -9,7 +9,7 @@ Projects can be built on a Mac or Linux host, as well as using the builder-base 
 [script](../../build/lib/install_go_versions.sh) modeled from the builder-base to install all golang versions locally.  
 * If intending on generating checksums or attribution files, patch versions of golang must match. Validate versions in above script match those in [builder-base](https://github.com/aws/eks-distro-build-tooling/blob/main/builder-base/install.sh#L172). If not,
 please send a PR updating script in this repo.
-* Gathering licenses and generating attribution files requires additional setup outlined in [here](attribution-files.md).
+* Gathering licenses and generating attribution files requires additional setup outlined [here](attribution-files.md).
 * For building container images, buildctl is used instead of docker to match our prow builds.  Running `local-images` targets 
 will export images to a tar, but if running `images` targets which push images, a registry is required.  By default,
 an ECR repo in the currently logged in AWS account will be used.  A common alternative is to run docker registry locally and override
@@ -46,13 +46,13 @@ It may be easier to ensure building matches that in prow to use the builder-base
 * To run a target within a specific project:
 	* `make run-target-in-docker MAKE_TARGET=<target> PROJECT=<project> RELEASE_BRANCH=<1-X>`
 	* any of the above targets can be used for `<target>`
-	* `<project>` will be in the format `repo/project`, ex: `coredns/coredns`
+	* `<project>` will be in the format `org/repo`, ex: `coredns/coredns`
 	* A container is launched using the `builder-base:latest` image and the current source tree is copied into it.
 	  If also building locally, you may want to run `make clean` to avoid copying unnecessary files into the container.
 	* The container will be named `eks-d-builder` and can be accessed to manually run targets or cleanup:
 		* `docker exec -it eks-d-builder bash`
 	* Subsequent calls to `make run-target-in-docker` will use the same running container.  To stop the container:
 		* `make stop-docker-builder`
-* Attribution and Checksum generation may be easier to run in docker to avoid needing specific golang versions locally.  A specific make target exist for these:
+* Attribution and Checksum generation may be easier to run in docker to avoid needing specific golang versions locally.  A specific make target exists for these:
 	* `make update-attribution-checksums-docker PROJECT=<project> RELEASE_BRANCH=<1-X>`
 	* This will build, generate attribution and checksums and then copy the resulting files out of the container to host project location.
