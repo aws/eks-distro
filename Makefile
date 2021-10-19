@@ -57,6 +57,7 @@ postsubmit-build: setup
 		--image-repo=${IMAGE_REPO} \
 		--artifact-bucket=$(ARTIFACT_BUCKET) \
 		--dry-run=false
+	cat $(BASE_DIRECTORY)/image_digests
 
 .PHONY: kops-prow-arm
 kops-prow-arm: export NODE_INSTANCE_TYPE=t4g.medium
@@ -91,6 +92,7 @@ tag:
 
 .PHONY: upload
 upload:
+	@cat $(BASE_DIRECTORY)/image_digests
 	release/generate_crd.sh $(RELEASE_BRANCH) $(RELEASE) $(IMAGE_REPO)
 	release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET)
 	@echo 'Done' $(TARGET)

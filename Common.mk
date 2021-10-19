@@ -176,6 +176,8 @@ validate-checksums: $(BINARY_TARGET)
 %/images/push: IMAGE_OUTPUT?=push=true
 %/images/push: $(GATHER_LICENSES_TARGET) $(OUTPUT_DIR)/ATTRIBUTION.txt
 	$(BUILDCTL)
+	$(eval IMAGE_DIGEST=$(shell aws ecr-public describe-images --region us-east-1 --repository-name $(ECR_IMAGE_NAME) --image-ids imageTag=$(IMAGE_TAG) | jq -r '.imageDetails[].imageDigest'))
+	@echo "$(IMAGE_DIGEST)  $(IMAGE)" >> $(BASE_DIRECTORY)/image_digests
 
 %/images/amd64: ## Build image using buildkit only builds linux/amd64 and saves to local tar.
 %/images/amd64: IMAGE_PLATFORMS?=linux/amd64
