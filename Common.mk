@@ -129,6 +129,11 @@ gather-licenses: $(GATHER_LICENSES_TARGET)
 attribution: ## Generates attribution from licenses gathered during `gather-licenses`.
 attribution: $(ATTRIBUTION_TARGET)
 
+.PHONY: attribution-pr
+attribution-pr: ## Generates PR to update attribution files for projects
+attribution-pr:
+	$(BASE_DIRECTORY)/build/update-attribution-files/create_pr.sh
+
 ##@ Tarball Targets
 
 .PHONY: tarballs
@@ -194,9 +199,9 @@ validate-checksums: $(BINARY_TARGET)
 ##@ Build Targets
 
 .PHONY: build
-build: ## Called via prow presubmit, calls `binaries gather-licenses clean-repo local-images attribution checksums` by default
+build: ## Called via prow presubmit, calls `binaries gather-licenses clean-repo local-images attribution checksums attribution-pr(dry-run)` by default
 build: FAKE_ARM_IMAGES_FOR_VALIDATION=true
-build: $(BINARY_TARGET) validate-checksums $(GATHER_LICENSES_TARGET) local-images $(ATTRIBUTION_TARGET)
+build: $(BINARY_TARGET) validate-checksums $(GATHER_LICENSES_TARGET) local-images $(ATTRIBUTION_TARGET) attribution-pr
 
 .PHONY: release
 release: ## Called via prow postsubmit + release jobs, calls `binaries gather-licenses clean-repo images` by default
