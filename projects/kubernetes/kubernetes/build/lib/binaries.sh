@@ -23,6 +23,10 @@ function build::binaries::kube_bins() {
     export SOURCE_DATE_EPOCH=$(git log -n 1 --pretty=format:%ct $release_branch/patches)
     export KUBE_GIT_COMMIT=$(git -C $repository rev-list -n 1 $git_tag)
     export KUBE_GIT_TREE_STATE=clean
+    # Not using full image tag to avoid having to change checksums just for bumping
+    # the release number, which is usually just a base image update and
+    # doesnt affect the binaries
+    export KUBE_GIT_VERSION=$git_tag-eks-$release_branch
 
     cd $repository
     

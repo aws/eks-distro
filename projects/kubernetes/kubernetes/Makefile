@@ -54,9 +54,6 @@ include $(BASE_DIRECTORY)/Common.mk
 build: tarballs local-images validate-version-file s3-artifacts 
 release: tarballs images validate-version-file upload-artifacts 
 
-# Override KUBE_GIT_VERSION for reproducible builds
-$(BINARY_TARGET): export KUBE_GIT_VERSION=$(IMAGE_TAG)
-
 # Do not pass down overrides we add in common makefile
 $(BINARY_TARGET): MAKEFLAGS=
 
