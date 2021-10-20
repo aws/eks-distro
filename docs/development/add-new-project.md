@@ -55,8 +55,8 @@ The key pieces of the Makefile to setup are:
 	refer to [attribution-files](attribution-files.md).
 * BINARY_TARGET - The path where the built binary will be placed, should generally start with
 	$(OUTPUT_BIN_DIR)
-* <IMAGE_NAME>_IMAGE - Name is important since common makefile target uses this to
-	dynamically determine final image tag.  Almost always set to `$(IMAGE_REPO)/$(IMAGE_NAME):$(IMAGE_TAG)`
+* <IMAGE_NAME>_IMAGE_COMPONENT (optional) - Common makefile will use this if set to override the default 
+	component in the `IMAGE` variable.  By default `IMAGE` will be set to `$(IMAGE_REPO)/$(COMPONENT):$(IMAGE_TAG)`
 
 The only required targets to add are `local-images` and `images`.  These will generally look like:
 

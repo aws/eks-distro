@@ -10,7 +10,6 @@ LICENSE_PACKAGE_FILTER?=./cmd/aws-iam-authenticator
 BINARY_TARGET=$(OUTPUT_BIN_DIR)/linux-amd64/aws-iam-authenticator
 BINARY_PLATFORMS=linux/amd64 linux/arm64 darwin/amd64 windows/amd64
 
-AWS_IAM_AUTHENTICATOR_IMAGE?=$(IMAGE_REPO)/$(ECR_IMAGE_NAME):$(IMAGE_TAG)
 
 include $(BASE_DIRECTORY)/Common.mk
 

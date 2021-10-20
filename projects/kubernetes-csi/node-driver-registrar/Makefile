@@ -8,8 +8,6 @@ COMPONENT=kubernetes-csi/$(REPO)
 LICENSE_PACKAGE_FILTER?=./cmd/csi-node-driver-registrar
 BINARY_TARGET=$(OUTPUT_BIN_DIR)/linux-amd64/csi-node-driver-registrar
 
-NODE_DRIVER_REGISTRAR_IMAGE?=$(IMAGE_REPO)/$(ECR_IMAGE_NAME):$(IMAGE_TAG)
-
 include $(BASE_DIRECTORY)/Common.mk
 
 $(ATTRIBUTION_TARGET): fix-licenses

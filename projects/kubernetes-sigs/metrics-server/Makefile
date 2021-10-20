@@ -9,8 +9,6 @@ LICENSE_PACKAGE_FILTER=./cmd/metrics-server
 
 BINARY_TARGET=$(OUTPUT_BIN_DIR)/linux-amd64/metrics-server
 
-METRICS_SERVER_IMAGE?=$(IMAGE_REPO)/$(ECR_IMAGE_NAME):$(IMAGE_TAG)
-
 include $(BASE_DIRECTORY)/Common.mk
 
 

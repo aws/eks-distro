@@ -9,8 +9,6 @@ LICENSE_PACKAGE_FILTER?=./cmd/csi-resizer
 
 BINARY_TARGET=$(OUTPUT_BIN_DIR)/linux-amd64/csi-resizer
 
-CSI_RESIZER_IMAGE?=$(IMAGE_REPO)/$(ECR_IMAGE_NAME):$(IMAGE_TAG)
-
 include $(BASE_DIRECTORY)/Common.mk
 
 .PHONY: images

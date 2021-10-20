@@ -21,10 +21,10 @@ PAUSE_TAG+=$(IMAGE_TAG)
 PAUSE_TAGS=$(foreach tag, $(PAUSE_TAG), $(IMAGE_REPO)/kubernetes/pause:$(tag))
 PAUSE_IMAGE=$(shell echo $(PAUSE_TAGS) | sed "s/ \+/,/g")
 
-KUBE_APISERVER_IMAGE=$(IMAGE_REPO)/kubernetes/kube-apiserver:$(IMAGE_TAG)
-KUBE_CONTROLLER_MANAGER_IMAGE=$(IMAGE_REPO)/kubernetes/kube-controller-manager:$(IMAGE_TAG)
-KUBE_SCHEDULER_IMAGE=$(IMAGE_REPO)/kubernetes/kube-scheduler:$(IMAGE_TAG)
-KUBE_PROXY_IMAGE=$(IMAGE_REPO)/kubernetes/kube-proxy:$(IMAGE_TAG)
+KUBE_APISERVER_IMAGE_COMPONENT=kubernetes/kube-apiserver
+KUBE_CONTROLLER_MANAGER_IMAGE_COMPONENT=kubernetes/kube-controller-manager
+KUBE_SCHEDULER_IMAGE_COMPONENT=kubernetes/kube-scheduler
+KUBE_PROXY_IMAGE_COMPONENT=kubernetes/kube-proxy
 
 IMAGES=pause kube-proxy kube-apiserver kube-controller-manager kube-scheduler
 LOCAL_IMAGE_TARGETS_AMD64=$(addsuffix /images/amd64, $(IMAGES))
