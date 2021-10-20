@@ -5,8 +5,8 @@ GOLANG_VERSION?=$(shell cat ./$(RELEASE_BRANCH)/GOLANG_VERSION)
 REPO=release-src
 COMPONENT=kubernetes/release
 
-GO_RUNNER_IMAGE?=$(IMAGE_REPO)/kubernetes/go-runner:$(IMAGE_TAG)
-KUBE_PROXY_BASE_IMAGE?=$(IMAGE_REPO)/kubernetes/kube-proxy-base:$(IMAGE_TAG)
+GO_RUNNER_IMAGE_COMPONENT?=kubernetes/go-runner
+KUBE_PROXY_BASE_IMAGE_COMPONENT?=kubernetes/kube-proxy-base
 
 LICENSE_PACKAGE_FILTER=./go-runner.go
 IPTABLES_WRAPPER=$(OUTPUT_DIR)/iptables-wrapper

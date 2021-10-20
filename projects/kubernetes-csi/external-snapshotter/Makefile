@@ -5,9 +5,9 @@ GOLANG_VERSION?="1.15"
 REPO=external-snapshotter
 COMPONENT=kubernetes-csi/$(REPO)
 
-CSI_SNAPSHOTTER_IMAGE?=$(IMAGE_REPO)/kubernetes-csi/external-snapshotter/csi-snapshotter:$(IMAGE_TAG)
-SNAPSHOT_CONTROLLER_IMAGE?=$(IMAGE_REPO)/kubernetes-csi/external-snapshotter/snapshot-controller:$(IMAGE_TAG)
-SNAPSHOT_VALIDATION_WEBHOOK_IMAGE?=$(IMAGE_REPO)/kubernetes-csi/external-snapshotter/snapshot-validation-webhook:$(IMAGE_TAG)
+CSI_SNAPSHOTTER_IMAGE_COMPONENT?=kubernetes-csi/external-snapshotter/csi-snapshotter
+SNAPSHOT_CONTROLLER_IMAGE_COMPONENT?=kubernetes-csi/external-snapshotter/snapshot-controller
+SNAPSHOT_VALIDATION_WEBHOOK_IMAGE_COMPONENT?=kubernetes-csi/external-snapshotter/snapshot-validation-webhook
 
 IMAGES=csi-snapshotter snapshot-controller snapshot-validation-webhook
 LOCAL_IMAGE_TARGETS=$(addsuffix /images/amd64, $(IMAGES))
