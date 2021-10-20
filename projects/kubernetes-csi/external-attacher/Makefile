@@ -14,7 +14,7 @@ CSI_ATTACHER_IMAGE?=$(IMAGE_REPO)/$(ECR_IMAGE_NAME):$(IMAGE_TAG)
 include $(BASE_DIRECTORY)/Common.mk
 
 .PHONY: images
-images: csi-attacher/images/arm64
+images: csi-attacher/images/push
 
 .PHONY: local-images
 local-images: csi-attacher/images/amd64
