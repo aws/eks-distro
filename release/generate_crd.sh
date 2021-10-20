@@ -23,6 +23,11 @@ REPO_OWNER=${REPO_OWNER:-aws}
 BASE_DIRECTORY=$(git rev-parse --show-toplevel)
 cd ${BASE_DIRECTORY}
 
+DEV_RELEASE=true
+if [[ "$JOB_NAME" =~ "prod-release" ]]; then
+    DEV_RELEASE=false
+fi
+
 REPOSITORY="https://github.com/${REPO_OWNER}/eks-distro-build-tooling.git"
 rm -rf ./eks-distro-build-tooling
 git clone ${REPOSITORY}
@@ -31,7 +36,8 @@ DESTINATION="./kubernetes-${RELEASE_BRANCH}/kubernetes-${RELEASE_BRANCH}-eks-${R
 ./eks-distro-build-tooling/release/bin/eks-distro-release release \
     --image-repository ${IMAGE_REPO} \
     --release-branch ${RELEASE_BRANCH} \
-    --release-number ${RELEASE} | tee ${DESTINATION}
+    --release-number ${RELEASE} \
+    --dev-release=${DEV_RELEASE} | tee ${DESTINATION}
 mkdir -p releasechannels
 grep -v '^#.*' eks-distro-build-tooling/release/config/${RELEASE_BRANCH}/${RELEASE_BRANCH}.yaml \
     | sed "s/latestRelease: .*/latestRelease: ${RELEASE}/" >releasechannels/${RELEASE_BRANCH}.yaml
