@@ -70,6 +70,7 @@ kube-proxy/images/%: BASE_IMAGE=$(KUBE_PROXY_BASE_IMAGE)
 # wildcard match doesnt work for add pre-req so have to use helper
 pause/images/%: DOCKERFILE_FOLDER=./docker/pause
 pause/images/%: BASE_IMAGE=scratch
+pause/images/%: IMAGE=$(PAUSE_IMAGE)
 $(call IMAGE_TARGETS_FOR_NAME, pause): $(PAUSE_DST)
 
 $(GIT_PATCH_TARGET): $(GIT_CHECKOUT_TARGET)
