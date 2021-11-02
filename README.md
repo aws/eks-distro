@@ -36,7 +36,7 @@ To receive notifications about new EKS-D releases, subscribe to the EKS-D update
 
 | Release | Manifest |
 | --- | --- |
-| 7 | [kubernetes-1-20-eks-7](https://distro.eks.amazonaws.com/kubernetes-1-20/kubernetes-1-20-eks-7.yaml) |
+| 8 | [kubernetes-1-20-eks-8](https://distro.eks.amazonaws.com/kubernetes-1-20/kubernetes-1-20-eks-8.yaml) |
 
 ### Kubernetes 1-19
 
