@@ -123,25 +123,25 @@ https://gopkg.in/DataDog/dd-trace-go.v1
 https://gopkg.in/yaml.v2
 
 ** k8s.io/api; version v0.19.2 --
-https://github.com/kubernetes/api
+https://k8s.io/api
 
 ** k8s.io/apimachinery; version v0.19.2 --
-https://github.com/kubernetes/apimachinery
+https://k8s.io/apimachinery
 
 ** k8s.io/client-go; version v0.19.2 --
-https://github.com/kubernetes/client-go
+https://k8s.io/client-go
 
 ** k8s.io/klog; version v1.0.0 --
-https://github.com/kubernetes/klog
+https://k8s.io/klog
 
 ** k8s.io/klog/v2; version v2.2.0 --
-https://github.com/kubernetes/klog
+https://k8s.io/klog/v2
 
 ** k8s.io/utils; version v0.0.0-20200729134348-d5654de09c73 --
-https://github.com/kubernetes/utils
+https://k8s.io/utils
 
 ** sigs.k8s.io/structured-merge-diff/v4/value; version v4.0.1 --
-https://github.com/kubernetes-sigs/structured-merge-diff
+https://sigs.k8s.io/structured-merge-diff/v4
 
 
                                  Apache License
@@ -1064,15 +1064,15 @@ https://github.com/philhofer/fwd
 Copyright (c) 2014-2015, Philip Hofer
 
 ** go.uber.org/atomic; version v1.6.0 --
-https://github.com/uber-go/atomic
+https://go.uber.org/atomic
 Copyright (c) 2016 Uber Technologies, Inc.
 
 ** go.uber.org/multierr; version v1.5.0 --
-https://github.com/uber-go/multierr
+https://go.uber.org/multierr
 Copyright (c) 2017 Uber Technologies, Inc.
 
 ** go.uber.org/zap; version v1.14.1 --
-https://github.com/uber-go/zap
+https://go.uber.org/zap
 Copyright (c) 2016-2017 Uber Technologies, Inc.
 
 Permission is hereby granted, free of charge, to any person obtaining
@@ -1110,7 +1110,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 ------
 
 ** sigs.k8s.io/yaml; version v1.2.0 --
-https://github.com/kubernetes-sigs/yaml
+https://sigs.k8s.io/yaml
 Copyright (c) 2014 Sam Ghods
 Copyright (c) 2012 The Go Authors. All rights reserved.
 
