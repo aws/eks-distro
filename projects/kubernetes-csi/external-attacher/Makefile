@@ -3,11 +3,10 @@ GIT_TAG?=$(shell cat GIT_TAG)
 GOLANG_VERSION?="1.15"
 
 REPO=external-attacher
-COMPONENT=kubernetes-csi/$(REPO)
+REPO_OWNER=kubernetes-csi
 
-LICENSE_PACKAGE_FILTER?=./cmd/csi-attacher
-
-BINARY_TARGET=$(OUTPUT_BIN_DIR)/linux-amd64/csi-attacher
+BINARY_TARGET_FILES=csi-attacher
+SOURCE_PATTERNS=./cmd/csi-attacher
 
 include $(BASE_DIRECTORY)/Common.mk
 

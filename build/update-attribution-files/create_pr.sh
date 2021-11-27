@@ -17,6 +17,10 @@ set -e
 set -o pipefail
 set -x
 
+if [[ -z "$JOB_TYPE" ]]; then
+    exit 0
+fi
+
 SCRIPT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 
 ORIGIN_ORG="eks-distro-pr-bot"

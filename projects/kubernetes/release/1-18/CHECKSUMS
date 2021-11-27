@@ -1,2 +1,2 @@
-a69beb4eb20615cc67b38d0fb2eef18b53a982d944ac466faaf66576805e6c8e  _output/bin/release-src/linux-amd64/go-runner
-09e1e638f365a2e793d3108dc08f1c5c509c96fd0c3d7c7b75f534c6116c09fc  _output/bin/release-src/linux-arm64/go-runner
+d9bba67c72460d59e7a6c678ee218eac4f290a3cb93e14a012a5b3a3dc9583b0  _output/1-18/bin/release-src/linux-amd64/go-runner
+eaf8a101d1ea1906c665fe0ba3b0fd0323b84491f1010e3d39eb9f1756859719  _output/1-18/bin/release-src/linux-arm64/go-runner

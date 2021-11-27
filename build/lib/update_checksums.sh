@@ -17,9 +17,10 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-PROJECT_ROOT="$1"
-OUTPUT_BIN_DIR="$2"
-RELEASE_BRANCH="$3"
+MAKE_ROOT="$1"
+PROJECT_ROOT="$2"
+OUTPUT_BIN_DIR="$3"
+
 
 if [ ! -d ${OUTPUT_BIN_DIR} ] ;  then
     echo "${OUTPUT_BIN_DIR} not present! Run 'make binaries'"
@@ -28,13 +29,9 @@ fi
 
 CHECKSUMS_FILE=$PROJECT_ROOT/CHECKSUMS
 
-if [ -d $PROJECT_ROOT/$RELEASE_BRANCH ]; then
-	CHECKSUMS_FILE=$PROJECT_ROOT/$RELEASE_BRANCH/CHECKSUMS
-fi
-
 rm -f $CHECKSUMS_FILE
 for file in $(find ${OUTPUT_BIN_DIR} -type f | sort); do
-    filepath=$(realpath --relative-base=$PROJECT_ROOT $file)
+    filepath=$(realpath --relative-base=$MAKE_ROOT $file)
     sha256sum $filepath >> $CHECKSUMS_FILE
 done
 

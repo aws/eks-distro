@@ -140,6 +140,7 @@ function build::generate_attribution(){
   local -r project_root=$1
   local -r golang_version=$2
   local -r output_directory=${3:-"${project_root}/_output"}
+  local -r attribution_file=${4:-"${project_root}/ATTRIBUTION.txt"}
 
   local -r root_module_name=$(cat ${output_directory}/attribution/root-module.txt)
   local -r go_path=$(build::common::get_go_path $golang_version)
@@ -153,7 +154,7 @@ function build::generate_attribution(){
   fi
 
   generate-attribution $root_module_name $project_root $golang_version_tag $output_directory 
-  cp -f "${output_directory}/attribution/ATTRIBUTION.txt" "${project_root}/ATTRIBUTION.txt"
+  cp -f "${output_directory}/attribution/ATTRIBUTION.txt" $attribution_file
 }
 
 function build::common::get_go_path() {
@@ -216,4 +217,19 @@ function build::common::set_go_cache() {
 function build::common::re_quote() {
     local -r to_escape=$1
     sed 's/[][()\.^$\/?*+]/\\&/g' <<< "$to_escape"
+}
+function build::common::wait_for_tag() {
+  local -r tag=$1
+  sleep_interval=20
+  for i in {1..60}; do
+    echo "Checking for tag ${tag}..."
+    git fetch --tags > /dev/null 2>&1
+    git rev-parse --verify --quiet "${tag}" && echo "Tag ${tag} exists!" && break
+    echo "Tag ${tag} does not exist!"
+    echo "Waiting for tag ${tag}..."
+    sleep $sleep_interval
+    if [ "$i" = "60" ]; then
+      exit 1
+    fi
+  done
 }

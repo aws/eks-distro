@@ -35,6 +35,9 @@ if ! docker ps -f name=eks-d-builder | grep -w eks-d-builder; then
 		public.ecr.aws/eks-distro-build-tooling/builder-base:latest  infinity 
 fi
 
-rsync -e 'docker exec -i' -a ./ eks-d-builder:/eks-distro
+rsync -e 'docker exec -i' -rm --exclude='.git/logs/***' \
+	--exclude="projects/$PROJECT/_output/***" --exclude="projects/$PROJECT/$(basename $PROJECT)/***" \
+	--include="projects/$PROJECT/***" \
+	--include='*/' --exclude='projects/***' ./ eks-d-builder:/eks-distro
 
 docker exec -it eks-d-builder make $TARGET -C /eks-distro/projects/$PROJECT RELEASE_BRANCH=$RELEASE_BRANCH IMAGE_REPO=$IMAGE_REPO

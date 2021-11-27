@@ -3,26 +3,24 @@ GIT_TAG?=$(shell cat GIT_TAG)
 GOLANG_VERSION?=1.14
 
 REPO=plugins
-COMPONENT=containernetworking/$(REPO)
+REPO_OWNER=containernetworking
 
-LICENSE_PACKAGE_FILTER?=$(shell build/license_patterns.sh $(REPO))
 TAR_FILE_PREFIX=cni-plugins
 
-BINARY_TARGET=$(OUTPUT_BIN_DIR)/linux-amd64/host-device
+SOURCE_PATTERNS_TARGET=_output/source_patterns
+BINARY_TARGET_FILES=$(foreach pattern,$(SOURCE_PATTERNS),$(notdir $(pattern)))
+
+HAS_S3_ARTIFACTS=true
+
+ifneq ($(filter-out clean,$(MAKECMDGOALS)),)
+-include $(SOURCE_PATTERNS_TARGET)
+endif
 
 include $(BASE_DIRECTORY)/Common.mk
 
-build: s3-artifacts
-release: upload-artifacts
-
-.PHONY: s3-artifacts
-s3-artifacts: tarballs
-	$(BASE_DIRECTORY)/release/copy_artifacts.sh $(REPO) $(OUTPUT_DIR)/tar $(RELEASE_BRANCH) $(RELEASE) $(GIT_TAG)
-	$(BUILD_LIB)/validate_artifacts.sh $(MAKE_ROOT) $(RELEASE_BRANCH) $(RELEASE) $(GIT_TAG) $(REPO)
-
-.PHONY: upload-artifacts
-upload-artifacts: s3-artifacts
-	$(BASE_DIRECTORY)/release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET) $(REPO)
+$(SOURCE_PATTERNS_TARGET): $(GIT_CHECKOUT_TARGET)
+	@mkdir -p $(@D)
+	echo SOURCE_PATTERNS=$(shell build/source_patterns.sh $(REPO)) > $@
 
 local-images: # noop
 images: # noop

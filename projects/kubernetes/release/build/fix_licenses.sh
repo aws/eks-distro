@@ -17,8 +17,9 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+OUTPUT_DIR="$1"
+
 MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
-OUTPUT_DIR="${MAKE_ROOT}/_output"
 ATTRIBUTION_DIR="${OUTPUT_DIR}/attribution"
 source "${MAKE_ROOT}/../../../build/lib/common.sh"
 

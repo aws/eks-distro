@@ -13,16 +13,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
 set -x
 set -o errexit
 set -o nounset
 set -o pipefail
 
-TAG="$1"
-BIN_PATH="$2"
-OS="$3"
-ARCH="$4"
+REPO="$1"
 
-CGO_ENABLED=0 GOOS=$OS GOARCH=$ARCH \
-	go build -trimpath -v -ldflags='-s -w --buildid=""' \
-        -o $BIN_PATH/go-runner
+function build::plugins::patterns(){
+  cd $REPO
+  # Pull licenses for the plugins we are building, similiar logic exist in build_linux.sh called above
+  # https://github.com/containernetworking/plugins/blob/master/build_linux.sh#L14
+  PLUGINS="plugins/meta/* plugins/main/* plugins/ipam/*"
+  ALL_PLUGINS=""
+  for d in $PLUGINS; do
+    if [ -d "$d" ]; then
+      plugin="$(basename "$d")"
+      if [ "${plugin}" != "windows" ]; then
+        ALL_PLUGINS+="./$d "
+      fi
+    fi
+  done
+  echo "$ALL_PLUGINS"
+}
+
+build::plugins::patterns

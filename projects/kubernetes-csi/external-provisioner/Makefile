@@ -3,11 +3,10 @@ GIT_TAG?=$(shell cat GIT_TAG)
 GOLANG_VERSION?="1.15"
 
 REPO=external-provisioner
-COMPONENT=kubernetes-csi/$(REPO)
+REPO_OWNER=kubernetes-csi
 
-LICENSE_PACKAGE_FILTER?=./cmd/csi-provisioner
-
-BINARY_TARGET=$(OUTPUT_BIN_DIR)/linux-amd64/csi-provisioner
+BINARY_TARGET_FILES=csi-provisioner
+SOURCE_PATTERNS=./cmd/csi-provisioner
 
 include $(BASE_DIRECTORY)/Common.mk
 

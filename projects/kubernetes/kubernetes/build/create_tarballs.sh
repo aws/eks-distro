@@ -36,9 +36,11 @@ fi
 
 OUTPUT_RELEASE_DIR="${OUTPUT_DIR}/${RELEASE_BRANCH}"
 BIN="${OUTPUT_RELEASE_DIR}/bin" 
+TAR_OUTPUT_DIR=${OUTPUT_DIR}/tar/${RELEASE_BRANCH}
 
+mkdir -p $TAR_OUTPUT_DIR
 build::common::ensure_tar
-build::tarballs::create_tarballs $BIN $OUTPUT_RELEASE_DIR
+build::tarballs::create_tarballs $BIN $OUTPUT_RELEASE_DIR $TAR_OUTPUT_DIR
 git \
     -C $SOURCE_DIR \
     archive \

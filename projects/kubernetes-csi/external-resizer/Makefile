@@ -3,11 +3,10 @@ GIT_TAG?=$(shell cat GIT_TAG)
 GOLANG_VERSION?="1.15"
 
 REPO=external-resizer
-COMPONENT=kubernetes-csi/$(REPO)
+REPO_OWNER=kubernetes-csi
 
-LICENSE_PACKAGE_FILTER?=./cmd/csi-resizer
-
-BINARY_TARGET=$(OUTPUT_BIN_DIR)/linux-amd64/csi-resizer
+BINARY_TARGET_FILES=csi-resizer
+SOURCE_PATTERNS=./cmd/csi-resizer
 
 include $(BASE_DIRECTORY)/Common.mk
 

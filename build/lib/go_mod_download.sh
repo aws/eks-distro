@@ -13,16 +13,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+set -o errexit
+set -o nounset
+set -o pipefail
 
-function build::git::patch() {
-    local -r source_dir="$1"
-    local -r git_ref="$2"
-    local -r patch_dir="$3"
+PROJECT_ROOT="$1"
+REPO="$2"
+TAG="$3"
+GOLANG_VERSION="$4"
+REPO_SUBPATH="${5:-}"
 
-    git -C $source_dir config user.email "prow@amazonaws.com"
-    git -C $source_dir config user.name "Prow Bot"
-    git -C $source_dir checkout $git_ref
-    git -C $source_dir apply --verbose $patch_dir/*
-    git -C $source_dir add .
-    git -C $source_dir commit -m "EKS Distro build of $git_ref"
-}
+SCRIPT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+source "${SCRIPT_ROOT}/common.sh"
+
+cd $REPO/$REPO_SUBPATH
+
+CACHE_KEY=$(echo $PROJECT_ROOT | sed 's/\(.*\)\//\1-/' | xargs basename)
+build::common::use_go_version $GOLANG_VERSION
+build::common::set_go_cache $CACHE_KEY $TAG
+go mod vendor
