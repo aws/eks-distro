@@ -148,7 +148,7 @@ HAS_S3_KUBERNETES_IMAGES?=false
 SIMPLE_CREATE_TARBALLS?=$(HAS_S3_TARBALLS)
 TAR_FILE_PREFIX?=$(REPO)
 FAKE_ARM_BINARIES_FOR_VALIDATION?=$(if $(filter linux/arm64,$(BINARY_PLATFORMS)),false,true)
-FAKE_ARM_IMAGES_FOR_VALIDATION?=$(if $(findstring linux/arm64,$(IMAGE_PLATFORMS)),false,true)
+FAKE_ARM_IMAGES_FOR_VALIDATION?=false
 ####################################################
 
 #################### TARGETS FOR OVERRIDING ########
@@ -367,7 +367,7 @@ validate-checksums: $(BINARY_TARGETS)
 
 .PHONY: build
 build: ## Called via prow presubmit, calls `binaries gather-licenses clean-repo local-images attribution checksums` by default
-build: IMAGE_PLATFORMS=linux/amd64
+build: FAKE_ARM_IMAGES_FOR_VALIDATION=true
 build: $(BUILD_TARGETS)
 
 .PHONY: release

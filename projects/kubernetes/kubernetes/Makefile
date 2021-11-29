@@ -6,6 +6,10 @@ PAUSE_TAG?=$(shell cat $(wildcard ./$(RELEASE_BRANCH)/PAUSE_*TAG))
 REPO=kubernetes
 REPO_OWNER=kubernetes
 
+# binaries do not build to bin/$(repo) like most other projects
+OUTPUT_DIR=_output/$(RELEASE_BRANCH)
+OUTPUT_BIN_DIR=$(OUTPUT_DIR)/bin
+
 KUBE_BASE_GIT_TAG?=$(shell cat $(BASE_DIRECTORY)/projects/kubernetes/release/$(RELEASE_BRANCH)/GIT_TAG)
 KUBE_BASE_TAG?=${KUBE_BASE_GIT_TAG}-eks-${RELEASE_BRANCH}-${RELEASE}
 GO_RUNNER_IMAGE?=$(IMAGE_REPO)/kubernetes/go-runner:$(KUBE_BASE_TAG)
