@@ -13,6 +13,7 @@ EXTRA_GO_LDFLAGS=-X github.com/coredns/coredns/coremain.GitCommit=$(shell git -C
 
 # When creating a local image IMAGE_PLATFORMS will be either linux/amd64 or linux/arm64
 IMAGE_OUTPUT_DIR=$(OUTPUT_DIR)/images/bin/$(IMAGE_PLATFORMS)
+BUILD_OCI_TARS=true
 
 HAS_RELEASE_BRANCHES=true
 
@@ -21,11 +22,3 @@ HAS_S3_ARTIFACTS=true
 SIMPLE_CREATE_TARBALLS=false
 
 include $(BASE_DIRECTORY)/Common.mk
-
-
-.PHONY: local-images
-local-images: coredns/images/amd64
-
-# we publish oci tarballs in release mode in addition to pushing images for installer tools
-.PHONY: images
-images: $(call IMAGE_TARGETS_FOR_NAME, coredns)

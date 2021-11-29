@@ -10,6 +10,7 @@ COMPONENT=$(REPO_OWNER)/release
 
 GO_RUNNER_IMAGE_COMPONENT?=kubernetes/go-runner
 KUBE_PROXY_BASE_IMAGE_COMPONENT?=kubernetes/kube-proxy-base
+IMAGE_NAMES=go-runner kube-proxy-base
 
 LICENSE_PACKAGE_FILTER=./go-runner.go
 IPTABLES_WRAPPER=$(OUTPUT_DIR)/iptables-wrapper
@@ -32,12 +33,6 @@ $(ATTRIBUTION_TARGETS): fix-licenses
 $(IPTABLES_WRAPPER): $(GIT_CHECKOUT_TARGET)
 	@mkdir -p $(@D)
 	cp $(REPO)/images/build/debian-iptables/buster/iptables-wrapper $@
-
-.PHONY: local-images
-local-images: go-runner/images/amd64 kube-proxy-base/images/amd64
-
-.PHONY: images
-images: go-runner/images/push kube-proxy-base/images/push
 
 .PHONE: fix-licenses
 fix-licenses: $(GATHER_LICENSES_TARGETS)

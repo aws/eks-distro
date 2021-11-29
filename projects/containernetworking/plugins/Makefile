@@ -11,6 +11,7 @@ SOURCE_PATTERNS_TARGET=_output/source_patterns
 BINARY_TARGET_FILES=$(foreach pattern,$(SOURCE_PATTERNS),$(notdir $(pattern)))
 
 HAS_S3_ARTIFACTS=true
+IMAGE_NAMES=
 
 ifneq ($(filter-out clean,$(MAKECMDGOALS)),)
 -include $(SOURCE_PATTERNS_TARGET)
@@ -21,6 +22,3 @@ include $(BASE_DIRECTORY)/Common.mk
 $(SOURCE_PATTERNS_TARGET): $(GIT_CHECKOUT_TARGET)
 	@mkdir -p $(@D)
 	echo SOURCE_PATTERNS=$(shell build/source_patterns.sh $(REPO)) > $@
-
-local-images: # noop
-images: # noop

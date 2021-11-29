@@ -84,6 +84,8 @@ IMAGE_OUTPUT_DIR?=/tmp
 IMAGE_OUTPUT_NAME?=$(IMAGE_NAME)
 IMAGE_TARGET?=
 
+IMAGE_NAMES?=$(REPO)
+
 # This tag is overwritten in the prow job to point to the upstream git tag and this repo's commit hash
 IMAGE_TAG?=$(GIT_TAG)-$(GIT_HASH)
 # For projects with multiple containers this is defined to override the default
@@ -94,6 +96,7 @@ IMAGE=$(IMAGE_REPO)/$(if $(value $(IMAGE_COMPONENT_VARIABLE)),$(value $(IMAGE_CO
 IMAGE_USERADD_USER_ID?=1000
 IMAGE_USERADD_USER_NAME?=
 
+BUILD_OCI_TARS?=false
 ####################################################
 
 #################### BINARIES ######################
@@ -150,8 +153,8 @@ FAKE_ARM_IMAGES_FOR_VALIDATION?=false
 ####################################################
 
 #################### TARGETS FOR OVERRIDING ########
-BUILD_TARGETS?=validate-checksums local-images attribution attribution-pr $(if $(filter true,$(HAS_S3_ARTIFACTS)),s3-artifacts,)
-RELEASE_TARGETS?=validate-checksums images $(if $(filter true,$(HAS_S3_ARTIFACTS)),s3-artifacts,)
+BUILD_TARGETS?=validate-checksums $(if $(IMAGE_NAMES),local-images,) attribution attribution-pr $(if $(filter true,$(HAS_S3_ARTIFACTS)),s3-artifacts,)
+RELEASE_TARGETS?=validate-checksums $(if $(IMAGE_NAMES),images,) $(if $(filter true,$(HAS_S3_ARTIFACTS)),s3-artifacts,)
 ####################################################
 
 define BUILDCTL
@@ -353,6 +356,12 @@ validate-checksums: $(BINARY_TARGETS)
 %-useradd/images/export: IMAGE_PLATFORMS=linux/amd64
 %-useradd/images/export:
 	$(BUILDCTL)
+
+ifneq ($(IMAGE_NAMES),)
+local-images: $(foreach image,$(IMAGE_NAMES),$(image)/images/amd64)
+images: $(foreach image,$(IMAGE_NAMES),$(if $(filter true,$(BUILD_OCI_TARS)),$(call IMAGE_TARGETS_FOR_NAME,$(image)),$(image)/images/push))
+endif
+
 ##@ Build Targets
 
 .PHONY: build

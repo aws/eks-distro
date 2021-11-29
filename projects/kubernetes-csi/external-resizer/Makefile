@@ -9,9 +9,3 @@ BINARY_TARGET_FILES=csi-resizer
 SOURCE_PATTERNS=./cmd/csi-resizer
 
 include $(BASE_DIRECTORY)/Common.mk
-
-.PHONY: images
-images: csi-resizer/images/push
-
-.PHONY: local-images
-local-images: csi-resizer/images/amd64

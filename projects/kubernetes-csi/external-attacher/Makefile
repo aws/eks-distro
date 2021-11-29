@@ -9,9 +9,3 @@ BINARY_TARGET_FILES=csi-attacher
 SOURCE_PATTERNS=./cmd/csi-attacher
 
 include $(BASE_DIRECTORY)/Common.mk
-
-.PHONY: images
-images: csi-attacher/images/push
-
-.PHONY: local-images
-local-images: csi-attacher/images/amd64

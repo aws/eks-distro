@@ -27,10 +27,8 @@ KUBE_CONTROLLER_MANAGER_IMAGE_COMPONENT=kubernetes/kube-controller-manager
 KUBE_SCHEDULER_IMAGE_COMPONENT=kubernetes/kube-scheduler
 KUBE_PROXY_IMAGE_COMPONENT=kubernetes/kube-proxy
 
-IMAGES=pause kube-proxy kube-apiserver kube-controller-manager kube-scheduler
-LOCAL_IMAGE_TARGETS_AMD64=$(addsuffix /images/amd64, $(IMAGES))
-LOCAL_IMAGE_TARGETS_ARM64=$(addsuffix /images/arm64, $(IMAGES))
-IMAGE_TARGETS=$(addsuffix /images/push, $(IMAGES))
+IMAGE_NAMES=pause kube-proxy kube-apiserver kube-controller-manager kube-scheduler
+BUILD_OCI_TARS=true
 
 IMAGE_CONTEXT_DIR=$(OUTPUT_DIR)
 DOCKERFILE_FOLDER=./docker
@@ -79,13 +77,6 @@ $(PAUSE_DST): $(GIT_PATCH_TARGET)
 	@mkdir -p $(dir $(PAUSE_DST))
 	cp $(PAUSE_SRC_DIR)/linux/pause.c $(PAUSE_DST) || cp $(PAUSE_SRC_DIR)/pause.c $(PAUSE_DST)
 
-.PHONY: local-images
-local-images: $(LOCAL_IMAGE_TARGETS_AMD64)
-
-# we publish oci tarballs in release mode in addition to pushing images for use by kops and other installer tools
-.PHONY: images
-images: $(IMAGE_TARGETS) $(LOCAL_IMAGE_TARGETS_AMD64) $(LOCAL_IMAGE_TARGETS_ARM64)
-	
 tarballs:
 	build/create_tarballs.sh $(REPO) $(GIT_TAG) $(RELEASE_BRANCH)
 

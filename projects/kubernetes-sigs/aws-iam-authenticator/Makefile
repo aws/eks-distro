@@ -15,10 +15,3 @@ HAS_RELEASE_BRANCHES=true
 HAS_S3_ARTIFACTS=true
 
 include $(BASE_DIRECTORY)/Common.mk
-
-
-.PHONY: images
-images: aws-iam-authenticator/images/push 
-
-.PHONY: local-images
-local-images: aws-iam-authenticator/images/amd64

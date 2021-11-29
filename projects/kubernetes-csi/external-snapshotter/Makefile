@@ -9,9 +9,7 @@ CSI_SNAPSHOTTER_IMAGE_COMPONENT?=kubernetes-csi/external-snapshotter/csi-snapsho
 SNAPSHOT_CONTROLLER_IMAGE_COMPONENT?=kubernetes-csi/external-snapshotter/snapshot-controller
 SNAPSHOT_VALIDATION_WEBHOOK_IMAGE_COMPONENT?=kubernetes-csi/external-snapshotter/snapshot-validation-webhook
 
-IMAGES=csi-snapshotter snapshot-controller snapshot-validation-webhook
-LOCAL_IMAGE_TARGETS=$(addsuffix /images/amd64, $(IMAGES))
-IMAGE_TARGETS=$(addsuffix /images/push, $(IMAGES))
+IMAGE_NAMES=csi-snapshotter snapshot-controller snapshot-validation-webhook
 
 SNAPSHOOTER_LICENSE=$(REPO)/vendor/github.com/kubernetes-csi/external-snapshotter/LICENSE
 
@@ -30,9 +28,3 @@ $(GATHER_LICENSES_TARGETS): $(SNAPSHOOTER_LICENSE)
 # manually copying the root license to the vendor directory
 $(SNAPSHOOTER_LICENSE): $(GIT_CHECKOUT_TARGET)
 	cp $(REPO)/LICENSE $@
-
-.PHONY: local-images
-local-images: $(LOCAL_IMAGE_TARGETS)
-
-.PHONY: images
-images: $(IMAGE_TARGETS)
