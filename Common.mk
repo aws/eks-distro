@@ -142,10 +142,8 @@ LICENSES_TARGETS_FOR_PREREQ=$(if $(filter true,$(HAS_LICENSES)),$(GATHER_LICENSE
 
 #################### TARBALLS ######################
 HAS_S3_ARTIFACTS?=false
-HAS_S3_TARBALLS?=$(HAS_S3_ARTIFACTS)
-HAS_S3_KUBERNETES_IMAGES?=false
 
-SIMPLE_CREATE_TARBALLS?=$(HAS_S3_TARBALLS)
+SIMPLE_CREATE_TARBALLS?=true
 TAR_FILE_PREFIX?=$(REPO)
 FAKE_ARM_BINARIES_FOR_VALIDATION?=$(if $(filter linux/arm64,$(BINARY_PLATFORMS)),false,true)
 FAKE_ARM_IMAGES_FOR_VALIDATION?=false
@@ -154,7 +152,6 @@ FAKE_ARM_IMAGES_FOR_VALIDATION?=false
 #################### TARGETS FOR OVERRIDING ########
 BUILD_TARGETS?=validate-checksums local-images attribution attribution-pr $(if $(filter true,$(HAS_S3_ARTIFACTS)),s3-artifacts,)
 RELEASE_TARGETS?=validate-checksums images $(if $(filter true,$(HAS_S3_ARTIFACTS)),s3-artifacts,)
-RELEASE_UPLOAD_TARGETS?=release $(if $(filter true,$(HAS_S3_ARTIFACTS)),upload-artifacts,)
 ####################################################
 
 define BUILDCTL
@@ -285,23 +282,16 @@ endif
 
 .PHONY: upload-artifacts
 upload-artifacts: s3-artifacts
-ifeq ($(HAS_S3_TARBALLS),true)
-	$(BASE_DIRECTORY)/release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET) $(REPO)
-endif
-ifeq ($(HAS_S3_KUBERNETES_IMAGES),true)
-	$(BASE_DIRECTORY)/release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET) kubernetes
-endif
+	$(BASE_DIRECTORY)/release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET)
 	
 .PHONY: s3-artifacts
 s3-artifacts: tarballs
-ifeq ($(HAS_S3_TARBALLS),true)
-	$(BASE_DIRECTORY)/release/copy_artifacts.sh $(REPO) $(ARTIFACTS_PATH) $(RELEASE_BRANCH) $(RELEASE) $(GIT_TAG)
-	$(BUILD_LIB)/validate_artifacts.sh $(MAKE_ROOT) $(RELEASE_BRANCH) $(RELEASE) $(GIT_TAG) $(REPO) false
-endif
-ifeq ($(HAS_S3_KUBERNETES_IMAGES),true)
-	$(BASE_DIRECTORY)/release/copy_artifacts.sh kubernetes $(OUTPUT_DIR)/images $(RELEASE_BRANCH) $(RELEASE) $(GIT_TAG)
-	$(BUILD_LIB)/validate_artifacts.sh $(MAKE_ROOT) $(RELEASE_BRANCH) $(RELEASE) $(GIT_TAG) 'kubernetes' $(FAKE_ARM_IMAGES_FOR_VALIDATION) "$(HAS_S3_KUBERNETES_IMAGES_FILTER)"
-endif
+	for folder in $(ARTIFACTS_PATH) $(OUTPUT_DIR)/images; do \
+		if [ -d $$folder ]; then \
+			$(BASE_DIRECTORY)/release/copy_artifacts.sh $(REPO) $$folder $(RELEASE_BRANCH) $(RELEASE) $(GIT_TAG); \
+			$(BUILD_LIB)/validate_artifacts.sh $(MAKE_ROOT) $$folder $(GIT_TAG) $(FAKE_ARM_IMAGES_FOR_VALIDATION); \
+		fi \
+	done
 
 ##@ Checksum Targets
 	

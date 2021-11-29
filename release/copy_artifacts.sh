@@ -38,5 +38,6 @@ ARTIFACT_DIR=${DEST_DIR}/${PROJECT}/${GIT_TAG}
 mkdir -p $ARTIFACT_DIR
 cp -r $SOURCE_ARTIFACT_DIR/* $ARTIFACT_DIR
 
+# create checksums in source output since we validate artifacts from that folder
+$SCRIPT_ROOT/create_release_checksums.sh $(pwd)/$SOURCE_ARTIFACT_DIR
 $SCRIPT_ROOT/create_release_checksums.sh $ARTIFACT_DIR
-

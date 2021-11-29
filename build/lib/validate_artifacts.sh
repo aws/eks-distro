@@ -16,39 +16,28 @@
 set -o errexit
 set -o nounset
 set -o pipefail
-set -f # do not expand find_filter
 
 PROJECT_ROOT="$1"
-RELEASE_BRANCH="$2"
-RELEASE="$3"
-GIT_TAG="$4"
-ARTIFACTS_FOLDER="$5"
-FAKE_ARM_ARTIFACTS_FOR_VALIDATION="${6:-}"
-FIND_FILTER="${7:-}"
+ARTIFACTS_FOLDER="$2"
+GIT_TAG="$3"
+FAKE_ARM_ARTIFACTS_FOR_VALIDATION="$4"
 
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd -P)"
-FIND_FOLDER=$REPO_ROOT/kubernetes-$RELEASE_BRANCH/releases/$RELEASE/artifacts/$ARTIFACTS_FOLDER
-KUBERNETES_GIT_TAG=$(cat $REPO_ROOT/projects/kubernetes/kubernetes/$RELEASE_BRANCH/GIT_TAG)
+EXPECTED_FILES_PATH=$PROJECT_ROOT/expected_artifacts
+if [[ $ARTIFACTS_FOLDER == *images ]]; then
+	EXPECTED_FILES_PATH=$PROJECT_ROOT/expected_images
+fi
 
 ACTUAL_FILES=$(mktemp)
 
-if [[ $ARTIFACTS_FOLDER == 'kubernetes' ]]; then
-	FIND_FOLDER=$FIND_FOLDER/$KUBERNETES_GIT_TAG
-else
-	FIND_FOLDER=$FIND_FOLDER/$GIT_TAG
-fi
-
-for file in $(find ${FIND_FOLDER} -type f | sort); do
-    filepath=$(realpath --relative-base=$FIND_FOLDER $file)
+for file in $(find ${ARTIFACTS_FOLDER} -type f | sort); do
+    filepath=$(realpath --relative-base=$ARTIFACTS_FOLDER $file)
 	echo $filepath >> $ACTUAL_FILES
 done
 
 EXPECTED_FILES=$(mktemp)
-
 export GIT_TAG=$GIT_TAG
-
 envsubst '$GIT_TAG' \
-	< $PROJECT_ROOT/expected_artifacts_$ARTIFACTS_FOLDER \
+	< $EXPECTED_FILES_PATH \
 	> $EXPECTED_FILES
 
 if $FAKE_ARM_ARTIFACTS_FOR_VALIDATION; then
@@ -63,16 +52,3 @@ if ! diff $EXPECTED_FILES $ACTUAL_FILES; then
 	exit 1
 fi
 
-for file in $(find $FIND_FOLDER -type f $FIND_FILTER -path '*\.docker_image_name'); do	
-	if [[ "$(cat $file)" != *:$GIT_TAG-eks-$RELEASE_BRANCH-$RELEASE ]]; then
-		echo "$file does not have correct content! Should be: IMAGE_REPO/IMAGE_NAME:$GIT_TAG-eks-$RELEASE_BRANCH-$RELEASE"
-		exit 1
-	fi
-done
-
-for file in $(find $FIND_FOLDER -type f $FIND_FILTER -path '*\.docker_tag'); do
-	if [[ "$(cat $file)" != $GIT_TAG-eks-$RELEASE_BRANCH-$RELEASE ]]; then
-		echo "$file does not have correct content! Should be: $GIT_TAG-eks-$RELEASE_BRANCH-$RELEASE"
-		exit 1
-	fi
-done

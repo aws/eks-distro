@@ -18,9 +18,7 @@ HAS_RELEASE_BRANCHES=true
 
 # sync kubernetes directory for oci tars
 HAS_S3_ARTIFACTS=true
-HAS_S3_TARBALLS=false
-HAS_S3_KUBERNETES_IMAGES=true
-HAS_S3_KUBERNETES_IMAGES_FILTER=-path *coredns*
+SIMPLE_CREATE_TARBALLS=false
 
 include $(BASE_DIRECTORY)/Common.mk
 

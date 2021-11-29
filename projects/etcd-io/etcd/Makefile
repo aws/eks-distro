@@ -15,9 +15,6 @@ IMAGE_OUTPUT_DIR=$(OUTPUT_DIR)/images/bin/$(IMAGE_PLATFORMS)
 
 HAS_RELEASE_BRANCHES=true
 HAS_S3_ARTIFACTS=true
-# Also sync kubernetes directory for oci tars
-HAS_S3_KUBERNETES_IMAGES=true
-HAS_S3_KUBERNETES_IMAGES_FILTER=-path *etcd*
 
 include $(BASE_DIRECTORY)/Common.mk
 

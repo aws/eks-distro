@@ -40,7 +40,7 @@ BINARY=$(IMAGE_NAME)
 PAUSE_VERSION=$(IMAGE_TAG)
 
 # When creating a local image IMAGE_PLATFORMS will be either linux/amd64 or linux/arm64
-IMAGE_OUTPUT_DIR=$(OUTPUT_BIN_DIR)/$(IMAGE_PLATFORMS)
+IMAGE_OUTPUT_DIR=$(OUTPUT_DIR)/images/bin/$(IMAGE_PLATFORMS)
 
 LICENSE_PACKAGE_FILTER=./cmd/kubelet ./cmd/kube-proxy ./cmd/kubeadm ./cmd/kubectl ./cmd/kube-apiserver ./cmd/kube-controller-manager ./cmd/kube-scheduler
 
@@ -51,8 +51,6 @@ SIMPLE_CREATE_TARBALLS=false
 
 HAS_RELEASE_BRANCHES=true
 HAS_S3_ARTIFACTS=true
-HAS_S3_KUBERNETES_IMAGES=true
-HAS_S3_KUBERNETES_IMAGES_FILTER=-not -path *coredns* -not -path *etcd*
 
 include $(BASE_DIRECTORY)/Common.mk
 
@@ -114,5 +112,7 @@ validate-version-file: update-version
 
 .PHONY: reset-repo
 reset-repo: $(REPO)
-	git -C $(REPO) checkout master
+	git -C $(REPO) checkout -- .
 	git -C $(REPO) clean -fd
+	git -C $(REPO) checkout master
+	

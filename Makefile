@@ -92,7 +92,7 @@ tag:
 .PHONY: upload
 upload:
 	release/generate_crd.sh $(RELEASE_BRANCH) $(RELEASE) $(IMAGE_REPO)
-	release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET)
+	release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET) true
 	@echo 'Done' $(TARGET)
 
 .PHONY: release
