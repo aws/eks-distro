@@ -76,13 +76,14 @@ readonly KUBE_CLIENT_BINARIES_WIN=("${KUBE_CLIENT_BINARIES[@]/%/.exe}")
 function build::tarballs::create_tarballs(){
     local -r bin_root="$1"
     local -r output_dir="$2"
+    local -r tar_output_dir="$3"
 
     for platform in "${KUBE_SUPPORTED_SERVER_PLATFORMS[@]}"; do
         # The substitution on platform_src below will replace all slashes with
         # dashes.  It'll transform darwin/amd64 -> darwin-amd64.
         local platform_src="${platform//\//-}"
 
-        tarball=$output_dir/kubernetes-server-$platform_src.tar.gz
+        tarball=$tar_output_dir/kubernetes-server-$platform_src.tar.gz
         local ch_dir="${output_dir}/${platform}"
         local bin_dir="${output_dir}/${platform}/kubernetes/server/bin"
         mkdir -p $bin_dir
@@ -100,7 +101,7 @@ function build::tarballs::create_tarballs(){
         # The substitution on platform_src below will replace all slashes with
         # dashes.  It'll transform darwin/amd64 -> darwin-amd64.
         local platform_src="${platform//\//-}"
-        tarball=$output_dir/kubernetes-node-$platform_src.tar.gz
+        tarball=$tar_output_dir/kubernetes-node-$platform_src.tar.gz
         local ch_dir="${output_dir}/${platform}"
         local bin_dir="${output_dir}/${platform}/kubernetes/node/bin"
         mkdir -p $bin_dir
@@ -124,7 +125,7 @@ function build::tarballs::create_tarballs(){
         # The substitution on platform_src below will replace all slashes with
         # dashes.  It'll transform darwin/amd64 -> darwin-amd64.
         local platform_src="${platform//\//-}"
-        tarball=$output_dir/kubernetes-client-$platform_src.tar.gz
+        tarball=$tar_output_dir/kubernetes-client-$platform_src.tar.gz
         local ch_dir="${output_dir}/${platform}"
         local bin_dir="${output_dir}/${platform}/kubernetes/client/bin"
         mkdir -p $bin_dir

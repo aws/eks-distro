@@ -1,0 +1,16 @@
+SHA256SUM
+SHA256SUM.sha256
+SHA256SUM.sha512
+SHA512SUM
+SHA512SUM.sha256
+SHA512SUM.sha512
+bin/linux/amd64/coredns.docker_image_name
+bin/linux/amd64/coredns.docker_tag
+bin/linux/amd64/coredns.tar
+bin/linux/amd64/coredns.tar.sha256
+bin/linux/amd64/coredns.tar.sha512
+bin/linux/arm64/coredns.docker_image_name
+bin/linux/arm64/coredns.docker_tag
+bin/linux/arm64/coredns.tar
+bin/linux/arm64/coredns.tar.sha256
+bin/linux/arm64/coredns.tar.sha512

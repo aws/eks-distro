@@ -3,21 +3,15 @@ GIT_TAG?=$(shell cat GIT_TAG)
 GOLANG_VERSION?="1.15"
 
 REPO=livenessprobe
-COMPONENT=kubernetes-csi/$(REPO)
+REPO_OWNER=kubernetes-csi
 
-LICENSE_PACKAGE_FILTER=./cmd/livenessprobe
-BINARY_TARGET=$(OUTPUT_BIN_DIR)/linux-amd64/livenessprobe
+BINARY_TARGET_FILES=livenessprobe
+SOURCE_PATTERNS=./cmd/livenessprobe
 
 include $(BASE_DIRECTORY)/Common.mk
 
-$(ATTRIBUTION_TARGET): fix-licenses
-
-.PHONY: images
-images: livenessprobe/images/push
-
-.PHONY: local-images
-local-images: livenessprobe/images/amd64
+$(ATTRIBUTION_TARGETS): fix-licenses
 
 .PHONE: fix-licenses
-fix-licenses: $(GATHER_LICENSES_TARGET)
+fix-licenses: $(GATHER_LICENSES_TARGETS)
 	build/fix_licenses.sh

@@ -25,8 +25,8 @@ ARG TARGETOS
 ARG RELEASE_BRANCH
 
 COPY --from=0 /etc/ssl/certs /etc/ssl/certs
-COPY _output/bin/coredns/$TARGETOS-$TARGETARCH/coredns /coredns
-COPY _output/LICENSES /LICENSES
+COPY _output/$RELEASE_BRANCH/bin/coredns/$TARGETOS-$TARGETARCH/coredns /coredns
+COPY _output/$RELEASE_BRANCH/LICENSES /LICENSES
 COPY $RELEASE_BRANCH/ATTRIBUTION.txt /ATTRIBUTION.txt
 
 EXPOSE 53 53/udp
