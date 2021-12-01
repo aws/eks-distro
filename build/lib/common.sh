@@ -136,10 +136,30 @@ function build::gather_licenses() {
   fi
 }
 
+function build::non-golang::gather_licenses(){
+  local -r project="$1"
+  local -r git_tag="$2"
+  local -r output_dir="$3"
+  project_org="$(cut -d '/' -f1 <<< ${project})"
+  project_name="$(cut -d '/' -f2 <<< ${project})"
+  git clone https://github.com/${project_org}/${project_name}
+  cd $project_name
+  git checkout $git_tag
+  license_files=($(find . \( -name "*COPYING*" -o -name "*COPYRIGHT*" -o -name "*LICEN[C|S]E*" -o -name "*NOTICE*" \)))
+  for file in "${license_files[@]}"; do
+    license_dest=$output_dir/LICENSES/github.com/${project_org}/${project_name}/$(dirname $file)
+    mkdir -p $license_dest
+    cp $file $license_dest/$(basename $file)
+  done
+  cd ..
+  rm -rf $project_name
+}
+
 function build::generate_attribution(){
   local -r project_root=$1
   local -r golang_version=$2
   local -r output_directory=${3:-"${project_root}/_output"}
+  local -r attribution_file=${4:-"${project_root}/ATTRIBUTION.txt"}
 
   local -r root_module_name=$(cat ${output_directory}/attribution/root-module.txt)
   local -r go_path=$(build::common::get_go_path $golang_version)
@@ -153,7 +173,7 @@ function build::generate_attribution(){
   fi
 
   generate-attribution $root_module_name $project_root $golang_version_tag $output_directory 
-  cp -f "${output_directory}/attribution/ATTRIBUTION.txt" "${project_root}/ATTRIBUTION.txt"
+  cp -f "${output_directory}/attribution/ATTRIBUTION.txt" $attribution_file
 }
 
 function build::common::get_go_path() {
@@ -171,6 +191,9 @@ function build::common::get_go_path() {
   fi
   if [[ $version == "1.16"* ]]; then
     gobinaryversion="1.16"
+  fi
+  if [[ $version == "1.17"* ]]; then
+    gobinaryversion="1.17"
   fi
 
   if [[ "$gobinaryversion" == "" ]]; then
@@ -216,4 +239,19 @@ function build::common::set_go_cache() {
 function build::common::re_quote() {
     local -r to_escape=$1
     sed 's/[][()\.^$\/?*+]/\\&/g' <<< "$to_escape"
+}
+function build::common::wait_for_tag() {
+  local -r tag=$1
+  sleep_interval=20
+  for i in {1..60}; do
+    echo "Checking for tag ${tag}..."
+    git fetch --tags > /dev/null 2>&1
+    git rev-parse --verify --quiet "${tag}" && echo "Tag ${tag} exists!" && break
+    echo "Tag ${tag} does not exist!"
+    echo "Waiting for tag ${tag}..."
+    sleep $sleep_interval
+    if [ "$i" = "60" ]; then
+      exit 1
+    fi
+  done
 }

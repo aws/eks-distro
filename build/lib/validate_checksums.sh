@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Copyright 2020 Amazon.com Inc. or its affiliates. All Rights Reserved.
+# Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,24 +17,27 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-PROJECT_ROOT="$1"
-OUTPUT_BIN_DIR="$2"
-RELEASE_BRANCH="$3"
+MAKE_ROOT="$1"
+PROJECT_ROOT="$2"
+OUTPUT_BIN_DIR="$3"
+FAKE_ARM_ARTIFACTS_FOR_VALIDATION="$4"
 
 SCRIPT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 
-cd $PROJECT_ROOT
+cd $MAKE_ROOT
 
 CHECKSUMS_FILE=$PROJECT_ROOT/CHECKSUMS
 
-if [ -d $PROJECT_ROOT/$RELEASE_BRANCH ]; then
-	CHECKSUMS_FILE=$PROJECT_ROOT/$RELEASE_BRANCH/CHECKSUMS
+if $FAKE_ARM_ARTIFACTS_FOR_VALIDATION; then
+	TEMP_FILE=$(mktemp)
+	grep -v 'arm64' $CHECKSUMS_FILE > $TEMP_FILE
+	CHECKSUMS_FILE=$TEMP_FILE
 fi
 
 if ! sha256sum -c $CHECKSUMS_FILE; then
 	echo "Checksums do not match!"
 	echo "The correct checksums are printed below"
 	echo "Please only update if changing GIT_TAG or build flags."
-	$SCRIPT_ROOT/update_checksums.sh $PROJECT_ROOT $OUTPUT_BIN_DIR $RELEASE_BRANCH
+	$SCRIPT_ROOT/update_checksums.sh $MAKE_ROOT $PROJECT_ROOT $OUTPUT_BIN_DIR
 	exit 1
 fi

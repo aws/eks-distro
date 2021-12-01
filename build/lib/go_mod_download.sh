@@ -17,24 +17,18 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-MAKE_ROOT="$1"
-PROJECT_ROOT="$2"
-OUTPUT_BIN_DIR="$3"
+PROJECT_ROOT="$1"
+REPO="$2"
+TAG="$3"
+GOLANG_VERSION="$4"
+REPO_SUBPATH="${5:-}"
 
+SCRIPT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+source "${SCRIPT_ROOT}/common.sh"
 
-if [ ! -d ${OUTPUT_BIN_DIR} ] ;  then
-    echo "${OUTPUT_BIN_DIR} not present! Run 'make binaries'"
-    exit 1
-fi
+cd $REPO/$REPO_SUBPATH
 
-CHECKSUMS_FILE=$PROJECT_ROOT/CHECKSUMS
-
-rm -f $CHECKSUMS_FILE
-for file in $(find ${OUTPUT_BIN_DIR} -type f | sort); do
-    filepath=$(realpath --relative-base=$MAKE_ROOT $file)
-    sha256sum $filepath >> $CHECKSUMS_FILE
-done
-
-echo "*************** CHECKSUMS ***************"
-cat $CHECKSUMS_FILE
-echo "*****************************************"
+CACHE_KEY=$(echo $PROJECT_ROOT | sed 's/\(.*\)\//\1-/' | xargs basename)
+build::common::use_go_version $GOLANG_VERSION
+build::common::set_go_cache $CACHE_KEY $TAG
+go mod vendor

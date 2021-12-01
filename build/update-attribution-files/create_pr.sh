@@ -17,10 +17,16 @@ set -e
 set -o pipefail
 set -x
 
+if [[ -z "$JOB_TYPE" ]]; then
+    exit 0
+fi
+
 SCRIPT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 
 ORIGIN_ORG="eks-distro-pr-bot"
 UPSTREAM_ORG="aws"
+
+MAIN_BRANCH="${PULL_BASE_REF:-main}"
 
 cd ${SCRIPT_ROOT}/../../
 git config --global push.default current
@@ -34,7 +40,7 @@ git stash
 git fetch upstream
 # there will be conflicts before we are on the bots fork at this point
 # -Xtheirs instructs git to favor the changes from the current branch
-git rebase -Xtheirs upstream/main
+git rebase -Xtheirs upstream/$MAIN_BRANCH
 
 if [ "$(git stash list)" != "" ]; then
     git stash pop
@@ -65,14 +71,14 @@ function pr:create()
     gh auth login --with-token < /secrets/github-secrets/token
     local -r pr_exists=$(gh pr list | grep -c "$pr_branch" || true)
     if [ $pr_exists -eq 0 ]; then
-        gh pr create --title "$pr_title" --body "$pr_body"
+        gh pr create --title "$pr_title" --body "$pr_body" --base $MAIN_BRANCH
     fi
 }
 
 function pr::create::attribution() {
     local -r pr_title="Update ATTRIBUTION.txt files"
     local -r commit_message="[PR BOT] Update ATTRIBUTION.txt files"
-    local -r pr_branch="attribution-files-update"
+    local -r pr_branch="attribution-files-update-$MAIN_BRANCH"
     local -r pr_body=$(cat <<EOF
 This PR updates the ATTRIBUTION.txt files across all dependency projects if there have been changes.
 
@@ -87,7 +93,7 @@ EOF
 function pr::create::checksums() {
     local -r pr_title="Update CHECKSUMS files"
     local -r commit_message="[PR BOT] Update CHECKSUMS files"
-    local -r pr_branch="checksums-files-update"
+    local -r pr_branch="checksums-files-update-$MAIN_BRANCH"
     local -r pr_body=$(cat <<EOF
 This PR updates the CHECKSUMS files across all dependency projects if there have been changes.
 
@@ -109,7 +115,7 @@ git stash --keep-index
 
 pr::create::attribution
 
-git checkout main
+git checkout $MAIN_BRANCH
 
 if [ "$(git stash list)" != "" ]; then
     git stash pop

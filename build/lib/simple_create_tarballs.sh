@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Copyright 2020 Amazon.com Inc. or its affiliates. All Rights Reserved.
+# Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,19 +13,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+set -x
 set -o errexit
 set -o nounset
 set -o pipefail
 
 TAR_FILE_PREFIX="$1"
-OUTPUT_BIN_DIR="$2"
-TAG="$3"
-BINARY_PLATFORMS="$4"
+OUTPUT_DIR="$2"
+OUTPUT_BIN_DIR="$3"
+TAG="$4"
+BINARY_PLATFORMS="$5"
+TAR_PATH="$6"
 
-TAR_PATH="_output/tar"
-LICENSES_PATH="_output/LICENSES"
-ATTRIBUTION_PATH="_output/ATTRIBUTION.txt"
-
+LICENSES_PATH="$OUTPUT_DIR/LICENSES"
+ATTRIBUTION_PATH="$OUTPUT_DIR/ATTRIBUTION.txt"
 
 SCRIPT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 source "${SCRIPT_ROOT}/common.sh"
