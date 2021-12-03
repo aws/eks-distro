@@ -1,10 +1,17 @@
-From 3d7d51983100ad62d28efeec158aa1537c5b1298 Mon Sep 17 00:00:00 2001
+From 6515542b71461f3f1a9b8e55d4ec36f5b9fc3d6e Mon Sep 17 00:00:00 2001
 From: Xiang Li <lixiang1992@gwu.edu>
 Date: Mon, 15 Mar 2021 10:59:32 -0700
-Subject: -- EKS PATCH -- Delete leaked volume if driver doesn't know
- the volume status -- aws
+Subject: --EKS PATCH-- Delete leaked volume if driver doesn't know the
+ volume status -- aws
 
-PR: https://github.com/kubernetes/kubernetes/pull/99664
+Cherry-pick of upstream Kubernetes:
+https://github.com/kubernetes/kubernetes/pull/99664, which was
+included in Kubernetes 1.22.
+
+Fixes bug where an error with the DescribeVolumes API would result in
+the state of previously-created volumes becoming unknown. These
+volumes would not be cleaned up, which could leak data. This change
+allows for these volumes to be deleted in this case.
 
 Signed-off-by: Kirsten Schumy <ksschumy@amazon.com>
 ---
@@ -13,10 +20,10 @@ Signed-off-by: Kirsten Schumy <ksschumy@amazon.com>
  2 files changed, 68 insertions(+), 4 deletions(-)
 
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-index 96e7780963d..75e83c6ad64 100644
+index 50e32f5b722..7e6e41e5a9f 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-@@ -2642,7 +2642,7 @@ func (c *Cloud) CreateDisk(volumeOptions *VolumeOptions) (KubernetesVolumeID, er
+@@ -2536,7 +2536,7 @@ func (c *Cloud) CreateDisk(volumeOptions *VolumeOptions) (KubernetesVolumeID, er
  		createType = DefaultVolumeType
  
  	default:
@@ -25,7 +32,7 @@ index 96e7780963d..75e83c6ad64 100644
  	}
  
  	request := &ec2.CreateVolumeInput{}
-@@ -2674,12 +2674,12 @@ func (c *Cloud) CreateDisk(volumeOptions *VolumeOptions) (KubernetesVolumeID, er
+@@ -2568,12 +2568,12 @@ func (c *Cloud) CreateDisk(volumeOptions *VolumeOptions) (KubernetesVolumeID, er
  
  	response, err := c.ec2.CreateVolume(request)
  	if err != nil {
@@ -40,7 +47,7 @@ index 96e7780963d..75e83c6ad64 100644
  	}
  	volumeName := KubernetesVolumeID("aws://" + aws.StringValue(response.AvailabilityZone) + "/" + string(awsID))
  
-@@ -2692,8 +2692,22 @@ func (c *Cloud) CreateDisk(volumeOptions *VolumeOptions) (KubernetesVolumeID, er
+@@ -2586,8 +2586,22 @@ func (c *Cloud) CreateDisk(volumeOptions *VolumeOptions) (KubernetesVolumeID, er
  		// because Kubernetes may have limited permissions to the key.
  		if isAWSErrorVolumeNotFound(err) {
  			err = fmt.Errorf("failed to create encrypted volume: the volume disappeared after creation, most likely due to inaccessible KMS encryption key")
@@ -65,7 +72,7 @@ index 96e7780963d..75e83c6ad64 100644
  
  	return volumeName, nil
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
-index 53c9071af94..6c652460c24 100644
+index ec960d790d4..5fc13de4583 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
 @@ -72,6 +72,11 @@ func (m *MockedFakeEC2) DescribeVolumes(request *ec2.DescribeVolumesInput) ([]*e
@@ -133,5 +140,5 @@ index 53c9071af94..6c652460c24 100644
  	fake := newMockedFakeAWSServices("fakeCluster")
  	fake.selfInstance.Placement = &ec2.Placement{
 -- 
-2.32.0
+2.33.0
 

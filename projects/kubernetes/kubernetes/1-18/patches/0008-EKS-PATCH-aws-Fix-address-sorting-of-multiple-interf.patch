@@ -1,13 +1,13 @@
-From 21c8211b021d820bccadb1fa54062ad3b18738a6 Mon Sep 17 00:00:00 2001
+From e7e7a5472da68aaa30b4547aac7ac800fea9245f Mon Sep 17 00:00:00 2001
 From: Angus Lees <gus@inodes.org>
 Date: Mon, 8 Jun 2020 15:12:35 +1000
-Subject: --EKS-PATCH-- aws: Fix address sorting of multiple
- interfaces
+Subject: --EKS-PATCH-- aws: Fix address sorting of multiple interfaces
 
-It is common to have "holes" in the network interfaces, eg after
-attaching eth1+eth2, and then removing eth1.
+It is common to have "holes" in the network interfaces, such as after
+attaching eth1+eth2 and then removing eth1. This change make the
+sorting code from Kubernetes PR #80747 robust to this situation.
 
-Make the sorting code from #80747 robust to this situation.
+See: https://github.com/kubernetes/kubernetes/pull/80747
 
 Signed-off-by: Jackson West <jgw@amazon.com>
 ---
@@ -16,10 +16,10 @@ Signed-off-by: Jackson West <jgw@amazon.com>
  2 files changed, 20 insertions(+), 9 deletions(-)
 
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-index 2ea7fc03379..d094816bdbf 100644
+index 2bd22ee1528..183e54cccb1 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-@@ -1496,7 +1496,9 @@ func (c *Cloud) NodeAddresses(ctx context.Context, name types.NodeName) ([]v1.No
+@@ -1439,7 +1439,9 @@ func (c *Cloud) NodeAddresses(ctx context.Context, name types.NodeName) ([]v1.No
  		// We want the IPs to end up in order by interface (in particular, we want eth0's
  		// IPs first), but macs isn't necessarily sorted in that order so we have to
  		// explicitly order by device-number (device-number == the "0" in "eth0").
@@ -30,7 +30,7 @@ index 2ea7fc03379..d094816bdbf 100644
  		for _, macID := range strings.Split(macs, "\n") {
  			if macID == "" {
  				continue
-@@ -1511,18 +1513,22 @@ func (c *Cloud) NodeAddresses(ctx context.Context, name types.NodeName) ([]v1.No
+@@ -1454,18 +1456,22 @@ func (c *Cloud) NodeAddresses(ctx context.Context, name types.NodeName) ([]v1.No
  				klog.Warningf("Bad device-number %q for interface %s\n", numStr, macID)
  				continue
  			}
@@ -61,10 +61,10 @@ index 2ea7fc03379..d094816bdbf 100644
  				if internalIP == "" {
  					continue
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_fakes.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_fakes.go
-index ef992bfae6b..3d0ffe5fec4 100644
+index 17383e52b6b..66aca4e00a4 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_fakes.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_fakes.go
-@@ -387,7 +387,12 @@ func (m *FakeMetadata) GetMetadata(key string) (string, error) {
+@@ -358,7 +358,12 @@ func (m *FakeMetadata) GetMetadata(key string) (string, error) {
  		if len(keySplit) == 5 && keySplit[4] == "device-number" {
  			for i, macElem := range m.aws.networkInterfacesMacs {
  				if macParam == macElem {
@@ -79,5 +79,5 @@ index ef992bfae6b..3d0ffe5fec4 100644
  			}
  		}
 -- 
-2.32.0
+2.33.0
 

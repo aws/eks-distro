@@ -1,26 +1,26 @@
-From db8a9200fc396b83a693ef0ff2e6baff6b1eaea9 Mon Sep 17 00:00:00 2001
+From c53bd44815172aa0d1d953a3579732dc832c7598 Mon Sep 17 00:00:00 2001
 From: Manu Gupta <mgpta@amazon.com>
 Date: Mon, 23 Aug 2021 16:01:52 -0700
-Subject: [PATCH] -- EKS Patch -- Pass additional flags to subpath mount to
- avoid flakes in certain conditions
+Subject: --EKS Patch-- Pass additional flags to subpath mount to avoid
+ flakes in certain conditions
 
-PR: https://github.com/kubernetes/kubernetes/pull/104340
+This change is largely based on this upstream Kubernetes PR:
+https://github.com/kubernetes/kubernetes/pull/104340. It backports
+the fix and ensures it works for 1.18.
 
-Backport upstream fix to 1.18.
-
-In-compatible change:
-1. klog/v2 is not present in EKS 1.18; so klog v1 is used.
+Incompatible change:
+1. klog/v2 is not present, so klog v1 is used.
 
 Other notes:
-1. In volume, a new MounterInterface is introduced and this is
-used for subPaths.
+1. In volume, a new MounterInterface is introduced and this is used
+for subPaths.
 2. When sensitive options are provided, the MounterInterface's
 MountSensitiveWithFlags is called for both systemd and non-systemd
 related services.
-3. A fakeMounter is introduced for testing and ensuring that the build
-   does not break.
-4. The scope of the CR is limited to windows and linux. It will throw
-an errUtilsMountUnsupported Error for other operating sytems.
+3. A fakeMounter is introduced for testing and ensuring that the
+build does not break.
+4. The scope of the patch is limited to Windows and Linux. It will
+throw an errUtilsMountUnsupported error for other operating systems.
 
 Signed-off-by: Jackson West <jgw@amazon.com>
 ---

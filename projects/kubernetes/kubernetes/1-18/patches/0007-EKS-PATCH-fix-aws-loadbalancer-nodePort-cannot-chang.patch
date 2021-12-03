@@ -1,10 +1,15 @@
-From 59ac169c7993b5f87c41bdce2f8edf293e480547 Mon Sep 17 00:00:00 2001
+From c32e68347f9ba32b56f0b887e171f8c02b9963be Mon Sep 17 00:00:00 2001
 From: Yang Yang <yyyng@amazon.com>
 Date: Thu, 26 Mar 2020 20:28:40 -0700
-Subject: --EKS-PATCH-- fix aws loadbalancer nodePort cannot
- change issue
+Subject: --EKS-PATCH-- fix aws loadbalancer nodePort cannot change
+ issue
 
-ref. https://github.com/kubernetes/kubernetes/pull/89562
+Cherry-pick of upstream Kubernetes:
+https://github.com/kubernetes/kubernetes/pull/89562, which is
+included in Kubernetes 1.19.
+
+This change fixes a bug to when the nodePort is manually changed for
+existing servicePort in a service after the service creation.
 
 Signed-off-by: Jackson West <jgw@amazon.com>
 ---
@@ -182,5 +187,5 @@ index f4fb71e5bbd..3faf328474f 100644
 +	}
 +}
 -- 
-2.32.0
+2.33.0
 

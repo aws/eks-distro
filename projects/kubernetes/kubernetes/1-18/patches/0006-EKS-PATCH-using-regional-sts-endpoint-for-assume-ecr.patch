@@ -1,8 +1,8 @@
-From 61343c04390352b13c6bd0222226e54a3cdba357 Mon Sep 17 00:00:00 2001
+From 93bc354775c1fb507cce8f997ff32bc8fd295018 Mon Sep 17 00:00:00 2001
 From: Yang Yang <yyyng@amazon.com>
 Date: Mon, 20 Jan 2020 11:59:08 -0800
-Subject: --EKS-PATCH-- using regional sts endpoint for assume ecr
- pull role
+Subject: --EKS-PATCH-- using regional sts endpoint for assume ecr pull
+ role
 
 Signed-off-by: Jackson West <jgw@amazon.com>
 ---
@@ -174,5 +174,5 @@ index c309af94ef9..4814bd70eab 100644
  		require.NoError(t, err)
  	})
 -- 
-2.32.0
+2.33.0
 

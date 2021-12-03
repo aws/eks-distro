@@ -53,7 +53,7 @@ function pr:create()
         return 0
     fi
 
-    git checkout -b $pr_branch
+    git checkout -B $pr_branch
     git commit -m "$commit_message" || true
 
     if [ "$JOB_TYPE" != "periodic" ]; then

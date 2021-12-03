@@ -1,16 +1,17 @@
-From 70c17e6267be8179a44a2d1031ff1ffc1596fff8 Mon Sep 17 00:00:00 2001
-From: Justin Ngo <justngo@amazon.com>
-Date: Tue, 13 Oct 2020 22:59:04 -0700
+From 9055f477f3447cf1c20e1ca2403042f609549c4e Mon Sep 17 00:00:00 2001
+From: Baoming Wang <baomingw@amazon.com>
+Date: Wed, 23 Jun 2021 15:31:07 -0700
 Subject: --EKS-PATCH-- Update aws-sdk-go to v1.34.24
 
+Updates aws-sdk-go from v1.28.2 to v1.34.24.
 
 Signed-off-by: Jackson West <jgw@amazon.com>
 ---
  go.mod                                        |    15 +-
  go.sum                                        |    17 +-
  pkg/credentialprovider/aws/BUILD              |     2 -
- pkg/kubeapiserver/options/BUILD               |     3 +-
- pkg/kubelet/lifecycle/BUILD                   |     9 +
+ pkg/kubeapiserver/options/BUILD               |     1 +
+ pkg/kubelet/lifecycle/BUILD                   |     8 +
  staging/src/k8s.io/api/go.mod                 |     2 +-
  staging/src/k8s.io/api/go.sum                 |     6 +-
  .../src/k8s.io/apiextensions-apiserver/go.mod |     2 +-
@@ -140,7 +141,7 @@ Signed-off-by: Jackson West <jgw@amazon.com>
  .../testify/require/require_forward.go        |   156 +-
  .../stretchr/testify/require/requirements.go  |     2 +-
  vendor/modules.txt                            |    11 +-
- 134 files changed, 20862 insertions(+), 2935 deletions(-)
+ 134 files changed, 20860 insertions(+), 2934 deletions(-)
  create mode 100644 vendor/github.com/aws/aws-sdk-go/aws/credentials/context_background_go1.5.go
  create mode 100644 vendor/github.com/aws/aws-sdk-go/aws/credentials/context_background_go1.7.go
  create mode 100644 vendor/github.com/aws/aws-sdk-go/aws/credentials/context_go1.5.go
@@ -303,25 +304,22 @@ index c139720ea4c..7874325a336 100644
          "//vendor/github.com/aws/aws-sdk-go/aws/session:go_default_library",
          "//vendor/github.com/aws/aws-sdk-go/service/ecr:go_default_library",
 diff --git a/pkg/kubeapiserver/options/BUILD b/pkg/kubeapiserver/options/BUILD
-index 7ec8682ed66..63124082941 100644
+index f0b9aabbeb8..c76cb114631 100644
 --- a/pkg/kubeapiserver/options/BUILD
 +++ b/pkg/kubeapiserver/options/BUILD
-@@ -82,9 +82,8 @@ go_test(
+@@ -81,6 +81,7 @@ go_test(
          "admission_test.go",
          "authentication_test.go",
          "authorization_test.go",
--        "plugins_test.go",
-         "ipnetslice_test.go",
--        "storage_versions_test.go",
-+        "plugins_test.go",
++        "ipnetslice_test.go",
+         "plugins_test.go",
      ],
      data = glob(["testdata/**"]),
-     embed = [":go_default_library"],
 diff --git a/pkg/kubelet/lifecycle/BUILD b/pkg/kubelet/lifecycle/BUILD
-index 34118d681d8..8cb840ff97c 100644
+index 3b57741a58d..d41b12cdffb 100644
 --- a/pkg/kubelet/lifecycle/BUILD
 +++ b/pkg/kubelet/lifecycle/BUILD
-@@ -31,8 +31,13 @@ go_library(
+@@ -29,8 +29,13 @@ go_library(
          "//pkg/scheduler/nodeinfo:go_default_library",
          "//pkg/security/apparmor:go_default_library",
          "//staging/src/k8s.io/api/core/v1:go_default_library",
@@ -335,15 +333,7 @@ index 34118d681d8..8cb840ff97c 100644
          "//vendor/k8s.io/klog:go_default_library",
          "//vendor/k8s.io/utils/io:go_default_library",
      ],
-@@ -41,6 +46,7 @@ go_library(
- go_test(
-     name = "go_default_test",
-     srcs = [
-+        "fargate_pod_validator_test.go",
-         "handlers_test.go",
-         "predicate_test.go",
-     ],
-@@ -56,6 +62,9 @@ go_test(
+@@ -54,6 +59,9 @@ go_test(
          "//staging/src/k8s.io/apimachinery/pkg/api/resource:go_default_library",
          "//staging/src/k8s.io/apimachinery/pkg/apis/meta/v1:go_default_library",
          "//staging/src/k8s.io/apimachinery/pkg/util/intstr:go_default_library",
@@ -39290,7 +39280,7 @@ index 6b85c5ecef2..91772dfeb91 100644
 -//go:generate go run ../_codegen/main.go -output-package=require -template=require.go.tmpl -include-format-funcs
 +//go:generate sh -c "cd ../_codegen && go build && cd - && ../_codegen/_codegen -output-package=require -template=require.go.tmpl -include-format-funcs"
 diff --git a/vendor/modules.txt b/vendor/modules.txt
-index e2a19d411f4..854ecfb050a 100644
+index 50d583bd4c3..e2188d72d26 100644
 --- a/vendor/modules.txt
 +++ b/vendor/modules.txt
 @@ -72,7 +72,7 @@ github.com/PuerkitoBio/urlesc
@@ -39345,7 +39335,7 @@ index e2a19d411f4..854ecfb050a 100644
  github.com/stretchr/testify/assert
  github.com/stretchr/testify/mock
  github.com/stretchr/testify/require
-@@ -1206,6 +1208,7 @@ k8s.io/apimachinery/pkg/api/apitesting
+@@ -1205,6 +1207,7 @@ k8s.io/apimachinery/pkg/api/apitesting
  k8s.io/apimachinery/pkg/api/apitesting/fuzzer
  k8s.io/apimachinery/pkg/api/apitesting/naming
  k8s.io/apimachinery/pkg/api/apitesting/roundtrip
@@ -39354,5 +39344,5 @@ index e2a19d411f4..854ecfb050a 100644
  k8s.io/apimachinery/pkg/api/errors
  k8s.io/apimachinery/pkg/api/meta
 -- 
-2.32.0
+2.33.0
 

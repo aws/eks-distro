@@ -1,22 +1,29 @@
-From f8872a394ec2cdc7fd4bc7fb96ee960fe3336c9d Mon Sep 17 00:00:00 2001
+From 36d5f7da8fc454ee1ab0f9465ad426585a1f2656 Mon Sep 17 00:00:00 2001
 From: Yang Yang <yyyng@amazon.com>
 Date: Wed, 17 Jun 2020 06:38:31 -0700
 Subject: --EKS-PATCH-- refine aws loadbalancer worker node SG rule
  logic
 
-ref: https://github.com/kubernetes/kubernetes/pull/92224
+Cherry-pick of upstream Kubernetes:
+https://github.com/kubernetes/kubernetes/pull/92224, which is
+included in Kubernetes 1.19.
+
+Fixes bug related to how a securityGroup is selected when using
+multiple securityGroups with AWS load balancer. This change ensures
+the first one is picked instead of a non-deterministic one, which
+allows for consistency in later use.
 
 Signed-off-by: Jackson West <jgw@amazon.com>
 ---
- .../k8s.io/legacy-cloud-providers/aws/aws.go  |  55 ++++++---
- .../legacy-cloud-providers/aws/aws_test.go    | 113 ++++++++++++++++++
- 2 files changed, 152 insertions(+), 16 deletions(-)
+ .../k8s.io/legacy-cloud-providers/aws/aws.go  | 55 ++++++++++++-----
+ .../legacy-cloud-providers/aws/aws_test.go    | 59 +++++++++++++++++++
+ 2 files changed, 98 insertions(+), 16 deletions(-)
 
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-index d094816bdbf..6a43cb0082c 100644
+index 183e54cccb1..d4ed8cf0eb9 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-@@ -3708,6 +3708,37 @@ func (c *Cloud) buildELBSecurityGroupList(serviceName types.NamespacedName, load
+@@ -3602,6 +3602,37 @@ func (c *Cloud) buildELBSecurityGroupList(serviceName types.NamespacedName, load
  	return sgList, setupSg, nil
  }
  
@@ -54,7 +61,7 @@ index d094816bdbf..6a43cb0082c 100644
  // buildListener creates a new listener from the given port, adding an SSL certificate
  // if indicated by the appropriate annotations.
  func buildListener(port v1.ServicePort, annotations map[string]string, sslPorts *portSets) (*elb.Listener, error) {
-@@ -4149,7 +4180,7 @@ func (c *Cloud) EnsureLoadBalancer(ctx context.Context, clusterName string, apiS
+@@ -4043,7 +4074,7 @@ func (c *Cloud) EnsureLoadBalancer(ctx context.Context, clusterName string, apiS
  		}
  	}
  
@@ -63,7 +70,7 @@ index d094816bdbf..6a43cb0082c 100644
  	if err != nil {
  		klog.Warningf("Error opening ingress rules for the load balancer to the instances: %q", err)
  		return nil, err
-@@ -4310,26 +4341,18 @@ func (c *Cloud) getTaggedSecurityGroups() (map[string]*ec2.SecurityGroup, error)
+@@ -4204,26 +4235,18 @@ func (c *Cloud) getTaggedSecurityGroups() (map[string]*ec2.SecurityGroup, error)
  
  // Open security group ingress rules on the instances so that the load balancer can talk to them
  // Will also remove any security groups ingress rules for the load balancer that are _not_ needed for allInstances
@@ -95,7 +102,7 @@ index d094816bdbf..6a43cb0082c 100644
  
  	// Get the actual list of groups that allow ingress from the load-balancer
  	var actualGroups []*ec2.SecurityGroup
-@@ -4508,7 +4531,7 @@ func (c *Cloud) EnsureLoadBalancerDeleted(ctx context.Context, clusterName strin
+@@ -4402,7 +4425,7 @@ func (c *Cloud) EnsureLoadBalancerDeleted(ctx context.Context, clusterName strin
  
  	{
  		// De-authorize the load balancer security group from the instances security group
@@ -104,7 +111,7 @@ index d094816bdbf..6a43cb0082c 100644
  		if err != nil {
  			klog.Errorf("Error deregistering load balancer from instance security groups: %q", err)
  			return err
-@@ -4675,7 +4698,7 @@ func (c *Cloud) UpdateLoadBalancer(ctx context.Context, clusterName string, serv
+@@ -4569,7 +4592,7 @@ func (c *Cloud) UpdateLoadBalancer(ctx context.Context, clusterName string, serv
  		return nil
  	}
  
@@ -114,7 +121,7 @@ index d094816bdbf..6a43cb0082c 100644
  		return err
  	}
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
-index 70b455d2335..681aecd6dc9 100644
+index 4814bd70eab..4ed7ca2d0e2 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
 @@ -2600,3 +2600,62 @@ func TestConstructStsEndpoint(t *testing.T) {
@@ -181,5 +188,5 @@ index 70b455d2335..681aecd6dc9 100644
 +	}
 +}
 -- 
-2.32.0
+2.33.0
 
