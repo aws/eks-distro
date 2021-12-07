@@ -1,9 +1,11 @@
-From 5277172ab78ef4ca11655c4f62b387c5948a4e9a Mon Sep 17 00:00:00 2001
+From 090c9172fffead7f348c72e1abd848479a24e999 Mon Sep 17 00:00:00 2001
 From: Yang Yang <yyyng@amazon.com>
 Date: Mon, 20 Jan 2020 11:59:08 -0800
-Subject: --EKS-PATCH-- using regional sts endpoint for assume ecr
- pull role
+Subject: --EKS-PATCH-- using regional sts endpoint for assume ecr pull
+ role
 
+Use regional AWS Security Token Service (STS) when assumeRole to pull
+from ECR.
 
 Signed-off-by: Jackson West <jgw@amazon.com>
 ---
@@ -176,5 +178,5 @@ index abac429f394..4baa20b60f4 100644
  		require.NoError(t, err)
  	})
 -- 
-2.32.0
+2.33.0
 
