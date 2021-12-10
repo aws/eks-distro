@@ -406,7 +406,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/go; version go1.15.14 --
+** golang.org/go; version go1.15.15 --
 https://github.com/golang/go
 
 ** golang.org/x/net; version v0.0.0-20201216054612-986b41b23924 --
