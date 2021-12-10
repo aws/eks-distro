@@ -103,7 +103,7 @@ else
 endif
 
 binaries: ## Build binaries by calling build/lib/simple_create_binaries.sh unless SIMPLE_CREATE_BINARIES=false, then calls build/create_binaries.sh from the project root.
-binaries: $(BINARY_TARGET) validate-checksums
+binaries: $(BINARY_TARGET)
 
 ## File/Folder Targets
 
