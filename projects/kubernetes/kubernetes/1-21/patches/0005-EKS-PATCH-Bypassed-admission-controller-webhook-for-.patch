@@ -4,7 +4,11 @@ Date: Sun, 18 Oct 2020 10:31:39 -0700
 Subject: --EKS-PATCH-- Bypassed admission controller webhook for
  cluster critical resources
 
-Workaround for https://github.com/kubernetes/kubernetes/issues/92157
+Workaround for Kubernetes issue:
+https://github.com/kubernetes/kubernetes/issues/92157
+
+This change allows for the bypassing of admission controller webhook
+for certain resources.
 
 Signed-off-by: Jyoti Mahapatra <jyotima@amazon.com>
 ---
