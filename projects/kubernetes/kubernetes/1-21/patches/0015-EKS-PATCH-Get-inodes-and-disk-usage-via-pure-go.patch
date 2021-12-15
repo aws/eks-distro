@@ -13,7 +13,7 @@ https://github.com/kubernetes/kubernetes/pull/104021
 This patch and the EKS-Distro patch "Add test for counting inodes
 correct with hardlinks" are tied together. This patch is the first
 commit in the above-mentioned PRs, while the other one is the second
-second commit on the PR.
+commit on the PR.
 
 From the original upstream commit message:
     Fix inode usage calculation to use filepath.Walk instead of
