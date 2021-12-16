@@ -20,7 +20,7 @@ function build::binaries::kube_bins() {
 
     # ensure consistent build date tag on final binary based on
     # last change in the patches directory
-    export SOURCE_DATE_EPOCH=$(git log -n 1 --pretty=format:%ct $release_branch/patches)
+    export SOURCE_DATE_EPOCH=$(git -C $repository log -1 --format=%at)
     export KUBE_GIT_COMMIT=$(git -C $repository rev-list -n 1 $git_tag)
     export KUBE_GIT_TREE_STATE=clean
     # Not using full image tag to avoid having to change checksums just for bumping
