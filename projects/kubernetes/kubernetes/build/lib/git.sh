@@ -22,7 +22,5 @@ function build::git::patch() {
     git -C $source_dir config user.email "prow@amazonaws.com"
     git -C $source_dir config user.name "Prow Bot"
     git -C $source_dir checkout $git_ref
-    git -C $source_dir apply --verbose $patch_dir/*
-    git -C $source_dir add .
-    git -C $source_dir commit -m "EKS Distro build of $git_ref"
+    git -C $source_dir am --committer-date-is-author-date $patch_dir/*
 }
