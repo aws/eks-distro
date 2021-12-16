@@ -1,5 +1,5 @@
 
-** github.com/aws/aws-sdk-go; version v1.30.0 --
+** github.com/aws/aws-sdk-go; version v1.37.1 --
 https://github.com/aws/aws-sdk-go
 
 ** github.com/golang/groupcache/lru; version v0.0.0-20190129154638-5b532d6fd5ef --
@@ -11,7 +11,7 @@ https://github.com/google/gofuzz
 ** github.com/googleapis/gnostic; version v0.0.0-20170729233727-0c5108395e2d --
 https://github.com/google/gnostic
 
-** github.com/jmespath/go-jmespath; version v0.3.0 --
+** github.com/jmespath/go-jmespath; version v0.4.0 --
 https://github.com/jmespath/go-jmespath
 
 ** github.com/matttproud/golang_protobuf_extensions/pbutil; version v1.0.1 --
@@ -71,7 +71,7 @@ https://github.com/kubernetes/sample-controller
 ** k8s.io/utils; version v0.0.0-20190801114015-581e00157fb1 --
 https://github.com/kubernetes/utils
 
-** sigs.k8s.io/aws-iam-authenticator; version v0.5.2 --
+** sigs.k8s.io/aws-iam-authenticator; version v0.5.3 --
 https://github.com/kubernetes-sigs/aws-iam-authenticator
 
 
@@ -382,25 +382,25 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/aws/aws-sdk-go/internal/sync/singleflight; version v1.30.0 --
+** github.com/aws/aws-sdk-go/internal/sync/singleflight; version v1.37.1 --
 https://github.com/aws/aws-sdk-go
 
 ** golang.org/go; version go1.13.15 --
 https://github.com/golang/go
 
-** golang.org/x/crypto/ssh/terminal; version v0.0.0-20200220183623-bac4c82f6975 --
+** golang.org/x/crypto/ssh/terminal; version v0.0.0-20200622213623-75b288015ac9 --
 https://go.googlesource.com/crypto
 
-** golang.org/x/net; version v0.0.0-20200202094626-16171245cfb2 --
+** golang.org/x/net; version v0.0.0-20201110031124-69a78807bb2b --
 https://go.googlesource.com/net
 
 ** golang.org/x/oauth2; version v0.0.0-20190604053449-0f29369cfe45 --
 https://go.googlesource.com/oauth2
 
-** golang.org/x/sys/unix; version v0.0.0-20190813064441-fde4db37ae7a --
+** golang.org/x/sys; version v0.0.0-20200930185726-fdedc70b468f --
 https://go.googlesource.com/sys
 
-** golang.org/x/text; version v0.3.2 --
+** golang.org/x/text; version v0.3.3 --
 https://go.googlesource.com/text
 
 ** golang.org/x/time/rate; version v0.0.0-20190308202827-9d24e82272b4 --
