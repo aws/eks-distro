@@ -34,21 +34,6 @@ do
     echo 'Waiting for cluster to come up...'
 done
 
-# Starting with coreDNS v1.8.3, coreDNS watches endpointslices
-# instead of endpoints, so we need to add additional permissions that
-# Kubernetes does not currently provide.
-while ! kubectl --context $KOPS_CLUSTER_NAME apply -f ./core_dns_cluster_role.yaml
-do
-    sleep 5
-    COUNT=$(expr $COUNT + 1)
-    if [ $COUNT -gt 120 ]
-    then
-        echo "Failed to configure coredns clusterrole"
-        exit 1
-    fi
-    echo 'Waiting for cluster to come up...'
-done
-
 # In kops 1-21 the metrics addon is not configurable enough for 1.18 based clusters
 # manually add -kubelet-insecure-tls
 # https://github.com/kubernetes/kops/blob/v1.21.0-beta.3/upup/models/cloudup/resources/addons/metrics-server.addons.k8s.io/k8s-1.11.yaml.template#L140
