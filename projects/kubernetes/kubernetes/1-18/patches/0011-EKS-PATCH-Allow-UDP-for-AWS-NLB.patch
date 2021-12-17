@@ -1,11 +1,13 @@
-From a41b63ea160c1a375c5e47b02931d0b2d29cd601 Mon Sep 17 00:00:00 2001
+From 90551f2c9e2b56d6be7ec9bc2c2610867cde98c0 Mon Sep 17 00:00:00 2001
 From: Kishor Joshi <joshikis@amazon.com>
 Date: Fri, 12 Jun 2020 12:57:37 -0700
 Subject: --EKS-PATCH-- Allow UDP for AWS NLB
 
-ref: https://github.com/kubernetes/kubernetes/pull/92109
- Co-authored-by: Patrick Ryan <pjryan@my.okcu.edu>
- Co-authored-by: Owen Ou <jingweno@gmail.com>
+Cherry-pick of upstream Kubernetes PR:
+https://github.com/kubernetes/kubernetes/pull/92109, which is
+included in 1.19.
+
+Allows for the creation of an AWS Network Load Balancer (NLB) for UDP.
 
 Signed-off-by: Jackson West <jgw@amazon.com>
 ---
@@ -15,10 +17,10 @@ Signed-off-by: Jackson West <jgw@amazon.com>
  3 files changed, 95 insertions(+), 22 deletions(-)
 
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-index 6a43cb0082c..96e7780963d 100644
+index d4ed8cf0eb9..50e32f5b722 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-@@ -3819,9 +3819,10 @@ func (c *Cloud) EnsureLoadBalancer(ctx context.Context, clusterName string, apiS
+@@ -3713,9 +3713,10 @@ func (c *Cloud) EnsureLoadBalancer(ctx context.Context, clusterName string, apiS
  
  	sslPorts := getPortSets(annotations[ServiceAnnotationLoadBalancerSSLPorts])
  	for _, port := range apiService.Spec.Ports {
@@ -31,7 +33,7 @@ index 6a43cb0082c..96e7780963d 100644
  		if port.NodePort == 0 {
  			klog.Errorf("Ignoring port without NodePort defined: %v", port)
  			continue
-@@ -3841,7 +3842,7 @@ func (c *Cloud) EnsureLoadBalancer(ctx context.Context, clusterName string, apiS
+@@ -3735,7 +3736,7 @@ func (c *Cloud) EnsureLoadBalancer(ctx context.Context, clusterName string, apiS
  			}
  
  			certificateARN := annotations[ServiceAnnotationLoadBalancerCertificate]
@@ -40,7 +42,7 @@ index 6a43cb0082c..96e7780963d 100644
  				portMapping.FrontendProtocol = elbv2.ProtocolEnumTls
  				portMapping.SSLCertificateARN = certificateARN
  				portMapping.SSLPolicy = annotations[ServiceAnnotationLoadBalancerSSLNegotiationPolicy]
-@@ -3852,12 +3853,13 @@ func (c *Cloud) EnsureLoadBalancer(ctx context.Context, clusterName string, apiS
+@@ -3746,12 +3747,13 @@ func (c *Cloud) EnsureLoadBalancer(ctx context.Context, clusterName string, apiS
  			}
  
  			v2Mappings = append(v2Mappings, portMapping)
@@ -59,7 +61,7 @@ index 6a43cb0082c..96e7780963d 100644
  	}
  
  	if apiService.Spec.LoadBalancerIP != "" {
-@@ -4905,6 +4907,18 @@ func (c *Cloud) nodeNameToProviderID(nodeName types.NodeName) (InstanceID, error
+@@ -4798,6 +4800,18 @@ func (c *Cloud) nodeNameToProviderID(nodeName types.NodeName) (InstanceID, error
  	return KubernetesInstanceID(node.Spec.ProviderID).MapToAWSInstanceID()
  }
  
@@ -180,7 +182,7 @@ index d648409dc03..5c714ea1865 100644
  				}
  			}
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
-index 681aecd6dc9..53c9071af94 100644
+index 4ed7ca2d0e2..ec960d790d4 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
 @@ -1395,6 +1395,53 @@ func TestDescribeLoadBalancerOnEnsure(t *testing.T) {
@@ -238,5 +240,5 @@ index 681aecd6dc9..53c9071af94 100644
  	tests := []struct {
  		name string
 -- 
-2.32.0
+2.33.0
 

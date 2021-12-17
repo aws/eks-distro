@@ -1,10 +1,16 @@
-From e4b1deb042f17278d93cd6a64c30386316f82f8d Mon Sep 17 00:00:00 2001
+From 09781905572ffd2f5d3b84e4590bac7768816848 Mon Sep 17 00:00:00 2001
 From: M00nF1sh <yyyng@amazon.com>
 Date: Wed, 28 Apr 2021 11:12:09 -0700
-Subject: --EKS-CHERRYPICK-- chunk target operation for aws
- targetGroupg
+Subject: --EKS-PATCH-- chunk target operation for aws targetGroups
 
-https://github.com/kubernetes/kubernetes/pull/101592
+Cherry-pick of upstream Kubernetes:
+https://github.com/kubernetes/kubernetes/pull/101592, which is
+included in Kubernetes 1.22 and cherry-picked by 1.19-1.21.
+
+Fixes bug related to target groups. Without these changes, all
+targets are registered in a single batch call, which could fail
+indefinitely for some users due to limits with the AWS ELBv2 API.
+These changes break the target calls into chunks.
 
 Signed-off-by: Kirsten Schumy <ksschumy@amazon.com>
 ---
@@ -714,5 +720,5 @@ index 3faf328474f..f1d87158d69 100644
 +	}
 +}
 -- 
-2.32.0
+2.33.0
 

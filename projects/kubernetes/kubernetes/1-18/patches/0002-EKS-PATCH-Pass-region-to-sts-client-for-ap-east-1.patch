@@ -1,4 +1,4 @@
-From 0cb856515156c360fd2fd588014c246ea07af8e2 Mon Sep 17 00:00:00 2001
+From a1c563d439ffce3f3c063262699209f75fdb1c2b Mon Sep 17 00:00:00 2001
 From: M00nF1sh <yyyng@amazon.com>
 Date: Tue, 2 Jul 2019 10:44:42 -0700
 Subject: --EKS-PATCH-- Pass region to sts client for ap-east-1
@@ -120,5 +120,5 @@ index 4f992ea86e5..9b42bc5829a 100644
  	if err != nil {
  		return nil, err
 -- 
-2.32.0
+2.33.0
 
