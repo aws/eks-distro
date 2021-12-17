@@ -30,6 +30,6 @@
    release when checking the Golang version. If the version has changes, update
    `GOLANG_VERSION` in the release branch.
 5. Update CHECKSUMS and attribution by using
-   `make update-attribution-checksums-docker PROJECT=coredns/coredns RELEASE_BRANCH=<release_branch>`
+   `make update-attribution-checksums-docker PROJECT=kubernetes-sigs/metrics-server RELEASE_BRANCH=<release_branch>`
    from the root of the EKS-Distro repo.
 6. Update the version at the top of this README.
