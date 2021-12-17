@@ -1,10 +1,17 @@
 From d4907aec4c9b648ca6a076b112e91c5a424cb0a6 Mon Sep 17 00:00:00 2001
 From: Xiang Li <lixiang1992@gwu.edu>
 Date: Mon, 15 Mar 2021 10:59:32 -0700
-Subject: -- EKS PATCH -- delete leaked volume if driver doesn't know the
+Subject: --EKS PATCH-- delete leaked volume if driver doesn't know the
  volume status -- aws
 
-PR: https://github.com/kubernetes/kubernetes/pull/99664
+Cherry-pick of upstream Kubernetes:
+https://github.com/kubernetes/kubernetes/pull/99664, which is
+included in Kubernetes 1.22.
+
+Fixes bug where an error with the DescribeVolumes API would result in
+the state of previously-created volumes becoming unknown. These
+volumes would not be cleaned up, which could leak data. This change
+allows for these volumes to be deleted in this case.
 
 Signed-off-by: Taylor Neyland <tneyla@amazon.com>
 ---

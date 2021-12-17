@@ -1,0 +1,56 @@
+From a3494c7e66aa096fbaebbea34cd133d73704b285 Mon Sep 17 00:00:00 2001
+From: Gyuho Lee <leegyuho@amazon.com>
+Date: Tue, 28 Sep 2021 19:38:47 +0000
+Subject: --EKS-PATCH-- apiserver/healthz: upper log verbosity for
+ "kms-provider-0"
+
+To silence:
+    cannot exclude some health checks, no health checks are installed
+    matching "kms-provider-0".
+
+This is logged when external health checker calls
+"/healthz?exclude=kms-provider-0" against an API server that does not
+enable KMS encryption. These changes reduce such logs to minimize the
+noise.
+
+Signed-off-by: Gyuho Lee <leegyuho@amazon.com>
+---
+ .../src/k8s.io/apiserver/pkg/server/healthz/healthz.go    | 8 ++++++--
+ .../k8s.io/apiserver/pkg/server/healthz/healthz_test.go   | 2 +-
+ 2 files changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/staging/src/k8s.io/apiserver/pkg/server/healthz/healthz.go b/staging/src/k8s.io/apiserver/pkg/server/healthz/healthz.go
+index e80b8501edf..75735565f2a 100644
+--- a/staging/src/k8s.io/apiserver/pkg/server/healthz/healthz.go
++++ b/staging/src/k8s.io/apiserver/pkg/server/healthz/healthz.go
+@@ -235,8 +235,12 @@ func handleRootHealth(name string, checks ...HealthChecker) http.HandlerFunc {
+ 			}
+ 		}
+ 		if excluded.Len() > 0 {
+-			fmt.Fprintf(&individualCheckOutput, "warn: some health checks cannot be excluded: no matches for %s\n", formatQuoted(excluded.List()...))
+-			klog.Warningf("cannot exclude some health checks, no health checks are installed matching %s",
++			// EKS-PATCH: to exclude "kms-provider-0" user-induced error, EKS has a separate alarm for encryption provider
++			verbosity := klog.V(6)
++			if verbosity.Enabled() {
++				fmt.Fprintf(&individualCheckOutput, "warn: some health checks cannot be excluded: no matches for %s\n", formatQuoted(excluded.List()...))
++			}
++			verbosity.Infof("cannot exclude some health checks, no health checks are installed matching %s",
+ 				formatQuoted(excluded.List()...))
+ 		}
+ 		// always be verbose on failure
+diff --git a/staging/src/k8s.io/apiserver/pkg/server/healthz/healthz_test.go b/staging/src/k8s.io/apiserver/pkg/server/healthz/healthz_test.go
+index 0fb67c84570..a56b4d20770 100644
+--- a/staging/src/k8s.io/apiserver/pkg/server/healthz/healthz_test.go
++++ b/staging/src/k8s.io/apiserver/pkg/server/healthz/healthz_test.go
+@@ -105,7 +105,7 @@ func testMultipleChecks(path, name string, t *testing.T) {
+ 		{"?exclude=dontexist", "ok", http.StatusOK, false},
+ 		{"?exclude=bad", "ok", http.StatusOK, true},
+ 		{"?verbose=true&exclude=bad", fmt.Sprintf("[+]ping ok\n[+]bad excluded: ok\n%s check passed\n", name), http.StatusOK, true},
+-		{"?verbose=true&exclude=dontexist", fmt.Sprintf("[+]ping ok\nwarn: some health checks cannot be excluded: no matches for \"dontexist\"\n%s check passed\n", name), http.StatusOK, false},
++		{"?verbose=true&exclude=dontexist", fmt.Sprintf("[+]ping ok\n%s check passed\n", name), http.StatusOK, false},
+ 		{"/ping", "ok", http.StatusOK, false},
+ 		{"", "ok", http.StatusOK, false},
+ 		{"?verbose", fmt.Sprintf("[+]ping ok\n[-]bad failed: reason withheld\n%s check failed\n", name), http.StatusInternalServerError, true},
+-- 
+2.32.0
+

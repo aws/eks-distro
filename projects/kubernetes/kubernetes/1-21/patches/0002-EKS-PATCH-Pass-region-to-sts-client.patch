@@ -1,0 +1,65 @@
+From 51daae8c06046d551f58bb7144dbf484dc0696bb Mon Sep 17 00:00:00 2001
+From: M00nF1sh <yyyng@amazon.com>
+Date: Tue, 2 Jul 2019 10:44:42 -0700
+Subject: --EKS-PATCH-- Pass region to sts client
+
+
+Signed-off-by: Jyoti Mahapatra <jyotima@amazon.com>
+---
+ .../k8s.io/legacy-cloud-providers/aws/aws.go  | 32 ++++++++++++++++++-
+ 1 file changed, 31 insertions(+), 1 deletion(-)
+
+diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
+index aafc7fe0564..aa8634f20fd 100644
+--- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
++++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
+@@ -1180,8 +1180,12 @@ func init() {
+ 			return nil, fmt.Errorf("unable to validate custom endpoint overrides: %v", err)
+ 		}
+ 
++		regionName, err := getRegionFromMetadata(cfg)
++		if err != nil {
++			return nil, err
++		}
+ 		sess, err := session.NewSessionWithOptions(session.Options{
+-			Config:            aws.Config{},
++			Config:            *aws.NewConfig().WithRegion(regionName).WithSTSRegionalEndpoint(endpoints.RegionalSTSEndpoint),
+ 			SharedConfigState: session.SharedConfigEnable,
+ 		})
+ 		if err != nil {
+@@ -1208,6 +1212,32 @@ func init() {
+ 	})
+ }
+ 
++func getRegionFromMetadata(cfg *CloudConfig) (string, error) {
++	klog.Infof("Get AWS region from metadata client")
++
++	metadata, err := newAWSSDKProvider(nil, cfg).Metadata()
++	if err != nil {
++		return "", fmt.Errorf("error creating AWS metadata client: %q", err)
++	}
++
++	err = updateConfigZone(cfg, metadata)
++	if err != nil {
++		return "", fmt.Errorf("unable to determine AWS zone from cloud provider config or EC2 instance metadata: %v", err)
++	}
++
++	zone := cfg.Global.Zone
++	if len(zone) <= 1 {
++		return "", fmt.Errorf("invalid AWS zone in config file: %s", zone)
++	}
++
++	regionName, err := azToRegion(zone)
++	if err != nil {
++		return "", err
++	}
++
++	return regionName, nil
++}
++
+ // readAWSCloudConfig reads an instance of AWSCloudConfig from config reader.
+ func readAWSCloudConfig(config io.Reader) (*CloudConfig, error) {
+ 	var cfg CloudConfig
+-- 
+2.17.1
+
