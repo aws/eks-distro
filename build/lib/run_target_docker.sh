@@ -31,6 +31,7 @@ echo "Run 'make stop-docker-builder' when you are done to stop it."
 echo "****************************************************************"
 
 if ! docker ps -f name=eks-d-builder | grep -w eks-d-builder; then
+	docker pull public.ecr.aws/eks-distro-build-tooling/builder-base:latest
 	docker run -d --name eks-d-builder --privileged -e GOPROXY=$GOPROXY --entrypoint sleep \
 		public.ecr.aws/eks-distro-build-tooling/builder-base:latest  infinity 
 fi
