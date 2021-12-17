@@ -5,7 +5,7 @@
 | 1-18 | ![Version](https://img.shields.io/badge/version-v1.7.0-blue) |
 | 1-19 | ![Version](https://img.shields.io/badge/version-v1.8.0-blue) |
 | 1-20 | ![Version](https://img.shields.io/badge/version-v1.8.3-blue) |
-| 1-21 | ![Version](https://img.shields.io/badge/version-v1.8.3-blue) |
+| 1-21 | ![Version](https://img.shields.io/badge/version-v1.8.4-blue) |
 
 
 ### Updating
@@ -31,7 +31,8 @@
 4. Verify the Golang version has not changed. The version specified in
    [`go.mod`](https://github.com/coredns/coredns/blob/master/go.mod) seems to be
    kept up to date. Be sure to select the correct branch for the release when 
-   checking the Golang version.
+   checking the Golang version. If the version has changes, update 
+   `GOLANG_VERSION` in the release branch.
 5. Update CHECKSUMS and attribution by using
    `make update-attribution-checksums-docker PROJECT=coredns/coredns RELEASE_BRANCH=<release_branch>`
    from the root of the EKS-Distro repo.
