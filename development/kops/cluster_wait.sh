@@ -19,7 +19,6 @@ BASEDIR=$(dirname "$0")
 source ${BASEDIR}/set_environment.sh
 $PREFLIGHT_CHECK_PASSED || exit 1
 
-#
 # Add IAM configmap
 COUNT=0
 echo 'Waiting for cluster to come up...'
@@ -34,23 +33,6 @@ do
     fi
     echo 'Waiting for cluster to come up...'
 done
-
-# In 1-20 since we are using coredns 1.8.3 which now watches endpointslices
-# instead of endpoints, we need to add additional permissions that kops
-# does not currently add since it still supports coredns 1.7.x
-if [[ "${RELEASE_BRANCH}" == "1-20" || "${RELEASE_BRANCH}" == "1-21" ]]; then
-while ! kubectl --context $KOPS_CLUSTER_NAME apply -f ./core_dns_cluster_role.yaml
-do
-    sleep 5
-    COUNT=$(expr $COUNT + 1)
-    if [ $COUNT -gt 120 ]
-    then
-        echo "Failed to configure coredns clusterrole"
-        exit 1
-    fi
-    echo 'Waiting for cluster to come up...'
-done
-fi
 
 # In kops 1-21 the metrics addon is not configurable enough for 1.18 based clusters
 # manually add -kubelet-insecure-tls
