@@ -1,17 +1,17 @@
-From e223231299d822e570aa35977164bba9ba279c1b Mon Sep 17 00:00:00 2001
+From 61e28e2b19d9f6a89aeccb0fae0fa050b04c5d3c Mon Sep 17 00:00:00 2001
 From: Shravan Achar <balakund@amazon.com>
 Date: Mon, 21 Dec 2020 22:31:56 -0800
 Subject: --EKS-PATCH-- Update aws-sdk-go to v1.34.24
 
+Updates aws-sdk-go from v1.28.2 to v1.34.24.
 
 Signed-off-by: Jackson West <jgw@amazon.com>
 ---
- cmd/kube-apiserver/app/options/BUILD          |     2 +-
  go.mod                                        |    11 +-
  go.sum                                        |    13 +-
  pkg/credentialprovider/aws/BUILD              |     4 +-
- pkg/kubeapiserver/options/BUILD               |     3 +-
- pkg/kubelet/lifecycle/BUILD                   |     9 +
+ pkg/kubeapiserver/options/BUILD               |     1 +
+ pkg/kubelet/lifecycle/BUILD                   |     8 +
  pkg/kubelet/util/BUILD                        |     6 +-
  staging/src/k8s.io/api/go.mod                 |     2 +-
  staging/src/k8s.io/api/go.sum                 |     4 +-
@@ -137,7 +137,7 @@ Signed-off-by: Jackson West <jgw@amazon.com>
  .../testify/require/require_forward.go        |   156 +-
  .../stretchr/testify/require/requirements.go  |     2 +-
  vendor/modules.txt                            |    16 +-
- 131 files changed, 20683 insertions(+), 2844 deletions(-)
+ 130 files changed, 20679 insertions(+), 2843 deletions(-)
  create mode 100644 vendor/github.com/aws/aws-sdk-go/aws/credentials/context_background_go1.5.go
  create mode 100644 vendor/github.com/aws/aws-sdk-go/aws/credentials/context_background_go1.7.go
  create mode 100644 vendor/github.com/aws/aws-sdk-go/aws/credentials/context_go1.5.go
@@ -152,23 +152,6 @@ Signed-off-by: Jackson West <jgw@amazon.com>
  create mode 100644 vendor/github.com/jmespath/go-jmespath/go.mod
  create mode 100644 vendor/github.com/jmespath/go-jmespath/go.sum
 
-diff --git a/cmd/kube-apiserver/app/options/BUILD b/cmd/kube-apiserver/app/options/BUILD
-index 7a3ec23ba6c..e4293b01f1c 100644
---- a/cmd/kube-apiserver/app/options/BUILD
-+++ b/cmd/kube-apiserver/app/options/BUILD
-@@ -9,11 +9,11 @@ load(
- go_library(
-     name = "go_default_library",
-     srcs = [
-+        "allowlist.go",
-         "globalflags.go",
-         "globalflags_providers.go",
-         "options.go",
-         "validation.go",
--        "allowlist.go",
-     ],
-     importpath = "k8s.io/kubernetes/cmd/kube-apiserver/app/options",
-     deps = [
 diff --git a/go.mod b/go.mod
 index 23c8400bd2f..c9df62afb07 100644
 --- a/go.mod
@@ -292,25 +275,22 @@ index a2d5b9b4c3d..6edb48e12ee 100644
  )
  
 diff --git a/pkg/kubeapiserver/options/BUILD b/pkg/kubeapiserver/options/BUILD
-index 9aa55d35384..56c6595f527 100644
+index bd631e32707..e0a43dddbe3 100644
 --- a/pkg/kubeapiserver/options/BUILD
 +++ b/pkg/kubeapiserver/options/BUILD
-@@ -82,9 +82,8 @@ go_test(
+@@ -81,6 +81,7 @@ go_test(
          "admission_test.go",
          "authentication_test.go",
          "authorization_test.go",
--        "plugins_test.go",
-         "ipnetslice_test.go",
--        "storage_versions_test.go",
-+        "plugins_test.go",
++        "ipnetslice_test.go",
+         "plugins_test.go",
      ],
      data = glob(["testdata/**"]),
-     embed = [":go_default_library"],
 diff --git a/pkg/kubelet/lifecycle/BUILD b/pkg/kubelet/lifecycle/BUILD
-index 6ee74988352..a2dc3881afc 100644
+index 05f2963b1ce..af858cc7a1f 100644
 --- a/pkg/kubelet/lifecycle/BUILD
 +++ b/pkg/kubelet/lifecycle/BUILD
-@@ -31,8 +31,13 @@ go_library(
+@@ -29,8 +29,13 @@ go_library(
          "//pkg/scheduler/framework/v1alpha1:go_default_library",
          "//pkg/security/apparmor:go_default_library",
          "//staging/src/k8s.io/api/core/v1:go_default_library",
@@ -324,15 +304,7 @@ index 6ee74988352..a2dc3881afc 100644
          "//vendor/k8s.io/klog/v2:go_default_library",
          "//vendor/k8s.io/utils/io:go_default_library",
      ],
-@@ -41,6 +46,7 @@ go_library(
- go_test(
-     name = "go_default_test",
-     srcs = [
-+        "fargate_pod_validator_test.go",
-         "handlers_test.go",
-         "predicate_test.go",
-     ],
-@@ -56,6 +62,9 @@ go_test(
+@@ -54,6 +59,9 @@ go_test(
          "//staging/src/k8s.io/apimachinery/pkg/api/resource:go_default_library",
          "//staging/src/k8s.io/apimachinery/pkg/apis/meta/v1:go_default_library",
          "//staging/src/k8s.io/apimachinery/pkg/util/intstr:go_default_library",
@@ -343,10 +315,11 @@ index 6ee74988352..a2dc3881afc 100644
  )
  
 diff --git a/pkg/kubelet/util/BUILD b/pkg/kubelet/util/BUILD
-index ae11bb27d58..658d7b5876e 100644
+index 5adac63deed..6ae213d2446 100644
 --- a/pkg/kubelet/util/BUILD
 +++ b/pkg/kubelet/util/BUILD
-@@ -55,25 +55,21 @@ go_library(
+@@ -54,26 +54,22 @@ go_library(
+     importpath = "k8s.io/kubernetes/pkg/kubelet/util",
      deps = [
          "//staging/src/k8s.io/apimachinery/pkg/apis/meta/v1:go_default_library",
 +        "//vendor/k8s.io/klog/v2:go_default_library",
@@ -38774,7 +38747,7 @@ index 6b85c5ecef2..91772dfeb91 100644
 -//go:generate go run ../_codegen/main.go -output-package=require -template=require.go.tmpl -include-format-funcs
 +//go:generate sh -c "cd ../_codegen && go build && cd - && ../_codegen/_codegen -output-package=require -template=require.go.tmpl -include-format-funcs"
 diff --git a/vendor/modules.txt b/vendor/modules.txt
-index 9fd64f018dc..d99a7874ed0 100644
+index aeb521b3b2c..044c58bf3f6 100644
 --- a/vendor/modules.txt
 +++ b/vendor/modules.txt
 @@ -126,9 +126,9 @@ github.com/asaskevich/govalidator
@@ -38837,7 +38810,7 @@ index 9fd64f018dc..d99a7874ed0 100644
  github.com/stretchr/testify/assert
  github.com/stretchr/testify/mock
  github.com/stretchr/testify/require
-@@ -1639,6 +1642,7 @@ k8s.io/apimachinery/pkg/api/apitesting
+@@ -1638,6 +1641,7 @@ k8s.io/apimachinery/pkg/api/apitesting
  k8s.io/apimachinery/pkg/api/apitesting/fuzzer
  k8s.io/apimachinery/pkg/api/apitesting/naming
  k8s.io/apimachinery/pkg/api/apitesting/roundtrip
@@ -38846,5 +38819,5 @@ index 9fd64f018dc..d99a7874ed0 100644
  k8s.io/apimachinery/pkg/api/errors
  k8s.io/apimachinery/pkg/api/meta
 -- 
-2.32.0
+2.33.0
 
