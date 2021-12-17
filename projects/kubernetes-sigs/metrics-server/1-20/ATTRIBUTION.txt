@@ -104,7 +104,7 @@ https://github.com/kubernetes/utils
 ** sigs.k8s.io/apiserver-network-proxy/konnectivity-client; version v0.0.15 --
 https://github.com/kubernetes-sigs/apiserver-network-proxy
 
-** sigs.k8s.io/metrics-server; version v0.4.3 --
+** sigs.k8s.io/metrics-server; version v0.4.5 --
 https://github.com/kubernetes-sigs/metrics-server
 
 ** sigs.k8s.io/structured-merge-diff/v4; version v4.0.3 --
