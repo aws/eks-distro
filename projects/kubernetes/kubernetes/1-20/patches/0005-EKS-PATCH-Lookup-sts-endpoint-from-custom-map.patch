@@ -1,7 +1,9 @@
-From b1b9124c7e00099a9e35abadb9c428221e51cf72 Mon Sep 17 00:00:00 2001
+From 8cb2c8280d2e77dd16d09bfaddb472f5f4d48e2d Mon Sep 17 00:00:00 2001
 From: Aleksandr Melnik <melnikal@amazon.com>
 Date: Wed, 8 Jan 2020 17:23:06 -0800
 Subject: --EKS-PATCH-- Lookup sts endpoint from custom map
+
+ Update STS endpoint to support different partitions.
 
 Signed-off-by: Jyoti Mahapatra <jyotima@amazon.com>
 ---
@@ -299,7 +301,7 @@ index 00000000000..1c496742903
 +		arn.Resource
 +}
 diff --git a/vendor/modules.txt b/vendor/modules.txt
-index 49fb21ec713..4b3a7fdd757 100644
+index 37fb9b6b741..dde2b9e3403 100644
 --- a/vendor/modules.txt
 +++ b/vendor/modules.txt
 @@ -135,6 +135,7 @@ github.com/asaskevich/govalidator
@@ -311,5 +313,5 @@ index 49fb21ec713..4b3a7fdd757 100644
  github.com/aws/aws-sdk-go/aws/awsutil
  github.com/aws/aws-sdk-go/aws/client
 -- 
-2.31.1
+2.33.0
 
