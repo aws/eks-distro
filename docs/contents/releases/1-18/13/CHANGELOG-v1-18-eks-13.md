@@ -4,12 +4,6 @@ This changelog highlights the changes for [v1-18-eks-13](https://github.com/aws/
 
 ## Version Upgrades
 
-### Kubernetes
-
-* No change. This release is still using Kubernetes
-  [v1.18.20](https://github.com/kubernetes/kubernetes/releases/tag/v1.18.20), which is the final patch version of
-  Kubernetes 1.18.
-
 ### Components
 
 * **AWS-IAM-Authenticator**: upgrade from 0.5.2 to
@@ -24,7 +18,7 @@ Security updates to Amazon Linux 2.
 ### Patches Added
 
 * **0019-EKS-PATCH-Skip-TestLoopbackHostPortIPv6-run-on-non-I.patch**
-  * Cherry-pick of upstream [Kubernetes PR #96115](https://github.com/kubernetes/kubernetes/pull/94376), which is
+  * Cherry-pick of upstream [Kubernetes PR #94376](https://github.com/kubernetes/kubernetes/pull/94376), which is
     included in Kubernetes 1.20.
   * Fixes `TestLoopbackHostPortIPv6` test failure if there is no IPv6 loopback device configured.
 * **0020-EKS-PATCH-apiserver-healthz-upper-log-verbosity-for-.patch**
