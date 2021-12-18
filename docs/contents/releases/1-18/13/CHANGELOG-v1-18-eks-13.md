@@ -30,7 +30,7 @@ Security updates to Amazon Linux 2.
 
 * **0001-EKS-PATCH-Added-allowlist-CIDR-flag-use-klog.patch**
   * Removed because it is an unused feature, which upstream Kubernetes does not seem interested in including.
-* **0004-EKS-PATCH-Lookup-sts-endpoint-from-custom-map.patch**
+* **0004-EKS-PATCH-volume-plugin-requests-patch.patch **
   * Related to the now-removed `0001-EKS-PATCH-Added-allowlist-CIDR-flag-use-klog.patch`. See removal note above.
 
 ### Existing Patches
