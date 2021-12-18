@@ -23,7 +23,7 @@ Security updates to Amazon Linux 2.
 
 * **0014-EKS-PATCH-Fix-kubectl-version-unit-test.patch**
   * Cherry-pick of upstream [Kubernetes PR #103955](https://github.com/kubernetes/kubernetes/pull/103955), which is
-    included in Kubernetes 1.22.
+    included in Kubernetes 1.23.
   * Fixes configuration requirement that results in test `TestNewCmdVersionWithoutConfigFile` failing for some
     developers.
 * **0015-EKS-PATCH-Skip-TestLoopbackHostPortIPv6-run-on-non-I.patch**
