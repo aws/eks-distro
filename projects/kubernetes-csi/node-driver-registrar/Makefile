@@ -15,3 +15,11 @@ $(ATTRIBUTION_TARGETS): fix-licenses
 .PHONE: fix-licenses
 fix-licenses: $(GATHER_LICENSES_TARGETS)
 	build/fix_licenses.sh
+
+
+########### DO NOT EDIT #############################
+# To update call: make add-generated-help-block
+# This is added to help document dynamic targets and support shell autocompletion
+# Run make help for a formatted help block with all targets
+include Help.mk
+########### END GENERATED ###########################

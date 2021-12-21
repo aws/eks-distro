@@ -16,3 +16,11 @@ images: csi-provisioner/images/push
 
 .PHONY: local-images
 local-images: csi-provisioner/images/amd64
+
+
+########### DO NOT EDIT #############################
+# To update call: make add-generated-help-block
+# This is added to help document dynamic targets and support shell autocompletion
+# Run make help for a formatted help block with all targets
+include Help.mk
+########### END GENERATED ###########################
