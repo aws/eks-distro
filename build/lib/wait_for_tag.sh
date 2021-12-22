@@ -13,21 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -x
+
 set -o errexit
 set -o nounset
 set -o pipefail
 
-MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
+TAG="$1"
 
-REPO="$1"
-GIT_TAG="$2"
-RELEASE_BRANCH="$3"
+SCRIPT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+source "${SCRIPT_ROOT}/common.sh"
 
-source "${MAKE_ROOT}/build/lib/init.sh"
-source "${MAKE_ROOT}/../../../build/lib/common.sh"
-
-PATCH_DIR=${MAKE_ROOT}/${RELEASE_BRANCH}/patches
-OUTPUT_DIR=${MAKE_ROOT}/_output/${RELEASE_BRANCH}
-
-build::git::patch "$SOURCE_DIR" "$GIT_TAG" "$PATCH_DIR"
+build::common::wait_for_tag $TAG

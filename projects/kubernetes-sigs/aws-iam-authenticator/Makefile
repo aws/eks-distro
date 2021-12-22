@@ -3,31 +3,23 @@ GIT_TAG?=$(shell cat $(RELEASE_BRANCH)/GIT_TAG)
 GOLANG_VERSION?="1.13"
 
 REPO=aws-iam-authenticator
-COMPONENT=kubernetes-sigs/$(REPO)
+REPO_OWNER=kubernetes-sigs
 
-LICENSE_PACKAGE_FILTER?=./cmd/aws-iam-authenticator
+BINARY_TARGET_FILES=aws-iam-authenticator
+SOURCE_PATTERNS=./cmd/aws-iam-authenticator
+EXTRA_GO_LDFLAGS=-X main.version=$(GIT_TAG) -X main.commit=$(shell git -C $(REPO) rev-list -n 1  "${GIT_TAG}")
 
-BINARY_TARGET=$(OUTPUT_BIN_DIR)/linux-amd64/aws-iam-authenticator
 BINARY_PLATFORMS=linux/amd64 linux/arm64 darwin/amd64 windows/amd64
 
+HAS_RELEASE_BRANCHES=true
+HAS_S3_ARTIFACTS=true
 
 include $(BASE_DIRECTORY)/Common.mk
 
 
-build: s3-artifacts
-release: upload-artifacts
-
-.PHONY: images
-images: aws-iam-authenticator/images/push 
-
-.PHONY: local-images
-local-images: aws-iam-authenticator/images/amd64
-
-.PHONY: s3-artifacts
-s3-artifacts: tarballs
-	$(BASE_DIRECTORY)/release/copy_artifacts.sh $(REPO) $(OUTPUT_DIR)/tar $(RELEASE_BRANCH) $(RELEASE) $(GIT_TAG)
-	$(BUILD_LIB)/validate_artifacts.sh $(MAKE_ROOT) $(RELEASE_BRANCH) $(RELEASE) $(GIT_TAG) $(REPO)
-
-.PHONY: upload-artifacts
-upload-artifacts: s3-artifacts	
-	$(BASE_DIRECTORY)/release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET) $(REPO)
+########### DO NOT EDIT #############################
+# To update call: make add-generated-help-block
+# This is added to help document dynamic targets and support shell autocompletion
+# Run make help for a formatted help block with all targets
+include Help.mk
+########### END GENERATED ###########################

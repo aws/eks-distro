@@ -19,7 +19,8 @@ ARG TARGETARCH
 ARG TARGETOS
 ARG RELEASE_BRANCH
 
-COPY _output/LICENSES /LICENSES
+COPY _output/$RELEASE_BRANCH/bin/metrics-server/$TARGETOS-$TARGETARCH/metrics-server /metrics-server
+COPY _output/$RELEASE_BRANCH/LICENSES /LICENSES
 COPY $RELEASE_BRANCH/ATTRIBUTION.txt /ATTRIBUTION.txt
-COPY _output/bin/metrics-server/$TARGETOS-$TARGETARCH/metrics-server /metrics-server
+
 ENTRYPOINT ["/metrics-server"]

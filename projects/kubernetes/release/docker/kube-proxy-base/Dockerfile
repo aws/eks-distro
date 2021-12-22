@@ -17,7 +17,6 @@ FROM $BASE_IMAGE
 
 ARG TARGETARCH
 ARG TARGETOS
-ARG RELEASE_BRANCH
 
 # Installing dependencies listed in upstream here: https://github.com/kubernetes/release/blob/master/images/build/debian-iptables/buster/Dockerfile
 # Since we rely on AL2, necessary files from netbase are already included, and we aren't making the same optimizations as of now.
@@ -30,11 +29,6 @@ RUN yum install -y \
     yum clean all && \
     rm -rf /var/cache/yum
 
-COPY _output/LICENSES /LICENSES
-COPY $RELEASE_BRANCH/ATTRIBUTION.txt /ATTRIBUTION.txt
-COPY _output/bin/release-src/$TARGETOS-$TARGETARCH/go-runner /usr/local/bin/go-runner
-COPY _output/iptables-wrapper /usr/sbin/iptables-wrapper
-
 RUN update-alternatives \
 	--install /usr/sbin/iptables iptables /usr/sbin/iptables-wrapper 100 \
 	--slave /usr/sbin/iptables-restore iptables-restore /usr/sbin/iptables-wrapper \
@@ -43,4 +37,12 @@ RUN update-alternatives \
 	--install /usr/sbin/ip6tables ip6tables /usr/sbin/iptables-wrapper 100 \
 	--slave /usr/sbin/ip6tables-restore ip6tables-restore /usr/sbin/iptables-wrapper \
 	--slave /usr/sbin/ip6tables-save ip6tables-save /usr/sbin/iptables-wrapper
+
+ARG RELEASE_BRANCH
+
+COPY _output/$RELEASE_BRANCH/bin/release-src/$TARGETOS-$TARGETARCH/go-runner /usr/local/bin/go-runner
+COPY _output/$RELEASE_BRANCH/iptables-wrapper /usr/sbin/iptables-wrapper
+COPY _output/$RELEASE_BRANCH/LICENSES /LICENSES
+COPY $RELEASE_BRANCH/ATTRIBUTION.txt /ATTRIBUTION.txt
+
 ENTRYPOINT ["/usr/local/bin/go-runner"]

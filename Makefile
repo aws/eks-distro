@@ -6,7 +6,7 @@ ARTIFACT_BUCKET?=my-s3-bucket
 
 AWS_ACCOUNT_ID?=$(shell aws sts get-caller-identity --query Account --output text)
 AWS_REGION?=us-west-2
-IMAGE_REPO?=$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
+IMAGE_REPO?=$(if $(AWS_ACCOUNT_ID),$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com,localhost:5000)
 RELEASE_AWS_PROFILE?=default
 
 IS_BOT?=false
@@ -16,16 +16,15 @@ OPEN_PR?=true
 RELEASE_GIT_TAG?=v$(RELEASE_BRANCH)-eks-$(RELEASE)
 RELEASE_GIT_COMMIT_HASH?=$(shell git rev-parse @)
 
+ALL_PROJECTS=containernetworking_plugins coredns_coredns etcd-io_etcd kubernetes-csi_external-attacher kubernetes-csi_external-resizer \
+	kubernetes-csi_livenessprobe kubernetes-csi_node-driver-registrar kubernetes-sigs_aws-iam-authenticator kubernetes-sigs_metrics-server \
+	kubernetes-csi_external-snapshotter kubernetes-csi_external-provisioner kubernetes_release kubernetes_kubernetes
+
 ifdef MAKECMDGOALS
 TARGET=$(MAKECMDGOALS)
 else
 TARGET=$(DEFAULT_GOAL)
 endif
-
-presubmit-cleanup = \
-	if [ `echo $(1)|awk '{$1==$1};1'` == "build" ]; then \
-		make -C $(2) clean; \
-	fi
 
 .PHONY: setup
 setup:
@@ -92,16 +91,26 @@ tag:
 .PHONY: upload
 upload:
 	release/generate_crd.sh $(RELEASE_BRANCH) $(RELEASE) $(IMAGE_REPO)
-	release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET)
+	release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET) true
 	@echo 'Done' $(TARGET)
 
 .PHONY: release
-release: makes upload
+release: $(addprefix makes-release-, $(ALL_PROJECTS)) upload
 	@echo 'Done' $(TARGET)
 
+.PHONY: makes-release-%
+makes-release-%:
+	$(eval PROJECT_PATH=projects/$(subst _,/,$*))
+	$(MAKE) release -C $(PROJECT_PATH)
+
 .PHONY: binaries
-binaries: makes
+binaries: $(addprefix makes-binaries-, $(ALL_PROJECTS))
 	@echo 'Done' $(TARGET)
+
+.PHONY: makes-binaries-%
+makes-binaries-%:
+	$(eval PROJECT_PATH=projects/$(subst _,/,$*))
+	$(MAKE) binaries -C $(PROJECT_PATH)
 
 .PHONY: run-target-in-docker
 run-target-in-docker:
@@ -126,60 +135,34 @@ stop-buildkit-and-registry:
 	docker rm -v --force registry
 
 .PHONY: clean
-clean: makes
+clean: $(addprefix makes-clean-, $(ALL_PROJECTS))
 	@echo 'Done' $(TARGET)
-	rm -rf _output
 
-.PHONY: makes
-makes:
-	make -C projects/kubernetes/release $(TARGET)
-	$(call presubmit-cleanup, $(TARGET), "projects/kubernetes/release")
-	make -C projects/kubernetes/kubernetes $(TARGET)
-	$(call presubmit-cleanup, $(TARGET), "projects/kubernetes/kubernetes")
-	make -C projects/containernetworking/plugins $(TARGET)
-	$(call presubmit-cleanup, $(TARGET), "projects/containernetworking/plugins")
-	make -C projects/coredns/coredns $(TARGET)
-	$(call presubmit-cleanup, $(TARGET), "projects/coredns/coredns")
-	make -C projects/etcd-io/etcd $(TARGET)
-	$(call presubmit-cleanup, $(TARGET), "projects/etcd-io/etcd")
-	make -C projects/kubernetes-csi/external-attacher $(TARGET)
-	$(call presubmit-cleanup, $(TARGET), "projects/kubernetes-csi/external-attacher")
-	make -C projects/kubernetes-csi/external-resizer $(TARGET)
-	$(call presubmit-cleanup, $(TARGET), "projects/kubernetes-csi/external-resizer")
-	make -C projects/kubernetes-csi/livenessprobe $(TARGET)
-	$(call presubmit-cleanup, $(TARGET), "projects/kubernetes-csi/livenessprobe")
-	make -C projects/kubernetes-csi/node-driver-registrar $(TARGET)
-	$(call presubmit-cleanup, $(TARGET), "projects/kubernetes-csi/node-driver-registrar")
-	make -C projects/kubernetes-sigs/aws-iam-authenticator $(TARGET)
-	$(call presubmit-cleanup, $(TARGET), "projects/kubernetes-sigs/aws-iam-authenticator")
-	make -C projects/kubernetes-sigs/metrics-server $(TARGET)
-	$(call presubmit-cleanup, $(TARGET), "projects/kubernetes-sigs/metrics-server")
-	make -C projects/kubernetes-csi/external-snapshotter $(TARGET)
-	$(call presubmit-cleanup, $(TARGET), "projects/kubernetes-csi/external-snapshotter")
-	make -C projects/kubernetes-csi/external-provisioner $(TARGET)
-	$(call presubmit-cleanup, $(TARGET), "projects/kubernetes-csi/external-provisioner")
+.PHONY: makes-clean-%
+makes-clean-%:
+	$(eval PROJECT_PATH=projects/$(subst _,/,$*))
+	$(MAKE) clean -C $(PROJECT_PATH)
 
 .PHONY: attribution-files
-attribution-files:
-	build/update-attribution-files/make_attribution.sh projects/containernetworking/plugins
-	build/update-attribution-files/make_attribution.sh projects/coredns/coredns
-	build/update-attribution-files/make_attribution.sh projects/etcd-io/etcd
-	build/update-attribution-files/make_attribution.sh projects/kubernetes-csi/external-attacher
-	build/update-attribution-files/make_attribution.sh projects/kubernetes-csi/external-resizer
-	build/update-attribution-files/make_attribution.sh projects/kubernetes-csi/livenessprobe
-	build/update-attribution-files/make_attribution.sh projects/kubernetes-csi/node-driver-registrar
-	build/update-attribution-files/make_attribution.sh projects/kubernetes-sigs/aws-iam-authenticator
-	build/update-attribution-files/make_attribution.sh projects/kubernetes-sigs/metrics-server
-	build/update-attribution-files/make_attribution.sh projects/kubernetes-csi/external-snapshotter
-	build/update-attribution-files/make_attribution.sh projects/kubernetes-csi/external-provisioner
-	build/update-attribution-files/make_attribution.sh projects/kubernetes/release
-	build/update-attribution-files/make_attribution.sh projects/kubernetes/kubernetes
-
+attribution-files: $(addprefix attribution-files-project-, $(ALL_PROJECTS))
 	cat _output/total_summary.txt
+
+.PHONY: attribution-files-project-%
+attribution-files-project-%:
+	$(eval PROJECT_PATH=projects/$(subst _,/,$*))
+	build/update-attribution-files/make_attribution.sh $(PROJECT_PATH)
 
 .PHONY: update-attribution-files
 update-attribution-files: attribution-files
 	build/update-attribution-files/create_pr.sh
+
+.PHONY: add-generated-help-block-project-%
+add-generated-help-block-project-%:
+	$(eval PROJECT_PATH=projects/$(subst _,/,$*))
+	$(MAKE) add-generated-help-block -C $(PROJECT_PATH) RELEASE_BRANCH=1-21
+
+.PHONY: add-generated-help-block
+add-generated-help-block: $(addprefix add-generated-help-block-project-, $(ALL_PROJECTS))
 
 .PHONY: update-release-number
 update-release-number:

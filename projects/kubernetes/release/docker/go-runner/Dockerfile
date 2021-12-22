@@ -19,7 +19,7 @@ ARG TARGETARCH
 ARG TARGETOS
 ARG RELEASE_BRANCH
 
-COPY _output/LICENSES /LICENSES
+COPY _output/$RELEASE_BRANCH/LICENSES /LICENSES
 COPY $RELEASE_BRANCH/ATTRIBUTION.txt /ATTRIBUTION.txt
-COPY _output/bin/release-src/$TARGETOS-$TARGETARCH/go-runner /usr/local/bin/go-runner
+COPY _output/$RELEASE_BRANCH/bin/release-src/$TARGETOS-$TARGETARCH/go-runner /usr/local/bin/go-runner
 ENTRYPOINT ["/usr/local/bin/go-runner"]

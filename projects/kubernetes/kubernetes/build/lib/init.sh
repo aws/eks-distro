@@ -21,6 +21,5 @@ SOURCE_DIR=${MAKE_ROOT}/${REPOSITORY}
 
 OUTPUT_DIR="${MAKE_ROOT}/_output"
 
-source "${MAKE_ROOT}/build/lib/git.sh"
 source "${MAKE_ROOT}/build/lib/binaries.sh"
 source "${MAKE_ROOT}/build/lib/version.sh"

@@ -18,16 +18,17 @@ set -o nounset
 set -o pipefail
 
 PROJECT="$1"
-RELEASE_BRANCH="$2"
+IMAGE_REPO="$2"
+RELEASE_BRANCH="${3:-}"
 
 MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd -P)"
 
-$MAKE_ROOT/build/lib/run_target_docker.sh $PROJECT "clean binaries attribution checksums" $RELEASE_BRANCH
+$MAKE_ROOT/build/lib/run_target_docker.sh $PROJECT "clean binaries attribution checksums" $IMAGE_REPO $RELEASE_BRANCH
 
 PROJECT_CHECKSUM=$PROJECT/CHECKSUMS
 PROJECT_ATTRIBUTION=$PROJECT/ATTRIBUTION.txt
 
-if [ -d $MAKE_ROOT/projects/$PROJECT/$RELEASE_BRANCH ]; then
+if [[ ! -z "$RELEASE_BRANCH" ]] && [ -d $MAKE_ROOT/projects/$PROJECT/$RELEASE_BRANCH ]; then
 	PROJECT_CHECKSUM=$PROJECT/$RELEASE_BRANCH/CHECKSUMS
 	PROJECT_ATTRIBUTION=$PROJECT/$RELEASE_BRANCH/ATTRIBUTION.txt
 fi

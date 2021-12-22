@@ -17,7 +17,6 @@ FROM $BASE_IMAGE
 
 ARG TARGETARCH
 ARG TARGETOS
-ARG RELEASE_BRANCH
 
 RUN yum install -y shadow-utils && \
     adduser \
@@ -25,11 +24,14 @@ RUN yum install -y shadow-utils && \
     --no-create-home \
     --uid 10000 \
     aws-iam-authenticator && \
-    yum update -y
+    yum clean all && \
+    rm -rf /var/cache/yum
 
-COPY _output/LICENSES /LICENSES
+ARG RELEASE_BRANCH
+
+COPY --chown=aws-iam-authenticator _output/$RELEASE_BRANCH/bin/aws-iam-authenticator/$TARGETOS-$TARGETARCH/aws-iam-authenticator /
+COPY _output/$RELEASE_BRANCH/LICENSES /LICENSES
 COPY $RELEASE_BRANCH/ATTRIBUTION.txt /ATTRIBUTION.txt
-COPY _output/bin/aws-iam-authenticator/$TARGETOS-$TARGETARCH/aws-iam-authenticator /
-RUN chown aws-iam-authenticator /aws-iam-authenticator
+
 USER aws-iam-authenticator
 ENTRYPOINT ["/aws-iam-authenticator"]
