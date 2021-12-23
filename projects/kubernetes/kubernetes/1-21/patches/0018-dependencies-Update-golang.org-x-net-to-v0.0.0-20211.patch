@@ -1,10 +1,11 @@
-From 1c15f1c1d9cb9271322c2445d773783ada646f41 Mon Sep 17 00:00:00 2001
+From d3ebcf6c562bb91884c0b5050796086a3b95f045 Mon Sep 17 00:00:00 2001
 From: Carlos Panato <ctadeu@gmail.com>
 Date: Fri, 10 Dec 2021 17:56:44 +0100
 Subject: [PATCH] dependencies: Update golang.org/x/net to
  v0.0.0-20211209124913-491a49abca63
 
 Signed-off-by: Carlos Panato <ctadeu@gmail.com>
+Signed-off-by: Prow Bot <prow@amazonaws.com>
 ---
  go.mod                                        |    4 +-
  go.sum                                        |    4 +-
@@ -212,7 +213,7 @@ Signed-off-by: Carlos Panato <ctadeu@gmail.com>
  create mode 100644 vendor/golang.org/x/net/internal/socket/zsys_linux_ppc.go
 
 diff --git a/go.mod b/go.mod
-index e81fd10a52ce4..cd99d3c7dbfc5 100644
+index 9b9143e812f..04ee2ca2079 100644
 --- a/go.mod
 +++ b/go.mod
 @@ -93,7 +93,7 @@ require (
@@ -234,7 +235,7 @@ index e81fd10a52ce4..cd99d3c7dbfc5 100644
  	golang.org/x/sync => golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9
  	golang.org/x/sys => golang.org/x/sys v0.0.0-20210426230700-d19ff857e887
 diff --git a/go.sum b/go.sum
-index 96924d4117257..fca646b84c2b9 100644
+index bc3a74528e5..4addb4ea2ea 100644
 --- a/go.sum
 +++ b/go.sum
 @@ -516,8 +516,8 @@ golang.org/x/lint v0.0.0-20200302205851-738671d3881b/go.mod h1:3xt1FjdF8hUf6vQPI
@@ -249,7 +250,7 @@ index 96924d4117257..fca646b84c2b9 100644
  golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
  golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9 h1:SQFwaSi55rU7vdNs9Yr0Z324VNlrF+0wMqRXT4St8ck=
 diff --git a/staging/src/k8s.io/api/go.sum b/staging/src/k8s.io/api/go.sum
-index f6f5c3248108f..a96517ff2ed6c 100644
+index 4a6ea5c45aa..7971d9ab73d 100644
 --- a/staging/src/k8s.io/api/go.sum
 +++ b/staging/src/k8s.io/api/go.sum
 @@ -99,8 +99,8 @@ golang.org/x/net v0.0.0-20190827160401-ba9fcec4b297/go.mod h1:z5CRVTTTmAJ677TzLL
@@ -272,7 +273,7 @@ index f6f5c3248108f..a96517ff2ed6c 100644
  golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
  golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 diff --git a/staging/src/k8s.io/apiextensions-apiserver/go.sum b/staging/src/k8s.io/apiextensions-apiserver/go.sum
-index d887b660747d5..74ee6a5fd78e6 100644
+index bc295423f3f..1d1ef7f4b2d 100644
 --- a/staging/src/k8s.io/apiextensions-apiserver/go.sum
 +++ b/staging/src/k8s.io/apiextensions-apiserver/go.sum
 @@ -464,8 +464,8 @@ golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod h1:z5CRVTTTmAJ677TzLL
@@ -295,7 +296,7 @@ index d887b660747d5..74ee6a5fd78e6 100644
  golang.org/x/sys v0.0.0-20210426230700-d19ff857e887/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
  golang.org/x/term v0.0.0-20201117132131-f5c789dd3221/go.mod h1:Nr5EML6q2oocZ2LXRh80K7BxOlk5/8JxuGnuhpl+muw=
 diff --git a/staging/src/k8s.io/apimachinery/go.mod b/staging/src/k8s.io/apimachinery/go.mod
-index 40b19f828b1ce..57ef5ed6b672d 100644
+index 2127e5ae096..52b17b9056a 100644
 --- a/staging/src/k8s.io/apimachinery/go.mod
 +++ b/staging/src/k8s.io/apimachinery/go.mod
 @@ -27,9 +27,8 @@ require (
@@ -305,12 +306,12 @@ index 40b19f828b1ce..57ef5ed6b672d 100644
 -	golang.org/x/net v0.0.0-20210224082022-3d97a244fca7
 +	golang.org/x/net v0.0.0-20211209124913-491a49abca63
  	golang.org/x/sys v0.0.0-20210426230700-d19ff857e887 // indirect
--	golang.org/x/text v0.3.6 // indirect
+-	golang.org/x/text v0.3.4 // indirect
  	google.golang.org/protobuf v1.26.0 // indirect
  	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
  	gopkg.in/inf.v0 v0.9.1
 diff --git a/staging/src/k8s.io/apimachinery/go.sum b/staging/src/k8s.io/apimachinery/go.sum
-index c21d7bcd5eeb3..351ab72796650 100644
+index 0807c349f81..b62ad6c1fe8 100644
 --- a/staging/src/k8s.io/apimachinery/go.sum
 +++ b/staging/src/k8s.io/apimachinery/go.sum
 @@ -111,8 +111,8 @@ golang.org/x/net v0.0.0-20190827160401-ba9fcec4b297/go.mod h1:z5CRVTTTmAJ677TzLL
@@ -333,7 +334,7 @@ index c21d7bcd5eeb3..351ab72796650 100644
  golang.org/x/sys v0.0.0-20210426230700-d19ff857e887/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
  golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
 diff --git a/staging/src/k8s.io/apiserver/go.mod b/staging/src/k8s.io/apiserver/go.mod
-index 02e5aea1d032d..485a84dca8bb3 100644
+index 3853dd1b6d6..db299d19e89 100644
 --- a/staging/src/k8s.io/apiserver/go.mod
 +++ b/staging/src/k8s.io/apiserver/go.mod
 @@ -34,7 +34,7 @@ require (
@@ -346,7 +347,7 @@ index 02e5aea1d032d..485a84dca8bb3 100644
  	golang.org/x/sys v0.0.0-20210426230700-d19ff857e887
  	google.golang.org/genproto v0.0.0-20201110150050-8816d57aaa9a // indirect
 diff --git a/staging/src/k8s.io/apiserver/go.sum b/staging/src/k8s.io/apiserver/go.sum
-index 54495884906ba..4e74f93ae7b32 100644
+index d2e91115a25..16a8247e098 100644
 --- a/staging/src/k8s.io/apiserver/go.sum
 +++ b/staging/src/k8s.io/apiserver/go.sum
 @@ -388,8 +388,8 @@ golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod h1:z5CRVTTTmAJ677TzLL
@@ -369,7 +370,7 @@ index 54495884906ba..4e74f93ae7b32 100644
  golang.org/x/sys v0.0.0-20210426230700-d19ff857e887/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
  golang.org/x/term v0.0.0-20201117132131-f5c789dd3221/go.mod h1:Nr5EML6q2oocZ2LXRh80K7BxOlk5/8JxuGnuhpl+muw=
 diff --git a/staging/src/k8s.io/cli-runtime/go.sum b/staging/src/k8s.io/cli-runtime/go.sum
-index 90ae81eda43e5..05e536912b0fc 100644
+index 819e1cc2d29..7167e785cfb 100644
 --- a/staging/src/k8s.io/cli-runtime/go.sum
 +++ b/staging/src/k8s.io/cli-runtime/go.sum
 @@ -446,8 +446,8 @@ golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod h1:z5CRVTTTmAJ677TzLL
@@ -392,7 +393,7 @@ index 90ae81eda43e5..05e536912b0fc 100644
  golang.org/x/sys v0.0.0-20210426230700-d19ff857e887/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
  golang.org/x/term v0.0.0-20201117132131-f5c789dd3221/go.mod h1:Nr5EML6q2oocZ2LXRh80K7BxOlk5/8JxuGnuhpl+muw=
 diff --git a/staging/src/k8s.io/client-go/go.mod b/staging/src/k8s.io/client-go/go.mod
-index be5d77d2834f0..e01121b685baa 100644
+index 8b0e3edc420..766d8c348a4 100644
 --- a/staging/src/k8s.io/client-go/go.mod
 +++ b/staging/src/k8s.io/client-go/go.mod
 @@ -23,7 +23,7 @@ require (
@@ -405,7 +406,7 @@ index be5d77d2834f0..e01121b685baa 100644
  	golang.org/x/term v0.0.0-20210220032956-6a3ed077a48d
  	golang.org/x/time v0.0.0-20210220033141-f8bda1e9f3ba
 diff --git a/staging/src/k8s.io/client-go/go.sum b/staging/src/k8s.io/client-go/go.sum
-index 63e305ca75640..0be8917de6c2a 100644
+index faf522470a8..e1dd8ea29a3 100644
 --- a/staging/src/k8s.io/client-go/go.sum
 +++ b/staging/src/k8s.io/client-go/go.sum
 @@ -252,8 +252,8 @@ golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod h1:z5CRVTTTmAJ677TzLL
@@ -428,7 +429,7 @@ index 63e305ca75640..0be8917de6c2a 100644
  golang.org/x/sys v0.0.0-20210426230700-d19ff857e887/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
  golang.org/x/term v0.0.0-20201117132131-f5c789dd3221/go.mod h1:Nr5EML6q2oocZ2LXRh80K7BxOlk5/8JxuGnuhpl+muw=
 diff --git a/staging/src/k8s.io/cloud-provider/go.sum b/staging/src/k8s.io/cloud-provider/go.sum
-index 3f3eac2566c1f..8a0ffcf9b7ec3 100644
+index 580967207b8..785eb33cfd8 100644
 --- a/staging/src/k8s.io/cloud-provider/go.sum
 +++ b/staging/src/k8s.io/cloud-provider/go.sum
 @@ -462,8 +462,8 @@ golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod h1:z5CRVTTTmAJ677TzLL
@@ -451,7 +452,7 @@ index 3f3eac2566c1f..8a0ffcf9b7ec3 100644
  golang.org/x/sys v0.0.0-20210426230700-d19ff857e887/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
  golang.org/x/term v0.0.0-20201117132131-f5c789dd3221/go.mod h1:Nr5EML6q2oocZ2LXRh80K7BxOlk5/8JxuGnuhpl+muw=
 diff --git a/staging/src/k8s.io/cluster-bootstrap/go.sum b/staging/src/k8s.io/cluster-bootstrap/go.sum
-index e2e1f8434ecee..43df0d41aec48 100644
+index 6b0a156b8ce..b2fd8803e6c 100644
 --- a/staging/src/k8s.io/cluster-bootstrap/go.sum
 +++ b/staging/src/k8s.io/cluster-bootstrap/go.sum
 @@ -100,8 +100,8 @@ golang.org/x/net v0.0.0-20190827160401-ba9fcec4b297/go.mod h1:z5CRVTTTmAJ677TzLL
@@ -474,7 +475,7 @@ index e2e1f8434ecee..43df0d41aec48 100644
  golang.org/x/term v0.0.0-20201117132131-f5c789dd3221/go.mod h1:Nr5EML6q2oocZ2LXRh80K7BxOlk5/8JxuGnuhpl+muw=
  golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
 diff --git a/staging/src/k8s.io/code-generator/examples/go.sum b/staging/src/k8s.io/code-generator/examples/go.sum
-index 64a9e78cbad68..b1d27143c1750 100644
+index 04bf97d89b9..5fc6fcc5f77 100644
 --- a/staging/src/k8s.io/code-generator/examples/go.sum
 +++ b/staging/src/k8s.io/code-generator/examples/go.sum
 @@ -244,8 +244,8 @@ golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod h1:z5CRVTTTmAJ677TzLL
@@ -497,7 +498,7 @@ index 64a9e78cbad68..b1d27143c1750 100644
  golang.org/x/sys v0.0.0-20210426230700-d19ff857e887/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
  golang.org/x/term v0.0.0-20201117132131-f5c789dd3221/go.mod h1:Nr5EML6q2oocZ2LXRh80K7BxOlk5/8JxuGnuhpl+muw=
 diff --git a/staging/src/k8s.io/code-generator/go.mod b/staging/src/k8s.io/code-generator/go.mod
-index d23baaf1e5dab..01f374e5adad2 100644
+index 2cf774a5e90..fcb313d5bbb 100644
 --- a/staging/src/k8s.io/code-generator/go.mod
 +++ b/staging/src/k8s.io/code-generator/go.mod
 @@ -18,9 +18,8 @@ require (
@@ -507,12 +508,12 @@ index d23baaf1e5dab..01f374e5adad2 100644
 -	golang.org/x/net v0.0.0-20210224082022-3d97a244fca7 // indirect
 +	golang.org/x/net v0.0.0-20211209124913-491a49abca63 // indirect
  	golang.org/x/sys v0.0.0-20210426230700-d19ff857e887 // indirect
--	golang.org/x/text v0.3.6 // indirect
+-	golang.org/x/text v0.3.4 // indirect
  	golang.org/x/tools v0.1.0 // indirect
  	google.golang.org/protobuf v1.26.0 // indirect
  	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 diff --git a/staging/src/k8s.io/code-generator/go.sum b/staging/src/k8s.io/code-generator/go.sum
-index c194f5980815b..8709a3226316f 100644
+index bea8fa88722..21c55f58ba9 100644
 --- a/staging/src/k8s.io/code-generator/go.sum
 +++ b/staging/src/k8s.io/code-generator/go.sum
 @@ -108,8 +108,8 @@ golang.org/x/net v0.0.0-20190827160401-ba9fcec4b297/go.mod h1:z5CRVTTTmAJ677TzLL
@@ -535,7 +536,7 @@ index c194f5980815b..8709a3226316f 100644
  golang.org/x/sys v0.0.0-20210426230700-d19ff857e887/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
  golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
 diff --git a/staging/src/k8s.io/component-base/go.sum b/staging/src/k8s.io/component-base/go.sum
-index e0b6e076ee199..d9eed2370d410 100644
+index fa46c6908ce..140d752df46 100644
 --- a/staging/src/k8s.io/component-base/go.sum
 +++ b/staging/src/k8s.io/component-base/go.sum
 @@ -299,8 +299,8 @@ golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod h1:z5CRVTTTmAJ677TzLL
@@ -558,7 +559,7 @@ index e0b6e076ee199..d9eed2370d410 100644
  golang.org/x/sys v0.0.0-20210426230700-d19ff857e887/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
  golang.org/x/term v0.0.0-20201117132131-f5c789dd3221/go.mod h1:Nr5EML6q2oocZ2LXRh80K7BxOlk5/8JxuGnuhpl+muw=
 diff --git a/staging/src/k8s.io/component-helpers/go.sum b/staging/src/k8s.io/component-helpers/go.sum
-index 10e0e295155dc..286e347aefbbe 100644
+index ebc31aade5a..6253e46a2f2 100644
 --- a/staging/src/k8s.io/component-helpers/go.sum
 +++ b/staging/src/k8s.io/component-helpers/go.sum
 @@ -233,8 +233,8 @@ golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod h1:z5CRVTTTmAJ677TzLL
@@ -581,7 +582,7 @@ index 10e0e295155dc..286e347aefbbe 100644
  golang.org/x/sys v0.0.0-20210426230700-d19ff857e887/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
  golang.org/x/term v0.0.0-20201117132131-f5c789dd3221/go.mod h1:Nr5EML6q2oocZ2LXRh80K7BxOlk5/8JxuGnuhpl+muw=
 diff --git a/staging/src/k8s.io/controller-manager/go.sum b/staging/src/k8s.io/controller-manager/go.sum
-index df8960f2838ed..d4902aa0ba095 100644
+index db448a0a6af..a30eab2f4d2 100644
 --- a/staging/src/k8s.io/controller-manager/go.sum
 +++ b/staging/src/k8s.io/controller-manager/go.sum
 @@ -565,8 +565,8 @@ golang.org/x/net v0.0.0-20200301022130-244492dfa37a/go.mod h1:z5CRVTTTmAJ677TzLL
@@ -604,7 +605,7 @@ index df8960f2838ed..d4902aa0ba095 100644
  golang.org/x/sys v0.0.0-20210426230700-d19ff857e887/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
  golang.org/x/term v0.0.0-20201117132131-f5c789dd3221/go.mod h1:Nr5EML6q2oocZ2LXRh80K7BxOlk5/8JxuGnuhpl+muw=
 diff --git a/staging/src/k8s.io/cri-api/go.mod b/staging/src/k8s.io/cri-api/go.mod
-index 042eeed717861..f02c95e45fff0 100644
+index 0d7910ce59f..f02c95e45ff 100644
 --- a/staging/src/k8s.io/cri-api/go.mod
 +++ b/staging/src/k8s.io/cri-api/go.mod
 @@ -10,9 +10,8 @@ require (
@@ -614,12 +615,12 @@ index 042eeed717861..f02c95e45fff0 100644
 -	golang.org/x/net v0.0.0-20210224082022-3d97a244fca7 // indirect
 +	golang.org/x/net v0.0.0-20211209124913-491a49abca63 // indirect
  	golang.org/x/sys v0.0.0-20210426230700-d19ff857e887 // indirect
--	golang.org/x/text v0.3.6 // indirect
+-	golang.org/x/text v0.3.4 // indirect
  	google.golang.org/genproto v0.0.0-20201110150050-8816d57aaa9a // indirect
  	google.golang.org/grpc v1.27.1
  	google.golang.org/protobuf v1.26.0 // indirect
 diff --git a/staging/src/k8s.io/cri-api/go.sum b/staging/src/k8s.io/cri-api/go.sum
-index 3625b01e4e765..b2baf3a5a8edf 100644
+index 6398227e084..8dc18670c0a 100644
 --- a/staging/src/k8s.io/cri-api/go.sum
 +++ b/staging/src/k8s.io/cri-api/go.sum
 @@ -62,8 +62,8 @@ golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3/go.mod h1:t9HGtf8HONx5eT2rtn
@@ -642,7 +643,7 @@ index 3625b01e4e765..b2baf3a5a8edf 100644
  golang.org/x/sys v0.0.0-20210426230700-d19ff857e887/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
  golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
 diff --git a/staging/src/k8s.io/csi-translation-lib/go.sum b/staging/src/k8s.io/csi-translation-lib/go.sum
-index f71aac274257f..185bf0d2a37ca 100644
+index a4cf2cf0290..1edb1cbe8f5 100644
 --- a/staging/src/k8s.io/csi-translation-lib/go.sum
 +++ b/staging/src/k8s.io/csi-translation-lib/go.sum
 @@ -99,8 +99,8 @@ golang.org/x/net v0.0.0-20190827160401-ba9fcec4b297/go.mod h1:z5CRVTTTmAJ677TzLL
@@ -665,7 +666,7 @@ index f71aac274257f..185bf0d2a37ca 100644
  golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
  golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 diff --git a/staging/src/k8s.io/kube-aggregator/go.mod b/staging/src/k8s.io/kube-aggregator/go.mod
-index cb78c4e9f86be..e134512e02b12 100644
+index e0c86a353f0..80c6ba894f0 100644
 --- a/staging/src/k8s.io/kube-aggregator/go.mod
 +++ b/staging/src/k8s.io/kube-aggregator/go.mod
 @@ -13,7 +13,7 @@ require (
@@ -678,10 +679,10 @@ index cb78c4e9f86be..e134512e02b12 100644
  	k8s.io/apimachinery v0.0.0
  	k8s.io/apiserver v0.0.0
 diff --git a/staging/src/k8s.io/kube-aggregator/go.sum b/staging/src/k8s.io/kube-aggregator/go.sum
-index 64bb83176c222..1e86700114a1f 100644
+index 0fbe69a48ef..9fa9b3aa6d8 100644
 --- a/staging/src/k8s.io/kube-aggregator/go.sum
 +++ b/staging/src/k8s.io/kube-aggregator/go.sum
-@@ -463,8 +463,8 @@ golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod h1:z5CRVTTTmAJ677TzLL
+@@ -465,8 +465,8 @@ golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod h1:z5CRVTTTmAJ677TzLL
  golang.org/x/net v0.0.0-20200301022130-244492dfa37a/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
  golang.org/x/net v0.0.0-20200324143707-d3edc9973b7e/go.mod h1:qpuaurCH72eLCgpAm/N6yyVIVM9cpaDIP3A8BGJEC5A=
  golang.org/x/net v0.0.0-20201021035429-f5854403a974/go.mod h1:sp8m0HH+o8qH0wwXwYZr8TS3Oi6o0r6Gce1SSxlDquU=
@@ -692,7 +693,7 @@ index 64bb83176c222..1e86700114a1f 100644
  golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
  golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
  golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
-@@ -514,6 +514,7 @@ golang.org/x/sys v0.0.0-20200831180312-196b9ba8737a/go.mod h1:h1NjWce9XRLGQEsW7w
+@@ -516,6 +516,7 @@ golang.org/x/sys v0.0.0-20200831180312-196b9ba8737a/go.mod h1:h1NjWce9XRLGQEsW7w
  golang.org/x/sys v0.0.0-20200930185726-fdedc70b468f/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
  golang.org/x/sys v0.0.0-20201119102817-f84b799fce68/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
  golang.org/x/sys v0.0.0-20210119212857-b64e53b001e4/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
@@ -701,7 +702,7 @@ index 64bb83176c222..1e86700114a1f 100644
  golang.org/x/sys v0.0.0-20210426230700-d19ff857e887/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
  golang.org/x/term v0.0.0-20201117132131-f5c789dd3221/go.mod h1:Nr5EML6q2oocZ2LXRh80K7BxOlk5/8JxuGnuhpl+muw=
 diff --git a/staging/src/k8s.io/kube-controller-manager/go.sum b/staging/src/k8s.io/kube-controller-manager/go.sum
-index aa36f50db22ce..0b07375994e8d 100644
+index 3890dc26744..eabda122315 100644
 --- a/staging/src/k8s.io/kube-controller-manager/go.sum
 +++ b/staging/src/k8s.io/kube-controller-manager/go.sum
 @@ -402,8 +402,8 @@ golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod h1:z5CRVTTTmAJ677TzLL
@@ -724,7 +725,7 @@ index aa36f50db22ce..0b07375994e8d 100644
  golang.org/x/term v0.0.0-20201117132131-f5c789dd3221/go.mod h1:Nr5EML6q2oocZ2LXRh80K7BxOlk5/8JxuGnuhpl+muw=
  golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
 diff --git a/staging/src/k8s.io/kube-proxy/go.sum b/staging/src/k8s.io/kube-proxy/go.sum
-index 4beb1533dc105..89b38e0cbb8b4 100644
+index cbb2632a279..f9b29c84d4e 100644
 --- a/staging/src/k8s.io/kube-proxy/go.sum
 +++ b/staging/src/k8s.io/kube-proxy/go.sum
 @@ -280,8 +280,8 @@ golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod h1:z5CRVTTTmAJ677TzLL
@@ -747,7 +748,7 @@ index 4beb1533dc105..89b38e0cbb8b4 100644
  golang.org/x/term v0.0.0-20201117132131-f5c789dd3221/go.mod h1:Nr5EML6q2oocZ2LXRh80K7BxOlk5/8JxuGnuhpl+muw=
  golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
 diff --git a/staging/src/k8s.io/kube-scheduler/go.sum b/staging/src/k8s.io/kube-scheduler/go.sum
-index 4beb1533dc105..89b38e0cbb8b4 100644
+index cbb2632a279..f9b29c84d4e 100644
 --- a/staging/src/k8s.io/kube-scheduler/go.sum
 +++ b/staging/src/k8s.io/kube-scheduler/go.sum
 @@ -280,8 +280,8 @@ golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod h1:z5CRVTTTmAJ677TzLL
@@ -770,7 +771,7 @@ index 4beb1533dc105..89b38e0cbb8b4 100644
  golang.org/x/term v0.0.0-20201117132131-f5c789dd3221/go.mod h1:Nr5EML6q2oocZ2LXRh80K7BxOlk5/8JxuGnuhpl+muw=
  golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
 diff --git a/staging/src/k8s.io/kubectl/go.sum b/staging/src/k8s.io/kubectl/go.sum
-index 3bb7d1e661f8a..c4f9d72ef914b 100644
+index 5517cb89abc..0e339416f64 100644
 --- a/staging/src/k8s.io/kubectl/go.sum
 +++ b/staging/src/k8s.io/kubectl/go.sum
 @@ -516,8 +516,8 @@ golang.org/x/net v0.0.0-20200301022130-244492dfa37a/go.mod h1:z5CRVTTTmAJ677TzLL
@@ -793,7 +794,7 @@ index 3bb7d1e661f8a..c4f9d72ef914b 100644
  golang.org/x/sys v0.0.0-20210426230700-d19ff857e887/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
  golang.org/x/term v0.0.0-20201117132131-f5c789dd3221/go.mod h1:Nr5EML6q2oocZ2LXRh80K7BxOlk5/8JxuGnuhpl+muw=
 diff --git a/staging/src/k8s.io/kubelet/go.mod b/staging/src/k8s.io/kubelet/go.mod
-index 1c8dd64907cc6..f96edebda926d 100644
+index 1c8dd64907c..f96edebda92 100644
 --- a/staging/src/k8s.io/kubelet/go.mod
 +++ b/staging/src/k8s.io/kubelet/go.mod
 @@ -6,7 +6,7 @@ go 1.16
@@ -806,7 +807,7 @@ index 1c8dd64907cc6..f96edebda926d 100644
  	google.golang.org/grpc v1.27.1
  	k8s.io/api v0.0.0
 diff --git a/staging/src/k8s.io/kubelet/go.sum b/staging/src/k8s.io/kubelet/go.sum
-index 94b96e6564eb3..63c5807709ae2 100644
+index c10ce3203bf..925b38c000b 100644
 --- a/staging/src/k8s.io/kubelet/go.sum
 +++ b/staging/src/k8s.io/kubelet/go.sum
 @@ -283,8 +283,8 @@ golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod h1:z5CRVTTTmAJ677TzLL
@@ -829,7 +830,7 @@ index 94b96e6564eb3..63c5807709ae2 100644
  golang.org/x/sys v0.0.0-20210426230700-d19ff857e887/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
  golang.org/x/term v0.0.0-20201117132131-f5c789dd3221/go.mod h1:Nr5EML6q2oocZ2LXRh80K7BxOlk5/8JxuGnuhpl+muw=
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/go.sum b/staging/src/k8s.io/legacy-cloud-providers/go.sum
-index 9f9ae5eb32022..5f855a38c5e40 100644
+index db5bc448807..9cbaa487ac2 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/go.sum
 +++ b/staging/src/k8s.io/legacy-cloud-providers/go.sum
 @@ -465,8 +465,8 @@ golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod h1:z5CRVTTTmAJ677TzLL
@@ -852,7 +853,7 @@ index 9f9ae5eb32022..5f855a38c5e40 100644
  golang.org/x/sys v0.0.0-20210426230700-d19ff857e887/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
  golang.org/x/term v0.0.0-20201117132131-f5c789dd3221/go.mod h1:Nr5EML6q2oocZ2LXRh80K7BxOlk5/8JxuGnuhpl+muw=
 diff --git a/staging/src/k8s.io/metrics/go.sum b/staging/src/k8s.io/metrics/go.sum
-index 0d9871ca7ea0b..f08edab8c2b8d 100644
+index c62de1db1af..2a3de691eab 100644
 --- a/staging/src/k8s.io/metrics/go.sum
 +++ b/staging/src/k8s.io/metrics/go.sum
 @@ -247,8 +247,8 @@ golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod h1:z5CRVTTTmAJ677TzLL
@@ -875,7 +876,7 @@ index 0d9871ca7ea0b..f08edab8c2b8d 100644
  golang.org/x/sys v0.0.0-20210426230700-d19ff857e887/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
  golang.org/x/term v0.0.0-20201117132131-f5c789dd3221/go.mod h1:Nr5EML6q2oocZ2LXRh80K7BxOlk5/8JxuGnuhpl+muw=
 diff --git a/staging/src/k8s.io/sample-apiserver/go.sum b/staging/src/k8s.io/sample-apiserver/go.sum
-index abf9328fa185e..1a5bb9f6f1349 100644
+index 1d5b56dbee0..6e4137dc4cb 100644
 --- a/staging/src/k8s.io/sample-apiserver/go.sum
 +++ b/staging/src/k8s.io/sample-apiserver/go.sum
 @@ -462,8 +462,8 @@ golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod h1:z5CRVTTTmAJ677TzLL
@@ -898,7 +899,7 @@ index abf9328fa185e..1a5bb9f6f1349 100644
  golang.org/x/sys v0.0.0-20210426230700-d19ff857e887/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
  golang.org/x/term v0.0.0-20201117132131-f5c789dd3221/go.mod h1:Nr5EML6q2oocZ2LXRh80K7BxOlk5/8JxuGnuhpl+muw=
 diff --git a/staging/src/k8s.io/sample-cli-plugin/go.sum b/staging/src/k8s.io/sample-cli-plugin/go.sum
-index 90ae81eda43e5..05e536912b0fc 100644
+index 819e1cc2d29..7167e785cfb 100644
 --- a/staging/src/k8s.io/sample-cli-plugin/go.sum
 +++ b/staging/src/k8s.io/sample-cli-plugin/go.sum
 @@ -446,8 +446,8 @@ golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod h1:z5CRVTTTmAJ677TzLL
@@ -921,7 +922,7 @@ index 90ae81eda43e5..05e536912b0fc 100644
  golang.org/x/sys v0.0.0-20210426230700-d19ff857e887/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
  golang.org/x/term v0.0.0-20201117132131-f5c789dd3221/go.mod h1:Nr5EML6q2oocZ2LXRh80K7BxOlk5/8JxuGnuhpl+muw=
 diff --git a/staging/src/k8s.io/sample-controller/go.sum b/staging/src/k8s.io/sample-controller/go.sum
-index f284ebcc8af06..590058b77bd93 100644
+index f1ac7cb87be..8abce3dfaa2 100644
 --- a/staging/src/k8s.io/sample-controller/go.sum
 +++ b/staging/src/k8s.io/sample-controller/go.sum
 @@ -251,8 +251,8 @@ golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod h1:z5CRVTTTmAJ677TzLL
@@ -944,7 +945,7 @@ index f284ebcc8af06..590058b77bd93 100644
  golang.org/x/sys v0.0.0-20210426230700-d19ff857e887/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
  golang.org/x/term v0.0.0-20201117132131-f5c789dd3221/go.mod h1:Nr5EML6q2oocZ2LXRh80K7BxOlk5/8JxuGnuhpl+muw=
 diff --git a/vendor/golang.org/x/net/html/parse.go b/vendor/golang.org/x/net/html/parse.go
-index f91466f7cd745..038941d708522 100644
+index f91466f7cd7..038941d7085 100644
 --- a/vendor/golang.org/x/net/html/parse.go
 +++ b/vendor/golang.org/x/net/html/parse.go
 @@ -663,6 +663,24 @@ func inHeadIM(p *parser) bool {
@@ -993,7 +994,7 @@ index f91466f7cd745..038941d708522 100644
  
  // Section 12.2.6.5
 diff --git a/vendor/golang.org/x/net/http/httpguts/httplex.go b/vendor/golang.org/x/net/http/httpguts/httplex.go
-index e7de24ee64efc..c79aa73f28bb9 100644
+index e7de24ee64e..c79aa73f28b 100644
 --- a/vendor/golang.org/x/net/http/httpguts/httplex.go
 +++ b/vendor/golang.org/x/net/http/httpguts/httplex.go
 @@ -137,11 +137,13 @@ func trimOWS(x string) string {
@@ -1015,7 +1016,7 @@ index e7de24ee64efc..c79aa73f28bb9 100644
  
  // lowerASCII returns the ASCII lowercase version of b.
 diff --git a/vendor/golang.org/x/net/http2/Dockerfile b/vendor/golang.org/x/net/http2/Dockerfile
-index 53fc525797445..8512245952be2 100644
+index 53fc5257974..8512245952b 100644
 --- a/vendor/golang.org/x/net/http2/Dockerfile
 +++ b/vendor/golang.org/x/net/http2/Dockerfile
 @@ -38,7 +38,7 @@ RUN make
@@ -1029,7 +1030,7 @@ index 53fc525797445..8512245952be2 100644
  RUN ./configure --with-ssl --with-nghttp2=/usr/local
 diff --git a/vendor/golang.org/x/net/http2/README b/vendor/golang.org/x/net/http2/README
 deleted file mode 100644
-index 360d5aa379057..0000000000000
+index 360d5aa3790..00000000000
 --- a/vendor/golang.org/x/net/http2/README
 +++ /dev/null
 @@ -1,20 +0,0 @@
@@ -1055,7 +1056,7 @@ index 360d5aa379057..0000000000000
 -Bugs:         https://golang.org/issue/new?title=x/net/http2:+
 diff --git a/vendor/golang.org/x/net/http2/ascii.go b/vendor/golang.org/x/net/http2/ascii.go
 new file mode 100644
-index 0000000000000..17caa205869fd
+index 00000000000..17caa205869
 --- /dev/null
 +++ b/vendor/golang.org/x/net/http2/ascii.go
 @@ -0,0 +1,53 @@
@@ -1113,7 +1114,7 @@ index 0000000000000..17caa205869fd
 +	return strings.ToLower(s), true
 +}
 diff --git a/vendor/golang.org/x/net/http2/client_conn_pool.go b/vendor/golang.org/x/net/http2/client_conn_pool.go
-index 3a67636fe252f..c936843eafa15 100644
+index 3a67636fe25..c936843eafa 100644
 --- a/vendor/golang.org/x/net/http2/client_conn_pool.go
 +++ b/vendor/golang.org/x/net/http2/client_conn_pool.go
 @@ -7,13 +7,21 @@
@@ -1314,7 +1315,7 @@ index 3a67636fe252f..c936843eafa15 100644
 +	return call.ctx.Err() != nil
 +}
 diff --git a/vendor/golang.org/x/net/http2/errors.go b/vendor/golang.org/x/net/http2/errors.go
-index 71f2c4631787e..2663e5d287eed 100644
+index 71f2c463178..2663e5d287e 100644
 --- a/vendor/golang.org/x/net/http2/errors.go
 +++ b/vendor/golang.org/x/net/http2/errors.go
 @@ -53,6 +53,13 @@ func (e ErrCode) String() string {
@@ -1344,7 +1345,7 @@ index 71f2c4631787e..2663e5d287eed 100644
  	return StreamError{StreamID: id, Code: code}
  }
 diff --git a/vendor/golang.org/x/net/http2/frame.go b/vendor/golang.org/x/net/http2/frame.go
-index 514c126c5f8f2..96a7479052419 100644
+index 514c126c5f8..96a74790524 100644
 --- a/vendor/golang.org/x/net/http2/frame.go
 +++ b/vendor/golang.org/x/net/http2/frame.go
 @@ -122,7 +122,7 @@ var flagName = map[FrameType]map[Flags]string{
@@ -1639,7 +1640,7 @@ index 514c126c5f8f2..96a7479052419 100644
  	pp.headerFragBuf = p[:len(p)-int(padLength)]
 diff --git a/vendor/golang.org/x/net/http2/go115.go b/vendor/golang.org/x/net/http2/go115.go
 new file mode 100644
-index 0000000000000..908af1ab93c5c
+index 00000000000..908af1ab93c
 --- /dev/null
 +++ b/vendor/golang.org/x/net/http2/go115.go
 @@ -0,0 +1,27 @@
@@ -1671,7 +1672,7 @@ index 0000000000000..908af1ab93c5c
 +	return tlsCn, nil
 +}
 diff --git a/vendor/golang.org/x/net/http2/headermap.go b/vendor/golang.org/x/net/http2/headermap.go
-index c3ff3fa1c78c0..9e12941da4c3d 100644
+index c3ff3fa1c78..9e12941da4c 100644
 --- a/vendor/golang.org/x/net/http2/headermap.go
 +++ b/vendor/golang.org/x/net/http2/headermap.go
 @@ -6,7 +6,6 @@ package http2
@@ -1697,7 +1698,7 @@ index c3ff3fa1c78c0..9e12941da4c3d 100644
 +	return asciiToLower(v)
  }
 diff --git a/vendor/golang.org/x/net/http2/hpack/huffman.go b/vendor/golang.org/x/net/http2/hpack/huffman.go
-index a1ab2f0567948..fe0b84ccd467c 100644
+index a1ab2f05679..fe0b84ccd46 100644
 --- a/vendor/golang.org/x/net/http2/hpack/huffman.go
 +++ b/vendor/golang.org/x/net/http2/hpack/huffman.go
 @@ -140,25 +140,29 @@ func buildRootHuffmanNode() {
@@ -1749,7 +1750,7 @@ index a1ab2f0567948..fe0b84ccd467c 100644
  
 diff --git a/vendor/golang.org/x/net/http2/not_go115.go b/vendor/golang.org/x/net/http2/not_go115.go
 new file mode 100644
-index 0000000000000..e6c04cf7ac75c
+index 00000000000..e6c04cf7ac7
 --- /dev/null
 +++ b/vendor/golang.org/x/net/http2/not_go115.go
 @@ -0,0 +1,31 @@
@@ -1785,7 +1786,7 @@ index 0000000000000..e6c04cf7ac75c
 +	return cn, nil
 +}
 diff --git a/vendor/golang.org/x/net/http2/pipe.go b/vendor/golang.org/x/net/http2/pipe.go
-index 2a5399ec4a045..c15b8a7719b5c 100644
+index 2a5399ec4a0..c15b8a7719b 100644
 --- a/vendor/golang.org/x/net/http2/pipe.go
 +++ b/vendor/golang.org/x/net/http2/pipe.go
 @@ -30,6 +30,17 @@ type pipeBuffer interface {
@@ -1807,7 +1808,7 @@ index 2a5399ec4a045..c15b8a7719b5c 100644
  	p.mu.Lock()
  	defer p.mu.Unlock()
 diff --git a/vendor/golang.org/x/net/http2/server.go b/vendor/golang.org/x/net/http2/server.go
-index 2aa859f76f9f3..d219dc4c76df8 100644
+index 2aa859f76f9..d219dc4c76d 100644
 --- a/vendor/golang.org/x/net/http2/server.go
 +++ b/vendor/golang.org/x/net/http2/server.go
 @@ -130,6 +130,12 @@ type Server struct {
@@ -2298,7 +2299,7 @@ index 2aa859f76f9f3..d219dc4c76df8 100644
 +	return err
 +}
 diff --git a/vendor/golang.org/x/net/http2/transport.go b/vendor/golang.org/x/net/http2/transport.go
-index 7688d72c39602..f135b0f75189c 100644
+index 7688d72c396..f135b0f7518 100644
 --- a/vendor/golang.org/x/net/http2/transport.go
 +++ b/vendor/golang.org/x/net/http2/transport.go
 @@ -24,6 +24,7 @@ import (
@@ -4703,7 +4704,7 @@ index 7688d72c39602..f135b0f75189c 100644
  // connection for a single request and then close the connection.
  func isConnectionCloseRequest(req *http.Request) bool {
 diff --git a/vendor/golang.org/x/net/http2/write.go b/vendor/golang.org/x/net/http2/write.go
-index 3849bc2632ef2..33f61398a1236 100644
+index 3849bc2632e..33f61398a12 100644
 --- a/vendor/golang.org/x/net/http2/write.go
 +++ b/vendor/golang.org/x/net/http2/write.go
 @@ -341,7 +341,12 @@ func encodeHeaders(enc *hpack.Encoder, h http.Header, keys []string) {
@@ -4721,7 +4722,7 @@ index 3849bc2632ef2..33f61398a1236 100644
  			// Skip it as backup paranoia. Per
  			// golang.org/issue/14048, these should
 diff --git a/vendor/golang.org/x/net/http2/writesched.go b/vendor/golang.org/x/net/http2/writesched.go
-index f24d2b1e7d4ae..c7cd0017392ef 100644
+index f24d2b1e7d4..c7cd0017392 100644
 --- a/vendor/golang.org/x/net/http2/writesched.go
 +++ b/vendor/golang.org/x/net/http2/writesched.go
 @@ -32,7 +32,8 @@ type WriteScheduler interface {
@@ -4743,7 +4744,7 @@ index f24d2b1e7d4ae..c7cd0017392ef 100644
  
  	// done, if non-nil, must be a buffered channel with space for
 diff --git a/vendor/golang.org/x/net/http2/writesched_random.go b/vendor/golang.org/x/net/http2/writesched_random.go
-index 9a7b9e581c1ef..f2e55e05ce908 100644
+index 9a7b9e581c1..f2e55e05ce9 100644
 --- a/vendor/golang.org/x/net/http2/writesched_random.go
 +++ b/vendor/golang.org/x/net/http2/writesched_random.go
 @@ -45,11 +45,11 @@ func (ws *randomWriteScheduler) AdjustStream(streamID uint32, priority PriorityP
@@ -4771,7 +4772,7 @@ index 9a7b9e581c1ef..f2e55e05ce908 100644
  	}
 diff --git a/vendor/golang.org/x/net/idna/go118.go b/vendor/golang.org/x/net/idna/go118.go
 new file mode 100644
-index 0000000000000..c5c4338dbed47
+index 00000000000..c5c4338dbed
 --- /dev/null
 +++ b/vendor/golang.org/x/net/idna/go118.go
 @@ -0,0 +1,14 @@
@@ -4790,7 +4791,7 @@ index 0000000000000..c5c4338dbed47
 +// https://golang.org/issue/47510
 +const transitionalLookup = false
 diff --git a/vendor/golang.org/x/net/idna/idna10.0.0.go b/vendor/golang.org/x/net/idna/idna10.0.0.go
-index 7e69ee1b22edb..64ccf85febb66 100644
+index 7e69ee1b22e..64ccf85febb 100644
 --- a/vendor/golang.org/x/net/idna/idna10.0.0.go
 +++ b/vendor/golang.org/x/net/idna/idna10.0.0.go
 @@ -59,23 +59,22 @@ type Option func(*options)
@@ -5003,7 +5004,7 @@ index 7e69ee1b22edb..64ccf85febb66 100644
  	v, sz := trie.lookupString(s)
  	x := info(v)
 diff --git a/vendor/golang.org/x/net/idna/idna9.0.0.go b/vendor/golang.org/x/net/idna/idna9.0.0.go
-index 7c7456374c132..aae6aac872b31 100644
+index 7c7456374c1..aae6aac872b 100644
 --- a/vendor/golang.org/x/net/idna/idna9.0.0.go
 +++ b/vendor/golang.org/x/net/idna/idna9.0.0.go
 @@ -58,23 +58,22 @@ type Option func(*options)
@@ -5208,7 +5209,7 @@ index 7c7456374c132..aae6aac872b31 100644
  	x := info(v)
 diff --git a/vendor/golang.org/x/net/idna/pre_go118.go b/vendor/golang.org/x/net/idna/pre_go118.go
 new file mode 100644
-index 0000000000000..3aaccab1c5a0e
+index 00000000000..3aaccab1c5a
 --- /dev/null
 +++ b/vendor/golang.org/x/net/idna/pre_go118.go
 @@ -0,0 +1,12 @@
@@ -5225,7 +5226,7 @@ index 0000000000000..3aaccab1c5a0e
 +
 +const transitionalLookup = true
 diff --git a/vendor/golang.org/x/net/idna/punycode.go b/vendor/golang.org/x/net/idna/punycode.go
-index 02c7d59af3b41..e8e3ac11a94b1 100644
+index 02c7d59af3b..e8e3ac11a94 100644
 --- a/vendor/golang.org/x/net/idna/punycode.go
 +++ b/vendor/golang.org/x/net/idna/punycode.go
 @@ -49,6 +49,7 @@ func decode(encoded string) (string, error) {
@@ -5324,7 +5325,7 @@ index 02c7d59af3b41..e8e3ac11a94b1 100644
  	switch {
  	case '0' <= x && x <= '9':
 diff --git a/vendor/golang.org/x/net/internal/socket/cmsghdr_linux_32bit.go b/vendor/golang.org/x/net/internal/socket/cmsghdr_linux_32bit.go
-index 623cf30f4cc22..4936e8a6f3b59 100644
+index 623cf30f4cc..4936e8a6f3b 100644
 --- a/vendor/golang.org/x/net/internal/socket/cmsghdr_linux_32bit.go
 +++ b/vendor/golang.org/x/net/internal/socket/cmsghdr_linux_32bit.go
 @@ -2,8 +2,8 @@
@@ -5340,7 +5341,7 @@ index 623cf30f4cc22..4936e8a6f3b59 100644
  package socket
 diff --git a/vendor/golang.org/x/net/internal/socket/complete_dontwait.go b/vendor/golang.org/x/net/internal/socket/complete_dontwait.go
 new file mode 100644
-index 0000000000000..5b1d50ae72575
+index 00000000000..5b1d50ae725
 --- /dev/null
 +++ b/vendor/golang.org/x/net/internal/socket/complete_dontwait.go
 @@ -0,0 +1,26 @@
@@ -5372,7 +5373,7 @@ index 0000000000000..5b1d50ae72575
 +}
 diff --git a/vendor/golang.org/x/net/internal/socket/complete_nodontwait.go b/vendor/golang.org/x/net/internal/socket/complete_nodontwait.go
 new file mode 100644
-index 0000000000000..be6340958351d
+index 00000000000..be634095835
 --- /dev/null
 +++ b/vendor/golang.org/x/net/internal/socket/complete_nodontwait.go
 @@ -0,0 +1,22 @@
@@ -5399,7 +5400,7 @@ index 0000000000000..be6340958351d
 +	return true
 +}
 diff --git a/vendor/golang.org/x/net/internal/socket/empty.s b/vendor/golang.org/x/net/internal/socket/empty.s
-index bff0231c7d57e..90ab4ca3d8e6f 100644
+index bff0231c7d5..90ab4ca3d8e 100644
 --- a/vendor/golang.org/x/net/internal/socket/empty.s
 +++ b/vendor/golang.org/x/net/internal/socket/empty.s
 @@ -2,6 +2,7 @@
@@ -5411,7 +5412,7 @@ index bff0231c7d57e..90ab4ca3d8e6f 100644
  
  // This exists solely so we can linkname in symbols from syscall.
 diff --git a/vendor/golang.org/x/net/internal/socket/iovec_32bit.go b/vendor/golang.org/x/net/internal/socket/iovec_32bit.go
-index 1f42d034dcb8e..2b8fbb3f3d080 100644
+index 1f42d034dcb..2b8fbb3f3d0 100644
 --- a/vendor/golang.org/x/net/internal/socket/iovec_32bit.go
 +++ b/vendor/golang.org/x/net/internal/socket/iovec_32bit.go
 @@ -2,8 +2,8 @@
@@ -5426,7 +5427,7 @@ index 1f42d034dcb8e..2b8fbb3f3d080 100644
  
  package socket
 diff --git a/vendor/golang.org/x/net/internal/socket/mmsghdr_unix.go b/vendor/golang.org/x/net/internal/socket/mmsghdr_unix.go
-index 5025a0f75acdd..40ebedab3c0fe 100644
+index 5025a0f75ac..40ebedab3c0 100644
 --- a/vendor/golang.org/x/net/internal/socket/mmsghdr_unix.go
 +++ b/vendor/golang.org/x/net/internal/socket/mmsghdr_unix.go
 @@ -7,25 +7,13 @@
@@ -5547,7 +5548,7 @@ index 5025a0f75acdd..40ebedab3c0fe 100644
 +	p.p.Put(packer)
 +}
 diff --git a/vendor/golang.org/x/net/internal/socket/msghdr_linux.go b/vendor/golang.org/x/net/internal/socket/msghdr_linux.go
-index 5a38798cc0cd9..c3c7cc4c83ad7 100644
+index 5a38798cc0c..c3c7cc4c83a 100644
 --- a/vendor/golang.org/x/net/internal/socket/msghdr_linux.go
 +++ b/vendor/golang.org/x/net/internal/socket/msghdr_linux.go
 @@ -17,6 +17,9 @@ func (h *msghdr) pack(vs []iovec, bs [][]byte, oob []byte, sa []byte) {
@@ -5561,7 +5562,7 @@ index 5a38798cc0cd9..c3c7cc4c83ad7 100644
  }
  
 diff --git a/vendor/golang.org/x/net/internal/socket/msghdr_linux_32bit.go b/vendor/golang.org/x/net/internal/socket/msghdr_linux_32bit.go
-index 2e09e26699623..b4658fbaeb800 100644
+index 2e09e266996..b4658fbaeb8 100644
 --- a/vendor/golang.org/x/net/internal/socket/msghdr_linux_32bit.go
 +++ b/vendor/golang.org/x/net/internal/socket/msghdr_linux_32bit.go
 @@ -2,8 +2,8 @@
@@ -5576,7 +5577,7 @@ index 2e09e26699623..b4658fbaeb800 100644
  
  package socket
 diff --git a/vendor/golang.org/x/net/internal/socket/rawconn.go b/vendor/golang.org/x/net/internal/socket/rawconn.go
-index b07b8900506b3..87e81071c1049 100644
+index b07b8900506..87e81071c10 100644
 --- a/vendor/golang.org/x/net/internal/socket/rawconn.go
 +++ b/vendor/golang.org/x/net/internal/socket/rawconn.go
 @@ -17,18 +17,45 @@ type Conn struct {
@@ -5629,7 +5630,7 @@ index b07b8900506b3..87e81071c1049 100644
  		cc.c, err = c.SyscallConn()
  	default:
 diff --git a/vendor/golang.org/x/net/internal/socket/rawconn_mmsg.go b/vendor/golang.org/x/net/internal/socket/rawconn_mmsg.go
-index 5d90de1183588..3fcb51b384451 100644
+index 5d90de11835..3fcb51b3844 100644
 --- a/vendor/golang.org/x/net/internal/socket/rawconn_mmsg.go
 +++ b/vendor/golang.org/x/net/internal/socket/rawconn_mmsg.go
 @@ -10,29 +10,24 @@ package socket
@@ -5695,7 +5696,7 @@ index 5d90de1183588..3fcb51b384451 100644
  	if err := c.c.Write(fn); err != nil {
  		return n, err
 diff --git a/vendor/golang.org/x/net/internal/socket/rawconn_msg.go b/vendor/golang.org/x/net/internal/socket/rawconn_msg.go
-index dfed9a8da3389..ba53f564bb46b 100644
+index dfed9a8da33..ba53f564bb4 100644
 --- a/vendor/golang.org/x/net/internal/socket/rawconn_msg.go
 +++ b/vendor/golang.org/x/net/internal/socket/rawconn_msg.go
 @@ -9,7 +9,6 @@ package socket
@@ -5741,7 +5742,7 @@ index dfed9a8da3389..ba53f564bb46b 100644
  	if err := c.c.Write(fn); err != nil {
  		return err
 diff --git a/vendor/golang.org/x/net/internal/socket/sys_bsd.go b/vendor/golang.org/x/net/internal/socket/sys_bsd.go
-index b6cd77088d59d..b258879d446e3 100644
+index b6cd77088d5..b258879d446 100644
 --- a/vendor/golang.org/x/net/internal/socket/sys_bsd.go
 +++ b/vendor/golang.org/x/net/internal/socket/sys_bsd.go
 @@ -2,8 +2,8 @@
@@ -5756,7 +5757,7 @@ index b6cd77088d59d..b258879d446e3 100644
  package socket
  
 diff --git a/vendor/golang.org/x/net/internal/socket/sys_const_unix.go b/vendor/golang.org/x/net/internal/socket/sys_const_unix.go
-index f077b2f11fea3..5d99f2373f205 100644
+index f077b2f11fe..5d99f2373f2 100644
 --- a/vendor/golang.org/x/net/internal/socket/sys_const_unix.go
 +++ b/vendor/golang.org/x/net/internal/socket/sys_const_unix.go
 @@ -2,8 +2,8 @@
@@ -5780,7 +5781,7 @@ index f077b2f11fea3..5d99f2373f205 100644
  )
 diff --git a/vendor/golang.org/x/net/internal/socket/sys_const_zos.go b/vendor/golang.org/x/net/internal/socket/sys_const_zos.go
 deleted file mode 100644
-index 3048629541b5a..0000000000000
+index 3048629541b..00000000000
 --- a/vendor/golang.org/x/net/internal/socket/sys_const_zos.go
 +++ /dev/null
 @@ -1,18 +0,0 @@
@@ -5804,7 +5805,7 @@ index 3048629541b5a..0000000000000
 -)
 diff --git a/vendor/golang.org/x/net/internal/socket/sys_linkname.go b/vendor/golang.org/x/net/internal/socket/sys_linkname.go
 deleted file mode 100644
-index 21734af4b85da..0000000000000
+index 21734af4b85..00000000000
 --- a/vendor/golang.org/x/net/internal/socket/sys_linkname.go
 +++ /dev/null
 @@ -1,43 +0,0 @@
@@ -5852,7 +5853,7 @@ index 21734af4b85da..0000000000000
 -	return syscall_sendmsg(int(s), (*syscall.Msghdr)(unsafe.Pointer(h)), flags)
 -}
 diff --git a/vendor/golang.org/x/net/internal/socket/sys_linux_386.go b/vendor/golang.org/x/net/internal/socket/sys_linux_386.go
-index 651215321bc8e..c877ef23ae0fd 100644
+index 651215321bc..c877ef23ae0 100644
 --- a/vendor/golang.org/x/net/internal/socket/sys_linux_386.go
 +++ b/vendor/golang.org/x/net/internal/socket/sys_linux_386.go
 @@ -10,38 +10,13 @@ import (
@@ -5898,7 +5899,7 @@ index 651215321bc8e..c877ef23ae0fd 100644
  	return int(n), errnoErr(errno)
 diff --git a/vendor/golang.org/x/net/internal/socket/sys_linux_ppc.go b/vendor/golang.org/x/net/internal/socket/sys_linux_ppc.go
 new file mode 100644
-index 0000000000000..90cfaa9fecf7b
+index 00000000000..90cfaa9fecf
 --- /dev/null
 +++ b/vendor/golang.org/x/net/internal/socket/sys_linux_ppc.go
 @@ -0,0 +1,10 @@
@@ -5913,7 +5914,7 @@ index 0000000000000..90cfaa9fecf7b
 +	sysSENDMMSG = 0x15d
 +)
 diff --git a/vendor/golang.org/x/net/internal/socket/sys_linux_s390x.go b/vendor/golang.org/x/net/internal/socket/sys_linux_s390x.go
-index 651215321bc8e..c877ef23ae0fd 100644
+index 651215321bc..c877ef23ae0 100644
 --- a/vendor/golang.org/x/net/internal/socket/sys_linux_s390x.go
 +++ b/vendor/golang.org/x/net/internal/socket/sys_linux_s390x.go
 @@ -10,38 +10,13 @@ import (
@@ -5958,7 +5959,7 @@ index 651215321bc8e..c877ef23ae0fd 100644
  	n, errno := socketcall(sysRECVMMSG, s, uintptr(unsafe.Pointer(&hs[0])), uintptr(len(hs)), uintptr(flags), 0, 0)
  	return int(n), errnoErr(errno)
 diff --git a/vendor/golang.org/x/net/internal/socket/sys_posix.go b/vendor/golang.org/x/net/internal/socket/sys_posix.go
-index 25ded21763ad4..42b8f2340e365 100644
+index 25ded21763a..42b8f2340e3 100644
 --- a/vendor/golang.org/x/net/internal/socket/sys_posix.go
 +++ b/vendor/golang.org/x/net/internal/socket/sys_posix.go
 @@ -17,35 +17,36 @@ import (
@@ -6031,7 +6032,7 @@ index 25ded21763ad4..42b8f2340e365 100644
  		ip = make(net.IP, net.IPv4len)
 diff --git a/vendor/golang.org/x/net/internal/socket/sys_solaris.go b/vendor/golang.org/x/net/internal/socket/sys_solaris.go
 deleted file mode 100644
-index e79ca95183abd..0000000000000
+index e79ca95183a..00000000000
 --- a/vendor/golang.org/x/net/internal/socket/sys_solaris.go
 +++ /dev/null
 @@ -1,59 +0,0 @@
@@ -6096,7 +6097,7 @@ index e79ca95183abd..0000000000000
 -}
 diff --git a/vendor/golang.org/x/net/internal/socket/sys_solaris_amd64.s b/vendor/golang.org/x/net/internal/socket/sys_solaris_amd64.s
 deleted file mode 100644
-index a18ac5ed75559..0000000000000
+index a18ac5ed755..00000000000
 --- a/vendor/golang.org/x/net/internal/socket/sys_solaris_amd64.s
 +++ /dev/null
 @@ -1,11 +0,0 @@
@@ -6112,7 +6113,7 @@ index a18ac5ed75559..0000000000000
 -TEXT	·rawSysvicall6(SB),NOSPLIT,$0-88
 -	JMP	syscall·rawSysvicall6(SB)
 diff --git a/vendor/golang.org/x/net/internal/socket/sys_stub.go b/vendor/golang.org/x/net/internal/socket/sys_stub.go
-index dc7bb389b3c31..381e45e167f9b 100644
+index dc7bb389b3c..381e45e167f 100644
 --- a/vendor/golang.org/x/net/internal/socket/sys_stub.go
 +++ b/vendor/golang.org/x/net/internal/socket/sys_stub.go
 @@ -15,6 +15,9 @@ const (
@@ -6126,7 +6127,7 @@ index dc7bb389b3c31..381e45e167f9b 100644
  
  func marshalInetAddr(ip net.IP, port int, zone string) []byte {
 diff --git a/vendor/golang.org/x/net/internal/socket/sys_unix.go b/vendor/golang.org/x/net/internal/socket/sys_unix.go
-index c98ebae548c4c..d203e2984cac8 100644
+index c98ebae548c..d203e2984ca 100644
 --- a/vendor/golang.org/x/net/internal/socket/sys_unix.go
 +++ b/vendor/golang.org/x/net/internal/socket/sys_unix.go
 @@ -2,8 +2,8 @@
@@ -6182,7 +6183,7 @@ index c98ebae548c4c..d203e2984cac8 100644
 +	return syscall_sendmsg(int(s), (*syscall.Msghdr)(unsafe.Pointer(h)), flags)
  }
 diff --git a/vendor/golang.org/x/net/internal/socket/sys_windows.go b/vendor/golang.org/x/net/internal/socket/sys_windows.go
-index d556a44615707..2de0d68c619aa 100644
+index d556a446157..2de0d68c619 100644
 --- a/vendor/golang.org/x/net/internal/socket/sys_windows.go
 +++ b/vendor/golang.org/x/net/internal/socket/sys_windows.go
 @@ -22,25 +22,8 @@ const (
@@ -6213,7 +6214,7 @@ index d556a44615707..2de0d68c619aa 100644
  )
  
 diff --git a/vendor/golang.org/x/net/internal/socket/zsys_aix_ppc64.go b/vendor/golang.org/x/net/internal/socket/zsys_aix_ppc64.go
-index 79f3bdd5b9d2a..00691bd524453 100644
+index 79f3bdd5b9d..00691bd5244 100644
 --- a/vendor/golang.org/x/net/internal/socket/zsys_aix_ppc64.go
 +++ b/vendor/golang.org/x/net/internal/socket/zsys_aix_ppc64.go
 @@ -34,27 +34,7 @@ type cmsghdr struct {
@@ -6245,7 +6246,7 @@ index 79f3bdd5b9d2a..00691bd524453 100644
 -	sizeofSockaddrInet6 = 0x1c
  )
 diff --git a/vendor/golang.org/x/net/internal/socket/zsys_darwin_386.go b/vendor/golang.org/x/net/internal/socket/zsys_darwin_386.go
-index 150f980f527b2..5acf6db6ea560 100644
+index 150f980f527..5acf6db6ea5 100644
 --- a/vendor/golang.org/x/net/internal/socket/zsys_darwin_386.go
 +++ b/vendor/golang.org/x/net/internal/socket/zsys_darwin_386.go
 @@ -24,27 +24,7 @@ type cmsghdr struct {
@@ -6277,7 +6278,7 @@ index 150f980f527b2..5acf6db6ea560 100644
 -	sizeofSockaddrInet6 = 0x1c
  )
 diff --git a/vendor/golang.org/x/net/internal/socket/zsys_darwin_amd64.go b/vendor/golang.org/x/net/internal/socket/zsys_darwin_amd64.go
-index a686c952855ba..98dcfe412a916 100644
+index a686c952855..98dcfe412a9 100644
 --- a/vendor/golang.org/x/net/internal/socket/zsys_darwin_amd64.go
 +++ b/vendor/golang.org/x/net/internal/socket/zsys_darwin_amd64.go
 @@ -26,27 +26,7 @@ type cmsghdr struct {
@@ -6309,7 +6310,7 @@ index a686c952855ba..98dcfe412a916 100644
 -	sizeofSockaddrInet6 = 0x1c
  )
 diff --git a/vendor/golang.org/x/net/internal/socket/zsys_darwin_arm.go b/vendor/golang.org/x/net/internal/socket/zsys_darwin_arm.go
-index 150f980f527b2..5acf6db6ea560 100644
+index 150f980f527..5acf6db6ea5 100644
 --- a/vendor/golang.org/x/net/internal/socket/zsys_darwin_arm.go
 +++ b/vendor/golang.org/x/net/internal/socket/zsys_darwin_arm.go
 @@ -24,27 +24,7 @@ type cmsghdr struct {
@@ -6341,7 +6342,7 @@ index 150f980f527b2..5acf6db6ea560 100644
 -	sizeofSockaddrInet6 = 0x1c
  )
 diff --git a/vendor/golang.org/x/net/internal/socket/zsys_darwin_arm64.go b/vendor/golang.org/x/net/internal/socket/zsys_darwin_arm64.go
-index a686c952855ba..98dcfe412a916 100644
+index a686c952855..98dcfe412a9 100644
 --- a/vendor/golang.org/x/net/internal/socket/zsys_darwin_arm64.go
 +++ b/vendor/golang.org/x/net/internal/socket/zsys_darwin_arm64.go
 @@ -26,27 +26,7 @@ type cmsghdr struct {
@@ -6373,7 +6374,7 @@ index a686c952855ba..98dcfe412a916 100644
 -	sizeofSockaddrInet6 = 0x1c
  )
 diff --git a/vendor/golang.org/x/net/internal/socket/zsys_dragonfly_amd64.go b/vendor/golang.org/x/net/internal/socket/zsys_dragonfly_amd64.go
-index d45c197e26df3..636d129aeefcc 100644
+index d45c197e26d..636d129aeef 100644
 --- a/vendor/golang.org/x/net/internal/socket/zsys_dragonfly_amd64.go
 +++ b/vendor/golang.org/x/net/internal/socket/zsys_dragonfly_amd64.go
 @@ -26,27 +26,7 @@ type cmsghdr struct {
@@ -6405,7 +6406,7 @@ index d45c197e26df3..636d129aeefcc 100644
 -	sizeofSockaddrInet6 = 0x1c
  )
 diff --git a/vendor/golang.org/x/net/internal/socket/zsys_freebsd_386.go b/vendor/golang.org/x/net/internal/socket/zsys_freebsd_386.go
-index ffec860ea8279..87707fed01971 100644
+index ffec860ea82..87707fed019 100644
 --- a/vendor/golang.org/x/net/internal/socket/zsys_freebsd_386.go
 +++ b/vendor/golang.org/x/net/internal/socket/zsys_freebsd_386.go
 @@ -24,27 +24,7 @@ type cmsghdr struct {
@@ -6437,7 +6438,7 @@ index ffec860ea8279..87707fed01971 100644
 -	sizeofSockaddrInet6 = 0x1c
  )
 diff --git a/vendor/golang.org/x/net/internal/socket/zsys_freebsd_amd64.go b/vendor/golang.org/x/net/internal/socket/zsys_freebsd_amd64.go
-index aa701ab67677d..7db7781129bbd 100644
+index aa701ab6767..7db7781129b 100644
 --- a/vendor/golang.org/x/net/internal/socket/zsys_freebsd_amd64.go
 +++ b/vendor/golang.org/x/net/internal/socket/zsys_freebsd_amd64.go
 @@ -26,27 +26,7 @@ type cmsghdr struct {
@@ -6469,7 +6470,7 @@ index aa701ab67677d..7db7781129bbd 100644
 -	sizeofSockaddrInet6 = 0x1c
  )
 diff --git a/vendor/golang.org/x/net/internal/socket/zsys_freebsd_arm.go b/vendor/golang.org/x/net/internal/socket/zsys_freebsd_arm.go
-index ffec860ea8279..87707fed01971 100644
+index ffec860ea82..87707fed019 100644
 --- a/vendor/golang.org/x/net/internal/socket/zsys_freebsd_arm.go
 +++ b/vendor/golang.org/x/net/internal/socket/zsys_freebsd_arm.go
 @@ -24,27 +24,7 @@ type cmsghdr struct {
@@ -6501,7 +6502,7 @@ index ffec860ea8279..87707fed01971 100644
 -	sizeofSockaddrInet6 = 0x1c
  )
 diff --git a/vendor/golang.org/x/net/internal/socket/zsys_freebsd_arm64.go b/vendor/golang.org/x/net/internal/socket/zsys_freebsd_arm64.go
-index aa701ab67677d..7db7781129bbd 100644
+index aa701ab6767..7db7781129b 100644
 --- a/vendor/golang.org/x/net/internal/socket/zsys_freebsd_arm64.go
 +++ b/vendor/golang.org/x/net/internal/socket/zsys_freebsd_arm64.go
 @@ -26,27 +26,7 @@ type cmsghdr struct {
@@ -6533,7 +6534,7 @@ index aa701ab67677d..7db7781129bbd 100644
 -	sizeofSockaddrInet6 = 0x1c
  )
 diff --git a/vendor/golang.org/x/net/internal/socket/zsys_linux_386.go b/vendor/golang.org/x/net/internal/socket/zsys_linux_386.go
-index 0c847bee7a46f..4c19269bee07b 100644
+index 0c847bee7a4..4c19269bee0 100644
 --- a/vendor/golang.org/x/net/internal/socket/zsys_linux_386.go
 +++ b/vendor/golang.org/x/net/internal/socket/zsys_linux_386.go
 @@ -29,25 +29,7 @@ type cmsghdr struct {
@@ -6563,7 +6564,7 @@ index 0c847bee7a46f..4c19269bee07b 100644
 -	sizeofSockaddrInet6 = 0x1c
  )
 diff --git a/vendor/golang.org/x/net/internal/socket/zsys_linux_amd64.go b/vendor/golang.org/x/net/internal/socket/zsys_linux_amd64.go
-index 15e2aecaabaec..3dcd5c8eda056 100644
+index 15e2aecaaba..3dcd5c8eda0 100644
 --- a/vendor/golang.org/x/net/internal/socket/zsys_linux_amd64.go
 +++ b/vendor/golang.org/x/net/internal/socket/zsys_linux_amd64.go
 @@ -32,25 +32,7 @@ type cmsghdr struct {
@@ -6593,7 +6594,7 @@ index 15e2aecaabaec..3dcd5c8eda056 100644
 -	sizeofSockaddrInet6 = 0x1c
  )
 diff --git a/vendor/golang.org/x/net/internal/socket/zsys_linux_arm.go b/vendor/golang.org/x/net/internal/socket/zsys_linux_arm.go
-index 0c847bee7a46f..4c19269bee07b 100644
+index 0c847bee7a4..4c19269bee0 100644
 --- a/vendor/golang.org/x/net/internal/socket/zsys_linux_arm.go
 +++ b/vendor/golang.org/x/net/internal/socket/zsys_linux_arm.go
 @@ -29,25 +29,7 @@ type cmsghdr struct {
@@ -6623,7 +6624,7 @@ index 0c847bee7a46f..4c19269bee07b 100644
 -	sizeofSockaddrInet6 = 0x1c
  )
 diff --git a/vendor/golang.org/x/net/internal/socket/zsys_linux_arm64.go b/vendor/golang.org/x/net/internal/socket/zsys_linux_arm64.go
-index 15e2aecaabaec..3dcd5c8eda056 100644
+index 15e2aecaaba..3dcd5c8eda0 100644
 --- a/vendor/golang.org/x/net/internal/socket/zsys_linux_arm64.go
 +++ b/vendor/golang.org/x/net/internal/socket/zsys_linux_arm64.go
 @@ -32,25 +32,7 @@ type cmsghdr struct {
@@ -6653,7 +6654,7 @@ index 15e2aecaabaec..3dcd5c8eda056 100644
 -	sizeofSockaddrInet6 = 0x1c
  )
 diff --git a/vendor/golang.org/x/net/internal/socket/zsys_linux_mips.go b/vendor/golang.org/x/net/internal/socket/zsys_linux_mips.go
-index 0c847bee7a46f..4c19269bee07b 100644
+index 0c847bee7a4..4c19269bee0 100644
 --- a/vendor/golang.org/x/net/internal/socket/zsys_linux_mips.go
 +++ b/vendor/golang.org/x/net/internal/socket/zsys_linux_mips.go
 @@ -29,25 +29,7 @@ type cmsghdr struct {
@@ -6683,7 +6684,7 @@ index 0c847bee7a46f..4c19269bee07b 100644
 -	sizeofSockaddrInet6 = 0x1c
  )
 diff --git a/vendor/golang.org/x/net/internal/socket/zsys_linux_mips64.go b/vendor/golang.org/x/net/internal/socket/zsys_linux_mips64.go
-index 15e2aecaabaec..3dcd5c8eda056 100644
+index 15e2aecaaba..3dcd5c8eda0 100644
 --- a/vendor/golang.org/x/net/internal/socket/zsys_linux_mips64.go
 +++ b/vendor/golang.org/x/net/internal/socket/zsys_linux_mips64.go
 @@ -32,25 +32,7 @@ type cmsghdr struct {
@@ -6713,7 +6714,7 @@ index 15e2aecaabaec..3dcd5c8eda056 100644
 -	sizeofSockaddrInet6 = 0x1c
  )
 diff --git a/vendor/golang.org/x/net/internal/socket/zsys_linux_mips64le.go b/vendor/golang.org/x/net/internal/socket/zsys_linux_mips64le.go
-index 15e2aecaabaec..3dcd5c8eda056 100644
+index 15e2aecaaba..3dcd5c8eda0 100644
 --- a/vendor/golang.org/x/net/internal/socket/zsys_linux_mips64le.go
 +++ b/vendor/golang.org/x/net/internal/socket/zsys_linux_mips64le.go
 @@ -32,25 +32,7 @@ type cmsghdr struct {
@@ -6743,7 +6744,7 @@ index 15e2aecaabaec..3dcd5c8eda056 100644
 -	sizeofSockaddrInet6 = 0x1c
  )
 diff --git a/vendor/golang.org/x/net/internal/socket/zsys_linux_mipsle.go b/vendor/golang.org/x/net/internal/socket/zsys_linux_mipsle.go
-index 0c847bee7a46f..4c19269bee07b 100644
+index 0c847bee7a4..4c19269bee0 100644
 --- a/vendor/golang.org/x/net/internal/socket/zsys_linux_mipsle.go
 +++ b/vendor/golang.org/x/net/internal/socket/zsys_linux_mipsle.go
 @@ -29,25 +29,7 @@ type cmsghdr struct {
@@ -6774,7 +6775,7 @@ index 0c847bee7a46f..4c19269bee07b 100644
  )
 diff --git a/vendor/golang.org/x/net/internal/socket/zsys_linux_ppc.go b/vendor/golang.org/x/net/internal/socket/zsys_linux_ppc.go
 new file mode 100644
-index 0000000000000..59b71da571632
+index 00000000000..59b71da5716
 --- /dev/null
 +++ b/vendor/golang.org/x/net/internal/socket/zsys_linux_ppc.go
 @@ -0,0 +1,35 @@
@@ -6814,7 +6815,7 @@ index 0000000000000..59b71da571632
 +	sizeofMsghdr	= 0x1c
 +)
 diff --git a/vendor/golang.org/x/net/internal/socket/zsys_linux_ppc64.go b/vendor/golang.org/x/net/internal/socket/zsys_linux_ppc64.go
-index 15e2aecaabaec..3dcd5c8eda056 100644
+index 15e2aecaaba..3dcd5c8eda0 100644
 --- a/vendor/golang.org/x/net/internal/socket/zsys_linux_ppc64.go
 +++ b/vendor/golang.org/x/net/internal/socket/zsys_linux_ppc64.go
 @@ -32,25 +32,7 @@ type cmsghdr struct {
@@ -6844,7 +6845,7 @@ index 15e2aecaabaec..3dcd5c8eda056 100644
 -	sizeofSockaddrInet6 = 0x1c
  )
 diff --git a/vendor/golang.org/x/net/internal/socket/zsys_linux_ppc64le.go b/vendor/golang.org/x/net/internal/socket/zsys_linux_ppc64le.go
-index 15e2aecaabaec..3dcd5c8eda056 100644
+index 15e2aecaaba..3dcd5c8eda0 100644
 --- a/vendor/golang.org/x/net/internal/socket/zsys_linux_ppc64le.go
 +++ b/vendor/golang.org/x/net/internal/socket/zsys_linux_ppc64le.go
 @@ -32,25 +32,7 @@ type cmsghdr struct {
@@ -6874,7 +6875,7 @@ index 15e2aecaabaec..3dcd5c8eda056 100644
 -	sizeofSockaddrInet6 = 0x1c
  )
 diff --git a/vendor/golang.org/x/net/internal/socket/zsys_linux_riscv64.go b/vendor/golang.org/x/net/internal/socket/zsys_linux_riscv64.go
-index 12ec2e42b8808..c066272ddd11f 100644
+index 12ec2e42b88..c066272ddd1 100644
 --- a/vendor/golang.org/x/net/internal/socket/zsys_linux_riscv64.go
 +++ b/vendor/golang.org/x/net/internal/socket/zsys_linux_riscv64.go
 @@ -34,25 +34,7 @@ type cmsghdr struct {
@@ -6904,7 +6905,7 @@ index 12ec2e42b8808..c066272ddd11f 100644
 -	sizeofSockaddrInet6 = 0x1c
  )
 diff --git a/vendor/golang.org/x/net/internal/socket/zsys_linux_s390x.go b/vendor/golang.org/x/net/internal/socket/zsys_linux_s390x.go
-index 15e2aecaabaec..3dcd5c8eda056 100644
+index 15e2aecaaba..3dcd5c8eda0 100644
 --- a/vendor/golang.org/x/net/internal/socket/zsys_linux_s390x.go
 +++ b/vendor/golang.org/x/net/internal/socket/zsys_linux_s390x.go
 @@ -32,25 +32,7 @@ type cmsghdr struct {
@@ -6934,7 +6935,7 @@ index 15e2aecaabaec..3dcd5c8eda056 100644
 -	sizeofSockaddrInet6 = 0x1c
  )
 diff --git a/vendor/golang.org/x/net/internal/socket/zsys_netbsd_386.go b/vendor/golang.org/x/net/internal/socket/zsys_netbsd_386.go
-index 6b72d24dd93ff..f95572dc00a08 100644
+index 6b72d24dd93..f95572dc00a 100644
 --- a/vendor/golang.org/x/net/internal/socket/zsys_netbsd_386.go
 +++ b/vendor/golang.org/x/net/internal/socket/zsys_netbsd_386.go
 @@ -29,27 +29,7 @@ type cmsghdr struct {
@@ -6966,7 +6967,7 @@ index 6b72d24dd93ff..f95572dc00a08 100644
 -	sizeofSockaddrInet6 = 0x1c
  )
 diff --git a/vendor/golang.org/x/net/internal/socket/zsys_netbsd_amd64.go b/vendor/golang.org/x/net/internal/socket/zsys_netbsd_amd64.go
-index 9aaa4ab1caf72..a92fd60e4d542 100644
+index 9aaa4ab1caf..a92fd60e4d5 100644
 --- a/vendor/golang.org/x/net/internal/socket/zsys_netbsd_amd64.go
 +++ b/vendor/golang.org/x/net/internal/socket/zsys_netbsd_amd64.go
 @@ -32,27 +32,7 @@ type cmsghdr struct {
@@ -6998,7 +6999,7 @@ index 9aaa4ab1caf72..a92fd60e4d542 100644
 -	sizeofSockaddrInet6 = 0x1c
  )
 diff --git a/vendor/golang.org/x/net/internal/socket/zsys_netbsd_arm.go b/vendor/golang.org/x/net/internal/socket/zsys_netbsd_arm.go
-index 6b72d24dd93ff..f95572dc00a08 100644
+index 6b72d24dd93..f95572dc00a 100644
 --- a/vendor/golang.org/x/net/internal/socket/zsys_netbsd_arm.go
 +++ b/vendor/golang.org/x/net/internal/socket/zsys_netbsd_arm.go
 @@ -29,27 +29,7 @@ type cmsghdr struct {
@@ -7030,7 +7031,7 @@ index 6b72d24dd93ff..f95572dc00a08 100644
 -	sizeofSockaddrInet6 = 0x1c
  )
 diff --git a/vendor/golang.org/x/net/internal/socket/zsys_netbsd_arm64.go b/vendor/golang.org/x/net/internal/socket/zsys_netbsd_arm64.go
-index 9aaa4ab1caf72..a92fd60e4d542 100644
+index 9aaa4ab1caf..a92fd60e4d5 100644
 --- a/vendor/golang.org/x/net/internal/socket/zsys_netbsd_arm64.go
 +++ b/vendor/golang.org/x/net/internal/socket/zsys_netbsd_arm64.go
 @@ -32,27 +32,7 @@ type cmsghdr struct {
@@ -7062,7 +7063,7 @@ index 9aaa4ab1caf72..a92fd60e4d542 100644
 -	sizeofSockaddrInet6 = 0x1c
  )
 diff --git a/vendor/golang.org/x/net/internal/socket/zsys_openbsd_386.go b/vendor/golang.org/x/net/internal/socket/zsys_openbsd_386.go
-index 3ec8d42fee8e5..e792ec2115e8d 100644
+index 3ec8d42fee8..e792ec2115e 100644
 --- a/vendor/golang.org/x/net/internal/socket/zsys_openbsd_386.go
 +++ b/vendor/golang.org/x/net/internal/socket/zsys_openbsd_386.go
 @@ -24,27 +24,7 @@ type cmsghdr struct {
@@ -7094,7 +7095,7 @@ index 3ec8d42fee8e5..e792ec2115e8d 100644
 -	sizeofSockaddrInet6 = 0x1c
  )
 diff --git a/vendor/golang.org/x/net/internal/socket/zsys_openbsd_amd64.go b/vendor/golang.org/x/net/internal/socket/zsys_openbsd_amd64.go
-index ea0ee008d7d4b..b68ff2d57f5e1 100644
+index ea0ee008d7d..b68ff2d57f5 100644
 --- a/vendor/golang.org/x/net/internal/socket/zsys_openbsd_amd64.go
 +++ b/vendor/golang.org/x/net/internal/socket/zsys_openbsd_amd64.go
 @@ -26,27 +26,7 @@ type cmsghdr struct {
@@ -7126,7 +7127,7 @@ index ea0ee008d7d4b..b68ff2d57f5e1 100644
 -	sizeofSockaddrInet6 = 0x1c
  )
 diff --git a/vendor/golang.org/x/net/internal/socket/zsys_openbsd_arm.go b/vendor/golang.org/x/net/internal/socket/zsys_openbsd_arm.go
-index 3ec8d42fee8e5..e792ec2115e8d 100644
+index 3ec8d42fee8..e792ec2115e 100644
 --- a/vendor/golang.org/x/net/internal/socket/zsys_openbsd_arm.go
 +++ b/vendor/golang.org/x/net/internal/socket/zsys_openbsd_arm.go
 @@ -24,27 +24,7 @@ type cmsghdr struct {
@@ -7158,7 +7159,7 @@ index 3ec8d42fee8e5..e792ec2115e8d 100644
 -	sizeofSockaddrInet6 = 0x1c
  )
 diff --git a/vendor/golang.org/x/net/internal/socket/zsys_openbsd_arm64.go b/vendor/golang.org/x/net/internal/socket/zsys_openbsd_arm64.go
-index ea0ee008d7d4b..b68ff2d57f5e1 100644
+index ea0ee008d7d..b68ff2d57f5 100644
 --- a/vendor/golang.org/x/net/internal/socket/zsys_openbsd_arm64.go
 +++ b/vendor/golang.org/x/net/internal/socket/zsys_openbsd_arm64.go
 @@ -26,27 +26,7 @@ type cmsghdr struct {
@@ -7190,7 +7191,7 @@ index ea0ee008d7d4b..b68ff2d57f5e1 100644
 -	sizeofSockaddrInet6 = 0x1c
  )
 diff --git a/vendor/golang.org/x/net/internal/socket/zsys_openbsd_mips64.go b/vendor/golang.org/x/net/internal/socket/zsys_openbsd_mips64.go
-index 0112832400bdd..3c9576e2d830f 100644
+index 0112832400b..3c9576e2d83 100644
 --- a/vendor/golang.org/x/net/internal/socket/zsys_openbsd_mips64.go
 +++ b/vendor/golang.org/x/net/internal/socket/zsys_openbsd_mips64.go
 @@ -24,27 +24,7 @@ type cmsghdr struct {
@@ -7222,7 +7223,7 @@ index 0112832400bdd..3c9576e2d830f 100644
 -	sizeofSockaddrInet6 = 0x1c
  )
 diff --git a/vendor/golang.org/x/net/internal/socket/zsys_solaris_amd64.go b/vendor/golang.org/x/net/internal/socket/zsys_solaris_amd64.go
-index 48b2b591f67de..359cfec40ad71 100644
+index 48b2b591f67..359cfec40ad 100644
 --- a/vendor/golang.org/x/net/internal/socket/zsys_solaris_amd64.go
 +++ b/vendor/golang.org/x/net/internal/socket/zsys_solaris_amd64.go
 @@ -26,26 +26,7 @@ type cmsghdr struct {
@@ -7253,7 +7254,7 @@ index 48b2b591f67de..359cfec40ad71 100644
 -	sizeofSockaddrInet6 = 0x20
  )
 diff --git a/vendor/golang.org/x/net/internal/socket/zsys_zos_s390x.go b/vendor/golang.org/x/net/internal/socket/zsys_zos_s390x.go
-index 514ca3754d4c6..49b62c8561a5b 100644
+index 514ca3754d4..49b62c8561a 100644
 --- a/vendor/golang.org/x/net/internal/socket/zsys_zos_s390x.go
 +++ b/vendor/golang.org/x/net/internal/socket/zsys_zos_s390x.go
 @@ -25,8 +25,4 @@ type cmsghdr struct {
@@ -7267,7 +7268,7 @@ index 514ca3754d4c6..49b62c8561a5b 100644
 -)
 +const sizeofCmsghdr = 12
 diff --git a/vendor/golang.org/x/net/ipv4/control_bsd.go b/vendor/golang.org/x/net/ipv4/control_bsd.go
-index 6fef740f2ff68..b7385dfd95ab4 100644
+index 6fef740f2ff..b7385dfd95a 100644
 --- a/vendor/golang.org/x/net/ipv4/control_bsd.go
 +++ b/vendor/golang.org/x/net/ipv4/control_bsd.go
 @@ -14,11 +14,13 @@ import (
@@ -7295,7 +7296,7 @@ index 6fef740f2ff68..b7385dfd95ab4 100644
  }
  
 diff --git a/vendor/golang.org/x/net/ipv4/control_pktinfo.go b/vendor/golang.org/x/net/ipv4/control_pktinfo.go
-index b0a8dbe4e25e5..0e748dbdc4680 100644
+index b0a8dbe4e25..0e748dbdc46 100644
 --- a/vendor/golang.org/x/net/ipv4/control_pktinfo.go
 +++ b/vendor/golang.org/x/net/ipv4/control_pktinfo.go
 @@ -13,11 +13,13 @@ import (
@@ -7314,7 +7315,7 @@ index b0a8dbe4e25e5..0e748dbdc4680 100644
  		pi := (*inetPktinfo)(unsafe.Pointer(&m.Data(sizeofInetPktinfo)[0]))
  		if ip := cm.Src.To4(); ip != nil {
 diff --git a/vendor/golang.org/x/net/ipv4/control_unix.go b/vendor/golang.org/x/net/ipv4/control_unix.go
-index edce30f12611f..2413e02f8f2d6 100644
+index edce30f1261..2413e02f8f2 100644
 --- a/vendor/golang.org/x/net/ipv4/control_unix.go
 +++ b/vendor/golang.org/x/net/ipv4/control_unix.go
 @@ -12,6 +12,8 @@ import (
@@ -7336,7 +7337,7 @@ index edce30f12611f..2413e02f8f2d6 100644
  }
  
 diff --git a/vendor/golang.org/x/net/ipv4/control_zos.go b/vendor/golang.org/x/net/ipv4/control_zos.go
-index 04420003e0261..de11c42e559d1 100644
+index 04420003e02..de11c42e559 100644
 --- a/vendor/golang.org/x/net/ipv4/control_zos.go
 +++ b/vendor/golang.org/x/net/ipv4/control_zos.go
 @@ -10,11 +10,13 @@ import (
@@ -7355,7 +7356,7 @@ index 04420003e0261..de11c42e559d1 100644
  		pi := (*inetPktinfo)(unsafe.Pointer(&m.Data(sizeofInetPktinfo)[0]))
  		if ip := cm.Src.To4(); ip != nil {
 diff --git a/vendor/golang.org/x/net/ipv4/sys_aix.go b/vendor/golang.org/x/net/ipv4/sys_aix.go
-index b0b69d9c02cec..02730cdfd270c 100644
+index b0b69d9c02c..02730cdfd27 100644
 --- a/vendor/golang.org/x/net/ipv4/sys_aix.go
 +++ b/vendor/golang.org/x/net/ipv4/sys_aix.go
 @@ -14,26 +14,31 @@ import (
@@ -7405,7 +7406,7 @@ index b0b69d9c02cec..02730cdfd270c 100644
  	}
  )
 diff --git a/vendor/golang.org/x/net/ipv4/sys_asmreqn.go b/vendor/golang.org/x/net/ipv4/sys_asmreqn.go
-index fbfe4af69d2df..54eb9901b5fcc 100644
+index fbfe4af69d2..54eb9901b5f 100644
 --- a/vendor/golang.org/x/net/ipv4/sys_asmreqn.go
 +++ b/vendor/golang.org/x/net/ipv4/sys_asmreqn.go
 @@ -12,6 +12,8 @@ import (
@@ -7443,7 +7444,7 @@ index fbfe4af69d2df..54eb9901b5fcc 100644
  	return so.Set(c, b)
  }
 diff --git a/vendor/golang.org/x/net/ipv4/sys_bsd.go b/vendor/golang.org/x/net/ipv4/sys_bsd.go
-index 8074f9898c30e..e191b2f14f9dc 100644
+index 8074f9898c3..e191b2f14f9 100644
 --- a/vendor/golang.org/x/net/ipv4/sys_bsd.go
 +++ b/vendor/golang.org/x/net/ipv4/sys_bsd.go
 @@ -13,26 +13,30 @@ import (
@@ -7492,7 +7493,7 @@ index 8074f9898c30e..e191b2f14f9dc 100644
  	}
  )
 diff --git a/vendor/golang.org/x/net/ipv4/sys_darwin.go b/vendor/golang.org/x/net/ipv4/sys_darwin.go
-index ac213c73509d4..cac6f3cace0d1 100644
+index ac213c73509..cac6f3cace0 100644
 --- a/vendor/golang.org/x/net/ipv4/sys_darwin.go
 +++ b/vendor/golang.org/x/net/ipv4/sys_darwin.go
 @@ -11,34 +11,38 @@ import (
@@ -7556,7 +7557,7 @@ index ac213c73509d4..cac6f3cace0d1 100644
  )
  
 diff --git a/vendor/golang.org/x/net/ipv4/sys_dragonfly.go b/vendor/golang.org/x/net/ipv4/sys_dragonfly.go
-index 859764f33a553..0620d0e1eab18 100644
+index 859764f33a5..0620d0e1eab 100644
 --- a/vendor/golang.org/x/net/ipv4/sys_dragonfly.go
 +++ b/vendor/golang.org/x/net/ipv4/sys_dragonfly.go
 @@ -10,26 +10,30 @@ import (
@@ -7605,7 +7606,7 @@ index 859764f33a553..0620d0e1eab18 100644
  	}
  )
 diff --git a/vendor/golang.org/x/net/ipv4/sys_freebsd.go b/vendor/golang.org/x/net/ipv4/sys_freebsd.go
-index 482873d9a15d0..89612287596c1 100644
+index 482873d9a15..89612287596 100644
 --- a/vendor/golang.org/x/net/ipv4/sys_freebsd.go
 +++ b/vendor/golang.org/x/net/ipv4/sys_freebsd.go
 @@ -13,38 +13,42 @@ import (
@@ -7671,7 +7672,7 @@ index 482873d9a15d0..89612287596c1 100644
  	if runtime.GOOS == "freebsd" && runtime.GOARCH == "386" {
  		archs, _ := syscall.Sysctl("kern.supported_archs")
 diff --git a/vendor/golang.org/x/net/ipv4/sys_linux.go b/vendor/golang.org/x/net/ipv4/sys_linux.go
-index cf755c7fbaf7c..4588a5f3e2e79 100644
+index cf755c7fbaf..4588a5f3e2e 100644
 --- a/vendor/golang.org/x/net/ipv4/sys_linux.go
 +++ b/vendor/golang.org/x/net/ipv4/sys_linux.go
 @@ -11,31 +11,32 @@ import (
@@ -7725,7 +7726,7 @@ index cf755c7fbaf7c..4588a5f3e2e79 100644
  	}
  )
 diff --git a/vendor/golang.org/x/net/ipv4/sys_solaris.go b/vendor/golang.org/x/net/ipv4/sys_solaris.go
-index 832fef1e2e259..0bb9f3e36430b 100644
+index 832fef1e2e2..0bb9f3e3643 100644
 --- a/vendor/golang.org/x/net/ipv4/sys_solaris.go
 +++ b/vendor/golang.org/x/net/ipv4/sys_solaris.go
 @@ -11,29 +11,33 @@ import (
@@ -7779,7 +7780,7 @@ index 832fef1e2e259..0bb9f3e36430b 100644
  )
  
 diff --git a/vendor/golang.org/x/net/ipv4/sys_windows.go b/vendor/golang.org/x/net/ipv4/sys_windows.go
-index b0913d539c307..c5e950633c7f7 100644
+index b0913d539c3..c5e950633c7 100644
 --- a/vendor/golang.org/x/net/ipv4/sys_windows.go
 +++ b/vendor/golang.org/x/net/ipv4/sys_windows.go
 @@ -7,34 +7,15 @@ package ipv4
@@ -7846,7 +7847,7 @@ index b0913d539c307..c5e950633c7f7 100644
 -	pi.Ifindex = int32(i)
 -}
 diff --git a/vendor/golang.org/x/net/ipv4/sys_zos.go b/vendor/golang.org/x/net/ipv4/sys_zos.go
-index 7426606cff3c2..be2064098782e 100644
+index 7426606cff3..be206409878 100644
 --- a/vendor/golang.org/x/net/ipv4/sys_zos.go
 +++ b/vendor/golang.org/x/net/ipv4/sys_zos.go
 @@ -11,24 +11,26 @@ import (
@@ -7888,7 +7889,7 @@ index 7426606cff3c2..be2064098782e 100644
  )
  
 diff --git a/vendor/golang.org/x/net/ipv4/zsys_aix_ppc64.go b/vendor/golang.org/x/net/ipv4/zsys_aix_ppc64.go
-index d6f24754e5a4d..b7f2d6e5c18e0 100644
+index d6f24754e5a..b7f2d6e5c18 100644
 --- a/vendor/golang.org/x/net/ipv4/zsys_aix_ppc64.go
 +++ b/vendor/golang.org/x/net/ipv4/zsys_aix_ppc64.go
 @@ -8,23 +8,6 @@
@@ -7916,7 +7917,7 @@ index d6f24754e5a4d..b7f2d6e5c18e0 100644
  )
  
 diff --git a/vendor/golang.org/x/net/ipv4/zsys_darwin.go b/vendor/golang.org/x/net/ipv4/zsys_darwin.go
-index e05a251ba0761..6c1b705642869 100644
+index e05a251ba07..6c1b7056428 100644
 --- a/vendor/golang.org/x/net/ipv4/zsys_darwin.go
 +++ b/vendor/golang.org/x/net/ipv4/zsys_darwin.go
 @@ -4,45 +4,11 @@
@@ -7979,7 +7980,7 @@ index e05a251ba0761..6c1b705642869 100644
  	Multiaddr  [4]byte /* in_addr */
  	Sourceaddr [4]byte /* in_addr */
 diff --git a/vendor/golang.org/x/net/ipv4/zsys_dragonfly.go b/vendor/golang.org/x/net/ipv4/zsys_dragonfly.go
-index 6d65e9fcb8155..2155df130a89c 100644
+index 6d65e9fcb81..2155df130a8 100644
 --- a/vendor/golang.org/x/net/ipv4/zsys_dragonfly.go
 +++ b/vendor/golang.org/x/net/ipv4/zsys_dragonfly.go
 @@ -4,24 +4,6 @@
@@ -8008,7 +8009,7 @@ index 6d65e9fcb8155..2155df130a89c 100644
  )
  
 diff --git a/vendor/golang.org/x/net/ipv4/zsys_freebsd_386.go b/vendor/golang.org/x/net/ipv4/zsys_freebsd_386.go
-index 136e2b8f1d615..ae40482a8f795 100644
+index 136e2b8f1d6..ae40482a8f7 100644
 --- a/vendor/golang.org/x/net/ipv4/zsys_freebsd_386.go
 +++ b/vendor/golang.org/x/net/ipv4/zsys_freebsd_386.go
 @@ -4,45 +4,10 @@
@@ -8071,7 +8072,7 @@ index 136e2b8f1d615..ae40482a8f795 100644
  	Multiaddr  [4]byte /* in_addr */
  	Sourceaddr [4]byte /* in_addr */
 diff --git a/vendor/golang.org/x/net/ipv4/zsys_freebsd_amd64.go b/vendor/golang.org/x/net/ipv4/zsys_freebsd_amd64.go
-index 4f730f19ef349..901818671b705 100644
+index 4f730f19ef3..901818671b7 100644
 --- a/vendor/golang.org/x/net/ipv4/zsys_freebsd_amd64.go
 +++ b/vendor/golang.org/x/net/ipv4/zsys_freebsd_amd64.go
 @@ -4,45 +4,10 @@
@@ -8134,7 +8135,7 @@ index 4f730f19ef349..901818671b705 100644
  	Multiaddr  [4]byte /* in_addr */
  	Sourceaddr [4]byte /* in_addr */
 diff --git a/vendor/golang.org/x/net/ipv4/zsys_freebsd_arm.go b/vendor/golang.org/x/net/ipv4/zsys_freebsd_arm.go
-index 4f730f19ef349..901818671b705 100644
+index 4f730f19ef3..901818671b7 100644
 --- a/vendor/golang.org/x/net/ipv4/zsys_freebsd_arm.go
 +++ b/vendor/golang.org/x/net/ipv4/zsys_freebsd_arm.go
 @@ -4,45 +4,10 @@
@@ -8197,7 +8198,7 @@ index 4f730f19ef349..901818671b705 100644
  	Multiaddr  [4]byte /* in_addr */
  	Sourceaddr [4]byte /* in_addr */
 diff --git a/vendor/golang.org/x/net/ipv4/zsys_freebsd_arm64.go b/vendor/golang.org/x/net/ipv4/zsys_freebsd_arm64.go
-index ecebf3272392e..0feb9a7536db6 100644
+index ecebf327239..0feb9a7536d 100644
 --- a/vendor/golang.org/x/net/ipv4/zsys_freebsd_arm64.go
 +++ b/vendor/golang.org/x/net/ipv4/zsys_freebsd_arm64.go
 @@ -4,45 +4,10 @@
@@ -8260,7 +8261,7 @@ index ecebf3272392e..0feb9a7536db6 100644
  	Multiaddr  [4]byte /* in_addr */
  	Sourceaddr [4]byte /* in_addr */
 diff --git a/vendor/golang.org/x/net/ipv4/zsys_linux_386.go b/vendor/golang.org/x/net/ipv4/zsys_linux_386.go
-index 1c7fdfa13af9b..d510357ca07b5 100644
+index 1c7fdfa13af..d510357ca07 100644
 --- a/vendor/golang.org/x/net/ipv4/zsys_linux_386.go
 +++ b/vendor/golang.org/x/net/ipv4/zsys_linux_386.go
 @@ -4,64 +4,12 @@
@@ -8342,7 +8343,7 @@ index 1c7fdfa13af9b..d510357ca07b5 100644
  	Multiaddr  uint32
  	Interface  uint32
 diff --git a/vendor/golang.org/x/net/ipv4/zsys_linux_amd64.go b/vendor/golang.org/x/net/ipv4/zsys_linux_amd64.go
-index a04e785187af5..eb10cc79bd160 100644
+index a04e785187a..eb10cc79bd1 100644
 --- a/vendor/golang.org/x/net/ipv4/zsys_linux_amd64.go
 +++ b/vendor/golang.org/x/net/ipv4/zsys_linux_amd64.go
 @@ -4,64 +4,12 @@
@@ -8424,7 +8425,7 @@ index a04e785187af5..eb10cc79bd160 100644
  	Multiaddr  uint32
  	Interface  uint32
 diff --git a/vendor/golang.org/x/net/ipv4/zsys_linux_arm.go b/vendor/golang.org/x/net/ipv4/zsys_linux_arm.go
-index 1c7fdfa13af9b..d510357ca07b5 100644
+index 1c7fdfa13af..d510357ca07 100644
 --- a/vendor/golang.org/x/net/ipv4/zsys_linux_arm.go
 +++ b/vendor/golang.org/x/net/ipv4/zsys_linux_arm.go
 @@ -4,64 +4,12 @@
@@ -8506,7 +8507,7 @@ index 1c7fdfa13af9b..d510357ca07b5 100644
  	Multiaddr  uint32
  	Interface  uint32
 diff --git a/vendor/golang.org/x/net/ipv4/zsys_linux_arm64.go b/vendor/golang.org/x/net/ipv4/zsys_linux_arm64.go
-index a04e785187af5..eb10cc79bd160 100644
+index a04e785187a..eb10cc79bd1 100644
 --- a/vendor/golang.org/x/net/ipv4/zsys_linux_arm64.go
 +++ b/vendor/golang.org/x/net/ipv4/zsys_linux_arm64.go
 @@ -4,64 +4,12 @@
@@ -8588,7 +8589,7 @@ index a04e785187af5..eb10cc79bd160 100644
  	Multiaddr  uint32
  	Interface  uint32
 diff --git a/vendor/golang.org/x/net/ipv4/zsys_linux_mips.go b/vendor/golang.org/x/net/ipv4/zsys_linux_mips.go
-index 1c7fdfa13af9b..d510357ca07b5 100644
+index 1c7fdfa13af..d510357ca07 100644
 --- a/vendor/golang.org/x/net/ipv4/zsys_linux_mips.go
 +++ b/vendor/golang.org/x/net/ipv4/zsys_linux_mips.go
 @@ -4,64 +4,12 @@
@@ -8670,7 +8671,7 @@ index 1c7fdfa13af9b..d510357ca07b5 100644
  	Multiaddr  uint32
  	Interface  uint32
 diff --git a/vendor/golang.org/x/net/ipv4/zsys_linux_mips64.go b/vendor/golang.org/x/net/ipv4/zsys_linux_mips64.go
-index a04e785187af5..eb10cc79bd160 100644
+index a04e785187a..eb10cc79bd1 100644
 --- a/vendor/golang.org/x/net/ipv4/zsys_linux_mips64.go
 +++ b/vendor/golang.org/x/net/ipv4/zsys_linux_mips64.go
 @@ -4,64 +4,12 @@
@@ -8752,7 +8753,7 @@ index a04e785187af5..eb10cc79bd160 100644
  	Multiaddr  uint32
  	Interface  uint32
 diff --git a/vendor/golang.org/x/net/ipv4/zsys_linux_mips64le.go b/vendor/golang.org/x/net/ipv4/zsys_linux_mips64le.go
-index a04e785187af5..eb10cc79bd160 100644
+index a04e785187a..eb10cc79bd1 100644
 --- a/vendor/golang.org/x/net/ipv4/zsys_linux_mips64le.go
 +++ b/vendor/golang.org/x/net/ipv4/zsys_linux_mips64le.go
 @@ -4,64 +4,12 @@
@@ -8834,7 +8835,7 @@ index a04e785187af5..eb10cc79bd160 100644
  	Multiaddr  uint32
  	Interface  uint32
 diff --git a/vendor/golang.org/x/net/ipv4/zsys_linux_mipsle.go b/vendor/golang.org/x/net/ipv4/zsys_linux_mipsle.go
-index 1c7fdfa13af9b..d510357ca07b5 100644
+index 1c7fdfa13af..d510357ca07 100644
 --- a/vendor/golang.org/x/net/ipv4/zsys_linux_mipsle.go
 +++ b/vendor/golang.org/x/net/ipv4/zsys_linux_mipsle.go
 @@ -4,64 +4,12 @@
@@ -8916,7 +8917,7 @@ index 1c7fdfa13af9b..d510357ca07b5 100644
  	Multiaddr  uint32
  	Interface  uint32
 diff --git a/vendor/golang.org/x/net/ipv4/zsys_linux_ppc.go b/vendor/golang.org/x/net/ipv4/zsys_linux_ppc.go
-index 3c5ea54731edd..29202e4011788 100644
+index 3c5ea54731e..29202e40117 100644
 --- a/vendor/golang.org/x/net/ipv4/zsys_linux_ppc.go
 +++ b/vendor/golang.org/x/net/ipv4/zsys_linux_ppc.go
 @@ -4,64 +4,12 @@
@@ -8998,7 +8999,7 @@ index 3c5ea54731edd..29202e4011788 100644
  	Multiaddr  uint32
  	Interface  uint32
 diff --git a/vendor/golang.org/x/net/ipv4/zsys_linux_ppc64.go b/vendor/golang.org/x/net/ipv4/zsys_linux_ppc64.go
-index a04e785187af5..eb10cc79bd160 100644
+index a04e785187a..eb10cc79bd1 100644
 --- a/vendor/golang.org/x/net/ipv4/zsys_linux_ppc64.go
 +++ b/vendor/golang.org/x/net/ipv4/zsys_linux_ppc64.go
 @@ -4,64 +4,12 @@
@@ -9080,7 +9081,7 @@ index a04e785187af5..eb10cc79bd160 100644
  	Multiaddr  uint32
  	Interface  uint32
 diff --git a/vendor/golang.org/x/net/ipv4/zsys_linux_ppc64le.go b/vendor/golang.org/x/net/ipv4/zsys_linux_ppc64le.go
-index a04e785187af5..eb10cc79bd160 100644
+index a04e785187a..eb10cc79bd1 100644
 --- a/vendor/golang.org/x/net/ipv4/zsys_linux_ppc64le.go
 +++ b/vendor/golang.org/x/net/ipv4/zsys_linux_ppc64le.go
 @@ -4,64 +4,12 @@
@@ -9162,7 +9163,7 @@ index a04e785187af5..eb10cc79bd160 100644
  	Multiaddr  uint32
  	Interface  uint32
 diff --git a/vendor/golang.org/x/net/ipv4/zsys_linux_riscv64.go b/vendor/golang.org/x/net/ipv4/zsys_linux_riscv64.go
-index ec9e2dbecca9e..e2edebdb81245 100644
+index ec9e2dbecca..e2edebdb812 100644
 --- a/vendor/golang.org/x/net/ipv4/zsys_linux_riscv64.go
 +++ b/vendor/golang.org/x/net/ipv4/zsys_linux_riscv64.go
 @@ -7,64 +7,12 @@
@@ -9244,7 +9245,7 @@ index ec9e2dbecca9e..e2edebdb81245 100644
  	Multiaddr  uint32
  	Interface  uint32
 diff --git a/vendor/golang.org/x/net/ipv4/zsys_linux_s390x.go b/vendor/golang.org/x/net/ipv4/zsys_linux_s390x.go
-index a04e785187af5..eb10cc79bd160 100644
+index a04e785187a..eb10cc79bd1 100644
 --- a/vendor/golang.org/x/net/ipv4/zsys_linux_s390x.go
 +++ b/vendor/golang.org/x/net/ipv4/zsys_linux_s390x.go
 @@ -4,64 +4,12 @@
@@ -9326,7 +9327,7 @@ index a04e785187af5..eb10cc79bd160 100644
  	Multiaddr  uint32
  	Interface  uint32
 diff --git a/vendor/golang.org/x/net/ipv4/zsys_netbsd.go b/vendor/golang.org/x/net/ipv4/zsys_netbsd.go
-index 8cfc648ad7e8c..a2ef2f6d6d216 100644
+index 8cfc648ad7e..a2ef2f6d6d2 100644
 --- a/vendor/golang.org/x/net/ipv4/zsys_netbsd.go
 +++ b/vendor/golang.org/x/net/ipv4/zsys_netbsd.go
 @@ -4,23 +4,6 @@
@@ -9354,7 +9355,7 @@ index 8cfc648ad7e8c..a2ef2f6d6d216 100644
  )
  
 diff --git a/vendor/golang.org/x/net/ipv4/zsys_openbsd.go b/vendor/golang.org/x/net/ipv4/zsys_openbsd.go
-index 37629cb0ab5f5..b293a338f8261 100644
+index 37629cb0ab5..b293a338f82 100644
 --- a/vendor/golang.org/x/net/ipv4/zsys_openbsd.go
 +++ b/vendor/golang.org/x/net/ipv4/zsys_openbsd.go
 @@ -4,23 +4,6 @@
@@ -9382,7 +9383,7 @@ index 37629cb0ab5f5..b293a338f8261 100644
  )
  
 diff --git a/vendor/golang.org/x/net/ipv4/zsys_solaris.go b/vendor/golang.org/x/net/ipv4/zsys_solaris.go
-index cb80a308b0e64..e1a961bb61886 100644
+index cb80a308b0e..e1a961bb618 100644
 --- a/vendor/golang.org/x/net/ipv4/zsys_solaris.go
 +++ b/vendor/golang.org/x/net/ipv4/zsys_solaris.go
 @@ -4,49 +4,6 @@
@@ -9436,7 +9437,7 @@ index cb80a308b0e64..e1a961bb61886 100644
  	sizeofSockaddrInet    = 0x10
  	sizeofInetPktinfo     = 0xc
 diff --git a/vendor/golang.org/x/net/ipv4/zsys_zos_s390x.go b/vendor/golang.org/x/net/ipv4/zsys_zos_s390x.go
-index 4bbfda07dc3a2..692abf6882339 100644
+index 4bbfda07dc3..692abf68823 100644
 --- a/vendor/golang.org/x/net/ipv4/zsys_zos_s390x.go
 +++ b/vendor/golang.org/x/net/ipv4/zsys_zos_s390x.go
 @@ -8,30 +8,6 @@
@@ -9471,7 +9472,7 @@ index 4bbfda07dc3a2..692abf6882339 100644
  	sizeofSockaddrInet4   = 16
  	sizeofSockaddrStorage = 128
 diff --git a/vendor/golang.org/x/net/ipv6/control_rfc2292_unix.go b/vendor/golang.org/x/net/ipv6/control_rfc2292_unix.go
-index dd5fdc3133cab..2733ddbe272d9 100644
+index dd5fdc3133c..2733ddbe272 100644
 --- a/vendor/golang.org/x/net/ipv6/control_rfc2292_unix.go
 +++ b/vendor/golang.org/x/net/ipv6/control_rfc2292_unix.go
 @@ -12,11 +12,13 @@ import (
@@ -9508,7 +9509,7 @@ index dd5fdc3133cab..2733ddbe272d9 100644
  		sa := (*sockaddrInet6)(unsafe.Pointer(&m.Data(sizeofSockaddrInet6)[0]))
  		sa.setSockaddr(cm.NextHop, cm.IfIndex)
 diff --git a/vendor/golang.org/x/net/ipv6/control_rfc3542_unix.go b/vendor/golang.org/x/net/ipv6/control_rfc3542_unix.go
-index 24221941950c3..9c90844aac1a7 100644
+index 24221941950..9c90844aac1 100644
 --- a/vendor/golang.org/x/net/ipv6/control_rfc3542_unix.go
 +++ b/vendor/golang.org/x/net/ipv6/control_rfc3542_unix.go
 @@ -13,11 +13,13 @@ import (
@@ -9563,7 +9564,7 @@ index 24221941950c3..9c90844aac1a7 100644
  }
  
 diff --git a/vendor/golang.org/x/net/ipv6/sys_aix.go b/vendor/golang.org/x/net/ipv6/sys_aix.go
-index 29c5c0e4f9155..a47182afb9d6d 100644
+index 29c5c0e4f91..a47182afb9d 100644
 --- a/vendor/golang.org/x/net/ipv6/sys_aix.go
 +++ b/vendor/golang.org/x/net/ipv6/sys_aix.go
 @@ -15,32 +15,34 @@ import (
@@ -9621,7 +9622,7 @@ index 29c5c0e4f9155..a47182afb9d6d 100644
  )
  
 diff --git a/vendor/golang.org/x/net/ipv6/sys_bsd.go b/vendor/golang.org/x/net/ipv6/sys_bsd.go
-index 63e5ee2d599dd..bde41a6cef91f 100644
+index 63e5ee2d599..bde41a6cef9 100644
 --- a/vendor/golang.org/x/net/ipv6/sys_bsd.go
 +++ b/vendor/golang.org/x/net/ipv6/sys_bsd.go
 @@ -13,32 +13,34 @@ import (
@@ -9679,7 +9680,7 @@ index 63e5ee2d599dd..bde41a6cef91f 100644
  )
  
 diff --git a/vendor/golang.org/x/net/ipv6/sys_darwin.go b/vendor/golang.org/x/net/ipv6/sys_darwin.go
-index 12cc5cb2c1e2e..b80ec8064a67b 100644
+index 12cc5cb2c1e..b80ec8064a6 100644
 --- a/vendor/golang.org/x/net/ipv6/sys_darwin.go
 +++ b/vendor/golang.org/x/net/ipv6/sys_darwin.go
 @@ -11,36 +11,38 @@ import (
@@ -9745,7 +9746,7 @@ index 12cc5cb2c1e2e..b80ec8064a67b 100644
  )
  
 diff --git a/vendor/golang.org/x/net/ipv6/sys_freebsd.go b/vendor/golang.org/x/net/ipv6/sys_freebsd.go
-index 85a9f5d07de48..6282cf9770514 100644
+index 85a9f5d07de..6282cf97705 100644
 --- a/vendor/golang.org/x/net/ipv6/sys_freebsd.go
 +++ b/vendor/golang.org/x/net/ipv6/sys_freebsd.go
 @@ -13,36 +13,38 @@ import (
@@ -9811,7 +9812,7 @@ index 85a9f5d07de48..6282cf9770514 100644
  )
  
 diff --git a/vendor/golang.org/x/net/ipv6/sys_linux.go b/vendor/golang.org/x/net/ipv6/sys_linux.go
-index 96e8093a307d1..82e212100088d 100644
+index 96e8093a307..82e21210008 100644
 --- a/vendor/golang.org/x/net/ipv6/sys_linux.go
 +++ b/vendor/golang.org/x/net/ipv6/sys_linux.go
 @@ -11,36 +11,37 @@ import (
@@ -9875,7 +9876,7 @@ index 96e8093a307d1..82e212100088d 100644
  	}
  )
 diff --git a/vendor/golang.org/x/net/ipv6/sys_solaris.go b/vendor/golang.org/x/net/ipv6/sys_solaris.go
-index d348b5f6e45a8..1fc30add4d0a8 100644
+index d348b5f6e45..1fc30add4d0 100644
 --- a/vendor/golang.org/x/net/ipv6/sys_solaris.go
 +++ b/vendor/golang.org/x/net/ipv6/sys_solaris.go
 @@ -11,36 +11,38 @@ import (
@@ -9941,7 +9942,7 @@ index d348b5f6e45a8..1fc30add4d0a8 100644
  )
  
 diff --git a/vendor/golang.org/x/net/ipv6/sys_windows.go b/vendor/golang.org/x/net/ipv6/sys_windows.go
-index fc36b018bd2fa..fda8a29949119 100644
+index fc36b018bd2..fda8a299491 100644
 --- a/vendor/golang.org/x/net/ipv6/sys_windows.go
 +++ b/vendor/golang.org/x/net/ipv6/sys_windows.go
 @@ -10,18 +10,11 @@ import (
@@ -9985,7 +9986,7 @@ index fc36b018bd2fa..fda8a29949119 100644
  )
  
 diff --git a/vendor/golang.org/x/net/ipv6/sys_zos.go b/vendor/golang.org/x/net/ipv6/sys_zos.go
-index d4567f908fa89..31adc866559e1 100644
+index d4567f908fa..31adc866559 100644
 --- a/vendor/golang.org/x/net/ipv6/sys_zos.go
 +++ b/vendor/golang.org/x/net/ipv6/sys_zos.go
 @@ -11,33 +11,35 @@ import (
@@ -10045,7 +10046,7 @@ index d4567f908fa89..31adc866559e1 100644
  )
  
 diff --git a/vendor/golang.org/x/net/ipv6/zsys_aix_ppc64.go b/vendor/golang.org/x/net/ipv6/zsys_aix_ppc64.go
-index 75e2dd99486da..f604b0f3b4080 100644
+index 75e2dd99486..f604b0f3b40 100644
 --- a/vendor/golang.org/x/net/ipv6/zsys_aix_ppc64.go
 +++ b/vendor/golang.org/x/net/ipv6/zsys_aix_ppc64.go
 @@ -8,41 +8,6 @@
@@ -10091,7 +10092,7 @@ index 75e2dd99486da..f604b0f3b4080 100644
  	sizeofSockaddrInet6   = 0x1c
  	sizeofInet6Pktinfo    = 0x14
 diff --git a/vendor/golang.org/x/net/ipv6/zsys_darwin.go b/vendor/golang.org/x/net/ipv6/zsys_darwin.go
-index 555744afd71ad..dd6f7b28ec997 100644
+index 555744afd71..dd6f7b28ec9 100644
 --- a/vendor/golang.org/x/net/ipv6/zsys_darwin.go
 +++ b/vendor/golang.org/x/net/ipv6/zsys_darwin.go
 @@ -4,73 +4,6 @@
@@ -10169,7 +10170,7 @@ index 555744afd71ad..dd6f7b28ec997 100644
  	sizeofSockaddrInet6   = 0x1c
  	sizeofInet6Pktinfo    = 0x14
 diff --git a/vendor/golang.org/x/net/ipv6/zsys_dragonfly.go b/vendor/golang.org/x/net/ipv6/zsys_dragonfly.go
-index cf3cc1024acb1..6b45a94fe1b03 100644
+index cf3cc1024ac..6b45a94fe1b 100644
 --- a/vendor/golang.org/x/net/ipv6/zsys_dragonfly.go
 +++ b/vendor/golang.org/x/net/ipv6/zsys_dragonfly.go
 @@ -4,52 +4,6 @@
@@ -10226,7 +10227,7 @@ index cf3cc1024acb1..6b45a94fe1b03 100644
  	sizeofInet6Pktinfo  = 0x14
  	sizeofIPv6Mtuinfo   = 0x20
 diff --git a/vendor/golang.org/x/net/ipv6/zsys_freebsd_386.go b/vendor/golang.org/x/net/ipv6/zsys_freebsd_386.go
-index 73f31b260ea18..8da55925f7c09 100644
+index 73f31b260ea..8da55925f7c 100644
 --- a/vendor/golang.org/x/net/ipv6/zsys_freebsd_386.go
 +++ b/vendor/golang.org/x/net/ipv6/zsys_freebsd_386.go
 @@ -4,64 +4,6 @@
@@ -10295,7 +10296,7 @@ index 73f31b260ea18..8da55925f7c09 100644
  	sizeofSockaddrInet6   = 0x1c
  	sizeofInet6Pktinfo    = 0x14
 diff --git a/vendor/golang.org/x/net/ipv6/zsys_freebsd_amd64.go b/vendor/golang.org/x/net/ipv6/zsys_freebsd_amd64.go
-index 490ce7cf1044c..72a1a65a23397 100644
+index 490ce7cf104..72a1a65a233 100644
 --- a/vendor/golang.org/x/net/ipv6/zsys_freebsd_amd64.go
 +++ b/vendor/golang.org/x/net/ipv6/zsys_freebsd_amd64.go
 @@ -4,64 +4,6 @@
@@ -10364,7 +10365,7 @@ index 490ce7cf1044c..72a1a65a23397 100644
  	sizeofSockaddrInet6   = 0x1c
  	sizeofInet6Pktinfo    = 0x14
 diff --git a/vendor/golang.org/x/net/ipv6/zsys_freebsd_arm.go b/vendor/golang.org/x/net/ipv6/zsys_freebsd_arm.go
-index 490ce7cf1044c..72a1a65a23397 100644
+index 490ce7cf104..72a1a65a233 100644
 --- a/vendor/golang.org/x/net/ipv6/zsys_freebsd_arm.go
 +++ b/vendor/golang.org/x/net/ipv6/zsys_freebsd_arm.go
 @@ -4,64 +4,6 @@
@@ -10433,7 +10434,7 @@ index 490ce7cf1044c..72a1a65a23397 100644
  	sizeofSockaddrInet6   = 0x1c
  	sizeofInet6Pktinfo    = 0x14
 diff --git a/vendor/golang.org/x/net/ipv6/zsys_freebsd_arm64.go b/vendor/golang.org/x/net/ipv6/zsys_freebsd_arm64.go
-index 47e99ac9d304e..5b39eb8dfd29b 100644
+index 47e99ac9d30..5b39eb8dfd2 100644
 --- a/vendor/golang.org/x/net/ipv6/zsys_freebsd_arm64.go
 +++ b/vendor/golang.org/x/net/ipv6/zsys_freebsd_arm64.go
 @@ -4,64 +4,6 @@
@@ -10502,7 +10503,7 @@ index 47e99ac9d304e..5b39eb8dfd29b 100644
  	sizeofSockaddrInet6   = 0x1c
  	sizeofInet6Pktinfo    = 0x14
 diff --git a/vendor/golang.org/x/net/ipv6/zsys_linux_386.go b/vendor/golang.org/x/net/ipv6/zsys_linux_386.go
-index bde4a8f8f5d2f..ad71871b78a9b 100644
+index bde4a8f8f5d..ad71871b78a 100644
 --- a/vendor/golang.org/x/net/ipv6/zsys_linux_386.go
 +++ b/vendor/golang.org/x/net/ipv6/zsys_linux_386.go
 @@ -4,86 +4,6 @@
@@ -10593,7 +10594,7 @@ index bde4a8f8f5d2f..ad71871b78a9b 100644
  	sizeofSockaddrInet6         = 0x1c
  	sizeofInet6Pktinfo          = 0x14
 diff --git a/vendor/golang.org/x/net/ipv6/zsys_linux_amd64.go b/vendor/golang.org/x/net/ipv6/zsys_linux_amd64.go
-index 992ac9ec5f2cd..2514ab9a41c0b 100644
+index 992ac9ec5f2..2514ab9a41c 100644
 --- a/vendor/golang.org/x/net/ipv6/zsys_linux_amd64.go
 +++ b/vendor/golang.org/x/net/ipv6/zsys_linux_amd64.go
 @@ -4,86 +4,6 @@
@@ -10684,7 +10685,7 @@ index 992ac9ec5f2cd..2514ab9a41c0b 100644
  	sizeofSockaddrInet6         = 0x1c
  	sizeofInet6Pktinfo          = 0x14
 diff --git a/vendor/golang.org/x/net/ipv6/zsys_linux_arm.go b/vendor/golang.org/x/net/ipv6/zsys_linux_arm.go
-index bde4a8f8f5d2f..ad71871b78a9b 100644
+index bde4a8f8f5d..ad71871b78a 100644
 --- a/vendor/golang.org/x/net/ipv6/zsys_linux_arm.go
 +++ b/vendor/golang.org/x/net/ipv6/zsys_linux_arm.go
 @@ -4,86 +4,6 @@
@@ -10775,7 +10776,7 @@ index bde4a8f8f5d2f..ad71871b78a9b 100644
  	sizeofSockaddrInet6         = 0x1c
  	sizeofInet6Pktinfo          = 0x14
 diff --git a/vendor/golang.org/x/net/ipv6/zsys_linux_arm64.go b/vendor/golang.org/x/net/ipv6/zsys_linux_arm64.go
-index 992ac9ec5f2cd..2514ab9a41c0b 100644
+index 992ac9ec5f2..2514ab9a41c 100644
 --- a/vendor/golang.org/x/net/ipv6/zsys_linux_arm64.go
 +++ b/vendor/golang.org/x/net/ipv6/zsys_linux_arm64.go
 @@ -4,86 +4,6 @@
@@ -10866,7 +10867,7 @@ index 992ac9ec5f2cd..2514ab9a41c0b 100644
  	sizeofSockaddrInet6         = 0x1c
  	sizeofInet6Pktinfo          = 0x14
 diff --git a/vendor/golang.org/x/net/ipv6/zsys_linux_mips.go b/vendor/golang.org/x/net/ipv6/zsys_linux_mips.go
-index bde4a8f8f5d2f..ad71871b78a9b 100644
+index bde4a8f8f5d..ad71871b78a 100644
 --- a/vendor/golang.org/x/net/ipv6/zsys_linux_mips.go
 +++ b/vendor/golang.org/x/net/ipv6/zsys_linux_mips.go
 @@ -4,86 +4,6 @@
@@ -10957,7 +10958,7 @@ index bde4a8f8f5d2f..ad71871b78a9b 100644
  	sizeofSockaddrInet6         = 0x1c
  	sizeofInet6Pktinfo          = 0x14
 diff --git a/vendor/golang.org/x/net/ipv6/zsys_linux_mips64.go b/vendor/golang.org/x/net/ipv6/zsys_linux_mips64.go
-index 992ac9ec5f2cd..2514ab9a41c0b 100644
+index 992ac9ec5f2..2514ab9a41c 100644
 --- a/vendor/golang.org/x/net/ipv6/zsys_linux_mips64.go
 +++ b/vendor/golang.org/x/net/ipv6/zsys_linux_mips64.go
 @@ -4,86 +4,6 @@
@@ -11048,7 +11049,7 @@ index 992ac9ec5f2cd..2514ab9a41c0b 100644
  	sizeofSockaddrInet6         = 0x1c
  	sizeofInet6Pktinfo          = 0x14
 diff --git a/vendor/golang.org/x/net/ipv6/zsys_linux_mips64le.go b/vendor/golang.org/x/net/ipv6/zsys_linux_mips64le.go
-index 992ac9ec5f2cd..2514ab9a41c0b 100644
+index 992ac9ec5f2..2514ab9a41c 100644
 --- a/vendor/golang.org/x/net/ipv6/zsys_linux_mips64le.go
 +++ b/vendor/golang.org/x/net/ipv6/zsys_linux_mips64le.go
 @@ -4,86 +4,6 @@
@@ -11139,7 +11140,7 @@ index 992ac9ec5f2cd..2514ab9a41c0b 100644
  	sizeofSockaddrInet6         = 0x1c
  	sizeofInet6Pktinfo          = 0x14
 diff --git a/vendor/golang.org/x/net/ipv6/zsys_linux_mipsle.go b/vendor/golang.org/x/net/ipv6/zsys_linux_mipsle.go
-index bde4a8f8f5d2f..ad71871b78a9b 100644
+index bde4a8f8f5d..ad71871b78a 100644
 --- a/vendor/golang.org/x/net/ipv6/zsys_linux_mipsle.go
 +++ b/vendor/golang.org/x/net/ipv6/zsys_linux_mipsle.go
 @@ -4,86 +4,6 @@
@@ -11230,7 +11231,7 @@ index bde4a8f8f5d2f..ad71871b78a9b 100644
  	sizeofSockaddrInet6         = 0x1c
  	sizeofInet6Pktinfo          = 0x14
 diff --git a/vendor/golang.org/x/net/ipv6/zsys_linux_ppc.go b/vendor/golang.org/x/net/ipv6/zsys_linux_ppc.go
-index 66fd236121047..d06c2adecb7b2 100644
+index 66fd2361210..d06c2adecb7 100644
 --- a/vendor/golang.org/x/net/ipv6/zsys_linux_ppc.go
 +++ b/vendor/golang.org/x/net/ipv6/zsys_linux_ppc.go
 @@ -4,86 +4,6 @@
@@ -11321,7 +11322,7 @@ index 66fd236121047..d06c2adecb7b2 100644
  	sizeofSockaddrInet6         = 0x1c
  	sizeofInet6Pktinfo          = 0x14
 diff --git a/vendor/golang.org/x/net/ipv6/zsys_linux_ppc64.go b/vendor/golang.org/x/net/ipv6/zsys_linux_ppc64.go
-index 992ac9ec5f2cd..2514ab9a41c0b 100644
+index 992ac9ec5f2..2514ab9a41c 100644
 --- a/vendor/golang.org/x/net/ipv6/zsys_linux_ppc64.go
 +++ b/vendor/golang.org/x/net/ipv6/zsys_linux_ppc64.go
 @@ -4,86 +4,6 @@
@@ -11412,7 +11413,7 @@ index 992ac9ec5f2cd..2514ab9a41c0b 100644
  	sizeofSockaddrInet6         = 0x1c
  	sizeofInet6Pktinfo          = 0x14
 diff --git a/vendor/golang.org/x/net/ipv6/zsys_linux_ppc64le.go b/vendor/golang.org/x/net/ipv6/zsys_linux_ppc64le.go
-index 992ac9ec5f2cd..2514ab9a41c0b 100644
+index 992ac9ec5f2..2514ab9a41c 100644
 --- a/vendor/golang.org/x/net/ipv6/zsys_linux_ppc64le.go
 +++ b/vendor/golang.org/x/net/ipv6/zsys_linux_ppc64le.go
 @@ -4,86 +4,6 @@
@@ -11503,7 +11504,7 @@ index 992ac9ec5f2cd..2514ab9a41c0b 100644
  	sizeofSockaddrInet6         = 0x1c
  	sizeofInet6Pktinfo          = 0x14
 diff --git a/vendor/golang.org/x/net/ipv6/zsys_linux_riscv64.go b/vendor/golang.org/x/net/ipv6/zsys_linux_riscv64.go
-index 2072c313e9c92..d4f78e405ab08 100644
+index 2072c313e9c..d4f78e405ab 100644
 --- a/vendor/golang.org/x/net/ipv6/zsys_linux_riscv64.go
 +++ b/vendor/golang.org/x/net/ipv6/zsys_linux_riscv64.go
 @@ -7,86 +7,6 @@
@@ -11594,7 +11595,7 @@ index 2072c313e9c92..d4f78e405ab08 100644
  	sizeofSockaddrInet6         = 0x1c
  	sizeofInet6Pktinfo          = 0x14
 diff --git a/vendor/golang.org/x/net/ipv6/zsys_linux_s390x.go b/vendor/golang.org/x/net/ipv6/zsys_linux_s390x.go
-index 992ac9ec5f2cd..2514ab9a41c0b 100644
+index 992ac9ec5f2..2514ab9a41c 100644
 --- a/vendor/golang.org/x/net/ipv6/zsys_linux_s390x.go
 +++ b/vendor/golang.org/x/net/ipv6/zsys_linux_s390x.go
 @@ -4,86 +4,6 @@
@@ -11685,7 +11686,7 @@ index 992ac9ec5f2cd..2514ab9a41c0b 100644
  	sizeofSockaddrInet6         = 0x1c
  	sizeofInet6Pktinfo          = 0x14
 diff --git a/vendor/golang.org/x/net/ipv6/zsys_netbsd.go b/vendor/golang.org/x/net/ipv6/zsys_netbsd.go
-index e39571e072509..f7335d5ae437a 100644
+index e39571e0725..f7335d5ae43 100644
 --- a/vendor/golang.org/x/net/ipv6/zsys_netbsd.go
 +++ b/vendor/golang.org/x/net/ipv6/zsys_netbsd.go
 @@ -4,48 +4,6 @@
@@ -11738,7 +11739,7 @@ index e39571e072509..f7335d5ae437a 100644
  	sizeofInet6Pktinfo  = 0x14
  	sizeofIPv6Mtuinfo   = 0x20
 diff --git a/vendor/golang.org/x/net/ipv6/zsys_openbsd.go b/vendor/golang.org/x/net/ipv6/zsys_openbsd.go
-index cc1899a630c2b..6d1592812264c 100644
+index cc1899a630c..6d159281226 100644
 --- a/vendor/golang.org/x/net/ipv6/zsys_openbsd.go
 +++ b/vendor/golang.org/x/net/ipv6/zsys_openbsd.go
 @@ -4,57 +4,6 @@
@@ -11800,7 +11801,7 @@ index cc1899a630c2b..6d1592812264c 100644
  	sizeofInet6Pktinfo  = 0x14
  	sizeofIPv6Mtuinfo   = 0x20
 diff --git a/vendor/golang.org/x/net/ipv6/zsys_solaris.go b/vendor/golang.org/x/net/ipv6/zsys_solaris.go
-index 690eef9341ac7..1716197477a76 100644
+index 690eef9341a..1716197477a 100644
 --- a/vendor/golang.org/x/net/ipv6/zsys_solaris.go
 +++ b/vendor/golang.org/x/net/ipv6/zsys_solaris.go
 @@ -4,74 +4,6 @@
@@ -11879,7 +11880,7 @@ index 690eef9341ac7..1716197477a76 100644
  	sizeofSockaddrInet6   = 0x20
  	sizeofInet6Pktinfo    = 0x14
 diff --git a/vendor/golang.org/x/net/ipv6/zsys_zos_s390x.go b/vendor/golang.org/x/net/ipv6/zsys_zos_s390x.go
-index 3f980691f6be1..7c75645967391 100644
+index 3f980691f6b..7c756459673 100644
 --- a/vendor/golang.org/x/net/ipv6/zsys_zos_s390x.go
 +++ b/vendor/golang.org/x/net/ipv6/zsys_zos_s390x.go
 @@ -8,50 +8,6 @@
@@ -11934,7 +11935,7 @@ index 3f980691f6be1..7c75645967391 100644
  	sizeofICMPv6Filter    = 32
  	sizeofInet6Pktinfo    = 20
 diff --git a/vendor/modules.txt b/vendor/modules.txt
-index 84e12e87b0575..6c9ce2ffcd59b 100644
+index 0075b726f3c..8de6b9942f5 100644
 --- a/vendor/modules.txt
 +++ b/vendor/modules.txt
 @@ -1277,9 +1277,9 @@ golang.org/x/crypto/ssh/internal/bcrypt_pbkdf
@@ -11949,3 +11950,6 @@ index 84e12e87b0575..6c9ce2ffcd59b 100644
  golang.org/x/net/bpf
  golang.org/x/net/context
  golang.org/x/net/context/ctxhttp
+-- 
+2.34.0
+
