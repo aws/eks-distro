@@ -31,6 +31,7 @@ HAS_S3_ARTIFACTS="${11}"
 HAS_LICENSES="${12}"
 REPO_NO_CLONE="${13}"
 FETCH_BINARIES_TARGETS="${14}"
+HAS_HELM_CHART="${15}"
 
 NL=$'\n'
 HEADER="########### DO NOT EDIT #############################"
@@ -50,7 +51,7 @@ sed -i "/$HEADER/,/$FOOTER/d" $HELPFILE
 printf %s "$(< $HELPFILE)" > $HELPFILE
 
 # Generate help items from Common.mk
-EXTRA_HELP="$(make help-list)"
+EXTRA_HELP="$(make help-list --no-print-directory)"
 BINARY_TARGETS_HELP=""
 CHECKSUMS_TARGETS_HELP=""
 if [ ! -z "$(echo "$BINARY_TARGETS" | xargs)" ]; then
@@ -75,11 +76,11 @@ fi
 
 PATCHES_TARGET=""
 if [[ "$HAS_PATCHES" == "true" ]]; then
-    PATCHES_TARGET+="${NL}${NL}patch-repo: ## Patch upstream repo with patches in patches directory"
+    PATCHES_TARGET+="${NL}patch-repo: ## Patch upstream repo with patches in patches directory"
 fi
 
 IMAGE_TARGETS_HELP=""
-if [ ! -z "$LOCAL_IMAGE_TARGETS" ]; then
+if [ ! -z "$(echo "$LOCAL_IMAGE_TARGETS" | xargs)" ]; then
     IMAGE_TARGETS_HELP+="${NL}${NL}##@ Image Targets"
     IMAGE_TARGETS_HELP+="${NL}local-images: ## Builds \`$(echo ${LOCAL_IMAGE_TARGETS} | xargs)\` as oci tars for presumbit validation"
     IMAGE_TARGETS_HELP+="${NL}images: ## Pushes \`$(echo ${IMAGE_TARGETS} | xargs)\` to IMAGE_REPO"
@@ -132,11 +133,18 @@ if [ ! -z "$(echo "$FETCH_BINARIES_TARGETS" | xargs)" ]; then
     done
 fi
 
+HELM_TARGETS=""
+if [[ "$HAS_HELM_CHART" == "true" ]]; then
+    HELM_TARGETS+="${NL}${NL}##@ Helm Targets"
+    HELM_TARGETS+="${NL}helm/build: ## Build helm chart"
+    HELM_TARGETS+="${NL}helm/push: ## Build helm chart and push to registry defined in IMAGE_REPO."
+fi
+
 cat >> $HELPFILE << EOF
 ${NL}${NL}${NL}${HEADER}
 # To update call: make add-generated-help-block
 # This is added to help document dynamic targets and support shell autocompletion
-${GIT_TARGETS_HELP}${BINARY_TARGETS_HELP}${PATCHES_TARGET}${IMAGE_TARGETS_HELP}${FETCH_BINARY_TARGETS_HELP}${CHECKSUMS_TARGETS_HELP}${ARTIFACTS_TARGETS}${LICENSES_TARGETS}${CLEAN_TARGETS}
+${GIT_TARGETS_HELP}${PATCHES_TARGET}${BINARY_TARGETS_HELP}${IMAGE_TARGETS_HELP}${HELM_TARGETS}${FETCH_BINARY_TARGETS_HELP}${CHECKSUMS_TARGETS_HELP}${ARTIFACTS_TARGETS}${LICENSES_TARGETS}${CLEAN_TARGETS}
 ${EXTRA_HELP}
 
 ##@ Build Targets

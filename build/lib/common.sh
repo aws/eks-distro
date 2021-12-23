@@ -126,7 +126,11 @@ function build::gather_licenses() {
   # which makes deleting them later awkward
   # this behavior may change in the future with the following PR
   # https://github.com/google/go-licenses/pull/28
-  chmod -R 777 "${outputdir}/LICENSES"  
+  # We can delete these additional files because we are running go mod vendor
+  # prior to this call so we know the source is the same as upstream
+  # go-licenses is copying this code because it doesnt know if its be modified or not
+  chmod -R 777 "${outputdir}/LICENSES"
+  find "${outputdir}/LICENSES" -type f \( -name '*.yml' -o -name '*.go' -o -name '*.mod' -o -name '*.sum' -o -name '*gitignore' \) -delete
 
   # most of the packages show up the go-license.csv file as the module name
   # from the go.mod file, storing that away since the source dirs usually get deleted
