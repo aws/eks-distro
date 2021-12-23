@@ -30,10 +30,15 @@ function build::binaries::kube_bins() {
 
     cd $repository
     
-    # avoid checksum differences due to modules being installed on 
-    # build machine before building kubernetes since that will sometimes
-    # add additional hashs for vendor modules in the final binary
-    ./hack/update-vendor.sh
+    
+    # Ideally, to avoid checksum differences due to modules being downloaded by go mod download vs
+    # vendored in the vendor directly, which really only comes into play when build locally vs in a clean
+    # builder-base, we would run `./hack/update-vendor.sh` to redownload all the modules avoiding this difference
+    # We do this for all projects, however, with kubernetes we actually patch some files in vendor
+    # so if we ran this it would overwrite our patched changes
+    # TODO: potentially look at ways to run this but reset back to patches after downloads?
+    # or once we are using go 1.15, using the seperate cache dirs like we do could help?
+    # ./hack/update-vendor.sh
     
     # Build all core components for linux arm64 and amd64
     # GOLDFLASGS
