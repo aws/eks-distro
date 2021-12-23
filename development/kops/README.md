@@ -23,6 +23,7 @@ also generate the cluster configuration:
 ```bash
 export KOPS_STATE_STORE=s3://kops-state-store
 export KOPS_CLUSTER_NAME=clustername.example.com
+export RELEASE_BRANCH=1-XX
 ./run_cluster.sh
 ```
 
