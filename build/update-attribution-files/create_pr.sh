@@ -105,9 +105,23 @@ EOF
     pr:create "$pr_title" "$commit_message" "$pr_branch" "$pr_body"
 }
 
+function pr::create::help() {
+    local -r pr_title="Update Makefile generated help"
+    local -r commit_message="[PR BOT] Update Help.mk files"
+    local -r pr_branch="checksums-files-update-$MAIN_BRANCH"
+    local -r pr_body=$(cat <<EOF
+This PR updates the Help.mk files across all dependency projects if there have been changes.
+
+By submitting this pull request, I confirm that you can use, modify, copy, and redistribute this contribution, under the terms of your choice.
+EOF
+)
+    pr:create "$pr_title" "$commit_message" "$pr_branch" "$pr_body"
+}
+
+
 # Add attribution files
-for FILE in $(find . -type f \( -name ATTRIBUTION.txt ! -path "*/_output/*" \)); do    
-    git add $FILE
+for FILE in $(find . -type f \( -name "*ATTRIBUTION.txt" ! -path "*/_output/*" \)); do    
+    git check-ignore -q $FILE || git add $FILE
 done
 
 # stash checksums files
@@ -122,7 +136,22 @@ if [ "$(git stash list)" != "" ]; then
 fi
 # Add checksum files
 for FILE in $(find . -type f -name CHECKSUMS); do    
-    git add $FILE
+    git check-ignore -q $FILE || git add $FILE
 done
 
+# stash help.mk files
+git stash --keep-index
+
 pr::create::checksums
+
+git checkout $MAIN_BRANCH
+
+if [ "$(git stash list)" != "" ]; then
+    git stash pop
+fi
+# Add help.mk/Makefile files
+for FILE in $(find . -type f \( -name Help.mk -o -name Makefile \)); do    
+    git check-ignore -q $FILE || git add $FILE
+done
+
+pr::create::help

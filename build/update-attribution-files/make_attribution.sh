@@ -20,6 +20,7 @@ set -o pipefail
 shopt -s globstar
 
 PROJECT="$1"
+TARGET="$2"
 
 MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd -P)"
 PROJECT_ROOT=$MAKE_ROOT/$PROJECT
@@ -31,7 +32,7 @@ function build::attribution::generate(){
     if [ $# -ge 1 ]; then
         export RELEASE_BRANCH="$1"
     fi
-    make -C $PROJECT_ROOT binaries attribution checksums
+    make -C $PROJECT_ROOT $TARGET
     if [ -f $PROJECT_ROOT/_output/**/summary.txt ]; then
         for summary in $PROJECT_ROOT/_output/**/summary.txt; do
             sed -i "s/+.*=/ =/g" $summary
@@ -39,7 +40,6 @@ function build::attribution::generate(){
                 $summary _output/total_summary.txt | sort > _output/total_summary.tmp && mv _output/total_summary.tmp _output/total_summary.txt
         done
     fi
-    make -C $PROJECT_ROOT clean 
 }
 
 

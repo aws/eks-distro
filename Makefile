@@ -150,10 +150,19 @@ attribution-files: $(addprefix attribution-files-project-, $(ALL_PROJECTS))
 .PHONY: attribution-files-project-%
 attribution-files-project-%:
 	$(eval PROJECT_PATH=projects/$(subst _,/,$*))
-	build/update-attribution-files/make_attribution.sh $(PROJECT_PATH)
+	build/update-attribution-files/make_attribution.sh $(PROJECT_PATH) attribution
 
 .PHONY: update-attribution-files
-update-attribution-files: attribution-files
+update-attribution-files: add-generated-help-block attribution-files checksum-files
+	build/update-attribution-files/create_pr.sh
+
+.PHONY: checksum-files-project-%
+checksum-files-project-%:
+	$(eval PROJECT_PATH=projects/$(subst _,/,$*))
+	build/update-attribution-files/make_attribution.sh $(PROJECT_PATH) checksums
+
+.PHONY: checksum-files
+checksum-files: $(addprefix checksum-files-project-, $(ALL_PROJECTS))
 	build/update-attribution-files/create_pr.sh
 
 .PHONY: add-generated-help-block-project-%
@@ -163,6 +172,7 @@ add-generated-help-block-project-%:
 
 .PHONY: add-generated-help-block
 add-generated-help-block: $(addprefix add-generated-help-block-project-, $(ALL_PROJECTS))
+	build/update-attribution-files/create_pr.sh
 
 .PHONY: update-release-number
 update-release-number:
