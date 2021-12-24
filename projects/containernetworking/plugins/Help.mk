@@ -11,14 +11,13 @@ clone-repo:  ## Clone upstream `plugins`
 checkout-repo: ## Checkout upstream tag based on value in GIT_TAG file
 
 ##@ Binary Targets
-binaries: ## Build all binaries: `bandwidth firewall flannel portmap sbr tuning vrf bridge host-device ipvlan loopback macvlan ptp vlan dhcp host-local static` for `linux/amd64 linux/arm64`
+binaries: ## Build all binaries: `bandwidth firewall flannel portmap sbr tuning bridge host-device ipvlan loopback macvlan ptp vlan dhcp host-local static` for `linux/amd64 linux/arm64`
 _output/bin/plugins/linux-amd64/bandwidth: ## Build `_output/bin/plugins/linux-amd64/bandwidth`
 _output/bin/plugins/linux-amd64/firewall: ## Build `_output/bin/plugins/linux-amd64/firewall`
 _output/bin/plugins/linux-amd64/flannel: ## Build `_output/bin/plugins/linux-amd64/flannel`
 _output/bin/plugins/linux-amd64/portmap: ## Build `_output/bin/plugins/linux-amd64/portmap`
 _output/bin/plugins/linux-amd64/sbr: ## Build `_output/bin/plugins/linux-amd64/sbr`
 _output/bin/plugins/linux-amd64/tuning: ## Build `_output/bin/plugins/linux-amd64/tuning`
-_output/bin/plugins/linux-amd64/vrf: ## Build `_output/bin/plugins/linux-amd64/vrf`
 _output/bin/plugins/linux-amd64/bridge: ## Build `_output/bin/plugins/linux-amd64/bridge`
 _output/bin/plugins/linux-amd64/host-device: ## Build `_output/bin/plugins/linux-amd64/host-device`
 _output/bin/plugins/linux-amd64/ipvlan: ## Build `_output/bin/plugins/linux-amd64/ipvlan`
@@ -35,7 +34,6 @@ _output/bin/plugins/linux-arm64/flannel: ## Build `_output/bin/plugins/linux-arm
 _output/bin/plugins/linux-arm64/portmap: ## Build `_output/bin/plugins/linux-arm64/portmap`
 _output/bin/plugins/linux-arm64/sbr: ## Build `_output/bin/plugins/linux-arm64/sbr`
 _output/bin/plugins/linux-arm64/tuning: ## Build `_output/bin/plugins/linux-arm64/tuning`
-_output/bin/plugins/linux-arm64/vrf: ## Build `_output/bin/plugins/linux-arm64/vrf`
 _output/bin/plugins/linux-arm64/bridge: ## Build `_output/bin/plugins/linux-arm64/bridge`
 _output/bin/plugins/linux-arm64/host-device: ## Build `_output/bin/plugins/linux-arm64/host-device`
 _output/bin/plugins/linux-arm64/ipvlan: ## Build `_output/bin/plugins/linux-arm64/ipvlan`
@@ -46,10 +44,6 @@ _output/bin/plugins/linux-arm64/vlan: ## Build `_output/bin/plugins/linux-arm64/
 _output/bin/plugins/linux-arm64/dhcp: ## Build `_output/bin/plugins/linux-arm64/dhcp`
 _output/bin/plugins/linux-arm64/host-local: ## Build `_output/bin/plugins/linux-arm64/host-local`
 _output/bin/plugins/linux-arm64/static: ## Build `_output/bin/plugins/linux-arm64/static`
-
-##@ Image Targets
-local-images: ## Builds `` as oci tars for presumbit validation
-images: ## Pushes `` to IMAGE_REPO
 
 ##@ Checksum Targets
 checksums: ## Update checksums file based on currently built binaries.
