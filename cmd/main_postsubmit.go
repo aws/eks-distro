@@ -19,6 +19,7 @@ var (
 
 type Command struct {
 	releaseBranch  string
+	releaseVariant string
 	gitRoot        string
 	release        string
 	artifactBucket string
@@ -53,6 +54,7 @@ func (c *Command) buildProject(projectPath string) error {
 func main() {
 	target := flag.String("target", "release", "Make target")
 	releaseBranch := flag.String("release-branch", "1-19", "Release branch to test")
+	releaseVariant := flag.String("release-variant", "", "Release variant to test")
 	release := flag.String("release", "1", "Release to test")
 	region := flag.String("region", "us-west-2", "AWS region to use")
 	accountId := flag.String("account-id", "", "AWS Account ID to use")
@@ -66,6 +68,7 @@ func main() {
 
 	c := &Command{
 		releaseBranch:  *releaseBranch,
+		releaseVariant: *releaseVariant,
 		release:        *release,
 		artifactBucket: *artifactBucket,
 		gitRoot:        *gitRoot,
@@ -81,6 +84,7 @@ func main() {
 	}
 	c.makeArgs = []string{
 		fmt.Sprintf("RELEASE_BRANCH=%s", c.releaseBranch),
+		fmt.Sprintf("RELEASE_VARIANT=%s", c.releaseVariant),
 		fmt.Sprintf("RELEASE=%s", c.release),
 		fmt.Sprintf("AWS_REGION=%s", *region),
 		fmt.Sprintf("AWS_ACCOUNT_ID=%s", *accountId),
@@ -125,7 +129,7 @@ func main() {
 				projects[projectPath].changed = true
 			}
 		}
-		r := regexp.MustCompile("^Makefile$|^Common.mk$|cmd/main_postsubmit.go|EKS_DISTRO_BASE_TAG_FILE|^release/.*|^build/lib/.*")
+		r := regexp.MustCompile("^Makefile$|^Common.mk$|cmd/main_postsubmit.go|EKS_DISTRO_.*_TAG_FILE|^release/.*|^build/lib/.*")
 		if r.MatchString(file) {
 			allChanged = true
 		}

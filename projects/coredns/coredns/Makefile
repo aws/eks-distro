@@ -11,6 +11,10 @@ BINARY_TARGET_FILES=coredns
 SOURCE_PATTERNS=.
 EXTRA_GO_LDFLAGS=-X github.com/coredns/coredns/coremain.GitCommit=$(shell git -C $(REPO) rev-list -n 1  "${GIT_TAG}")
 
+BASE_IMAGE=$(if $(IS_BUILDING_MINIMAL),$(BASE_IMAGE_REPO)/$(BASE_IMAGE_NAME):$(BASE_IMAGE_TAG),scratch)
+IMAGE_TARGET=$(RELEASE_VARIANT)
+BUILDER_IMAGE=$(EKS_DISTRO_BASE_IMAGE)
+
 # When creating a local image IMAGE_PLATFORMS will be either linux/amd64 or linux/arm64
 IMAGE_OUTPUT_DIR=$(OUTPUT_DIR)/images/bin/$(IMAGE_PLATFORMS)
 BUILD_OCI_TARS=true

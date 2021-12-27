@@ -14,7 +14,7 @@ KUBE_BASE_GIT_TAG?=$(shell cat $(BASE_DIRECTORY)/projects/kubernetes/release/$(R
 KUBE_BASE_TAG?=${KUBE_BASE_GIT_TAG}-eks-${RELEASE_BRANCH}-${RELEASE}
 GO_RUNNER_IMAGE?=$(IMAGE_REPO)/kubernetes/go-runner:$(KUBE_BASE_TAG)
 KUBE_PROXY_BASE_IMAGE?=$(IMAGE_REPO)/kubernetes/kube-proxy-base:$(KUBE_BASE_TAG)
-BUILDER_IMAGE=$(GO_RUNNER_IMAGE) # for pause
+BUILDER_IMAGE=$(EKS_DISTRO_BASE_IMAGE) # for pause
 
 PAUSE_SRC_DIR?=kubernetes/build/pause
 PAUSE_DST=$(OUTPUT_DIR)/pause/pause.c
@@ -69,7 +69,8 @@ kube-proxy/images/%: BASE_IMAGE=$(KUBE_PROXY_BASE_IMAGE)
 # For pause change the dockerfile and base off scratch
 # wildcard match doesnt work for add pre-req so have to use helper
 pause/images/%: DOCKERFILE_FOLDER=./docker/pause
-pause/images/%: BASE_IMAGE=scratch
+pause/images/%: BASE_IMAGE_NAME=eks-distro-minimal-base-nonroot
+pause/images/%: BASE_IMAGE=$(if $(IS_BUILDING_MINIMAL),$(BASE_IMAGE_REPO)/$(BASE_IMAGE_NAME):$(BASE_IMAGE_TAG),scratch)
 pause/images/%: IMAGE=$(PAUSE_IMAGE)
 $(call IMAGE_TARGETS_FOR_NAME, pause): $(PAUSE_DST)
 
@@ -97,7 +98,7 @@ fix-licenses:
 
 .PHONY: update-version
 update-version:
-	build/create_version_file.sh $(GIT_TAG) $(RELEASE_BRANCH) $(IMAGE_TAG)
+	build/create_version_file.sh $(GIT_TAG) $(RELEASE_BRANCH) $(IMAGE_TAG:.minimal=)
 
 .PHONY: validate-version-file
 validate-version-file: update-version
