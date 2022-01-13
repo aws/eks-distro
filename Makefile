@@ -1,5 +1,6 @@
 BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
 RELEASE_BRANCH?=$(shell cat $(BASE_DIRECTORY)/release/DEFAULT_RELEASE_BRANCH)
+SUPPORTED_RELEASE_BRANCHES?=$(shell cat $(BASE_DIRECTORY)/release/SUPPORTED_RELEASE_BRANCHES)
 RELEASE_ENVIRONMENT?=development
 RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/$(RELEASE_ENVIRONMENT)/RELEASE)
 ARTIFACT_BUCKET?=my-s3-bucket
@@ -186,6 +187,10 @@ update-release-number:
 	go run ./cmd/release/number/main.go \
 		--branch=$(RELEASE_BRANCH) \
 		--isBot=$(IS_BOT)
+
+.PHONY: update-all-release-numbers
+update-all-release-numbers:
+	for r_b in $(SUPPORTED_RELEASE_BRANCHES); do RELEASE_BRANCH=$$r_b $(MAKE) update-release-number; done
 
 .PHONY: release-docs
 release-docs:
