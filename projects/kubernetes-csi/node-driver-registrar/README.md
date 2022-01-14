@@ -1,4 +1,4 @@
-## CSI external-provisioner
+## CSI node-driver-registrar
 
 | Release | Version |
 | --- | --- |
@@ -10,27 +10,27 @@
 
 ### Updating
 
-1. Determine the version of CSI external-provisioner to use.
+1. Determine the version of CSI node-driver-registrar to use.
    1. Consult the EKS team and consider options among the 
-      [supported versions](https://kubernetes-csi.github.io/docs/external-provisioner.html#supported-versions). 
-   2. Review [releases](https://github.com/kubernetes-csi/external-provisioner/releases),
-      [tags](https://github.com/kubernetes-csi/external-provisioner/tags),
-      and [changelogs](https://github.com/kubernetes-csi/external-provisioner/tree/master/CHANGELOG),
+      [supported versions](https://kubernetes-csi.github.io/docs/node-driver-registrar.html#supported-versions). 
+   2. Review [releases](https://github.com/kubernetes-csi/node-driver-registrar/releases),
+      [tags](https://github.com/kubernetes-csi/node-driver-registrar/tags),
+      and [changelogs](https://github.com/kubernetes-csi/node-driver-registrar/tree/master/CHANGELOG),
       carefully looking for updates that may affect EKS-Distro or downstream 
       projects like EKS-Anywhere.
 2. Update the `GIT_TAG` file to have the new, desired version based on the 
-   `external-provisioner` release tags.
+   `node-driver-registrar` release tags.
 3. Compare the old tag to the new one, looking specifically for Makefile changes.
    For example:
-   [v2.1.0 compared to v2.2.0](https://github.com/kubernetes-csi/external-provisioner/compare/v2.1.0...v2.2.0).
-   Check the `external-provisioner` target for any build flag changes, tag 
+   [v2.1.0 compared to v2.2.0](https://github.com/kubernetes-csi/node-driver-registrar/compare/v2.1.0...v2.2.0).
+   Check the `node-driver-registrar` target for any build flag changes, tag 
    changes, dependencies, etc. Check that the manifest target, which is called
    from the EKS-D Makefile, has not changed.
 4. Verify the Golang version has not changed. The version specified in
-   [`go.mod`](https://github.com/kubernetes-csi/external-provisioner/blob/master/go.mod)
+   [`go.mod`](https://github.com/kubernetes-csi/node-driver-registrar/blob/master/go.mod)
    seems to be kept up to date. Be sure to select the correct branch for the 
    release when checking the Golang version.
 5. Update CHECKSUMS and attribution by using
-   `make update-attribution-checksums-docker PROJECT=kubernetes-csi/external-provisioner RELEASE_BRANCH=<release_branch>` 
+   `make update-attribution-checksums-docker PROJECT=kubernetes-csi/node-driver-registrar RELEASE_BRANCH=<release_branch>` 
    from the root of the EKS-Distro repo.
 6. Update the version at the top of this README.
