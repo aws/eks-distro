@@ -1,0 +1,1 @@
+Amazon EKS Distro v1.20-10 is now available. This release includes newer versions of many CSI sidecars, specifically external-attacher, external-provisioner, external-resizer, livenessprobe, and node-driver-registrar. Amazon EKS Distro v1.20-10 builds are available through ECR Public Gallery (https://gallery.ecr.aws/eks-distro) and GitHub (https://github.com/aws/eks-distro)g
