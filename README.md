@@ -48,7 +48,7 @@ To receive notifications about new EKS-D releases, subscribe to the EKS-D update
 
 | Release | Manifest |
 | --- | --- |
-| 13 | [kubernetes-1-18-eks-13](https://distro.eks.amazonaws.com/kubernetes-1-18/kubernetes-1-18-eks-13.yaml) |
+| 14 | [kubernetes-1-18-eks-14](https://distro.eks.amazonaws.com/kubernetes-1-18/kubernetes-1-18-eks-14.yaml) |
 
 ## Development
 
