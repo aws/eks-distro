@@ -41,6 +41,7 @@ endif
 #################### CODEBUILD #####################
 CODEBUILD_CI?=false
 CI?=false
+JOB_TYPE?=
 ifeq ($(CODEBUILD_CI),true)
 	ARTIFACTS_PATH?=$(CODEBUILD_SRC_DIR)/$(PROJECT_PATH)/$(CODEBUILD_BUILD_NUMBER)-$(CODEBUILD_RESOLVED_SOURCE_VERSION)/artifacts
 	CLONE_URL=https://git-codecommit.$(AWS_REGION).amazonaws.com/v1/repos/$(REPO_OWNER).$(REPO)
@@ -51,7 +52,7 @@ else
 	ARTIFACTS_PATH?=$(MAKE_ROOT)/_output/tar
 	CLONE_URL=https://github.com/$(COMPONENT).git
 	HELM_CLONE_URL=https://github.com/$(HELM_SOURCE_OWNER)/$(HELM_SOURCE_REPOSITORY).git
-	UPLOAD_DRY_RUN=$(if $(findstring presubmit,$(JOB_TYPE)),true,false)
+	UPLOAD_DRY_RUN=$(if $(findstring postsubmit,$(JOB_TYPE)),false,true)
 	ifeq ($(CI),true)
 		BUILD_IDENTIFIER=$(PROW_JOB_ID)
 	else
@@ -408,13 +409,14 @@ upload-artifacts: s3-artifacts
 	
 .PHONY: s3-artifacts
 s3-artifacts: tarballs
+# Images (oci tarballs) always go to the kubernetes bin directly to match upstream, thats why kubernetes is passed as the first arg below instead of $(REPO) like when copying other artifacts
 	if [ -d $(ARTIFACTS_PATH) ]; then \
 		$(BASE_DIRECTORY)/release/copy_artifacts.sh $(REPO) $(ARTIFACTS_PATH) $(RELEASE_BRANCH) $(RELEASE) $(GIT_TAG); \
 		$(BUILD_LIB)/validate_artifacts.sh $(MAKE_ROOT) $(ARTIFACTS_PATH) $(GIT_TAG) $(FAKE_ARM_BINARIES_FOR_VALIDATION); \
 	fi
-	if [ -d  $(MAKE_ROOT)/$(OUTPUT_DIR)/images ]; then \
-		$(BASE_DIRECTORY)/release/copy_artifacts.sh $(REPO)  $(MAKE_ROOT)/$(OUTPUT_DIR)/images $(RELEASE_BRANCH) $(RELEASE) $(GIT_TAG); \
-		$(BUILD_LIB)/validate_artifacts.sh $(MAKE_ROOT)  $(MAKE_ROOT)/$(OUTPUT_DIR)/images $(GIT_TAG) $(FAKE_ARM_IMAGES_FOR_VALIDATION); \
+	if [ -d $(MAKE_ROOT)/$(OUTPUT_DIR)/images ]; then \
+		$(BASE_DIRECTORY)/release/copy_artifacts.sh kubernetes $(MAKE_ROOT)/$(OUTPUT_DIR)/images $(RELEASE_BRANCH) $(RELEASE) $(GIT_TAG); \
+		$(BUILD_LIB)/validate_artifacts.sh $(MAKE_ROOT) $(MAKE_ROOT)/$(OUTPUT_DIR)/images $(GIT_TAG) $(FAKE_ARM_IMAGES_FOR_VALIDATION); \
 	fi
 
 ### Checksum Targets
