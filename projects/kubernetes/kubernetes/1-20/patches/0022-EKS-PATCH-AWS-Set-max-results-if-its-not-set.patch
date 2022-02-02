@@ -5,10 +5,7 @@ Subject: --EKS-PATCH-- [AWS] Set max results if its not set
 
 Cherry-pick of upstream Kubernetes:
 https://github.com/kubernetes/kubernetes/pull/106280, which is
-included in Kubernetes 1.24. There was a PR opened to cherry-pick
-this change for 1.21, but it was not approved before the release of
-the patch version of Kubernetes EKS-Distro uses for 1.21. See
-https://github.com/kubernetes/kubernetes/pull/107653
+included in Kubernetes 1.24.
 
 * If max results is not set and instance IDs are not provided for the
   describe instances call in the aws cloud provider, set max results.
