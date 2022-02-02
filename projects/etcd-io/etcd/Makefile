@@ -1,6 +1,6 @@
 BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
 GIT_TAG?=$(shell cat $(RELEASE_BRANCH)/GIT_TAG)
-GOLANG_VERSION?="1.14"
+GOLANG_VERSION?=$(shell cat $(RELEASE_BRANCH)/GOLANG_VERSION)
 
 REPO=etcd
 REPO_OWNER=etcd-io
