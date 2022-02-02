@@ -84,7 +84,6 @@ func main() {
 	}
 	c.makeArgs = []string{
 		fmt.Sprintf("RELEASE_BRANCH=%s", c.releaseBranch),
-		fmt.Sprintf("RELEASE_VARIANT=%s", c.releaseVariant),
 		fmt.Sprintf("RELEASE=%s", c.release),
 		fmt.Sprintf("AWS_REGION=%s", *region),
 		fmt.Sprintf("AWS_ACCOUNT_ID=%s", *accountId),
