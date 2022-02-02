@@ -1,0 +1,40 @@
+From d2697ec1119d42b9a4d7dad8f6c21e8a347f833f Mon Sep 17 00:00:00 2001
+From: Nick Turner <nic@amazon.com>
+Date: Tue, 9 Nov 2021 18:50:19 +0000
+Subject: --EKS-PATCH-- [AWS] Set max results if its not set
+
+Cherry-pick of upstream Kubernetes:
+https://github.com/kubernetes/kubernetes/pull/106280, which is
+included in Kubernetes 1.24. There was a PR opened to cherry-pick
+this change for 1.21, but it was not approved before the release of
+the patch version of Kubernetes EKS-Distro uses for 1.21. See
+https://github.com/kubernetes/kubernetes/pull/107653
+
+* If max results is not set and instance IDs are not provided for the
+  describe instances call in the aws cloud provider, set max results.
+* This prevents an expensive call against the EC2 API, which can
+  result in timeouts.
+
+Signed-off-by: Kirsten Schumy <ksschumy@amazon.com>
+---
+ staging/src/k8s.io/legacy-cloud-providers/aws/aws.go | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
+index b8a67e0693f..37c45bf4f7e 100644
+--- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
++++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
+@@ -959,6 +959,13 @@ func (s *awsSdkEC2) DescribeInstances(request *ec2.DescribeInstancesInput) ([]*e
+ 	results := []*ec2.Instance{}
+ 	var nextToken *string
+ 	requestTime := time.Now()
++
++	if request.MaxResults == nil && request.InstanceIds == nil {
++		// MaxResults must be set in order for pagination to work
++		// MaxResults cannot be set with InstanceIds
++		request.MaxResults = aws.Int64(1000)
++	}
++
+ 	for {
+ 		response, err := s.ec2.DescribeInstances(request)
+ 		if err != nil {
