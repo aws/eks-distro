@@ -18,6 +18,8 @@ SOURCE_PATTERNS=./cmd/snapshot-controller ./cmd/csi-snapshotter ./cmd/snapshot-v
 
 DOCKERFILE_FOLDER=./docker/linux/$(IMAGE_NAME)
 
+HAS_RELEASE_BRANCHES=true
+
 include $(BASE_DIRECTORY)/Common.mk
 
 
