@@ -1,0 +1,6 @@
+3daae06b712fefbb55bc1370882023137810f97459c07dbe260c6aee2f6754fd  _output/1-21/bin/external-snapshotter/linux-amd64/csi-snapshotter
+484b877a9cc4eec97006158c10d1bc8fe308d9bed5de5cce80d022ef19069249  _output/1-21/bin/external-snapshotter/linux-amd64/snapshot-controller
+53e424b5dcb387281a478bdf23a3924f4c2ea196bce3d0a08ed83df37f1bcc7c  _output/1-21/bin/external-snapshotter/linux-amd64/snapshot-validation-webhook
+d8442a932476cb76aa54fc66166547899d89098a5ebb7f59f43fa4fe5fa2aa43  _output/1-21/bin/external-snapshotter/linux-arm64/csi-snapshotter
+dd595af410226674f274e2e55b62b22f9893aee7f231ad558fff942777e6f3b9  _output/1-21/bin/external-snapshotter/linux-arm64/snapshot-controller
+0bd81d1cce51d6fbcc81d7692960a855ffbc909a13bb1f3e09e18fe77594d45c  _output/1-21/bin/external-snapshotter/linux-arm64/snapshot-validation-webhook
