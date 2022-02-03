@@ -132,8 +132,8 @@ IMAGE_NAMES?=$(REPO)
 IMAGE_TAG?=$(GIT_TAG)-$(GIT_HASH)
 # For projects with multiple containers this is defined to override the default
 # ex: CLUSTER_API_CONTROLLER_IMAGE_COMPONENT
-IMAGE_COMPONENT_VARIABLE=$(shell echo '$(IMAGE_NAME)' | tr '[:lower:]' '[:upper:]' | tr '-' '_' )_IMAGE_COMPONENT
-IMAGE=$(IMAGE_REPO)/$(if $(value $(IMAGE_COMPONENT_VARIABLE)),$(value $(IMAGE_COMPONENT_VARIABLE)),$(IMAGE_COMPONENT)):$(IMAGE_TAG)
+IMAGE_COMPONENT_VARIABLE=$(call TO_UPPER,$(IMAGE_NAME))_IMAGE_COMPONENT
+IMAGE=$(IMAGE_REPO)/$(call IF_OVERRIDE_VARIABLE,$(IMAGE_COMPONENT_VARIABLE),$(IMAGE_COMPONENT)):$(IMAGE_TAG)
 LATEST_IMAGE=$(IMAGE:$(lastword $(subst :, ,$(IMAGE)))=$(LATEST_TAG))
 
 IMAGE_USERADD_USER_ID?=1000
@@ -168,7 +168,8 @@ SIMPLE_CREATE_BINARIES?=true
 
 BINARY_TARGETS?=$(call BINARY_TARGETS_FROM_FILES_PLATFORMS, $(BINARY_TARGET_FILES), $(BINARY_PLATFORMS))
 BINARY_TARGET_FILES?=
-SOURCE_PATTERNS?=.
+SOURCE_PATTERNS?=$(shell for vv in $(BINARY_TARGET_FILES) ; do echo . ; done)
+GO_MOD_PATHS?=$(shell for vv in $(BINARY_TARGET_FILES) ; do echo . ; done)
 
 #### CGO ############
 CGO_CREATE_BINARIES?=false
@@ -202,6 +203,13 @@ list-rem = $(wordlist 2,$(words $1),$1)
 pairmap = $(and $(strip $2),$(strip $3),$(call \
     $1,$(firstword $2),$(firstword $3)) $(call \
     pairmap,$1,$(call list-rem,$2),$(call list-rem,$3)))
+
+trimap = $(and $(strip $2),$(strip $3),$(strip $4),$(call \
+    $1,$(firstword $2),$(firstword $3),$(firstword $4)) $(call \
+    trimap,$1,$(call list-rem,$2),$(call list-rem,$3),$(call list-rem,$4)))
+
+uniq = $(eval seen :=) $(foreach _,$1,$(if $(filter $_,${seen}),,$(eval seen += $_))) ${seen}
+
 ######################
 
 ####################################################
@@ -213,12 +221,12 @@ FETCH_BINARIES_TARGETS?=
 
 #################### LICENSES ######################
 LICENSE_PACKAGE_FILTER?=$(SOURCE_PATTERNS)
-REPO_SUBPATH?=
 HAS_LICENSES?=true
-ATTRIBUTION_TARGETS?=$(if $(wildcard $(RELEASE_BRANCH)/ATTRIBUTION.txt),$(RELEASE_BRANCH)/ATTRIBUTION.txt,ATTRIBUTION.txt)
-GATHER_LICENSES_TARGETS?=$(OUTPUT_DIR)/attribution/go-license.csv
+ATTRIBUTION_TARGETS?=$(call pairmap,ATTRIBUTION_TARGET_FROM_BINARY_GO_MOD,$(BINARY_TARGET_FILES),$(GO_MOD_PATHS))
+GATHER_LICENSES_TARGETS?=$(call pairmap,LICENSE_TARGET_FROM_BINARY_GO_MOD,$(BINARY_TARGET_FILES),$(GO_MOD_PATHS))
 LICENSES_OUTPUT_DIR?=$(OUTPUT_DIR)
-LICENSES_TARGETS_FOR_PREREQ=$(if $(filter true,$(HAS_LICENSES)),$(GATHER_LICENSES_TARGETS) $(OUTPUT_DIR)/ATTRIBUTION.txt,)
+LICENSES_TARGETS_FOR_PREREQ=$(if $(filter true,$(HAS_LICENSES)),$(GATHER_LICENSES_TARGETS) \
+	$(foreach target,$(ATTRIBUTION_TARGETS),_output/$(target)),)
 ####################################################
 
 #################### TARBALLS ######################
@@ -280,14 +288,18 @@ endef
 
 define BINARY_TARGET_BODY_ALL_PLATFORMS
 	$(eval $(foreach platform, $(BINARY_PLATFORMS), \
-		$(call $(if $(call needs-cgo-builder,$(platform)),CGO_BINARY_TARGET_BODY,BINARY_TARGET_BODY),$(platform),$(if $(findstring windows,$(platform)),$(1).exe,$(1)),$(2))))
+		$(call $(if $(call needs-cgo-builder,$(platform)),CGO_BINARY_TARGET_BODY,BINARY_TARGET_BODY),$(platform),$(if $(findstring windows,$(platform)),$(1).exe,$(1)),$(2),$(3))))
 endef
 
+# $1 - arch
+# $2 - binary file name
+# #3 - target file
+# $4 - go mod path for binary
 define BINARY_TARGET_BODY
-	$(OUTPUT_BIN_DIR)/$(subst /,-,$(1))/$(2): $(GO_MOD_DOWNLOAD_TARGETS)
+	$(OUTPUT_BIN_DIR)/$(subst /,-,$(1))/$(2): $(REPO)/$(4)/eks-distro-go-mod-download
 		$(BASE_DIRECTORY)/build/lib/simple_create_binaries.sh $$(MAKE_ROOT) \
 			$$(MAKE_ROOT)/$(OUTPUT_BIN_DIR)/$(subst /,-,$(1))/$(2) $$(REPO) $$(GOLANG_VERSION) $(1) $(3) \
-			"$$(GOBUILD_COMMAND)" "$$(EXTRA_GOBUILD_FLAGS)" "$$(GO_LDFLAGS)" $$(CGO_ENABLED) "$$(CGO_LDFLAGS)" $$(REPO_SUBPATH)
+			"$$(GOBUILD_COMMAND)" "$$(EXTRA_GOBUILD_FLAGS)" "$$(GO_LDFLAGS)" $$(CGO_ENABLED) "$$(CGO_LDFLAGS)" $(4)
 
 endef
 
@@ -295,8 +307,12 @@ endef
 # multi-stage build to build the binaries for both amd64 and arm64
 # licenses and attribution are also run from the builder image since
 # the deps are all needed
+# $1 - arch
+# $2 - binary file name
+# #3 - target file
+# $4 - go mod path for binary
 define CGO_BINARY_TARGET_BODY
-	$(OUTPUT_BIN_DIR)/$(subst /,-,$(1))/$(2): $(GO_MOD_DOWNLOAD_TARGETS)
+	$(OUTPUT_BIN_DIR)/$(subst /,-,$(1))/$(2): $(REPO)/$(4)/eks-distro-go-mod-download
 		@mkdir -p $(CGO_SOURCE)/eks-distro/
 		rsync -rm  --exclude='.git/logs/***' \
 			--exclude='projects/$(COMPONENT)/_output/bin/***' --exclude='projects/$(COMPONENT)/$(REPO)/***' \
@@ -306,6 +322,106 @@ define CGO_BINARY_TARGET_BODY
 		$(MAKE) binary-builder/cgo/$(1:linux/%=%) IMAGE_OUTPUT=dest=$(OUTPUT_BIN_DIR)/$(subst /,-,$(1))
 
 endef
+
+define GO_MOD_DOWNLOAD_ALL_TARGETS_BODY	
+	$(eval $(foreach path, $(call uniq,$(GO_MOD_PATHS)), $(call GO_MOD_DOWNLOAD_TARGET_BODY,$(path))))
+endef
+
+# $1 - go mod path for binary
+define GO_MOD_DOWNLOAD_TARGET_BODY
+	$(REPO)/$(1)/eks-distro-go-mod-download: $(if $(PATCHES_DIR),$(GIT_PATCH_TARGET),$(GIT_CHECKOUT_TARGET))
+		$$(BASE_DIRECTORY)/build/lib/go_mod_download.sh $$(MAKE_ROOT) $$(REPO) $$(GIT_TAG) $$(GOLANG_VERSION) $(1)
+		@touch $$@
+
+endef
+
+# $(eval $(if $(strip $(filter-out .,$(GO_MOD_PATHS))),$(call pairmap,GATHER_LICENSES_TARGETS_BODY,$(BINARY_TARGET_FILES),$(GO_MOD_PATHS)),$(call GATHER_LICENSES_TARGETS_BODY,.)))
+# If go_mod_paths is all `.` then only create the one target for the default /attribution folder for licenses
+# otherwise for each go mod path, generate a new license target
+# $1 - binary file name
+# $2 - go mod path for binary
+# Strange make issue here, calling $(eval $(call ...)) directly will not work as intended
+# "looping" over the list of 1 to avoid the issue
+define GATHER_LICENSES_ALL_TARGETS_BODY	
+	$(eval $(foreach binary,$(1), $(call GATHER_LICENSES_TARGETS_BODY,$(binary),$(2))))
+endef
+
+# $1 - binary file name
+# $2 - go mod path for binary
+define GATHER_LICENSES_TARGETS_BODY
+	$(call LICENSE_TARGET_FROM_BINARY_GO_MOD,$(1),$(2)): $(REPO)/$(2)/eks-distro-go-mod-download
+		$$(BASE_DIRECTORY)/build/lib/gather_licenses.sh $$(REPO) $(MAKE_ROOT)/$(call LICENSE_OUTPUT_FROM_BINARY_GO_MOD,$(1),$(2)) "$$(LICENSE_PACKAGE_FILTER)" $(2)
+
+endef
+
+# $1 - binary file name
+# $2 - go mod path for binary
+define ATTRIBUTION_ALL_TARGETS_BODY	
+	$(eval $(foreach binary,$(1), $(call ATTRIBUTION_TARGETS_BODY,$(binary),$(2))))
+endef
+
+# $1 - binary file name
+# $2 - go mod path for binary
+define ATTRIBUTION_TARGETS_BODY
+	$(call ATTRIBUTION_TARGET_FROM_BINARY_GO_MOD,$(1),$(2)): $(call LICENSE_TARGET_FROM_BINARY_GO_MOD,$(1),$(2))
+		$$(BASE_DIRECTORY)/build/lib/create_attribution.sh $$(MAKE_ROOT) $$(GOLANG_VERSION) $(MAKE_ROOT)/$(call LICENSE_OUTPUT_FROM_BINARY_GO_MOD,$(1),$(2)) $$(@F) $$(RELEASE_BRANCH)
+
+endef
+
+# $1 - binary file name
+# $2 - go mod path for binary
+# returns full target path for given binary + go mod path
+# if the go mod path is `.` then do not prefix attribution dir, otherwise use binary name
+# intentionally no tab/space since it would come out in the result of calling this func
+define LICENSE_TARGET_FROM_BINARY_GO_MOD
+$(call LICENSE_OUTPUT_FROM_BINARY_GO_MOD,$(1),$(2))attribution/go-license.csv
+endef
+
+# $1 - binary file name
+# $2 - go mod path for binary
+# intentionally no tab/space since it would come out in the result of calling this func
+define ATTRIBUTION_PREFIX_FROM_BINARY_GO_MOD
+$(if $(strip $(filter-out .,$(2))),$(call IF_OVERRIDE_VARIABLE,$(call TO_UPPER,$(1))_ATTRIBUTION_OVERRIDE,$(1)),)
+endef
+
+
+# $1 - binary file name
+# $2 - go mod path for binary
+# returns full path to create attribution/licenses directory
+# intentionally no tab/space since it would come out in the result of calling this func
+define LICENSE_OUTPUT_FROM_BINARY_GO_MOD
+$(LICENSES_OUTPUT_DIR)/$(call ADD_TRAILING_CHAR,$(call ATTRIBUTION_PREFIX_FROM_BINARY_GO_MOD,$(1),$(2)),/)
+endef
+
+# $1 - binary file name
+# $2 - go mod path for binary
+# returns attribution target for given binary + go mod path
+# intentionally no tab/space since it would come out in the result of calling this func
+define ATTRIBUTION_TARGET_FROM_BINARY_GO_MOD
+$(if $(IS_RELEASE_BRANCH_BUILD),$(RELEASE_BRANCH)/,)$(call ADD_TRAILING_CHAR,$(call TO_UPPER,$(call ATTRIBUTION_PREFIX_FROM_BINARY_GO_MOD,$(1),$(2))),_)ATTRIBUTION.txt
+endef
+
+# $1 - potential override variable name
+# $2 - value if variable not set
+# returns value of override var if one is set, otherwise returns $(2)
+# intentionally no tab/space since it would come out in the result of calling this func
+define IF_OVERRIDE_VARIABLE
+$(if $(filter undefined,$(origin $1)),$(2),$(value $(1)))
+endef
+
+# $1 - value
+# $2 - char
+# if value is non empty, add trailing $2
+# intentionally no tab/space since it would come out in the result of calling this func
+define ADD_TRAILING_CHAR
+$(if $(1),$(1)$(2),)
+endef
+
+# intentionally no tab/space since it would come out in the result of calling this func
+define TO_UPPER
+$(shell echo '$(1)' | tr '[:lower:]' '[:upper:]'  | tr '-' '_')
+endef
+
 
 #### Source repo + binary Targets
 ifneq ($(REPO_NO_CLONE),true)
@@ -325,9 +441,7 @@ $(GIT_PATCH_TARGET): $(GIT_CHECKOUT_TARGET)
 	git -C $(REPO) am --committer-date-is-author-date $(PATCHES_DIR)/*
 	@touch $@
 
-%eks-distro-go-mod-download: $(if $(PATCHES_DIR),$(GIT_PATCH_TARGET),$(GIT_CHECKOUT_TARGET))
-	$(BASE_DIRECTORY)/build/lib/go_mod_download.sh $(MAKE_ROOT) $(REPO) $(GIT_TAG) $(GOLANG_VERSION) $(REPO_SUBPATH)
-	@touch $@
+$(call GO_MOD_DOWNLOAD_ALL_TARGETS_BODY)
 
 ifneq ($(REPO),$(HELM_SOURCE_REPOSITORY))
 $(HELM_SOURCE_REPOSITORY):
@@ -347,7 +461,7 @@ $(HELM_GIT_PATCH_TARGET): $(HELM_GIT_CHECKOUT_TARGET)
 	@touch $@
 
 ifeq ($(SIMPLE_CREATE_BINARIES),true)
-$(call pairmap,BINARY_TARGET_BODY_ALL_PLATFORMS,$(BINARY_TARGET_FILES),$(SOURCE_PATTERNS))
+$(call trimap,BINARY_TARGET_BODY_ALL_PLATFORMS,$(BINARY_TARGET_FILES),$(SOURCE_PATTERNS),$(GO_MOD_PATHS))
 endif
 
 .PHONY: binaries
@@ -371,20 +485,23 @@ patch-repo: $(GIT_PATCH_TARGET)
 $(OUTPUT_DIR)/images/%:
 	@mkdir -p $(@D)
 
-$(OUTPUT_DIR)/ATTRIBUTION.txt:
+$(OUTPUT_DIR)/%TTRIBUTION.txt:
 	@mkdir -p $(OUTPUT_DIR)
 	@cp $(ATTRIBUTION_TARGETS) $(OUTPUT_DIR)
 
 
 ## License Targets
 
+# if all go-mod paths are . just create one target
+ifeq ($(strip $(filter-out .,$(GO_MOD_PATHS))),)
+$(call GATHER_LICENSES_ALL_TARGETS_BODY,1,.)
+$(call ATTRIBUTION_ALL_TARGETS_BODY,1,.)
+else
 ## Gather licenses for project based on dependencies in REPO.
-$(GATHER_LICENSES_TARGETS): $(GO_MOD_DOWNLOAD_TARGETS)
-	$(BASE_DIRECTORY)/build/lib/gather_licenses.sh $(REPO) $(MAKE_ROOT)/$(LICENSES_OUTPUT_DIR) "$(LICENSE_PACKAGE_FILTER)" $(REPO_SUBPATH)
-
+$(call pairmap,GATHER_LICENSES_ALL_TARGETS_BODY,$(BINARY_TARGET_FILES),$(GO_MOD_PATHS))
 # Match all variables of ATTRIBUTION.txt `ATTRIBUTION.txt` `{RELEASE_BRANCH}/ATTRIBUTION.txt` `CAPD_ATTRIBUTION.txt`
-%TTRIBUTION.txt: $(GATHER_LICENSES_TARGETS)
-	$(BASE_DIRECTORY)/build/lib/create_attribution.sh $(MAKE_ROOT) $(GOLANG_VERSION) $(MAKE_ROOT)/$(LICENSES_OUTPUT_DIR) $(@F) $(RELEASE_BRANCH)
+$(call pairmap,ATTRIBUTION_ALL_TARGETS_BODY,$(BINARY_TARGET_FILES),$(GO_MOD_PATHS))
+endif
 
 .PHONY: gather-licenses
 gather-licenses: $(GATHER_LICENSES_TARGETS)

@@ -11,7 +11,7 @@ clone-repo:  ## Clone upstream `plugins`
 checkout-repo: ## Checkout upstream tag based on value in GIT_TAG file
 
 ##@ Binary Targets
-binaries: ## Build all binaries: `bandwidth firewall flannel portmap sbr tuning bridge host-device ipvlan loopback macvlan ptp vlan dhcp host-local static` for `linux/amd64 linux/arm64`
+binaries: ## Build all binaries: `bandwidth firewall flannel portmap sbr tuning bridge host-device ipvlan loopback macvlan ptp vlan dhcp host-local static ` for `linux/amd64 linux/arm64`
 _output/bin/plugins/linux-amd64/bandwidth: ## Build `_output/bin/plugins/linux-amd64/bandwidth`
 _output/bin/plugins/linux-amd64/firewall: ## Build `_output/bin/plugins/linux-amd64/firewall`
 _output/bin/plugins/linux-amd64/flannel: ## Build `_output/bin/plugins/linux-amd64/flannel`

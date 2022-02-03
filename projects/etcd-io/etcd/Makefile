@@ -8,7 +8,9 @@ REPO_OWNER=etcd-io
 BINARY_TARGET_FILES=etcd etcdctl
 SOURCE_PATTERNS=./ ./etcdctl
 EXTRA_GOBUILD_FLAGS=-installsuffix cgo
-EXTRA_GO_LDFLAGS=-X go.etcd.io/etcd/version.GitSHA=$(shell git -C $(REPO) rev-parse --short $(GIT_TAG))
+
+ROOT_MODULE=go.etcd.io/etcd
+EXTRA_GO_LDFLAGS=-X $(ROOT_MODULE)/version.GitSHA=$(shell git -C $(REPO) rev-parse --short $(GIT_TAG))
 
 # When creating a local image IMAGE_PLATFORMS will be either linux/amd64 or linux/arm64
 IMAGE_OUTPUT_DIR=$(OUTPUT_DIR)/images/bin/$(IMAGE_PLATFORMS)
@@ -17,6 +19,7 @@ BUILD_OCI_TARS=true
 HAS_RELEASE_BRANCHES=true
 HAS_S3_ARTIFACTS=true
 
+-include $(RELEASE_BRANCH)/Overrides.mk
 include $(BASE_DIRECTORY)/Common.mk
 
 
