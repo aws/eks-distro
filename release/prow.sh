@@ -25,7 +25,7 @@ export RELEASE=$(cat ${BASE_DIRECTORY}/release/${RELEASE_BRANCH}/${RELEASE_ENVIR
 
 if [ "${RELEASE}" == "0" ]
 then
-    echo "No production release zero"
+    echo "No dev release zero"
     exit 0
 fi
 
