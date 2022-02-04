@@ -23,7 +23,7 @@ $PREFLIGHT_CHECK_PASSED || exit 1
 # NodePort setting
 #
 export KOPS_FEATURE_FLAGS=SpecOverrideFlag
-${KOPS} edit cluster "${KOPS_CLUSTER_NAME}" --set 'cluster.spec.nodePortAccess=0.0.0.0/0'
+${KOPS} edit cluster --name "${KOPS_CLUSTER_NAME}" --set 'cluster.spec.nodePortAccess=0.0.0.0/0'
 
 
 ADDITIONAL_ARGS=""
