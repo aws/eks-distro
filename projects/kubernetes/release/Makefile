@@ -18,9 +18,11 @@ KUBE_PROXY_BASE_BASE_IMAGE_NAME=$(if $(IS_BUILDING_MINIMAL),eks-distro-minimal-b
 LICENSE_PACKAGE_FILTER=./go-runner.go
 IPTABLES_WRAPPER=$(OUTPUT_DIR)/iptables-wrapper
 
-REPO_SUBPATH=images/build/go-runner
 BINARY_TARGET_FILES=go-runner
-SOURCE_PATTERNS=.
+GO_MOD_PATHS=images/build/go-runner
+# create default attribution name and save licneses in default _output/attribution folder instead
+# of with go-runner prefix
+GO_RUNNER_ATTRIBUTION_OVERRIDE=
 
 DOCKERFILE_FOLDER=./docker/$(IMAGE_NAME)
 

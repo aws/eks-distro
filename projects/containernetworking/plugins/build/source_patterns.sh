@@ -20,6 +20,7 @@ set -o nounset
 set -o pipefail
 
 REPO="$1"
+OUTPUT_FILE="$2"
 
 function build::plugins::patterns(){
   cd $REPO
@@ -27,15 +28,19 @@ function build::plugins::patterns(){
   # https://github.com/containernetworking/plugins/blob/master/build_linux.sh#L14
   PLUGINS="plugins/meta/* plugins/main/* plugins/ipam/*"
   ALL_PLUGINS=""
+  FILES=""
   for d in $PLUGINS; do
     if [ -d "$d" ]; then
       plugin="$(basename "$d")"
       if [ "${plugin}" != "windows" ]; then
         ALL_PLUGINS+="./$d "
+        FILES+="$plugin "
       fi
     fi
   done
-  echo "$ALL_PLUGINS"
+  mkdir -p $(dirname $OUTPUT_FILE)
+  echo "SOURCE_PATTERNS=$ALL_PLUGINS" > $OUTPUT_FILE
+  echo "BINARY_TARGET_FILES=$FILES" >> $OUTPUT_FILE
 }
 
 build::plugins::patterns
