@@ -81,6 +81,7 @@ kops-prereqs:
 	cd development/kops && ./install_requirements.sh
 
 .PHONY: postsubmit-conformance
+postsubmit-conformance: RELEASE:=$(shell echo  $$(($(RELEASE) + 1))).pre
 postsubmit-conformance: postsubmit-build kops-prereqs kops-prow 
 	@echo 'Done postsubmit-conformance'
 
