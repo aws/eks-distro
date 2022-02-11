@@ -53,7 +53,7 @@ HAS_S3_ARTIFACTS=true
 include $(BASE_DIRECTORY)/Common.mk
 
 # Validate version file before uploading artifacts since that runs in both build and release
-s3-artifacts: cleanup-artifacts validate-version-file 
+s3-artifacts: cleanup-artifacts update-version 
 
 # Do not pass down overrides we add in common makefile
 $(BINARY_TARGETS): MAKEFLAGS=
@@ -98,11 +98,7 @@ fix-licenses:
 
 .PHONY: update-version
 update-version:
-	build/create_version_file.sh $(GIT_TAG) $(RELEASE_BRANCH) $(IMAGE_TAG:.pre=)
-
-.PHONY: validate-version-file
-validate-version-file: update-version
-	git diff --exit-code $(MAKE_ROOT)/$(RELEASE_BRANCH)/KUBE_GIT_VERSION_FILE
+	build/create_version_file.sh $(GIT_TAG) $(RELEASE_BRANCH) $(IMAGE_TAG)
 
 .PHONY: reset-repo
 reset-repo: $(REPO)
