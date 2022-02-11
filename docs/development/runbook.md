@@ -35,8 +35,6 @@ All other changes are to this package.
     * projects/kubernetes/kubernetes/${RELEASE_BRANCH}/GIT_TAG (set to upstream tag)
     * copy ATTRIBUTION.txt and GOLANG_VERSION from previous release branch folder to the new
     * Add release/${RELEASE_BRANCH}/patches with the patches from the EKS team
-    * Create projects/kubernetes/kubernetes/${RELEASE_BRANCH}/KUBE_GIT_VERSION_FILE using
-        * `RELEASE_BRANCH=${RELEASE_BRANCH} make update-version`
     * Create ${RELEASE_BRANCH}/GIT_TAG files for other versioned components (etcd, coredns, metrics-server,
       aws-iam-authenticator)
         * Work with EKS team to gather these requirements based on the EKS release, by default use same version as
@@ -71,8 +69,6 @@ All other changes are to this package.
     * release/${RELEASE_BRANCH}/development/RELEASE (increment)
 1. **Create EKS Distro Prod Release PR**
     * release/${RELEASE_BRANCH}/production/RELEASE (increment)
-    * update projects/kubernetes/kubernetes/${RELEASE_BRANCH}/KUBE_GIT_VERSION_FILE
-        * `RELEASE_BRANCH=${RELEASE_BRANCH} make update-version`
 1. **Docs PR**
     * docs/contents/releases/${RELEASE_BRANCH}/${RELEASE}/index.md
     * docs/contents/releases/${RELEASE_BRANCH}/${RELEASE}/CHANGELOG<...>.md
