@@ -98,7 +98,7 @@ fix-licenses:
 
 .PHONY: update-version
 update-version:
-	build/create_version_file.sh $(GIT_TAG) $(RELEASE_BRANCH) $(IMAGE_TAG:.minimal=)
+	build/create_version_file.sh $(GIT_TAG) $(RELEASE_BRANCH) $(IMAGE_TAG:.pre=)
 
 .PHONY: validate-version-file
 validate-version-file: update-version
