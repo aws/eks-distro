@@ -21,7 +21,6 @@ type Release struct {
 	environment    ReleaseEnvironment
 
 	// File paths, which are not guaranteed to be valid or existing
-	KubeGitVersionFilePath string
 	DocsDirectoryPath      string
 	ProductionReleasePath  string
 	DevelopmentReleasePath string
@@ -40,8 +39,8 @@ type Release struct {
 	VBranchEKSPreviousNumber   string // e.g. v1-20-eks-1
 	VBranchWithDotNumber       string // e.g. v1.20-2
 
-	// URL for release manifest, which is not guaranteed to be valid or existing
-	// e.g. https://distro.eks.amazonaws.com/kubernetes-1-20/kubernetes-1-20-eks-2.yaml
+	// URL for release manifest, which is not guaranteed to be valid or existing.
+	// Example: https://distro.eks.amazonaws.com/kubernetes-1-20/kubernetes-1-20-eks-2.yaml
 	ManifestURL         string
 	PreviousManifestURL string
 }
@@ -77,8 +76,6 @@ func newRelease(inputBranch string, inputEnvironment ReleaseEnvironment, overrid
 		branch:      inputBranch,
 		environment: inputEnvironment,
 	}
-
-	release.KubeGitVersionFilePath = FormatKubeGitVersionFilePath(&release)
 
 	if overrideNumber != nil {
 		release.number, release.previousNumber = convertToNumberAndPrevNumber(*overrideNumber)
