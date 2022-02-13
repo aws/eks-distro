@@ -41,12 +41,6 @@ func formatEnvironmentReleasePath(branch string, environment ReleaseEnvironment)
 	return filepath.Join(gitRootDirectory, "release", branch, environment.String(), "RELEASE")
 }
 
-// FormatKubeGitVersionFilePath returns path to KUBE_GIT_VERSION_FILE for provided release.
-// Expects release.Branch() to return a non-empty value.  Returned path is not guaranteed to exist or be valid.
-func FormatKubeGitVersionFilePath(release *Release) string {
-	return filepath.Join(gitRootDirectory, "projects/kubernetes/kubernetes", release.Branch(), "KUBE_GIT_VERSION_FILE")
-}
-
 // formatReleaseDocsDirectory returns path to the directory for the docs' directory for provided release.
 // Expects branch and number to be non-empty values. Returned path is not guaranteed to exist or be valid.
 func formatReleaseDocsDirectory(branch, number string) string {
