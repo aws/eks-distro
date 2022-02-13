@@ -52,8 +52,7 @@ HAS_S3_ARTIFACTS=true
 
 include $(BASE_DIRECTORY)/Common.mk
 
-# Validate version file before uploading artifacts since that runs in both build and release
-s3-artifacts: cleanup-artifacts create-version-file
+s3-artifacts: cleanup-artifacts
 
 # Do not pass down overrides we add in common makefile
 $(BINARY_TARGETS): MAKEFLAGS=
@@ -95,10 +94,6 @@ test: $(BINARY_TARGETS)
 .PHONY: fix-licenses
 fix-licenses:
 	build/fix_licenses.sh $(REPO) $(OUTPUT_DIR)
-
-.PHONY: create-version-file
-create-version-file:
-	build/create_version_file.sh $(GIT_TAG) $(RELEASE_BRANCH) $(IMAGE_TAG)
 
 .PHONY: reset-repo
 reset-repo: $(REPO)
