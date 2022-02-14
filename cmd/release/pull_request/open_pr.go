@@ -1,17 +1,20 @@
 package pull_request
 
 import (
-	. "../internal"
+	. "../utils"
 	"fmt"
 	"io"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strconv"
 )
 
 var (
 	outputStream io.Writer = os.Stdout
 	errStream    io.Writer = os.Stderr
+
+	createReleasePRScriptPath = filepath.Join(GetGitRootDirectory(), "cmd/release/pull_request/create_release_pr.sh")
 )
 
 type PullRequest struct {
@@ -24,7 +27,7 @@ type PullRequest struct {
 func (pr PullRequest) Open() error {
 	cmd := exec.Command(
 		"/bin/bash",
-		CreateReleasePRScriptPath,
+		createReleasePRScriptPath,
 		pr.branch,
 		pr.commitMessage,
 		pr.filesPaths,

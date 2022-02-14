@@ -1,30 +1,38 @@
 package internal
 
 import (
+	. "../../utils"
 	"fmt"
 	"io/ioutil"
-	"os/exec"
 	"path/filepath"
 	"strings"
 )
 
 var (
-	gitRootDirectory = getGitRootDirectory()
+	gitRootDirectory = GetGitRootDirectory()
 
-	CreateReleasePRScriptPath = filepath.Join(gitRootDirectory, "cmd/release/pull_request/create_release_pr.sh")
 	READMEPath                = filepath.Join(gitRootDirectory, "README.md")
 
 	docsContentsDirectory = filepath.Join(gitRootDirectory, "docs/contents")
 	DocsIndexPath         = filepath.Join(docsContentsDirectory, "index.md")
 )
 
-func getGitRootDirectory() string {
-	gitRootOutput, err := exec.Command("git", "rev-parse", "--show-toplevel").Output()
-	if err != nil {
-		panic(fmt.Sprintf("Unable to get git root directory: %v", err))
-	}
-	return strings.Join(strings.Fields(string(gitRootOutput)), "")
-}
+//func init() {
+//	gitRootOutput, err := exec.Command("git", "rev-parse", "--show-toplevel").Output()
+//	if err != nil {
+//		panic(fmt.Sprintf("Unable to get git root directory: %v", err))
+//	}
+//	gitRootDirectory = strings.Join(strings.Fields(string(gitRootOutput)), "")
+//}
+
+
+//func getGitRootDirectory() string {
+//gitRootOutput, err := exec.Command("git", "rev-parse", "--show-toplevel").Output()
+//if err != nil {
+//panic(fmt.Sprintf("Unable to get git root directory: %v", err))
+//}
+//return strings.Join(strings.Fields(string(gitRootOutput)), "")
+//}
 
 // GetKubernetesReleaseGitTag returns the trimmed value of Kubernetes release GIT_TAG
 func GetKubernetesReleaseGitTag(releaseBranch string) (string, error) {
@@ -35,11 +43,11 @@ func GetKubernetesReleaseGitTag(releaseBranch string) (string, error) {
 	return strings.TrimSpace(string(fileOutput)), nil
 }
 
-// formatEnvironmentReleasePath returns path to RELEASE for provided branch and environment. Returned path is not
-// guaranteed to exist or be valid.
-func formatEnvironmentReleasePath(branch string, environment ReleaseEnvironment) string {
-	return filepath.Join(gitRootDirectory, "release", branch, environment.String(), "RELEASE")
-}
+//// FormatEnvironmentReleasePath returns path to RELEASE for provided branch and environment. Returned path is not
+//// guaranteed to exist or be valid.
+//func FormatEnvironmentReleasePath(branch string, environment ReleaseEnvironment) string {
+//	return filepath.Join(gitRootDirectory, "release", branch, environment.String(), "RELEASE")
+//}
 
 // formatReleaseDocsDirectory returns path to the directory for the docs' directory for provided release.
 // Expects branch and number to be non-empty values. Returned path is not guaranteed to exist or be valid.

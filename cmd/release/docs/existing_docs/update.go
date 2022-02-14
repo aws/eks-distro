@@ -1,7 +1,7 @@
-package internal
+package existing_docs
 
 import (
-	. "../../internal"
+	. "../internal"
 	"bytes"
 	"errors"
 	"fmt"

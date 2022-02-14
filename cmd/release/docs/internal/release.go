@@ -1,15 +1,17 @@
 package internal
 
 import (
+	. "../../utils"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
+	"strconv"
 	"strings"
 )
 
 const (
-	defaultEnvironment = Production
+	Environment = Production
 	minNumber          = 1
 )
 
@@ -18,12 +20,12 @@ type Release struct {
 	number         string
 	previousNumber string
 
-	environment    ReleaseEnvironment
+	//environment    ReleaseEnvironment
 
 	// File paths, which are not guaranteed to be valid or existing
 	DocsDirectoryPath      string
-	ProductionReleasePath  string
-	DevelopmentReleasePath string
+	//ProductionReleasePath  string
+	//DevelopmentReleasePath string
 
 	// Version notations
 	BranchEKSNumber            string // e.g. 1-20-eks-2
@@ -52,53 +54,46 @@ func NewReleaseWithOverrideNumber(inputBranch string, overrideNumber int) (Relea
 	if overrideNumber < minNumber {
 		return Release{}, fmt.Errorf("override number %d cannot be less than %d", overrideNumber, minNumber)
 	}
-	return newRelease(inputBranch, defaultEnvironment, &overrideNumber)
+	return newRelease(inputBranch, &overrideNumber)
 }
 
-// NewReleaseWithOverrideEnvironment returns complete Release based on the provided input.
-func NewReleaseWithOverrideEnvironment(inputBranch string, inputEnvironment ReleaseEnvironment) (Release, error) {
-	return newRelease(inputBranch, inputEnvironment, nil)
-}
+//// NewReleaseWithOverrideEnvironment returns complete Release based on the provided input.
+//func NewReleaseWithOverrideEnvironment(inputBranch string, inputEnvironment ReleaseEnvironment) (Release, error) {
+//	return newRelease(inputBranch, inputEnvironment, nil)
+//}
 
 // NewRelease returns complete Release based on the provided inputBranch
 func NewRelease(inputBranch string) (Release, error) {
-	return NewReleaseWithOverrideEnvironment(inputBranch, defaultEnvironment)
+	return newRelease(inputBranch, nil)
 }
 
-func newRelease(inputBranch string, inputEnvironment ReleaseEnvironment, overrideNumber *int) (Release, error) {
+func newRelease(inputBranch string, overrideNumber *int) (Release, error) {
 	inputBranch = strings.TrimSpace(inputBranch)
 	if len(inputBranch) == 0 {
 		return Release{}, errors.New("branch cannot be an empty string")
 	}
-	var err error
 
 	release := Release{
 		branch:      inputBranch,
-		environment: inputEnvironment,
 	}
 
 	if overrideNumber != nil {
 		release.number, release.previousNumber = convertToNumberAndPrevNumber(*overrideNumber)
 	} else {
-		release.previousNumber, err = determinePreviousReleaseNumber(&release)
-		if err != nil {
-			return Release{}, fmt.Errorf("error determining previous number: %v", err)
-		}
-		release.number, err = determineReleaseNumber(&release)
+		rn, err := CreateReleaseNumber(release.branch, Environment)
 		if err != nil {
 			return Release{}, fmt.Errorf("error determining number: %v", err)
 		}
+		release.number, release.previousNumber = rn.Number(),rn.PrevNumber()
 	}
 
 	release.DocsDirectoryPath = formatReleaseDocsDirectory(release.branch, release.number)
-	release.ProductionReleasePath = formatEnvironmentReleasePath(release.branch, Production)
-	release.DevelopmentReleasePath = formatEnvironmentReleasePath(release.branch, Development)
 
 	branchEKS := release.branch + "-eks"
 	release.BranchEKSNumber = fmt.Sprintf("%s-%s", branchEKS, release.number)
 	release.BranchEKSPreviousNumber = fmt.Sprintf("%s-%s", branchEKS, release.previousNumber)
-	release.BranchWithDot = strings.Replace(release.branch, "-", ".", 1)
-	release.BranchWithDotNumber = fmt.Sprintf("%s-%s", release.BranchWithDot, release.number)
+	release.BranchWithDot = GetBranchWithDotFormat(release.branch)
+	release.BranchWithDotNumber = GetBranchWithDotAndNumberWithDashFormat(release.BranchWithDot, release.number)
 	release.EKSBranchNumber = fmt.Sprintf("eks-%s-%s", release.branch, release.number)
 	release.EKSBranchPreviousNumber = fmt.Sprintf("eks-%s-%s", release.branch, release.previousNumber)
 	release.K8sBranchEKS = "kubernetes-" + branchEKS
@@ -138,4 +133,8 @@ func formatReleaseManifestURL(branch, branchEKSNumber string) string {
 		"https://distro.eks.amazonaws.com/kubernetes-%s/kubernetes-%s.yaml",
 		branch,
 		branchEKSNumber)
+}
+
+func convertToNumberAndPrevNumber(overrideNumber int) (num, prevNum string) {
+	return strconv.Itoa(overrideNumber), strconv.Itoa(overrideNumber - 1)
 }

@@ -1,7 +1,7 @@
-package internal
+package new_docs
 
 import (
-	. "../../internal"
+	. "../internal"
 	"errors"
 	"fmt"
 	"io"
@@ -18,9 +18,9 @@ type GeneratedDoc struct {
 	AppendToEnd  func(release *Release) (string, error)
 }
 
-// WriteToDocs writes to each doc in provided docs with the information supplied by release, with overrideIfExisting
+// GenerateNewDocs writes to each doc in provided docs with the information supplied by release, with overrideIfExisting
 // conditionally replacing existing file content with the generated content.
-func WriteToDocs(docs []GeneratedDoc, release *Release, overrideIfExisting bool) ([]DocStatus, error) {
+func GenerateNewDocs(docs []GeneratedDoc, release *Release, overrideIfExisting bool) ([]DocStatus, error) {
 	var docStatuses []DocStatus
 
 	err := os.Mkdir(release.DocsDirectoryPath, 0777)
@@ -36,7 +36,7 @@ func WriteToDocs(docs []GeneratedDoc, release *Release, overrideIfExisting bool)
 
 	for _, doc := range docs {
 		if doc.IsIncluded {
-			ds, err := writeToDoc(&doc, release, overrideIfExisting)
+			ds, err := writeToNewDoc(&doc, release, overrideIfExisting)
 			docStatuses = append(docStatuses, ds)
 			if err != nil {
 				return docStatuses, fmt.Errorf("error with writing to docs and failed to finish: %v", err)
@@ -46,23 +46,20 @@ func WriteToDocs(docs []GeneratedDoc, release *Release, overrideIfExisting bool)
 	return docStatuses, nil
 }
 
-func writeToDoc(doc *GeneratedDoc, release *Release, overrideIfExisting bool) (DocStatus, error) {
+func writeToNewDoc(doc *GeneratedDoc, release *Release, overrideIfExisting bool) (DocStatus, error) {
 	filePath := fmt.Sprintf(release.DocsDirectoryPath + "/" + doc.Filename)
 
-	ds := DocStatus{path: filePath}
+	ds, err  := InitializeDocStatus(filePath)
+	if err != nil {
+		return ds, fmt.Errorf("error while creating file: %v", err)
+	}
 
-	_, err := os.Stat(filePath)
-	if os.IsNotExist(err) {
-		ds.isAlreadyExisting = false
-	} else if err == nil {
-		ds.isAlreadyExisting = true
+	if ds.IsAlreadyExisting() {
 		if overrideIfExisting {
 			fmt.Printf("file %v already exists but ignoring error because force option\n", filePath)
 		} else {
 			return DocStatus{}, fmt.Errorf("file %v already exists and override option not enabled", filePath)
 		}
-	} else {
-		return DocStatus{}, fmt.Errorf("encountered error checking file: %v", err)
 	}
 
 	docFile, err := os.Create(filePath)

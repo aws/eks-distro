@@ -1,8 +1,10 @@
 package main
 
 import (
-	. "../internal"
+	. "./existing_docs"
 	. "./internal"
+	. "./new_docs"
+	. "./new_docs/templates"
 	"fmt"
 
 	"flag"
@@ -57,6 +59,7 @@ Caution about specific flags
 func main() {
 	branch := flag.String("branch", "", "Release branch, e.g. 1-20")
 
+	// TODO: add flag for only base image updates and pick templates accordingly
 	// Generate new files
 	includeChangelog := flag.Bool("includeChangelog", true, "If changelog should be generated")
 	includeAnnouncement := flag.Bool("includeAnnouncement", true, "If release announcement should be generated")
@@ -95,12 +98,12 @@ func main() {
 	}
 	generatedDocsInfo := createGeneratedDocsInfo(&includeGeneratedDocs, release.VBranchEKSNumber)
 
-	docStatusesWriteToDocs, err := WriteToDocs(generatedDocsInfo, &release, *force)
-	docStatuses = append(docStatuses, docStatusesWriteToDocs...)
+	docStatusesForNewDocs, err := GenerateNewDocs(generatedDocsInfo, &release, *force)
+	docStatuses = append(docStatuses, docStatusesForNewDocs...)
 	if err != nil {
 		UndoChanges(docStatuses)
 		DeleteDocsDirectoryIfEmpty(&release)
-		log.Fatalf("Error that was encountered while writing to docs : %v", err)
+		log.Fatalf("Error that was encountered while creating new docs: %v", err)
 	}
 
 	// Update existing files
@@ -160,7 +163,7 @@ func createGeneratedDocsInfo(includeGenerated *includeGenerated, formattedReleas
 	return []GeneratedDoc{
 		{
 			Filename:     fmt.Sprintf("CHANGELOG-%s.md", formattedReleaseVersion),
-			TemplateName: ChangeLogBaseImage,
+			TemplateName: ChangeLogGenericBase,
 			IsIncluded:   includeGenerated.changelog,
 		},
 		{
@@ -171,7 +174,7 @@ func createGeneratedDocsInfo(includeGenerated *includeGenerated, formattedReleas
 		},
 		{
 			Filename:     "release-announcement.txt",
-			TemplateName: ReleaseAnnouncement,
+			TemplateName: ReleaseAnnouncementGenericBase,
 			IsIncluded:   includeGenerated.announcement,
 		},
 	}

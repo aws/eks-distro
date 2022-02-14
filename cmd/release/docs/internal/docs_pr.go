@@ -1,7 +1,6 @@
 package internal
 
 import (
-	. "../../internal"
 	. "../../pull_request"
 )
 
