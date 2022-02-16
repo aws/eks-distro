@@ -20,9 +20,9 @@ var (
 // updating the doc would result in non-sequential number.
 func UpdateREADME(release *Release, force bool) (DocStatus, error) {
 	readmePath := READMEPath
-	data, err := ioutil.ReadFile(READMEPath)
+	data, err := ioutil.ReadFile(readmePath)
 	if err != nil {
-		return GetEmptyDocStatus(), fmt.Errorf("failed to read file because error: %v", err)
+		return GetEmptyDocStatus(), fmt.Errorf("failed to read README because error: %v", err)
 	}
 
 	splitData := bytes.Split(data, linebreak)
@@ -64,12 +64,10 @@ func UpdateREADME(release *Release, force bool) (DocStatus, error) {
 // If the value of provided 'force' is 'true', does not check for sequential numbering; otherwise, returns error if
 // updating the doc would result in non-sequential number.
 func UpdateDocsIndex(release *Release, force bool) (DocStatus, error) {
-	//ds := GetEmptyDocStatus()
-
 	docsIndexPath := DocsIndexPath
 	data, err := ioutil.ReadFile(docsIndexPath)
 	if err != nil {
-		return GetEmptyDocStatus(), fmt.Errorf("failed to read file because error: %v", err)
+		return GetEmptyDocStatus(), fmt.Errorf("failed to read doc index file because error: %v", err)
 	}
 
 	splitData := bytes.Split(data, linebreak)
