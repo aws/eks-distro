@@ -44,13 +44,13 @@ func getNumberAndPreviousNumber(numberFilePath string) (string, string, error) {
 	if err != nil {
 		return "", "", err
 	}
-	number := strings.TrimSpace(string(fileOutput))
+	currFileNumber := strings.TrimSpace(string(fileOutput))
 
-	numberAsInt, err := strconv.Atoi(number)
+	currFileNumberAsInt, err := strconv.Atoi(currFileNumber)
 	if err != nil {
 		return "", "", err
 	}
-	return number, strconv.Itoa(numberAsInt - 1), nil
+	return strconv.Itoa(currFileNumberAsInt + 1), currFileNumber, nil
 }
 
 func formatEnvironmentReleasePath(branch string, environment ReleaseEnvironment) string {
