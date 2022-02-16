@@ -19,42 +19,37 @@ Generate docs for release. Value for 'branch' flag must be provided.
 If a failure is encounter, attempts to undo any changes to files in branch doc directory, including deleting the
 directory if it was created.
 
-
-Assumptions if using default flag value:
-
-  - The new release is only for a base image update. Future plans are to provide more options.
-  - The release number in the local code has not been incremented yet for the new release, and the generated doc should
-	be for the new release. The new release number is the release number in the local code one incremented by 1.
-  - The new release is using the same component versions in the preceding version's release manifest, and the preceding
-	version's release manifest does not contain errors and follows the expected version naming convention.
-  - Since the last release went out, there have been no code changes to the patches or component versions.
-  - The production release will be cut today.
-
-
 Caution about specific flags
 
-  - usePrevReleaseManifestForComponentTable
+	usePrevReleaseManifestForComponentTable
 
 		If false, there if no guarantee that the generated table is correct for that release, as the generated table is
-		based on the previous release's release manifest (which must exist). However, if all the assumptions if using
-		default flag values (see list above) are followed, one can be reasonably confident the table is correct.
+		based on the previous release's release manifest (which must exist).
 
-		If true, the release manifest for that release must exist. If using a release's own release manifest, one can be
-		reasonably confident the table is correct.
+		If true, the release manifest for that release must exist.
 
-  - overrideNumber and force
+	isLocalReleaseNumberForNewRelease
 
-		Both flags undercut the logical bedrock upon which all aspects of the generated docs depend: the release number.
-		The release number's impact extends far beyond what is discernible by looking at the docs. Factors well outside
-		of the scope of this command, such as the passage of time or code changes unrelated to the release, impact the
-		generation of docs in critically important ways that are not readily apparent.
+		If false, the local prod release number of the branch must be from the current release number, which will be
+		incremented for the next release. The generated docs are for the next release.
+
+		If true, the local prod release number of the branch must be the new release number. Typically, this means an
+		earlier PR incremented the release number, the PR was merged, and the change was pulled down locally. The
+		generated docs are for this release
+
+	overrideNumber and force
+
+		Both flags undercut the logical bedrock of the doc generation: the release number. The release number's impact
+		extends far beyond what is discernible by looking at the docs. Factors well outside the scope of this command,
+		such as the passage of time or code changes unrelated to the release, impact the generation of docs in
+		critically important ways that are not readily apparent.
 
 		Circumventing the expected and established workflow can easily result in errors that are not easily identifiable
 		or consistent throughout the docs. Executing a command without an error does not mean that there are no errors
-		in the generated docs.
+		in the generated docs. Even if a command with these flags produces error-free docs one time, there is no
+		guarantee that rerunning the same command will still generate error-free docs.
 
-		Even if a command with these flags produces error-free docs one time, there is no guarantee that rerunning the
-		same command will still generate error-free docs.
+		If overrideNumber is used, isLocalReleaseNumberForNewRelease is ignored.
 */
 func main() {
 	branch := flag.String("branch", "", "Release branch, e.g. 1-20")
