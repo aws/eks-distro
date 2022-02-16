@@ -12,7 +12,7 @@ RELEASE_AWS_PROFILE?=default
 
 IS_BOT?=false
 USE_PREV_RELEASE_MANIFEST?=true
-OPEN_PR?=true
+OPEN_PR?=false
 
 RELEASE_GIT_TAG?=v$(RELEASE_BRANCH)-eks-$(RELEASE)
 RELEASE_GIT_COMMIT_HASH?=$(shell git rev-parse @)
@@ -182,6 +182,7 @@ update-release-number:
 	go run ./cmd/release/number/main.go \
 		--branch=$(RELEASE_BRANCH) \
 		--isBot=$(IS_BOT)
+		--openPR=$(OPEN_PR)
 
 .PHONY: update-all-release-numbers
 update-all-release-numbers:

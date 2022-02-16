@@ -5,21 +5,22 @@ import (
 	. "./internal"
 	"errors"
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
-	"strings"
 )
 
 // Updates RELEASE number for dev and/or prod, depending on the values
 // provided to the appropriate flags. If a failure is encounter,
 // attempts to undo any changes to RELEASE.
 func main() {
-	branch := *flag.String("branch", "", "Release branch, e.g. 1-20")
+	branch := flag.String("branch", "", "Release branch, e.g. 1-20")
 	includeProd := *flag.Bool("includeProd", true, "If production RELEASE should be incremented")
 	includeDev := *flag.Bool("includeDev", true, "If development RELEASE should be incremented")
-	includePR := *flag.Bool("includePR", true, "If a PR should be opened for changed")
+	includePR := *flag.Bool("openPR", true, "If a PR should be opened for changed")
 	isBot := flag.Bool("isBot", false, "If a PR is created by bot")
+	//openPR := flag.Bool("openPR", true, "If a PR should be opened for changed")
 
 	flag.Parse()
 
@@ -27,8 +28,10 @@ func main() {
 	var prodReleaseNumber, devReleaseNumber ReleaseNumber
 	var err error
 
+	fmt.Println("BRANCH:" + *branch)
+
 	if includeProd {
-		prodReleaseNumber, err = CreateReleaseNumber(branch, Production)
+		prodReleaseNumber, err = CreateReleaseNumber(*branch, Production)
 		if err != nil {
 			log.Fatalf("Error calculating prod RELEASE: %v", err)
 		}
@@ -42,16 +45,17 @@ func main() {
 	}
 
 	if includeDev {
-		devReleaseNumber, err := CreateReleaseNumber(branch, Development)
+		devReleaseNumber, err := CreateReleaseNumber(*branch, Development)
 		if err != nil {
 			log.Fatalf("Error calculating dev RELEASE: %v", err)
 		}
+		fmt.Printf("NUMBER again: %v/n", devReleaseNumber.Number())
 
-		changedDevFilePaths = append(changedProdFilePaths, devReleaseNumber.FilePath())
+		changedDevFilePaths = append(changedDevFilePaths, devReleaseNumber.FilePath())
 		err = updateEnvironmentReleaseNumber(devReleaseNumber)
 		if err != nil {
 			cleanUpIfError(append(changedDevFilePaths, changedProdFilePaths...))
-			log.Fatalf("Error writing to prod RELEASE: %v", err)
+			log.Fatalf("Error writing to dev RELEASE: %v", err)
 		}
 	}
 
@@ -59,17 +63,16 @@ func main() {
 
 	if includePR {
 		if includeProd {
-			if err = OpenProdPR(branch, prodReleaseNumber.Number(), changedProdFilePaths, *isBot); err != nil {
+			if err = OpenProdPR(*branch, prodReleaseNumber.Number(), changedProdFilePaths, *isBot); err != nil {
 				log.Fatal(err)
 			}
-			log.Printf("Opened PRs for %s\n", strings.Join(changedProdFilePaths, " "))
 		}
 
 		if includeDev {
-			if err = OpenDevPR(branch, devReleaseNumber.Number(), changedDevFilePaths, *isBot); err != nil {
+			fmt.Printf("NUMBER again: %v/n", devReleaseNumber.Number())
+			if err = OpenDevPR(*branch, devReleaseNumber.Number(), changedDevFilePaths, *isBot); err != nil {
 				log.Fatal(err)
 			}
-			log.Printf("Opened PRs for %s\n", strings.Join(changedDevFilePaths, " "))
 		}
 		log.Println("Successfully opened PRs for changed files")
 	}
