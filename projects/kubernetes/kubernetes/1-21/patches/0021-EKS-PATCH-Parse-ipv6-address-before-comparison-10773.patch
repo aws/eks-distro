@@ -3,9 +3,12 @@ From: Jyoti Mahapatra <jyotima@amazon.com>
 Date: Sat, 22 Jan 2022 01:16:11 +0000
 Subject: --EKS-PATCH-- Parse ipv6 address before comparison (#107736)
 
-Cherry-pick of upstream Kubernetes:
+Modified cherry-pick of upstream Kubernetes:
 https://github.com/kubernetes/kubernetes/pull/107736, which is
-included in Kubernetes 1.24.
+included in Kubernetes 1.24. The difference between this patch and the
+upstream change is the upstreams use of forked golang parsers, which
+were not included in the minor Kubernetes version that this patch
+applied to.
 
 This fixes a bug related to ipv6 clusters, as described in Kubernetes
 issue #107735 (https://github.com/kubernetes/kubernetes/issues/107735)
@@ -20,12 +23,12 @@ diff --git a/pkg/kubelet/nodestatus/setters.go b/pkg/kubelet/nodestatus/setters.
 index 52f12178b66..a31cfbd2970 100644
 --- a/pkg/kubelet/nodestatus/setters.go
 +++ b/pkg/kubelet/nodestatus/setters.go
-@@ -125,8 +125,10 @@ func NodeAddress(nodeIPs []net.IP, // typically Kubelet.nodeIPs
+@@ -125,8 +125,8 @@ func NodeAddress(nodeIPs []net.IP, // typically Kubelet.nodeIPs
  
  				nodeIPTypes := make(map[v1.NodeAddressType]bool)
  				for _, nodeAddress := range cloudNodeAddresses {
 -					if nodeAddress.Address == nodeIP.String() {
-+					if netutils.ParseIPSloppy(nodeAddress.Address).Equal(nodeIP) {
++					if net.ParseIP(nodeAddress.Address).Equal(nodeIP) {
  						enforcedNodeAddresses = append(enforcedNodeAddresses, v1.NodeAddress{Type: nodeAddress.Type, Address: nodeAddress.Address})
  						nodeIPTypes[nodeAddress.Type] = true
  					}

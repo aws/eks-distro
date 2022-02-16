@@ -3,9 +3,12 @@ From: Jyoti Mahapatra <49211422+jyotimahapatra@users.noreply.github.com>
 Date: Wed, 26 Jan 2022 18:38:49 -0800
 Subject: --EKS-PATCH-- Parse ipv6 address before comparison (#107736)
 
-Cherry-pick of upstream Kubernetes:
+Modified cherry-pick of upstream Kubernetes:
 https://github.com/kubernetes/kubernetes/pull/107736, which is
-included in Kubernetes 1.24.
+included in Kubernetes 1.24. The difference between this patch and the
+upstream change is the upstreams use of forked golang parsers, which
+were not included in the minor Kubernetes version that this patch
+applied to.
 
 This fixes a bug related to ipv6 clusters, as described in Kubernetes
 issue #107735 (https://github.com/kubernetes/kubernetes/issues/107735)
@@ -25,7 +28,7 @@ index 0ff7f6fced9..f23a3ee0525 100644
  				nodeIPTypes := make(map[v1.NodeAddressType]bool)
  				for _, nodeAddress := range cloudNodeAddresses {
 -					if nodeAddress.Address == nodeIP.String() {
-+					if netutils.ParseIPSloppy(nodeAddress.Address).Equal(nodeIP) {
++					if net.ParseIP(nodeAddress.Address).Equal(nodeIP) {
  						enforcedNodeAddresses = append(enforcedNodeAddresses, v1.NodeAddress{Type: nodeAddress.Type, Address: nodeAddress.Address})
  						nodeIPTypes[nodeAddress.Type] = true
  					}
