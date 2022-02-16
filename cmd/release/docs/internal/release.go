@@ -12,7 +12,7 @@ import (
 
 const (
 	Environment = Production
-	minNumber          = 1
+	minNumber   = 1
 )
 
 type Release struct {
@@ -21,7 +21,7 @@ type Release struct {
 	previousNumber string
 
 	// File paths, which are not guaranteed to be valid or existing
-	DocsDirectoryPath      string
+	DocsDirectoryPath string
 
 	// Version notations
 	BranchEKSNumber            string // e.g. 1-20-eks-2

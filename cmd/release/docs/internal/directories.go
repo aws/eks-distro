@@ -11,7 +11,7 @@ import (
 var (
 	gitRootDirectory = GetGitRootDirectory()
 
-	READMEPath                = filepath.Join(gitRootDirectory, "README.md")
+	READMEPath = filepath.Join(gitRootDirectory, "README.md")
 
 	docsContentsDirectory = filepath.Join(gitRootDirectory, "docs/contents")
 	DocsIndexPath         = filepath.Join(docsContentsDirectory, "index.md")

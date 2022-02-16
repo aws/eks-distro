@@ -17,7 +17,7 @@ type DocStatus struct {
 
 func InitializeDocStatus(filePath string) (DocStatus, error) {
 	var isExistingFile bool
-	
+
 	_, err := os.Stat(filePath)
 	if os.IsNotExist(err) {
 		isExistingFile = false

@@ -49,7 +49,7 @@ func GenerateNewDocs(docs []GeneratedDoc, release *Release, overrideIfExisting b
 func writeToNewDoc(doc *GeneratedDoc, release *Release, overrideIfExisting bool) (DocStatus, error) {
 	filePath := fmt.Sprintf(release.DocsDirectoryPath + "/" + doc.Filename)
 
-	ds, err  := InitializeDocStatus(filePath)
+	ds, err := InitializeDocStatus(filePath)
 	if err != nil {
 		return ds, fmt.Errorf("error while creating file: %v", err)
 	}
