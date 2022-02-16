@@ -64,7 +64,7 @@ func GetGitRootDirectory() string {
 //}
 
 //// FormatRelativeReleaseDocsDirectory return relative path to (example: "releases/1-20/1").
-//// Expects release.Branch() and release.Number() to be non-empty values.
+//// Expects release.Branch() and release.Current() to be non-empty values.
 //func FormatRelativeReleaseDocsDirectory(branch, number string) string {
 //	return filepath.Join("releases", branch, number)
 //}

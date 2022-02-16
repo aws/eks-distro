@@ -33,7 +33,7 @@ func formatReleaseDocsDirectory(branch, number string) string {
 }
 
 // FormatRelativeReleaseDocsDirectory return relative path to (example: "releases/1-20/1").
-// Expects release.Branch() and release.Number() to be non-empty values.
+// Expects branch and number to be non-empty values.
 func FormatRelativeReleaseDocsDirectory(branch, number string) string {
 	return filepath.Join("releases", branch, number)
 }

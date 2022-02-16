@@ -11,24 +11,15 @@ type prRequest struct {
 	bot                          bool
 }
 
-func OpenDevPR(branch, number string, filesChanged []string, isBot bool) error {
-	request := newPRRequest(branch, number, filesChanged, isBot, Development)
-	return openNumberPR(&request)
-}
-
-func OpenProdPR(branch, number string, filesChanged []string, isBot bool) error {
-	request := newPRRequest(branch, number, filesChanged, isBot, Production)
-	return openNumberPR(&request)
-}
-
-func newPRRequest(branch, number string, files []string, isBot bool, environment ReleaseEnvironment) prRequest {
-	return prRequest{
+func OpenNumberPR(branch, number string, files []string, isBot bool, environment ReleaseEnvironment) error {
+	request := prRequest{
 		branch:       branch,
 		environment:  environment.String(),
 		version:      GetBranchWithDotAndNumberWithDashFormat(branch, number),
 		filesChanged: files,
 		bot:          isBot,
 	}
+	return openNumberPR(&request)
 }
 
 func openNumberPR(prReq *prRequest) error {

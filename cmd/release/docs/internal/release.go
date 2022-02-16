@@ -75,7 +75,7 @@ func newRelease(inputBranch string, overrideNumber *int) (Release, error) {
 		if err != nil {
 			return Release{}, fmt.Errorf("error determining number: %v", err)
 		}
-		release.number, release.previousNumber = rn.Number(), rn.PrevNumber()
+		release.number, release.previousNumber = rn.Current(), rn.Previous()
 	}
 
 	release.DocsDirectoryPath = formatReleaseDocsDirectory(release.branch, release.number)

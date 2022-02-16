@@ -15,57 +15,55 @@ import (
 // attempts to undo any changes to RELEASE.
 func main() {
 	branch := flag.String("branch", "", "Release branch, e.g. 1-20")
-	includeProd := *flag.Bool("includeProd", true, "If production RELEASE should be incremented")
-	includeDev := *flag.Bool("includeDev", true, "If development RELEASE should be incremented")
-	includePR := *flag.Bool("openPR", true, "If a PR should be opened for changed")
+	includeProd := flag.Bool("includeProd", true, "If production RELEASE should be incremented")
+	includeDev := flag.Bool("includeDev", true, "If development RELEASE should be incremented")
+	includePR := flag.Bool("openPR", true, "If a PR should be opened for changed")
 	isBot := flag.Bool("isBot", false, "If a PR is created by bot")
-	//openPR := flag.Bool("openPR", true, "If a PR should be opened for changed")
 
 	flag.Parse()
 
-	var changedProdFilePaths, changedDevFilePaths []string
-	var prodReleaseNumber, devReleaseNumber ReleaseNumber
+	var changedProdFiles, changedDevFiles []string
+	var prodNumber, devNumber ReleaseNumber
 	var err error
 
-	if includeProd {
-		prodReleaseNumber, err = CreateReleaseNumber(*branch, Production)
+	if *includeProd {
+		prodNumber, err = CreateReleaseNumber(*branch, Production)
 		if err != nil {
 			log.Fatalf("Error calculating prod RELEASE: %v", err)
 		}
 
-		changedProdFilePaths = append(changedProdFilePaths, prodReleaseNumber.FilePath())
-		err = updateEnvironmentReleaseNumber(prodReleaseNumber)
+		changedProdFiles = append(changedProdFiles, prodNumber.FilePath())
+		err = updateEnvironmentReleaseNumber(prodNumber)
 		if err != nil {
-			cleanUpIfError(changedProdFilePaths)
+			cleanUpIfError(changedProdFiles)
 			log.Fatalf("Error writing to prod RELEASE: %v", err)
 		}
 	}
 
-	if includeDev {
-		devReleaseNumber, err = CreateReleaseNumber(*branch, Development)
+	if *includeDev {
+		devNumber, err = CreateReleaseNumber(*branch, Development)
 		if err != nil {
 			log.Fatalf("Error calculating dev RELEASE: %v", err)
 		}
 
-		changedDevFilePaths = append(changedDevFilePaths, devReleaseNumber.FilePath())
-		err = updateEnvironmentReleaseNumber(devReleaseNumber)
+		changedDevFiles = append(changedDevFiles, devNumber.FilePath())
+		err = updateEnvironmentReleaseNumber(devNumber)
 		if err != nil {
-			cleanUpIfError(append(changedDevFilePaths, changedProdFilePaths...))
+			cleanUpIfError(append(changedDevFiles, changedProdFiles...))
 			log.Fatalf("Error writing to dev RELEASE: %v", err)
 		}
 	}
 
-	log.Printf("Successfully updated number for %d file(s)\n", len(changedDevFilePaths)+len(changedProdFilePaths))
+	log.Printf("Successfully updated number for %d file(s)\n", len(changedDevFiles)+len(changedProdFiles))
 
-	if includePR {
-		if includeProd {
-			if err = OpenNumberPR(*branch, prodReleaseNumber.Next(), changedProdFilePaths, *isBot, Production); err != nil {
+	if *includePR {
+		if *includeProd {
+			if err = OpenNumberPR(*branch, prodNumber.Next(), changedProdFiles, *isBot, Production); err != nil {
 				log.Fatal(err)
 			}
 		}
-
-		if includeDev {
-			if err = OpenNumberPR(*branch, devReleaseNumber.Next(), changedDevFilePaths, *isBot, Development); err != nil {
+		if *includeDev {
+			if err = OpenNumberPR(*branch, devNumber.Next(), changedDevFiles, *isBot, Development); err != nil {
 				log.Fatal(err)
 			}
 		}
