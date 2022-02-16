@@ -27,12 +27,6 @@ func InitializeDocStatus(filePath string) (DocStatus, error) {
 		return DocStatus{}, fmt.Errorf("encountered error checking file: %v", err)
 	}
 	return DocStatus{path: filePath, isAlreadyExisting: isExistingFile}, nil
-		//if overrideIfExisting {
-		//	fmt.Printf("file %v already exists but ignoring error because force option\n", filePath)
-		//} else {
-		//	return DocStatus{}, fmt.Errorf("file %v already exists and override option not enabled", filePath)
-		//}
-
 }
 
 func UndoChanges(docStatuses []DocStatus) {

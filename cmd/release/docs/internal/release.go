@@ -20,12 +20,8 @@ type Release struct {
 	number         string
 	previousNumber string
 
-	//environment    ReleaseEnvironment
-
 	// File paths, which are not guaranteed to be valid or existing
 	DocsDirectoryPath      string
-	//ProductionReleasePath  string
-	//DevelopmentReleasePath string
 
 	// Version notations
 	BranchEKSNumber            string // e.g. 1-20-eks-2
@@ -57,11 +53,6 @@ func NewReleaseWithOverrideNumber(inputBranch string, overrideNumber int) (Relea
 	return newRelease(inputBranch, &overrideNumber)
 }
 
-//// NewReleaseWithOverrideEnvironment returns complete Release based on the provided input.
-//func NewReleaseWithOverrideEnvironment(inputBranch string, inputEnvironment ReleaseEnvironment) (Release, error) {
-//	return newRelease(inputBranch, inputEnvironment, nil)
-//}
-
 // NewRelease returns complete Release based on the provided inputBranch
 func NewRelease(inputBranch string) (Release, error) {
 	return newRelease(inputBranch, nil)
@@ -84,7 +75,7 @@ func newRelease(inputBranch string, overrideNumber *int) (Release, error) {
 		if err != nil {
 			return Release{}, fmt.Errorf("error determining number: %v", err)
 		}
-		release.number, release.previousNumber = rn.Number(),rn.PrevNumber()
+		release.number, release.previousNumber = rn.Number(), rn.PrevNumber()
 	}
 
 	release.DocsDirectoryPath = formatReleaseDocsDirectory(release.branch, release.number)
