@@ -57,7 +57,7 @@ func getCurrentAsInt(numberFilePath string) (int, error) {
 		return -1, err
 	}
 	return currFileNumberAsInt, nil
-]}
+}
 
 func formatEnvironmentReleasePath(branch string, environment ReleaseEnvironment) string {
 	return filepath.Join(rootDirectory, "release", branch, environment.String(), "RELEASE")
