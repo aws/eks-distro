@@ -66,6 +66,7 @@ func main() {
 	includeIndex := flag.Bool("includeIndex", true, "If index in branch dir should be generated")
 	includeIndexComponentTable := flag.Bool("includeIndexComponentTable", true, "If Markdown table should be generated. Ignored if includeIndex is false.")
 	usePrevReleaseManifestForComponentTable := flag.Bool("usePrevReleaseManifestForComponentTable", true, "If Markdown table should be generated from release manifest, which must exist if .")
+	isLocalReleaseNumberForNewRelease := flag.Bool("isLocalReleaseNumberForNewRelease", true, "TODO")
 
 	// Update existing files
 	includeREADME := flag.Bool("includeREADME", true, "If README should be updated")
@@ -80,7 +81,7 @@ func main() {
 
 	flag.Parse()
 
-	release, err := initializeRelease(*branch, *overrideNumber)
+	release, err := initializeRelease(*branch, *overrideNumber, *isLocalReleaseNumberForNewRelease)
 	if err != nil {
 		log.Fatalf("Error initializing release values: %v", err)
 	}
@@ -137,9 +138,9 @@ func main() {
 	}
 }
 
-func initializeRelease(branch string, overrideNumber int) (Release, error) {
+func initializeRelease(branch string, overrideNumber int, isLocalReleaseNumberForNewRelease bool) (Release, error) {
 	if overrideNumber == skipOverrideNumber {
-		return NewRelease(branch)
+		return NewRelease(branch, isLocalReleaseNumberForNewRelease)
 	}
 	return NewReleaseWithOverrideNumber(branch, overrideNumber)
 }

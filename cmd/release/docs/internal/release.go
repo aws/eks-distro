@@ -50,32 +50,33 @@ func NewReleaseWithOverrideNumber(inputBranch string, overrideNumber int) (Relea
 	if overrideNumber < minNumber {
 		return Release{}, fmt.Errorf("override number %d cannot be less than %d", overrideNumber, minNumber)
 	}
-	return newRelease(inputBranch, &overrideNumber)
+	return newRelease(inputBranch, strconv.Itoa(overrideNumber), strconv.Itoa(overrideNumber-1))
 }
 
 // NewRelease returns complete Release based on the provided inputBranch
-func NewRelease(inputBranch string) (Release, error) {
-	return newRelease(inputBranch, nil)
+func NewRelease(inputBranch string, isLocalReleaseNumberForNewRelease bool) (Release, error) {
+	rn, err := CreateReleaseNumber(inputBranch, Environment)
+	if err != nil {
+		return Release{}, fmt.Errorf("error determining number: %v", err)
+	}
+
+	if isLocalReleaseNumberForNewRelease {
+		return newRelease(inputBranch, rn.Current(), rn.Previous())
+	} else {
+		return newRelease(inputBranch, rn.Next(), rn.Current())
+	}
 }
 
-func newRelease(inputBranch string, overrideNumber *int) (Release, error) {
+func newRelease(inputBranch string, num, prevNum string) (Release, error) {
 	inputBranch = strings.TrimSpace(inputBranch)
 	if len(inputBranch) == 0 {
 		return Release{}, errors.New("branch cannot be an empty string")
 	}
 
 	release := Release{
-		branch:      inputBranch,
-	}
-
-	if overrideNumber != nil {
-		release.number, release.previousNumber = convertToNumberAndPrevNumber(*overrideNumber)
-	} else {
-		rn, err := CreateReleaseNumber(release.branch, Environment)
-		if err != nil {
-			return Release{}, fmt.Errorf("error determining number: %v", err)
-		}
-		release.number, release.previousNumber = rn.Next(), rn.Current()
+		branch:         inputBranch,
+		number:         num,
+		previousNumber: prevNum,
 	}
 
 	release.DocsDirectoryPath = formatReleaseDocsDirectory(release.branch, release.number)

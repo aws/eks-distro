@@ -11,8 +11,9 @@ IMAGE_REPO?=$(if $(AWS_ACCOUNT_ID),$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazo
 RELEASE_AWS_PROFILE?=default
 
 IS_BOT?=false
-USE_PREV_RELEASE_MANIFEST?=true
+USE_PREV_RELEASE_MANIFEST?=false
 OPEN_PR?=true
+IS_LOCAL_RELEASE_NUMBER_FOR_NEW_RELEASE?=true
 
 RELEASE_GIT_TAG?=v$(RELEASE_BRANCH)-eks-$(RELEASE)
 RELEASE_GIT_COMMIT_HASH?=$(shell git rev-parse @)
@@ -195,7 +196,8 @@ release-docs:
 		--branch=$(RELEASE_BRANCH) \
 		--isBot=$(IS_BOT) \
 		--usePrevReleaseManifestForComponentTable=$(USE_PREV_RELEASE_MANIFEST) \
-		--openPR=$(OPEN_PR)
+		--openPR=$(OPEN_PR) \
+		--isLocalReleaseNumberForNewRelease=$(IS_LOCAL_RELEASE_NUMBER_FOR_NEW_RELEASE)
 
 .PHONY: only-index-md-from-existing-release-manifest
 only-index-md-from-existing-release-manifest:
