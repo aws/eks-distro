@@ -5,7 +5,6 @@ import (
 	. "./internal"
 	"errors"
 	"flag"
-	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -28,8 +27,6 @@ func main() {
 	var prodReleaseNumber, devReleaseNumber ReleaseNumber
 	var err error
 
-	fmt.Println("BRANCH:" + *branch)
-
 	if includeProd {
 		prodReleaseNumber, err = CreateReleaseNumber(*branch, Production)
 		if err != nil {
@@ -45,11 +42,10 @@ func main() {
 	}
 
 	if includeDev {
-		devReleaseNumber, err := CreateReleaseNumber(*branch, Development)
+		devReleaseNumber, err = CreateReleaseNumber(*branch, Development)
 		if err != nil {
 			log.Fatalf("Error calculating dev RELEASE: %v", err)
 		}
-		fmt.Printf("NUMBER again: %v/n", devReleaseNumber.Number())
 
 		changedDevFilePaths = append(changedDevFilePaths, devReleaseNumber.FilePath())
 		err = updateEnvironmentReleaseNumber(devReleaseNumber)
@@ -63,14 +59,13 @@ func main() {
 
 	if includePR {
 		if includeProd {
-			if err = OpenProdPR(*branch, prodReleaseNumber.Number(), changedProdFilePaths, *isBot); err != nil {
+			if err = OpenNumberPR(*branch, prodReleaseNumber.Next(), changedProdFilePaths, *isBot, Production); err != nil {
 				log.Fatal(err)
 			}
 		}
 
 		if includeDev {
-			fmt.Printf("NUMBER again: %v/n", devReleaseNumber.Number())
-			if err = OpenDevPR(*branch, devReleaseNumber.Number(), changedDevFilePaths, *isBot); err != nil {
+			if err = OpenNumberPR(*branch, devReleaseNumber.Next(), changedDevFilePaths, *isBot, Development); err != nil {
 				log.Fatal(err)
 			}
 		}
@@ -79,10 +74,10 @@ func main() {
 }
 
 func updateEnvironmentReleaseNumber(rn ReleaseNumber) error {
-	if len(rn.Number()) == 0 {
+	if len(rn.Next()) == 0 {
 		return errors.New("failed to update release number file because provided number was empty")
 	}
-	return os.WriteFile(rn.FilePath(), []byte(rn.Number()+"\n"), 0644)
+	return os.WriteFile(rn.FilePath(), []byte(rn.Next()+"\n"), 0644)
 }
 
 func cleanUpIfError(paths []string) {
