@@ -48,8 +48,9 @@ echo "eks-distro-patched export-ignore" >> $SOURCE_DIR/.git/info/attributes
 
 # Tag current HEAD of repo which includes the patches so that when the archive is created
 # the proper tag will be written into the hack/lib/version.sh file for anyone building from 
-# this source tarball
-git -C $SOURCE_DIR tag -f $GIT_TAG-eks
+# this source tarball. Load version file to avoid recreating git version
+source "${MAKE_ROOT}/${RELEASE_BRANCH}/KUBE_GIT_VERSION_FILE"
+git -C $SOURCE_DIR tag -f $KUBE_GIT_VERSION
 
 git \
     -C $SOURCE_DIR \

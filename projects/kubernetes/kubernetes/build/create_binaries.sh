@@ -29,10 +29,11 @@ source "${MAKE_ROOT}/build/lib/init.sh"
 source "${MAKE_ROOT}/../../../build/lib/common.sh"
 
 OUTPUT_DIR=${MAKE_ROOT}/_output/${RELEASE_BRANCH}
+KUBE_GIT_VERSION_FILE=${MAKE_ROOT}/${RELEASE_BRANCH}/KUBE_GIT_VERSION_FILE
 
 build::common::use_go_version $GOLANG_VERSION
 build::common::set_go_cache kubernetes $GIT_TAG
-build::binaries::kube_bins "$SOURCE_DIR" $RELEASE_BRANCH $GIT_TAG
+build::binaries::kube_bins "$SOURCE_DIR" $RELEASE_BRANCH $GIT_TAG $KUBE_GIT_VERSION_FILE
 
 mkdir -p ${OUTPUT_DIR}/bin
 rsync --remove-source-files -a --include '*/' --include 'kube-*' --include 'kubelet*' \

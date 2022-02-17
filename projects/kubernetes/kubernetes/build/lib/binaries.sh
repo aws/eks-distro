@@ -17,16 +17,9 @@ function build::binaries::kube_bins() {
     local -r repository="$1"
     local -r release_branch="$2"
     local -r git_tag="$3"
+    local -r kube_git_version_file="$4"
 
-    # ensure consistent build date tag on final binary based on
-    # last change in the patches directory
-    export SOURCE_DATE_EPOCH=$(git -C $repository log -1 --format=%at)
-    export KUBE_GIT_COMMIT=$(git -C $repository rev-list -n 1 $git_tag)
-    export KUBE_GIT_TREE_STATE=clean
-    # Not using full image tag to avoid having to change checksums just for bumping
-    # the release number, which is usually just a base image update and
-    # doesnt affect the binaries
-    export KUBE_GIT_VERSION=$git_tag-eks-$release_branch
+    export KUBE_GIT_VERSION_FILE=$kube_git_version_file
 
     cd $repository
     

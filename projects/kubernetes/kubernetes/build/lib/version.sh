@@ -17,11 +17,11 @@
 function build::version::create_env_file() {
     local -r tag="$1"
     local -r version_file="$2"
-    local -r kube_git_version="$3"
-    local -r repository="$4"
+    local -r repository="$3"
 
-    local -r source_date_epoch=$(git -C $repository show -s --format=format:%ct $tag^{commit})
-    export KUBE_GIT_COMMIT=$(git  -C $repository rev-list -n 1 $tag)
+    local -r source_date_epoch=$(git -C $repository show -s --format=format:%ct $tag^{commit})    
+    local -r kube_git_version=$tag-eks-$(git -C $repository rev-parse --short=7 HEAD)
+
     export KUBE_GIT_VERSION=$tag
     export KUBE_GIT_TREE_STATE=clean
 
