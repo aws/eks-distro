@@ -41,6 +41,16 @@ TAR_OUTPUT_DIR=${OUTPUT_DIR}/tar/${RELEASE_BRANCH}
 mkdir -p $TAR_OUTPUT_DIR
 build::common::ensure_tar
 build::tarballs::create_tarballs $BIN $OUTPUT_RELEASE_DIR $TAR_OUTPUT_DIR
+
+# exclude helper files used for make targets
+echo "eks-distro-checkout-$GIT_TAG export-ignore" >> $SOURCE_DIR/.git/info/attributes
+echo "eks-distro-patched export-ignore" >> $SOURCE_DIR/.git/info/attributes
+
+# Tag current HEAD of repo which includes the patches so that when the archive is created
+# the proper tag will be written into the hack/lib/version.sh file for anyone building from 
+# this source tarball
+git -C $SOURCE_DIR tag -f $GIT_TAG-eks
+
 git \
     -C $SOURCE_DIR \
     archive \
