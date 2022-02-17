@@ -1,7 +1,7 @@
-package internal
+package existing_docs
 
 import (
-	. "../../internal"
+	. "../internal"
 	"bytes"
 	"errors"
 	"fmt"
@@ -19,12 +19,10 @@ var (
 // If the value of provided 'force' is 'true', does not check for sequential numbering; otherwise, returns error if
 // updating the doc would result in non-sequential number.
 func UpdateREADME(release *Release, force bool) (DocStatus, error) {
-	ds := GetEmptyDocStatus()
-
 	readmePath := READMEPath
 	data, err := ioutil.ReadFile(readmePath)
 	if err != nil {
-		return ds, fmt.Errorf("failed to read file because error: %v", err)
+		return GetEmptyDocStatus(), fmt.Errorf("failed to read README because error: %v", err)
 	}
 
 	splitData := bytes.Split(data, linebreak)
@@ -55,10 +53,10 @@ func UpdateREADME(release *Release, force bool) (DocStatus, error) {
 	}
 
 	if !hasFoundLine {
-		return ds, errors.New("failed to find line needed to update version tag in README")
+		return GetEmptyDocStatus(), errors.New("failed to find line needed to update version tag in README")
 	}
 
-	ds = DocStatus{path: readmePath, isAlreadyExisting: true}
+	ds, _ := InitializeDocStatus(readmePath)
 	return ds, os.WriteFile(readmePath, bytes.Join(splitData, linebreak), 0644)
 }
 
@@ -66,12 +64,10 @@ func UpdateREADME(release *Release, force bool) (DocStatus, error) {
 // If the value of provided 'force' is 'true', does not check for sequential numbering; otherwise, returns error if
 // updating the doc would result in non-sequential number.
 func UpdateDocsIndex(release *Release, force bool) (DocStatus, error) {
-	ds := GetEmptyDocStatus()
-
 	docsIndexPath := DocsIndexPath
 	data, err := ioutil.ReadFile(docsIndexPath)
 	if err != nil {
-		return ds, fmt.Errorf("failed to read file because error: %v", err)
+		return GetEmptyDocStatus(), fmt.Errorf("failed to read doc index file because error: %v", err)
 	}
 
 	splitData := bytes.Split(data, linebreak)
@@ -86,7 +82,7 @@ func UpdateDocsIndex(release *Release, force bool) (DocStatus, error) {
 			continue
 		}
 		if bytes.Compare(lineToUpdate, splitData[i+1]) != 0 && !force {
-			return ds, fmt.Errorf("expected line %q but found %q", lineToUpdate, splitData[i+1])
+			return GetEmptyDocStatus(), fmt.Errorf("expected line %q but found %q", lineToUpdate, splitData[i+1])
 		}
 		splitData[i+1] = []byte("RELEASE=" + release.Number())
 	}
@@ -98,7 +94,7 @@ func UpdateDocsIndex(release *Release, force bool) (DocStatus, error) {
 	for i := 0; i < len(splitData)-1; i++ {
 		if bytes.Compare(sectionHeader, splitData[i]) == 0 {
 			if !nextLineMatch.Match(splitData[i+1]) && !force {
-				return ds, errors.New("non-sequential Version Dependencies list")
+				return GetEmptyDocStatus(), errors.New("non-sequential Version Dependencies list")
 			}
 			appendLine := fmt.Sprintf(
 				`* [%s](%s/index.md) (%s)`,
@@ -111,7 +107,7 @@ func UpdateDocsIndex(release *Release, force bool) (DocStatus, error) {
 		}
 	}
 
-	ds = DocStatus{path: docsIndexPath, isAlreadyExisting: true}
+	ds, _ := InitializeDocStatus(docsIndexPath)
 	return ds, os.WriteFile(docsIndexPath, bytes.Join(splitData, linebreak), 0644)
 }
 

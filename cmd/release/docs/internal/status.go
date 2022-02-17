@@ -15,6 +15,20 @@ type DocStatus struct {
 	isAlreadyExisting bool
 }
 
+func InitializeDocStatus(filePath string) (DocStatus, error) {
+	var isExistingFile bool
+
+	_, err := os.Stat(filePath)
+	if os.IsNotExist(err) {
+		isExistingFile = false
+	} else if err == nil {
+		isExistingFile = true
+	} else {
+		return DocStatus{}, fmt.Errorf("encountered error checking file: %v", err)
+	}
+	return DocStatus{path: filePath, isAlreadyExisting: isExistingFile}, nil
+}
+
 func UndoChanges(docStatuses []DocStatus) {
 	log.Println("Encountered error processing docs. Attempting to undo all changes... ")
 	for _, ds := range docStatuses {
@@ -69,6 +83,10 @@ func (docStatus *DocStatus) undoChanges() error {
 
 func GetEmptyDocStatus() DocStatus {
 	return DocStatus{path: "", isAlreadyExisting: true}
+}
+
+func (docStatus *DocStatus) IsAlreadyExisting() bool {
+	return docStatus.isAlreadyExisting
 }
 
 func (docStatus *DocStatus) isEmpty() bool {

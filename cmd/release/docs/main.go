@@ -1,8 +1,10 @@
 package main
 
 import (
-	. "../internal"
+	. "./existing_docs"
 	. "./internal"
+	. "./new_docs"
+	. "./new_docs/templates"
 	"fmt"
 
 	"flag"
@@ -17,52 +19,49 @@ Generate docs for release. Value for 'branch' flag must be provided.
 If a failure is encounter, attempts to undo any changes to files in branch doc directory, including deleting the
 directory if it was created.
 
-
-Assumptions if using default flag value:
-
-  - The new release is only for a base image update. Future plans are to provide more options.
-  - The release number in the local code has not been incremented yet for the new release, and the generated doc should
-	be for the new release. The new release number is the release number in the local code one incremented by 1.
-  - The new release is using the same component versions in the preceding version's release manifest, and the preceding
-	version's release manifest does not contain errors and follows the expected version naming convention.
-  - Since the last release went out, there have been no code changes to the patches or component versions.
-  - The production release will be cut today.
-
-
 Caution about specific flags
 
-  - usePrevReleaseManifestForComponentTable
+	usePrevReleaseManifestForComponentTable
 
 		If false, there if no guarantee that the generated table is correct for that release, as the generated table is
-		based on the previous release's release manifest (which must exist). However, if all the assumptions if using
-		default flag values (see list above) are followed, one can be reasonably confident the table is correct.
+		based on the previous release's release manifest (which must exist).
 
-		If true, the release manifest for that release must exist. If using a release's own release manifest, one can be
-		reasonably confident the table is correct.
+		If true, the release manifest for that release must exist.
 
-  - overrideNumber and force
+	isLocalReleaseNumberForNewRelease
 
-		Both flags undercut the logical bedrock upon which all aspects of the generated docs depend: the release number.
-		The release number's impact extends far beyond what is discernible by looking at the docs. Factors well outside
-		of the scope of this command, such as the passage of time or code changes unrelated to the release, impact the
-		generation of docs in critically important ways that are not readily apparent.
+		If false, the local prod release number of the branch must be from the current release number, which will be
+		incremented for the next release. The generated docs are for the next release.
+
+		If true, the local prod release number of the branch must be the new release number. Typically, this means an
+		earlier PR incremented the release number, the PR was merged, and the change was pulled down locally. The
+		generated docs are for this release
+
+	overrideNumber and force
+
+		Both flags undercut the logical bedrock of the doc generation: the release number. The release number's impact
+		extends far beyond what is discernible by looking at the docs. Factors well outside the scope of this command,
+		such as the passage of time or code changes unrelated to the release, impact the generation of docs in
+		critically important ways that are not readily apparent.
 
 		Circumventing the expected and established workflow can easily result in errors that are not easily identifiable
 		or consistent throughout the docs. Executing a command without an error does not mean that there are no errors
-		in the generated docs.
+		in the generated docs. Even if a command with these flags produces error-free docs one time, there is no
+		guarantee that rerunning the same command will still generate error-free docs.
 
-		Even if a command with these flags produces error-free docs one time, there is no guarantee that rerunning the
-		same command will still generate error-free docs.
+		If overrideNumber is used, isLocalReleaseNumberForNewRelease is ignored.
 */
 func main() {
 	branch := flag.String("branch", "", "Release branch, e.g. 1-20")
 
+	// TODO: add flag for only base image updates and pick templates accordingly
 	// Generate new files
 	includeChangelog := flag.Bool("includeChangelog", true, "If changelog should be generated")
 	includeAnnouncement := flag.Bool("includeAnnouncement", true, "If release announcement should be generated")
 	includeIndex := flag.Bool("includeIndex", true, "If index in branch dir should be generated")
 	includeIndexComponentTable := flag.Bool("includeIndexComponentTable", true, "If Markdown table should be generated. Ignored if includeIndex is false.")
 	usePrevReleaseManifestForComponentTable := flag.Bool("usePrevReleaseManifestForComponentTable", true, "If Markdown table should be generated from release manifest, which must exist if .")
+	isLocalReleaseNumberForNewRelease := flag.Bool("isLocalReleaseNumberForNewRelease", true, "TODO")
 
 	// Update existing files
 	includeREADME := flag.Bool("includeREADME", true, "If README should be updated")
@@ -77,7 +76,7 @@ func main() {
 
 	flag.Parse()
 
-	release, err := initializeRelease(*branch, *overrideNumber)
+	release, err := initializeRelease(*branch, *overrideNumber, *isLocalReleaseNumberForNewRelease)
 	if err != nil {
 		log.Fatalf("Error initializing release values: %v", err)
 	}
@@ -95,12 +94,12 @@ func main() {
 	}
 	generatedDocsInfo := createGeneratedDocsInfo(&includeGeneratedDocs, release.VBranchEKSNumber)
 
-	docStatusesWriteToDocs, err := WriteToDocs(generatedDocsInfo, &release, *force)
-	docStatuses = append(docStatuses, docStatusesWriteToDocs...)
+	docStatusesForNewDocs, err := GenerateNewDocs(generatedDocsInfo, &release, *force)
+	docStatuses = append(docStatuses, docStatusesForNewDocs...)
 	if err != nil {
 		UndoChanges(docStatuses)
 		DeleteDocsDirectoryIfEmpty(&release)
-		log.Fatalf("Error that was encountered while writing to docs : %v", err)
+		log.Fatalf("Error that was encountered while creating new docs: %v", err)
 	}
 
 	// Update existing files
@@ -134,9 +133,9 @@ func main() {
 	}
 }
 
-func initializeRelease(branch string, overrideNumber int) (Release, error) {
+func initializeRelease(branch string, overrideNumber int, isLocalReleaseNumberForNewRelease bool) (Release, error) {
 	if overrideNumber == skipOverrideNumber {
-		return NewRelease(branch)
+		return NewRelease(branch, isLocalReleaseNumberForNewRelease)
 	}
 	return NewReleaseWithOverrideNumber(branch, overrideNumber)
 }
@@ -160,7 +159,7 @@ func createGeneratedDocsInfo(includeGenerated *includeGenerated, formattedReleas
 	return []GeneratedDoc{
 		{
 			Filename:     fmt.Sprintf("CHANGELOG-%s.md", formattedReleaseVersion),
-			TemplateName: ChangeLogBaseImage,
+			TemplateName: ChangeLogGenericBase,
 			IsIncluded:   includeGenerated.changelog,
 		},
 		{
@@ -171,7 +170,7 @@ func createGeneratedDocsInfo(includeGenerated *includeGenerated, formattedReleas
 		},
 		{
 			Filename:     "release-announcement.txt",
-			TemplateName: ReleaseAnnouncement,
+			TemplateName: ReleaseAnnouncementGenericBase,
 			IsIncluded:   includeGenerated.announcement,
 		},
 	}

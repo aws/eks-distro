@@ -1,8 +1,8 @@
 package internal
 
 import (
-	. "../../internal"
 	. "../../pull_request"
+	. "../../utils"
 )
 
 type prRequest struct {
@@ -11,24 +11,15 @@ type prRequest struct {
 	bot                          bool
 }
 
-func OpenDevPR(release *Release, filesChanged []string, isBot bool) error {
-	request := newPRRequest(release, filesChanged, isBot, Development)
-	return openNumberPR(&request)
-}
-
-func OpenProdPR(release *Release, filesChanged []string, isBot bool) error {
-	request := newPRRequest(release, filesChanged, isBot, Production)
-	return openNumberPR(&request)
-}
-
-func newPRRequest(release *Release, files []string, isBot bool, environment ReleaseEnvironment) prRequest {
-	return prRequest{
-		branch:      release.Branch(),
-		environment: environment.String(),
-		version:     release.Version(),
+func OpenNumberPR(branch, number string, files []string, isBot bool, environment ReleaseEnvironment) error {
+	request := prRequest{
+		branch:       branch,
+		environment:  environment.String(),
+		version:      GetBranchWithDotAndNumberWithDashFormat(branch, number),
 		filesChanged: files,
-		bot:         isBot,
+		bot:          isBot,
 	}
+	return openNumberPR(&request)
 }
 
 func openNumberPR(prReq *prRequest) error {
