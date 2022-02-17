@@ -65,6 +65,7 @@ kops-prow-arm: export NODE_ARCHITECTURE=arm64
 kops-prow-arm: postsubmit-build
 	$(eval MINOR_VERSION=$(subst 1-,,$(RELEASE_BRANCH)))
 	if [[ $(MINOR_VERSION) -ge 21 ]]; then \
+		sleep 5m; \
 		RELEASE=$(RELEASE) development/kops/prow.sh; \
 	fi;
 
