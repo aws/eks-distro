@@ -62,7 +62,7 @@ postsubmit-build: setup
 .PHONY: kops-prow-arm
 kops-prow-arm: export NODE_INSTANCE_TYPE=t4g.medium
 kops-prow-arm: export NODE_ARCHITECTURE=arm64
-kops-prow-arm: postsubmit-build
+kops-prow-arm: kops-prereqs
 	$(eval MINOR_VERSION=$(subst 1-,,$(RELEASE_BRANCH)))
 	if [[ $(MINOR_VERSION) -ge 21 ]]; then \
 		sleep 5m; \
@@ -70,7 +70,7 @@ kops-prow-arm: postsubmit-build
 	fi;
 
 .PHONY: kops-prow-amd
-kops-prow-amd: postsubmit-build
+kops-prow-amd: kops-prereqs
 	RELEASE=$(RELEASE) development/kops/prow.sh
 
 .PHONY: kops-prow
@@ -80,11 +80,11 @@ kops-prow: kops-prow-amd kops-prow-arm
 .PHONT: kops-prereqs
 kops-prereqs: postsubmit-build
 	ssh-keygen -b 2048 -t rsa -f ~/.ssh/id_rsa -q -N ""
-	cd development/kops && ./install_requirements.sh
+	cd development/kops && RELEASE=$(RELEASE) ./install_requirements.sh
 
 .PHONY: postsubmit-conformance
 postsubmit-conformance: RELEASE:=$(shell echo  $$(($(RELEASE) + 1))).pre
-postsubmit-conformance: postsubmit-build kops-prereqs kops-prow 
+postsubmit-conformance: postsubmit-build kops-prow 
 	@echo 'Done postsubmit-conformance'
 
 .PHONY: tag
