@@ -1,6 +1,8 @@
 BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
 RELEASE_BRANCH?=$(shell cat $(BASE_DIRECTORY)/release/DEFAULT_RELEASE_BRANCH)
-SUPPORTED_RELEASE_BRANCHES?=$(shell cat $(BASE_DIRECTORY)/release/SUPPORTED_RELEASE_BRANCHES)
+RELEASED_RELEASE_BRANCHES?=$(shell head -4 $(BASE_DIRECTORY)/release/SUPPORTED_RELEASE_BRANCHES)
+UPCOMING_RELEASE_BRANCH?=$(shell if [[ $(shell wc -l < $(BASE_DIRECTORY)/release/SUPPORTED_RELEASE_BRANCHES) == 5 ]]; then \
+	echo $(shell tail -1 $(BASE_DIRECTORY)/release/SUPPORTED_RELEASE_BRANCHES); fi)
 RELEASE_ENVIRONMENT?=development
 RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/$(RELEASE_ENVIRONMENT)/RELEASE)
 ARTIFACT_BUCKET?=my-s3-bucket
@@ -185,9 +187,19 @@ update-release-number:
 		--isBot=$(IS_BOT) \
 		--openPR=$(OPEN_PR)
 
+.PHONY: update-upcoming-release-branch-dev-release-number
+update-upcoming-release-branch-dev-release-number:
+	go vet ./cmd/release/number
+	go run ./cmd/release/number/main.go \
+		--branch=$(UPCOMING_RELEASE_BRANCH) \
+		--isBot=$(IS_BOT) \
+		--openPR=$(OPEN_PR) \
+		--includeProd=false
+
+# TODO: change this to how you're supposed to do for make: https://www.gnu.org/software/make/manual/make.html#Foreach-Function
 .PHONY: update-all-release-numbers
 update-all-release-numbers:
-	for r_b in $(SUPPORTED_RELEASE_BRANCHES); do RELEASE_BRANCH=$$r_b $(MAKE) update-release-number; done
+	for r_b in $(RELEASED_RELEASE_BRANCHES); do RELEASE_BRANCH=$$r_b $(MAKE) update-release-number; done
 
 .PHONY: release-docs
 release-docs:
