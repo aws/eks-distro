@@ -1,1 +1,1 @@
-Amazon EKS Distro v1.20-11 is now available. Amazon EKS Distro v1.20-11 builds are available through ECR Public Gallery (https://gallery.ecr.aws/eks-distro) and GitHub (https://github.com/aws/eks-distro)
+Amazon EKS Distro v1.20-11 is now available. This release includes an update to Amazon Linux 2, which contains the latest security fixes, and changes to the patches and CSI Snapshotter version. Amazon EKS Distro v1.20-11 builds are available through ECR Public Gallery (https://gallery.ecr.aws/eks-distro) and GitHub (https://github.com/aws/eks-distro)
