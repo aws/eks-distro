@@ -1884,7 +1884,7 @@ https://github.com/mailru/easyjson
 Copyright (c) 2016 Mail.Ru Group
 
 ** github.com/MakeNowJust/heredoc; version v0.0.0-20170808103936-bb23615498cd --
-https://github.com/MakeNowJust/heredoc
+https://github.com/makenowjust/heredoc
 Copyright (c) 2014-2017 TSUYUSATO Kitsune
 
 ** github.com/mitchellh/go-wordwrap; version v1.0.0 --
