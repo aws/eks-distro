@@ -3,6 +3,7 @@ MAKEFLAGS+=--no-builtin-rules --warn-undefined-variables
 .SHELLFLAGS:=-eu -o pipefail -c
 .SUFFIXES:
 
+
 RELEASE_BRANCH?=$(shell cat $(BASE_DIRECTORY)/release/DEFAULT_RELEASE_BRANCH)
 RELEASE_ENVIRONMENT?=development
 RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/$(RELEASE_ENVIRONMENT)/RELEASE)
