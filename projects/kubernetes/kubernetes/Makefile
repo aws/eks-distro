@@ -50,14 +50,16 @@ SIMPLE_CREATE_TARBALLS=false
 HAS_RELEASE_BRANCHES=true
 HAS_S3_ARTIFACTS=true
 
+KUBE_GIT_VERSION_FILE=$(RELEASE_BRANCH)/KUBE_GIT_VERSION_FILE
+
 include $(BASE_DIRECTORY)/Common.mk
 
 # Validate version file before uploading artifacts since that runs in both build and release
-s3-artifacts: cleanup-artifacts create-version-file
+s3-artifacts: cleanup-artifacts
 
 # Do not pass down overrides we add in common makefile
 $(BINARY_TARGETS): MAKEFLAGS=
-$(BINARY_TARGETS): | $(GIT_PATCH_TARGET)
+$(BINARY_TARGETS): $(KUBE_GIT_VERSION_FILE) | $(GIT_PATCH_TARGET)
 	build/create_binaries.sh $(REPO) $(GOLANG_VERSION) $(GIT_TAG) $(RELEASE_BRANCH)
 
 # There are a couple of fixes needed to the licenses and root-module name before running gather licenses
@@ -78,7 +80,7 @@ $(PAUSE_DST): $(GIT_PATCH_TARGET)
 	@mkdir -p $(dir $(PAUSE_DST))
 	cp $(PAUSE_SRC_DIR)/linux/pause.c $(PAUSE_DST) || cp $(PAUSE_SRC_DIR)/pause.c $(PAUSE_DST)
 
-tarballs:
+tarballs: $(KUBE_GIT_VERSION_FILE) 
 	build/create_tarballs.sh $(REPO) $(GIT_TAG) $(RELEASE_BRANCH)
 
 .PHONY: cleanup-artifacts
@@ -96,9 +98,8 @@ test: $(BINARY_TARGETS)
 fix-licenses:
 	build/fix_licenses.sh $(REPO) $(OUTPUT_DIR)
 
-.PHONY: create-version-file
-create-version-file:
-	build/create_version_file.sh $(GIT_TAG) $(RELEASE_BRANCH) $(IMAGE_TAG)
+$(KUBE_GIT_VERSION_FILE): $(GIT_PATCH_TARGET)
+	build/create_version_file.sh $(GIT_TAG) $(RELEASE_BRANCH)
 
 .PHONY: reset-repo
 reset-repo: $(REPO)

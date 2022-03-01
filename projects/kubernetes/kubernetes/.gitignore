@@ -1,3 +1,4 @@
 _output/
 _bin/
 kubernetes/
+KUBE_GIT_VERSION_FILE

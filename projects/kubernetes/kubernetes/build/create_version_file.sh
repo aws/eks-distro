@@ -19,7 +19,6 @@ set -o pipefail
 
 TAG=$1
 RELEASE_BRANCH=$2
-KUBE_GIT_VERSION=$3
 
 BASE_DIRECTORY=$(git rev-parse --show-toplevel)
 MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
@@ -28,4 +27,4 @@ source "${MAKE_ROOT}/build/lib/init.sh"
 VERSION_FILE="${MAKE_ROOT}/${RELEASE_BRANCH}/KUBE_GIT_VERSION_FILE"
 rm -f $VERSION_FILE
 touch $VERSION_FILE
-build::version::create_env_file "$TAG" "$VERSION_FILE" "$KUBE_GIT_VERSION" "kubernetes"
+build::version::create_env_file "$TAG" "$VERSION_FILE" "kubernetes"
