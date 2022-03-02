@@ -1,6 +1,6 @@
 BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
 GIT_TAG?=$(shell cat $(RELEASE_BRANCH)/GIT_TAG)
-GOLANG_VERSION?="1.13"
+GOLANG_VERSION?=$(shell cat $(RELEASE_BRANCH)/GOLANG_VERSION)
 
 REPO=aws-iam-authenticator
 REPO_OWNER=kubernetes-sigs
