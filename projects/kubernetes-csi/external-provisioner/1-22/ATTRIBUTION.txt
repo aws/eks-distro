@@ -716,7 +716,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/go; version go1.17.6 --
+** golang.org/go; version go1.17.5 --
 https://github.com/golang/go
 
 ** golang.org/x/crypto/ed25519; version v0.0.0-20210817164053-32db794688a5 --
