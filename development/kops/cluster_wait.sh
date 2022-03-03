@@ -34,21 +34,28 @@ do
     echo 'Waiting for cluster to come up...'
 done
 
-# In kops 1-22 metrics was updated and the port was changed to 443 from 4443. In the verison of metrics server we ship, it does not support binding to 443
+# In kops 1-22 metrics was updated and the port was changed to 443 from 4443. In the verison of metrics server we ship for kube versions < 1-22, it does not support binding to 443
 # patching back to old port and behavior
-PATCH='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--secure-port=4443" },{"op": "replace", "path": "/spec/template/spec/containers/0/ports/0/containerPort", "value": 4443 }]'
-while ! kubectl --context $KOPS_CLUSTER_NAME  -n kube-system patch deployments metrics-server --type=json -p="$PATCH"
-do
-    sleep 5
-    COUNT=$(expr $COUNT + 1)
-    if [ $COUNT -gt 120 ]
-    then
-        echo "Failed to configure metrics server"
-        exit 1
-    fi
-    echo 'Waiting for cluster to come up...'
-done
+if [ "${RELEASE_BRANCH}" != "1-22" ]; then
+    PATCH='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--secure-port=4443" },{"op": "replace", "path": "/spec/template/spec/containers/0/ports/0/containerPort", "value": 4443 }]'
+    while ! kubectl --context $KOPS_CLUSTER_NAME  -n kube-system patch deployments metrics-server --type=json -p="$PATCH"
+    do
+        sleep 5
+        COUNT=$(expr $COUNT + 1)
+        if [ $COUNT -gt 120 ]
+        then
+            echo "Failed to configure metrics server"
+            exit 1
+        fi
+        echo 'Waiting for cluster to come up...'
+    done
+fi
 
+# kops 1-22 installs an older metrics server than we ship with eksd 1.22 along with an older clusterrole def.  The 0.6 version of metrics requires a slightly different rbac setup
+# Appling the clusterrole from the metrics repo fixes the permissions
+if [ "${RELEASE_BRANCH}" == "1-22" ]; then
+    kubectl --context $KOPS_CLUSTER_NAME apply -f metrics-server-0.6-clusterrole.yaml
+fi
 
 set -x
 ${KOPS} validate cluster --wait 15m
