@@ -12,8 +12,8 @@ checkout-repo: ## Checkout upstream tag based on value in GIT_TAG file
 
 ##@ Binary Targets
 binaries: ## Build all binaries: `csi-attacher` for `linux/amd64 linux/arm64`
-_output/bin/external-attacher/linux-amd64/csi-attacher: ## Build `_output/bin/external-attacher/linux-amd64/csi-attacher`
-_output/bin/external-attacher/linux-arm64/csi-attacher: ## Build `_output/bin/external-attacher/linux-arm64/csi-attacher`
+_output/1-21/bin/external-attacher/linux-amd64/csi-attacher: ## Build `_output/1-21/bin/external-attacher/linux-amd64/csi-attacher`
+_output/1-21/bin/external-attacher/linux-arm64/csi-attacher: ## Build `_output/1-21/bin/external-attacher/linux-arm64/csi-attacher`
 
 ##@ Image Targets
 local-images: ## Builds `external-attacher/images/amd64` as oci tars for presumbit validation
