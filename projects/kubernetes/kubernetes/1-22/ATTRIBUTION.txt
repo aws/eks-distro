@@ -1,6 +1,6 @@
 
 ** cloud.google.com/go/compute/metadata; version v0.54.0 --
-https://github.com/googleapis/google-cloud-go
+https://cloud.google.com/go
 
 ** github.com/aws/aws-sdk-go; version v1.38.49 --
 https://github.com/aws/aws-sdk-go
