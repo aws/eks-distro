@@ -12,8 +12,8 @@ checkout-repo: ## Checkout upstream tag based on value in GIT_TAG file
 
 ##@ Binary Targets
 binaries: ## Build all binaries: `csi-node-driver-registrar` for `linux/amd64 linux/arm64`
-_output/bin/node-driver-registrar/linux-amd64/csi-node-driver-registrar: ## Build `_output/bin/node-driver-registrar/linux-amd64/csi-node-driver-registrar`
-_output/bin/node-driver-registrar/linux-arm64/csi-node-driver-registrar: ## Build `_output/bin/node-driver-registrar/linux-arm64/csi-node-driver-registrar`
+_output/1-21/bin/node-driver-registrar/linux-amd64/csi-node-driver-registrar: ## Build `_output/1-21/bin/node-driver-registrar/linux-amd64/csi-node-driver-registrar`
+_output/1-21/bin/node-driver-registrar/linux-arm64/csi-node-driver-registrar: ## Build `_output/1-21/bin/node-driver-registrar/linux-arm64/csi-node-driver-registrar`
 
 ##@ Image Targets
 local-images: ## Builds `node-driver-registrar/images/amd64` as oci tars for presumbit validation
