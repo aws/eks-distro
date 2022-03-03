@@ -1,44 +1,44 @@
 
-** github.com/container-storage-interface/spec/lib/go/csi; version v1.4.0 --
+** github.com/container-storage-interface/spec/lib/go/csi; version v1.5.0 --
 https://github.com/container-storage-interface/spec
 
-** github.com/go-logr/logr; version v0.4.0 --
+** github.com/go-logr/logr; version v1.2.0 --
 https://github.com/go-logr/logr
 
-** github.com/kubernetes-csi/csi-lib-utils; version v0.9.1 --
+** github.com/kubernetes-csi/csi-lib-utils; version v0.10.0 --
 https://github.com/kubernetes-csi/csi-lib-utils
 
-** github.com/kubernetes-csi/livenessprobe; version v2.3.0 --
+** github.com/kubernetes-csi/livenessprobe; version v2.6.0 --
 https://github.com/kubernetes-csi/livenessprobe
 
 ** github.com/matttproud/golang_protobuf_extensions/pbutil; version v1.0.2-0.20181231171920-c182affec369 --
 https://github.com/matttproud/golang_protobuf_extensions
 
-** github.com/prometheus/client_golang/prometheus; version v1.9.0 --
+** github.com/prometheus/client_golang/prometheus; version v1.11.0 --
 https://github.com/prometheus/client_golang
 
 ** github.com/prometheus/client_model/go; version v0.2.0 --
 https://github.com/prometheus/client_model
 
-** github.com/prometheus/common; version v0.19.0 --
+** github.com/prometheus/common; version v0.26.0 --
 https://github.com/prometheus/common
 
 ** github.com/prometheus/procfs; version v0.6.0 --
 https://github.com/prometheus/procfs
 
-** google.golang.org/genproto/googleapis/rpc/status; version v0.0.0-20210317182105-75c7a8546eb9 --
+** google.golang.org/genproto/googleapis/rpc/status; version v0.0.0-20210602131652-f16073e35f0c --
 https://github.com/googleapis/go-genproto
 
-** google.golang.org/grpc; version v1.36.0 --
+** google.golang.org/grpc; version v1.40.0 --
 https://github.com/grpc/grpc-go
 
-** k8s.io/apimachinery/pkg/version; version v0.20.4 --
+** k8s.io/apimachinery/pkg; version v0.22.0 --
 https://github.com/kubernetes/apimachinery
 
-** k8s.io/component-base; version v0.20.4 --
+** k8s.io/component-base; version v0.22.0 --
 https://github.com/kubernetes/component-base
 
-** k8s.io/klog/v2; version v2.8.0 --
+** k8s.io/klog/v2; version v2.30.0 --
 https://github.com/kubernetes/klog
 
 
@@ -302,7 +302,7 @@ SoundCloud Ltd. (http://soundcloud.com/).
 
 ------
 
-** github.com/golang/protobuf; version v1.5.1 --
+** github.com/golang/protobuf; version v1.5.2 --
 https://github.com/golang/protobuf
 
 Copyright 2010 The Go Authors.  All rights reserved.
@@ -336,7 +336,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/prometheus/common/internal/bitbucket.org/ww/goautoneg; version v0.19.0 --
+** github.com/prometheus/common/internal/bitbucket.org/ww/goautoneg; version v0.26.0 --
 https://github.com/prometheus/common
 
 Copyright (c) 2011, Open Knowledge Foundation Ltd.
@@ -406,16 +406,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/go; version go1.16.12 --
+** golang.org/go; version go1.17.6 --
 https://github.com/golang/go
 
-** golang.org/x/net; version v0.0.0-20210316092652-d523dce5a7f4 --
+** golang.org/x/net; version v0.0.0-20210520170846-37e1c6afe023 --
 https://go.googlesource.com/net
 
-** golang.org/x/sys; version v0.0.0-20210317225723-c4fcb01b228e --
+** golang.org/x/sys; version v0.0.0-20210616094352-59db8d763f22 --
 https://go.googlesource.com/sys
 
-** golang.org/x/text; version v0.3.5 --
+** golang.org/x/text; version v0.3.6 --
 https://go.googlesource.com/text
 
 Copyright (c) 2009 The Go Authors. All rights reserved.

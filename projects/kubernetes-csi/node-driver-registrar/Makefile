@@ -1,5 +1,5 @@
 BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
-GIT_TAG?=$(shell cat GIT_TAG)
+GIT_TAG?=$(shell cat $(RELEASE_BRANCH)/GIT_TAG)
 GOLANG_VERSION?=$(shell cat $(RELEASE_BRANCH)/GOLANG_VERSION)
 
 REPO=node-driver-registrar
@@ -8,13 +8,15 @@ REPO_OWNER=kubernetes-csi
 BINARY_TARGET_FILES=csi-node-driver-registrar
 SOURCE_PATTERNS=./cmd/csi-node-driver-registrar
 
+HAS_RELEASE_BRANCHES=true
+
 include $(BASE_DIRECTORY)/Common.mk
 
 $(ATTRIBUTION_TARGETS): fix-licenses
 
 .PHONE: fix-licenses
 fix-licenses: $(GATHER_LICENSES_TARGETS)
-	build/fix_licenses.sh
+	build/fix_licenses.sh $(RELEASE_BRANCH)
 
 
 ########### DO NOT EDIT #############################

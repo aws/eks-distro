@@ -17,8 +17,10 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+RELEASE_BRANCH="$1"
+
 MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
-OUTPUT_DIR="${MAKE_ROOT}/_output"
+OUTPUT_DIR="${MAKE_ROOT}/_output/${RELEASE_BRANCH}"
 ATTRIBUTION_DIR="${OUTPUT_DIR}/attribution"
 source "${MAKE_ROOT}/../../../build/lib/common.sh"
 
