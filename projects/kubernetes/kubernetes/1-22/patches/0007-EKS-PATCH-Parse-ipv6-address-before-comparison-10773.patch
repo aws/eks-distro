@@ -5,10 +5,7 @@ Subject: --EKS-PATCH-- Parse ipv6 address before comparison (#107736)
 
 Modified cherry-pick of upstream Kubernetes:
 https://github.com/kubernetes/kubernetes/pull/107736, which is
-included in Kubernetes 1.24. The difference between this patch and the
-upstream change is the upstreams use of forked golang parsers, which
-were not included in the minor Kubernetes version that this patch
-applied to.
+included in Kubernetes 1.24.
 
 This fixes a bug related to ipv6 clusters, as described in Kubernetes
 issue #107735 (https://github.com/kubernetes/kubernetes/issues/107735)
