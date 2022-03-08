@@ -1,4 +1,4 @@
-From f37324db60b6cc9fd78c84f6db82290d456ad8d3 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Manu Gupta <mgpta@amazon.com>
 Date: Tue, 12 Oct 2021 14:43:34 -0700
 Subject: --EKS-PATCH-- Get inodes and disk usage via pure go.
@@ -6,8 +6,7 @@ Subject: --EKS-PATCH-- Get inodes and disk usage via pure go.
 Cherry-pick of upstream Kubernetes:
 https://github.com/kubernetes/kubernetes/pull/96115, which was
 included in Kubernetes 1.22. There was a PR opened to cherry-pick
-this change for 1.20, but it was not approved before the release of
-the patch version of Kubernetes EKS-Distro uses for 1.20. See
+this change for 1.20, but it was closed without being merged. See
 https://github.com/kubernetes/kubernetes/pull/104022
 
 From the original upstream commit message:
@@ -450,6 +449,3 @@ index 5723dcd72b6..32b15632a9d 100644
  	used, err := resource.ParseQuantity(fmt.Sprintf("%d", total))
  	if err != nil {
  		t.Fatalf("TestDiskUsage failed: %s", err.Error())
--- 
-2.33.0
-

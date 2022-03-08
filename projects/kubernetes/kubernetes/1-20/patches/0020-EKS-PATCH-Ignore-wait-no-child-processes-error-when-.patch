@@ -1,4 +1,4 @@
-From d4ed75cd087cdb2b613ca8a65ccff6eadadeb34b Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Shyam Jeedigunta <jeedigv@amazon.com>
 Date: Mon, 19 Jul 2021 12:31:37 -0700
 Subject: --EKS-PATCH-- Ignore 'wait: no child processes' error when
@@ -64,6 +64,3 @@ index 9e6b033cb4b..031e9f0e1df 100644
  		return fmt.Errorf("unmount failed: %v\nUnmounting arguments: %s\nOutput: %s", err, target, string(output))
  	}
  	return nil
--- 
-2.33.0
-

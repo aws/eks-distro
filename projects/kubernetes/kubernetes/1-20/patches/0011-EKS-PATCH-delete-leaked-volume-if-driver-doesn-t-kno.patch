@@ -1,4 +1,4 @@
-From 21fcb4f2058d9cc24cc131bba4e08ad1910cb04e Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Xiang Li <lixiang1992@gwu.edu>
 Date: Mon, 15 Mar 2021 10:59:32 -0700
 Subject: --EKS PATCH-- Delete leaked volume if driver doesn't know
@@ -139,6 +139,3 @@ index b1590a59c1e..bc6cb1b18ac 100644
  func TestRegionIsValid(t *testing.T) {
  	fake := newMockedFakeAWSServices("fakeCluster")
  	fake.selfInstance.Placement = &ec2.Placement{
--- 
-2.33.0
-
