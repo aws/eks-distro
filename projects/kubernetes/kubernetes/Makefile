@@ -43,7 +43,10 @@ IMAGE_OUTPUT_DIR=$(OUTPUT_DIR)/images/bin/$(IMAGE_PLATFORMS)
 LICENSE_PACKAGE_FILTER=./cmd/kubelet ./cmd/kube-proxy ./cmd/kubeadm ./cmd/kubectl ./cmd/kube-apiserver ./cmd/kube-controller-manager ./cmd/kube-scheduler
 
 # Since we are overriding the building of binaries, just pick 1 of the binaries as the target
+# kubernetes outputs to linux/amd64 instead of linux-amd64, have to override binary_targets as well
 BINARY_TARGET_FILES=kubelet
+BINARY_TARGETS=$(OUTPUT_BIN_DIR)/linux/amd64/kubelet
+
 SIMPLE_CREATE_BINARIES=false
 SIMPLE_CREATE_TARBALLS=false
 
