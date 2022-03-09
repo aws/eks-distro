@@ -28,6 +28,8 @@ else
     ARCH="amd64"
 fi
 
+mkdir -p ${BASEDIR}/bin
+
 if [ ! -x ${KOPS} ]
 then
     echo "Determine kops version"
@@ -35,20 +37,16 @@ then
     echo "Download kops"
     KOPS_URL="https://github.com/kubernetes/kops/releases/download/${KOPS_VERSION}/kops-${OS}-${ARCH}"
     set -x
-    mkdir -p ${BASEDIR}/bin
     curl -L -o ${KOPS} "${KOPS_URL}"
     chmod 755 ${KOPS}
     set +x
-else
-    echo "Kops executable ${KOPS} available..."
-    ${KOPS} version
 fi
+
 if ! command -v kubectl &> /dev/null
 then
     echo "kubectl could not be found. Downloading..."
     KUBECTL_VERSION=$(cat ${BASEDIR}/../../projects/kubernetes/kubernetes/${RELEASE_BRANCH}/GIT_TAG)
     KUBECTL_PATH=${BASEDIR}/bin/kubectl
-    mkdir -p ${BASEDIR}/bin
     COUNT=0
     while [ ! "$(${KUBECTL_PATH} version --client true --short)" ]; do
         sleep 5
@@ -64,4 +62,24 @@ then
         set +x
     done
 fi
+
+if ! command -v helm &> /dev/null
+then
+    curl -s https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | HELM_INSTALL_DIR=${BASEDIR}/bin bash
+fi
+
+if ! command -v sonobuoy &> /dev/null
+then
+    echo "Download sonobuoy"
+    SONOBUOY=https://github.com/vmware-tanzu/sonobuoy/releases/download/v0.56.2/sonobuoy_0.56.2_${OS}_${ARCH}.tar.gz
+    wget -qO- ${SONOBUOY} |tar -xz sonobuoy
+    chmod 755 sonobuoy
+    mv sonobuoy ./bin
+fi
+
+echo "$(which kops): $(kops version)"
+echo "$(which kubectl): $(kubectl version --client=true --short)"
+echo "$(which helm): $(helm version --short)"
+echo "$(which sonobuoy): $(sonobuoy version --short)"
+
 exit 0
