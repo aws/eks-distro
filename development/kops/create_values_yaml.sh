@@ -67,6 +67,7 @@ controlPlaneInstanceProfileArn: $CONTROL_PLANE_INSTANCE_PROFILE
 nodeInstanceProfileArn: $NODE_INSTANCE_PROFILE
 instanceType: $NODE_INSTANCE_TYPE
 architecture: $NODE_ARCHITECTURE
+ipv6: false
 pause:
 $(get_container_yaml kubernetes/pause $RELEASE)
 kube_apiserver:
