@@ -66,7 +66,7 @@ kops-prow-arm: kops-prereqs
 	$(eval MINOR_VERSION=$(subst 1-,,$(RELEASE_BRANCH)))
 	if [[ $(MINOR_VERSION) -ge 21 ]]; then \
 		sleep 5m; \
-		RELEASE=$(RELEASE) development/kops/prow.sh; \
+		IPV6=true RELEASE=$(RELEASE) development/kops/prow.sh; \
 	fi;
 
 .PHONY: kops-prow-amd
