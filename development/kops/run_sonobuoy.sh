@@ -19,22 +19,13 @@ BASEDIR=$(dirname "$0")
 source ${BASEDIR}/set_environment.sh
 $PREFLIGHT_CHECK_PASSED || exit 1
 
-echo "Download sonobuoy"
-if [ "$(uname)" == "Darwin" ]
-then
-  SONOBUOY=https://github.com/vmware-tanzu/sonobuoy/releases/download/v0.56.2/sonobuoy_0.56.2_darwin_amd64.tar.gz
-else
-  SONOBUOY=https://github.com/vmware-tanzu/sonobuoy/releases/download/v0.56.2/sonobuoy_0.56.2_linux_amd64.tar.gz
-fi
 CONFORMANCE_IMAGE=k8s.gcr.io/conformance:${KUBERNETES_VERSION}
-wget -qO- ${SONOBUOY} |tar -xz sonobuoy
-chmod 755 sonobuoy
 echo "Testing cluster ${KOPS_CLUSTER_NAME}"
 
 COUNT=0
-while ! ./sonobuoy --context ${KOPS_CLUSTER_NAME} run --mode=certified-conformance --wait --kube-conformance-image ${CONFORMANCE_IMAGE}
+while ! sonobuoy --context ${KOPS_CLUSTER_NAME} run --mode=conformance-lite --wait --kube-conformance-image ${CONFORMANCE_IMAGE}
 do
-  ./sonobuoy --context ${KOPS_CLUSTER_NAME} delete --all --wait||true
+  sonobuoy --context ${KOPS_CLUSTER_NAME} delete --all --wait||true
   sleep 5
   COUNT=$(expr $COUNT + 1)
   if [ $COUNT -gt 3 ]
@@ -49,7 +40,7 @@ results=''
 function save_results() {
   local run=$1
   
-  results=$(./sonobuoy --context ${KOPS_CLUSTER_NAME} retrieve)
+  results=$(sonobuoy --context ${KOPS_CLUSTER_NAME} retrieve)
   mv $results "./${KOPS_CLUSTER_NAME}/$results"
   results="./${KOPS_CLUSTER_NAME}/$results"
   mkdir -p ./${KOPS_CLUSTER_NAME}/results
@@ -60,8 +51,8 @@ function save_results() {
     cp ./${KOPS_CLUSTER_NAME}/results/plugins/e2e/results/global/* /logs/artifacts/$NODE_ARCHITECTURE-$run
   fi
 
-  ./sonobuoy results --plugin e2e ${results}
-  if ./sonobuoy results --plugin e2e ${results} | grep 'Status: passed'; then
+  sonobuoy results --plugin e2e ${results}
+  if sonobuoy results --plugin e2e ${results} | grep 'Status: passed'; then
     return 0
   else
     return 1
@@ -77,6 +68,6 @@ while ! save_results $COUNT; do
     echo "Conformance test still failing after reruns"
     exit 1
   fi
-  ./sonobuoy --context ${KOPS_CLUSTER_NAME} delete --all --wait
-  ./sonobuoy --context ${KOPS_CLUSTER_NAME} run --rerun-failed ${results} --wait --kube-conformance-image ${CONFORMANCE_IMAGE}  
+  sonobuoy --context ${KOPS_CLUSTER_NAME} delete --all --wait
+  sonobuoy --context ${KOPS_CLUSTER_NAME} run --rerun-failed ${results} --wait --kube-conformance-image ${CONFORMANCE_IMAGE}  
 done

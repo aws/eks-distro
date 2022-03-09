@@ -57,5 +57,14 @@ if [ "${RELEASE_BRANCH}" == "1-22" ]; then
     kubectl --context $KOPS_CLUSTER_NAME apply -f metrics-server-0.6-clusterrole.yaml
 fi
 
+# We do not let kops install the cni, instead we install the eks-a cilium build to better match eksa
+export HELM_EXPERIMENTAL_OCI=1
+CILIUM_REGISTRY="public.ecr.aws/isovalent"
+CILIUM_TAG="v1.9.13-eksa.2"
+helm install cilium oci://$CILIUM_REGISTRY/cilium  --version ${CILIUM_TAG#"v"} --namespace kube-system  \
+    --set operator.image.tag=$CILIUM_TAG --set image.tag=$CILIUM_TAG \
+    --set image.repository="$CILIUM_REGISTRY/cilium" --set operator.image.repository="$CILIUM_REGISTRY/operator" \
+    --set cni.chainingMode="portmap" --set rollOutCiliumPods=true
+
 set -x
 ${KOPS} validate cluster --wait 15m
