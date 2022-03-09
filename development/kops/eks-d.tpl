@@ -8,6 +8,9 @@ spec:
   authorization:
     rbac: {}
   channel: stable
+  {{if .ipv6}}
+  cloudControllerManager: {}
+  {{end}}
   cloudProvider: aws
   configBase: {{ .configBase }}
   containerRuntime: docker
@@ -36,24 +39,44 @@ spec:
     legacy: false
   kubernetesApiAccess:
   - 0.0.0.0/0
+  {{if .ipv6}}
+  - ::/0
+  {{end}}
   kubernetesVersion: {{ .kubernetesVersion }}
   masterPublicName: api.{{ .clusterName }}
   networkCIDR: 172.20.0.0/16
   networking:
-    kubenet: {}
-  nonMasqueradeCIDR: 100.64.0.0/10
+    cilium:
+      chainingMode: portmap
+  {{if .ipv6}}
+  nonMasqueradeCIDR: ::/0
+  {{else}}
+    nonMasqueradeCIDR: 100.64.0.0/10
+  {{end}}
   sshAccess:
   - 0.0.0.0/0
+  {{if .ipv6}}
+  - ::/0
+  {{end}}
   subnets:
   - cidr: 172.20.32.0/19
+    {{if .ipv6}}
+    ipv6CIDR: /64#0
+    {{end}}
     name: {{.awsRegion}}a
     type: Public
     zone: {{.awsRegion}}a
   - cidr: 172.20.64.0/19
+    {{if .ipv6}}
+    ipv6CIDR: /64#1
+    {{end}}
     name: {{.awsRegion}}b
     type: Public
     zone: {{.awsRegion}}b
   - cidr: 172.20.96.0/19
+    {{if .ipv6}}
+    ipv6CIDR: /64#2
+    {{end}}
     name: {{.awsRegion}}c
     type: Public
     zone: {{.awsRegion}}c

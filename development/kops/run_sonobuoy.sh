@@ -22,9 +22,9 @@ $PREFLIGHT_CHECK_PASSED || exit 1
 echo "Download sonobuoy"
 if [ "$(uname)" == "Darwin" ]
 then
-  SONOBUOY=https://github.com/vmware-tanzu/sonobuoy/releases/download/v0.53.2/sonobuoy_0.53.2_darwin_amd64.tar.gz
+  SONOBUOY=https://github.com/vmware-tanzu/sonobuoy/releases/download/v0.56.2/sonobuoy_0.56.2_darwin_amd64.tar.gz
 else
-  SONOBUOY=https://github.com/vmware-tanzu/sonobuoy/releases/download/v0.53.2/sonobuoy_0.53.2_linux_amd64.tar.gz
+  SONOBUOY=https://github.com/vmware-tanzu/sonobuoy/releases/download/v0.56.2/sonobuoy_0.56.2_linux_amd64.tar.gz
 fi
 CONFORMANCE_IMAGE=k8s.gcr.io/conformance:${KUBERNETES_VERSION}
 wget -qO- ${SONOBUOY} |tar -xz sonobuoy
@@ -60,8 +60,8 @@ function save_results() {
     cp ./${KOPS_CLUSTER_NAME}/results/plugins/e2e/results/global/* /logs/artifacts/$NODE_ARCHITECTURE-$run
   fi
 
-  ./sonobuoy --context ${KOPS_CLUSTER_NAME} e2e ${results}
-  if ./sonobuoy --context ${KOPS_CLUSTER_NAME} e2e ${results} | grep 'failed tests: 0'; then
+  ./sonobuoy results --plugin e2e ${results}
+  if ./sonobuoy results --plugin e2e ${results} | grep 'Status: passed'; then
     return 0
   else
     return 1
@@ -78,5 +78,5 @@ while ! save_results $COUNT; do
     exit 1
   fi
   ./sonobuoy --context ${KOPS_CLUSTER_NAME} delete --all --wait
-  ./sonobuoy --context ${KOPS_CLUSTER_NAME} e2e ${results} --rerun-failed --wait --kube-conformance-image ${CONFORMANCE_IMAGE}  
+  ./sonobuoy --context ${KOPS_CLUSTER_NAME} run --rerun-failed ${results} --wait --kube-conformance-image ${CONFORMANCE_IMAGE}  
 done
