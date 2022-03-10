@@ -62,9 +62,11 @@ postsubmit-build: setup
 .PHONY: kops-prow-arm
 kops-prow-arm: export NODE_INSTANCE_TYPE=t4g.medium
 kops-prow-arm: export NODE_ARCHITECTURE=arm64
-kops-prow-arm: export IPV6=true
 kops-prow-arm: kops-prereqs
 	$(eval MINOR_VERSION=$(subst 1-,,$(RELEASE_BRANCH)))
+	if [[ $(MINOR_VERSION) -ge 22 ]]; then \
+		export IPV6=true; \
+	fi; \
 	if [[ $(MINOR_VERSION) -ge 21 ]]; then \
 		sleep 5m; \
 		RELEASE=$(RELEASE) development/kops/prow.sh; \
