@@ -1,4 +1,4 @@
-From cfc0470ab3433ce0251a8913c62974828c0811b0 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Jyoti Mahapatra <49211422+jyotimahapatra@users.noreply.github.com>
 Date: Mon, 31 Jan 2022 16:01:52 -0800
 Subject: --EKS-PATCH-- extend sa token if audience is apiserver

@@ -1,4 +1,4 @@
-From 51daae8c06046d551f58bb7144dbf484dc0696bb Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: M00nF1sh <yyyng@amazon.com>
 Date: Tue, 2 Jul 2019 10:44:42 -0700
 Subject: --EKS-PATCH-- Pass region to sts client
@@ -60,6 +60,3 @@ index aafc7fe0564..aa8634f20fd 100644
  // readAWSCloudConfig reads an instance of AWSCloudConfig from config reader.
  func readAWSCloudConfig(config io.Reader) (*CloudConfig, error) {
  	var cfg CloudConfig
--- 
-2.17.1
-
