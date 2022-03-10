@@ -1,4 +1,4 @@
-From 61e28e2b19d9f6a89aeccb0fae0fa050b04c5d3c Mon Sep 17 00:00:00 2001
+From 58f726d570f2bd1b28d49ce1274b565a2f3cf84c Mon Sep 17 00:00:00 2001
 From: Shravan Achar <balakund@amazon.com>
 Date: Mon, 21 Dec 2020 22:31:56 -0800
 Subject: --EKS-PATCH-- Update aws-sdk-go to v1.34.24
@@ -275,7 +275,7 @@ index a2d5b9b4c3d..6edb48e12ee 100644
  )
  
 diff --git a/pkg/kubeapiserver/options/BUILD b/pkg/kubeapiserver/options/BUILD
-index bd631e32707..e0a43dddbe3 100644
+index 9aa55d35384..56c6595f527 100644
 --- a/pkg/kubeapiserver/options/BUILD
 +++ b/pkg/kubeapiserver/options/BUILD
 @@ -81,6 +81,7 @@ go_test(
@@ -287,7 +287,7 @@ index bd631e32707..e0a43dddbe3 100644
      ],
      data = glob(["testdata/**"]),
 diff --git a/pkg/kubelet/lifecycle/BUILD b/pkg/kubelet/lifecycle/BUILD
-index 05f2963b1ce..af858cc7a1f 100644
+index 6ee74988352..a2dc3881afc 100644
 --- a/pkg/kubelet/lifecycle/BUILD
 +++ b/pkg/kubelet/lifecycle/BUILD
 @@ -29,8 +29,13 @@ go_library(
@@ -315,7 +315,7 @@ index 05f2963b1ce..af858cc7a1f 100644
  )
  
 diff --git a/pkg/kubelet/util/BUILD b/pkg/kubelet/util/BUILD
-index 5adac63deed..6ae213d2446 100644
+index ae11bb27d58..658d7b5876e 100644
 --- a/pkg/kubelet/util/BUILD
 +++ b/pkg/kubelet/util/BUILD
 @@ -54,26 +54,22 @@ go_library(
@@ -38747,7 +38747,7 @@ index 6b85c5ecef2..91772dfeb91 100644
 -//go:generate go run ../_codegen/main.go -output-package=require -template=require.go.tmpl -include-format-funcs
 +//go:generate sh -c "cd ../_codegen && go build && cd - && ../_codegen/_codegen -output-package=require -template=require.go.tmpl -include-format-funcs"
 diff --git a/vendor/modules.txt b/vendor/modules.txt
-index aeb521b3b2c..044c58bf3f6 100644
+index 9fd64f018dc..d99a7874ed0 100644
 --- a/vendor/modules.txt
 +++ b/vendor/modules.txt
 @@ -126,9 +126,9 @@ github.com/asaskevich/govalidator
@@ -38810,7 +38810,7 @@ index aeb521b3b2c..044c58bf3f6 100644
  github.com/stretchr/testify/assert
  github.com/stretchr/testify/mock
  github.com/stretchr/testify/require
-@@ -1638,6 +1641,7 @@ k8s.io/apimachinery/pkg/api/apitesting
+@@ -1639,6 +1642,7 @@ k8s.io/apimachinery/pkg/api/apitesting
  k8s.io/apimachinery/pkg/api/apitesting/fuzzer
  k8s.io/apimachinery/pkg/api/apitesting/naming
  k8s.io/apimachinery/pkg/api/apitesting/roundtrip
@@ -38819,5 +38819,5 @@ index aeb521b3b2c..044c58bf3f6 100644
  k8s.io/apimachinery/pkg/api/errors
  k8s.io/apimachinery/pkg/api/meta
 -- 
-2.33.0
+2.35.0
 

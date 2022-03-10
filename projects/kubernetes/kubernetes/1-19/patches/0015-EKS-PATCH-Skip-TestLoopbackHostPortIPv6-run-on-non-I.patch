@@ -1,4 +1,4 @@
-From 981f08444066b71974e7b90de486a97b94db2bf3 Mon Sep 17 00:00:00 2001
+From c8b2932009bed1066e076473f4feaf3b6c878bed Mon Sep 17 00:00:00 2001
 From: Manjunath Kumatagi <mkumatag@in.ibm.com>
 Date: Mon, 31 Aug 2020 23:20:49 +0530
 Subject: Skip TestLoopbackHostPortIPv6 run on non-IPv6 env
@@ -28,5 +28,5 @@ index 19e975ffb6a..4d811c64104 100644
  
  	host, port, err := LoopbackHostPort("[ff06:0:0:0:0:0:0:c3]:443")
 -- 
-2.33.0
+2.35.0
 

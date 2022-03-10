@@ -1,4 +1,4 @@
-From 3be5fc5174d13cbddac015d574ecde0ab97e00c6 Mon Sep 17 00:00:00 2001
+From e05487e3b3348529300a85a3ea39a39aadc973ea Mon Sep 17 00:00:00 2001
 From: Manu Gupta <mgpta@amazon.com>
 Date: Tue, 19 Oct 2021 14:28:11 -0700
 Subject: --EKS-PATCH-- Ignore 'wait: no child processes' error when
@@ -65,5 +65,5 @@ index b7a443fdf6c..1716611f483 100644
  	}
  	return nil
 -- 
-2.33.0
+2.35.0
 

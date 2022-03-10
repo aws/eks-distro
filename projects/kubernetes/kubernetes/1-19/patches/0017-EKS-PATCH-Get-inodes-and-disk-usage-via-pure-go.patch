@@ -1,4 +1,4 @@
-From fdb655c7f91d3ab4d6c61aa19cc155131249cd19 Mon Sep 17 00:00:00 2001
+From 41a87f4ccb97acc7a2c704c3151b9b2655a4217f Mon Sep 17 00:00:00 2001
 From: Natanael Copa <ncopa@mirantis.com>
 Date: Wed, 30 Sep 2020 15:19:27 +0200
 Subject: --EKS-PATCH-- Get inodes and disk usage via pure go
@@ -364,5 +364,5 @@ index 5723dcd72b6..32b15632a9d 100644
  	if err != nil {
  		t.Fatalf("TestDiskUsage failed: %s", err.Error())
 -- 
-2.33.0
+2.35.0
 
