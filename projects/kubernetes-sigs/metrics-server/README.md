@@ -1,11 +1,11 @@
 ## Metrics Server
 
 | Release | Version                                                      |
-| --- |--------------------------------------------------------------|
-| 1-18 | ![Version](https://img.shields.io/badge/version-v0.4.0-blue) |
-| 1-19 | ![Version](https://img.shields.io/badge/version-v0.4.0-blue) |
-| 1-20 | ![Version](https://img.shields.io/badge/version-v0.4.5-blue) |
-| 1-21 | ![Version](https://img.shields.io/badge/version-v0.5.2-blue) |
+|---------|--------------------------------------------------------------|
+| 1-18    | ![Version](https://img.shields.io/badge/version-v0.5.2-blue) |
+| 1-19    | ![Version](https://img.shields.io/badge/version-v0.6.1-blue) |
+| 1-20    | ![Version](https://img.shields.io/badge/version-v0.6.1-blue) |
+| 1-21    | ![Version](https://img.shields.io/badge/version-v0.6.1-blue) |
 
 
 ### Updating
