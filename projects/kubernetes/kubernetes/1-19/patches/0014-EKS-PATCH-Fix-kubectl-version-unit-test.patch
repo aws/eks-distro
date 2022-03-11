@@ -1,4 +1,4 @@
-From 39bb1454ffa0c9b784b680fdadb955a64961c8aa Mon Sep 17 00:00:00 2001
+From 7622bb616ea7feaad7bc9df02bfa049011ac39aa Mon Sep 17 00:00:00 2001
 From: Eddie Zaneski <eddiezane@gmail.com>
 Date: Tue, 27 Jul 2021 11:46:45 -0600
 Subject: --EKS-PATCH-- Fix kubectl version unit test
@@ -62,5 +62,5 @@ index 5b1fbf1f581..16b3827c9be 100644
  	}
  	if !strings.Contains(buf.String(), "Client Version") {
 -- 
-2.33.0
+2.35.0
 

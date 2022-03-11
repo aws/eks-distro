@@ -1,4 +1,4 @@
-From 05e1045922221b8693d75d9cd69c06a110a80240 Mon Sep 17 00:00:00 2001
+From 964f087f0d4892a7a381b590e48e846d71f90e87 Mon Sep 17 00:00:00 2001
 From: Aleksandr Melnik <melnikal@amazon.com>
 Date: Wed, 8 Jan 2020 17:23:06 -0800
 Subject: --EKS-PATCH-- Lookup sts endpoint from custom map
@@ -313,5 +313,5 @@ index a08fc47173e..aeb521b3b2c 100644
  github.com/aws/aws-sdk-go/aws/awsutil
  github.com/aws/aws-sdk-go/aws/client
 -- 
-2.33.0
+2.35.0
 
