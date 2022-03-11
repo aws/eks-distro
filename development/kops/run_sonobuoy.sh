@@ -23,7 +23,7 @@ CONFORMANCE_IMAGE=k8s.gcr.io/conformance:${KUBERNETES_VERSION}
 echo "Testing cluster ${KOPS_CLUSTER_NAME}"
 
 COUNT=0
-while ! sonobuoy --context ${KOPS_CLUSTER_NAME} run --mode=conformance-lite --wait --kube-conformance-image ${CONFORMANCE_IMAGE}
+while ! sonobuoy --context ${KOPS_CLUSTER_NAME} run --mode=certified-conformance --wait --kube-conformance-image ${CONFORMANCE_IMAGE}
 do
   sonobuoy --context ${KOPS_CLUSTER_NAME} delete --all --wait||true
   sleep 5
