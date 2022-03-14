@@ -42,21 +42,20 @@ function k {
 }
 
 # Add IAM configmap
-COUNT=0
 echo 'Waiting for cluster to come up...'
 k apply -f ./${KOPS_CLUSTER_NAME}/aws-iam-authenticator.yaml
 
 
-# In kops 1-22 metrics was updated and the port was changed to 443 from 4443. In the verison of metrics server we ship for kube versions < 1-22, it does not support binding to 443
-# patching back to old port and behavior
-if [ "${RELEASE_BRANCH}" != "1-22" ]; then
+# TODO: Delete when discontinue support for 1-18
+if [ "${RELEASE_BRANCH}" == "1-18" ]; then
     PATCH='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--secure-port=4443" },{"op": "replace", "path": "/spec/template/spec/containers/0/ports/0/containerPort", "value": 4443 }]'
     k  -n kube-system patch deployments metrics-server --type=json -p="$PATCH"    
 fi
 
-# kops 1-22 installs an older metrics server than we ship with eksd 1.22 along with an older clusterrole def.  The 0.6 version of metrics requires a slightly different rbac setup
-# Appling the clusterrole from the metrics repo fixes the permissions
-if [ "${RELEASE_BRANCH}" == "1-22" ]; then
+# For all supported versions except 1-18, kops installs an older metrics server
+# than we ship with EKS-D, along with an older clusterrole def. The 0.6 version
+# of metrics requires a slightly different rbac setup.
+if [ "${RELEASE_BRANCH}" != "1-18" ]; then
     k apply -f metrics-server-0.6-clusterrole.yaml
 fi
 
