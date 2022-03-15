@@ -20,9 +20,9 @@
 3. Compare the old tag to the new one, looking specifically for Makefile changes.
    For example:
    [v0.5.2 compared to v0.5.3](https://github.com/kubernetes-sigs/aws-iam-authenticator/compare/v0.5.2...v0.5.3). 
-   Check the `aws-iam-authenticator` target for any build flag changes, tag 
-   changes, dependencies, etc. Check that the manifest target, which is called 
-   from the EKS-D Makefile, has not changed.
+   Check the `$(OUTPUT)/bin/%: $(SOURCES)` target for any build flag changes, tag 
+   changes, dependencies, etc. Check the [gorelease config](https://github.com/kubernetes-sigs/aws-iam-authenticator/blob/master/.goreleaser.yaml)
+   for LDFLAGS changes, these should match what is in their Makefile and the EKS-D Makefile.
 4. Verify the Golang version has not changed. The version specified in
    [`go.mod`](https://github.com/kubernetes-sigs/aws-iam-authenticator/blob/master/go.mod)
    seems to be kept up to date. Be sure to select the correct branch for the 

@@ -28,6 +28,23 @@ SIMPLE_CREATE_TARBALLS=false
 include $(BASE_DIRECTORY)/Common.mk
 
 
+build: validate-cli-version
+release: validate-cli-version
+
+# To ensure this will work on mac, instead of building those archs
+# only build it when run. on a linux builder this extra make will be a noop
+.PHONY: validate-cli-version
+validate-cli-version: CLI=$(OUTPUT_BIN_DIR)/$(subst /,-,$(BUILDER_PLATFORM))/$(REPO)
+validate-cli-version:
+	$(MAKE) $(CLI) BINARY_PLATFORMS=$(BUILDER_PLATFORM)
+	$(CLI) --version
+	@if [[ "$$($(CLI) --version)" != *"CoreDNS-$(GIT_TAG:v%=%)"* ]]; then \
+		echo "Version set incorrectly on cli!"; \
+		exit 1; \
+	fi
+
+
+
 ########### DO NOT EDIT #############################
 # To update call: make add-generated-help-block
 # This is added to help document dynamic targets and support shell autocompletion

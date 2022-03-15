@@ -7,7 +7,10 @@ REPO_OWNER=kubernetes-sigs
 
 BINARY_TARGET_FILES=aws-iam-authenticator
 SOURCE_PATTERNS=./cmd/aws-iam-authenticator
-EXTRA_GO_LDFLAGS=-X main.version=$(GIT_TAG) -X main.commit=$(shell git -C $(REPO) rev-list -n 1  "${GIT_TAG}")
+
+PKG=sigs.k8s.io/aws-iam-authenticator
+GIT_COMMIT=$(shell git -C $(REPO) describe --always --abbrev=0)
+EXTRA_GO_LDFLAGS=-X $(PKG)/pkg.Version=$(GIT_TAG) -X $(PKG)/pkg.CommitID=$(GIT_COMMIT)
 
 BINARY_PLATFORMS=linux/amd64 linux/arm64 darwin/amd64 windows/amd64
 
@@ -18,6 +21,18 @@ IMAGE_TARGET=$(RELEASE_VARIANT)
 BUILDER_IMAGE=$(EKS_DISTRO_BASE_IMAGE)
 
 include $(BASE_DIRECTORY)/Common.mk
+
+build: validate-cli-version
+release: validate-cli-version
+
+.PHONY: validate-cli-version
+validate-cli-version: CLI=./$(OUTPUT_BIN_DIR)/$(subst /,-,$(BUILDER_PLATFORM))/$(REPO)
+validate-cli-version: $(BINARY_TARGETS)
+	$(CLI) version
+	@if [[ "$$($(CLI) version --short)" != "$(GIT_TAG)" ]]; then \
+		echo "Version set incorrectly on cli!"; \
+		exit 1; \
+	fi
 
 
 ########### DO NOT EDIT #############################
