@@ -1,4 +1,4 @@
-From 9386bf0ea183c589f53e8a0c6e4cf58dd3920f69 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Jyoti Mahapatra <jyotima@amazon.com>
 Date: Sat, 22 Jan 2022 01:16:11 +0000
 Subject: --EKS-PATCH-- Parse ipv6 address before comparison (#107736)
@@ -15,7 +15,7 @@ issue #107735 (https://github.com/kubernetes/kubernetes/issues/107735)
 
 Signed-off-by: Jyoti Mahapatra <jyotima@amazon.com>
 ---
- pkg/kubelet/nodestatus/setters.go      |  6 ++++--
+ pkg/kubelet/nodestatus/setters.go      |  2 +-
  pkg/kubelet/nodestatus/setters_test.go | 14 ++++++++++++++
  2 files changed, 15 insertions(+), 1 deletion(-)
 
