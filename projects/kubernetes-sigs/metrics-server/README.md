@@ -21,9 +21,8 @@
 3. Compare the old tag to the new one, looking specifically for Makefile changes.
    For example:
    [v0.5.0 compared to v0.5.2](https://github.com/kubernetes-sigs/metrics-server/compare/v0.5.0...v0.5.2).
-   Check the `metrics-server` target for any build flag changes, tag changes,
-   dependencies, etc. Check that the manifest target, which is called from the
-   EKS-D Makefile, has not changed.
+   Check the [metrics-server](https://github.com/kubernetes-sigs/metrics-server/blob/master/Makefile#L35) 
+   target for any build flag changes especially LDFLAGS and PKG, tag changes, dependencies, etc. 
 4. Verify the Golang version has not changed. The version specified in
    [`go.mod`](https://github.com/kubernetes-sigs/metrics-server/blob/master/go.mod) 
    seems to be kept up to date. Be sure to select the correct branch for the 
