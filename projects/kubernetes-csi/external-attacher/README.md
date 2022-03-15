@@ -1,11 +1,11 @@
 ## CSI external-attacher
 
-| Release | Version |
-| --- | --- |
-| 1-18 | ![Version](https://img.shields.io/badge/version-v3.2.0-blue) |
-| 1-19 | ![Version](https://img.shields.io/badge/version-v3.2.0-blue) |
-| 1-20 | ![Version](https://img.shields.io/badge/version-v3.2.0-blue) |
-| 1-21 | ![Version](https://img.shields.io/badge/version-v3.2.0-blue) |
+| Release | Version                                                      |
+|---------|--------------------------------------------------------------|
+| 1-18    | ![Version](https://img.shields.io/badge/version-v3.4.0-blue) |
+| 1-19    | ![Version](https://img.shields.io/badge/version-v3.4.0-blue) |
+| 1-20    | ![Version](https://img.shields.io/badge/version-v3.4.0-blue) |
+| 1-21    | ![Version](https://img.shields.io/badge/version-v3.4.0-blue) |
 
 
 ### Updating
