@@ -113,7 +113,7 @@ https://github.com/golang/mock
 ** github.com/google/btree; version v1.0.0 --
 https://github.com/google/btree
 
-** github.com/google/cadvisor; version v0.39.0 --
+** github.com/google/cadvisor; version v0.39.3 --
 https://github.com/google/cadvisor
 
 ** github.com/google/gofuzz; version v1.1.0 --
@@ -287,7 +287,7 @@ https://github.com/kubernetes/csi-translation-lib
 ** k8s.io/heapster/metrics/api/v1/types; version v1.2.0-beta.1 --
 https://github.com/kubernetes/heapster
 
-** k8s.io/klog/v2; version v2.8.0 --
+** k8s.io/klog/v2; version v2.9.0 --
 https://github.com/kubernetes/klog
 
 ** k8s.io/kube-aggregator/pkg; version v0.0.0 --
@@ -296,19 +296,19 @@ https://github.com/kubernetes/kube-aggregator
 ** k8s.io/kube-controller-manager/config/v1alpha1; version v0.0.0 --
 https://github.com/kubernetes/kube-controller-manager
 
-** k8s.io/kube-openapi/pkg; version v0.0.0-20210305001622-591a79e4bda7 --
+** k8s.io/kube-openapi/pkg; version v0.0.0-20211110012726-3cc51fd1e909 --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kube-openapi/pkg/validation/errors; version v0.0.0-20210305001622-591a79e4bda7 --
+** k8s.io/kube-openapi/pkg/validation/errors; version v0.0.0-20211110012726-3cc51fd1e909 --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kube-openapi/pkg/validation/spec; version v0.0.0-20210305001622-591a79e4bda7 --
+** k8s.io/kube-openapi/pkg/validation/spec; version v0.0.0-20211110012726-3cc51fd1e909 --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kube-openapi/pkg/validation/strfmt; version v0.0.0-20210305001622-591a79e4bda7 --
+** k8s.io/kube-openapi/pkg/validation/strfmt; version v0.0.0-20211110012726-3cc51fd1e909 --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kube-openapi/pkg/validation/validate; version v0.0.0-20210305001622-591a79e4bda7 --
+** k8s.io/kube-openapi/pkg/validation/validate; version v0.0.0-20211110012726-3cc51fd1e909 --
 https://github.com/kubernetes/kube-openapi
 
 ** k8s.io/kube-proxy/config/v1alpha1; version v0.0.0 --
@@ -323,7 +323,7 @@ https://github.com/kubernetes/kubectl
 ** k8s.io/kubelet; version v0.0.0 --
 https://github.com/kubernetes/kubelet
 
-** k8s.io/kubernetes; version v1.21.5 --
+** k8s.io/kubernetes; version v1.21.9 --
 https://github.com/kubernetes/kubernetes
 
 ** k8s.io/legacy-cloud-providers; version v0.0.0 --
@@ -338,10 +338,10 @@ https://github.com/kubernetes/mount-utils
 ** k8s.io/system-validators/validators; version v1.4.0 --
 https://github.com/kubernetes/system-validators
 
-** k8s.io/utils; version v0.0.0-20201110183641-67b214c5f920 --
+** k8s.io/utils; version v0.0.0-20210521133846-da695404a2bc --
 https://github.com/kubernetes/utils
 
-** sigs.k8s.io/apiserver-network-proxy/konnectivity-client; version v0.0.22 --
+** sigs.k8s.io/apiserver-network-proxy/konnectivity-client; version v0.0.27 --
 https://github.com/kubernetes-sigs/apiserver-network-proxy
 
 ** sigs.k8s.io/kustomize/api; version v0.8.8 --
@@ -353,7 +353,7 @@ https://github.com/kubernetes-sigs/kustomize
 ** sigs.k8s.io/kustomize/kyaml; version v0.10.17 --
 https://github.com/kubernetes-sigs/kustomize
 
-** sigs.k8s.io/structured-merge-diff/v4; version v4.1.2 --
+** sigs.k8s.io/structured-merge-diff/v4; version v4.2.1 --
 https://github.com/kubernetes-sigs/structured-merge-diff
 
 
@@ -971,7 +971,7 @@ https://go.googlesource.com/sys
 ** golang.org/x/term; version v0.0.0-20210220032956-6a3ed077a48d --
 https://go.googlesource.com/term
 
-** golang.org/x/text; version v0.3.4 --
+** golang.org/x/text; version v0.3.6 --
 https://go.googlesource.com/text
 
 ** golang.org/x/time/rate; version v0.0.0-20210220033141-f8bda1e9f3ba --
@@ -986,10 +986,10 @@ https://github.com/kubernetes/apimachinery
 ** k8s.io/client-go/third_party/forked/golang/template; version v0.0.0 --
 https://github.com/kubernetes/client-go
 
-** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.21.5 --
+** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.21.9 --
 https://github.com/kubernetes/kubernetes
 
-** k8s.io/utils/inotify; version v0.0.0-20201110183641-67b214c5f920 --
+** k8s.io/utils/inotify; version v0.0.0-20210521133846-da695404a2bc --
 https://github.com/kubernetes/utils
 
 Copyright (c) 2009 The Go Authors. All rights reserved.
@@ -1860,7 +1860,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.21.5 --
+** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.21.9 --
 https://github.com/kubernetes/kubernetes
 
 Copyright ©2013 The gonum Authors. All rights reserved.
