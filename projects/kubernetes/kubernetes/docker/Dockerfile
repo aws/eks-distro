@@ -24,4 +24,3 @@ COPY LICENSES /LICENSES
 COPY ATTRIBUTION.txt /ATTRIBUTION.txt
 COPY bin/$TARGETOS/$TARGETARCH/$BINARY /usr/local/bin/$BINARY
 ENTRYPOINT ["/usr/local/bin/go-runner"]
-CMD ["/usr/local/bin/$BINARY"]
