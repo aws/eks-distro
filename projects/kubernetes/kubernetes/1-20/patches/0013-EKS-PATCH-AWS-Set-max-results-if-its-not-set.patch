@@ -1,4 +1,4 @@
-From 3dfe3ebafc246b5e428e853c68f98d68d7f9f6b5 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Nick Turner <nic@amazon.com>
 Date: Tue, 9 Nov 2021 18:50:19 +0000
 Subject: --EKS-PATCH-- [AWS] Set max results if its not set
@@ -18,10 +18,10 @@ Signed-off-by: Kirsten Schumy <ksschumy@amazon.com>
  1 file changed, 7 insertions(+)
 
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-index c9c628afd01..ca6e3483315 100644
+index b470d585f7e..172952369d5 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-@@ -1022,6 +1022,13 @@ func (s *awsSdkEC2) DescribeInstances(request *ec2.DescribeInstancesInput) ([]*e
+@@ -991,6 +991,13 @@ func (s *awsSdkEC2) DescribeInstances(request *ec2.DescribeInstancesInput) ([]*e
  	results := []*ec2.Instance{}
  	var nextToken *string
  	requestTime := time.Now()
@@ -35,6 +35,3 @@ index c9c628afd01..ca6e3483315 100644
  	for {
  		response, err := s.ec2.DescribeInstances(request)
  		if err != nil {
--- 
-2.35.0
-

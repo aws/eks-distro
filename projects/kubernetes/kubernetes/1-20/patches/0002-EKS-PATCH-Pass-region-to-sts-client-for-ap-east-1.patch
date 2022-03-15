@@ -1,4 +1,4 @@
-From cfe9d973f96e397676aeb2492a16f7869d30e5e0 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: M00nF1sh <yyyng@amazon.com>
 Date: Tue, 2 Jul 2019 10:44:42 -0700
 Subject: --EKS-PATCH-- Pass region to sts client for ap-east-1
@@ -119,6 +119,3 @@ index fbbaa6567d0..6f280c19320 100644
  	regionName, err := azToRegion(zone)
  	if err != nil {
  		return nil, err
--- 
-2.33.0
-

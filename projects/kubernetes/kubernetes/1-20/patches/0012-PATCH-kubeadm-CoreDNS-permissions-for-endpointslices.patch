@@ -3,6 +3,12 @@ From: Antonio Ojea <antonio.ojea.garcia@gmail.com>
 Date: Wed, 12 May 2021 19:15:56 +0200
 Subject: [PATCH] kubeadm: CoreDNS permissions for endpointslices
 
+This patch is resolves an issue related to EKS-D being ahead of
+upstream Kubernetes in version of CoreDNS use, which EKS-D issue #545
+(https://github.com/aws/eks-distro/issues/545) raised. This change is
+a partial cherry-pick of upstream Kubernetes PR #102466
+(https://github.com/kubernetes/kubernetes/pull/102466
+
 Signed-off-by: Antonio Ojea <antonio.ojea.garcia@gmail.com>
 Co-authored-by: pacoxu <paco.xu@daocloud.io>
 ---
@@ -29,4 +35,3 @@ index 3ac6856bfc6..97c7f8b3e60 100644
  	CoreDNSClusterRoleBinding = `
 -- 
 2.25.1
-

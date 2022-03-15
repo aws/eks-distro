@@ -1,4 +1,4 @@
-From e6b50fda650b31e45a756aa97965ea3bf5137111 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Manu Gupta <mgpta@amazon.com>
 Date: Tue, 12 Oct 2021 14:55:52 -0700
 Subject: --EKS-PATCH-- ConsistentRead tries 10 times
@@ -46,6 +46,3 @@ index 11b70ebc298..6110e7b2b35 100644
  )
  
  // IsCorruptedMnt return true if err is about corrupted mount point
--- 
-2.33.0
-
