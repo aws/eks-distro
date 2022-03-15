@@ -293,19 +293,19 @@ https://github.com/kubernetes/kube-aggregator
 ** k8s.io/kube-controller-manager/config/v1alpha1; version v0.0.0 --
 https://github.com/kubernetes/kube-controller-manager
 
-** k8s.io/kube-openapi/pkg; version v0.0.0-20201113171705-d219536bb9fd --
+** k8s.io/kube-openapi/pkg; version v0.0.0-20211110013926-83f114cd0513 --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kube-openapi/pkg/validation/errors; version v0.0.0-20201113171705-d219536bb9fd --
+** k8s.io/kube-openapi/pkg/validation/errors; version v0.0.0-20211110013926-83f114cd0513 --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kube-openapi/pkg/validation/spec; version v0.0.0-20201113171705-d219536bb9fd --
+** k8s.io/kube-openapi/pkg/validation/spec; version v0.0.0-20211110013926-83f114cd0513 --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kube-openapi/pkg/validation/strfmt; version v0.0.0-20201113171705-d219536bb9fd --
+** k8s.io/kube-openapi/pkg/validation/strfmt; version v0.0.0-20211110013926-83f114cd0513 --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kube-openapi/pkg/validation/validate; version v0.0.0-20201113171705-d219536bb9fd --
+** k8s.io/kube-openapi/pkg/validation/validate; version v0.0.0-20211110013926-83f114cd0513 --
 https://github.com/kubernetes/kube-openapi
 
 ** k8s.io/kube-proxy/config/v1alpha1; version v0.0.0 --
@@ -320,7 +320,7 @@ https://github.com/kubernetes/kubectl
 ** k8s.io/kubelet; version v0.0.0 --
 https://github.com/kubernetes/kubelet
 
-** k8s.io/kubernetes; version v1.20.11 --
+** k8s.io/kubernetes; version v1.20.15 --
 https://github.com/kubernetes/kubernetes
 
 ** k8s.io/legacy-cloud-providers; version v0.0.0 --
@@ -951,7 +951,7 @@ https://go.googlesource.com/sync
 ** golang.org/x/sys; version v0.0.0-20201112073958-5cba982894dd --
 https://go.googlesource.com/sys
 
-** golang.org/x/text; version v0.3.4 --
+** golang.org/x/text; version v0.3.6 --
 https://go.googlesource.com/text
 
 ** golang.org/x/time/rate; version v0.0.0-20200630173020-3af7569d3a1e --
@@ -966,7 +966,7 @@ https://github.com/kubernetes/apimachinery
 ** k8s.io/client-go/third_party/forked/golang/template; version v0.0.0 --
 https://github.com/kubernetes/client-go
 
-** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.20.11 --
+** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.20.15 --
 https://github.com/kubernetes/kubernetes
 
 ** k8s.io/utils/inotify; version v0.0.0-20201110183641-67b214c5f920 --
@@ -1772,7 +1772,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.20.11 --
+** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.20.15 --
 https://github.com/kubernetes/kubernetes
 
 Copyright ©2013 The gonum Authors. All rights reserved.
