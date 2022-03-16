@@ -10,7 +10,7 @@ SOURCE_PATTERNS=./cmd/aws-iam-authenticator
 
 PKG=sigs.k8s.io/aws-iam-authenticator
 GIT_COMMIT=$(shell git -C $(REPO) describe --always --abbrev=0)
-EXTRA_GO_LDFLAGS=-X $(PKG)/pkg.Version=$(GIT_TAG) -X $(PKG)/pkg.CommitID=$(GIT_COMMIT)
+EXTRA_GO_LDFLAGS=-X $(PKG)/pkg.Version=$(GIT_TAG:v%=%) -X $(PKG)/pkg.CommitID=$(GIT_COMMIT)
 
 BINARY_PLATFORMS=linux/amd64 linux/arm64 darwin/amd64 windows/amd64
 
@@ -29,7 +29,7 @@ release: validate-cli-version
 validate-cli-version: CLI=./$(OUTPUT_BIN_DIR)/$(subst /,-,$(BUILDER_PLATFORM))/$(REPO)
 validate-cli-version: $(BINARY_TARGETS)
 	$(CLI) version
-	@if [[ "$$($(CLI) version --short)" != "$(GIT_TAG)" ]]; then \
+	@if [[ "$$($(CLI) version --short)" != "$(GIT_TAG:v%=%)" ]]; then \
 		echo "Version set incorrectly on cli!"; \
 		exit 1; \
 	fi
