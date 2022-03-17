@@ -50,7 +50,7 @@ https://github.com/soheilhy/cmux
 ** github.com/spf13/cobra; version v0.0.3 --
 https://github.com/spf13/cobra
 
-** go.etcd.io/etcd; version v3.4.15 --
+** go.etcd.io/etcd; version v3.4.18 --
 https://github.com/etcd-io/etcd
 
 ** google.golang.org/genproto; version v0.0.0-20190819201941-24fa4b261c55 --
@@ -602,16 +602,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/go; version go1.14.15 --
+** golang.org/go; version go1.15.15 --
 https://github.com/golang/go
 
-** golang.org/x/crypto; version v0.0.0-20190308221718-c2843e01d9a2 --
+** golang.org/x/crypto; version v0.0.0-20200622213623-75b288015ac9 --
 https://go.googlesource.com/crypto
 
-** golang.org/x/net; version v0.0.0-20190813141303-74dc4d7220e7 --
+** golang.org/x/net; version v0.0.0-20201021035429-f5854403a974 --
 https://go.googlesource.com/net
 
-** golang.org/x/sys/unix; version v0.0.0-20190826190057-c7b8b68b1456 --
+** golang.org/x/sys; version v0.0.0-20210119212857-b64e53b001e4 --
 https://go.googlesource.com/sys
 
 ** golang.org/x/text; version v0.3.3 --
@@ -671,9 +671,10 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 https://github.com/beorn7/perks
 Copyright (C) 2013 Blake Mizerany
 
-** github.com/dgrijalva/jwt-go; version v3.2.0+incompatible --
-https://github.com/dgrijalva/jwt-go
+** github.com/golang-jwt/jwt; version v3.2.1+incompatible --
+https://github.com/golang-jwt/jwt
 Copyright (c) 2012 Dave Grijalva
+Copyright (c) 2021 golang-jwt maintainers
 
 ** github.com/json-iterator/go; version v1.1.7 --
 https://github.com/json-iterator/go
