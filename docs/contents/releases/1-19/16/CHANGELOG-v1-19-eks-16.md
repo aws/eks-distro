@@ -4,3 +4,6 @@ This changelog highlights the changes for [v1-19-eks-16](https://github.com/aws/
 
 ## Changes
 
+### Base Image
+
+Security updates to Amazon Linux 2.
