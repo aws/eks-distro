@@ -8,16 +8,14 @@ import (
 type prRequest struct {
 	branch, environment, version string
 	filesChanged                 []string
-	bot                          bool
 }
 
-func OpenNumberPR(branch, number string, files []string, isBot bool, environment ReleaseEnvironment) error {
+func OpenNumberPR(branch, number string, files []string, environment ReleaseEnvironment) error {
 	request := prRequest{
 		branch:       branch,
 		environment:  environment.String(),
 		version:      GetBranchWithDotAndNumberWithDashFormat(branch, number),
 		filesChanged: files,
-		bot:          isBot,
 	}
 	return openNumberPR(&request)
 }
@@ -44,8 +42,4 @@ func (prReq *prRequest) Version() string {
 
 func (prReq *prRequest) FilePaths() []string {
 	return prReq.filesChanged
-}
-
-func (prReq *prRequest) IsBot() bool {
-	return prReq.bot
 }

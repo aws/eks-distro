@@ -7,7 +7,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strconv"
 )
 
 var (
@@ -21,7 +20,6 @@ type PullRequest struct {
 	branch        string
 	commitMessage string
 	filesPaths    string
-	isBot         bool
 }
 
 func (pr PullRequest) Open() error {
@@ -31,7 +29,6 @@ func (pr PullRequest) Open() error {
 		pr.branch,
 		pr.commitMessage,
 		pr.filesPaths,
-		strconv.FormatBool(pr.isBot),
 	)
 
 	cmd.Stdout = outputStream

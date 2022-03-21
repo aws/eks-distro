@@ -13,7 +13,6 @@ type PullRequestInputBase interface {
 	Branch() string
 	Version() string
 	FilePaths() []string
-	IsBot() bool
 }
 
 type NumberPullRequestInput interface {
@@ -47,7 +46,6 @@ func getCommonPullRequest(branchBase string, input PullRequestInputBase) (PullRe
 	return PullRequest{
 		branch:     formatBranch(branchBase),
 		filesPaths: convertedFilePaths,
-		isBot:      input.IsBot(),
 	}, nil
 }
 

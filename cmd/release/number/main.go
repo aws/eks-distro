@@ -18,7 +18,6 @@ func main() {
 	includeProd := flag.Bool("includeProd", true, "If production RELEASE should be incremented")
 	includeDev := flag.Bool("includeDev", true, "If development RELEASE should be incremented")
 	includePR := flag.Bool("openPR", true, "If a PR should be opened for changed")
-	isBot := flag.Bool("isBot", false, "If a PR is created by bot")
 
 	flag.Parse()
 
@@ -58,12 +57,12 @@ func main() {
 
 	if *includePR {
 		if *includeProd {
-			if err = OpenNumberPR(*branch, prodNumber.Next(), changedProdFiles, *isBot, Production); err != nil {
+			if err = OpenNumberPR(*branch, prodNumber.Next(), changedProdFiles, Production); err != nil {
 				log.Fatal(err)
 			}
 		}
 		if *includeDev {
-			if err = OpenNumberPR(*branch, devNumber.Next(), changedDevFiles, *isBot, Development); err != nil {
+			if err = OpenNumberPR(*branch, devNumber.Next(), changedDevFiles, Development); err != nil {
 				log.Fatal(err)
 			}
 		}

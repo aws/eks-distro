@@ -21,29 +21,16 @@ set -x
 PR_BRANCH="${1?...}"
 PR_COMMIT_MESSAGE="${2?...}"
 PR_FILE_PATHS="${3?...}"
-PR_FOR_BOT="${4?...}"
-
-if [ "$PR_FOR_BOT" == "true" ]; then
-    IS_BOT=true
-else
-    IS_BOT=false
-fi
 
 ORIGINAL_BRANCH=$(git branch --show-current)
 
 function cleanup {
   echo "Encountered error! Cleaning up..."
-  if "$IS_BOT"; then
-    git checkout "${ORIGINAL_BRANCH}"
-    git push -d origin "${PR_BRANCH}"
-    echo "Cleaned up minimally for bot submitter"
-  else
-    git checkout HEAD^ -- "${PR_FILE_PATHS}"
-    git checkout "${ORIGINAL_BRANCH}"
-    git push -d origin "${PR_BRANCH}"
-    git branch -D "${PR_BRANCH}"
-    echo "Cleaned up as much as possible for non-bot submitter"
-  fi
+  git checkout HEAD^ -- "${PR_FILE_PATHS}"
+  git checkout "${ORIGINAL_BRANCH}"
+  git push -d origin "${PR_BRANCH}"
+  git branch -D "${PR_BRANCH}"
+  echo "Cleaned up as much as possible"
 }
 
 trap cleanup ERR
@@ -60,9 +47,6 @@ EOF
 )
 
 PR_TITLE="${PR_COMMIT_MESSAGE}"
-if "$IS_BOT"; then
-  PR_TITLE="[BOT RELEASE] ${PR_TITLE}"
-fi
 
 pr_arguments=(
   --title "${PR_TITLE}"
@@ -74,10 +58,6 @@ labels="do-not-merge/hold release"
 for label in $labels; do
      pr_arguments+=(--label "${label}")
 done
-
-if ! "$IS_BOT"; then
-    pr_arguments+=(--web)
-fi
 
 git checkout -b "${PR_BRANCH}"
 for aFilePath in $PR_FILE_PATHS; do

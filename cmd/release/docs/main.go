@@ -68,7 +68,6 @@ func main() {
 	includeDocsIndex := flag.Bool("includeDocsIndex", true, "If index.md in docs should be updated")
 
 	openPR := flag.Bool("openPR", true, "If a PR should be opened for changed")
-	isBot := flag.Bool("isBot", false, "If a PR is created by bot")
 
 	// WARNING: use of these flags can produce errors that are not easily identifiable. See comment at top.
 	force := flag.Bool("force", false, "Replaces existing files with newly-generated ones")
@@ -126,7 +125,7 @@ func main() {
 	log.Printf("Finished writing to %v doc(s)\n", len(docStatuses))
 
 	if *openPR {
-		err = OpenDocsPR(&release, docStatuses, *isBot)
+		err = OpenDocsPR(&release, docStatuses)
 		if err != nil {
 			log.Fatalf("error opening PR: %v", err)
 		}
