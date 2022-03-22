@@ -34,7 +34,7 @@ func (pr PullRequest) Open() error {
 	cmd.Stdout = outputStream
 	cmd.Stderr = errStream
 	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("error opening PR: %v", err)
+		return fmt.Errorf("error opening hiiiiiii PR: %v", err)
 	}
 	return nil
 }
