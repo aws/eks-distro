@@ -22,10 +22,12 @@ PR_BRANCH="${1?...}"
 PR_COMMIT_MESSAGE="${2?...}"
 PR_FILE_PATHS="${3?...}"
 
+ORIGINAL_BRANCH=$(git branch --show-current)
+
 function cleanup {
   echo "Encountered error! Cleaning up..."
   git checkout HEAD^ -- "${PR_FILE_PATHS}"
-  git checkout -
+  git checkout "${ORIGINAL_BRANCH}"
   git push -d origin "${PR_BRANCH}"
   git branch -D "${PR_BRANCH}"
   echo "Cleaned up as much as possible"
@@ -69,5 +71,5 @@ echo "pushed!"
 
 gh pr create "${pr_arguments[@]}"
 
-git co -
+git co "${ORIGINAL_BRANCH}"
 git br -D "${PR_BRANCH}"
