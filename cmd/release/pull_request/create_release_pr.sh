@@ -22,12 +22,10 @@ PR_BRANCH="${1?...}"
 PR_COMMIT_MESSAGE="${2?...}"
 PR_FILE_PATHS="${3?...}"
 
-ORIGINAL_BRANCH=$(git branch --show-current)
-
 function cleanup {
   echo "Encountered error! Cleaning up..."
   git checkout HEAD^ -- "${PR_FILE_PATHS}"
-  git checkout "${ORIGINAL_BRANCH}"
+  git checkout -
   git push -d origin "${PR_BRANCH}"
   git branch -D "${PR_BRANCH}"
   echo "Cleaned up as much as possible"
@@ -36,7 +34,6 @@ function cleanup {
 trap cleanup ERR
 
 PR_REPO="eks-distro"
-PR_ORG_REPO="aws/${PR_REPO}"
 ORIGIN_ORG=$(git remote get-url origin | sed -n -e "s|git@github.com:\(.*\)/${PR_REPO}.git|\1|p")
 
 PR_BODY=$(cat <<EOF
@@ -52,7 +49,7 @@ pr_arguments=(
   --title "${PR_TITLE}"
   --body "${PR_BODY}"
   --head "${ORIGIN_ORG}:${PR_BRANCH}"
-  --repo "${PR_ORG_REPO}"
+  --repo "aws/${PR_REPO}"
   --web
 )
 labels="do-not-merge/hold release"
@@ -72,5 +69,5 @@ echo "pushed!"
 
 gh pr create "${pr_arguments[@]}"
 
-git co "${ORIGINAL_BRANCH}"
+git co -
 git br -D "${PR_BRANCH}"
