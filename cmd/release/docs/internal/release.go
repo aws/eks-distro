@@ -2,10 +2,8 @@ package internal
 
 import (
 	. "../../utils"
-	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"strconv"
 	"strings"
 )
@@ -98,9 +96,6 @@ func newRelease(inputBranch string, num, prevNum string) (Release, error) {
 
 	release.ManifestURL = formatReleaseManifestURL(release.branch, release.branchEKSNumber)
 	release.PreviousManifestURL = formatReleaseManifestURL(release.branch, release.branchEKSPreviousNumber)
-
-	releaseJson, _ := json.MarshalIndent(release, "", "\t")
-	log.Printf("populated release with:%v", string(releaseJson))
 
 	return release, nil
 }

@@ -5,6 +5,7 @@ import (
 	. "./internal"
 	. "./new_docs"
 	. "./new_docs/templates"
+	"encoding/json"
 	"fmt"
 
 	"flag"
@@ -12,6 +13,7 @@ import (
 )
 
 const skipOverrideNumber = -1
+const verboseLogging=false
 
 /*
 Generate docs for release. Value for 'branch' flag must be provided.
@@ -78,6 +80,11 @@ func main() {
 	release, err := initializeRelease(*branch, *overrideNumber, *isLocalReleaseNumberForNewRelease)
 	if err != nil {
 		log.Fatalf("Error initializing release values: %v", err)
+	}
+
+	if verboseLogging {
+		releaseJson, _ := json.MarshalIndent(release, "", "\t")
+		log.Printf("populated release with:%v", string(releaseJson))
 	}
 
 	var docStatuses []DocStatus
