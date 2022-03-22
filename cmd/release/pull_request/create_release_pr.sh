@@ -53,6 +53,7 @@ pr_arguments=(
   --body "${PR_BODY}"
   --head "${ORIGIN_ORG}:${PR_BRANCH}"
   --repo "${PR_ORG_REPO}"
+  --web
 )
 labels="do-not-merge/hold release"
 for label in $labels; do
