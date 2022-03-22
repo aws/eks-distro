@@ -7,11 +7,10 @@ import (
 type docsPRRequest struct {
 	branch, version string
 	filesChanged    []string
-	bot             bool
 }
 
-func OpenDocsPR(release *Release, docStatuses []DocStatus, isBot bool) error {
-	prRequest := newDocsPRRequest(release, GetPaths(docStatuses), isBot)
+func OpenDocsPR(release *Release, docStatuses []DocStatus) error {
+	prRequest := newDocsPRRequest(release, GetPaths(docStatuses))
 	pr, err := NewPullRequestForDocs(&prRequest)
 	if err != nil {
 		return err
@@ -19,12 +18,11 @@ func OpenDocsPR(release *Release, docStatuses []DocStatus, isBot bool) error {
 	return pr.Open()
 }
 
-func newDocsPRRequest(release *Release, filesChanged []string, isBot bool) docsPRRequest {
+func newDocsPRRequest(release *Release, filesChanged []string) docsPRRequest {
 	return docsPRRequest{
 		branch:       release.Branch(),
 		version:      release.Version(),
 		filesChanged: filesChanged,
-		bot:          isBot,
 	}
 }
 
@@ -38,8 +36,4 @@ func (prReq *docsPRRequest) Version() string {
 
 func (prReq *docsPRRequest) FilePaths() []string {
 	return prReq.filesChanged
-}
-
-func (prReq *docsPRRequest) IsBot() bool {
-	return prReq.bot
 }

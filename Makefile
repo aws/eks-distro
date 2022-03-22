@@ -10,7 +10,6 @@ AWS_REGION?=us-west-2
 IMAGE_REPO?=$(if $(AWS_ACCOUNT_ID),$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com,localhost:5000)
 RELEASE_AWS_PROFILE?=default
 
-IS_BOT?=false
 USE_PREV_RELEASE_MANIFEST?=false
 OPEN_PR?=true
 IS_LOCAL_RELEASE_NUMBER_FOR_NEW_RELEASE?=true
@@ -186,7 +185,6 @@ update-release-number:
 	go vet ./cmd/release/number
 	go run ./cmd/release/number/main.go \
 		--branch=$(RELEASE_BRANCH) \
-		--isBot=$(IS_BOT) \
 		--openPR=$(OPEN_PR)
 
 .PHONY: update-all-release-numbers
@@ -198,7 +196,6 @@ release-docs:
 	go vet ./cmd/release/docs
 	go run ./cmd/release/docs/main.go \
 		--branch=$(RELEASE_BRANCH) \
-		--isBot=$(IS_BOT) \
 		--usePrevReleaseManifestForComponentTable=$(USE_PREV_RELEASE_MANIFEST) \
 		--openPR=$(OPEN_PR) \
 		--isLocalReleaseNumberForNewRelease=$(IS_LOCAL_RELEASE_NUMBER_FOR_NEW_RELEASE)
