@@ -1801,7 +1801,7 @@ https://gopkg.in/natefinch/lumberjack.v2
 Copyright (c) 2014 Nate Finch 
 
 ** vbom.ml/util/sortorder; version v0.0.0-20160121211510-db5cfe13f5cc --
-https://github.com/fvbommel/util
+https://vbom.ml/util
 Copyright (c) 2015 Frits van Bommel
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
