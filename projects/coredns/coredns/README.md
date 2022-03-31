@@ -1,11 +1,12 @@
 ## CoreDNS
 
-| Release | Version |
-| --- | --- |
-| 1-18 | ![Version](https://img.shields.io/badge/version-v1.7.0-blue) |
-| 1-19 | ![Version](https://img.shields.io/badge/version-v1.8.0-blue) |
-| 1-20 | ![Version](https://img.shields.io/badge/version-v1.8.3-blue) |
-| 1-21 | ![Version](https://img.shields.io/badge/version-v1.8.4-blue) |
+| Release | Version                                                      |
+|---------|--------------------------------------------------------------|
+| 1-18    | ![Version](https://img.shields.io/badge/version-v1.7.0-blue) |
+| 1-19    | ![Version](https://img.shields.io/badge/version-v1.8.0-blue) |
+| 1-20    | ![Version](https://img.shields.io/badge/version-v1.8.3-blue) |
+| 1-21    | ![Version](https://img.shields.io/badge/version-v1.8.4-blue) |
+| 1-22    | ![Version](https://img.shields.io/badge/version-v1.8.7-blue) |
 
 
 ### Updating
