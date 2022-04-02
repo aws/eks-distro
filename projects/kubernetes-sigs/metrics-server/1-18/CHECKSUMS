@@ -1,2 +1,2 @@
-d7e137d8a87edf1c28037ddbd2932eb4fb06db6d81a4022e0a40a890599a20e1  _output/1-18/bin/metrics-server/linux-amd64/metrics-server
-8cf2fafec95d03cbbe5f614c44f1de7ea2eedc96dbb9badcc705ec03c3ec3337  _output/1-18/bin/metrics-server/linux-arm64/metrics-server
+d502bdb423019bf3c03e5cdeb24e8e8ea2d6cfcbd5e058ca60337da102bd0bb5  _output/1-18/bin/metrics-server/linux-amd64/metrics-server
+b4a9a5d0067ad63cee06ee6dc4be7d6c847021c96da2b324a107cdad89ce1cef  _output/1-18/bin/metrics-server/linux-arm64/metrics-server
