@@ -182,32 +182,11 @@ function build::generate_attribution(){
 
 function build::common::get_go_path() {
   local -r version=$1
-  local gobinaryversion=""
-
-  if [[ $version == "1.13"* ]]; then
-    gobinaryversion="1.13"
-  fi
-  if [[ $version == "1.14"* ]]; then
-    gobinaryversion="1.14"
-  fi
-  if [[ $version == "1.15"* ]]; then
-    gobinaryversion="1.15"
-  fi
-  if [[ $version == "1.16"* ]]; then
-    gobinaryversion="1.16"
-  fi
-  if [[ $version == "1.17"* ]]; then
-    gobinaryversion="1.17"
-  fi
-
-  if [[ "$gobinaryversion" == "" ]]; then
-    return
-  fi
 
   # This is the path where the specific go binary versions reside in our builder-base image
-  local -r gorootbinarypath="/go/go${gobinaryversion}/bin"
+  local -r gorootbinarypath="/go/go${version}/bin"
   # This is the path that will most likely be correct if running locally
-  local -r gopathbinarypath="$GOPATH/go${gobinaryversion}/bin"
+  local -r gopathbinarypath="$GOPATH/go${version}/bin"
   if [ -d "$gorootbinarypath" ]; then
     echo $gorootbinarypath
   elif [ -d "$gopathbinarypath" ]; then

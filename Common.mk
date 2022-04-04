@@ -472,7 +472,7 @@ $(KUSTOMIZE_TARGET):
 	curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash -s -- $(OUTPUT_DIR)
 
 .PHONY: clone-repo
-clone-rpeo: $(REPO)
+clone-repo: $(REPO)
 
 .PHONY: checkout-repo
 checkout-repo: $(GIT_CHECKOUT_TARGET)

@@ -20,9 +20,12 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+SCRIPT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+source "${SCRIPT_ROOT}/common.sh"
+
 setupgo() {
     local -r version=$1
-    go get golang.org/dl/go${version}
+    go install golang.org/dl/go${version}@latest
     go${version} download
     # Removing the patch number as we only care about the minor version of golang
     local -r majorversion=${version%.*}
@@ -34,5 +37,12 @@ setupgo() {
 setupgo "${GOLANG113_VERSION:-1.13.15}"
 setupgo "${GOLANG114_VERSION:-1.14.15}"
 setupgo "${GOLANG115_VERSION:-1.15.15}"
-setupgo "${GOLANG116_VERSION:-1.16.12}"
-setupgo "${GOLANG116_VERSION:-1.17.5}"
+setupgo "${GOLANG116_VERSION:-1.16.15}"
+setupgo "${GOLANG116_VERSION:-1.17.8}"
+setupgo "${GOLANG116_VERSION:-1.18}"
+
+# always using 1.16 for now when installing and running go-licenses
+# go-licenses needs to be installed by the same version of go that is being used
+# to generate the deps list during the attribution generation process
+build::common::use_go_version "1.16"
+go install github.com/google/go-licenses@v1.0.0
