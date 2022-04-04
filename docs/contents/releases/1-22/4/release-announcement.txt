@@ -1,0 +1,1 @@
+Amazon EKS Distro v1.22-4 is now available. This release includes an important change to the etcd. This release also coincides with the official release of Amazon EKS v1.22. Amazon EKS Distro v1.22-4 builds are available through ECR Public Gallery (https://gallery.ecr.aws/eks-distro) and GitHub (https://github.com/aws/eks-distro)
