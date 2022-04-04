@@ -14,7 +14,7 @@ possible.
 | 1-19 | [![1-19](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-19-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-19-postsubmit) |
 | 1-20 | [![1-20](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-20-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-20-postsubmit) |
 | 1-21 | [![1-21](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-21-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-21-postsubmit) |
-| 1-22    | [![1-22](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-22-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-22-postsubmit) |
+| 1-22 | [![1-22](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-22-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-22-postsubmit) |
 
 Amazon **EKS Distro** (EKS-D) is a Kubernetes distribution based on and used by
 Amazon Elastic Kubernetes Service (EKS) to create reliable and secure Kubernetes
