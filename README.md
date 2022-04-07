@@ -1,16 +1,9 @@
 ## EKS Distro Repository
 
-### IMPORTANT INFORMATION ABOUT 1.18 SUPPORT
-
-EKS-D will be discontinuing support of Kubernetes v1.18 soon. While there are no
-plans to removed EKS-D 1.18 images from the ECR, there will be no more updates 
-to 1.18. Due to the increased security risk this poses, it is HIGHLY recommended
-that users of 1.18 update to a supported version (1.19 - 1.22) as soon as 
-possible.
+### 🚨 EKS Distro 1-18 is deprecated. See details [below](#kubernetes-1-18-deprecated) 🚨
 
 | Release | Development Build Status |
 | --- | --- |
-| 1-18 | [![1-18](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-18-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-18-postsubmit) |
 | 1-19 | [![1-19](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-19-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-19-postsubmit) |
 | 1-20 | [![1-20](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-20-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-20-postsubmit) |
 | 1-21 | [![1-21](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-21-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-21-postsubmit) |
@@ -59,11 +52,14 @@ To receive notifications about new EKS-D releases, subscribe to the EKS-D update
 | --- | --- |
 | 16 | [kubernetes-1-19-eks-16](https://distro.eks.amazonaws.com/kubernetes-1-19/kubernetes-1-19-eks-16.yaml) |
 
-### Kubernetes 1-18
+### Kubernetes 1-18: DEPRECATED
 
-| Release | Manifest |
-| --- | --- |
-| 17 | [kubernetes-1-18-eks-17](https://distro.eks.amazonaws.com/kubernetes-1-18/kubernetes-1-18-eks-17.yaml) |
+EKS Distro has discontinued support of Kubernetes v1.18. While there are no
+plans to remove the 1.18 images from EKS Distro ECR, there will be no more 
+updates, including security updates, for 1.18.
+
+**Due to the increased security risk this poses, it is HIGHLY recommended that
+users of 1.18 update to a supported version (1.19 - 1.22) as soon as possible.**
 
 ## Development
 
