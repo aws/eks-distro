@@ -1,6 +1,6 @@
 ## EKS Distro Repository
 
-### 🚨 EKS Distro 1-18 is deprecated. See details [below](#kubernetes-1-18:-DEPRECATED) 🚨
+### 🚨 EKS Distro 1-18 is deprecated. See details [below](#kubernetes-1-18-deprecated) 🚨
 
 | Release | Development Build Status |
 | --- | --- |
