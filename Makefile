@@ -160,6 +160,7 @@ attribution-files-project-%:
 
 .PHONY: update-attribution-files
 update-attribution-files: add-generated-help-block attribution-files checksum-files
+	build/lib/update_go_versions.sh
 	build/update-attribution-files/create_pr.sh
 
 .PHONY: checksum-files-project-%

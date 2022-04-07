@@ -28,7 +28,7 @@ setupgo() {
     go install golang.org/dl/go${version}@latest
     go${version} download
     # Removing the patch number as we only care about the minor version of golang
-    local -r majorversion=${version%.*}
+    local -r majorversion=$(cut -d. -f"1,2" <<< $version)
     mkdir -p ${GOPATH}/go${majorversion}/bin
     ln -sf ${GOPATH}/bin/go${version} ${GOPATH}/go${majorversion}/bin/go
     ln -sf ${HOME}/sdk/go${version}/bin/gofmt ${GOPATH}/go${majorversion}/bin/gofmt
@@ -38,8 +38,8 @@ setupgo "${GOLANG113_VERSION:-1.13.15}"
 setupgo "${GOLANG114_VERSION:-1.14.15}"
 setupgo "${GOLANG115_VERSION:-1.15.15}"
 setupgo "${GOLANG116_VERSION:-1.16.15}"
-setupgo "${GOLANG116_VERSION:-1.17.8}"
-setupgo "${GOLANG116_VERSION:-1.18}"
+setupgo "${GOLANG117_VERSION:-1.17.8}"
+setupgo "${GOLANG118_VERSION:-1.18}"
 
 # always using 1.16 for now when installing and running go-licenses
 # go-licenses needs to be installed by the same version of go that is being used
