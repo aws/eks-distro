@@ -68,6 +68,11 @@ $(BINARY_TARGETS): $(KUBE_GIT_VERSION_FILE) | $(GIT_PATCH_TARGET)
 # There are a couple of fixes needed to the licenses and root-module name before running gather licenses
 $(GATHER_LICENSES_TARGETS): fix-licenses
 
+# Intentional override since this projects deps are vendored and handled a bit differently
+# there is no need to go mod download
+$(REPO)/./eks-distro-go-mod-download:
+	touch $@
+
 # For kube proxy images, use the kube proxy base
 kube-proxy/images/%: BASE_IMAGE=$(KUBE_PROXY_BASE_IMAGE)
 
@@ -90,7 +95,7 @@ tarballs: $(KUBE_GIT_VERSION_FILE)
 cleanup-artifacts:
 	@mkdir $(ARTIFACTS_PATH)/bin
 	rm -rf $(OUTPUT_DIR)/{attribution,LICENSES,pause} $(OUTPUT_DIR)/bin/{LICENSES,ATTRIBUTION.txt}
-	cp -rf $(OUTPUT_DIR)/bin/* $(ARTIFACTS_PATH)/bin
+	mv $(OUTPUT_DIR)/bin/* $(ARTIFACTS_PATH)/bin
 	cp $(OUTPUT_DIR)/ATTRIBUTION.txt $(ARTIFACTS_PATH)
 
 .PHONY: test
