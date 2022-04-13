@@ -38,8 +38,8 @@ setupgo "${GOLANG113_VERSION:-1.13.15}"
 setupgo "${GOLANG114_VERSION:-1.14.15}"
 setupgo "${GOLANG115_VERSION:-1.15.15}"
 setupgo "${GOLANG116_VERSION:-1.16.15}"
-setupgo "${GOLANG117_VERSION:-1.17.8}"
-setupgo "${GOLANG118_VERSION:-1.18}"
+setupgo "${GOLANG117_VERSION:-1.17.9}"
+setupgo "${GOLANG118_VERSION:-1.18.1}"
 
 # always using 1.16 for now when installing and running go-licenses
 # go-licenses needs to be installed by the same version of go that is being used
