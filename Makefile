@@ -186,11 +186,23 @@ update-release-number:
 	go vet ./cmd/release/number
 	go run ./cmd/release/number/main.go \
 		--branch=$(RELEASE_BRANCH) \
+		--isProd=$(is_update_prod_number) \
 		--openPR=$(OPEN_PR)
+
+.PHONY: update-dev-release-number
+update-dev-release-number:
+	$(MAKE) is_update_prod_number=false update-release-number
+
+.PHONY: update-prod-release-number
+update-prod-release-number:
+	$(MAKE) is_update_prod_number=true update-release-number
+
+.PHONY: update-release-numbers
+update-release-numbers: update-dev-release-number update-prod-release-number
 
 .PHONY: update-all-release-numbers
 update-all-release-numbers:
-	for r_b in $(SUPPORTED_RELEASE_BRANCHES); do RELEASE_BRANCH=$$r_b $(MAKE) update-release-number; done
+	for r_b in $(SUPPORTED_RELEASE_BRANCHES); do RELEASE_BRANCH=$$r_b $(MAKE) update-release-numbers; done
 
 .PHONY: release-docs
 release-docs:

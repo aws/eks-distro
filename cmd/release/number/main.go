@@ -15,58 +15,33 @@ import (
 // attempts to undo any changes to RELEASE.
 func main() {
 	branch := flag.String("branch", "", "Release branch, e.g. 1-20")
-	includeProd := flag.Bool("includeProd", true, "If production RELEASE should be incremented")
-	includeDev := flag.Bool("includeDev", true, "If development RELEASE should be incremented")
+	isProd := flag.Bool("isProd", false, "True for prod; false for dev")
 	includePR := flag.Bool("openPR", true, "If a PR should be opened for changed")
 
 	flag.Parse()
 
-	var changedProdFiles, changedDevFiles []string
-	var prodNumber, devNumber ReleaseNumber
-	var err error
-
-	if *includeProd {
-		prodNumber, err = CreateReleaseNumber(*branch, Production)
-		if err != nil {
-			log.Fatalf("Error calculating prod RELEASE: %v", err)
+	releaseEnvironment := func() ReleaseEnvironment {
+		if *isProd {
+			return Production
 		}
+		return Development
+	}()
 
-		changedProdFiles = append(changedProdFiles, prodNumber.FilePath())
-		err = updateEnvironmentReleaseNumber(prodNumber)
-		if err != nil {
-			cleanUpIfError(changedProdFiles)
-			log.Fatalf("Error writing to prod RELEASE: %v", err)
-		}
+	releaseNumber, err := CreateReleaseNumber(*branch, releaseEnvironment)
+	if err != nil {
+		log.Fatalf("Error calculating %s RELEASE: %v", releaseEnvironment.String(), err)
 	}
 
-	if *includeDev {
-		devNumber, err = CreateReleaseNumber(*branch, Development)
-		if err != nil {
-			log.Fatalf("Error calculating dev RELEASE: %v", err)
-		}
-
-		changedDevFiles = append(changedDevFiles, devNumber.FilePath())
-		err = updateEnvironmentReleaseNumber(devNumber)
-		if err != nil {
-			cleanUpIfError(append(changedDevFiles, changedProdFiles...))
-			log.Fatalf("Error writing to dev RELEASE: %v", err)
-		}
+	err = updateEnvironmentReleaseNumber(releaseNumber)
+	if err != nil {
+		cleanUpIfError(releaseNumber.FilePath())
+		log.Fatalf("Error writing to %s RELEASE: %v", releaseEnvironment.String(), err)
 	}
-
-	log.Printf("Successfully updated number for %d file(s)\n", len(changedDevFiles)+len(changedProdFiles))
 
 	if *includePR {
-		if *includeProd {
-			if err = OpenNumberPR(*branch, prodNumber.Next(), changedProdFiles, Production); err != nil {
-				log.Fatal(err)
-			}
+		if err = OpenNumberPR(*branch, releaseNumber, releaseEnvironment); err != nil {
+			log.Fatal(err)
 		}
-		if *includeDev {
-			if err = OpenNumberPR(*branch, devNumber.Next(), changedDevFiles, Development); err != nil {
-				log.Fatal(err)
-			}
-		}
-		log.Println("Successfully opened PRs for changed files")
 	}
 }
 
@@ -77,14 +52,12 @@ func updateEnvironmentReleaseNumber(rn ReleaseNumber) error {
 	return os.WriteFile(rn.FilePath(), []byte(rn.Next()+"\n"), 0644)
 }
 
-func cleanUpIfError(paths []string) {
-	log.Println("Encountered error so all attempting to restore files")
-
-	for _, path := range paths {
-		err := exec.Command("git", "restore", path).Run()
-		if err == nil {
-			log.Printf("If changes were made, restored %s", path)
-		}
+func cleanUpIfError(path string) {
+	log.Println("Encountered error so all attempting to restore file")
+	err := exec.Command("git", "restore", path).Run()
+	if err != nil {
+		log.Printf("Encountered error while attempting to restored %s", path)
+	} else {
+		log.Printf("If changes were made, restored %s", path)
 	}
-	log.Println("Finished attempting to restore files")
 }

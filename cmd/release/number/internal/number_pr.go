@@ -10,12 +10,12 @@ type prRequest struct {
 	filesChanged                 []string
 }
 
-func OpenNumberPR(branch, number string, files []string, environment ReleaseEnvironment) error {
+func OpenNumberPR(branch string, releaseNum ReleaseNumber, environment ReleaseEnvironment) error {
 	request := prRequest{
 		branch:       branch,
 		environment:  environment.String(),
-		version:      GetBranchWithDotAndNumberWithDashFormat(branch, number),
-		filesChanged: files,
+		version:      GetBranchWithDotAndNumberWithDashFormat(branch, releaseNum.Next()),
+		filesChanged: []string{releaseNum.FilePath()},
 	}
 	return openNumberPR(&request)
 }
