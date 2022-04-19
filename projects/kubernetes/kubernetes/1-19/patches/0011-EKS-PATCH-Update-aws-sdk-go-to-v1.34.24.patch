@@ -137,7 +137,7 @@ Signed-off-by: Jackson West <jgw@amazon.com>
  .../testify/require/require_forward.go        |   156 +-
  .../stretchr/testify/require/requirements.go  |     2 +-
  vendor/modules.txt                            |    16 +-
- 130 files changed, 20679 insertions(+), 2843 deletions(-)
+ 133 files changed, 20683 insertions(+), 2850 deletions(-)
  create mode 100644 vendor/github.com/aws/aws-sdk-go/aws/credentials/context_background_go1.5.go
  create mode 100644 vendor/github.com/aws/aws-sdk-go/aws/credentials/context_background_go1.7.go
  create mode 100644 vendor/github.com/aws/aws-sdk-go/aws/credentials/context_go1.5.go
@@ -38819,5 +38819,5 @@ index 9fd64f018dc..d99a7874ed0 100644
  k8s.io/apimachinery/pkg/api/errors
  k8s.io/apimachinery/pkg/api/meta
 -- 
-2.35.0
+2.35.1
 
