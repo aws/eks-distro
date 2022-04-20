@@ -140,5 +140,5 @@ index ac13f17c6f0..68900a30ac5 100644
  	fake := newMockedFakeAWSServices("fakeCluster")
  	fake.selfInstance.Placement = &ec2.Placement{
 -- 
-2.35.0
+2.35.1
 
