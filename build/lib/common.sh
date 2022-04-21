@@ -149,14 +149,21 @@ function build::non-golang::gather_licenses(){
   git clone https://github.com/${project_org}/${project_name}
   cd $project_name
   git checkout $git_tag
-  license_files=($(find . \( -name "*COPYING*" -o -name "*COPYRIGHT*" -o -name "*LICEN[C|S]E*" -o -name "*NOTICE*" \)))
-  for file in "${license_files[@]}"; do
-    license_dest=$output_dir/LICENSES/github.com/${project_org}/${project_name}/$(dirname $file)
-    mkdir -p $license_dest
-    cp $file $license_dest/$(basename $file)
-  done
   cd ..
+  build::non-golang::copy_licenses $project_name $output_dir/LICENSES/github.com/${project_org}/${project_name}
   rm -rf $project_name
+}
+
+function build::non-golang::copy_licenses(){
+  local -r source_dir="$1"
+  local -r destination_dir="$2"
+  (cd $source_dir; find . \( -name "*COPYING*" -o -name "*COPYRIGHT*" -o -name "*LICEN[C|S]E*" -o -name "*NOTICE*" \)) |
+  while read file
+  do
+    license_dest=$destination_dir/$(dirname $file)
+    mkdir -p $license_dest
+    cp "${source_dir}/${file}" $license_dest/$(basename $file)
+  done
 }
 
 function build::generate_attribution(){
@@ -237,4 +244,17 @@ function build::common::wait_for_tag() {
       exit 1
     fi
   done
+}
+
+function build::common::get_clone_url() {
+  local -r org=$1
+  local -r repo=$2
+  local -r aws_region=$3
+  local -r codebuild_ci=$4
+
+  if [ "$codebuild_ci" = "true" ]; then
+    echo "https://git-codecommit.${aws_region}.amazonaws.com/v1/repos/${org}.${repo}"
+  else
+    echo "https://github.com/${org}/${repo}.git"
+  fi
 }

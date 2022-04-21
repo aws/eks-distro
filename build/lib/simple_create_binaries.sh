@@ -30,7 +30,7 @@ GO_LDFLAGS="$9"
 CGO_ENABLED="${10}"
 CGO_LDFLAGS="${11}"
 REPO_SUBPATH="${12:-}"
-
+ALL_TARGET_FILES="${13:-}"
 
 SCRIPT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 source "${SCRIPT_ROOT}/common.sh"
@@ -49,8 +49,27 @@ function build::simple::binaries(){
       export LD_LIBRARY_PATH=$PROJECT_ROOT/_output/source/$OS-$ARCH/usr/lib64:${LD_LIBRARY_PATH-}
       export PKG_CONFIG_PATH=$PROJECT_ROOT/_output/source/$OS-$ARCH/usr/lib64/pkgconfig:${PKG_CONFIG_PATH-}
     fi
+
+    # target file is meant to be treated as a folder since multiple binaries will written out
+    if [[ "$TARGET_FILE" == */ ]]; then
+      mkdir -p $TARGET_FILE
+    fi
+
     CGO_ENABLED=$CGO_ENABLED GOOS=$OS GOARCH=$ARCH \
       go $GOBUILD_COMMAND -trimpath -a -ldflags "$GO_LDFLAGS" $EXTRA_GOBUILD_FLAGS -o $TARGET_FILE $SOURCE_PATTERN
+
+    if [[ "$TARGET_FILE" == */ ]]; then
+      # in the case of outputing to a directory, the files will be named by the basename of the source pattern
+      # these need to be renamed to match the configured name from ALL_TARGET_FILES
+      TARGET_FILES=(${ALL_TARGET_FILES// / })
+      index=0
+      for source in $SOURCE_PATTERN; do
+        if [ "$(basename $source)" != "${TARGET_FILES[$index]}" ]; then
+          mv $TARGET_FILE$(basename $source) $TARGET_FILE${TARGET_FILES[$index]}
+        fi
+        ((index=index+1))
+      done
+    fi
   done
 }
 

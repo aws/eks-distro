@@ -1,4 +1,4 @@
-BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
+BASE_DIRECTORY:=$(shell git rev-parse --show-toplevel)
 GIT_TAG?=$(shell cat ./$(RELEASE_BRANCH)/GIT_TAG)
 GOLANG_VERSION?=$(shell cat ./$(RELEASE_BRANCH)/GOLANG_VERSION)
 
@@ -7,6 +7,7 @@ REPO_OWNER=kubernetes
 # REPO cant be releae since there is a phony release target
 # using release-src and overriding component
 COMPONENT=$(REPO_OWNER)/release
+CLONE_URL=https://github.com/$(COMPONENT).git
 
 GO_RUNNER_IMAGE_COMPONENT?=kubernetes/go-runner
 KUBE_PROXY_BASE_IMAGE_COMPONENT?=kubernetes/kube-proxy-base

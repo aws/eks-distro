@@ -40,13 +40,18 @@ FOOTER="########### END GENERATED ###########################"
 MAKEFILE=$PROJECT_ROOT/Makefile
 HELPFILE=$PROJECT_ROOT/Help.mk
 
-sed -i "/$HEADER/,/$FOOTER/d" $MAKEFILE
+SED=sed
+if [ "$(uname -s)" = "Darwin" ]; then
+    SED=gsed
+fi
+
+$SED -i "/$HEADER/,/$FOOTER/d" $MAKEFILE
 # remove trailing newlines
 printf %s "$(< $MAKEFILE)" > $MAKEFILE
 
 touch $HELPFILE
 
-sed -i "/$HEADER/,/$FOOTER/d" $HELPFILE
+$SED -i "/$HEADER/,/$FOOTER/d" $HELPFILE
 # remove trailing newlines
 printf %s "$(< $HELPFILE)" > $HELPFILE
 

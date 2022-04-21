@@ -19,8 +19,9 @@ set -o pipefail
 
 PROJECT="$1"
 TARGET="$2"
-RELEASE_BRANCH="$3"
-IMAGE_REPO="${4:-}"
+IMAGE_REPO="${3:-}"
+RELEASE_BRANCH="${4:-}"
+ARTIFACTS_BUCKET="${5:-}"
 
 MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd -P)"
 
@@ -36,9 +37,13 @@ if ! docker ps -f name=eks-d-builder | grep -w eks-d-builder; then
 		public.ecr.aws/eks-distro-build-tooling/builder-base:latest  infinity 
 fi
 
-rsync -e 'docker exec -i' -rm --exclude='.git/logs/***' \
+rsync -e 'docker exec -i' -rm --exclude='.git/***' \
 	--exclude="projects/$PROJECT/_output/***" --exclude="projects/$PROJECT/$(basename $PROJECT)/***" \
 	--include="projects/$PROJECT/***" \
-	--include='*/' --exclude='projects/***' ./ eks-d-builder:/eks-distro
+	--include='*/' --exclude='projects/***' $MAKE_ROOT/ eks-d-builder:/eks-distro
+
+# Need so git properly finds the root of the repo
+docker exec -it eks-d-builder mkdir -p /eks-distro/.git/{refs,objects}
+docker cp $MAKE_ROOT/.git/HEAD eks-d-builder:/eks-distro/.git
 
 docker exec -it eks-d-builder make $TARGET -C /eks-distro/projects/$PROJECT RELEASE_BRANCH=$RELEASE_BRANCH IMAGE_REPO=$IMAGE_REPO
