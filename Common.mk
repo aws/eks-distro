@@ -288,7 +288,7 @@ setup_uniq_go_mod_license_filters = \
 			$(eval UNIQ_GO_MOD_PATHS+=$(3)) \
 			$(eval UNIQ_GO_MOD_TARGET_FILES+=$(1))) \
 			$(eval $(call GO_MOD_TARGET_FOR_BINARY_VAR_NAME,$(1))=$(3)) \
-	$(eval GO_MOD_$(subst /,_,$(3))_LICENSE_PACKAGE_FILTER+=$(2))
+	$(eval GO_MOD_$(subst /,_,$(3))_LICENSE_PACKAGE_FILTER+=$(call IF_OVERRIDE_VARIABLE,LICENSE_PACKAGE_FILTER,$(2)))
 
 BINARY_PLATFORMS?=linux/amd64 linux/arm64
 SIMPLE_CREATE_BINARIES?=true
@@ -338,6 +338,7 @@ FETCH_BINARIES_TARGETS?=
 ####################################################
 
 #################### LICENSES ######################
+LICENSE_PACKAGE_FILTER?=$(SOURCE_PATTERNS)
 HAS_LICENSES?=true
 ATTRIBUTION_TARGETS?=$(call pairmap,ATTRIBUTION_TARGET_FROM_BINARY_GO_MOD,$(BINARY_TARGET_FILES),$(GO_MOD_PATHS))
 GATHER_LICENSES_TARGETS?=$(call pairmap,LICENSE_TARGET_FROM_BINARY_GO_MOD,$(BINARY_TARGET_FILES),$(GO_MOD_PATHS))

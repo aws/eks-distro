@@ -70,7 +70,7 @@ $(GATHER_LICENSES_TARGETS): fix-licenses
 
 # Intentional override since this projects deps are vendored and handled a bit differently
 # there is no need to go mod download
-$(REPO)/./eks-distro-go-mod-download:
+$(GO_MOD_DOWNLOAD_TARGETS):
 	touch $@
 
 # For kube proxy images, use the kube proxy base
