@@ -32,7 +32,7 @@ To receive notifications about new EKS-D releases, subscribe to the EKS-D update
 
 | Release | Manifest |
 | --- | --- |
-| 4  | [kubernetes-1-22-eks-4](https://distro.eks.amazonaws.com/kubernetes-1-22/kubernetes-1-22-eks-4.yaml) |
+| 5 | [kubernetes-1-22-eks-5](https://distro.eks.amazonaws.com/kubernetes-1-22/kubernetes-1-22-eks-5.yaml) |
 
 ### Kubernetes 1-21
 
