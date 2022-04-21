@@ -1,1 +1,1 @@
-Amazon EKS Distro v1.19-17 is now available. Amazon EKS Distro v1.19-17 builds are available through ECR Public Gallery (https://gallery.ecr.aws/eks-distro) and GitHub (https://github.com/aws/eks-distro)
+Amazon EKS Distro v1.19-17 is now available. This release includes an update to Amazon Linux 2 that contains the latest security fixes, a new patch to Kubernetes, and a new version of aws-iam-authenticator. Amazon EKS Distro v1.19-17 builds are available through ECR Public Gallery (https://gallery.ecr.aws/eks-distro) and GitHub (https://github.com/aws/eks-distro)
