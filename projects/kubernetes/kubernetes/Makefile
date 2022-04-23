@@ -1,4 +1,4 @@
-BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
+BASE_DIRECTORY:=$(shell git rev-parse --show-toplevel)
 GIT_TAG?=$(shell cat ./$(RELEASE_BRANCH)/GIT_TAG)
 GOLANG_VERSION?=$(shell cat ./$(RELEASE_BRANCH)/GOLANG_VERSION)
 PAUSE_TAG?=$(shell cat $(wildcard ./$(RELEASE_BRANCH)/PAUSE_*TAG))
@@ -70,7 +70,7 @@ $(GATHER_LICENSES_TARGETS): fix-licenses
 
 # Intentional override since this projects deps are vendored and handled a bit differently
 # there is no need to go mod download
-$(REPO)/./eks-distro-go-mod-download:
+$(GO_MOD_DOWNLOAD_TARGETS):
 	touch $@
 
 # For kube proxy images, use the kube proxy base

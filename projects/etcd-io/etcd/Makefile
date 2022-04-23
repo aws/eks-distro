@@ -1,4 +1,4 @@
-BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
+BASE_DIRECTORY:=$(shell git rev-parse --show-toplevel)
 GIT_TAG?=$(shell cat $(RELEASE_BRANCH)/GIT_TAG)
 GOLANG_VERSION?=$(shell cat $(RELEASE_BRANCH)/GOLANG_VERSION)
 
@@ -6,7 +6,7 @@ REPO=etcd
 REPO_OWNER=etcd-io
 
 BINARY_TARGET_FILES=etcd etcdctl
-SOURCE_PATTERNS=./ ./etcdctl
+SOURCE_PATTERNS=go.etcd.io/etcd ./etcdctl
 EXTRA_GOBUILD_FLAGS=-installsuffix cgo
 
 ROOT_MODULE=go.etcd.io/etcd

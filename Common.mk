@@ -1,7 +1,9 @@
 # Disable built-in rules and variables
 MAKEFLAGS+=--no-builtin-rules --warn-undefined-variables
+SHELL=bash
 .SHELLFLAGS:=-eu -o pipefail -c
 .SUFFIXES:
+.SECONDEXPANSION:
 
 RELEASE_BRANCH?=$(shell cat $(BASE_DIRECTORY)/release/DEFAULT_RELEASE_BRANCH)
 RELEASE_ENVIRONMENT?=development
@@ -15,6 +17,7 @@ GIT_HASH=eks-$(RELEASE_BRANCH)-$(RELEASE)
 
 COMPONENT?=$(REPO_OWNER)/$(REPO)
 MAKE_ROOT=$(BASE_DIRECTORY)/projects/$(COMPONENT)
+PROJECT_PATH?=$(subst $(BASE_DIRECTORY)/,,$(MAKE_ROOT))
 BUILD_LIB=${BASE_DIRECTORY}/build/lib
 OUTPUT_BIN_DIR?=$(OUTPUT_DIR)/bin/$(REPO)
 
@@ -43,21 +46,20 @@ endif
 CODEBUILD_CI?=false
 CI?=false
 JOB_TYPE?=
+CLONE_URL?=$(call GET_CLONE_URL,$(REPO_OWNER),$(REPO))
+#HELM_CLONE_URL=$(call GET_CLONE_URL,$(HELM_SOURCE_OWNER),$(HELM_SOURCE_REPOSITORY))
+HELM_CLONE_URL=https://github.com/$(HELM_SOURCE_OWNER)/$(HELM_SOURCE_REPOSITORY).git
 ifeq ($(CODEBUILD_CI),true)
 	ARTIFACTS_PATH?=$(CODEBUILD_SRC_DIR)/$(PROJECT_PATH)/$(CODEBUILD_BUILD_NUMBER)-$(CODEBUILD_RESOLVED_SOURCE_VERSION)/artifacts
-	CLONE_URL=https://git-codecommit.$(AWS_REGION).amazonaws.com/v1/repos/$(REPO_OWNER).$(REPO)
-	HELM_CLONE_URL=https://git-codecommit.$(AWS_REGION).amazonaws.com/v1/repos/$(HELM_SOURCE_OWNER).$(HELM_SOURCE_REPOSITORY)
 	UPLOAD_DRY_RUN=false
 	BUILD_IDENTIFIER=$(CODEBUILD_BUILD_NUMBER)
 else
 	ARTIFACTS_PATH?=$(MAKE_ROOT)/_output/tar
-	CLONE_URL=https://github.com/$(COMPONENT).git
-	HELM_CLONE_URL=https://github.com/$(HELM_SOURCE_OWNER)/$(HELM_SOURCE_REPOSITORY).git
 	UPLOAD_DRY_RUN=$(if $(findstring postsubmit,$(JOB_TYPE)),false,true)
 	ifeq ($(CI),true)
 		BUILD_IDENTIFIER=$(PROW_JOB_ID)
 	else
-		BUILD_IDENTIFIER=$(shell date "+%F-%s")
+		BUILD_IDENTIFIER:=$(shell date "+%F-%s")
 	endif
 endif
 ####################################################
@@ -65,7 +67,6 @@ endif
 #################### GIT ###########################
 GIT_CHECKOUT_TARGET?=$(REPO)/eks-distro-checkout-$(GIT_TAG)
 GIT_PATCH_TARGET?=$(REPO)/eks-distro-patched
-GO_MOD_DOWNLOAD_TARGETS?=$(REPO)/eks-distro-go-mod-download
 REPO_NO_CLONE?=false
 PATCHES_DIR=$(or $(wildcard $(PROJECT_ROOT)/patches),$(wildcard $(MAKE_ROOT)/patches))
 ####################################################
@@ -73,7 +74,7 @@ PATCHES_DIR=$(or $(wildcard $(PROJECT_ROOT)/patches),$(wildcard $(MAKE_ROOT)/pat
 #################### RELEASE BRANCHES ##############
 HAS_RELEASE_BRANCHES?=false
 RELEASE_BRANCH?=
-SUPPORTED_K8S_VERSIONS=$(shell cat $(BASE_DIRECTORY)/release/SUPPORTED_RELEASE_BRANCHES)
+SUPPORTED_K8S_VERSIONS:=$(shell cat $(BASE_DIRECTORY)/release/SUPPORTED_RELEASE_BRANCHES)
 BINARIES_ARE_RELEASE_BRANCHED?=true
 IS_RELEASE_BRANCH_BUILD=$(filter true,$(HAS_RELEASE_BRANCHES))
 IS_UNRELEASE_BRANCH_TARGET=$(and $(filter false,$(BINARIES_ARE_RELEASE_BRANCHED)),$(filter binaries attribution checksums,$(MAKECMDGOALS)))
@@ -101,6 +102,7 @@ else ifneq ($(IS_RELEASE_BRANCH_BUILD),)
 
 	# avoid warnings when trying to read GIT_TAG file which wont exist when no release_branch is given
 	GIT_TAG=non-existent
+	OUTPUT_DIR=non-existent
 else
 	PROJECT_ROOT?=$(MAKE_ROOT)
 	ARTIFACTS_UPLOAD_PATH?=$(PROJECT_PATH)
@@ -156,26 +158,161 @@ HELM_SOURCE_REPOSITORY?=$(REPO)
 HELM_GIT_TAG?=$(GIT_TAG)
 HELM_DIRECTORY?=.
 HELM_DESTINATION_REPOSITORY?=$(IMAGE_COMPONENT)
-HELM_ADDITIONAL_KEY_VALUES?=
+HELM_IMAGE_LIST?=
 HELM_GIT_CHECKOUT_TARGET?=$(HELM_SOURCE_REPOSITORY)/eks-distro-checkout-$(HELM_GIT_TAG)
 HELM_GIT_PATCH_TARGET?=$(HELM_SOURCE_REPOSITORY)/eks-distro-helm-patched
-PUBLIC_REGISTRY?=$(shell aws ecr-public describe-registries --region us-east-1 --query 'registries[*].registryUri' --output text)
+####################################################
+
+#### HELPERS ########
+# https://riptutorial.com/makefile/example/23643/zipping-lists
+# Used to generate binary targets based on BINARY_TARGET_FILES
+list-rem = $(wordlist 2,$(words $1),$1)
+
+pairmap = $(and $(strip $2),$(strip $3),$(call \
+    $1,$(firstword $2),$(firstword $3)) $(call \
+    pairmap,$1,$(call list-rem,$2),$(call list-rem,$3)))
+
+trimap = $(and $(strip $2),$(strip $3),$(strip $4),$(call \
+    $1,$(firstword $2),$(firstword $3),$(firstword $4)) $(call \
+    trimap,$1,$(call list-rem,$2),$(call list-rem,$3),$(call list-rem,$4)))
+
+_pos = $(if $(filter $1,$2),$(call _pos,$1,\
+       $(call list-rem,$2),x $3),$3)
+pos = $(words $(call _pos,$1,$2))
+
+# TODO: this exist in the gmsl, https://gmsl.sourceforge.io/
+# look into introducting gmsl for things like this
+# this function gets called a few dozen times and the alternative of using shell with tr takes
+# noticeablely longer
+TO_UPPER = $(subst a,A,$(subst b,B,$(subst c,C,$(subst d,D,$(subst e,E,$(subst \
+	f,F,$(subst g,G,$(subst h,H,$(subst i,I,$(subst j,J,$(subst k,K,$(subst l,L,$(subst \
+	m,M,$(subst n,N,$(subst o,O,$(subst p,P,$(subst q,Q,$(subst r,R,$(subst s,S,$(subst \
+	t,T,$(subst u,U,$(subst v,V,$(subst w,W,$(subst x,X,$(subst y,Y,$(subst z,Z,$(subst -,_,$(1))))))))))))))))))))))))))))
+
+TO_LOWER = $(subst A,a,$(subst B,b,$(subst C,c,$(subst D,d,$(subst E,e,$(subst \
+	F,f,$(subst G,g,$(subst H,h,$(subst I,i,$(subst J,j,$(subst K,k,$(subst L,l,$(subst \
+	M,m,$(subst N,n,$(subst O,o,$(subst P,p,$(subst Q,q,$(subst R,r,$(subst S,s,$(subst \
+	T,t,$(subst U,u,$(subst V,v,$(subst W,w,$(subst X,x,$(subst Y,y,$(subst Z,z,$(subst _,-,$(1))))))))))))))))))))))))))))
+
+# $1 - potential override variable name
+# $2 - value if variable not set
+# returns value of override var if one is set, otherwise returns $(2)
+# intentionally no tab/space since it would come out in the result of calling this func
+IF_OVERRIDE_VARIABLE=$(if $(filter undefined,$(origin $1)),$(2),$(value $(1)))
+
+# $1 - image name
+IMAGE_TARGETS_FOR_NAME=$(addsuffix /images/push, $(1)) $(addsuffix /images/amd64, $(1)) $(addsuffix /images/arm64, $(1))
+
+# $1 - binary file name
+FULL_FETCH_BINARIES_TARGETS=$(addprefix $(BINARY_DEPS_DIR)/linux-amd64/, $(1)) $(addprefix $(BINARY_DEPS_DIR)/linux-arm64/, $(1))
+
+# $1 - targets
+# $2 - platforms
+BINARY_TARGETS_FROM_FILES_PLATFORMS=$(foreach platform, $(2), $(foreach target, $(1), \
+		$(OUTPUT_BIN_DIR)/$(subst /,-,$(platform))/$(if $(findstring windows,$(platform)),$(target).exe,$(target))))
+
+# This "function" is used to construt the git clone URL for projects.
+# Indenting the block results in the URL getting prefixed with a
+# space, hence no indentation below.
+# $1 - repo owner
+# $2 - repo
+GET_CLONE_URL=$(shell source $(BUILD_LIB)/common.sh && build::common::get_clone_url $(1) $(2) $(AWS_REGION) $(CODEBUILD_CI))
+
+# $1 - binary file name
+# $2 - go mod path for binary
+# returns full target path for given binary + go mod path
+# if the go mod path is `.` then do not prefix attribution dir, otherwise use binary name
+LICENSE_TARGET_FROM_BINARY_GO_MOD=$(call LICENSE_OUTPUT_FROM_BINARY_GO_MOD,$(1),$(2))attribution/go-license.csv
+
+# $1 - binary file name
+# $2 - go mod path for binary
+# return $1 if the go mod path is not the first, unless there is an override var for the binary
+ATTRIBUTION_PREFIX_FROM_BINARY_GO_MOD=$(or \
+	$(call IF_OVERRIDE_VARIABLE,$(call TO_UPPER,$(1))_ATTRIBUTION_OVERRIDE,), \
+	$(if $(strip $(filter-out $(word 1,$(GO_MOD_PATHS)),$(2))),$(1),))
+
+# $1 - binary file name
+# $2 - go mod path for binary
+# returns full path to create attribution/licenses directory
+LICENSE_OUTPUT_FROM_BINARY_GO_MOD=$(LICENSES_OUTPUT_DIR)/$(call ADD_TRAILING_CHAR,$(call ATTRIBUTION_PREFIX_FROM_BINARY_GO_MOD,$(1),$(2)),/)
+
+# $1 - binary file name
+# $2 - go mod path for binary
+# returns attribution target for given binary + go mod path
+ATTRIBUTION_TARGET_FROM_BINARY_GO_MOD=$(if $(and $(IS_RELEASE_BRANCH_BUILD),$(filter \
+	true,$(BINARIES_ARE_RELEASE_BRANCHED))),$(RELEASE_BRANCH)/,)$(call ADD_TRAILING_CHAR,$(call TO_UPPER,$(call ATTRIBUTION_PREFIX_FROM_BINARY_GO_MOD,$(1),$(2))),_)ATTRIBUTION.txt
+
+# $1 - go mod path
+GO_MOD_DOWNLOAD_TARGET_FROM_GO_MOD_PATH=$(REPO)/$(if $(filter-out .,$(1)),$(1)/,)eks-distro-go-mod-download
+
+# $1 - binary file name
+GO_MOD_TARGET_FOR_BINARY_VAR_NAME= \
+	GO_MOD_TARGET_FOR_BINARY_$(call TO_UPPER,$(call IF_OVERRIDE_VARIABLE,$(call TO_UPPER,$(1))_ATTRIBUTION_OVERRIDE,$(1)))
+
+# $1 - value
+# $2 - char
+# if value is non empty, add trailing $2
+# intentionally no tab/space since it would come out in the result of calling this func
+ADD_TRAILING_CHAR=$(if $(1),$(1)$(2),)
+
+# check if pass variable has length of 1
+IS_ONE_WORD=$(if $(filter 1,$(words $(1))),true,false)
+
 ####################################################
 
 #################### BINARIES ######################
+# if the pattern ends in the same as a previous pattern, binary must be built seperately
+# if the go mod path has changed from the main, must be built seperately
+# if binary is already in the BINARY_TARGET_FILES_BUILD_ALONE list do not add, but properly add source pattern and go mod
+# $1 - binary file name
+# $2 - source pattern
+# $3 - go mod path for binary
+setup_build_alone_vs_together = \
+	$(eval type:=$(if $(or \
+			$(call IF_OVERRIDE_VARIABLE,_UNIQ_PATTERN_$(notdir $(2)),), \
+			$(filter-out $(word 1,$(GO_MOD_PATHS)),$(3)), \
+			$(filter $(1),$(BINARY_TARGET_FILES_BUILD_ALONE))) \
+		,ALONE,TOGETHER)) \
+	$(if $(filter $(1),$(BINARY_TARGET_FILES_BUILD_ALONE)),,$(eval BINARY_TARGET_FILES_BUILD_$(type)+=$(1))) \
+	$(eval SOURCE_PATTERNS_BUILD_$(type)+=$(2)) \
+	$(eval GO_MOD_PATHS_BUILD_$(type)+=$(3)) \
+	$(eval _UNIQ_PATTERN_$(notdir $(2)):=1)
+
+# Setup vars UNIQ_GO_MOD_PATHS UNIQ_GO_MOD_TARGET_FILES
+# which will store the mapping of uniq go_mod paths to first target file for repsective go mod
+# $1 - binary file name
+# $2 - source pattern
+# $3 - go mod path for binary
+setup_uniq_go_mod_license_filters = \
+	$(if $(call IF_OVERRIDE_VARIABLE,GO_MOD_$(subst /,_,$(3))_LICENSE_PACKAGE_FILTER,),, \
+			$(eval UNIQ_GO_MOD_PATHS+=$(3)) \
+			$(eval UNIQ_GO_MOD_TARGET_FILES+=$(1))) \
+			$(eval $(call GO_MOD_TARGET_FOR_BINARY_VAR_NAME,$(1))=$(3)) \
+	$(eval GO_MOD_$(subst /,_,$(3))_LICENSE_PACKAGE_FILTER+=$(call IF_OVERRIDE_VARIABLE,LICENSE_PACKAGE_FILTER,$(2)))
+
 BINARY_PLATFORMS?=linux/amd64 linux/arm64
 SIMPLE_CREATE_BINARIES?=true
 
 BINARY_TARGETS?=$(call BINARY_TARGETS_FROM_FILES_PLATFORMS, $(BINARY_TARGET_FILES), $(BINARY_PLATFORMS))
 BINARY_TARGET_FILES?=
-SOURCE_PATTERNS?=$(shell for vv in $(BINARY_TARGET_FILES) ; do echo . ; done)
-GO_MOD_PATHS?=$(shell for vv in $(BINARY_TARGET_FILES) ; do echo . ; done)
+SOURCE_PATTERNS?=$(foreach _,$(BINARY_TARGET_FILES),.)
+GO_MOD_PATHS?=$(foreach _,$(BINARY_TARGET_FILES),.)
+
+# There may not any that need building alone, defining empty vars in case not set from above
+BINARY_TARGET_FILES_BUILD_ALONE?=
+SOURCE_PATTERNS_BUILD_ALONE?=
+GO_MOD_PATHS_BUILD_ALONE?=
+UNIQ_GO_MOD_PATHS?=
+$(call trimap,setup_build_alone_vs_together,$(BINARY_TARGET_FILES),$(SOURCE_PATTERNS),$(GO_MOD_PATHS))
+$(call trimap,setup_uniq_go_mod_license_filters,$(BINARY_TARGET_FILES),$(SOURCE_PATTERNS),$(GO_MOD_PATHS))
+
+GO_MOD_DOWNLOAD_TARGETS?=$(foreach path, $(UNIQ_GO_MOD_PATHS), $(call GO_MOD_DOWNLOAD_TARGET_FROM_GO_MOD_PATH,$(path)))
 
 #### CGO ############
 CGO_CREATE_BINARIES?=false
 CGO_SOURCE=$(OUTPUT_DIR)/source
-IS_ON_BUILDER_BASE=$(shell if [ -f /buildkit.sh ]; then echo true; fi;)
-BUILDER_PLATFORM=$(shell echo $$(go env GOHOSTOS)/$$(go env GOHOSTARCH))
+IS_ON_BUILDER_BASE?=$(shell if [ -f /buildkit.sh ]; then echo true; fi;)
+BUILDER_PLATFORM?=$(shell echo $$(go env GOHOSTOS)/$$(go env GOHOSTARCH))
 needs-cgo-builder=$(and $(if $(filter true,$(CGO_CREATE_BINARIES)),true,),$(if $(filter-out $(1),$(BUILDER_PLATFORM)),true,))
 ######################
 
@@ -194,25 +331,6 @@ endif
 EXTRA_GO_LDFLAGS?=
 GOBUILD_COMMAND?=build
 ######################
-
-#### HELPERS ########
-# https://riptutorial.com/makefile/example/23643/zipping-lists
-# Used to generate binary targets based on BINARY_TARGET_FILES
-list-rem = $(wordlist 2,$(words $1),$1)
-
-pairmap = $(and $(strip $2),$(strip $3),$(call \
-    $1,$(firstword $2),$(firstword $3)) $(call \
-    pairmap,$1,$(call list-rem,$2),$(call list-rem,$3)))
-
-trimap = $(and $(strip $2),$(strip $3),$(strip $4),$(call \
-    $1,$(firstword $2),$(firstword $3),$(firstword $4)) $(call \
-    trimap,$1,$(call list-rem,$2),$(call list-rem,$3),$(call list-rem,$4)))
-
-uniq = $(eval seen :=) $(foreach _,$1,$(if $(filter $_,${seen}),,$(eval seen += $_))) ${seen}
-
-######################
-
-####################################################
 
 ############### BINARIES DEPS ######################
 BINARY_DEPS_DIR?=$(OUTPUT_DIR)/dependencies
@@ -241,10 +359,11 @@ FAKE_ARM_IMAGES_FOR_VALIDATION?=false
 #################### OTHER #########################
 KUSTOMIZE_TARGET=$(OUTPUT_DIR)/kustomize
 GIT_DEPS_DIR?=$(OUTPUT_DIR)/gitdependencies
+SPECIAL_TARGET_SECONDARY=$(strip $(call FULL_FETCH_BINARIES_TARGETS, $(FETCH_BINARIES_TARGETS)) $(GO_MOD_DOWNLOAD_TARGETS))
 ####################################################
 
 #################### TARGETS FOR OVERRIDING ########
-BUILD_TARGETS?=validate-checksums $(if $(IMAGE_NAMES),local-images,) attribution $(if $(filter true,$(HAS_S3_ARTIFACTS)),upload-artifacts,) attribution-pr
+BUILD_TARGETS?=validate-checksums attribution $(if $(IMAGE_NAMES),local-images,) $(if $(filter true,$(HAS_S3_ARTIFACTS)),upload-artifacts,) attribution-pr
 RELEASE_TARGETS?=validate-checksums $(if $(IMAGE_NAMES),images,) $(if $(filter true,$(HAS_S3_ARTIFACTS)),upload-artifacts,)
 ####################################################
 
@@ -273,155 +392,10 @@ define WRITE_LOCAL_IMAGE_TAG
 	echo $(IMAGE) > $(IMAGE_OUTPUT_DIR)/$(IMAGE_OUTPUT_NAME).docker_image_name	
 endef
 
-define IMAGE_TARGETS_FOR_NAME
-	$(addsuffix /images/push, $(1)) $(addsuffix /images/amd64, $(1)) $(addsuffix /images/arm64, $(1))
-endef
-
-define FULL_FETCH_BINARIES_TARGETS
-	$(addprefix $(BINARY_DEPS_DIR)/linux-amd64/, $(1)) $(addprefix $(BINARY_DEPS_DIR)/linux-arm64/, $(1))
-endef
-
-define BINARY_TARGETS_FROM_FILES_PLATFORMS
-	$(foreach platform, $(2), $(foreach target, $(1), \
-		$(OUTPUT_BIN_DIR)/$(subst /,-,$(platform))/$(if $(findstring windows,$(platform)),$(target).exe,$(target))))
-endef
-
-define BINARY_TARGET_BODY_ALL_PLATFORMS
-	$(eval $(foreach platform, $(BINARY_PLATFORMS), \
-		$(call $(if $(call needs-cgo-builder,$(platform)),CGO_BINARY_TARGET_BODY,BINARY_TARGET_BODY),$(platform),$(if $(findstring windows,$(platform)),$(1).exe,$(1)),$(2),$(3))))
-endef
-
-# $1 - arch
-# $2 - binary file name
-# #3 - target file
-# $4 - go mod path for binary
-define BINARY_TARGET_BODY
-	$(OUTPUT_BIN_DIR)/$(subst /,-,$(1))/$(2): $(REPO)/$(4)/eks-distro-go-mod-download
-		$(BASE_DIRECTORY)/build/lib/simple_create_binaries.sh $$(MAKE_ROOT) \
-			$$(MAKE_ROOT)/$(OUTPUT_BIN_DIR)/$(subst /,-,$(1))/$(2) $$(REPO) $$(GOLANG_VERSION) $(1) $(3) \
-			"$$(GOBUILD_COMMAND)" "$$(EXTRA_GOBUILD_FLAGS)" "$$(GO_LDFLAGS)" $$(CGO_ENABLED) "$$(CGO_LDFLAGS)" $(4)
-
-endef
-
-# to avoid dealing with cross compling issues using a buildctl
-# multi-stage build to build the binaries for both amd64 and arm64
-# licenses and attribution are also run from the builder image since
-# the deps are all needed
-# $1 - arch
-# $2 - binary file name
-# #3 - target file
-# $4 - go mod path for binary
-define CGO_BINARY_TARGET_BODY
-	$(OUTPUT_BIN_DIR)/$(subst /,-,$(1))/$(2): $(REPO)/$(4)/eks-distro-go-mod-download
-		@mkdir -p $(CGO_SOURCE)/eks-distro/
-		rsync -rm  --exclude='.git/logs/***' \
-			--exclude='projects/$(COMPONENT)/_output/bin/***' --exclude='projects/$(COMPONENT)/$(REPO)/***' \
-			--include='projects/$(COMPONENT)/***' --include='*/' --exclude='projects/***'  \
-			$(BASE_DIRECTORY)/ $(CGO_SOURCE)/eks-distro/
-		@mkdir -p $(OUTPUT_BIN_DIR)/$(subst /,-,$(1))
-		$(MAKE) binary-builder/cgo/$(1:linux/%=%) IMAGE_OUTPUT=dest=$(OUTPUT_BIN_DIR)/$(subst /,-,$(1))
-
-endef
-
-define GO_MOD_DOWNLOAD_ALL_TARGETS_BODY	
-	$(eval $(foreach path, $(call uniq,$(GO_MOD_PATHS)), $(call GO_MOD_DOWNLOAD_TARGET_BODY,$(path))))
-endef
-
-# $1 - go mod path for binary
-define GO_MOD_DOWNLOAD_TARGET_BODY
-	$(REPO)/$(1)/eks-distro-go-mod-download: $(if $(PATCHES_DIR),$(GIT_PATCH_TARGET),$(GIT_CHECKOUT_TARGET))
-		$$(BASE_DIRECTORY)/build/lib/go_mod_download.sh $$(MAKE_ROOT) $$(REPO) $$(GIT_TAG) $$(GOLANG_VERSION) $(1)
-		@touch $$@
-
-endef
-
-# $(eval $(if $(strip $(filter-out .,$(GO_MOD_PATHS))),$(call pairmap,GATHER_LICENSES_TARGETS_BODY,$(BINARY_TARGET_FILES),$(GO_MOD_PATHS)),$(call GATHER_LICENSES_TARGETS_BODY,.)))
-# If go_mod_paths is all `.` then only create the one target for the default /attribution folder for licenses
-# otherwise for each go mod path, generate a new license target
-# $1 - binary file name
-# $2 - go mod path for binary
-# Strange make issue here, calling $(eval $(call ...)) directly will not work as intended
-# "looping" over the list of 1 to avoid the issue
-define GATHER_LICENSES_ALL_TARGETS_BODY	
-	$(eval $(foreach binary,$(1), $(call GATHER_LICENSES_TARGETS_BODY,$(binary),$(2))))
-endef
-
-# $1 - binary file name
-# $2 - go mod path for binary
-define GATHER_LICENSES_TARGETS_BODY
-	$(call LICENSE_TARGET_FROM_BINARY_GO_MOD,$(1),$(2)): $(REPO)/$(2)/eks-distro-go-mod-download
-		$$(BASE_DIRECTORY)/build/lib/gather_licenses.sh $$(REPO) $(MAKE_ROOT)/$(call LICENSE_OUTPUT_FROM_BINARY_GO_MOD,$(1),$(2)) "$$(LICENSE_PACKAGE_FILTER)" $(2)
-
-endef
-
-# $1 - binary file name
-# $2 - go mod path for binary
-define ATTRIBUTION_ALL_TARGETS_BODY	
-	$(eval $(foreach binary,$(1), $(call ATTRIBUTION_TARGETS_BODY,$(binary),$(2))))
-endef
-
-# $1 - binary file name
-# $2 - go mod path for binary
-define ATTRIBUTION_TARGETS_BODY
-	$(call ATTRIBUTION_TARGET_FROM_BINARY_GO_MOD,$(1),$(2)): $(call LICENSE_TARGET_FROM_BINARY_GO_MOD,$(1),$(2))
-		$$(BASE_DIRECTORY)/build/lib/create_attribution.sh $$(MAKE_ROOT) $$(GOLANG_VERSION) $(MAKE_ROOT)/$(call LICENSE_OUTPUT_FROM_BINARY_GO_MOD,$(1),$(2)) $$(@F) $$(RELEASE_BRANCH)
-
-endef
-
-# $1 - binary file name
-# $2 - go mod path for binary
-# returns full target path for given binary + go mod path
-# if the go mod path is `.` then do not prefix attribution dir, otherwise use binary name
-# intentionally no tab/space since it would come out in the result of calling this func
-define LICENSE_TARGET_FROM_BINARY_GO_MOD
-$(call LICENSE_OUTPUT_FROM_BINARY_GO_MOD,$(1),$(2))attribution/go-license.csv
-endef
-
-# $1 - binary file name
-# $2 - go mod path for binary
-# intentionally no tab/space since it would come out in the result of calling this func
-define ATTRIBUTION_PREFIX_FROM_BINARY_GO_MOD
-$(if $(strip $(filter-out .,$(2))),$(call IF_OVERRIDE_VARIABLE,$(call TO_UPPER,$(1))_ATTRIBUTION_OVERRIDE,$(1)),)
-endef
-
-
-# $1 - binary file name
-# $2 - go mod path for binary
-# returns full path to create attribution/licenses directory
-# intentionally no tab/space since it would come out in the result of calling this func
-define LICENSE_OUTPUT_FROM_BINARY_GO_MOD
-$(LICENSES_OUTPUT_DIR)/$(call ADD_TRAILING_CHAR,$(call ATTRIBUTION_PREFIX_FROM_BINARY_GO_MOD,$(1),$(2)),/)
-endef
-
-# $1 - binary file name
-# $2 - go mod path for binary
-# returns attribution target for given binary + go mod path
-# intentionally no tab/space since it would come out in the result of calling this func
-define ATTRIBUTION_TARGET_FROM_BINARY_GO_MOD
-$(if $(IS_RELEASE_BRANCH_BUILD),$(RELEASE_BRANCH)/,)$(call ADD_TRAILING_CHAR,$(call TO_UPPER,$(call ATTRIBUTION_PREFIX_FROM_BINARY_GO_MOD,$(1),$(2))),_)ATTRIBUTION.txt
-endef
-
-# $1 - potential override variable name
-# $2 - value if variable not set
-# returns value of override var if one is set, otherwise returns $(2)
-# intentionally no tab/space since it would come out in the result of calling this func
-define IF_OVERRIDE_VARIABLE
-$(if $(filter undefined,$(origin $1)),$(2),$(value $(1)))
-endef
-
-# $1 - value
-# $2 - char
-# if value is non empty, add trailing $2
-# intentionally no tab/space since it would come out in the result of calling this func
-define ADD_TRAILING_CHAR
-$(if $(1),$(1)$(2),)
-endef
-
-# intentionally no tab/space since it would come out in the result of calling this func
-define TO_UPPER
-$(shell echo '$(1)' | tr '[:lower:]' '[:upper:]'  | tr '-' '_')
-endef
-
+# Do not binary deps + go mod download file as intermediate files
+ifneq ($(SPECIAL_TARGET_SECONDARY),)
+.SECONDARY: $(SPECIAL_TARGET_SECONDARY)
+endif
 
 #### Source repo + binary Targets
 ifneq ($(REPO_NO_CLONE),true)
@@ -441,7 +415,12 @@ $(GIT_PATCH_TARGET): $(GIT_CHECKOUT_TARGET)
 	git -C $(REPO) am --committer-date-is-author-date $(PATCHES_DIR)/*
 	@touch $@
 
-$(call GO_MOD_DOWNLOAD_ALL_TARGETS_BODY)
+
+## GO mod download targets
+$(REPO)/%ks-distro-go-mod-download: REPO_SUBPATH=$(if $(filter e,$*),,$(*:%/e=%))
+$(REPO)/%ks-distro-go-mod-download: $(if $(PATCHES_DIR),$(GIT_PATCH_TARGET),$(GIT_CHECKOUT_TARGET))
+	$(BASE_DIRECTORY)/build/lib/go_mod_download.sh $(MAKE_ROOT) $(REPO) $(GIT_TAG) $(GOLANG_VERSION) "$(REPO_SUBPATH)"
+	@touch $@
 
 ifneq ($(REPO),$(HELM_SOURCE_REPOSITORY))
 $(HELM_SOURCE_REPOSITORY):
@@ -461,7 +440,20 @@ $(HELM_GIT_PATCH_TARGET): $(HELM_GIT_CHECKOUT_TARGET)
 	@touch $@
 
 ifeq ($(SIMPLE_CREATE_BINARIES),true)
-$(call trimap,BINARY_TARGET_BODY_ALL_PLATFORMS,$(BINARY_TARGET_FILES),$(SOURCE_PATTERNS),$(GO_MOD_PATHS))
+# GO_MOD_TARGET_FOR_BINARY_<binary> variables are created earlier in the makefile when determining which binaries can be built together vs alone
+# if target is included in BINARY_TARGET_FILES_BUILD_TOGETHER list, use SOURCE_PATTERNS_BUILD_TOGETHER, otherewise use source pattern at the same index as binary_target in binary_target_files
+$(OUTPUT_BIN_DIR)/%: PLATFORM=$(subst -,/,$(*D))
+$(OUTPUT_BIN_DIR)/%: BINARY_TARGET=$(@F:%.exe=%)
+$(OUTPUT_BIN_DIR)/%: SOURCE_PATTERN=$(if $(filter $(BINARY_TARGET),$(BINARY_TARGET_FILES_BUILD_TOGETHER)),$(SOURCE_PATTERNS_BUILD_TOGETHER),$(word $(call pos,$(BINARY_TARGET),$(BINARY_TARGET_FILES)),$(SOURCE_PATTERNS)))
+$(OUTPUT_BIN_DIR)/%: OUTPUT_PATH=$(if $(and $(if $(filter false,$(call IS_ONE_WORD,$(BINARY_TARGET_FILES_BUILD_TOGETHER))),$(filter $(BINARY_TARGET),$(BINARY_TARGET_FILES_BUILD_TOGETHER)))),$(@D)/,$@)
+$(OUTPUT_BIN_DIR)/%: GO_MOD_PATH=$($(call GO_MOD_TARGET_FOR_BINARY_VAR_NAME,$(BINARY_TARGET)))
+$(OUTPUT_BIN_DIR)/%: $$(call GO_MOD_DOWNLOAD_TARGET_FROM_GO_MOD_PATH,$$(GO_MOD_PATH))
+	if [ "$(call needs-cgo-builder,$(PLATFORM))" == "true" ]; then \
+		$(MAKE) binary-builder/cgo/$(PLATFORM:linux/%=%) IMAGE_OUTPUT=dest=$(OUTPUT_BIN_DIR)/$(*D) CGO_TARGET=$@ IMAGE_BUILD_ARGS="GOPROXY COMPONENT CGO_TARGET"; \
+	else \
+		$(BASE_DIRECTORY)/build/lib/simple_create_binaries.sh $(MAKE_ROOT) $(MAKE_ROOT)/$(OUTPUT_PATH) $(REPO) $(GOLANG_VERSION) $(PLATFORM) "$(SOURCE_PATTERN)" \
+			"$(GOBUILD_COMMAND)" "$(EXTRA_GOBUILD_FLAGS)" "$(GO_LDFLAGS)" $(CGO_ENABLED) "$(CGO_LDFLAGS)" "$(GO_MOD_PATH)" "$(BINARY_TARGET_FILES_BUILD_TOGETHER)"; \
+	fi
 endif
 
 .PHONY: binaries
@@ -491,26 +483,31 @@ $(OUTPUT_DIR)/%TTRIBUTION.txt:
 
 
 ## License Targets
-
-# if all go-mod paths are . just create one target
-ifeq ($(strip $(filter-out .,$(GO_MOD_PATHS))),)
-$(call GATHER_LICENSES_ALL_TARGETS_BODY,1,.)
-$(call ATTRIBUTION_ALL_TARGETS_BODY,1,.)
-else
-## Gather licenses for project based on dependencies in REPO.
-$(call pairmap,GATHER_LICENSES_ALL_TARGETS_BODY,$(BINARY_TARGET_FILES),$(GO_MOD_PATHS))
-# Match all variables of ATTRIBUTION.txt `ATTRIBUTION.txt` `{RELEASE_BRANCH}/ATTRIBUTION.txt` `CAPD_ATTRIBUTION.txt`
-$(call pairmap,ATTRIBUTION_ALL_TARGETS_BODY,$(BINARY_TARGET_FILES),$(GO_MOD_PATHS))
-endif
+# if there is only one go mod path then licenses are gathered to _output, `%` will equal `a`
+# multiple go mod paths are in use and licenses are gathered and stored in sub folders, `%` will equal `<binary>/a`
+# GO_MOD_TARGET_FOR_BINARY_<binary> variables are created earlier in the makefile when determining which binaries can be built together vs alone
+$(OUTPUT_DIR)/%ttribution/go-license.csv: BINARY_TARGET=$(if $(filter .,$(*D)),,$(*D))
+$(OUTPUT_DIR)/%ttribution/go-license.csv: GO_MOD_PATH=$(if $(BINARY_TARGET),$(GO_MOD_TARGET_FOR_BINARY_$(call TO_UPPER,$(BINARY_TARGET))),$(word 1,$(UNIQ_GO_MOD_PATHS)))
+$(OUTPUT_DIR)/%ttribution/go-license.csv: LICENSE_PACKAGE_FILTER=$(GO_MOD_$(subst /,_,$(GO_MOD_PATH))_LICENSE_PACKAGE_FILTER)
+$(OUTPUT_DIR)/%ttribution/go-license.csv: $$(call GO_MOD_DOWNLOAD_TARGET_FROM_GO_MOD_PATH,$$(GO_MOD_PATH))	
+	$(BASE_DIRECTORY)/build/lib/gather_licenses.sh $(REPO) $(MAKE_ROOT)/$(OUTPUT_DIR)/$(BINARY_TARGET) "$(LICENSE_PACKAGE_FILTER)" $(GO_MOD_PATH)
 
 .PHONY: gather-licenses
 gather-licenses: $(GATHER_LICENSES_TARGETS)
+
+## Attribution Targets
+# if there is only one go mod path so only one attribution is created, the file will be named ATTRIBUTION.txt and licenses will be stored in _output, `%` will equal `A`
+# if multiple attributions are being generated, the file will be <binary>_ATTRIBUTION.txt and licenses will be stored in _output/<binary>, `%` will equal `<BINARY>_A`
+%TTRIBUTION.txt: LICENSE_OUTPUT_PATH=$(OUTPUT_DIR)$(if $(filter A,$(*F)),,/$(call TO_LOWER,$(*F:%_A=%)))
+%TTRIBUTION.txt: $$(LICENSE_OUTPUT_PATH)/attribution/go-license.csv
+	@rm -f $(@F)
+	$(BASE_DIRECTORY)/build/lib/create_attribution.sh $(MAKE_ROOT) $(GOLANG_VERSION) $(MAKE_ROOT)/$(LICENSE_OUTPUT_PATH) $(@F) $(RELEASE_BRANCH)
 
 .PHONY: attribution
 attribution: $(and $(filter true,$(HAS_LICENSES)),$(ATTRIBUTION_TARGETS))
 
 .PHONY: attribution-pr
-attribution-pr:
+attribution-pr: attribution
 	$(BASE_DIRECTORY)/build/update-attribution-files/create_pr.sh
 
 #### Tarball Targets
@@ -524,7 +521,7 @@ endif
 .PHONY: upload-artifacts
 upload-artifacts: s3-artifacts
 	$(BASE_DIRECTORY)/release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET) false $(UPLOAD_DRY_RUN)
-	
+
 .PHONY: s3-artifacts
 s3-artifacts: tarballs
 # Images (oci tarballs) always go to the kubernetes bin directly to match upstream, thats why kubernetes is passed as the first arg below instead of $(REPO) like when copying other artifacts
@@ -538,7 +535,7 @@ s3-artifacts: tarballs
 	fi
 
 ### Checksum Targets
-	
+
 .PHONY: checksums
 checksums: $(BINARY_TARGETS)
 ifneq ($(strip $(BINARY_TARGETS)),)
@@ -547,16 +544,17 @@ endif
 
 .PHONY: validate-checksums
 validate-checksums: $(BINARY_TARGETS)
+ifneq ($(strip $(BINARY_TARGETS)),)
 	$(BASE_DIRECTORY)/build/lib/validate_checksums.sh $(MAKE_ROOT) $(PROJECT_ROOT) $(MAKE_ROOT)/$(OUTPUT_BIN_DIR) $(FAKE_ARM_BINARIES_FOR_VALIDATION)
+endif
 
 #### Image Helpers
 
-
-#	IMAGE_NAME is dynamically set based on target prefix. \
-#	BASE_IMAGE BUILDER_IMAGE RELEASE_BRANCH are automatically passed as build-arg(s) to buildctl. args: \
-#	DOCKERFILE_FOLDER: folder containing dockerfile, defaults ./docker/linux \
-#	IMAGE_BUILD_ARGS:  additional build-args passed to buildctl, set to name of variable defined in makefile \
-#	IMAGE_CONTEXT_DIR: context directory for buildctl, default: .
+ifneq ($(IMAGE_NAMES),)
+.PHONY: local-images images
+local-images: $(LOCAL_IMAGE_TARGETS)
+images: $(IMAGE_TARGETS)
+endif
 
 .PHONY: %/images/push %/images/amd64 %/images/arm64
 %/images/push %/images/amd64 %/images/arm64: IMAGE_NAME=$*
@@ -568,23 +566,6 @@ validate-checksums: $(BINARY_TARGETS)
 %/images/push: IMAGE_PLATFORMS?=linux/amd64,linux/arm64
 %/images/push: IMAGE_OUTPUT_TYPE?=image
 %/images/push: IMAGE_OUTPUT?=push=true
-%/images/push: $(BINARY_TARGETS) $(LICENSES_TARGETS_FOR_PREREQ)
-	$(BUILDCTL)
-
-# Build helm chart
-.PHONY: helm/build
-helm/build: $(OUTPUT_DIR)/ATTRIBUTION.txt
-helm/build: $(if $(filter true,$(REPO_NO_CLONE)),,$(HELM_GIT_CHECKOUT_TARGET))
-helm/build: $(if $(wildcard $(MAKE_ROOT)/helm/patches),$(HELM_GIT_PATCH_TARGET),)
-	HELM_REGISTRY=$(PUBLIC_REGISTRY) \
-	IMAGE_TAG=$(IMAGE_TAG) \
-	$(HELM_ADDITIONAL_KEY_VALUES) \
-	$(BUILD_LIB)/helm_build.sh $(HELM_SOURCE_REPOSITORY) $(HELM_DESTINATION_REPOSITORY) $(HELM_DIRECTORY) $(OUTPUT_DIR)
-
-# Build helm chart and push to registry defined in IMAGE_REPO.
-.PHONY: helm/push
-helm/push: helm/build
-	$(BUILD_LIB)/helm_push.sh $(PUBLIC_REGISTRY) $(HELM_DESTINATION_REPOSITORY) $(IMAGE_TAG) $(OUTPUT_DIR)
 
 # Build image using buildkit only builds linux/amd64 oci and saves to local tar.
 %/images/amd64: IMAGE_PLATFORMS?=linux/amd64
@@ -594,6 +575,9 @@ helm/push: helm/build
 
 %/images/amd64 %/images/arm64: IMAGE_OUTPUT_TYPE?=oci
 %/images/amd64 %/images/arm64: IMAGE_OUTPUT?=dest=$(IMAGE_OUTPUT_DIR)/$(IMAGE_OUTPUT_NAME).tar
+
+%/images/push: $(BINARY_TARGETS) $(LICENSES_TARGETS_FOR_PREREQ)
+	$(BUILDCTL)
 
 %/images/amd64: $(BINARY_TARGETS) $(LICENSES_TARGETS_FOR_PREREQ)
 	@mkdir -p $(IMAGE_OUTPUT_DIR)
@@ -605,45 +589,68 @@ helm/push: helm/build
 	$(BUILDCTL)
 	$(WRITE_LOCAL_IMAGE_TAG)
 
-.PHONY: %/cgo/amd64 %/cgo/arm64
+## CGO Targets
+.PHONY: %/cgo/amd64 %/cgo/arm64 prepare-cgo-folder
+
+prepare-cgo-folder:
+	@mkdir -p $(CGO_SOURCE)/eks-distro/
+	rsync -rm  --exclude='.git/***' \
+		--exclude='***/_output/***' --exclude='projects/$(COMPONENT)/$(REPO)/***' \
+		--include='projects/$(COMPONENT)/***' --include='*/' --exclude='projects/***'  \
+		$(BASE_DIRECTORY)/ $(CGO_SOURCE)/eks-distro/
+	@mkdir -p $(OUTPUT_BIN_DIR)/$(subst /,-,$(IMAGE_PLATFORMS))
+	# Need so git properly finds the root of the repo
+	@mkdir -p $(CGO_SOURCE)/eks-distro/.git/{refs,objects}
+	@cp $(BASE_DIRECTORY)/.git/HEAD $(CGO_SOURCE)/eks-distro/.git
+
 %/cgo/amd64 %/cgo/arm64: IMAGE_OUTPUT_TYPE?=local
-%/cgo/amd64 %/cgo/arm64: DOCKERFILE_FOLDER?=./docker/build
+%/cgo/amd64 %/cgo/arm64: DOCKERFILE_FOLDER?=$(BUILD_LIB)/docker/linux/cgo
 %/cgo/amd64 %/cgo/arm64: IMAGE_NAME=binary-builder
-%/cgo/amd64 %/cgo/arm64: IMAGE_BUILD_ARGS?=GOPROXY
+%/cgo/amd64 %/cgo/arm64: IMAGE_BUILD_ARGS?=GOPROXY COMPONENT
 %/cgo/amd64 %/cgo/arm64: IMAGE_CONTEXT_DIR?=$(CGO_SOURCE)
 %/cgo/amd64 %/cgo/arm64: BUILDER_IMAGE=$(BASE_IMAGE_REPO)/builder-base:latest
 
 %/cgo/amd64: IMAGE_PLATFORMS=linux/amd64
-%/cgo/amd64:
-	@mkdir -p $(CGO_SOURCE)
-	$(BUILDCTL)
-
 %/cgo/arm64: IMAGE_PLATFORMS=linux/arm64
-%/cgo/arm64:
-	@mkdir -p $(CGO_SOURCE)
+
+%/cgo/amd64: prepare-cgo-folder
 	$(BUILDCTL)
 
+%/cgo/arm64: prepare-cgo-folder
+	$(BUILDCTL)
+
+## Useradd targets
 %-useradd/images/export: IMAGE_OUTPUT_TYPE=local
-%-useradd/images/export: IMAGE_OUTPUT=dest=$(OUTPUT_DIR)/files/$*
+%-useradd/images/export: IMAGE_OUTPUT_DIR=$(OUTPUT_DIR)/files/$*
+%-useradd/images/export: IMAGE_OUTPUT?=dest=$(IMAGE_OUTPUT_DIR)
 %-useradd/images/export: IMAGE_BUILD_ARGS=IMAGE_USERADD_USER_ID IMAGE_USERADD_USER_NAME
 %-useradd/images/export: DOCKERFILE_FOLDER=$(BUILD_LIB)/docker/linux/useradd
 %-useradd/images/export: IMAGE_PLATFORMS=linux/amd64
 %-useradd/images/export:
+	@mkdir -p $(IMAGE_OUTPUT_DIR)
 	$(BUILDCTL)
 
-ifneq ($(IMAGE_NAMES),)
-local-images: $(LOCAL_IMAGE_TARGETS)
-images: $(IMAGE_TARGETS)
-endif
+## Helm Targets
+
+# Build helm chart
+.PHONY: helm/build
+helm/build: $(LICENSES_TARGETS_FOR_PREREQ)
+helm/build: $(if $(filter true,$(REPO_NO_CLONE)),,$(HELM_GIT_CHECKOUT_TARGET))
+helm/build: $(if $(wildcard $(MAKE_ROOT)/helm/patches),$(HELM_GIT_PATCH_TARGET),)
+	$(BUILD_LIB)/helm_copy.sh $(HELM_SOURCE_REPOSITORY) $(HELM_DESTINATION_REPOSITORY) $(HELM_DIRECTORY) $(OUTPUT_DIR)
+	$(BUILD_LIB)/helm_require.sh $(IMAGE_REPO) $(HELM_DESTINATION_REPOSITORY) $(OUTPUT_DIR) $(IMAGE_TAG) $(LATEST) $(HELM_IMAGE_LIST)
+	$(BUILD_LIB)/helm_replace.sh $(HELM_DESTINATION_REPOSITORY) $(OUTPUT_DIR)
+	$(BUILD_LIB)/helm_build.sh $(OUTPUT_DIR) $(HELM_DESTINATION_REPOSITORY)
+
+# Build helm chart and push to registry defined in IMAGE_REPO.
+.PHONY: helm/push
+helm/push: helm/build
+	$(BUILD_LIB)/helm_push.sh $(IMAGE_REPO) $(HELM_DESTINATION_REPOSITORY) $(IMAGE_TAG) $(OUTPUT_DIR)
 
 ## Fetch Binary Targets
 $(BINARY_DEPS_DIR)/linux-%:
 	$(BUILD_LIB)/fetch_binaries.sh $(BINARY_DEPS_DIR) $* $(ARTIFACTS_BUCKET) $(LATEST) $(RELEASE_BRANCH)
 
-# Do not binary deps as intermediate files
-ifneq ($(FETCH_BINARIES_TARGETS),)
-.SECONDARY: $(call FULL_FETCH_BINARIES_TARGETS, $(FETCH_BINARIES_TARGETS))
-endif
 
 ## Build Targets
 .PHONY: build
@@ -688,3 +695,24 @@ add-generated-help-block:
 		$(REPO) $(if $(PATCHES_DIR),true,false) "$(LOCAL_IMAGE_TARGETS)" "$(IMAGE_TARGETS)" "$(BUILD_TARGETS)" "$(RELEASE_TARGETS)" \
 		"$(HAS_S3_ARTIFACTS)" "$(HAS_LICENSES)" "$(REPO_NO_CLONE)" "$(call FULL_FETCH_BINARIES_TARGETS,$(FETCH_BINARIES_TARGETS))" \
 		"$(HAS_HELM_CHART)"
+
+## --------------------------------------
+## Update Helpers
+## --------------------------------------
+#@ Update Helpers
+
+.PHONY: run-target-in-docker
+run-target-in-docker: # Run `MAKE_TARGET` using builder base docker container
+	$(BUILD_LIB)/run_target_docker.sh $(COMPONENT) $(MAKE_TARGET) $(IMAGE_REPO) $(RELEASE_BRANCH) $(ARTIFACTS_BUCKET)
+
+.PHONY: update-attribution-checksums-docker
+update-attribution-checksums-docker: # Update attribution and checksums using the builder base docker container
+	$(BUILD_LIB)/update_checksum_docker.sh $(COMPONENT) $(IMAGE_REPO) $(RELEASE_BRANCH)
+
+.PHONY: stop-docker-builder
+stop-docker-builder: # Clean up builder base docker container
+	docker rm -f -v eks-d-builder
+
+.PHONY: generate
+generate: # Update UPSTREAM_PROJECTS.yaml
+	$(BUILD_LIB)/generate_projects_list.sh $(BASE_DIRECTORY)

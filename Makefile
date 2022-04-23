@@ -1,4 +1,4 @@
-BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
+BASE_DIRECTORY:=$(shell git rev-parse --show-toplevel)
 RELEASE_BRANCH?=$(shell cat $(BASE_DIRECTORY)/release/DEFAULT_RELEASE_BRANCH)
 SUPPORTED_RELEASE_BRANCHES?=$(shell cat $(BASE_DIRECTORY)/release/SUPPORTED_RELEASE_BRANCHES)
 RELEASE_ENVIRONMENT?=development

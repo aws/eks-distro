@@ -36,9 +36,14 @@ if [ -f "/buildkit.sh" ]; then
         [ $i -gt 1 ] && sleep 15
         $CMD "$@" && s=0 && break || s=$?
     done
+
+    # space is limited on presubmit nodes, after each image build clear the build cache
+    if [ "${JOB_TYPE:-}" == "presubmit" ] && [ "${PRUNE_BUILDCTL:-false}" == "true" ]; then
+        $CMD prune --all
+    fi
+
     (exit $s)
 else
     # skip retry when running locally
     $CMD "$@"
 fi
-
