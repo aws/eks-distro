@@ -67,7 +67,13 @@ clean-repo: ## Removes source directory
 help: ## Display this help
 add-generated-help-block: ## Add or update generated help block to document project make file and support shell auto completion
 
+##@Update Helpers
+run-target-in-docker: ## Run `MAKE_TARGET` using builder base docker container
+update-attribution-checksums-docker: ## Update attribution and checksums using the builder base docker container
+stop-docker-builder: ## Clean up builder base docker container
+generate: ## Update UPSTREAM_PROJECTS.yaml
+
 ##@ Build Targets
-build: ## Called via prow presubmit, calls `validate-checksums  attribution upload-artifacts attribution-pr`
+build: ## Called via prow presubmit, calls `validate-checksums attribution  upload-artifacts attribution-pr`
 release: ## Called via prow postsubmit + release jobs, calls `validate-checksums  upload-artifacts`
 ########### END GENERATED ###########################
