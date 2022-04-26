@@ -16,4 +16,4 @@ Security updates to Amazon Linux 2.
 ### Patches Added
 
 * **0009-EKS-PATCH-Update-aws-sdk-go-to-v1.42.23-for-CGK-regi.patch**
-  * Update aws-sdk to v1.42.23 for ap-southeast-3 region build
+  * Update aws-sdk to v1.42.23 for `ap-southeast-3` region build

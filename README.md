@@ -69,15 +69,15 @@ Kubernetes CI/CD system. EKS operates an installation of Prow, which is visible
 at https://prow.eks.amazonaws.com/. Please read our
 [CONTRIBUTING](CONTRIBUTING.md) guide before making a Pull Request.
 
-For building EKS Distro locally, refer to the [building-locally](docs/development/building-locally.md) guide.
+For building EKS Distro locally, refer to the 
+[building-locally](docs/development/building-locally.md) guide.
 
 ## Security
 
 If you discover a potential security issue in this project, or think you may
 have discovered a security issue, we ask that you notify AWS Security via our
-[vulnerability reporting
-page](http://aws.amazon.com/security/vulnerability-reporting/). Please do
-**not** create a public GitHub issue.
+[vulnerability reporting page](http://aws.amazon.com/security/vulnerability-reporting/).
+Please do **not** create a public GitHub issue.
 
 ## License
 
