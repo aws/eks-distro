@@ -21,8 +21,8 @@
 3. Compare the old tag to the new one, looking specifically for Makefile changes.
    For example:
    [v0.8.7 compared to v0.9.0](https://github.com/containernetworking/plugins/compare/v0.8.7...v0.9.0). 
-   Check the [scripts/release](https://github.com/containernetworking/plugins/blob/main/scripts/release.sh) any build flag changes, tag changes,
-   dependencies, etc.
+   Check the [scripts/release](https://github.com/containernetworking/plugins/blob/main/scripts/release.sh) 
+   for any changes to build flags, tags, dependencies, etc.
 4. Verify the Golang version has not changed. The version specified in
    [scripts/release](https://github.com/containernetworking/plugins/blob/main/scripts/release.sh) should be the 
    source of truth. Be sure to select the correct branch for the release when 
