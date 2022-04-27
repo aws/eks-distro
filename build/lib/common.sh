@@ -69,19 +69,9 @@ function build::common::generate_shasum() {
 
 
 function build::gather_licenses() {
-  if ! command -v go-licenses &> /dev/null
-  then
-    echo " go-licenses not found.  If you need license or attribution file handling"
-    echo " please refer to the doc in docs/development/attribution-files.md"
-    exit
-  fi
-
   local -r outputdir=$1
   local -r patterns=$2
-
-  # use go 1.16 since 1.17 seems to be more agressive about wanting to update
-  # the go.mod/sum file
-  build::common::use_go_version 1.16
+  local -r golang_version=$3
 
   # Force deps to only be pulled form vendor directories
   # this is important in a couple cases where license files
@@ -91,13 +81,28 @@ function build::gather_licenses() {
   export GOOS=linux 
   export GOARCH=amd64 
 
+  # the version of go used here must be the version go-licenses was installed with
+  # by default we use 1.16, but due to changes in 1.17, there are some changes that require using 1.17
+  if [ "$golang_version" == "1.17" ]; then
+    build::common::use_go_version 1.17
+  else
+    build::common::use_go_version 1.16
+  fi
+
+  if ! command -v go-licenses &> /dev/null
+  then
+    echo " go-licenses not found.  If you need license or attribution file handling"
+    echo " please refer to the doc in docs/development/attribution-files.md"
+    exit
+  fi
+
   mkdir -p "${outputdir}/attribution"
   # attribution file generated uses the output go-deps and go-license to gather the necessary
   # data about each dependency to generate the amazon approved attribution.txt files
   # go-deps is needed for module versions
   # go-licenses are all the dependencies found from the module(s) that were passed in via patterns
   go list -deps=true -json ./... | jq -s ''  > "${outputdir}/attribution/go-deps.json"
-  
+
   go-licenses save --force $patterns --save_path="${outputdir}/LICENSES"
   
   # go-licenses can be a bit noisy with its output and lot of it can be confusing 

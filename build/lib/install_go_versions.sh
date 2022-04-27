@@ -41,8 +41,14 @@ setupgo "${GOLANG116_VERSION:-1.16.15}"
 setupgo "${GOLANG117_VERSION:-1.17.9}"
 setupgo "${GOLANG118_VERSION:-1.18.1}"
 
-# always using 1.16 for now when installing and running go-licenses
+# use 1.16 or 1.17 when installing and running go-licenses
 # go-licenses needs to be installed by the same version of go that is being used
 # to generate the deps list during the attribution generation process
 build::common::use_go_version "1.16"
-go install github.com/google/go-licenses@v1.0.0
+GOBIN=${GOPATH}/go1.17/bin go install github.com/google/go-licenses@v1.0.0
+
+build::common::use_go_version "1.17"
+GOBIN=${GOPATH}/go1.17/bin go install github.com/google/go-licenses@v1.0.0
+
+# 1.16 is the default so symlink it to /go/bin
+ln -s ${GOPATH}/go1.16/bin/go-licenses ${GOPATH}/bin
