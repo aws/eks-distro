@@ -21,9 +21,10 @@ REPO="$1"
 OUTPUT_DIR="$2"
 PACKAGE_FILTER="$3"
 REPO_SUBPATH="${4:-}"
+GOLANG_VERSION="${5:-}"
 
 SCRIPT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 source "${SCRIPT_ROOT}/common.sh"
 
 cd $REPO/$REPO_SUBPATH
-build::gather_licenses $OUTPUT_DIR "$PACKAGE_FILTER"
+build::gather_licenses $OUTPUT_DIR "$PACKAGE_FILTER" "$GOLANG_VERSION"
