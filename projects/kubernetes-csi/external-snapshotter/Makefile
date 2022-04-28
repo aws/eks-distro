@@ -28,7 +28,8 @@ $(GATHER_LICENSES_TARGETS): $(SNAPSHOTTER_LICENSE)
 # external-snapshotter ends up vendoring some deps that exist in the main repo, but there
 # is no license file in the subfolder and go-license is not able to find it
 # manually copying the root license to the vendor directory
-$(SNAPSHOTTER_LICENSE): $(GIT_CHECKOUT_TARGET)
+$(SNAPSHOTTER_LICENSE): | $(GO_MOD_DOWNLOAD_TARGETS)
+	mkdir -p $(@D)
 	cp $(REPO)/LICENSE $@
 
 
