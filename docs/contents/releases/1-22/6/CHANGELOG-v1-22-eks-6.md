@@ -4,3 +4,6 @@ This changelog highlights the changes for [v1-22-eks-6](https://github.com/aws/e
 
 ## Changes
 
+### Base Image
+
+Security updates to Amazon Linux 2.
