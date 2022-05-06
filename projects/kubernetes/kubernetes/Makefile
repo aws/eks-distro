@@ -103,7 +103,7 @@ test: $(BINARY_TARGETS)
 	build/run_tests.sh $(RELEASE_BRANCH) $(GOLANG_VERSION)
 
 .PHONY: fix-licenses
-fix-licenses:
+fix-licenses: $(GIT_PATCH_TARGET)
 	build/fix_licenses.sh $(REPO) $(OUTPUT_DIR)
 
 $(KUBE_GIT_VERSION_FILE): $(GIT_PATCH_TARGET)
