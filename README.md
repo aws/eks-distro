@@ -72,6 +72,9 @@ at https://prow.eks.amazonaws.com/. Please read our
 For building EKS Distro locally, refer to the 
 [building-locally](docs/development/building-locally.md) guide.
 
+For updating project dependencies, refer to the
+[update-project-dependency](docs/development/update-project-dependency.md) guide.
+
 ## Security
 
 If you discover a potential security issue in this project, or think you may
