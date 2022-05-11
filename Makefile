@@ -120,11 +120,11 @@ makes-binaries-%:
 
 .PHONY: run-target-in-docker
 run-target-in-docker:
-	build/lib/run_target_docker.sh $(PROJECT) $(MAKE_TARGET) $(RELEASE_BRANCH) $(IMAGE_REPO)
+	build/lib/run_target_docker.sh $(PROJECT) $(MAKE_TARGET) $(IMAGE_REPO) $(RELEASE_BRANCH)
 
 .PHONY: update-attribution-checksums-docker
 update-attribution-checksums-docker:
-	build/lib/update_checksum_docker.sh $(PROJECT) $(RELEASE_BRANCH)
+	build/lib/update_checksum_docker.sh $(PROJECT) $(IMAGE_REPO) $(RELEASE_BRANCH)
 
 .PHONY: stop-docker-builder
 stop-docker-builder:
