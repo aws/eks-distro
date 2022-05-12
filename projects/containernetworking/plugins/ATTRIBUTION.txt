@@ -1,5 +1,5 @@
 
-** github.com/containernetworking/cni/pkg; version v0.8.0 --
+** github.com/containernetworking/cni/pkg; version v0.8.1 --
 https://github.com/containernetworking/cni
 
 ** github.com/containernetworking/plugins; version v0.8.7 --
