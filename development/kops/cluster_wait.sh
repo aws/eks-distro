@@ -49,7 +49,8 @@ k apply -f ./${KOPS_CLUSTER_NAME}/aws-iam-authenticator.yaml
 # In the versions of metrics server we ship for kube versions < 1-21, it does
 # not support binding to 443
 # patching back to old port and behavior
-if [ "${RELEASE_BRANCH}" != "1-21" ] && [ "${RELEASE_BRANCH}" != "1-22" ]; then
+
+if [ "${RELEASE_BRANCH: -2}" -lt 21 ]; then
     PATCH='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--secure-port=4443" },{"op": "replace", "path": "/spec/template/spec/containers/0/ports/0/containerPort", "value": 4443 }]'
     k  -n kube-system patch deployments metrics-server --type=json -p="$PATCH"    
 fi
