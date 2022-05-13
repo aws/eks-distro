@@ -13,7 +13,7 @@ spec:
   {{end}}
   cloudProvider: aws
   configBase: {{ .configBase }}
-  containerRuntime: docker
+  containerRuntime: containerd
   etcdClusters:
   - cpuRequest: 200m
     etcdMembers:
