@@ -14,6 +14,9 @@ starting in Kubernetes 1.21.
 The change modifies the in-tree cloud provider code to append ipv6
 addresses to the Node object advertised by the kubelet.
 
+source:
+https://github.com/anguslees/kubernetes/commit/f8ea814e2d459a900bfb5e6f613dbe521b31515b
+
 Signed-off-by: Jyoti Mahapatra<jyotima@amazon.com>
 ---
  .../k8s.io/legacy-cloud-providers/aws/aws.go  | 52 +++++++++++++++++++
