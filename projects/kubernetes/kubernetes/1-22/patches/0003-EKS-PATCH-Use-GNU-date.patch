@@ -1,4 +1,4 @@
-From e0cb409b887ffebf1b8ca0f2680ba3c65fe9844c Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Micah Hausler <mhausler@amazon.com>
 Date: Sun, 1 Nov 2020 09:24:08 -0800
 Subject: --EKS-PATCH-- Use GNU date
@@ -30,6 +30,3 @@ index a14c7261aaa..e861312c45f 100644
    if [[ -n ${KUBE_GIT_COMMIT-} ]]; then
      add_ldflag "gitCommit" "${KUBE_GIT_COMMIT}"
      add_ldflag "gitTreeState" "${KUBE_GIT_TREE_STATE}"
--- 
-2.17.1
-

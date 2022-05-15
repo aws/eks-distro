@@ -1,4 +1,4 @@
-From a26766258d6725c99e7cf360b45092121e41268d Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Rasita Pai <prasita@amazon.com>
 Date: Wed, 13 Oct 2021 10:46:18 -0700
 Subject: --EKS-PATCH-- Pass region to sts client
@@ -14,10 +14,10 @@ Signed-off-by: Nick Turner <nic@amazon.com>
  1 file changed, 31 insertions(+), 1 deletion(-)
 
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-index d21e2cd7d44..b8a67e0693f 100644
+index 97b380ace25..37c45bf4f7e 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-@@ -1180,8 +1180,12 @@ func init() {
+@@ -1187,8 +1187,12 @@ func init() {
  			return nil, fmt.Errorf("unable to validate custom endpoint overrides: %v", err)
  		}
  
@@ -31,7 +31,7 @@ index d21e2cd7d44..b8a67e0693f 100644
  			SharedConfigState: session.SharedConfigEnable,
  		})
  		if err != nil {
-@@ -1208,6 +1212,32 @@ func init() {
+@@ -1215,6 +1219,32 @@ func init() {
  	})
  }
  
@@ -64,6 +64,3 @@ index d21e2cd7d44..b8a67e0693f 100644
  // readAWSCloudConfig reads an instance of AWSCloudConfig from config reader.
  func readAWSCloudConfig(config io.Reader) (*CloudConfig, error) {
  	var cfg CloudConfig
--- 
-2.17.1
-
