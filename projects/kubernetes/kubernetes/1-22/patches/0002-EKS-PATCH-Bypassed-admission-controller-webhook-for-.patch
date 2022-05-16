@@ -1,4 +1,4 @@
-From 69c26420e07ce2ef5d2ac592e752c305feaa4028 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Qing Ju <juqing@amazon.com>
 Date: Sun, 18 Oct 2020 10:31:39 -0700
 Subject: --EKS-PATCH-- Bypassed admission controller webhook for
@@ -207,6 +207,3 @@ index 26dbefc1991..f2db46707b2 100644
  func TestShouldCallHook(t *testing.T) {
  	a := &Webhook{namespaceMatcher: &namespace.Matcher{}, objectMatcher: &object.Matcher{}}
  
--- 
-2.17.1
-
