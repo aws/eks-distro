@@ -1,5 +1,5 @@
 
-** k8s.io/release/images/build/go-runner; version v0.12.0 --
+** k8s.io/release/images/build/go-runner; version v0.13.0 --
 https://github.com/kubernetes/release
 
 
@@ -207,7 +207,7 @@ https://github.com/kubernetes/release
 
 ------
 
-** golang.org/go; version go1.16.15 --
+** golang.org/go; version go1.17.9 --
 https://github.com/golang/go
 
 Copyright (c) 2009 The Go Authors. All rights reserved.
