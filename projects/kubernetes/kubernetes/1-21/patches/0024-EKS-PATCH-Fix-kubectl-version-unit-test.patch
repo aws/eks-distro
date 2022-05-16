@@ -3,8 +3,12 @@ From: Eddie Zaneski <eddiezane@gmail.com>
 Date: Tue, 27 Jul 2021 11:46:45 -0600
 Subject: --EKS-PATCH-- Fix kubectl version unit test
 
-This patch was cherry-picked from upstream 1.23 PR 103955 so it can be
-dropped from the EKS 1.23 branch.
+Cherry-pick of upstream Kubernetes:
+https://github.com/kubernetes/kubernetes/pull/103955, which is
+included in Kubernetes 1.23.
+
+Fixes configuration requirement that results in test
+TestNewCmdVersionWithoutConfigFile failing for some developers.
 
 Signed-off-by: Eddie Zaneski <eddiezane@gmail.com>
 ---
