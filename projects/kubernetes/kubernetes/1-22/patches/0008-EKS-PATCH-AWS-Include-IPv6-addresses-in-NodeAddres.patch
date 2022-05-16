@@ -14,9 +14,6 @@ starting in Kubernetes 1.21.
 The change modifies the in-tree cloud provider code to append ipv6
 addresses to the Node object advertised by the kubelet.
 
-source:
-https://github.com/anguslees/kubernetes/commit/f8ea814e2d459a900bfb5e6f613dbe521b31515b
-
 Signed-off-by: Jyoti Mahapatra<jyotima@amazon.com>
 ---
  .../k8s.io/legacy-cloud-providers/aws/aws.go  | 52 +++++++++++++++++++
@@ -36,8 +33,8 @@ index 7c2f33b232c..2a5fe901100 100644
  	"path"
  	"regexp"
  	"sort"
-@@ -1548,6 +1549,17 @@ func getNodeAddressesForFargateNode(privateDNSName, privateIP string) []v1.NodeA
- 	return addresses
+@@ -1494,6 +1495,17 @@ func (c *Cloud) HasClusterID() bool {
+ 	return len(c.tagging.clusterID()) > 0
  }
  
 +// isAWSNotFound returns true if the error was caused by an AWS API 404 response.
@@ -54,7 +51,7 @@ index 7c2f33b232c..2a5fe901100 100644
  // NodeAddresses is an implementation of Instances.NodeAddresses.
  func (c *Cloud) NodeAddresses(ctx context.Context, name types.NodeName) ([]v1.NodeAddress, error) {
  	if c.selfAWSInstance.nodeName == name || len(name) == 0 {
-@@ -1605,6 +1617,27 @@ func (c *Cloud) NodeAddresses(ctx context.Context, name types.NodeName) ([]v1.No
+@@ -1551,6 +1563,27 @@ func (c *Cloud) NodeAddresses(ctx context.Context, name types.NodeName) ([]v1.No
  			}
  		}
  
@@ -82,7 +79,7 @@ index 7c2f33b232c..2a5fe901100 100644
  		externalIP, err := c.metadata.GetMetadata("public-ipv4")
  		if err != nil {
  			//TODO: It would be nice to be able to determine the reason for the failure,
-@@ -1694,6 +1727,25 @@ func extractNodeAddresses(instance *ec2.Instance) ([]v1.NodeAddress, error) {
+@@ -1637,6 +1670,25 @@ func extractNodeAddresses(instance *ec2.Instance) ([]v1.NodeAddress, error) {
  		}
  	}
  
