@@ -10,10 +10,10 @@ Signed-off-by: Jyoti Mahapatra <jyotima@amazon.com>
  1 file changed, 31 insertions(+), 1 deletion(-)
 
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-index aafc7fe0564..aa8634f20fd 100644
+index 22ab23be2c6..e755c799ea4 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-@@ -1180,8 +1180,12 @@ func init() {
+@@ -1187,8 +1187,12 @@ func init() {
  			return nil, fmt.Errorf("unable to validate custom endpoint overrides: %v", err)
  		}
  
@@ -27,7 +27,7 @@ index aafc7fe0564..aa8634f20fd 100644
  			SharedConfigState: session.SharedConfigEnable,
  		})
  		if err != nil {
-@@ -1208,6 +1212,32 @@ func init() {
+@@ -1215,6 +1219,32 @@ func init() {
  	})
  }
  
