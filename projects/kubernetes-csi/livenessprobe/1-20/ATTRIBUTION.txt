@@ -5,16 +5,16 @@ https://github.com/container-storage-interface/spec
 ** github.com/go-logr/logr; version v1.2.0 --
 https://github.com/go-logr/logr
 
-** github.com/kubernetes-csi/csi-lib-utils; version v0.10.0 --
+** github.com/kubernetes-csi/csi-lib-utils; version v0.11.0 --
 https://github.com/kubernetes-csi/csi-lib-utils
 
-** github.com/kubernetes-csi/livenessprobe; version v2.6.0 --
+** github.com/kubernetes-csi/livenessprobe; version v2.7.0 --
 https://github.com/kubernetes-csi/livenessprobe
 
 ** github.com/matttproud/golang_protobuf_extensions/pbutil; version v1.0.2-0.20181231171920-c182affec369 --
 https://github.com/matttproud/golang_protobuf_extensions
 
-** github.com/prometheus/client_golang/prometheus; version v1.11.0 --
+** github.com/prometheus/client_golang/prometheus; version v1.11.1 --
 https://github.com/prometheus/client_golang
 
 ** github.com/prometheus/client_model/go; version v0.2.0 --
@@ -38,8 +38,11 @@ https://github.com/kubernetes/apimachinery
 ** k8s.io/component-base; version v0.22.0 --
 https://github.com/kubernetes/component-base
 
-** k8s.io/klog/v2; version v2.30.0 --
+** k8s.io/klog/v2; version v2.60.0 --
 https://github.com/kubernetes/klog
+
+** k8s.io/utils/clock; version v0.0.0-20220210201930-3a6ce19ff2f9 --
+https://github.com/kubernetes/utils
 
 
                                  Apache License
@@ -406,7 +409,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/go; version go1.17.9 --
+** golang.org/go; version go1.18.1 --
 https://github.com/golang/go
 
 ** golang.org/x/net; version v0.0.0-20210520170846-37e1c6afe023 --
