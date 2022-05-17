@@ -6,7 +6,7 @@ require (
 	github.com/Microsoft/go-winio v0.4.11 // indirect
 	github.com/Microsoft/hcsshim v0.8.6
 	github.com/alexflint/go-filemutex v0.0.0-20171022225611-72bdc8eae2ae
-	github.com/buger/jsonparser v0.0.0-20180808090653-f4dd9f5a6b44
+	github.com/buger/jsonparser v1.1.1
 	github.com/containernetworking/cni v0.8.1
 	github.com/coreos/go-iptables v0.4.5
 	github.com/coreos/go-systemd v0.0.0-20180511133405-39ca1b05acc7
