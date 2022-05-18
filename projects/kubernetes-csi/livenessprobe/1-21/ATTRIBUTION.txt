@@ -409,7 +409,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/go; version go1.18.1 --
+** golang.org/go; version go1.18.2 --
 https://github.com/golang/go
 
 ** golang.org/x/net; version v0.0.0-20210520170846-37e1c6afe023 --
