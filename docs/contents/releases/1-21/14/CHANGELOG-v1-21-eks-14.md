@@ -35,5 +35,5 @@ Security updates to Amazon Linux 2.
 
 ### Patches Removed
 * **0019-EKS-PATCH-AWS-Set-max-results-if-its-not-set.patch**
-  * The Updated version of Kubernetes cherrypicked this change in PR
+  * The updated version of Kubernetes cherrypicked this change in PR
     [#106280](https://github.com/kubernetes/kubernetes/pull/107653)
