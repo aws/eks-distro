@@ -10,6 +10,8 @@ SOURCE_PATTERNS=./cmd/csi-provisioner
 
 HAS_RELEASE_BRANCHES=true
 
+VENDOR_UPDATE_SCRIPT=release-tools/update-vendor.sh
+
 include $(BASE_DIRECTORY)/Common.mk
 
 
