@@ -34,8 +34,8 @@ index 5def40b9dd8..764c79d694f 100644
  	"path"
  	"regexp"
  	"sort"
-@@ -1549,6 +1551,17 @@ func getNodeAddressesForFargateNode(privateDNSName, privateIP string) []v1.NodeA
- 	return addresses
+@@ -1465,6 +1467,17 @@ func (c *Cloud) HasClusterID() bool {
+ 	return len(c.tagging.clusterID()) > 0
  }
  
 +// isAWSNotFound returns true if the error was caused by an AWS API 404 response.
