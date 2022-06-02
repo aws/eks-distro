@@ -1,63 +1,68 @@
 package main
 
 import (
-	. "../utils"
-	. "./internal"
+	. "github.com/aws/eks-distro/cmd/release/utils"
+	. "github.com/aws/eks-distro/cmd/release/utils/git_manager"
+
 	"errors"
 	"flag"
 	"log"
 	"os"
-	"os/exec"
 )
 
-// Updates RELEASE number for dev and/or prod, depending on the values
-// provided to the appropriate flags. If a failure is encounter,
-// attempts to undo any changes to RELEASE.
+// Updates RELEASE number for dev or prod, depending on the values provided to the appropriate flags.
+// TODO: fix all logic around undoing changes if error.
 func main() {
 	branch := flag.String("branch", "", "Release branch, e.g. 1-20")
 	isProd := flag.Bool("isProd", false, "True for prod; false for dev")
-	includePR := flag.Bool("openPR", true, "If a PR should be opened for changed")
 
 	flag.Parse()
 
-	releaseEnvironment := func() ReleaseEnvironment {
+	environment := func() ChangesType {
 		if *isProd {
-			return Production
+			return Prod
 		}
-		return Development
+		return Dev
 	}()
 
-	releaseNumber, err := CreateReleaseNumber(*branch, releaseEnvironment)
+	nextNumber, numberFilePath, err := GetNextNumber(*branch, environment)
 	if err != nil {
-		log.Fatalf("Error calculating %s RELEASE: %v", releaseEnvironment.String(), err)
+		log.Fatalf("Error calculating %s RELEASE: %v", environment, err)
 	}
 
-	err = updateEnvironmentReleaseNumber(releaseNumber)
+	gitManager, err := CreateGitManager(*branch, nextNumber, environment)
 	if err != nil {
-		cleanUpIfError(releaseNumber.FilePath())
-		log.Fatalf("Error writing to %s RELEASE: %v", releaseEnvironment.String(), err)
+		log.Fatalf("Error creating git manager for %s RELEASE: %v", environment, err)
 	}
 
-	if *includePR {
-		if err = OpenNumberPR(*branch, releaseNumber, releaseEnvironment); err != nil {
-			log.Fatal(err)
-		}
+	if err = updateEnvironmentReleaseNumber(nextNumber, numberFilePath); err != nil {
+		cleanUpIfError(gitManager, numberFilePath)
+		log.Fatalf("Error writing to %s RELEASE: %v", environment, err)
+	}
+
+	if err = gitManager.AddAndCommit(numberFilePath); err != nil {
+		cleanUpIfError(gitManager, numberFilePath)
+		log.Fatalf("error adding and committing: %v", err)
+	}
+
+	if err = gitManager.OpenPR(); err != nil {
+		log.Fatalf("error adding and committing: %v", err)
 	}
 }
 
-func updateEnvironmentReleaseNumber(rn ReleaseNumber) error {
-	if len(rn.Next()) == 0 {
+func updateEnvironmentReleaseNumber(number, numberFilPath string) error {
+	if len(number) == 0 {
 		return errors.New("failed to update release number file because provided number was empty")
 	}
-	return os.WriteFile(rn.FilePath(), []byte(rn.Next()+"\n"), 0644)
+	return os.WriteFile(numberFilPath, []byte(number+"\n"), 0644)
 }
 
-func cleanUpIfError(path string) {
-	log.Println("Encountered error so all attempting to restore file")
-	err := exec.Command("git", "restore", path).Run()
-	if err != nil {
-		log.Printf("Encountered error while attempting to restored %s", path)
+func cleanUpIfError(gm *GitManager, filepath string) {
+	restoreErr := gm.RestoreFile(filepath)
+	if restoreErr != nil {
+		log.Printf("Encountered error while attempting to restored %s", filepath)
 	} else {
-		log.Printf("If changes were made, restored %s", path)
+		log.Println("Encountered error so restored file")
 	}
+	gm.AbandonBranch()
 }

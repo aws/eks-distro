@@ -1,183 +1,84 @@
 package main
 
 import (
-	. "./existing_docs"
-	. "./internal"
-	. "./new_docs"
-	. "./new_docs/templates"
-	"encoding/json"
-	"fmt"
-
 	"flag"
+	"fmt"
+	. "github.com/aws/eks-distro/cmd/release/docs/existing_docs"
+	. "github.com/aws/eks-distro/cmd/release/docs/new_docs"
+	"github.com/aws/eks-distro/cmd/release/utils"
+	. "github.com/aws/eks-distro/cmd/release/utils/git_manager"
 	"log"
+	"path/filepath"
 )
 
-const skipOverrideNumber = -1
-const verboseLogging=false
+const changeType = utils.Docs
 
-/*
-Generate docs for release. Value for 'branch' flag must be provided.
+var rootDirectory = utils.GetGitRootDirectory()
 
-If a failure is encounter, attempts to undo any changes to files in branch doc directory, including deleting the
-directory if it was created.
-
-Caution about specific flags
-
-	usePrevReleaseManifestForComponentTable
-
-		If false, there if no guarantee that the generated table is correct for that release, as the generated table is
-		based on the previous release's release manifest (which must exist).
-
-		If true, the release manifest for that release must exist.
-
-	isLocalReleaseNumberForNewRelease
-
-		If false, the local prod release number of the branch must be from the current release number, which will be
-		incremented for the next release. The generated docs are for the next release.
-
-		If true, the local prod release number of the branch must be the new release number. Typically, this means an
-		earlier PR incremented the release number, the PR was merged, and the change was pulled down locally. The
-		generated docs are for this release
-
-	overrideNumber and force
-
-		Both flags undercut the logical bedrock of the doc generation: the release number. The release number's impact
-		extends far beyond what is discernible by looking at the docs. Factors well outside the scope of this command,
-		such as the passage of time or code changes unrelated to the release, impact the generation of docs in
-		critically important ways that are not readily apparent.
-
-		Circumventing the expected and established workflow can easily result in errors that are not easily identifiable
-		or consistent throughout the docs. Executing a command without an error does not mean that there are no errors
-		in the generated docs. Even if a command with these flags produces error-free docs one time, there is no
-		guarantee that rerunning the same command will still generate error-free docs.
-
-		If overrideNumber is used, isLocalReleaseNumberForNewRelease is ignored.
-*/
+// Generates docs for release. Value for 'branch' flag must be provided. The release MUST already be out, and all
+// upstream changes MUST be pulled down locally.
+// TODO: fix all logic around undoing changes if error.
 func main() {
-	branch := flag.String("branch", "", "Release branch, e.g. 1-20")
-
-	// TODO: add flag for only base image updates and pick templates accordingly
-	// Generate new files
-	includeChangelog := flag.Bool("includeChangelog", true, "If changelog should be generated")
-	includeAnnouncement := flag.Bool("includeAnnouncement", true, "If release announcement should be generated")
-	includeIndex := flag.Bool("includeIndex", true, "If index in branch dir should be generated")
-	includeIndexComponentTable := flag.Bool("includeIndexComponentTable", true, "If Markdown table should be generated. Ignored if includeIndex is false.")
-	usePrevReleaseManifestForComponentTable := flag.Bool("usePrevReleaseManifestForComponentTable", true, "If Markdown table should be generated from release manifest, which must exist if .")
-	isLocalReleaseNumberForNewRelease := flag.Bool("isLocalReleaseNumberForNewRelease", true, "TODO")
-
-	// Update existing files
-	includeREADME := flag.Bool("includeREADME", true, "If README should be updated")
-	includeDocsIndex := flag.Bool("includeDocsIndex", true, "If index.md in docs should be updated")
-
-	openPR := flag.Bool("openPR", true, "If a PR should be opened for changed")
-
-	// WARNING: use of these flags can produce errors that are not easily identifiable. See comment at top.
-	force := flag.Bool("force", false, "Replaces existing files with newly-generated ones")
-	overrideNumber := flag.Int("overrideNumber", skipOverrideNumber, "Overrides default logic for number, which is not recommended")
-
+	branch := flag.String("branch", "", "Release branch, e.g. 1-23")
 	flag.Parse()
 
-	release, err := initializeRelease(*branch, *overrideNumber, *isLocalReleaseNumberForNewRelease)
+	// Create Release with values. The actual release MUST already be out, and all upstream changes MUST be pulled
+	// down locally.
+	release, err := utils.NewRelease(*branch, changeType)
 	if err != nil {
-		log.Fatalf("Error initializing release values: %v", err)
+		log.Fatalf("Error that was encountered while creating new release: %v", err)
 	}
 
-	if verboseLogging {
-		releaseJson, _ := json.MarshalIndent(release, "", "\t")
-		log.Printf("populated release with:%v", string(releaseJson))
-	}
-
-	var docStatuses []DocStatus
-
-	// Generate new files
-	includeGeneratedDocs := includeGenerated{
-		changelog:    *includeChangelog,
-		announcement: *includeAnnouncement,
-		index:        *includeIndex,
-		indexComponentTableFunc: getComponentTableFunc(
-			*includeIndex && *includeIndexComponentTable, *usePrevReleaseManifestForComponentTable,
-		),
-	}
-	generatedDocsInfo := createGeneratedDocsInfo(&includeGeneratedDocs, release.VBranchEKSNumber)
-
-	docStatusesForNewDocs, err := GenerateNewDocs(generatedDocsInfo, &release, *force)
-	docStatuses = append(docStatuses, docStatusesForNewDocs...)
+	// Create GitManager
+	gm, err := CreateGitManager(release.Branch(), release.Number(), changeType)
 	if err != nil {
-		UndoChanges(docStatuses)
-		DeleteDocsDirectoryIfEmpty(&release)
+		log.Fatalf("Error that was encountered while creating new git manager: %v", err)
+	}
+
+	// Create new docs
+	docs, err := CreateNewDocsInfo(&release)
+	if err != nil {
+		log.Fatalf("Error that was encountered while creating new docs input: %v", err)
+	}
+	newReleaseDocDirectory := utils.GetReleaseDocsDirectory(release.Branch(), release.Number())
+	changedFiles, err := GenerateNewDocs(docs, newReleaseDocDirectory)
+	if err != nil {
+		_ = gm.AbandonBranch()
 		log.Fatalf("Error that was encountered while creating new docs: %v", err)
+	}
+	err = gm.AddAndCommit(changedFiles...)
+	if err != nil {
+		log.Fatalf("Failed to update doc due to error: %v", err)
 	}
 
 	// Update existing files
-	if *includeREADME {
-		docStatusREADME, err := UpdateREADME(&release, *force)
-		docStatuses = append(docStatuses, docStatusREADME)
-		if err != nil {
-			UndoChanges(docStatuses)
-			DeleteDocsDirectoryIfEmpty(&release)
-			log.Fatalf("Error that was encountered while updating README: %v", err)
-		}
+	readmePath := filepath.Join(rootDirectory, "README.md")
+	if err = updateExistingDocs(gm, UpdateREADME, readmePath, &release); err != nil {
+		log.Fatalf("Failed to update README due to error: %v", err)
 	}
-	if *includeDocsIndex {
-		docStatusDocsIndex, err := UpdateDocsIndex(&release, *force)
-		docStatuses = append(docStatuses, docStatusDocsIndex)
-		if err != nil {
-			UndoChanges(docStatuses)
-			DeleteDocsDirectoryIfEmpty(&release)
-			log.Fatalf("Error that was encountered while updating index: %v", err)
-		}
+	indexPath := filepath.Join(rootDirectory, "docs", "contents", "index.md")
+	if err = updateExistingDocs(gm, UpdateDocsIndex, indexPath, &release); err != nil {
+		log.Fatalf("Failed to update index due to error: %v", err)
 	}
 
-	DeleteDocsDirectoryIfEmpty(&release)
-	log.Printf("Finished writing to %v doc(s)\n", len(docStatuses))
-
-	if *openPR {
-		err = OpenDocsPR(&release, docStatuses)
-		if err != nil {
-			log.Fatalf("error opening PR: %v", err)
-		}
+	// Open PR
+	if err = gm.OpenPR(); err != nil {
+		log.Fatalf("error opening PR: %v", err)
 	}
 }
 
-func initializeRelease(branch string, overrideNumber int, isLocalReleaseNumberForNewRelease bool) (Release, error) {
-	if overrideNumber == skipOverrideNumber {
-		return NewRelease(branch, isLocalReleaseNumberForNewRelease)
+func updateExistingDocs(gm *GitManager, updateFunc func(utils.Release, string) error, filePath string, r *utils.Release) error {
+	err := updateFunc(*r, filePath)
+	if err != nil {
+		_ = gm.RestoreFile(filePath)
+		_ = gm.AbandonBranch()
+		return fmt.Errorf("error encountered while updating %s: %v", filePath, err)
 	}
-	return NewReleaseWithOverrideNumber(branch, overrideNumber)
-}
 
-func getComponentTableFunc(includeComponentTable, usePrevRelease bool) func(*Release) (string, error) {
-	if includeComponentTable {
-		if usePrevRelease {
-			return GetComponentVersionsTableIfNoReleaseManifest
-		}
-		return GetComponentVersionsTable
+	if err = gm.AddAndCommit(filePath); err != nil {
+		_ = gm.RestoreFile(filePath)
+		_ = gm.AbandonBranch()
+		return fmt.Errorf("error encountered while adding and committing %s: %v", filePath, err)
 	}
 	return nil
-}
-
-type includeGenerated struct {
-	changelog, index, announcement bool
-	indexComponentTableFunc        func(*Release) (string, error)
-}
-
-func createGeneratedDocsInfo(includeGenerated *includeGenerated, formattedReleaseVersion string) []GeneratedDoc {
-	return []GeneratedDoc{
-		{
-			Filename:     fmt.Sprintf("CHANGELOG-%s.md", formattedReleaseVersion),
-			TemplateName: ChangeLogGenericBase,
-			IsIncluded:   includeGenerated.changelog,
-		},
-		{
-			Filename:     "index.md",
-			TemplateName: IndexInBranch,
-			IsIncluded:   includeGenerated.index,
-			AppendToEnd:  includeGenerated.indexComponentTableFunc,
-		},
-		{
-			Filename:     "release-announcement.txt",
-			TemplateName: ReleaseAnnouncementGenericBase,
-			IsIncluded:   includeGenerated.announcement,
-		},
-	}
 }

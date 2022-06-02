@@ -1,7 +1,8 @@
 package main
 
 import (
-	. "../utils"
+	. "github.com/aws/eks-distro/cmd/release/utils"
+
 	"flag"
 	"fmt"
 	"io"
@@ -19,6 +20,7 @@ var (
 // Generates a release on GitHub.
 // IMPORTANT! Only run after the release is out, you've pulled own the
 // latest changes, and the release is tagged on GitHub.
+// TODO: update after refactor is done
 func main() {
 	branch := flag.String("branch", "", "Release branch, e.g. 1-22")
 	number := flag.String("number", "", "Release branch, e.g. 5")
@@ -37,7 +39,7 @@ func createRelease(branch, number string) error {
 	indexFilepath := fmt.Sprintf("%s/index.md", docsDirectory)
 
 	releaseGitTag := fmt.Sprintf("v%s-eks-%s", branch, number)
-	releaseVersion := "v" + GetBranchWithDotAndNumberWithDashFormat(branch, number)
+	releaseVersion := "REPLACE WITH release.version" //"v" + GetBranchWithDotAndNumberWithDashFormat(branch, number)
 
 	cmd := exec.Command(
 		"/bin/bash",
