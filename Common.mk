@@ -308,6 +308,8 @@ $(call trimap,setup_uniq_go_mod_license_filters,$(BINARY_TARGET_FILES),$(SOURCE_
 
 GO_MOD_DOWNLOAD_TARGETS?=$(foreach path, $(UNIQ_GO_MOD_PATHS), $(call GO_MOD_DOWNLOAD_TARGET_FROM_GO_MOD_PATH,$(path)))
 
+VENDOR_UPDATE_SCRIPT?=
+
 #### CGO ############
 CGO_CREATE_BINARIES?=false
 CGO_SOURCE=$(OUTPUT_DIR)/source
@@ -467,10 +469,10 @@ $(KUSTOMIZE_TARGET):
 clone-repo: $(REPO)
 
 .PHONY: checkout-repo
-checkout-repo: $(GIT_CHECKOUT_TARGET)
+checkout-repo: $(if $(PATCHES_DIR),$(GIT_PATCH_TARGET),$(GIT_CHECKOUT_TARGET))
 
 .PHONY: patch-repo
-patch-repo: $(GIT_PATCH_TARGET)
+patch-repo: checkout-repo
 
 ## File/Folder Targets
 
@@ -716,3 +718,22 @@ stop-docker-builder: # Clean up builder base docker container
 .PHONY: generate
 generate: # Update UPSTREAM_PROJECTS.yaml
 	$(BUILD_LIB)/generate_projects_list.sh $(BASE_DIRECTORY)
+
+.PHONY: update-go-mods
+update-go-mods: # Update locally checked-in go sum to assist in vuln scanning
+update-go-mods: DEST_PATH=$(if $(IS_RELEASE_BRANCH_BUILD),$(RELEASE_BRANCH)/$$gomod,$$gomod)
+update-go-mods: checkout-repo
+	for gomod in $(GO_MOD_PATHS); do \
+		mkdir -p $(DEST_PATH); \
+		cp $(REPO)/$$gomod/go.{mod,sum} $(DEST_PATH); \
+	done
+
+.PHONY: update-vendor-for-dep-patch
+update-vendor-for-dep-patch: # After bumping dep in go.mod file, uses generic vendor update script or one provided from upstream project
+update-vendor-for-dep-patch: checkout-repo
+	$(BUILD_LIB)/update_vendor.sh $(PROJECT_ROOT) $(REPO) $(GIT_TAG) $(GOLANG_VERSION) $(VENDOR_UPDATE_SCRIPT)
+
+.PHONY: patch-for-dep-update
+patch-for-dep-update: # After bumping dep in go.mod file and updating vendor, generates patch
+patch-for-dep-update: checkout-repo
+	$(BUILD_LIB)/patch_for_dep_update.sh $(REPO) $(GIT_TAG) $(PROJECT_ROOT)/patches

@@ -50,7 +50,7 @@ RELEASE_FOLDER=$(find $PROJECT_ROOT -type d -name "1-*")
 if [ -z "${RELEASE_FOLDER}" ]; then
     build::attribution::generate
 else
-    for release in $PROJECT_ROOT/1-*/ ; do
-        build::attribution::generate $(basename $release)
+    for release in $(cat $MAKE_ROOT/release/SUPPORTED_RELEASE_BRANCHES) ; do
+        build::attribution::generate $release
     done
 fi
