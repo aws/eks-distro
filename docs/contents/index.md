@@ -21,9 +21,11 @@ upgrading it yourself. For end users, however, running applications is the
 same as with EKS since the two support the same API versions and
 same set of components.
 
-In the near future, a supported, packaged product and installation method
-for EKS-D will be available under the name EKS Anywhere (EKS-A). To try out
-EKS-D for now, instructions in this repository describe how to:
+A supported installation method for EKS-D is available with [EKS 
+Anywhere (EKS-A)][eks-a]. To try out EKS-D without EKS-A, the instructions in 
+this website describe how to:
+
+[eks-a]: https://anywhere.eks.amazonaws.com/
 
 * Build EKS-D from source code
 
@@ -48,12 +50,12 @@ The tenets of the EKS Distro (EKS-D) project are:
 
 ## Release Channels
 
-The EKS Distro releases Kubernetes versions at the same pace as EKS and issues 
+EKS Distro releases Kubernetes versions at the same pace as EKS and issues 
 updates as releases in release channels. A release channel tracks minor
 versions (`v<major>.<minor>.<point>`) of Kubernetes, and a channel will be
 retired when EKS ceases supporting a particular minor version of Kubernetes.
 EKS Distro announces new releases and release channels via an SNS topic 
-(arn:aws:sns:us-east-1:379412251201:eks-distro-updates) at their launched.
+(arn:aws:sns:us-east-1:379412251201:eks-distro-updates) at their launch.
 Releases and release channels are structured as Kubernetes Custom
 Resource Definitions
 ([CRDs](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/)),
