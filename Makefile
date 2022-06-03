@@ -228,4 +228,3 @@ only-index-md-from-existing-release-manifest:
 		--force=true
 
 
-g
