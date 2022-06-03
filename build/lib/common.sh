@@ -103,11 +103,12 @@ function build::gather_licenses() {
   # go-licenses are all the dependencies found from the module(s) that were passed in via patterns
   go list -deps=true -json ./... | jq -s ''  > "${outputdir}/attribution/go-deps.json"
 
-  go-licenses save --force $patterns --save_path="${outputdir}/LICENSES"
-  
   # go-licenses can be a bit noisy with its output and lot of it can be confusing 
   # the following messages are safe to ignore since we do not need the license url for our process
-  NOISY_MESSAGES="cannot determine URL for|Error discovering URL|unsupported package host"
+  NOISY_MESSAGES="cannot determine URL for|Error discovering license URL|unsupported package host|contains non-Go code|has empty version|vendor.*\.s$"
+
+  go-licenses save --force $patterns --save_path="${outputdir}/LICENSES" 2>  >(grep -vE "$NOISY_MESSAGES" >&2)
+  
   go-licenses csv $patterns > "${outputdir}/attribution/go-license.csv" 2>  >(grep -vE "$NOISY_MESSAGES" >&2)
 
   if cat "${outputdir}/attribution/go-license.csv" | grep -q "^vendor\/golang.org\/x"; then
