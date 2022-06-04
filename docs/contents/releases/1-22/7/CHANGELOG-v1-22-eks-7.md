@@ -9,8 +9,8 @@ This changelog highlights the changes for [v1-22-eks-7](https://github.com/aws/e
 Security updates to Amazon Linux 2.
 
 ### Kubernetes Version
-* Updated Kubernetes version from 1.22.9 to
-  [1.22.6](https://github.com/kubernetes/kubernetes/tree/v1.22.9)
+* Updated Kubernetes version from 1.22.6 to
+  [1.22.9](https://github.com/kubernetes/kubernetes/tree/v1.22.9)
 
 ### Project Version Updates
 
