@@ -49,6 +49,9 @@ run-target-in-docker: ## Run `MAKE_TARGET` using builder base docker container
 update-attribution-checksums-docker: ## Update attribution and checksums using the builder base docker container
 stop-docker-builder: ## Clean up builder base docker container
 generate: ## Update UPSTREAM_PROJECTS.yaml
+update-go-mods: ## Update locally checked-in go sum to assist in vuln scanning
+update-vendor-for-dep-patch: ## After bumping dep in go.mod file, uses generic vendor update script or one provided from upstream project
+patch-for-dep-update: ## After bumping dep in go.mod file and updating vendor, generates patch
 
 ##@ Build Targets
 build: ## Called via prow presubmit, calls `validate-checksums attribution local-images upload-artifacts attribution-pr`
