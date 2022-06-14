@@ -1,6 +1,14 @@
 ## EKS Distro Repository
 
-### 🚨 EKS Distro 1-18 is deprecated. See details [below](#kubernetes-1-18-deprecated) 🚨
+### 🚨🚨🚨 IMPORTANT INFORMATION ABOUT 1.19 SUPPORT 🚨🚨🚨
+
+EKS-D will be discontinuing support of Kubernetes v1.19 soon. While there are no
+plans to removed EKS-D 1.19 images from the ECR, there will be no more updates 
+to 1.19 once support has stopped. **Due to the increased security risk this poses, 
+it is HIGHLY recommended that users of 1.19 update to a supported version 
+(1.20 - 1.22) as soon as possible.**
+
+---
 
 | Release | Development Build Status |
 | --- | --- |
@@ -61,7 +69,7 @@ plans to remove the 1.18 images from EKS Distro ECR, there will be no more
 updates, including security updates, for 1.18.
 
 **Due to the increased security risk this poses, it is HIGHLY recommended that
-users of 1.18 update to a supported version (1.19 - 1.22) as soon as possible.**
+users of 1.18 update to a supported version (1.20 - 1.22) as soon as possible.**
 
 ## Development
 
