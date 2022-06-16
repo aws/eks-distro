@@ -103,7 +103,7 @@ if updating a released branch project.
     * if the dependency is an implicit dependency brought in via another, you may need to add a replace override
         * `go mod why` and `go mod graph` could be helpful in determining which dependency is pulling in implicit dependencies
     * pay close attention to replace override blocks, these may need updating as well
-1.  **After go.mod has been updated, update vendor scripts**  
+1.  **After go.mod has been updated, run vendor update scripts**  
     * run `make update-vendor-for-dep-patch`
         * a number upstream projects which vendor their deps have a specific script for updating the vendor directly.
         For ex [external-snapshotter](https://github.com/kubernetes-csi/external-snapshotter/blob/master/release-tools/update-vendor.sh)
