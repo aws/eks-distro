@@ -101,19 +101,21 @@ if updating a released branch project.
     * if it is a simple dependency, not overridden in a replace block, run `go get -u dep@version`
     * if there are a number of dependencies to update, it may be easier to manually change the version in the go.mod file
     * if the dependency is an implicit dependency brought in via another, you may need to add a replace override
+        * `go mod why` and `go mod graph` could be helpful in determining which dependency is pulling in implicit dependencies
     * pay close attention to replace override blocks, these may need updating as well
-    * `go mod why` and `go mod graph` could be helpful in determining which dependency is pulling in implicit dependenciesZZZ
-1.  **Note**  
-    * After go.mod has been updated run `make update-vendor-for-dep-patch`
+1.  **After go.mod has been updated, update vendor scripts**  
+    * run `make update-vendor-for-dep-patch`
         * a number upstream projects which vendor their deps have a specific script for updating the vendor directly.
         For ex [external-snapshotter](https://github.com/kubernetes-csi/external-snapshotter/blob/master/release-tools/update-vendor.sh)
         if this is the case, add `VENDOR_UPDATE_SCRIPT=<path-in-repo>` to the project Makefile
         * by default, this will run `go mod vendor && go mod tidy`
+1.  **Generate a new patch file**
     * `make patch-for-dep-update` will generate a new patch file including the go.sum/mod file changes along with the vendor
     directory if upstream vends deps.
         * the script will launch your git editor to fill in the commit message and body. Please try to include the CVE number
         along with any upstream PR this may be based off and which upstream version includes the fix.  This information will
         help in future maintenance of these patches.
-    * `make build` to generate new checksums
+1.  **Generate new checksums**
+    * `make build` 
         * can use `make update-attribution-checksums-docker` if you prefer to build in docker. See [building locally](building-locally.md)
         for more info
