@@ -118,6 +118,19 @@ EOF
     pr:create "$pr_title" "$commit_message" "$pr_branch" "$pr_body"
 }
 
+function pr::create::go-mod() {
+    local -r pr_title="Update go.mod files"
+    local -r commit_message="[PR BOT] Update go.mod files"
+    local -r pr_branch="go-mod-update-$MAIN_BRANCH"
+    local -r pr_body=$(cat <<EOF
+This PR updates the checked in go.mod and go.sum files across all dependency projects to support automated vulnerability scanning.
+
+By submitting this pull request, I confirm that you can use, modify, copy, and redistribute this contribution, under the terms of your choice.
+EOF
+)
+    pr:create "$pr_title" "$commit_message" "$pr_branch" "$pr_body"
+}
+
 # Add checksum files
 for FILE in $(find . -type f -name CHECKSUMS); do    
     git check-ignore -q $FILE || git add $FILE
@@ -156,4 +169,20 @@ for FILE in $(find . -type f \( -name Help.mk -o -name Makefile \)); do
     git check-ignore -q $FILE || git add $FILE
 done
 
+# stash go.sum files
+git stash --keep-index
+
 pr::create::help
+
+git checkout $MAIN_BRANCH
+
+if [ "$(git stash list)" != "" ]; then
+    git stash pop
+fi
+
+# Add go.mod files
+for FILE in $(find . -type f \( -name go.sum -o -name go.mod \)); do    
+    git check-ignore -q $FILE || git add $FILE
+done
+
+pr::create::go-mod

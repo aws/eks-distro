@@ -2,11 +2,10 @@
 
 | Release | Version                                                      |
 |---------|--------------------------------------------------------------|
-| 1-18    | ![Version](https://img.shields.io/badge/version-v2.6.0-blue) |
-| 1-19    | ![Version](https://img.shields.io/badge/version-v2.6.0-blue) |
-| 1-20    | ![Version](https://img.shields.io/badge/version-v2.6.0-blue) |
-| 1-21    | ![Version](https://img.shields.io/badge/version-v2.6.0-blue) |
-| 1-22    | ![Version](https://img.shields.io/badge/version-v2.6.0-blue) |
+| 1-19    | ![Version](https://img.shields.io/badge/version-v2.7.0-blue) |
+| 1-20    | ![Version](https://img.shields.io/badge/version-v2.7.0-blue) |
+| 1-21    | ![Version](https://img.shields.io/badge/version-v2.7.0-blue) |
+| 1-22    | ![Version](https://img.shields.io/badge/version-v2.7.0-blue) |
 
 
 ### Updating
@@ -28,9 +27,9 @@
    changes, dependencies, etc. Check that the manifest target, which is called
    from the EKS-D Makefile, has not changed.
 4. Verify the Golang version has not changed. The version specified in
-   [`go.mod`](https://github.com/kubernetes-csi/livenessprobe/blob/master/go.mod)
-   seems to be kept up to date. Be sure to select the correct branch for the 
-   release when checking the Golang version.
+   [release-tools/prow.sh](https://github.com/kubernetes-csi/livenessprobe/blob/5daa5c264193e349f589bbe414412d8e173a3c2f/release-tools/prow.sh#L89)
+   should be correct. Be sure to select the correct branch for the release when 
+   checking the Golang version.
 5. Update CHECKSUMS and attribution by using
    `make update-attribution-checksums-docker PROJECT=kubernetes-csi/livenessprobe RELEASE_BRANCH=<release_branch>` 
    from the root of the EKS-Distro repo.

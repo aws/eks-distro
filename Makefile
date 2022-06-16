@@ -1,4 +1,4 @@
-BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
+BASE_DIRECTORY:=$(shell git rev-parse --show-toplevel)
 RELEASE_BRANCH?=$(shell cat $(BASE_DIRECTORY)/release/DEFAULT_RELEASE_BRANCH)
 SUPPORTED_RELEASE_BRANCHES?=$(shell cat $(BASE_DIRECTORY)/release/SUPPORTED_RELEASE_BRANCHES)
 RELEASE_ENVIRONMENT?=development
@@ -120,11 +120,11 @@ makes-binaries-%:
 
 .PHONY: run-target-in-docker
 run-target-in-docker:
-	build/lib/run_target_docker.sh $(PROJECT) $(MAKE_TARGET) $(RELEASE_BRANCH) $(IMAGE_REPO)
+	build/lib/run_target_docker.sh $(PROJECT) $(MAKE_TARGET) $(IMAGE_REPO) $(RELEASE_BRANCH)
 
 .PHONY: update-attribution-checksums-docker
 update-attribution-checksums-docker:
-	build/lib/update_checksum_docker.sh $(PROJECT) $(RELEASE_BRANCH)
+	build/lib/update_checksum_docker.sh $(PROJECT) $(IMAGE_REPO) $(RELEASE_BRANCH)
 
 .PHONY: stop-docker-builder
 stop-docker-builder:
@@ -159,7 +159,7 @@ attribution-files-project-%:
 	build/update-attribution-files/make_attribution.sh $(PROJECT_PATH) attribution
 
 .PHONY: update-attribution-files
-update-attribution-files: add-generated-help-block attribution-files checksum-files
+update-attribution-files: add-generated-help-block attribution-files checksum-files go-mod-files
 	build/lib/update_go_versions.sh
 	build/update-attribution-files/create_pr.sh
 
@@ -170,6 +170,15 @@ checksum-files-project-%:
 
 .PHONY: checksum-files
 checksum-files: $(addprefix checksum-files-project-, $(ALL_PROJECTS))
+	build/update-attribution-files/create_pr.sh
+
+.PHONY: go-mod-files-project-%
+go-mod-files-project-%:
+	$(eval PROJECT_PATH=projects/$(subst _,/,$*))
+	build/update-attribution-files/make_attribution.sh $(PROJECT_PATH) update-go-mods
+
+.PHONY: go-mod-files
+go-mod-files: $(addprefix go-mod-files-project-, $(ALL_PROJECTS))
 	build/update-attribution-files/create_pr.sh
 
 .PHONY: add-generated-help-block-project-%
@@ -186,11 +195,23 @@ update-release-number:
 	go vet ./cmd/release/number
 	go run ./cmd/release/number/main.go \
 		--branch=$(RELEASE_BRANCH) \
+		--isProd=$(is_update_prod_number) \
 		--openPR=$(OPEN_PR)
+
+.PHONY: update-dev-release-number
+update-dev-release-number:
+	$(MAKE) is_update_prod_number=false update-release-number
+
+.PHONY: update-prod-release-number
+update-prod-release-number:
+	$(MAKE) is_update_prod_number=true update-release-number
+
+.PHONY: update-release-numbers
+update-release-numbers: update-dev-release-number update-prod-release-number
 
 .PHONY: update-all-release-numbers
 update-all-release-numbers:
-	for r_b in $(SUPPORTED_RELEASE_BRANCHES); do RELEASE_BRANCH=$$r_b $(MAKE) update-release-number; done
+	for r_b in $(SUPPORTED_RELEASE_BRANCHES); do RELEASE_BRANCH=$$r_b $(MAKE) update-release-numbers; done
 
 .PHONY: release-docs
 release-docs:
@@ -214,4 +235,5 @@ only-index-md-from-existing-release-manifest:
 		--includeREADME=false \
 		--includeDocsIndex=false \
 		--force=true
+
 

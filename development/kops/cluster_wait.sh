@@ -45,14 +45,8 @@ function k {
 echo 'Waiting for cluster to come up...'
 k apply -f ./${KOPS_CLUSTER_NAME}/aws-iam-authenticator.yaml
 
-# In kops 1-21, metrics was updated and the port was changed to 443 from 4443.
-# In the versions of metrics server we ship for kube versions < 1-21, it does
-# not support binding to 443
-# patching back to old port and behavior
-if [ "${RELEASE_BRANCH}" != "1-21" ] && [ "${RELEASE_BRANCH}" != "1-22" ]; then
-    PATCH='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--secure-port=4443" },{"op": "replace", "path": "/spec/template/spec/containers/0/ports/0/containerPort", "value": 4443 }]'
-    k  -n kube-system patch deployments metrics-server --type=json -p="$PATCH"    
-fi
+PATCH='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--secure-port=4443" },{"op": "replace", "path": "/spec/template/spec/containers/0/ports/0/containerPort", "value": 4443 }]'
+k  -n kube-system patch deployments metrics-server --type=json -p="$PATCH"    
 
 # For all supported versions except 1-18, kops installs an older metrics server
 # than we ship with EKS-D, along with an older clusterrole def. The 0.6 version

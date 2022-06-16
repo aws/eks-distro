@@ -19,11 +19,11 @@ ARG TARGETARCH
 ARG TARGETOS
 ARG RELEASE_BRANCH
 
-COPY _output/$RELEASE_BRANCH/bin/release-src/$TARGETOS-$TARGETARCH/go-runner /usr/local/bin/go-runner
+COPY _output/$RELEASE_BRANCH/bin/release-src/$TARGETOS-$TARGETARCH/go-runner /go-runner
 COPY _output/$RELEASE_BRANCH/LICENSES /LICENSES
 COPY $RELEASE_BRANCH/ATTRIBUTION.txt /ATTRIBUTION.txt
 
-ENTRYPOINT ["/usr/local/bin/go-runner"]
+ENTRYPOINT ["/go-runner"]
 
 
 FROM base as standard
@@ -54,6 +54,6 @@ ARG RELEASE_BRANCH
 
 COPY _output/$RELEASE_BRANCH/iptables-wrapper /usr/sbin/iptables-wrapper
 
-ENTRYPOINT ["/usr/local/bin/go-runner"]
+ENTRYPOINT ["/go-runner"]
 
 FROM base as minimal

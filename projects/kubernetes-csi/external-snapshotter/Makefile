@@ -1,4 +1,4 @@
-BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
+BASE_DIRECTORY:=$(shell git rev-parse --show-toplevel)
 GIT_TAG?=$(shell cat $(RELEASE_BRANCH)/GIT_TAG)
 GOLANG_VERSION?=$(shell cat $(RELEASE_BRANCH)/GOLANG_VERSION)
 
@@ -20,6 +20,8 @@ DOCKERFILE_FOLDER=./docker/linux/$(IMAGE_NAME)
 
 HAS_RELEASE_BRANCHES=true
 
+VENDOR_UPDATE_SCRIPT=release-tools/update-vendor.sh
+
 include $(BASE_DIRECTORY)/Common.mk
 
 
@@ -28,7 +30,8 @@ $(GATHER_LICENSES_TARGETS): $(SNAPSHOTTER_LICENSE)
 # external-snapshotter ends up vendoring some deps that exist in the main repo, but there
 # is no license file in the subfolder and go-license is not able to find it
 # manually copying the root license to the vendor directory
-$(SNAPSHOTTER_LICENSE): $(GIT_CHECKOUT_TARGET)
+$(SNAPSHOTTER_LICENSE): | $(GO_MOD_DOWNLOAD_TARGETS)
+	mkdir -p $(@D)
 	cp $(REPO)/LICENSE $@
 
 

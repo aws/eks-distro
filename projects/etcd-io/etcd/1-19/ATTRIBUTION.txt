@@ -59,7 +59,7 @@ https://github.com/googleapis/go-genproto
 ** google.golang.org/grpc; version v1.26.0 --
 https://github.com/grpc/grpc-go
 
-** gopkg.in/yaml.v2; version v2.2.2 --
+** gopkg.in/yaml.v2; version v2.2.8 --
 https://gopkg.in/yaml.v2
 
 

@@ -1,6 +1,14 @@
 ## EKS Distro Repository
 
-### 🚨 EKS Distro 1-18 is deprecated. See details [below](#kubernetes-1-18-deprecated) 🚨
+### 🚨🚨🚨 IMPORTANT INFORMATION ABOUT 1.19 SUPPORT 🚨🚨🚨
+
+EKS-D will be discontinuing support of Kubernetes v1.19 soon. While there are no
+plans to removed EKS-D 1.19 images from the ECR, there will be no more updates 
+to 1.19 once support has stopped. **Due to the increased security risk this poses, 
+it is HIGHLY recommended that users of 1.19 update to a supported version 
+(1.20 - 1.22) as soon as possible.**
+
+---
 
 | Release | Development Build Status |
 | --- | --- |
@@ -8,6 +16,8 @@
 | 1-20 | [![1-20](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-20-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-20-postsubmit) |
 | 1-21 | [![1-21](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-21-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-21-postsubmit) |
 | 1-22 | [![1-22](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-22-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-22-postsubmit) |
+
+[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/6111/badge)](https://bestpractices.coreinfrastructure.org/projects/6111)
 
 Amazon **EKS Distro** (EKS-D) is a Kubernetes distribution based on and used by
 Amazon Elastic Kubernetes Service (EKS) to create reliable and secure Kubernetes
@@ -32,25 +42,25 @@ To receive notifications about new EKS-D releases, subscribe to the EKS-D update
 
 | Release | Manifest |
 | --- | --- |
-| 4  | [kubernetes-1-22-eks-4](https://distro.eks.amazonaws.com/kubernetes-1-22/kubernetes-1-22-eks-4.yaml) |
+| 7 | [kubernetes-1-22-eks-7](https://distro.eks.amazonaws.com/kubernetes-1-22/kubernetes-1-22-eks-7.yaml) |
 
 ### Kubernetes 1-21
 
 | Release | Manifest |
 | --- | --- |
-| 11 | [kubernetes-1-21-eks-11](https://distro.eks.amazonaws.com/kubernetes-1-21/kubernetes-1-21-eks-11.yaml) |
+| 14 | [kubernetes-1-21-eks-14](https://distro.eks.amazonaws.com/kubernetes-1-21/kubernetes-1-21-eks-14.yaml) |
 
 ### Kubernetes 1-20
 
 | Release | Manifest |
 | --- | --- |
-| 13 | [kubernetes-1-20-eks-13](https://distro.eks.amazonaws.com/kubernetes-1-20/kubernetes-1-20-eks-13.yaml) |
+| 16 | [kubernetes-1-20-eks-16](https://distro.eks.amazonaws.com/kubernetes-1-20/kubernetes-1-20-eks-16.yaml) |
 
 ### Kubernetes 1-19
 
 | Release | Manifest |
 | --- | --- |
-| 16 | [kubernetes-1-19-eks-16](https://distro.eks.amazonaws.com/kubernetes-1-19/kubernetes-1-19-eks-16.yaml) |
+| 19 | [kubernetes-1-19-eks-19](https://distro.eks.amazonaws.com/kubernetes-1-19/kubernetes-1-19-eks-19.yaml) |
 
 ### Kubernetes 1-18: DEPRECATED
 
@@ -59,7 +69,7 @@ plans to remove the 1.18 images from EKS Distro ECR, there will be no more
 updates, including security updates, for 1.18.
 
 **Due to the increased security risk this poses, it is HIGHLY recommended that
-users of 1.18 update to a supported version (1.19 - 1.22) as soon as possible.**
+users of 1.18 update to a supported version (1.20 - 1.22) as soon as possible.**
 
 ## Development
 
@@ -69,15 +79,18 @@ Kubernetes CI/CD system. EKS operates an installation of Prow, which is visible
 at https://prow.eks.amazonaws.com/. Please read our
 [CONTRIBUTING](CONTRIBUTING.md) guide before making a Pull Request.
 
-For building EKS Distro locally refer to the [building-locally](docs/development/building-locally.md) guide.
+For building EKS Distro locally, refer to the 
+[building-locally](docs/development/building-locally.md) guide.
+
+For updating project dependencies, refer to the
+[update-project-dependency](docs/development/update-project-dependency.md) guide.
 
 ## Security
 
 If you discover a potential security issue in this project, or think you may
 have discovered a security issue, we ask that you notify AWS Security via our
-[vulnerability reporting
-page](http://aws.amazon.com/security/vulnerability-reporting/). Please do
-**not** create a public GitHub issue.
+[vulnerability reporting page](http://aws.amazon.com/security/vulnerability-reporting/).
+Please do **not** create a public GitHub issue.
 
 ## License
 

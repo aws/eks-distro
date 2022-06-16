@@ -69,19 +69,9 @@ function build::common::generate_shasum() {
 
 
 function build::gather_licenses() {
-  if ! command -v go-licenses &> /dev/null
-  then
-    echo " go-licenses not found.  If you need license or attribution file handling"
-    echo " please refer to the doc in docs/development/attribution-files.md"
-    exit
-  fi
-
   local -r outputdir=$1
   local -r patterns=$2
-
-  # use go 1.16 since 1.17 seems to be more agressive about wanting to update
-  # the go.mod/sum file
-  build::common::use_go_version 1.16
+  local -r golang_version=$3
 
   # Force deps to only be pulled form vendor directories
   # this is important in a couple cases where license files
@@ -91,18 +81,34 @@ function build::gather_licenses() {
   export GOOS=linux 
   export GOARCH=amd64 
 
+  # the version of go used here must be the version go-licenses was installed with
+  # by default we use 1.16, but due to changes in 1.17, there are some changes that require using 1.17
+  if [ "$golang_version" == "1.17" ]; then
+    build::common::use_go_version 1.17
+  else
+    build::common::use_go_version 1.16
+  fi
+
+  if ! command -v go-licenses &> /dev/null
+  then
+    echo " go-licenses not found.  If you need license or attribution file handling"
+    echo " please refer to the doc in docs/development/attribution-files.md"
+    exit
+  fi
+
   mkdir -p "${outputdir}/attribution"
   # attribution file generated uses the output go-deps and go-license to gather the necessary
   # data about each dependency to generate the amazon approved attribution.txt files
   # go-deps is needed for module versions
   # go-licenses are all the dependencies found from the module(s) that were passed in via patterns
   go list -deps=true -json ./... | jq -s ''  > "${outputdir}/attribution/go-deps.json"
-  
-  go-licenses save --force $patterns --save_path="${outputdir}/LICENSES"
-  
+
   # go-licenses can be a bit noisy with its output and lot of it can be confusing 
   # the following messages are safe to ignore since we do not need the license url for our process
-  NOISY_MESSAGES="cannot determine URL for|Error discovering URL|unsupported package host"
+  NOISY_MESSAGES="cannot determine URL for|Error discovering license URL|unsupported package host|contains non-Go code|has empty version|vendor.*\.s$"
+
+  go-licenses save --force $patterns --save_path="${outputdir}/LICENSES" 2>  >(grep -vE "$NOISY_MESSAGES" >&2)
+  
   go-licenses csv $patterns > "${outputdir}/attribution/go-license.csv" 2>  >(grep -vE "$NOISY_MESSAGES" >&2)
 
   if cat "${outputdir}/attribution/go-license.csv" | grep -q "^vendor\/golang.org\/x"; then
@@ -149,14 +155,21 @@ function build::non-golang::gather_licenses(){
   git clone https://github.com/${project_org}/${project_name}
   cd $project_name
   git checkout $git_tag
-  license_files=($(find . \( -name "*COPYING*" -o -name "*COPYRIGHT*" -o -name "*LICEN[C|S]E*" -o -name "*NOTICE*" \)))
-  for file in "${license_files[@]}"; do
-    license_dest=$output_dir/LICENSES/github.com/${project_org}/${project_name}/$(dirname $file)
-    mkdir -p $license_dest
-    cp $file $license_dest/$(basename $file)
-  done
   cd ..
+  build::non-golang::copy_licenses $project_name $output_dir/LICENSES/github.com/${project_org}/${project_name}
   rm -rf $project_name
+}
+
+function build::non-golang::copy_licenses(){
+  local -r source_dir="$1"
+  local -r destination_dir="$2"
+  (cd $source_dir; find . \( -name "*COPYING*" -o -name "*COPYRIGHT*" -o -name "*LICEN[C|S]E*" -o -name "*NOTICE*" \)) |
+  while read file
+  do
+    license_dest=$destination_dir/$(dirname $file)
+    mkdir -p $license_dest
+    cp "${source_dir}/${file}" $license_dest/$(basename $file)
+  done
 }
 
 function build::generate_attribution(){
@@ -237,4 +250,17 @@ function build::common::wait_for_tag() {
       exit 1
     fi
   done
+}
+
+function build::common::get_clone_url() {
+  local -r org=$1
+  local -r repo=$2
+  local -r aws_region=$3
+  local -r codebuild_ci=$4
+
+  if [ "$codebuild_ci" = "true" ]; then
+    echo "https://git-codecommit.${aws_region}.amazonaws.com/v1/repos/${org}.${repo}"
+  else
+    echo "https://github.com/${org}/${repo}.git"
+  fi
 }

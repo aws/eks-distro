@@ -1,4 +1,4 @@
-BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
+BASE_DIRECTORY:=$(shell git rev-parse --show-toplevel)
 GIT_TAG?=$(shell cat ./$(RELEASE_BRANCH)/GIT_TAG)
 GOLANG_VERSION?=$(shell cat ./$(RELEASE_BRANCH)/GOLANG_VERSION)
 PAUSE_TAG?=$(shell cat $(wildcard ./$(RELEASE_BRANCH)/PAUSE_*TAG))
@@ -68,6 +68,11 @@ $(BINARY_TARGETS): $(KUBE_GIT_VERSION_FILE) | $(GIT_PATCH_TARGET)
 # There are a couple of fixes needed to the licenses and root-module name before running gather licenses
 $(GATHER_LICENSES_TARGETS): fix-licenses
 
+# Intentional override since this projects deps are vendored and handled a bit differently
+# there is no need to go mod download
+$(GO_MOD_DOWNLOAD_TARGETS):
+	touch $@
+
 # For kube proxy images, use the kube proxy base
 kube-proxy/images/%: BASE_IMAGE=$(KUBE_PROXY_BASE_IMAGE)
 
@@ -90,7 +95,7 @@ tarballs: $(KUBE_GIT_VERSION_FILE)
 cleanup-artifacts:
 	@mkdir $(ARTIFACTS_PATH)/bin
 	rm -rf $(OUTPUT_DIR)/{attribution,LICENSES,pause} $(OUTPUT_DIR)/bin/{LICENSES,ATTRIBUTION.txt}
-	cp -rf $(OUTPUT_DIR)/bin/* $(ARTIFACTS_PATH)/bin
+	mv $(OUTPUT_DIR)/bin/* $(ARTIFACTS_PATH)/bin
 	cp $(OUTPUT_DIR)/ATTRIBUTION.txt $(ARTIFACTS_PATH)
 
 .PHONY: test
@@ -98,7 +103,7 @@ test: $(BINARY_TARGETS)
 	build/run_tests.sh $(RELEASE_BRANCH) $(GOLANG_VERSION)
 
 .PHONY: fix-licenses
-fix-licenses:
+fix-licenses: $(GIT_PATCH_TARGET)
 	build/fix_licenses.sh $(REPO) $(OUTPUT_DIR)
 
 $(KUBE_GIT_VERSION_FILE): $(GIT_PATCH_TARGET)

@@ -1,4 +1,4 @@
-BASE_DIRECTORY=$(shell git rev-parse --show-toplevel)
+BASE_DIRECTORY:=$(shell git rev-parse --show-toplevel)
 GIT_TAG?=$(shell cat ./$(RELEASE_BRANCH)/GIT_TAG)
 GOLANG_VERSION?=$(shell cat ./$(RELEASE_BRANCH)/GOLANG_VERSION)
 
@@ -7,6 +7,7 @@ REPO_OWNER=kubernetes
 # REPO cant be releae since there is a phony release target
 # using release-src and overriding component
 COMPONENT=$(REPO_OWNER)/release
+CLONE_URL=https://github.com/$(COMPONENT).git
 
 GO_RUNNER_IMAGE_COMPONENT?=kubernetes/go-runner
 KUBE_PROXY_BASE_IMAGE_COMPONENT?=kubernetes/kube-proxy-base
@@ -28,8 +29,12 @@ DOCKERFILE_FOLDER=./docker/$(IMAGE_NAME)
 
 HAS_RELEASE_BRANCHES=true
 
+FIX_LICENSES_GO_RUNNER_TARGET=$(REPO)/images/build/go-runner/LICENSE
+
 include $(BASE_DIRECTORY)/Common.mk
 
+
+$(GATHER_LICENSES_TARGETS): | $(FIX_LICENSES_GO_RUNNER_TARGET)
 
 $(call IMAGE_TARGETS_FOR_NAME, kube-proxy-base): $(IPTABLES_WRAPPER)
 $(call IMAGE_TARGETS_FOR_NAME, kube-proxy-base): IMAGE_TARGET=$(RELEASE_VARIANT)
@@ -44,6 +49,10 @@ $(IPTABLES_WRAPPER): $(GIT_CHECKOUT_TARGET)
 .PHONE: fix-licenses
 fix-licenses: $(GATHER_LICENSES_TARGETS)
 	build/fix_licenses.sh $(OUTPUT_DIR)
+
+$(FIX_LICENSES_GO_RUNNER_TARGET): | $(GO_MOD_DOWNLOAD_TARGETS)
+#go-licenses requires a LICENSE file in each folder with the go.mod
+	cp $(REPO)/LICENSE $@
 
 
 ########### DO NOT EDIT #############################

@@ -9,6 +9,7 @@
 ##@ GIT/Repo Targets
 clone-repo:  ## Clone upstream `plugins`
 checkout-repo: ## Checkout upstream tag based on value in GIT_TAG file
+patch-repo: ## Patch upstream repo with patches in patches directory
 
 ##@ Binary Targets
 binaries: ## Build all binaries: `bandwidth firewall flannel portmap sbr tuning bridge host-device ipvlan loopback macvlan ptp vlan dhcp host-local static ` for `linux/amd64 linux/arm64`
@@ -67,7 +68,16 @@ clean-repo: ## Removes source directory
 help: ## Display this help
 add-generated-help-block: ## Add or update generated help block to document project make file and support shell auto completion
 
+##@Update Helpers
+run-target-in-docker: ## Run `MAKE_TARGET` using builder base docker container
+update-attribution-checksums-docker: ## Update attribution and checksums using the builder base docker container
+stop-docker-builder: ## Clean up builder base docker container
+generate: ## Update UPSTREAM_PROJECTS.yaml
+update-go-mods: ## Update locally checked-in go sum to assist in vuln scanning
+update-vendor-for-dep-patch: ## After bumping dep in go.mod file, uses generic vendor update script or one provided from upstream project
+patch-for-dep-update: ## After bumping dep in go.mod file and updating vendor, generates patch
+
 ##@ Build Targets
-build: ## Called via prow presubmit, calls `validate-checksums  attribution upload-artifacts attribution-pr`
+build: ## Called via prow presubmit, calls `validate-checksums attribution  upload-artifacts attribution-pr`
 release: ## Called via prow postsubmit + release jobs, calls `validate-checksums  upload-artifacts`
 ########### END GENERATED ###########################

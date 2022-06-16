@@ -21,9 +21,11 @@ upgrading it yourself. For end users, however, running applications is the
 same as with EKS since the two support the same API versions and
 same set of components.
 
-In the near future, a supported, packaged product and installation method
-for EKS-D will be available under the name EKS Anywhere (EKS-A). To try out
-EKS-D for now, instructions in this repository describe how to:
+A supported installation method for EKS-D is available with [EKS 
+Anywhere (EKS-A)][eks-a]. To try out EKS-D without EKS-A, the instructions in 
+this website describe how to:
+
+[eks-a]: https://anywhere.eks.amazonaws.com/
 
 * Build EKS-D from source code
 
@@ -48,12 +50,12 @@ The tenets of the EKS Distro (EKS-D) project are:
 
 ## Release Channels
 
-The EKS Distro releases Kubernetes versions at the same pace as EKS and issues 
+EKS Distro releases Kubernetes versions at the same pace as EKS and issues 
 updates as releases in release channels. A release channel tracks minor
 versions (`v<major>.<minor>.<point>`) of Kubernetes, and a channel will be
 retired when EKS ceases supporting a particular minor version of Kubernetes.
 EKS Distro announces new releases and release channels via an SNS topic 
-(arn:aws:sns:us-east-1:379412251201:eks-distro-updates) at their launched.
+(arn:aws:sns:us-east-1:379412251201:eks-distro-updates) at their launch.
 Releases and release channels are structured as Kubernetes Custom
 Resource Definitions
 ([CRDs](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/)),
@@ -105,7 +107,7 @@ commands:
 
 ```bash
 RELEASE_BRANCH=1-22
-RELEASE=4
+RELEASE=7
 kubectl apply -f https://distro.eks.amazonaws.com/crds/releases.distro.eks.amazonaws.com-v1alpha1.yaml
 kubectl apply -f https://distro.eks.amazonaws.com/kubernetes-${RELEASE_BRANCH}/kubernetes-${RELEASE_BRANCH}-eks-${RELEASE}.yaml
 kubectl get release kubernetes-${RELEASE_BRANCH}-eks-${RELEASE}
@@ -120,12 +122,18 @@ repository for the [EKS Optimized AMI](https://github.com/awslabs/amazon-eks-ami
 if you are interested in the AL2 container runtime kernel version.
 
 #### EKS-D 1.22 Version Dependencies
+* [v1-22-eks-7](releases/1-22/7/index.md) (May 17, 2022)
+* [v1-22-eks-6](releases/1-22/6/index.md) (May 1, 2022)
+* [v1-22-eks-5](releases/1-22/5/index.md) (April 20, 2022)
 * [v1-22-eks-4](releases/1-22/4/index.md) (March 28, 2022)
 * [v1-22-eks-3](releases/1-22/3/index.md) (March 17, 2022)
 * [v1-22-eks-2](releases/1-22/2/index.md) (March 17, 2022)
 * [v1-22-eks-1](releases/1-22/1/index.md) (March 6, 2022)
 
 #### EKS-D 1.21 Version Dependencies
+* [v1-21-eks-14](releases/1-21/14/index.md) (May 17, 2022)
+* [v1-21-eks-13](releases/1-21/13/index.md) (May 1, 2022)
+* [v1-21-eks-12](releases/1-21/12/index.md) (April 20, 2022)
 * [v1-21-eks-11](releases/1-21/11/index.md) (March 17, 2022)
 * [v1-21-eks-10](releases/1-21/10/index.md) (March 17, 2022)
 * [v1-21-eks-9](releases/1-21/9/index.md) (February 18, 2022)
@@ -139,6 +147,9 @@ if you are interested in the AL2 container runtime kernel version.
 * [v1-21-eks-1](releases/1-21/1/index.md) (July 19, 2021)
 
 #### EKS-D 1.20 Version Dependencies
+* [v1-20-eks-16](releases/1-20/16/index.md) (May 17, 2022)
+* [v1-20-eks-15](releases/1-20/15/index.md) (May 1, 2022)
+* [v1-20-eks-14](releases/1-20/14/index.md) (April 20, 2022)
 * [v1-20-eks-13](releases/1-20/13/index.md) (March 17, 2022)
 * [v1-20-eks-12](releases/1-20/12/index.md) (March 17, 2022)
 * [v1-20-eks-11](releases/1-20/11/index.md) (February 18, 2022)
@@ -154,6 +165,9 @@ if you are interested in the AL2 container runtime kernel version.
 * [v1-20-eks-1](releases/1-20/1/index.md) (May 18, 2021)
 
 #### EKS-D 1.19 Version Dependencies
+* [v1-19-eks-19](releases/1-19/19/index.md) (May 17, 2022)
+* [v1-19-eks-18](releases/1-19/18/index.md) (May 1, 2022)
+* [v1-19-eks-17](releases/1-19/17/index.md) (April 20, 2022)
 * [v1-19-eks-16](releases/1-19/16/index.md) (March 17, 2022)
 * [v1-19-eks-15](releases/1-19/15/index.md) (March 17, 2022)
 * [v1-19-eks-14](releases/1-19/14/index.md) (February 18, 2022)

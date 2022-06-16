@@ -20,10 +20,10 @@ Signed-off-by: Taylor Neyland <tneyla@amazon.com>
  2 files changed, 68 insertions(+), 4 deletions(-)
 
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-index aa8634f20fd..b8a67e0693f 100644
+index e755c799ea4..37c45bf4f7e 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-@@ -2593,7 +2593,7 @@ func (c *Cloud) CreateDisk(volumeOptions *VolumeOptions) (KubernetesVolumeID, er
+@@ -2600,7 +2600,7 @@ func (c *Cloud) CreateDisk(volumeOptions *VolumeOptions) (KubernetesVolumeID, er
  		createType = DefaultVolumeType
  
  	default:
@@ -32,7 +32,7 @@ index aa8634f20fd..b8a67e0693f 100644
  	}
  
  	request := &ec2.CreateVolumeInput{}
-@@ -2625,12 +2625,12 @@ func (c *Cloud) CreateDisk(volumeOptions *VolumeOptions) (KubernetesVolumeID, er
+@@ -2632,12 +2632,12 @@ func (c *Cloud) CreateDisk(volumeOptions *VolumeOptions) (KubernetesVolumeID, er
  
  	response, err := c.ec2.CreateVolume(request)
  	if err != nil {
@@ -47,7 +47,7 @@ index aa8634f20fd..b8a67e0693f 100644
  	}
  	volumeName := KubernetesVolumeID("aws://" + aws.StringValue(response.AvailabilityZone) + "/" + string(awsID))
  
-@@ -2643,8 +2643,22 @@ func (c *Cloud) CreateDisk(volumeOptions *VolumeOptions) (KubernetesVolumeID, er
+@@ -2650,8 +2650,22 @@ func (c *Cloud) CreateDisk(volumeOptions *VolumeOptions) (KubernetesVolumeID, er
  		// because Kubernetes may have limited permissions to the key.
  		if isAWSErrorVolumeNotFound(err) {
  			err = fmt.Errorf("failed to create encrypted volume: the volume disappeared after creation, most likely due to inaccessible KMS encryption key")
