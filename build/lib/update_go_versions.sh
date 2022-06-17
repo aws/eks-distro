@@ -21,6 +21,10 @@ set -o pipefail
 SCRIPT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 source "${SCRIPT_ROOT}/common.sh"
 
+if [[ -z "$JOB_TYPE" ]]; then
+    exit 0
+fi
+
 GOPATH=$GOPATH
 if [ -d "/go" ]; then
     GOPATH="/go"
