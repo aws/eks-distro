@@ -24,7 +24,7 @@ require (
 	github.com/aws/aws-sdk-go v1.42.23
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/boltdb/bolt v1.3.1 // indirect
-	github.com/caddyserver/caddy v1.0.3
+	github.com/caddyserver/caddy v2.5.0
 	github.com/clusterhq/flocker-go v0.0.0-20160920122132-2b8b7259d313
 	github.com/codegangsta/negroni v1.0.0 // indirect
 	github.com/container-storage-interface/spec v1.2.0
@@ -191,7 +191,7 @@ replace (
 	github.com/bketelsen/crypt => github.com/bketelsen/crypt v0.0.3-0.20200106085610-5cbc8cc4026c
 	github.com/blang/semver => github.com/blang/semver v3.5.1+incompatible
 	github.com/boltdb/bolt => github.com/boltdb/bolt v1.3.1
-	github.com/caddyserver/caddy => github.com/caddyserver/caddy v1.0.3
+	github.com/caddyserver/caddy => github.com/caddyserver/caddy v2.5.0
 	github.com/cenkalti/backoff => github.com/cenkalti/backoff v2.1.1+incompatible
 	github.com/census-instrumentation/opencensus-proto => github.com/census-instrumentation/opencensus-proto v0.2.1
 	github.com/cespare/xxhash/v2 => github.com/cespare/xxhash/v2 v2.1.1
