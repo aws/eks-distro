@@ -38,6 +38,8 @@ git config remote.upstream.url >&- || git remote add upstream https://github.com
 # Files have already changed, stash to perform rebase
 git stash
 git fetch upstream
+
+git checkout $MAIN_BRANCH
 # there will be conflicts before we are on the bots fork at this point
 # -Xtheirs instructs git to favor the changes from the current branch
 git rebase -Xtheirs upstream/$MAIN_BRANCH
@@ -131,9 +133,24 @@ EOF
     pr:create "$pr_title" "$commit_message" "$pr_branch" "$pr_body"
 }
 
+function pr::file:add() {
+    local -r file="$1"
+
+    if git check-ignore -q $FILE; then
+        continue
+    fi
+
+    local -r diff="$(git diff --ignore-blank-lines --ignore-all-space $FILE)"
+    if [[ -z $diff ]]; then
+        continue
+    fi
+
+    git add $file
+}
+
 # Add checksum files
 for FILE in $(find . -type f -name CHECKSUMS); do    
-    git check-ignore -q $FILE || git add $FILE
+    pr::file:add $FILE
 done
 
 git add ./build/lib/install_go_versions.sh
@@ -151,7 +168,7 @@ fi
 
 # Add attribution files
 for FILE in $(find . -type f \( -name "*ATTRIBUTION.txt" ! -path "*/_output/*" \)); do    
-    git check-ignore -q $FILE || git add $FILE
+    pr::file:add $FILE
 done
 
 # stash help.mk files
@@ -166,7 +183,7 @@ if [ "$(git stash list)" != "" ]; then
 fi
 # Add help.mk/Makefile files
 for FILE in $(find . -type f \( -name Help.mk -o -name Makefile \)); do    
-    git check-ignore -q $FILE || git add $FILE
+    pr::file:add $FILE
 done
 
 # stash go.sum files
