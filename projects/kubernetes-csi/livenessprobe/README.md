@@ -26,10 +26,10 @@
    Check the `livenessprobe` target for any build flag changes, tag 
    changes, dependencies, etc. Check that the manifest target, which is called
    from the EKS-D Makefile, has not changed.
-4. Verify the Golang version has not changed. The version specified in
-   [release-tools/prow.sh](https://github.com/kubernetes-csi/livenessprobe/blob/5daa5c264193e349f589bbe414412d8e173a3c2f/release-tools/prow.sh#L89)
-   should be correct. Be sure to select the correct branch for the release when 
-   checking the Golang version.
+4. Verify the Golang version has not changed. The Golang version defined in
+   [`CSI_PROW_GO_VERSION_BUILD`](https://github.com/kubernetes-csi/livenessprobe/blob/v2.7.0/release-tools/prow.sh#L89)
+   is likely the correct one. Be sure to select the correct branch for the
+   project version when checking the Golang version.
 5. Update CHECKSUMS and attribution by using
    `make update-attribution-checksums-docker PROJECT=kubernetes-csi/livenessprobe RELEASE_BRANCH=<release_branch>` 
    from the root of the EKS-Distro repo.
