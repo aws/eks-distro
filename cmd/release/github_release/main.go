@@ -16,6 +16,9 @@ var (
 	errStream    io.Writer = os.Stderr
 )
 
+// Generates a release on GitHub.
+// IMPORTANT! Only run after the release is out, you've pulled own the
+// latest changes, and the release is tagged on GitHub.
 func main() {
 	branch := flag.String("branch", "", "Release branch, e.g. 1-22")
 	number := flag.String("number", "", "Release branch, e.g. 5")
