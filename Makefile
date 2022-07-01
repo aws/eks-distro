@@ -3,6 +3,7 @@ RELEASE_BRANCH?=$(shell cat $(BASE_DIRECTORY)/release/DEFAULT_RELEASE_BRANCH)
 SUPPORTED_RELEASE_BRANCHES?=$(shell cat $(BASE_DIRECTORY)/release/SUPPORTED_RELEASE_BRANCHES)
 RELEASE_ENVIRONMENT?=development
 RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/$(RELEASE_ENVIRONMENT)/RELEASE)
+PROD_RELEASE=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/production/RELEASE)
 ARTIFACT_BUCKET?=my-s3-bucket
 
 AWS_ACCOUNT_ID?=$(shell aws sts get-caller-identity --query Account --output text)
@@ -14,7 +15,7 @@ USE_PREV_RELEASE_MANIFEST?=false
 OPEN_PR?=true
 IS_LOCAL_RELEASE_NUMBER_FOR_NEW_RELEASE?=true
 
-RELEASE_GIT_TAG?=v$(RELEASE_BRANCH)-eks-$(RELEASE)
+RELEASE_GIT_TAG?=v$(RELEASE_BRANCH)-eks-$(PROD_RELEASE)
 RELEASE_GIT_COMMIT_HASH?=$(shell git rev-parse @)
 
 ALL_PROJECTS=containernetworking_plugins coredns_coredns etcd-io_etcd kubernetes-csi_external-attacher kubernetes-csi_external-resizer \
@@ -236,4 +237,10 @@ only-index-md-from-existing-release-manifest:
 		--includeDocsIndex=false \
 		--force=true
 
+.PHONY: github-release
+github-release:
+	go vet ./cmd/release/github_release
+	go run ./cmd/release/github_release/main.go \
+		--branch=$(RELEASE_BRANCH) \
+		--number=$(PROD_RELEASE)
 
