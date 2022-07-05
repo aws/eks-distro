@@ -1,1 +1,1 @@
-Amazon EKS Distro v1.22-9 is now available. Amazon EKS Distro v1.22-9 builds are available through ECR Public Gallery (https://gallery.ecr.aws/eks-distro) and GitHub (https://github.com/aws/eks-distro)
+Amazon EKS Distro v1.22-9 is now available. This release includes updated versions of CSI external-provisioner and AWS IAM Authenticator for Kubernetes. Amazon EKS Distro v1.22-9 builds are available through ECR Public Gallery (https://gallery.ecr.aws/eks-distro) and GitHub (https://github.com/aws/eks-distro)
