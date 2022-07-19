@@ -1,2 +1,2 @@
-3b61a990e6a51c0c13487bf0cfd4c6163cb06b8c9dea8209db04306a605367ca  _output/1-19/bin/coredns/linux-amd64/coredns
-d7fb420974824f4c805ddb3c9835bc25351da36d718b063da54f8655d2127c7c  _output/1-19/bin/coredns/linux-arm64/coredns
+d481aaae5a25b074f8a1d250e8bf293bb9f0593e8a3c8ec58b344243c6b41af1  _output/1-19/bin/coredns/linux-amd64/coredns
+53a2a59c3152f59c7116b832e0fb9e01bc7261f7bf9afb3ddb639bfbf1abcec1  _output/1-19/bin/coredns/linux-arm64/coredns
