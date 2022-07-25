@@ -119,3 +119,14 @@ if updating a released branch project.
     * `make build` 
         * can use `make update-attribution-checksums-docker` if you prefer to build in docker. See [building locally](building-locally.md)
         for more info
+	
+	* If there's an alert that recommends a specific version to fix it, but it hasn't been incorporated in the last few versions from upstream, there's a good chance it's because they decided the versions are not affected. For example, there's a vulnerability in some part of a package that the code doesn't use. 
+	  * Search for the CVE ID in the relevant repository code, issues, PRs etc to see if there's some conversation about it.
+	  * Check the release notes of the fixed version; there may be more information on who is affected and why it might or might not apply to us. 
+	Reference any link or conversation you find in the documentation for the CVE for that version
+
+	* If the above doesn't turn anything up, we're still probably safe to assume we're not affected, _only if the version is still in support_. Out of support version will *not* get patched and the vulnerability may definitely apply to them. So blanket "not affected" cannot be assumed for all versions. 
+
+	* If the vulnerability alert is new and nothing exists upstream yet, create an issue for it using the proper process for submitting security issues for the repo in question. If you can tackle the fix, consider doing so and submitting the PR.
+
+	* There may be many false positives in the vulnerability alerts. So the main value of this process is discovering if upstream has fixed something that affects out of support K8s version that we still support (>9 months ago) and we need to backport the fix to our additional supported versions. 
