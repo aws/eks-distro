@@ -107,7 +107,7 @@ commands:
 
 ```bash
 RELEASE_BRANCH=1-22
-RELEASE=7
+RELEASE=8
 kubectl apply -f https://distro.eks.amazonaws.com/crds/releases.distro.eks.amazonaws.com-v1alpha1.yaml
 kubectl apply -f https://distro.eks.amazonaws.com/kubernetes-${RELEASE_BRANCH}/kubernetes-${RELEASE_BRANCH}-eks-${RELEASE}.yaml
 kubectl get release kubernetes-${RELEASE_BRANCH}-eks-${RELEASE}
@@ -122,6 +122,7 @@ repository for the [EKS Optimized AMI](https://github.com/awslabs/amazon-eks-ami
 if you are interested in the AL2 container runtime kernel version.
 
 #### EKS-D 1.22 Version Dependencies
+* [v1-22-eks-8](releases/1-22/8/index.md) (June 20, 2022)
 * [v1-22-eks-7](releases/1-22/7/index.md) (May 17, 2022)
 * [v1-22-eks-6](releases/1-22/6/index.md) (May 1, 2022)
 * [v1-22-eks-5](releases/1-22/5/index.md) (April 20, 2022)
@@ -131,6 +132,7 @@ if you are interested in the AL2 container runtime kernel version.
 * [v1-22-eks-1](releases/1-22/1/index.md) (March 6, 2022)
 
 #### EKS-D 1.21 Version Dependencies
+* [v1-21-eks-15](releases/1-21/15/index.md) (June 20, 2022)
 * [v1-21-eks-14](releases/1-21/14/index.md) (May 17, 2022)
 * [v1-21-eks-13](releases/1-21/13/index.md) (May 1, 2022)
 * [v1-21-eks-12](releases/1-21/12/index.md) (April 20, 2022)
@@ -147,6 +149,7 @@ if you are interested in the AL2 container runtime kernel version.
 * [v1-21-eks-1](releases/1-21/1/index.md) (July 19, 2021)
 
 #### EKS-D 1.20 Version Dependencies
+* [v1-20-eks-17](releases/1-20/17/index.md) (June 20, 2022)
 * [v1-20-eks-16](releases/1-20/16/index.md) (May 17, 2022)
 * [v1-20-eks-15](releases/1-20/15/index.md) (May 1, 2022)
 * [v1-20-eks-14](releases/1-20/14/index.md) (April 20, 2022)
@@ -165,6 +168,7 @@ if you are interested in the AL2 container runtime kernel version.
 * [v1-20-eks-1](releases/1-20/1/index.md) (May 18, 2021)
 
 #### EKS-D 1.19 Version Dependencies
+* [v1-19-eks-20](releases/1-19/20/index.md) (June 20, 2022)
 * [v1-19-eks-19](releases/1-19/19/index.md) (May 17, 2022)
 * [v1-19-eks-18](releases/1-19/18/index.md) (May 1, 2022)
 * [v1-19-eks-17](releases/1-19/17/index.md) (April 20, 2022)

@@ -17,7 +17,7 @@ https://github.com/google/gnostic
 ** github.com/kubernetes-csi/csi-lib-utils; version v0.10.0 --
 https://github.com/kubernetes-csi/csi-lib-utils
 
-** github.com/kubernetes-csi/external-provisioner; version v3.1.0 --
+** github.com/kubernetes-csi/external-provisioner; version v3.1.1 --
 https://github.com/kubernetes-csi/external-provisioner
 
 ** github.com/kubernetes-csi/external-snapshotter/client/v4; version v4.1.0 --
@@ -716,7 +716,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/go; version go1.17.10 --
+** golang.org/go; version go1.17.11 --
 https://github.com/golang/go
 
 ** golang.org/x/crypto/ed25519; version v0.0.0-20210817164053-32db794688a5 --

@@ -3,9 +3,9 @@
 | Release | Version                                                      |
 |---------|--------------------------------------------------------------|
 | 1-19    | ![Version](https://img.shields.io/badge/version-v3.0.3-blue) |
-| 1-20    | ![Version](https://img.shields.io/badge/version-v4.1.1-blue) |
-| 1-21    | ![Version](https://img.shields.io/badge/version-v4.1.1-blue) |
-| 1-22    | ![Version](https://img.shields.io/badge/version-v5.0.1-blue) |
+| 1-20    | ![Version](https://img.shields.io/badge/version-v6.0.1-blue) |
+| 1-21    | ![Version](https://img.shields.io/badge/version-v6.0.1-blue) |
+| 1-22    | ![Version](https://img.shields.io/badge/version-v6.0.1-blue) |
 
 
 ### Updating
@@ -26,10 +26,10 @@
    Check the `external-snapshotter` target for any build flag changes, tag 
    changes, dependencies, etc. Check that the manifest target, which is called
    from the EKS-D Makefile, has not changed.
-4. Verify the Golang version has not changed. The version specified in
-   [`go.mod`](https://github.com/kubernetes-csi/external-snapshotter/blob/master/go.mod)
-   seems to be kept up to date. Be sure to select the correct branch for the 
-   release when checking the Golang version.
+4. Verify the Golang version has not changed. The Golang version defined in
+   [`CSI_PROW_GO_VERSION_BUILD`](https://github.com/kubernetes-csi/external-snapshotter/blob/v6.0.1/release-tools/prow.sh#L89)
+   is likely the correct one. Be sure to select the correct branch for the
+   project version when checking the Golang version.
 5. Update CHECKSUMS and attribution by using
    `make update-attribution-checksums-docker PROJECT=kubernetes-csi/external-snapshotter RELEASE_BRANCH=<release_branch>` 
    from the root of the EKS-Distro repo.

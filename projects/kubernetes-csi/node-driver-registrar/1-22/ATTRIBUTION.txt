@@ -8,7 +8,7 @@ https://github.com/go-logr/logr
 ** github.com/kubernetes-csi/csi-lib-utils; version v0.10.0 --
 https://github.com/kubernetes-csi/csi-lib-utils
 
-** github.com/kubernetes-csi/node-driver-registrar; version v2.5.0 --
+** github.com/kubernetes-csi/node-driver-registrar; version v2.5.1 --
 https://github.com/kubernetes-csi/node-driver-registrar
 
 ** github.com/matttproud/golang_protobuf_extensions/pbutil; version v1.0.2-0.20181231171920-c182affec369 --
@@ -450,7 +450,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/go; version go1.17.10 --
+** golang.org/go; version go1.17.11 --
 https://github.com/golang/go
 
 ** golang.org/x/net; version v0.0.0-20210825183410-e898025ed96a --

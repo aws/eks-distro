@@ -152,6 +152,7 @@ makes-clean-%:
 .PHONY: attribution-files
 attribution-files: $(addprefix attribution-files-project-, $(ALL_PROJECTS))
 	cat _output/total_summary.txt
+	build/update-attribution-files/create_pr.sh
 
 .PHONY: attribution-files-project-%
 attribution-files-project-%:
@@ -159,9 +160,7 @@ attribution-files-project-%:
 	build/update-attribution-files/make_attribution.sh $(PROJECT_PATH) attribution
 
 .PHONY: update-attribution-files
-update-attribution-files: add-generated-help-block attribution-files checksum-files go-mod-files
-	build/lib/update_go_versions.sh
-	build/update-attribution-files/create_pr.sh
+update-attribution-files: add-generated-help-block go-mod-files attribution-files checksum-files
 
 .PHONY: checksum-files-project-%
 checksum-files-project-%:
@@ -170,6 +169,7 @@ checksum-files-project-%:
 
 .PHONY: checksum-files
 checksum-files: $(addprefix checksum-files-project-, $(ALL_PROJECTS))
+	build/lib/update_go_versions.sh
 	build/update-attribution-files/create_pr.sh
 
 .PHONY: go-mod-files-project-%
