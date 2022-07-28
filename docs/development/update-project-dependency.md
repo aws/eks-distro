@@ -5,7 +5,7 @@ EKS-D matches the versions used in the cloud EKS service and generally dependenc
 during the life cycle of a specific Kubernetes release life cycle.  To account for security related fixes upstream
 we occasionally need to update specific dependencies for some of the projects in this repo.
 
-## Typical workflo
+## Typical workflow
 1. **Identify dependencies in need of updating**: Be sure to include the `RELEASE_BRANCH=<>` along with each make call
 if updating a released branch project.
     * Based on our automated Dependeabot alerts or Inspector V2 scans
