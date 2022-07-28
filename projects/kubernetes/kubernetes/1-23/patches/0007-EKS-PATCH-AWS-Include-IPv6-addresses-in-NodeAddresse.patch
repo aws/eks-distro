@@ -1,4 +1,4 @@
-From e1f4c330b3f3b15b801a608dc975ed1184320179 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Angus Lees <gus@inodes.org>
 Date: Thu, 19 Nov 2020 17:34:07 +1100
 Subject: --EKS-PATCH-- AWS: Include IPv6 addresses in NodeAddresses
@@ -210,6 +210,3 @@ index 5600c7c79fb..13aefcf3dd5 100644
  	var index1, index2 int
  	for i, addr := range addrs {
  		if addr.Type == v1.NodeInternalIP && addr.Address == "192.168.0.1" {
--- 
-2.36.0
-

@@ -42,25 +42,25 @@ To receive notifications about new EKS-D releases, subscribe to the EKS-D update
 
 | Release | Manifest |
 | --- | --- |
-| 8 | [kubernetes-1-22-eks-8](https://distro.eks.amazonaws.com/kubernetes-1-22/kubernetes-1-22-eks-8.yaml) |
+| 9 | [kubernetes-1-22-eks-9](https://distro.eks.amazonaws.com/kubernetes-1-22/kubernetes-1-22-eks-9.yaml) |
 
 ### Kubernetes 1-21
 
 | Release | Manifest |
 | --- | --- |
-| 15 | [kubernetes-1-21-eks-15](https://distro.eks.amazonaws.com/kubernetes-1-21/kubernetes-1-21-eks-15.yaml) |
+| 16 | [kubernetes-1-21-eks-16](https://distro.eks.amazonaws.com/kubernetes-1-21/kubernetes-1-21-eks-16.yaml) |
 
 ### Kubernetes 1-20
 
 | Release | Manifest |
 | --- | --- |
-| 17 | [kubernetes-1-20-eks-17](https://distro.eks.amazonaws.com/kubernetes-1-20/kubernetes-1-20-eks-17.yaml) |
+| 18 | [kubernetes-1-20-eks-18](https://distro.eks.amazonaws.com/kubernetes-1-20/kubernetes-1-20-eks-18.yaml) |
 
 ### Kubernetes 1-19
 
 | Release | Manifest |
 | --- | --- |
-| 20 | [kubernetes-1-19-eks-20](https://distro.eks.amazonaws.com/kubernetes-1-19/kubernetes-1-19-eks-20.yaml) |
+| 21 | [kubernetes-1-19-eks-21](https://distro.eks.amazonaws.com/kubernetes-1-19/kubernetes-1-19-eks-21.yaml) |
 
 ### Kubernetes 1-18: DEPRECATED
 
