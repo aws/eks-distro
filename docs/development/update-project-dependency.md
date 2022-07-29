@@ -43,7 +43,7 @@ if updating a released branch project.
 	  * Check the release notes of the fixed version; there may be more information on who is affected and why it might or might not apply to us. 
 	Reference any link or conversation you find in the documentation for the CVE for that version
 
-	* If the above doesn't turn anything up, we're still probably safe to assume we're not affected, _only if the version is still in support_. Out of support version will *not* get patched and the vulnerability may definitely apply to them. So blanket "not affected" cannot be assumed for all versions. 
+	* If the above doesn't turn anything up, the issue may not apply, _only if the version is still in support_. Out of support version will *not* get patched and the vulnerability may definitely apply to them. So blanket "not affected" cannot be assumed for all versions. 
 
 	* If the vulnerability alert is new and nothing exists upstream yet, create an issue for it using the proper process for submitting security issues for the repo in question. If you can tackle the fix, consider doing so and submitting the PR.
 
