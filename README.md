@@ -60,7 +60,7 @@ To receive notifications about new EKS-D releases, subscribe to the EKS-D update
 
 | Release | Manifest |
 | --- | --- |
-| 21 | [kubernetes-1-19-eks-21](https://distro.eks.amazonaws.com/kubernetes-1-19/kubernetes-1-19-eks-21.yaml) |
+| 22 | [kubernetes-1-19-eks-22](https://distro.eks.amazonaws.com/kubernetes-1-19/kubernetes-1-19-eks-22.yaml) |
 
 ### Kubernetes 1-18: DEPRECATED
 
