@@ -2,17 +2,15 @@
 
 ### 🚨🚨🚨 IMPORTANT INFORMATION ABOUT 1.19 SUPPORT 🚨🚨🚨
 
-EKS-D will be discontinuing support of Kubernetes v1.19 soon. While there are no
-plans to removed EKS-D 1.19 images from the ECR, there will be no more updates 
-to 1.19 once support has stopped. **Due to the increased security risk this poses, 
-it is HIGHLY recommended that users of 1.19 update to a supported version 
-(1.20 - 1.22) as soon as possible.**
+EKS-D has discontinued support of Kubernetes 1.19. While there are no plans to 
+removed EKS-D 1.19 images from the ECR, there will be no more updates to 1.19. 
+**Due to the increased security risk this poses, it is HIGHLY recommended that 
+users of 1.19 update to a supported version (1.20 - 1.22) as soon as possible.**
 
 ---
 
 | Release | Development Build Status |
 | --- | --- |
-| 1-19 | [![1-19](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-19-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-19-postsubmit) |
 | 1-20 | [![1-20](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-20-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-20-postsubmit) |
 | 1-21 | [![1-21](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-21-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-21-postsubmit) |
 | 1-22 | [![1-22](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-22-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-22-postsubmit) |
@@ -56,20 +54,16 @@ To receive notifications about new EKS-D releases, subscribe to the EKS-D update
 | --- | --- |
 | 19 | [kubernetes-1-20-eks-19](https://distro.eks.amazonaws.com/kubernetes-1-20/kubernetes-1-20-eks-19.yaml) |
 
-### Kubernetes 1-19
 
-| Release | Manifest |
-| --- | --- |
-| 22 | [kubernetes-1-19-eks-22](https://distro.eks.amazonaws.com/kubernetes-1-19/kubernetes-1-19-eks-22.yaml) |
+### Kubernetes 1.18 and 1.19: DEPRECATED
 
-### Kubernetes 1-18: DEPRECATED
-
-EKS Distro has discontinued support of Kubernetes v1.18. While there are no
-plans to remove the 1.18 images from EKS Distro ECR, there will be no more 
-updates, including security updates, for 1.18.
+EKS Distro has discontinued support of Kubernetes 1.18 and 1.19. While there are
+no plans to remove these versions' images from EKS Distro ECR, there will be no
+more updates, including security fixes, for them.
 
 **Due to the increased security risk this poses, it is HIGHLY recommended that
-users of 1.18 update to a supported version (1.20 - 1.22) as soon as possible.**
+users of 1.18 and 1.19 update to a supported version (1.20 - 1.22) as soon as 
+possible.**
 
 ## Development
 
