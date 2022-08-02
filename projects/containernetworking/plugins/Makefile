@@ -1,6 +1,6 @@
 BASE_DIRECTORY:=$(shell git rev-parse --show-toplevel)
-GIT_TAG?=$(shell cat GIT_TAG)
-GOLANG_VERSION?=1.14
+GIT_TAG?=$(shell cat $(RELEASE_BRANCH)/GIT_TAG)
+GOLANG_VERSION?=$(shell cat $(RELEASE_BRANCH)/GOLANG_VERSION)
 
 REPO=plugins
 REPO_OWNER=containernetworking
@@ -10,6 +10,7 @@ TAR_FILE_PREFIX=cni-plugins
 SOURCE_PATTERNS_TARGET=_output/source_patterns
 EXTRA_GO_LDFLAGS=-X github.com/containernetworking/plugins/pkg/utils/buildversion.BuildVersion=$(GIT_TAG)
 
+HAS_RELEASE_BRANCHES=true
 HAS_S3_ARTIFACTS=true
 IMAGE_NAMES=
 
