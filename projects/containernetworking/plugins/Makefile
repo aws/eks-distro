@@ -7,7 +7,7 @@ REPO_OWNER=containernetworking
 
 TAR_FILE_PREFIX=cni-plugins
 
-SOURCE_PATTERNS_TARGET=_output/source_patterns
+SOURCE_PATTERNS_TARGET=_output/$(RELEASE_BRANCH)/source_patterns
 EXTRA_GO_LDFLAGS=-X github.com/containernetworking/plugins/pkg/utils/buildversion.BuildVersion=$(GIT_TAG)
 
 HAS_RELEASE_BRANCHES=true
@@ -31,7 +31,7 @@ $(SOURCE_PATTERNS_TARGET): $(GIT_CHECKOUT_TARGET)
 .PHONY: validate-cli-version
 validate-cli-version: CLI=$(OUTPUT_BIN_DIR)/$(subst /,-,$(BUILDER_PLATFORM))/static
 validate-cli-version:
-	$(MAKE) $(CLI) BINARY_PLATFORMS=$(BUILDER_PLATFORM)
+	$(MAKE) $(CLI) SOURCE_PATTERNS=./plugins/ipam/static BINARY_TARGET_FILES=static  BINARY_PLATFORMS=$(BUILDER_PLATFORM)
 	$(CLI) version
 	@if [[ "CNI static plugin $(GIT_TAG)" != "$$($(CLI) version)"* ]]; then \
 		echo "Version set incorrectly on cli!"; \
