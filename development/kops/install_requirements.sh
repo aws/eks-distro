@@ -33,13 +33,20 @@ mkdir -p ${BASEDIR}/bin
 if [ ! -x ${KOPS} ]
 then
     echo "Determine kops version"
-    KOPS_VERSION="v1.23.2"
-    echo "Download kops"
-    KOPS_URL="https://github.com/kubernetes/kops/releases/download/${KOPS_VERSION}/kops-${OS}-${ARCH}"
-    set -x
-    curl -L -o ${KOPS} "${KOPS_URL}"
-    chmod 755 ${KOPS}
-    set +x
+    KOPS_VERSION_TAG="v1.23.2"
+
+    echo "Cloning kops"
+    KOPS_FLANNEL_PLUGIN_PATCH="0001-remove-hardcoded-requierment-on-flannel-plugin.patch"
+    KOPS_GIT_URL="https://github.com/kubernetes/kops.git"
+    git clone ${KOPS_GIT_URL}
+
+    echo "Patching kops"
+    git -C ${BASEDIR}/kops checkout ${KOPS_VERSION_TAG} 
+    git -C ${BASEDIR}/kops am ../patches/${KOPS_FLANNEL_PLUGIN_PATCH}
+
+    echo "Building kops"
+    KOPS_BIN_DIR="$(pwd)/bin"
+    (cd ${BASEDIR}/kops && GOBIN=${KOPS_BIN_DIR} make kops-install)
 fi
 
 if ! command -v kubectl &> /dev/null

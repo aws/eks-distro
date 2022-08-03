@@ -1,0 +1,29 @@
+From 2ec5afbedada5688c13aa8e8d9ac9ffba3ae4511 Mon Sep 17 00:00:00 2001
+From: Daniel Budris <budris@amazon.com>
+Date: Wed, 3 Aug 2022 11:50:10 -0400
+Subject: [PATCH] remove hardcoded requierment on flannel plugin
+
+In CNI v1.0.0 the flannel plugin was removed; so, when building EKS Distro 1.23 
+or greater the plugin is not present and cannot be loaded.
+However, EKS Distro does not use the flannel plugin in any cases 
+and the requierment hard-coded in kOps can be safely removed.
+
+---
+ nodeup/pkg/model/networking/common.go | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/nodeup/pkg/model/networking/common.go b/nodeup/pkg/model/networking/common.go
+index a7a08cb235..4d78eb4836 100644
+--- a/nodeup/pkg/model/networking/common.go
++++ b/nodeup/pkg/model/networking/common.go
+@@ -34,7 +34,6 @@ func (b *CommonBuilder) Build(c *fi.ModelBuilderContext) error {
+ 	assets := []string{
+ 		"bridge",
+ 		"dhcp",
+-		"flannel",
+ 		"host-device",
+ 		"host-local",
+ 		"ipvlan",
+-- 
+2.30.1 (Apple Git-130)
+
