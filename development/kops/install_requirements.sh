@@ -46,7 +46,7 @@ then
 
     echo "Building kops"
     KOPS_BIN_DIR="$(pwd)/bin"
-    (cd ${BASEDIR}/kops && GOBIN=${KOPS_BIN_DIR}/bin make kops-install)
+    (cd ${BASEDIR}/kops && GOBIN=${KOPS_BIN_DIR} make kops-install)
 fi
 
 if ! command -v kubectl &> /dev/null
