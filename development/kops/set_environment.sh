@@ -74,7 +74,7 @@ export PREFLIGHT_CHECK_PASSED
 export KUBERNETES_VERSION=$(cat ../../projects/kubernetes/kubernetes/${RELEASE_BRANCH}/GIT_TAG)
 export IMAGE_REPO=${IMAGE_REPO:-public.ecr.aws/eks-distro}
 export ARTIFACT_URL=${ARTIFACT_URL:-$ARTIFACT_BASE_URL/kubernetes-${RELEASE_BRANCH}/releases/${RELEASE}/artifacts}
-export CNI_VERSION=$(cat ../../projects/containernetworking/plugins/GIT_TAG)
+export CNI_VERSION=$(cat ../../projects/containernetworking/plugins/${RELEASE_BRANCH}/GIT_TAG)
 export CNI_VERSION_URL=${ARTIFACT_URL}/plugins/${CNI_VERSION}/cni-plugins-linux-${NODE_ARCHITECTURE}-${CNI_VERSION}.tar.gz
 export CNI_ASSET_HASH_STRING=${CNI_ASSET_HASH_STRING:-sha256:$(curl -s ${CNI_VERSION_URL}.sha256 | cut -f1 -d' ')}
 export KOPS=bin/kops
