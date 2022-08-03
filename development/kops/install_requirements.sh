@@ -45,7 +45,8 @@ then
     git -C ${BASEDIR}/kops am ../patches/${KOPS_FLANNEL_PLUGIN_PATCH}
 
     echo "Building kops"
-    (cd ${BASEDIR}/kops && make kops-install)
+    KOPS_BIN_DIR="$(pwd)/bin"
+    (cd ${BASEDIR}/kops && GOBIN=${KOPS_BIN_DIR}/bin make kops-install)
 fi
 
 if ! command -v kubectl &> /dev/null
