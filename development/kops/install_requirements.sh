@@ -43,7 +43,7 @@ then
     echo "Patching kops"
     REPO=${BASEDIR}/kops
     git -C ${REPO} config user.email prow@amazonaws.com
-	git -C ${REPO} config user.name "Prow Bot"
+    git -C ${REPO} config user.name "Prow Bot"
     git -C ${REPO}/kops checkout ${KOPS_VERSION_TAG} 
     git -C ${REPO}/kops am ../patches/${KOPS_FLANNEL_PLUGIN_PATCH}
 
