@@ -33,7 +33,7 @@ build::common::use_go_version $GOLANG_VERSION
 build::common::set_go_cache $CACHE_KEY $TAG
 
 # force a full download of deps to properly clean up the go.sum
-rm -rf go.sum vendor
+rm -rf vendor
 
 if [ ! -f "$CUSTOM_VENDOR_UPDATE_SCRIPT" ]; then
     go mod vendor
