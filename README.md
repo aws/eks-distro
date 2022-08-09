@@ -2,10 +2,11 @@
 
 ### 🚨🚨🚨 IMPORTANT INFORMATION ABOUT 1.19 SUPPORT 🚨🚨🚨
 
-EKS-D has discontinued support of Kubernetes 1.19. While there are no plans to 
-removed EKS-D 1.19 images from the ECR, there will be no more updates to 1.19. 
-**Due to the increased security risk this poses, it is HIGHLY recommended that 
-users of 1.19 update to a supported version (1.20 - 1.22) as soon as possible.**
+EKS-D will be discontinuing support of Kubernetes v1.19 soon. While there are no
+plans to removed EKS-D 1.19 images from the ECR, there will be no more updates 
+to 1.19 once support has stopped. **Due to the increased security risk this poses, 
+it is HIGHLY recommended that users of 1.19 update to a supported version 
+(1.20 - 1.23) as soon as possible.**
 
 ---
 
@@ -14,6 +15,7 @@ users of 1.19 update to a supported version (1.20 - 1.22) as soon as possible.**
 | 1-20 | [![1-20](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-20-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-20-postsubmit) |
 | 1-21 | [![1-21](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-21-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-21-postsubmit) |
 | 1-22 | [![1-22](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-22-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-22-postsubmit) |
+| 1-23 | [![1-23](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-23-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-23-postsubmit) |
 
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/6111/badge)](https://bestpractices.coreinfrastructure.org/projects/6111)
 
@@ -35,6 +37,12 @@ Full documentation for releases can be found on [https://distro.eks.amazonaws.co
 
 To receive notifications about new EKS-D releases, subscribe to the EKS-D updates SNS topic: 
 `arn:aws:sns:us-east-1:379412251201:eks-distro-updates`
+
+### Kubernetes 1-23
+
+| Release | Manifest |
+| --- | --- |
+| 3 | [kubernetes-1-23-eks-3](https://distro.eks.amazonaws.com/kubernetes-1-23/kubernetes-1-22-eks-3.yaml) |
 
 ### Kubernetes 1-22
 
@@ -62,7 +70,7 @@ no plans to remove these versions' images from EKS Distro ECR, there will be no
 more updates, including security fixes, for them.
 
 **Due to the increased security risk this poses, it is HIGHLY recommended that
-users of 1.18 and 1.19 update to a supported version (1.20 - 1.22) as soon as 
+users of 1.18 and 1.19 update to a supported version (1.20 - 1.23) as soon as 
 possible.**
 
 ## Development
