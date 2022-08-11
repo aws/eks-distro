@@ -1,0 +1,1 @@
+Amazon EKS Distro v1.23-4 is now available. This release supports Kubernetes 1.23.7. Amazon EKS Distro v1.23-4 builds are available through ECR Public Gallery (https://gallery.ecr.aws/eks-distro) and GitHub (https://github.com/aws/eks-distro)
