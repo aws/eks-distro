@@ -33,9 +33,8 @@ mkdir -p ${BASEDIR}/bin
 if [ ! -x ${KOPS} ]
 then
     echo "Determine kops version"
-    KOPS_VERSION="v1.24.1"
     echo "Download kops"
-    KOPS_URL="https://github.com/kubernetes/kops/releases/download/${KOPS_VERSION}/kops-${OS}-${ARCH}"
+    KOPS_URL="https://github.com/kubernetes/kops/releases/download/v${KOPS_VERSION}/kops-${OS}-${ARCH}"
     set -x
     curl -L -o ${KOPS} "${KOPS_URL}"
     chmod 755 ${KOPS}
