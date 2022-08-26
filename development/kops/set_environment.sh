@@ -23,6 +23,7 @@ export ARTIFACT_BASE_URL="https://distro.eks.amazonaws.com"
 export NODE_INSTANCE_TYPE=${NODE_INSTANCE_TYPE:-t3.medium}
 export NODE_ARCHITECTURE=${NODE_ARCHITECTURE:-amd64}
 export IPV6=${IPV6:-false}
+export KOPS_VERSION="1.24.1"
 
 if [ -n "$ARTIFACT_BUCKET" ]; then
     export ARTIFACT_BASE_URL="https://$ARTIFACT_BUCKET.s3.amazonaws.com"
@@ -77,7 +78,7 @@ export ARTIFACT_URL=${ARTIFACT_URL:-$ARTIFACT_BASE_URL/kubernetes-${RELEASE_BRAN
 export CNI_VERSION=$(cat ../../projects/containernetworking/plugins/${RELEASE_BRANCH}/GIT_TAG)
 export CNI_VERSION_URL=${ARTIFACT_URL}/plugins/${CNI_VERSION}/cni-plugins-linux-${NODE_ARCHITECTURE}-${CNI_VERSION}.tar.gz
 export CNI_ASSET_HASH_STRING=${CNI_ASSET_HASH_STRING:-sha256:$(curl -s ${CNI_VERSION_URL}.sha256 | cut -f1 -d' ')}
-export KOPS_BASE_URL=https://eks-d-postsubmit-artifacts.s3.amazonaws.com/kops/1.24.1
+export KOPS_BASE_URL=https://eks-d-postsubmit-artifacts.s3.amazonaws.com/kops/$KOPS_VERSION
 export KOPS=bin/kops
 mkdir -p bin
 export PATH=`pwd`/bin:${PATH}
