@@ -48,7 +48,7 @@ then
     KUBECTL_VERSION=$(cat ${BASEDIR}/../../projects/kubernetes/kubernetes/${RELEASE_BRANCH}/GIT_TAG)
     KUBECTL_PATH=${BASEDIR}/bin/kubectl
     COUNT=0
-    while [ ! "$(${KUBECTL_PATH} version --client true --short)" ]; do
+    while [ ! "$(${KUBECTL_PATH} version --client true)" ]; do
         sleep 5
         COUNT=$(expr $COUNT + 1)
         if [ $COUNT -gt 120 ]
