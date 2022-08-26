@@ -47,8 +47,15 @@ then
     echo "kubectl could not be found. Downloading..."
     KUBECTL_VERSION=$(cat ${BASEDIR}/../../projects/kubernetes/kubernetes/${RELEASE_BRANCH}/GIT_TAG)
     KUBECTL_PATH=${BASEDIR}/bin/kubectl
+    # Starting with Kubernetes 1.24, the short version output became the default, and the `--short`
+    # flag was deprecated. See https://github.com/kubernetes/kubernetes/pull/108987. Once Kubernetes
+    # 1.24 is the oldest version EKS-D supports, SHORT_FLAG_IF_NEEDED can be removed.
+    # The variable KUBERNETES_VERSION is presumed to start with a "v".
+    SHORT_FLAG_IF_NEEDED=$(awk -v k8s_minor_version="${KUBERNETES_VERSION:1:4}" '
+      BEGIN { print (k8s_minor_version < "1.24") ? "--short" : "" }
+    ')
     COUNT=0
-    while [ ! "$(${KUBECTL_PATH} version --client true --short)" ]; do
+    while [ ! "$(${KUBECTL_PATH} version --client true "$SHORT_FLAG_IF_NEEDED")" ]; do
         sleep 5
         COUNT=$(expr $COUNT + 1)
         if [ $COUNT -gt 120 ]
