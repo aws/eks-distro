@@ -45,15 +45,10 @@ function k {
 echo 'Waiting for cluster to come up...'
 k apply -f ./${KOPS_CLUSTER_NAME}/aws-iam-authenticator.yaml
 
-PATCH='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--secure-port=4443" },{"op": "replace", "path": "/spec/template/spec/containers/0/ports/0/containerPort", "value": 4443 }]'
-k  -n kube-system patch deployments metrics-server --type=json -p="$PATCH"    
-
-# For all supported versions except 1-18, kops installs an older metrics server
+# kops installs an older metrics server
 # than we ship with EKS-D, along with an older clusterrole def. The 0.6 version
 # of metrics requires a slightly different rbac setup.
-if [ "${RELEASE_BRANCH}" != "1-18" ]; then
-    k apply -f metrics-server-0.6-clusterrole.yaml
-fi
+k apply -f metrics-server-0.6-clusterrole.yaml
 
 # kops doesnt support setting these cilium values
 # session affinity for conformance tess

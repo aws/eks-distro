@@ -77,7 +77,7 @@ export ARTIFACT_URL=${ARTIFACT_URL:-$ARTIFACT_BASE_URL/kubernetes-${RELEASE_BRAN
 export CNI_VERSION=$(cat ../../projects/containernetworking/plugins/${RELEASE_BRANCH}/GIT_TAG)
 export CNI_VERSION_URL=${ARTIFACT_URL}/plugins/${CNI_VERSION}/cni-plugins-linux-${NODE_ARCHITECTURE}-${CNI_VERSION}.tar.gz
 export CNI_ASSET_HASH_STRING=${CNI_ASSET_HASH_STRING:-sha256:$(curl -s ${CNI_VERSION_URL}.sha256 | cut -f1 -d' ')}
-export KOPS_BASE_URL=https://eks-d-postsubmit-artifacts.s3.amazonaws.com/kops/1.23.2
+export KOPS_BASE_URL=https://eks-d-postsubmit-artifacts.s3.amazonaws.com/kops/1.24.1
 export KOPS=bin/kops
 mkdir -p bin
 export PATH=`pwd`/bin:${PATH}
