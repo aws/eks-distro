@@ -32,7 +32,17 @@ export KUBE_TIMEOUT=${KUBE_TIMEOUT:-"--timeout=600s"}
 
 build::common::use_go_version $GOLANG_VERSION
 
-go get gotest.tools/gotestsum
+# Beginning with Go 1.17, using `go get` to install executables was deprecated
+# in favor of `go install`. See https://go.dev/doc/go-get-install-deprecation
+awk -v short_golang_version="${GOLANG_VERSION:0:4}" \
+    -v go_install_min_version="1.17" \
+  'BEGIN {
+    if (short_golang_version<go_install_min_version)
+      system("go get gotest.tools/gotestsum")
+    else
+      system("go install gotest.tools/gotestsum")
+    fi
+  };'
 
 cd $MAKE_ROOT/kubernetes
 
@@ -44,10 +54,10 @@ export PATH="${GOPATH}/bin:${MAKE_ROOT}/kubernetes/third_party/etcd:${PATH}"
 MAX_RETRIES=5
 # There are flakes in upstream tests, the process also caches passing results
 # so on rerun it only runs the tests which failed
-for i in $(seq 1 $MAX_RETRIES); 
-do 
+for i in $(seq 1 $MAX_RETRIES);
+do
   [ $i -gt 1 ] && sleep 5
-  make test && ret=0 && break || ret=$?; 
+  make test && ret=0 && break || ret=$?;
 done
 
 if [ $ret -ne 0 ]; then
