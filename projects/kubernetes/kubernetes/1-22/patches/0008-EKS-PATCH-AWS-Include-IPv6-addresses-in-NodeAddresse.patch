@@ -22,7 +22,7 @@ Signed-off-by: Jyoti Mahapatra<jyotima@amazon.com>
  3 files changed, 78 insertions(+), 6 deletions(-)
 
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-index 7c2f33b232c..2a5fe901100 100644
+index 37c45bf4f7e..ff180e7f61e 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
 @@ -24,6 +24,7 @@ import (
@@ -51,7 +51,7 @@ index 7c2f33b232c..2a5fe901100 100644
  // NodeAddresses is an implementation of Instances.NodeAddresses.
  func (c *Cloud) NodeAddresses(ctx context.Context, name types.NodeName) ([]v1.NodeAddress, error) {
  	if c.selfAWSInstance.nodeName == name || len(name) == 0 {
-@@ -1551,6 +1563,27 @@ func (c *Cloud) NodeAddresses(ctx context.Context, name types.NodeName) ([]v1.No
+@@ -1548,6 +1560,27 @@ func (c *Cloud) NodeAddresses(ctx context.Context, name types.NodeName) ([]v1.No
  			}
  		}
  
@@ -106,7 +106,7 @@ index 7c2f33b232c..2a5fe901100 100644
  	publicIPAddress := aws.StringValue(instance.PublicIpAddress)
  	if publicIPAddress != "" {
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_fakes.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_fakes.go
-index b0662072f43..8a5eda69d38 100644
+index 0113c55554f..500a81a696a 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_fakes.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_fakes.go
 @@ -39,6 +39,7 @@ type FakeAWSServices struct {
@@ -117,7 +117,7 @@ index b0662072f43..8a5eda69d38 100644
  	networkInterfacesVpcIDs     []string
  
  	ec2      FakeEC2
-@@ -403,6 +404,13 @@ func (m *FakeMetadata) GetMetadata(key string) (string, error) {
+@@ -374,6 +375,13 @@ func (m *FakeMetadata) GetMetadata(key string) (string, error) {
  				}
  			}
  		}
@@ -132,7 +132,7 @@ index b0662072f43..8a5eda69d38 100644
  		return "", nil
  	}
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
-index d4c1ac10d31..1834c4e5d7c 100644
+index d168eb8467e..ad7de16331f 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_test.go
 @@ -589,7 +589,7 @@ func testHasNodeAddress(t *testing.T, addrs []v1.NodeAddress, addressType v1.Nod
