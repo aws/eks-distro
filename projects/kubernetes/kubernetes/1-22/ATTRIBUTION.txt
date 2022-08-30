@@ -101,7 +101,7 @@ https://github.com/golang/mock
 ** github.com/google/btree; version v1.0.1 --
 https://github.com/google/btree
 
-** github.com/google/cadvisor; version v0.39.3 --
+** github.com/google/cadvisor; version v0.39.4 --
 https://github.com/google/cadvisor
 
 ** github.com/google/gofuzz; version v1.1.0 --
@@ -341,7 +341,7 @@ https://github.com/kubernetes/kubectl
 ** k8s.io/kubelet; version v0.0.0 --
 https://github.com/kubernetes/kubelet
 
-** k8s.io/kubernetes; version v1.22.10 --
+** k8s.io/kubernetes; version v1.22.12 --
 https://github.com/kubernetes/kubernetes
 
 ** k8s.io/legacy-cloud-providers; version v0.0.0 --
@@ -975,7 +975,7 @@ https://github.com/kubernetes/apimachinery
 ** k8s.io/client-go/third_party/forked/golang/template; version v0.0.0 --
 https://github.com/kubernetes/client-go
 
-** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.22.10 --
+** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.22.12 --
 https://github.com/kubernetes/kubernetes
 
 ** k8s.io/utils/inotify; version v0.0.0-20211116205334-6203023598ed --
@@ -1885,7 +1885,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.22.10 --
+** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.22.12 --
 https://github.com/kubernetes/kubernetes
 
 Copyright ©2013 The gonum Authors. All rights reserved.
