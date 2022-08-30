@@ -13,7 +13,6 @@ From the original PR description:
   because device was in-use elsewhere, we should mark the device
   mount as uncertain because we can't use the global mount point at
   this point.
-
 ---
  pkg/volume/util/operationexecutor/operation_generator.go | 6 ++++++
  1 file changed, 6 insertions(+)
