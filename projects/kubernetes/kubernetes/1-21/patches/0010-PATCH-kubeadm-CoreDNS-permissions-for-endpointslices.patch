@@ -1,7 +1,7 @@
 From 74feb0759484202496e7639c5645e49a7258c9d5 Mon Sep 17 00:00:00 2001
 From: Antonio Ojea <antonio.ojea.garcia@gmail.com>
 Date: Wed, 12 May 2021 19:15:56 +0200
-Subject: --EKS PATCH-- kubeadm: CoreDNS permissions for endpointslices
+Subject: --PATCH-- kubeadm: CoreDNS permissions for endpointslices
 
 Cherry-pick of upstream Kubernetes commit
 https://github.com/kubernetes/kubernetes/commit/74feb07, which is
