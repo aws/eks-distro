@@ -1,0 +1,1 @@
+Amazon EKS Distro v1.22-10 is now available. Amazon EKS Distro v1.22-10 builds are available through ECR Public Gallery (https://gallery.ecr.aws/eks-distro) and GitHub (https://github.com/aws/eks-distro)
