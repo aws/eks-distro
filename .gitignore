@@ -3,7 +3,5 @@ _output
 .DS_Store
 **/1-19/go.sum
 **/1-19/go.mod
-**/1-20/go.sum
-**/1-20/go.mod
 **/1-21/go.sum
 **/1-21/go.mod
