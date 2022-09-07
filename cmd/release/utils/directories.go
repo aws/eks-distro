@@ -19,6 +19,10 @@ var (
 	}()
 )
 
+type ReleaseTag interface {
+	Tag() string
+}
+
 // GetGitRootDirectory returns path to root of project. Example: /Users/lovelace/go/eks-distro
 func GetGitRootDirectory() string {
 	return gitRootDirectory
@@ -47,4 +51,8 @@ func GetDefaultReleaseBranch() (string, error) {
 // StripRootDirectory returns provided fullFilePath with the root directory path removed.
 func StripRootDirectory(fullFilePath string) string {
 	return strings.TrimPrefix(fullFilePath, GetGitRootDirectory())
+}
+
+func GetChangelogFileName(rt ReleaseTag) string {
+	return fmt.Sprintf("CHANGELOG-%s.md", rt.Tag())
 }

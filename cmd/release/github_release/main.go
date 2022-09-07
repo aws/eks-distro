@@ -1,10 +1,9 @@
 package main
 
 import (
-	. "github.com/aws/eks-distro/cmd/release/utils"
-
 	"flag"
 	"fmt"
+	"github.com/aws/eks-distro/cmd/release/utils"
 	"io"
 	"log"
 	"os"
@@ -20,34 +19,28 @@ var (
 // Generates a release on GitHub.
 // IMPORTANT! Only run after the release is out, you've pulled own the
 // latest changes, and the release is tagged on GitHub.
-// TODO: update after refactor is done
+// TODO: implement number override for release
 func main() {
 	branch := flag.String("branch", "", "Release branch, e.g. 1-22")
-	number := flag.String("number", "", "Release branch, e.g. 5")
 
 	flag.Parse()
 
-	err := createRelease(*branch, *number)
+	release, err := utils.NewRelease(*branch, utils.GHRelease)
 	if err != nil {
 		log.Fatal(err)
 	}
+	createGitHubRelease(&release)
 }
 
-func createRelease(branch, number string) error {
-	docsDirectory := fmt.Sprintf("%s/docs/contents/releases/%s/%s", GetGitRootDirectory(), branch, number)
-	changelogFilepath := fmt.Sprintf("%s/CHANGELOG-v%s-eks-%s.md", docsDirectory, branch, number)
-	indexFilepath := fmt.Sprintf("%s/index.md", docsDirectory)
-
-	releaseGitTag := fmt.Sprintf("v%s-eks-%s", branch, number)
-	releaseVersion := "REPLACE WITH release.version" //"v" + GetBranchWithDotAndNumberWithDashFormat(branch, number)
+func createGitHubRelease(r *utils.Release) error {
+	docsDirectory := utils.GetReleaseDocsDirectory(r.Branch(), r.Number())
 
 	cmd := exec.Command(
 		"/bin/bash",
-		filepath.Join(GetGitRootDirectory(), "cmd/release/github_release/create_github_release.sh"),
-		releaseGitTag,
-		releaseVersion,
-		changelogFilepath,
-		indexFilepath,
+		filepath.Join(utils.GetGitRootDirectory(), "cmd/release/github_release/create_github_release.sh"),
+		r.Tag(),
+		filepath.Join(docsDirectory, utils.GetChangelogFileName(r)),
+		filepath.Join(docsDirectory, "index.md"),
 	)
 
 	cmd.Stdout = outputStream
@@ -56,8 +49,6 @@ func createRelease(branch, number string) error {
 		return fmt.Errorf("error creating release: %v", err)
 	}
 
-	log.Printf(
-		"Published release!\nYou can view at it https://github.com/aws/eks-distro/releases/tag/%s",
-		releaseGitTag)
+	log.Printf("Published release!\nYou can view at it https://github.com/aws/eks-distro/releases/tag/%s", r.Tag())
 	return nil
 }

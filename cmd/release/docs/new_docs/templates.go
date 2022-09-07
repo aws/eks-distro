@@ -2,6 +2,7 @@ package new_docs
 
 import (
 	"bytes"
+	"github.com/aws/eks-distro/cmd/release/utils"
 	"path/filepath"
 	"text/template"
 )
@@ -31,14 +32,16 @@ This changelog highlights the changes for [{{.Tag}}](https://github.com/aws/eks-
 var indexTemplateInput = templateInput{
 	templateName: "indexTemplate",
 	funcMap: template.FuncMap{
-		"changelogFileNameFunc": changelogFileName,
+		"changelogFileNameFunc": func(ri releaseInfo) string {
+			return utils.GetChangelogFileName(ri)
+		},
 		"filepathBaseFunc": func(manifestURL string) string {
 			return filepath.Base(manifestURL)
 		},
 	},
 	docTemplate: `# EKS-D {{.Tag}} Release
 
-For additional information, see the [changelog]({{changelogFileNameFunc .Tag}}) for this release.
+For additional information, see the [changelog]({{changelogFileNameFunc .}}) for this release.
 
 ## Release Manifest
 
