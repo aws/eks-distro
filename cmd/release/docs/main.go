@@ -3,12 +3,13 @@ package main
 import (
 	"flag"
 	"fmt"
-	. "github.com/aws/eks-distro/cmd/release/docs/existing_docs"
-	. "github.com/aws/eks-distro/cmd/release/docs/new_docs"
-	"github.com/aws/eks-distro/cmd/release/utils"
-	. "github.com/aws/eks-distro/cmd/release/utils/git_manager"
 	"log"
 	"path/filepath"
+
+	"github.com/aws/eks-distro/cmd/release/docs/existing_docs"
+	"github.com/aws/eks-distro/cmd/release/docs/new_docs"
+	"github.com/aws/eks-distro/cmd/release/utils"
+	"github.com/aws/eks-distro/cmd/release/utils/git_manager"
 )
 
 const changeType = utils.Docs
@@ -26,59 +27,59 @@ func main() {
 	// down locally.
 	release, err := utils.NewRelease(*branch, changeType)
 	if err != nil {
-		log.Fatalf("Error that was encountered while creating new release: %v", err)
+		log.Fatalf("creating new release: %v", err)
 	}
 
 	// Create GitManager
-	gm, err := CreateGitManager(release.Branch(), release.Number(), changeType)
+	gm, err := git_manager.CreateGitManager(release.Branch(), release.Number(), changeType)
 	if err != nil {
-		log.Fatalf("Error that was encountered while creating new git manager: %v", err)
+		log.Fatalf("creating new git manager: %v", err)
 	}
 
 	// Create new docs
-	docs, err := CreateNewDocsInfo(&release)
+	docs, err := new_docs.CreateNewDocsInfo(&release)
 	if err != nil {
-		log.Fatalf("Error that was encountered while creating new docs input: %v", err)
+		log.Fatalf("creating new docs input: %v", err)
 	}
 	newReleaseDocDirectory := utils.GetReleaseDocsDirectory(release.Branch(), release.Number())
-	changedFiles, err := GenerateNewDocs(docs, newReleaseDocDirectory)
+	changedFiles, err := new_docs.GenerateNewDocs(docs, newReleaseDocDirectory)
 	if err != nil {
 		_ = gm.AbandonBranch()
-		log.Fatalf("Error that was encountered while creating new docs: %v", err)
+		log.Fatalf("creating new docs: %v", err)
 	}
 	err = gm.AddAndCommit(changedFiles...)
 	if err != nil {
-		log.Fatalf("Failed to update doc due to error: %v", err)
+		log.Fatalf("updating docs: %v", err)
 	}
 
 	// Update existing files
 	readmePath := filepath.Join(rootDirectory, "README.md")
-	if err = updateExistingDocs(gm, UpdateREADME, readmePath, &release); err != nil {
-		log.Fatalf("Failed to update README due to error: %v", err)
+	if err = updateExistingDocs(gm, existing_docs.UpdateREADME, readmePath, &release); err != nil {
+		log.Fatalf("updating README: %v", err)
 	}
 	indexPath := filepath.Join(rootDirectory, "docs", "contents", "index.md")
-	if err = updateExistingDocs(gm, UpdateDocsIndex, indexPath, &release); err != nil {
-		log.Fatalf("Failed to update index due to error: %v", err)
+	if err = updateExistingDocs(gm, existing_docs.UpdateDocsIndex, indexPath, &release); err != nil {
+		log.Fatalf("updating existing index doc: %v", err)
 	}
 
 	// Open PR
 	if err = gm.OpenPR(); err != nil {
-		log.Fatalf("error opening PR: %v", err)
+		log.Fatalf("opening PR: %v", err)
 	}
 }
 
-func updateExistingDocs(gm *GitManager, updateFunc func(utils.Release, string) error, filePath string, r *utils.Release) error {
+func updateExistingDocs(gm *git_manager.GitManager, updateFunc func(utils.Release, string) error, filePath string, r *utils.Release) error {
 	err := updateFunc(*r, filePath)
 	if err != nil {
 		_ = gm.RestoreFile(filePath)
 		_ = gm.AbandonBranch()
-		return fmt.Errorf("error encountered while updating %s: %v", filePath, err)
+		return fmt.Errorf("updating doc: %v", err)
 	}
 
 	if err = gm.AddAndCommit(filePath); err != nil {
 		_ = gm.RestoreFile(filePath)
 		_ = gm.AbandonBranch()
-		return fmt.Errorf("error encountered while adding and committing %s: %v", filePath, err)
+		return fmt.Errorf("adding and committing doc: %v", err)
 	}
 	return nil
 }

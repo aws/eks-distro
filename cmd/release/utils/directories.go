@@ -34,16 +34,19 @@ func GetReleaseDocsDirectory(branch, number string) string {
 }
 
 func GetGitTag(projectOrg, projectName, releaseBranch string) ([]byte, error) {
-	fileOutput, err := os.ReadFile(
-		filepath.Join(GetGitRootDirectory(), "projects", projectOrg, projectName, releaseBranch, "GIT_TAG"),
-	)
-	return bytes.TrimSpace(fileOutput), err
+	getTagPath := filepath.Join(GetGitRootDirectory(), "projects", projectOrg, projectName, releaseBranch, "GIT_TAG")
+	fileOutput, err := os.ReadFile(getTagPath)
+	if err != nil {
+		return []byte{}, fmt.Errorf("reading GIT_TAG at %s path:%v", getTagPath, err)
+	}
+	return bytes.TrimSpace(fileOutput), nil
 }
 
 func GetDefaultReleaseBranch() (string, error) {
-	fileOutput, err := os.ReadFile(filepath.Join(GetGitRootDirectory(), "release", "DEFAULT_RELEASE_BRANCH"))
+	defaultReleaseBranchPath := filepath.Join(GetGitRootDirectory(), "release", "DEFAULT_RELEASE_BRANCH")
+	fileOutput, err := os.ReadFile(defaultReleaseBranchPath)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("getting default release branch at %s path:%v", defaultReleaseBranchPath, err)
 	}
 	return strings.TrimSpace(string(fileOutput)), nil
 }

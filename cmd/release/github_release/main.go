@@ -3,17 +3,20 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/aws/eks-distro/cmd/release/utils"
 	"io"
 	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
+
+	"github.com/aws/eks-distro/cmd/release/utils"
 )
 
 var (
 	outputStream io.Writer = os.Stdout
 	errStream    io.Writer = os.Stderr
+
+	ghReleaseScriptPath = filepath.Join(utils.GetGitRootDirectory(), "cmd/release/github_release/create_github_release.sh")
 )
 
 // Generates a release on GitHub.
@@ -22,14 +25,15 @@ var (
 // TODO: implement number override for release
 func main() {
 	branch := flag.String("branch", "", "Release branch, e.g. 1-22")
-
 	flag.Parse()
 
 	release, err := utils.NewRelease(*branch, utils.GHRelease)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("creating release values: %v", err)
 	}
-	createGitHubRelease(&release)
+	if err = createGitHubRelease(&release); err != nil {
+		log.Fatalf("creating GitHub release: %v", err)
+	}
 }
 
 func createGitHubRelease(r *utils.Release) error {
@@ -37,7 +41,7 @@ func createGitHubRelease(r *utils.Release) error {
 
 	cmd := exec.Command(
 		"/bin/bash",
-		filepath.Join(utils.GetGitRootDirectory(), "cmd/release/github_release/create_github_release.sh"),
+		ghReleaseScriptPath,
 		r.Tag(),
 		filepath.Join(docsDirectory, utils.GetChangelogFileName(r)),
 		filepath.Join(docsDirectory, "index.md"),
@@ -46,9 +50,9 @@ func createGitHubRelease(r *utils.Release) error {
 	cmd.Stdout = outputStream
 	cmd.Stderr = errStream
 	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("error creating release: %v", err)
+		return fmt.Errorf("creating release from script: %v", err)
 	}
 
-	log.Printf("Published release!\nYou can view at it https://github.com/aws/eks-distro/releases/tag/%s", r.Tag())
+	log.Printf("Published release!\nYou can view at it https://github.com/aws/eks-distro/releases/tag/%s\n", r.Tag())
 	return nil
 }

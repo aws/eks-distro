@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -12,12 +12,12 @@ import (
 func GetNumber(branch string, ct ChangesType) (num, numPath string, err error) {
 	numPath, err = getReleaseNumberPath(branch, ct)
 	if err != nil {
-		return "", "", err
+		return "", "", fmt.Errorf("getting filepath for number: %v", err)
 	}
 
 	fileOutput, err := os.ReadFile(numPath)
 	if err != nil {
-		return "", "", err
+		return "", "", fmt.Errorf("reading number from %s file: %v", numPath, err)
 	}
 	return strings.TrimSpace(string(fileOutput)), numPath, nil
 }
@@ -27,12 +27,12 @@ func GetNumber(branch string, ct ChangesType) (num, numPath string, err error) {
 func GetNextNumber(branch string, ct ChangesType) (nextNum, numPath string, err error) {
 	currNum, numPath, err := GetNumber(branch, ct)
 	if err != nil {
-		return "", "", err
+		return "", "", fmt.Errorf("getting next number: %v", err)
 	}
 
 	currNumAsInt, err := strconv.Atoi(currNum)
 	if err != nil {
-		return "", "", err
+		return "", "", fmt.Errorf("calculating next number from current number %s: %v", currNum, err)
 	}
 	return strconv.Itoa(currNumAsInt + 1), numPath, nil
 }
@@ -41,7 +41,7 @@ func GetNextNumber(branch string, ct ChangesType) (nextNum, numPath string, err 
 // Dev or Prod. Example: /Users/lovelace/go/eks-distro/release/1-24/development/RELEASE
 func getReleaseNumberPath(branch string, ct ChangesType) (string, error) {
 	if !ct.IsDevOrProd() {
-		return "", errors.New("change type must be dev or prod")
+		return "", fmt.Errorf("change type must be dev or prod but was %s", ct)
 	}
 	return filepath.Join(gitRootDirectory, "release", branch, ct.String(), "RELEASE"), nil
 }

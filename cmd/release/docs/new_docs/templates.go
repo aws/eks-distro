@@ -2,9 +2,10 @@ package new_docs
 
 import (
 	"bytes"
-	"github.com/aws/eks-distro/cmd/release/utils"
 	"path/filepath"
 	"text/template"
+
+	"github.com/aws/eks-distro/cmd/release/utils"
 )
 
 // RELEASE ANNOUNCEMENT

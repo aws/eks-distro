@@ -3,19 +3,20 @@ package existing_docs
 import (
 	"bytes"
 	"fmt"
-	. "github.com/aws/eks-distro/cmd/release/utils"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/aws/eks-distro/cmd/release/utils"
 )
 
 var linebreak = []byte("\n")
 
 // UpdateDocsIndex updates the doc's directory index.md file for the current release.
-func UpdateDocsIndex(r Release, docsIndexPath string) error {
+func UpdateDocsIndex(r utils.Release, docsIndexPath string) error {
 	data, err := os.ReadFile(docsIndexPath)
 	if err != nil {
-		fmt.Errorf("failed to read doc index file because error: %v", err)
+		return fmt.Errorf("reading doc index file: %v", err)
 	}
 
 	splitData := bytes.Split(data, linebreak)
@@ -38,7 +39,7 @@ func UpdateDocsIndex(r Release, docsIndexPath string) error {
 			}
 		}
 		if !hasFoundLine {
-			return fmt.Errorf("failed to update index file because did not find line %q", expectedPreviousLine)
+			return fmt.Errorf("updating index file because did not find line %q", expectedPreviousLine)
 		}
 		splitData[currLineNumber] = append(linePrefix, []byte(r.Number())...)
 	}
@@ -54,7 +55,7 @@ func UpdateDocsIndex(r Release, docsIndexPath string) error {
 		}
 	}
 	if !hasFoundSection {
-		return fmt.Errorf("failed to update index file because did not find section for Version Dependencies")
+		return fmt.Errorf("updating index file because did not find section for Version Dependencies")
 	}
 	newLine := fmt.Sprintf(`* [%s](releases/%s/%s/index.md) (%s)`, r.Tag(), r.Branch(), r.Number(), getDate())
 	splitData[currLineNumber] = append(append(splitData[currLineNumber], linebreak...), newLine...)
@@ -68,7 +69,7 @@ func getDate() string {
 }
 
 func isDefaultReleaseBranch(providedBranch string) (bool, error) {
-	defaultReleaseBranch, err := GetDefaultReleaseBranch()
+	defaultReleaseBranch, err := utils.GetDefaultReleaseBranch()
 	if err != nil {
 		return false, err
 	}

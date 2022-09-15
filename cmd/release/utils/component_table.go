@@ -19,19 +19,19 @@ type component struct {
 func GetComponentsFromReleaseManifest(releaseManifestURL string) (string, error) {
 	resp, err := http.Get(releaseManifestURL)
 	if err != nil {
-		return "", fmt.Errorf("error getting release manifest: %v", err)
+		return "", fmt.Errorf("getting release manifest: %v", err)
 	}
 
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		return "", fmt.Errorf("error status code %v getting release manifest (expected 200)", resp.StatusCode)
+		return "", fmt.Errorf("expected expected 200 but got %v when getting release manifest", resp.StatusCode)
 	}
 
 	re := regexp.MustCompile(fmt.Sprintf(`uri: (%s.*)`, ecrBase))
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return "", fmt.Errorf("error reading release manifest: %v", err)
+		return "", fmt.Errorf("reading release manifest: %v", err)
 	}
 	foundMatches := re.FindAllSubmatch(body, -1)
 
@@ -56,7 +56,7 @@ func GetComponentsFromReleaseManifest(releaseManifestURL string) (string, error)
 	assetsNotInReleaseManifest := [][]byte{[]byte("go-runner"), []byte("kube-proxy-base")}
 	kubernetesReleaseGitTag, err := GetGitTag("kubernetes", "release", string(releaseBranch))
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("getting Kubernetes git tag for release manifest: %v", err)
 	}
 	for _, asset := range assetsNotInReleaseManifest {
 		components = append(components, component{

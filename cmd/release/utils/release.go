@@ -27,7 +27,7 @@ func NewRelease(releaseBranch string, changesType ChangesType) (Release, error) 
 
 	currNum, _, err := GetNumber(releaseBranch, Prod)
 	if err != nil {
-		return Release{}, fmt.Errorf("error determining number: %v", err)
+		return Release{}, fmt.Errorf("determining number: %v", err)
 	}
 
 	return Release{

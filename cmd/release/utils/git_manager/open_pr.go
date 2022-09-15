@@ -1,20 +1,20 @@
 package git_manager
 
 import (
-	. "github.com/aws/eks-distro/cmd/release/utils"
-
 	"fmt"
 	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
+
+	"github.com/aws/eks-distro/cmd/release/utils"
 )
 
 var (
 	outputStream io.Writer = os.Stdout
 	errStream    io.Writer = os.Stderr
 
-	createPRScriptPath = filepath.Join(gitRootDir, "cmd/release/utils/git_manager/open_pr.sh")
+	createPRScriptPath = filepath.Join(utils.GetGitRootDirectory(), "cmd/release/utils/git_manager/open_pr.sh")
 )
 
 func (gm *GitManager) OpenPR() error {
@@ -26,7 +26,7 @@ func (gm *GitManager) OpenPR() error {
 	cmd := exec.Command(
 		"/bin/bash",
 		createPRScriptPath,
-		gm.CurrentBranch(),
+		string(gm.currentBranch),
 		prDescription,
 		gm.version,
 	)
@@ -34,15 +34,15 @@ func (gm *GitManager) OpenPR() error {
 	cmd.Stdout = outputStream
 	cmd.Stderr = errStream
 	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("error opening PR: %v", err)
+		return fmt.Errorf("opening PR: %v", err)
 	}
-	return gm.CheckoutOriginalBranch()
+	return gm.checkoutOriginalBranch()
 }
 
-func getPRDescription(changesType ChangesType, version string) (string, error) {
+func getPRDescription(changesType utils.ChangesType, version string) (string, error) {
 	if changesType.IsDevOrProd() {
 		return fmt.Sprintf("Bumped %s release number for %s", changesType.String(), version), nil
-	} else if changesType == Docs {
+	} else if changesType == utils.Docs {
 		return "Created and updated docs for " + version, nil
 	} else {
 		return "", fmt.Errorf("unknown ChangesType %v", changesType)

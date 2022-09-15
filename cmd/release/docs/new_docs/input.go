@@ -2,6 +2,8 @@ package new_docs
 
 import (
 	"bytes"
+	"fmt"
+
 	"github.com/aws/eks-distro/cmd/release/utils"
 )
 
@@ -19,17 +21,17 @@ type releaseInfo interface {
 func CreateNewDocsInfo(ri releaseInfo) ([]NewDocInput, error) {
 	changeLogWriter, err := getTemplateWriter(ri, changelogTemplateInput)
 	if err != nil {
-		return []NewDocInput{}, err
+		return []NewDocInput{}, fmt.Errorf("getting template writer for changelog: %v", err)
 	}
 
 	indexWriter, err := getTemplateWriter(ri, indexTemplateInput)
 	if err != nil {
-		return []NewDocInput{}, err
+		return []NewDocInput{}, fmt.Errorf("getting template writer for index: %v", err)
 	}
 
 	releaseAnnouncementWriter, err := getTemplateWriter(ri, releaseAnnouncementTemplateInput)
 	if err != nil {
-		return []NewDocInput{}, err
+		return []NewDocInput{}, fmt.Errorf("getting template writer for release announcement: %v", err)
 	}
 
 	return []NewDocInput{

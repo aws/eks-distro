@@ -10,7 +10,7 @@ import (
 // GenerateNewDocs writes to each doc in provided docs.
 func GenerateNewDocs(newDocsInput []NewDocInput, newDocsDirectory string) ([]string, error) {
 	if err := os.Mkdir(newDocsDirectory, 0777); err != nil {
-		return []string{}, fmt.Errorf("error creating release docs directory: %v", err)
+		return []string{}, fmt.Errorf("creating release docs directory: %v", err)
 	}
 	log.Printf("Created new docs directory %v\n\n", newDocsDirectory)
 
@@ -21,9 +21,9 @@ func GenerateNewDocs(newDocsInput []NewDocInput, newDocsDirectory string) ([]str
 
 		if err != nil {
 			if errRemoveAll := os.RemoveAll(newDocsDirectory); errRemoveAll != nil {
-				log.Printf("error deleting directory and all content: %v", errRemoveAll)
+				log.Printf("deleting directory and all content: %v", errRemoveAll)
 			}
-			return []string{}, fmt.Errorf("error with writing to docs: %v", err)
+			return []string{}, fmt.Errorf("writing to new docs: %v", err)
 		}
 		newFiles = append(newFiles, fullFilePath)
 		log.Printf("Successfully wrote to %v\n", doc.FileName)
@@ -40,11 +40,11 @@ func writeToNewDoc(doc NewDocInput, fullFilePath string) error {
 		additionalText, appendErr := doc.AppendToEnd()
 		if appendErr != nil {
 			closeFile(docFile)
-			return fmt.Errorf("error while trying to get additional text append to file: %v", appendErr)
+			return fmt.Errorf("getting additional text append to file: %v", appendErr)
 		}
 		if _, err = docFile.WriteString(additionalText + "\n"); err != nil {
 			closeFile(docFile)
-			return fmt.Errorf("error while appending additional text to file: %v", err)
+			return fmt.Errorf("appending additional text to file: %v", err)
 		}
 	}
 	closeFile(docFile)
