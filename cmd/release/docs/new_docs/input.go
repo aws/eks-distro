@@ -36,7 +36,7 @@ func CreateNewDocsInfo(ri releaseInfo) ([]NewDocInput, error) {
 		{
 			FileName:       utils.GetChangelogFileName(ri),
 			TemplateWriter: changeLogWriter,
-			AppendToEnd:    nil,
+			AppendToEnd:    getPrInfoForChangelogFunc(ri),
 		},
 		{
 			FileName:       "index.md",
@@ -55,5 +55,12 @@ var getComponentsFromReleaseManifestFunc = func(ri releaseInfo) func() (string, 
 	manifestURL := ri.ManifestURL()
 	return func() (string, error) {
 		return utils.GetComponentsFromReleaseManifest(manifestURL)
+	}
+}
+
+var getPrInfoForChangelogFunc = func(ri releaseInfo) func() (string, error) {
+	tag := ri.Tag()
+	return func() (string, error) {
+		return utils.GetChangelogPRs(tag)
 	}
 }
