@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	. "github.com/aws/eks-distro/cmd/release/utils"
+	"os"
 	"os/exec"
 	"strings"
 	"time"
@@ -70,12 +71,18 @@ func (gm *GitManager) AddAndCommit(filepaths ...string) error {
 	}
 
 	for _, filepath := range filepaths {
-		if err = exec.Command("git", "-C", gitRootDir, "add", filepath).Run(); err != nil {
-			return err
+		addCmd := exec.Command("git", "-C", gitRootDir, "add", filepath)
+		addCmd.Stdout = os.Stdout
+		addCmd.Stderr = os.Stdout
+		if err = addCmd.Run(); err != nil {
+			return fmt.Errorf("add %v in git rootdir %v: %v", filepath, gitRootDir, err)
 		}
 		commitMessage := "Added " + StripRootDirectory(filepath)
-		if err = exec.Command("git", "-C", gitRootDir, "commit", "-m", commitMessage).Run(); err != nil {
-			return err
+		commitCmd := exec.Command("git", "-C", gitRootDir, "commit", "-m", commitMessage)
+		commitCmd.Stdout = os.Stdout
+		commitCmd.Stderr = os.Stdout
+		if err = commitCmd.Run(); err != nil {
+			return fmt.Errorf("commiting in git rootdir %v with commit message %v: %v", gitRootDir, commitMessage, err)
 		}
 	}
 	return nil
