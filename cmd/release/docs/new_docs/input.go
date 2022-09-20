@@ -14,6 +14,7 @@ type NewDocInput struct {
 type releaseInfo interface {
 	Tag() string
 	ManifestURL() string
+	KubernetesMinorVersion() string
 }
 
 func CreateNewDocsInfo(ri releaseInfo) ([]NewDocInput, error) {
@@ -59,8 +60,8 @@ var getComponentsFromReleaseManifestFunc = func(ri releaseInfo) func() (string, 
 }
 
 var getPrInfoForChangelogFunc = func(ri releaseInfo) func() (string, error) {
-	tag := ri.Tag()
+	releaseVersion := "v" + ri.KubernetesMinorVersion()
 	return func() (string, error) {
-		return utils.GetChangelogPRs(tag)
+		return utils.GetChangelogPRs(releaseVersion)
 	}
 }
