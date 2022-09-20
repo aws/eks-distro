@@ -1,0 +1,2 @@
+documentation:
+  -any: ['README.md', 'docs/**/*']
