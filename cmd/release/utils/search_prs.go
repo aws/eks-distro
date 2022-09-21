@@ -19,11 +19,11 @@ func GetChangelogPRs(releaseVersion string) (string, error) {
 
 	lastDocRelease := prs.Issues[0].ClosedAt
 
-	patchPRs, _, err := githubClient.Search.Issues(ctx, "repo:aws/eks-distro is:pr is:closed label:patch label:" + releaseVersion + " closed:>" + fmt.Sprintf("%v", lastDocRelease), opts)
+	patchPRs, _, err := githubClient.Search.Issues(ctx, "repo:aws/eks-distro is:pr is:merged label:patch label:" + releaseVersion + " merged:>" + fmt.Sprintf("%v", lastDocRelease), opts)
 
-	baseImgPRs, _, err := githubClient.Search.Issues(ctx, "repo:aws/eks-distro is:pr is:closed label:base-image-pkg-update label:" + releaseVersion, opts)
+	baseImgPRs, _, err := githubClient.Search.Issues(ctx, "repo:aws/eks-distro is:pr is:merged label:base-image-pkg-update label:" + releaseVersion + " merged:>" + fmt.Sprintf("%v", lastDocRelease), opts)
 
-	versPRs, _, err := githubClient.Search.Issues(ctx, "repo:aws/eks-distro is:pr is:closed label:dependencies label:" + releaseVersion, opts)
+	versPRs, _, err := githubClient.Search.Issues(ctx, "repo:aws/eks-distro is:pr is:merged label:dependencies label:" + releaseVersion + " merged:>" + fmt.Sprintf("%v", lastDocRelease), opts)
 	
 	var changelog []string
 	patchSect, _ := patchPRsSinceLastRelease(patchPRs)
