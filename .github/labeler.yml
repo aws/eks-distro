@@ -1,2 +1,8 @@
 documentation: 
 - 'docs/**/*'
+
+dependencies:
+- ''
+
+patch:
+- '*.patch'
