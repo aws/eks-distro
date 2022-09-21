@@ -1,0 +1,24 @@
+From b6e4bf49cc74aa0360b6817630642e9a504aad3d Mon Sep 17 00:00:00 2001
+From: amewayne <hqweiyu@gmail.com>
+Date: Wed, 10 Aug 2022 12:02:27 +0800
+Subject: [PATCH 1/1] fix a memory leak problem when calling DryRunPreemption
+
+---
+ .../framework/plugins/defaultpreemption/default_preemption.go    | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/pkg/scheduler/framework/plugins/defaultpreemption/default_preemption.go b/pkg/scheduler/framework/plugins/defaultpreemption/default_preemption.go
+index b3d7186bee6..cf9a859adf7 100644
+--- a/pkg/scheduler/framework/plugins/defaultpreemption/default_preemption.go
++++ b/pkg/scheduler/framework/plugins/defaultpreemption/default_preemption.go
+@@ -329,6 +329,7 @@ func dryRunPreemption(ctx context.Context, fh framework.Handle,
+ 	nonViolatingCandidates := newCandidateList(numCandidates)
+ 	violatingCandidates := newCandidateList(numCandidates)
+ 	parallelCtx, cancel := context.WithCancel(ctx)
++	defer cancel()
+ 	nodeStatuses := make(framework.NodeToStatusMap)
+ 	var statusesLock sync.Mutex
+ 	checkNode := func(i int) {
+-- 
+2.37.3
+
