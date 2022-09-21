@@ -16,27 +16,69 @@ func GetChangelogPRs(releaseVersion string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("Getting PRs from %v: %v", githubClient, err)
 	}
+
+	lastDocRelease := prs.Issues[0].ClosedAt
+
+	patchPRs, _, err := githubClient.Search.Issues(ctx, "repo:aws/eks-distro is:pr is:closed label:patch label:" + releaseVersion + " closed:>" + fmt.Sprintf("%v", lastDocRelease), opts)
+
+	baseImgPRs, _, err := githubClient.Search.Issues(ctx, "repo:aws/eks-distro is:pr is:closed label:base-image-pkg-update label:" + releaseVersion, opts)
+
+	versPRs, _, err := githubClient.Search.Issues(ctx, "repo:aws/eks-distro is:pr is:closed label:dependencies label:" + releaseVersion, opts)
 	
 	var changelog []string
-	changelog = append(changelog, releaseVersion)
-	for _, pr := range prs.Issues {
-		changelog = append(changelog, *pr.Title)
-	}
+	patchSect, _ := patchPRsSinceLastRelease(patchPRs)
+	changelog = append(changelog, patchSect)
+	
+	versSect, _ := versionChangesSinceLastRelease(versPRs)
+	changelog = append(changelog, versSect)
+	
+	baseImgSect, _ := baseImageChangesSinceLastRelease(baseImgPRs)
+	changelog = append(changelog, baseImgSect)
+
 	return strings.Join(changelog, "\n"), nil
 }
-/*
-func mostRecentReleaseDocPR(tag string) (string, error) {
 
+func patchPRsSinceLastRelease(patchPRs *github.IssuesSearchResult) (string, error) {
+	var patchSection []string
+	patchSection = append(patchSection, "### Patches")
+	
+	if len(patchPRs.Issues) == 0 {
+		patchSection = append(patchSection, "No patches applied since last release")
+		return strings.Join(patchSection, "\n"), nil
+	}
+
+	for _, pr := range patchPRs.Issues {
+		patchSection = append(patchSection, fmt.Sprintf("%v ([%v](%v), [%v](%v))", *pr.Title, *pr.ID, *pr.URL, *pr.User.Login, *pr.User.URL))
+	}
+	return strings.Join(patchSection, "\n"), nil
 }
 
-func patchPRsSinceLastRelease() (string, error) {
+func versionChangesSinceLastRelease(versPRs *github.IssuesSearchResult) (string, error) {
+	var versSection []string
+	versSection = append(versSection, "### Dependencies")
+	
+	if len(versPRs.Issues) == 0 {
+		versSection = append(versSection, "No changes since last release")
+		return strings.Join(versSection, "\n"), nil
+	}
 
+	for _, pr := range versPRs.Issues {
+		versSection = append(versSection, fmt.Sprintf("%v ([%v](%v), [%v](%v))", *pr.Title, *pr.ID, *pr.URL, *pr.User.Login, *pr.User.URL))
+	}
+	return strings.Join(versSection, "\n"), nil
 }
 
-func versionChangesSinceLastRelease() (string, error) {
+func baseImageChangesSinceLastRelease(baseImgPRs *github.IssuesSearchResult) (string, error) {
+	var baseImgSection []string
+	baseImgSection = append(baseImgSection, "### Base Image Package Updates")
 
+	if len(baseImgPRs.Issues) == 0 {
+		baseImgSection = append(baseImgSection, "No changes since last release")
+		return strings.Join(baseImgSection, "\n"), nil
+	}
+
+	for _, pr := range baseImgPRs.Issues {
+		baseImgSection = append(baseImgSection, fmt.Sprintf("%v ([%v](%v), [%v](%v))", *pr.Title, *pr.ID, *pr.URL, *pr.User.Login, *pr.User.URL))
+	}
+	return strings.Join(baseImgSection, "\n"), nil
 }
-
-func baseImageChangesSinceLastRelease() (string, error) {
-
-}*/
