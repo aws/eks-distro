@@ -1,0 +1,82 @@
+From 51025589eed0885a67f783e8f5800a33f652cd33 Mon Sep 17 00:00:00 2001
+From: Jordan Liggitt <liggitt@google.com>
+Date: Fri, 16 Sep 2022 21:24:41 -0400
+Subject: [PATCH 1/1] Limit redirect proxy handling to redirected responses
+
+---
+ .../pkg/util/proxy/upgradeaware.go            |  2 +-
+ .../pkg/util/proxy/upgradeaware_test.go       | 21 +++++++++++++++++++
+ 2 files changed, 22 insertions(+), 1 deletion(-)
+
+diff --git a/staging/src/k8s.io/apimachinery/pkg/util/proxy/upgradeaware.go b/staging/src/k8s.io/apimachinery/pkg/util/proxy/upgradeaware.go
+index 0e40a6a5c8d..2c307367245 100644
+--- a/staging/src/k8s.io/apimachinery/pkg/util/proxy/upgradeaware.go
++++ b/staging/src/k8s.io/apimachinery/pkg/util/proxy/upgradeaware.go
+@@ -249,7 +249,7 @@ func (h *UpgradeAwareHandler) ServeHTTP(w http.ResponseWriter, req *http.Request
+ 		oldModifyResponse := proxy.ModifyResponse
+ 		proxy.ModifyResponse = func(response *http.Response) error {
+ 			code := response.StatusCode
+-			if code >= 300 && code <= 399 {
++			if code >= 300 && code <= 399 && len(response.Header.Get("Location")) > 0 {
+ 				// close the original response
+ 				response.Body.Close()
+ 				msg := "the backend attempted to redirect this request, which is not permitted"
+diff --git a/staging/src/k8s.io/apimachinery/pkg/util/proxy/upgradeaware_test.go b/staging/src/k8s.io/apimachinery/pkg/util/proxy/upgradeaware_test.go
+index 2d61b36a8ac..4ef252237b1 100644
+--- a/staging/src/k8s.io/apimachinery/pkg/util/proxy/upgradeaware_test.go
++++ b/staging/src/k8s.io/apimachinery/pkg/util/proxy/upgradeaware_test.go
+@@ -701,6 +701,7 @@ func TestRejectForwardingRedirectsOption(t *testing.T) {
+ 		name                      string
+ 		rejectForwardingRedirects bool
+ 		serverStatusCode          int
++		redirect                  string
+ 		expectStatusCode          int
+ 		expectBody                []byte
+ 	}{
+@@ -715,9 +716,25 @@ func TestRejectForwardingRedirectsOption(t *testing.T) {
+ 			name:                      "reject redirection enabled in proxy, backend server sending 301 response",
+ 			rejectForwardingRedirects: true,
+ 			serverStatusCode:          301,
++			redirect:                  "/",
+ 			expectStatusCode:          502,
+ 			expectBody:                []byte(`the backend attempted to redirect this request, which is not permitted`),
+ 		},
++		{
++			name:                      "reject redirection enabled in proxy, backend server sending 304 response with a location header",
++			rejectForwardingRedirects: true,
++			serverStatusCode:          304,
++			redirect:                  "/",
++			expectStatusCode:          502,
++			expectBody:                []byte(`the backend attempted to redirect this request, which is not permitted`),
++		},
++		{
++			name:                      "reject redirection enabled in proxy, backend server sending 304 response with no location header",
++			rejectForwardingRedirects: true,
++			serverStatusCode:          304,
++			expectStatusCode:          304,
++			expectBody:                []byte{}, // client doesn't read the body for 304 responses
++		},
+ 		{
+ 			name:                      "reject redirection disabled in proxy, backend server sending 200 response",
+ 			rejectForwardingRedirects: false,
+@@ -729,6 +746,7 @@ func TestRejectForwardingRedirectsOption(t *testing.T) {
+ 			name:                      "reject redirection disabled in proxy, backend server sending 301 response",
+ 			rejectForwardingRedirects: false,
+ 			serverStatusCode:          301,
++			redirect:                  "/",
+ 			expectStatusCode:          301,
+ 			expectBody:                originalBody,
+ 		},
+@@ -737,6 +755,9 @@ func TestRejectForwardingRedirectsOption(t *testing.T) {
+ 		t.Run(tc.name, func(t *testing.T) {
+ 			// Set up a backend server
+ 			backendServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++				if tc.redirect != "" {
++					w.Header().Set("Location", tc.redirect)
++				}
+ 				w.WriteHeader(tc.serverStatusCode)
+ 				w.Write(originalBody)
+ 			}))
+-- 
+2.37.3
+
