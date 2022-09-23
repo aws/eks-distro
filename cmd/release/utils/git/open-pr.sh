@@ -18,38 +18,26 @@ set -o pipefail
 set -x
 
 PR_BRANCH="${1?...}"
-PR_COMMIT_MESSAGE="${2?...}"
+PR_TITLE="${2?...}"
 VERSION_FOR_LABEL="${3?...}"
 
-echo "VERSION_FOR_LABEL: $VERSION_FOR_LABEL"
+echo "pushing..."
+git push origin "${PR_BRANCH}"
+echo "pushed!"
 
 PR_REPO="eks-distro"
-ORIGIN_ORG=$(git remote get-url origin | sed -n -e "s|git@github.com:\(.*\)/${PR_REPO}.git|\1|p")
-
-PR_BODY=$(cat <<EOF
-${PR_COMMIT_MESSAGE}
-
-By submitting this pull request, I confirm that you can use, modify, copy, and redistribute this contribution, under the terms of your choice.
-EOF
-)
-
-PR_TITLE="${PR_COMMIT_MESSAGE}"
 
 pr_arguments=(
-  --title "${PR_TITLE}"
-  --body "${PR_BODY}"
-  --head "${ORIGIN_ORG}:${PR_BRANCH}"
+  --head "$(git remote get-url origin | sed -n -e "s|git@github.com:\(.*\)/${PR_REPO}.git|\1|p"):${PR_BRANCH}"
   --repo "aws/${PR_REPO}"
+  --title "${PR_TITLE}"
   --web
+  --body "By submitting this pull request, I confirm that you can use, modify, copy, and redistribute this contribution, under the terms of your choice."
 )
 
 labels="do-not-merge/hold release v$VERSION_FOR_LABEL"
 for label in $labels; do
      pr_arguments+=(--label "${label}")
 done
-
-echo "pushing..."
-git push origin "${PR_BRANCH}"
-echo "pushed!"
 
 gh pr create "${pr_arguments[@]}"

@@ -1,4 +1,4 @@
-package utils
+package values
 
 import (
 	"bytes"
@@ -10,7 +10,10 @@ import (
 	"strings"
 )
 
-const ecrBase = "public.ecr.aws/eks-distro"
+const (
+	ecrBase            = "public.ecr.aws/eks-distro"
+	expectedStatusCode = 200
+)
 
 type component struct {
 	name, version, uri []byte
@@ -19,20 +22,21 @@ type component struct {
 func GetComponentsFromReleaseManifest(releaseManifestURL string) (string, error) {
 	resp, err := http.Get(releaseManifestURL)
 	if err != nil {
-		return "", fmt.Errorf("getting release manifest: %v", err)
+		return "", fmt.Errorf("getting release manifest: %w\n", err)
 	}
 
 	defer resp.Body.Close()
 
-	if resp.StatusCode != 200 {
-		return "", fmt.Errorf("expected expected 200 but got %v when getting release manifest", resp.StatusCode)
+	if resp.StatusCode != expectedStatusCode {
+		return "", fmt.Errorf("got status code %v when getting release manifest (expected %d)",
+			resp.StatusCode, expectedStatusCode)
 	}
 
-	re := regexp.MustCompile(fmt.Sprintf(`uri: (%s.*)`, ecrBase))
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return "", fmt.Errorf("reading release manifest: %v", err)
+		return "", fmt.Errorf("reading release manifest: %w", err)
 	}
+	re := regexp.MustCompile(fmt.Sprintf(`uri: (%s.*)`, ecrBase))
 	foundMatches := re.FindAllSubmatch(body, -1)
 
 	var components []component
@@ -56,7 +60,7 @@ func GetComponentsFromReleaseManifest(releaseManifestURL string) (string, error)
 	assetsNotInReleaseManifest := [][]byte{[]byte("go-runner"), []byte("kube-proxy-base")}
 	kubernetesReleaseGitTag, err := GetGitTag("kubernetes", "release", string(releaseBranch))
 	if err != nil {
-		return "", fmt.Errorf("getting Kubernetes git tag for release manifest: %v", err)
+		return "", fmt.Errorf("getting Kubernetes git tag for release manifest: %w", err)
 	}
 	for _, asset := range assetsNotInReleaseManifest {
 		components = append(components, component{

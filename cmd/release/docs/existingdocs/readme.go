@@ -1,8 +1,7 @@
-package existing_docs
+package existingdocs
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"os"
 
@@ -10,10 +9,10 @@ import (
 )
 
 // UpdateREADME updates the README to replace release manifest from previous patch release with the new one.
-func UpdateREADME(release utils.Release, readmePath string) error {
+func UpdateREADME(release *utils.Release, readmePath string) error {
 	data, err := os.ReadFile(readmePath)
 	if err != nil {
-		return fmt.Errorf("reading README: %v", err)
+		return fmt.Errorf("reading README: %w", err)
 	}
 
 	//	Example:
@@ -28,10 +27,10 @@ func UpdateREADME(release utils.Release, readmePath string) error {
 
 	splitData := bytes.Split(data, linebreak)
 	for i := 0; i < len(splitData)-numberOfLinesBetweenExpectedLineAndLineToUpdate; i++ {
-		if bytes.Compare(expectedLine, splitData[i]) == 0 {
+		if bytes.Equal(expectedLine, splitData[i]) {
 			splitData[i+numberOfLinesBetweenExpectedLineAndLineToUpdate] = lineToUpdate
 			return os.WriteFile(readmePath, bytes.Join(splitData, linebreak), 0644)
 		}
 	}
-	return errors.New("finding line needed to update version tag in README")
+	return fmt.Errorf("finding line (%q) needed to update version tag in %s", expectedLine, readmePath)
 }

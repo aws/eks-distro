@@ -1,29 +1,29 @@
-package existing_docs
+package existingdocs
 
 import (
 	"bytes"
 	"fmt"
 	"os"
-	"strings"
 	"time"
 
 	"github.com/aws/eks-distro/cmd/release/utils"
+	"github.com/aws/eks-distro/cmd/release/utils/values"
 )
 
 var linebreak = []byte("\n")
 
 // UpdateDocsIndex updates the doc's directory index.md file for the current release.
-func UpdateDocsIndex(r utils.Release, docsIndexPath string) error {
+func UpdateDocsIndex(r *utils.Release, docsIndexPath string) error {
 	data, err := os.ReadFile(docsIndexPath)
 	if err != nil {
-		return fmt.Errorf("reading doc index file: %v", err)
+		return fmt.Errorf("reading doc index file: %w", err)
 	}
 
 	splitData := bytes.Split(data, linebreak)
 	currLineNumber := 0
 
 	// Update 'RELEASE=<number>' if branch is default branch
-	isDefaultBranch, err := isDefaultReleaseBranch(r.Branch())
+	isDefaultBranch, err := values.IsDefaultReleaseBranch(r.Branch())
 	if err != nil {
 		return err
 	}
@@ -32,7 +32,7 @@ func UpdateDocsIndex(r utils.Release, docsIndexPath string) error {
 		linePrefix := []byte("RELEASE=")
 		expectedPreviousLine := []byte("RELEASE_BRANCH=" + r.Branch())
 		for i := 1; i < len(splitData); i++ {
-			if bytes.HasPrefix(splitData[i], linePrefix) && bytes.Compare(splitData[i-1], expectedPreviousLine) == 0 {
+			if bytes.HasPrefix(splitData[i], linePrefix) && bytes.Equal(splitData[i-1], expectedPreviousLine) {
 				hasFoundLine = true
 				currLineNumber = i
 				break
@@ -48,7 +48,7 @@ func UpdateDocsIndex(r utils.Release, docsIndexPath string) error {
 	hasFoundSection := false
 	sectionHeader := []byte(fmt.Sprintf("#### EKS-D %s Version Dependencies", r.KubernetesMinorVersion()))
 	for j := currLineNumber; j < len(splitData)-1; j++ {
-		if bytes.Compare(sectionHeader, splitData[j]) == 0 {
+		if bytes.Equal(sectionHeader, splitData[j]) {
 			currLineNumber = j
 			hasFoundSection = true
 			break
@@ -64,14 +64,5 @@ func UpdateDocsIndex(r utils.Release, docsIndexPath string) error {
 }
 
 func getDate() string {
-	currentTime := time.Now()
-	return fmt.Sprintf("%s %d, %d", currentTime.Month(), currentTime.Day(), currentTime.Year())
-}
-
-func isDefaultReleaseBranch(providedBranch string) (bool, error) {
-	defaultReleaseBranch, err := utils.GetDefaultReleaseBranch()
-	if err != nil {
-		return false, err
-	}
-	return strings.Compare(providedBranch, defaultReleaseBranch) == 0, nil
+	return time.Now().Format("January 02, 2006")
 }

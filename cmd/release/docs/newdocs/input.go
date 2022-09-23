@@ -1,10 +1,10 @@
-package new_docs
+package newdocs
 
 import (
 	"bytes"
 	"fmt"
 
-	"github.com/aws/eks-distro/cmd/release/utils"
+	"github.com/aws/eks-distro/cmd/release/utils/values"
 )
 
 type NewDocInput struct {
@@ -18,35 +18,35 @@ type releaseInfo interface {
 	ManifestURL() string
 }
 
-func CreateNewDocsInfo(ri releaseInfo) ([]NewDocInput, error) {
+func CreateNewDocsInput(ri releaseInfo) ([]NewDocInput, error) {
 	changeLogWriter, err := getTemplateWriter(ri, changelogTemplateInput)
 	if err != nil {
-		return []NewDocInput{}, fmt.Errorf("getting template writer for changelog: %v", err)
+		return []NewDocInput{}, fmt.Errorf("getting template writer for changelog: %w", err)
 	}
 
 	indexWriter, err := getTemplateWriter(ri, indexTemplateInput)
 	if err != nil {
-		return []NewDocInput{}, fmt.Errorf("getting template writer for index: %v", err)
+		return []NewDocInput{}, fmt.Errorf("getting template writer for index: %w", err)
 	}
 
 	releaseAnnouncementWriter, err := getTemplateWriter(ri, releaseAnnouncementTemplateInput)
 	if err != nil {
-		return []NewDocInput{}, fmt.Errorf("getting template writer for release announcement: %v", err)
+		return []NewDocInput{}, fmt.Errorf("getting template writer for release announcement: %w", err)
 	}
 
 	return []NewDocInput{
 		{
-			FileName:       utils.GetChangelogFileName(ri),
+			FileName:       values.GetChangelogFileName(ri),
 			TemplateWriter: changeLogWriter,
 			AppendToEnd:    nil,
 		},
 		{
-			FileName:       "index.md",
+			FileName:       values.IndexFileName,
 			TemplateWriter: indexWriter,
 			AppendToEnd:    getComponentsFromReleaseManifestFunc(ri),
 		},
 		{
-			FileName:       "release-announcement.txt",
+			FileName:       values.ReleaseAnnouncementFileName,
 			TemplateWriter: releaseAnnouncementWriter,
 			AppendToEnd:    nil,
 		},
@@ -56,6 +56,6 @@ func CreateNewDocsInfo(ri releaseInfo) ([]NewDocInput, error) {
 var getComponentsFromReleaseManifestFunc = func(ri releaseInfo) func() (string, error) {
 	manifestURL := ri.ManifestURL()
 	return func() (string, error) {
-		return utils.GetComponentsFromReleaseManifest(manifestURL)
+		return values.GetComponentsFromReleaseManifest(manifestURL)
 	}
 }

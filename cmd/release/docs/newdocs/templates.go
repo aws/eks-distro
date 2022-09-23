@@ -1,11 +1,11 @@
-package new_docs
+package newdocs
 
 import (
 	"bytes"
 	"path/filepath"
 	"text/template"
 
-	"github.com/aws/eks-distro/cmd/release/utils"
+	"github.com/aws/eks-distro/cmd/release/utils/values"
 )
 
 // RELEASE ANNOUNCEMENT
@@ -13,7 +13,7 @@ var releaseAnnouncementTemplateInput = templateInput{
 	templateName: "releaseAnnouncementTemplate",
 	funcMap:      template.FuncMap{},
 	docTemplate: `Amazon EKS Distro {{.Tag}} is now available. Builds are available through ECR Public Gallery (https://gallery.ecr.aws/eks-distro). The changelog and release manifest are available on GitHub (https://github.com/aws/eks-distro/releases).
-`,
+	`,
 }
 
 // CHANGELOG
@@ -34,7 +34,7 @@ var indexTemplateInput = templateInput{
 	templateName: "indexTemplate",
 	funcMap: template.FuncMap{
 		"changelogFileNameFunc": func(ri releaseInfo) string {
-			return utils.GetChangelogFileName(ri)
+			return values.GetChangelogFileName(ri)
 		},
 		"filepathBaseFunc": func(manifestURL string) string {
 			return filepath.Base(manifestURL)
