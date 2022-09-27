@@ -14,13 +14,6 @@ import (
 
 const changeType = changetype.Docs
 
-var (
-	existingDocsUpdateFuncs = map[values.AbsolutePath]func(*utils.Release, string) error{
-		values.IndexPath:  existingdocs.UpdateDocsIndex,
-		values.ReadmePath: existingdocs.UpdateREADME,
-	}
-)
-
 // Generates docs for release. Value for 'branch' flag must be provided. The release MUST already be out, and all
 // upstream changes MUST be pulled down locally.
 // TODO: fix all logic around undoing changes if error.
@@ -76,7 +69,13 @@ func main() {
 	////////////	Update existing docs	////////////////////////////////////
 
 	log.Println("Starting to update existing new docs")
+
 	cleanUp := cleanUpFunc(gm)
+
+	var existingDocsUpdateFuncs = map[values.AbsolutePath]func(*utils.Release, string) error{
+		values.IndexPath:  existingdocs.UpdateDocsIndex,
+		values.ReadmePath: existingdocs.UpdateREADME,
+	}
 
 	for ap, updateFunc := range existingDocsUpdateFuncs {
 		log.Printf("Starting update of %v\n", ap)
