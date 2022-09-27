@@ -8,6 +8,10 @@ SHELL=bash
 RELEASE_BRANCH?=$(shell cat $(BASE_DIRECTORY)/release/DEFAULT_RELEASE_BRANCH)
 RELEASE_ENVIRONMENT?=development
 RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/$(RELEASE_ENVIRONMENT)/RELEASE)
+LAST_PROD_RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/production/RELEASE)
+LAST_DEV_RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/development/RELEASE)
+PROD_ECR_REG?=public.ecr.aws/eks-distro
+DEV_ECR_REG?=public.ecr.aws/h1r8a7l5
 
 MINIMAL_VARIANT_VERSIONS=1-20 1-21 1-22 1-23 1-24
 RELEASE_VARIANT?=$(if $(filter $(RELEASE_BRANCH),$(MINIMAL_VARIANT_VERSIONS)),minimal,standard)
@@ -141,9 +145,18 @@ LATEST_IMAGE=$(IMAGE:$(lastword $(subst :, ,$(IMAGE)))=$(LATEST_TAG))
 IMAGE_USERADD_USER_ID?=1000
 IMAGE_USERADD_USER_NAME?=
 
-# Branch builds should look at the current branch latest image for cache as well as main branch latest for cache to cover the cases
-# where its the first build from a new release branch
-IMAGE_IMPORT_CACHE?=type=registry,ref=$(LATEST_IMAGE) type=registry,ref=$(subst $(LATEST),latest,$(LATEST_IMAGE))
+# Cache should be loaded from a number of potential sources
+# - latest prod release, if there the latest prod image cache matches what we are about to build, that should take precedent
+# - latest dev release
+# - last build to current tag
+# - previous dev build tag (release-number.pre)
+
+# $1 - registry
+# $2 - release number
+CACHE_IMPORT_IMAGE=$(1)/$(call IF_OVERRIDE_VARIABLE,$(IMAGE_COMPONENT_VARIABLE),$(IMAGE_COMPONENT)):$(GIT_TAG)-eks-$(RELEASE_BRANCH)-$(2)
+
+IMAGE_IMPORT_CACHE?=type=registry,ref=$(call CACHE_IMPORT_IMAGE,$(PROD_ECR_REG),$(LAST_PROD_RELEASE)) \
+	type=registry,ref=$(call CACHE_IMPORT_IMAGE,$(DEV_ECR_REG),$(LAST_DEV_RELEASE)) type=registry,ref=$(IMAGE) type=registry,ref=$(IMAGE).pre
 
 BUILD_OCI_TARS?=false
 
@@ -382,10 +395,9 @@ define BUILDCTL
 		--local dockerfile=$(DOCKERFILE_FOLDER) \
 		--local context=$(IMAGE_CONTEXT_DIR) \
 		--opt target=$(IMAGE_TARGET) \
-		--output type=$(IMAGE_OUTPUT_TYPE),oci-mediatypes=true,\"name=$(IMAGE)\",$(IMAGE_OUTPUT) # \
-		# TODO: look into buildctl caching
-		# $(if $(filter push=true,$(IMAGE_OUTPUT)),--export-cache type=inline,) \
-		# $(foreach IMPORT_CACHE,$(IMAGE_IMPORT_CACHE),--import-cache $(IMPORT_CACHE))
+		--output type=$(IMAGE_OUTPUT_TYPE),oci-mediatypes=true,\"name=$(IMAGE)\",$(IMAGE_OUTPUT) \
+		$(if $(filter push=true,$(IMAGE_OUTPUT)),--export-cache type=inline,) \
+		$(foreach IMPORT_CACHE,$(IMAGE_IMPORT_CACHE),--import-cache $(IMPORT_CACHE))
 
 endef 
 
