@@ -155,8 +155,12 @@ IMAGE_USERADD_USER_NAME?=
 # $2 - release number
 CACHE_IMPORT_IMAGE=$(1)/$(call IF_OVERRIDE_VARIABLE,$(IMAGE_COMPONENT_VARIABLE),$(IMAGE_COMPONENT)):$(GIT_TAG)-eks-$(RELEASE_BRANCH)-$(2)
 
+# pause images have multiple tags, for caching import grab just the first
+COMMA=,
+FIRST_IMAGE_TAG?=$(word 1,$(subst $(COMMA), ,$(IMAGE)))
+
 IMAGE_IMPORT_CACHE?=type=registry,ref=$(call CACHE_IMPORT_IMAGE,$(PROD_ECR_REG),$(LAST_PROD_RELEASE)) \
-	type=registry,ref=$(call CACHE_IMPORT_IMAGE,$(DEV_ECR_REG),$(LAST_DEV_RELEASE)) type=registry,ref=$(IMAGE) type=registry,ref=$(IMAGE).pre
+	type=registry,ref=$(call CACHE_IMPORT_IMAGE,$(DEV_ECR_REG),$(LAST_DEV_RELEASE)) type=registry,ref=$(FIRST_IMAGE_TAG) type=registry,ref=$(FIRST_IMAGE_TAG).pre
 
 BUILD_OCI_TARS?=false
 
