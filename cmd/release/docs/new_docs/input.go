@@ -2,13 +2,8 @@ package new_docs
 
 import (
 	"bytes"
-	"fmt"
-	. "github.com/aws/eks-distro/cmd/release/utils"
+	"github.com/aws/eks-distro/cmd/release/utils"
 )
-
-var changelogFileName = func(tag string) string {
-	return fmt.Sprintf("CHANGELOG-%s.md", tag)
-}
 
 type NewDocInput struct {
 	FileName       string
@@ -39,7 +34,7 @@ func CreateNewDocsInfo(ri releaseInfo) ([]NewDocInput, error) {
 
 	return []NewDocInput{
 		{
-			FileName:       changelogFileName(ri.Tag()),
+			FileName:       utils.GetChangelogFileName(ri),
 			TemplateWriter: changeLogWriter,
 			AppendToEnd:    nil,
 		},
@@ -59,6 +54,6 @@ func CreateNewDocsInfo(ri releaseInfo) ([]NewDocInput, error) {
 var getComponentsFromReleaseManifestFunc = func(ri releaseInfo) func() (string, error) {
 	manifestURL := ri.ManifestURL()
 	return func() (string, error) {
-		return GetComponentsFromReleaseManifest(manifestURL)
+		return utils.GetComponentsFromReleaseManifest(manifestURL)
 	}
 }

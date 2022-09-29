@@ -3,9 +3,10 @@ package utils
 type ChangesType string
 
 const (
-	Dev  ChangesType = "development"
-	Prod ChangesType = "production"
-	Docs ChangesType = "docs"
+	Dev       ChangesType = "development"
+	Prod      ChangesType = "production"
+	Docs      ChangesType = "docs"
+	GHRelease ChangesType = "github_release"
 )
 
 func (ct ChangesType) String() string {
