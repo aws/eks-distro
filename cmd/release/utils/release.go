@@ -13,7 +13,7 @@ type Release struct {
 	branch string
 	number string
 
-	kubernetesMinorVersion string // e.g. 1.23
+	kubernetesGitTag       string // e.g. v1.23.1
 	tag                    string // e.g. v1-23-eks-1
 	manifestURL            string // e.g. https://distro.eks.amazonaws.com/kubernetes-1-23/kubernetes-1-23-eks-1.yaml
 }
@@ -33,9 +33,9 @@ func NewRelease(releaseBranch string, ct changetype.ChangeType) (*Release, error
 		return &Release{}, fmt.Errorf("determining number: %w", err)
 	}
 	
-	k8sGitTag, err := GetGitTag("kubernetes", "kubernetes", releaseBranch)
+	k8sGitTag, err := values.GetGitTag("kubernetes", "kubernetes", releaseBranch)
 	if err != nil {
-		return Release{}, fmt.Errorf("Kubernetes Git Tag: %v", err)
+		return &Release{}, fmt.Errorf("Kubernetes Git Tag: %v", err)
 	}
 
 	return &Release{

@@ -1,4 +1,4 @@
-package existing_docs
+package existingdocs
 
 import (
 	"bytes"
