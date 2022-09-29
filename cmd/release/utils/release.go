@@ -13,7 +13,7 @@ type Release struct {
 	branch string
 	number string
 
-	kubernetesMinorVersion string // e.g. 1.23
+	kubernetesGitTag       string // e.g. v1.23.1
 	tag                    string // e.g. v1-23-eks-1
 	manifestURL            string // e.g. https://distro.eks.amazonaws.com/kubernetes-1-23/kubernetes-1-23-eks-1.yaml
 }
@@ -32,11 +32,16 @@ func NewRelease(releaseBranch string, ct changetype.ChangeType) (*Release, error
 	if err != nil {
 		return &Release{}, fmt.Errorf("determining number: %w", err)
 	}
+	
+	k8sGitTag, err := values.GetGitTag("kubernetes", "kubernetes", releaseBranch)
+	if err != nil {
+		return &Release{}, fmt.Errorf("Kubernetes Git Tag: %v", err)
+	}
 
 	return &Release{
 		branch:                 releaseBranch,
 		number:                 currNum,
-		kubernetesMinorVersion: strings.Replace(releaseBranch, "-", ".", 1),
+		kubernetesGitTag:       fmt.Sprintf("%s", k8sGitTag),
 		tag:                    fmt.Sprintf("v%s-eks-%s", releaseBranch, currNum),
 		manifestURL: fmt.Sprintf("https://distro.eks.amazonaws.com/kubernetes-%s/kubernetes-%s-eks-%s.yaml",
 			releaseBranch, releaseBranch, currNum),
@@ -51,9 +56,18 @@ func (r *Release) Number() string {
 	return r.number
 }
 
-// KubernetesMinorVersion returns the minor version. Example: 1.23
+// KubernetesGitTag return the full kubernetes version. Example: v1.23.7
+func (r *Release) KubernetesGitTag() string {
+	return r.kubernetesGitTag
+}
+
+// KubernetesURL returns the url to the Kubernetes version release. Example: https://github.com/kubernetes/kubernetes/release/tag/v1.23.7
+func (r *Release) KubernetesURL() string {
+	return fmt.Sprintf("https://github.com/kubernetes/kubernetes/release/tag/%s", r.kubernetesGitTag)
+}
+// KubernetesMinorVersion returns the minor version. Example: 1.24
 func (r *Release) KubernetesMinorVersion() string {
-	return r.kubernetesMinorVersion
+	return r.kubernetesGitTag[1:5]
 }
 
 // Tag returns v<branch>-eks-<number>. Example: v1-23-eks-1

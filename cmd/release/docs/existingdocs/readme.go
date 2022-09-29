@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"os"
-
+	
 	"github.com/aws/eks-distro/cmd/release/utils"
 )
 
@@ -18,11 +18,11 @@ func UpdateREADME(release *utils.Release, readmePath string) error {
 	//	Example:
 	//	### Kubernetes 1-23
 	//
-	//	| Release | Manifest |
-	//	| --- | --- |
-	//	| 4 | [1-23-eks-4](https://distro.eks.amazonaws.com/kubernetes-1-23/kubernetes-1-23-eks-4.yaml) | <- line to change
+	//	| Release | Manifest | Kubernetes Version |
+	//	| --- | --- | --- |
+	//	| 4 | [1-23-eks-4](https://distro.eks.amazonaws.com/kubernetes-1-23/kubernetes-1-23-eks-4.yaml) | v1.23.9 | <- line to change
 	expectedLine := []byte("### Kubernetes " + release.Branch())
-	lineToUpdate := []byte(fmt.Sprintf("| %s | [%s](%s) |", release.Number(), release.Tag(), release.ManifestURL()))
+	lineToUpdate := []byte(fmt.Sprintf("| %s | [%s](%s) | [%s](%s) |", release.Number(), release.Tag(), release.ManifestURL(), release.KubernetesGitTag(), release.KubernetesURL()))
 	numberOfLinesBetweenExpectedLineAndLineToUpdate := 4
 
 	splitData := bytes.Split(data, linebreak)
