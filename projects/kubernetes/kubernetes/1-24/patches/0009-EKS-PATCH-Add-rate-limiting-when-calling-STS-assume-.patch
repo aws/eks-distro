@@ -1,14 +1,15 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Prateek Gogia <pgogia@amazon.com>
 Date: Mon, 20 Jun 2022 17:35:35 -0500
-Subject: --EKS-PATCH-- Add rate limiting when calling STS assume role
+Subject: [PATCH] --EKS-PATCH-- Add rate limiting when calling STS assume role
  API
 
 Cherry-pick of upstream Kubernetes PR # 110706
 The upstream PR is merged and should be available in future k/k releases.
-However we need the STS throttling fix for 1.20-1.23.
+However we need the STS throttling fix for 1.19-1.23 EKS versions internally.
 
 We can remove this patch from version 1.22-1.23 versions once the upstream cherry-picks for this patch get merged.
+1.22 - upstream cherry-pick PR # 111260
 1.23 - upstream cherry-pick PR # 111261
 ---
  .../k8s.io/legacy-cloud-providers/aws/aws.go  |   2 +-
