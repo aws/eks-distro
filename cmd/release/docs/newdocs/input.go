@@ -39,7 +39,7 @@ func CreateNewDocsInput(ri releaseInfo) ([]NewDocInput, error) {
 		{
 			FileName:       values.GetChangelogFileName(ri),
 			TemplateWriter: changeLogWriter,
-			AppendToEnd:    getPrInforForGangelogFunc(ri),
+			AppendToEnd:    getPrInfoForChangelogFunc(ri),
 		},
 		{
 			FileName:       values.IndexFileName,
@@ -61,9 +61,9 @@ var getComponentsFromReleaseManifestFunc = func(ri releaseInfo) func() (string, 
 	}
 }
 
-var getPrInforForChangelogFunc = func(ri releaseInfo) func() (string, error) {
+var getPrInfoForChangelogFunc = func(ri releaseInfo) func() (string, error) {
 	releaseVersion := "v" + ri.KubernetesMinorVersion()
 	return func() (string, error) {
-		return utils.GetChangelogPRs(releaseVersion)
+		return values.GetChangelogPRs(releaseVersion)
 	}
 }
