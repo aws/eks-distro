@@ -11,10 +11,6 @@ AWS_REGION?=us-west-2
 IMAGE_REPO?=$(if $(AWS_ACCOUNT_ID),$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com,localhost:5000)
 RELEASE_AWS_PROFILE?=default
 
-USE_PREV_RELEASE_MANIFEST?=false
-OPEN_PR?=true
-IS_LOCAL_RELEASE_NUMBER_FOR_NEW_RELEASE?=true
-
 RELEASE_GIT_TAG?=v$(RELEASE_BRANCH)-eks-$(PROD_RELEASE)
 RELEASE_GIT_COMMIT_HASH?=$(shell git rev-parse @)
 
@@ -196,8 +192,7 @@ update-release-number:
 	go vet ./cmd/release/number
 	go run ./cmd/release/number/main.go \
 		--branch=$(RELEASE_BRANCH) \
-		--isProd=$(is_update_prod_number) \
-		--openPR=$(OPEN_PR)
+		--isProd=$(is_update_prod_number)
 
 .PHONY: update-dev-release-number
 update-dev-release-number:
@@ -218,24 +213,7 @@ update-all-release-numbers:
 release-docs:
 	go vet ./cmd/release/docs
 	go run ./cmd/release/docs/main.go \
-		--branch=$(RELEASE_BRANCH) \
-		--usePrevReleaseManifestForComponentTable=$(USE_PREV_RELEASE_MANIFEST) \
-		--openPR=$(OPEN_PR) \
-		--isLocalReleaseNumberForNewRelease=$(IS_LOCAL_RELEASE_NUMBER_FOR_NEW_RELEASE)
-
-.PHONY: only-index-md-from-existing-release-manifest
-only-index-md-from-existing-release-manifest:
-	go vet ./cmd/release/docs
-	go run ./cmd/release/docs/main.go \
-		--branch=$(RELEASE_BRANCH) \
-		--includeIndex=true \
-		--includeIndexComponentTable=true \
-		--usePrevReleaseManifestForComponentTable=false \
-		--includeChangelog=false \
-		--includeAnnouncement=false \
-		--includeREADME=false \
-		--includeDocsIndex=false \
-		--force=true
+		--branch=$(RELEASE_BRANCH)
 
 .PHONY: github-release
 github-release:
@@ -243,4 +221,3 @@ github-release:
 	go run ./cmd/release/github_release/main.go \
 		--branch=$(RELEASE_BRANCH) \
 		--number=$(PROD_RELEASE)
-
