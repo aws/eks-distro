@@ -1,63 +1,83 @@
 package main
 
 import (
-	. "../utils"
-	. "./internal"
-	"errors"
 	"flag"
+	"fmt"
 	"log"
 	"os"
-	"os/exec"
+	"strconv"
+
+	"github.com/aws/eks-distro/cmd/release/utils/changetype"
+	"github.com/aws/eks-distro/cmd/release/utils/git"
+	"github.com/aws/eks-distro/cmd/release/utils/values"
 )
 
-// Updates RELEASE number for dev and/or prod, depending on the values
-// provided to the appropriate flags. If a failure is encounter,
-// attempts to undo any changes to RELEASE.
+// Updates RELEASE number for dev or prod, depending on the values provided to the appropriate flags.
+// TODO: fix all logic around undoing changes if error.
 func main() {
 	branch := flag.String("branch", "", "Release branch, e.g. 1-20")
 	isProd := flag.Bool("isProd", false, "True for prod; false for dev")
-	includePR := flag.Bool("openPR", true, "If a PR should be opened for changed")
 
 	flag.Parse()
 
-	releaseEnvironment := func() ReleaseEnvironment {
+	environment := func() changetype.ChangeType {
 		if *isProd {
-			return Production
+			return changetype.Prod
 		}
-		return Development
+		return changetype.Dev
 	}()
 
-	releaseNumber, err := CreateReleaseNumber(*branch, releaseEnvironment)
+	nextNumber, numberFilePath, err := getNextNumber(*branch, environment)
 	if err != nil {
-		log.Fatalf("Error calculating %s RELEASE: %v", releaseEnvironment.String(), err)
+		log.Fatalf("calculating %s RELEASE: %v", environment, err)
 	}
 
-	err = updateEnvironmentReleaseNumber(releaseNumber)
+	gm, err := git.CreateGitManager(*branch, nextNumber, environment)
 	if err != nil {
-		cleanUpIfError(releaseNumber.FilePath())
-		log.Fatalf("Error writing to %s RELEASE: %v", releaseEnvironment.String(), err)
+		log.Fatalf("creating git manager for %s RELEASE: %v", environment, err)
 	}
 
-	if *includePR {
-		if err = OpenNumberPR(*branch, releaseNumber, releaseEnvironment); err != nil {
-			log.Fatal(err)
+	if err = updateEnvironmentReleaseNumber(nextNumber, numberFilePath); err != nil {
+		cleanUpErrs := gm.RestoreFileAndAbandonAllChanges(numberFilePath)
+		if len(cleanUpErrs) > 0 {
+			log.Printf("encountered %d error(s) while attemptng to clean up due to earlier error: %v",
+				len(cleanUpErrs), cleanUpErrs)
 		}
+		log.Fatalf("writing to %s RELEASE: %v", environment, err)
+	}
+
+	if err = gm.AddAndCommit(numberFilePath); err != nil {
+		cleanUpErrs := gm.RestoreFileAndAbandonAllChanges(numberFilePath)
+		if len(cleanUpErrs) > 0 {
+			log.Printf("encountered %d error(s) while attemptng to clean up due to earlier error: %v",
+				len(cleanUpErrs), cleanUpErrs)
+		}
+		log.Fatalf("adding and committing: %v", err)
+	}
+
+	if err = gm.OpenPR(); err != nil {
+		log.Fatalf("adding and committing: %v", err)
 	}
 }
 
-func updateEnvironmentReleaseNumber(rn ReleaseNumber) error {
-	if len(rn.Next()) == 0 {
-		return errors.New("failed to update release number file because provided number was empty")
-	}
-	return os.WriteFile(rn.FilePath(), []byte(rn.Next()+"\n"), 0644)
-}
-
-func cleanUpIfError(path string) {
-	log.Println("Encountered error so all attempting to restore file")
-	err := exec.Command("git", "restore", path).Run()
+// getNextNumber returns the next number and the filepath to the local file for the current number used to determine
+// the next number.
+func getNextNumber(branch string, ct changetype.ChangeType) (nextNum string, numPath values.AbsolutePath, err error) {
+	currNum, numPath, err := values.GetLocalNumber(branch, ct)
 	if err != nil {
-		log.Printf("Encountered error while attempting to restored %s", path)
-	} else {
-		log.Printf("If changes were made, restored %s", path)
+		return "", "", fmt.Errorf("getting local number: %w", err)
 	}
+
+	currNumAsInt, err := strconv.Atoi(currNum)
+	if err != nil {
+		return "", "", fmt.Errorf("calculating next number from current number %s: %w", currNum, err)
+	}
+	return strconv.Itoa(currNumAsInt + 1), numPath, nil
+}
+
+func updateEnvironmentReleaseNumber(number string, numberFilPath values.AbsolutePath) error {
+	if len(number) == 0 {
+		return fmt.Errorf("updating release number file %s because provided number was empty", numberFilPath)
+	}
+	return os.WriteFile(numberFilPath.String(), []byte(number+"\n"), 0644)
 }

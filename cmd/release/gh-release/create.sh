@@ -20,9 +20,8 @@ set -o pipefail
 set -x
 
 GIT_TAG="${1?...}"
-VERSION="${2?...}"
-CHANGELOG_FILEPATH="${3?...}"
-INDEX_FILEPATH="${4?...}"
+CHANGELOG_FILEPATH="${2?...}"
+INDEX_FILEPATH="${3?...}"
 
 # Removes the first to lines to get rid of H1 headers and an empty line.
 # The H1 headers are larger than the release titles on GitHub, and it
@@ -31,4 +30,4 @@ releaseNotes="$(sed '1,2d' "$CHANGELOG_FILEPATH")
 
 $(sed '1,2d' "$INDEX_FILEPATH")"
 
-gh release create "$GIT_TAG" --title "EKS Distro $VERSION Release" --notes "$releaseNotes"
+gh release create "$GIT_TAG" --title "EKS Distro $GIT_TAG Release" --notes "$releaseNotes"
