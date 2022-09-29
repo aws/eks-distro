@@ -16,6 +16,7 @@ type NewDocInput struct {
 type releaseInfo interface {
 	Tag() string
 	ManifestURL() string
+	KubernetesMinorVersion() string
 }
 
 func CreateNewDocsInput(ri releaseInfo) ([]NewDocInput, error) {
@@ -38,7 +39,7 @@ func CreateNewDocsInput(ri releaseInfo) ([]NewDocInput, error) {
 		{
 			FileName:       values.GetChangelogFileName(ri),
 			TemplateWriter: changeLogWriter,
-			AppendToEnd:    nil,
+			AppendToEnd:    getPrInforForGangelogFunc(ri),
 		},
 		{
 			FileName:       values.IndexFileName,
@@ -57,5 +58,12 @@ var getComponentsFromReleaseManifestFunc = func(ri releaseInfo) func() (string, 
 	manifestURL := ri.ManifestURL()
 	return func() (string, error) {
 		return values.GetComponentsFromReleaseManifest(manifestURL)
+	}
+}
+
+var getPrInforForChangelogFunc = func(ri releaseInfo) func() (string, error) {
+	releaseVersion := "v" + ri.KubernetesMinorVersion()
+	return func() (string, error) {
+		return utils.GetChangelogPRs(releaseVersion)
 	}
 }

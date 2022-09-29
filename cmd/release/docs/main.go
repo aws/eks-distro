@@ -35,10 +35,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("creating new git manager: %v", err)
 	}
-	err = gm.AddAndCommit(changedFiles...)
-	if err != nil {
-		log.Fatalf("Failed to update doc due to error: %v", err)
-	}
 
 	////////////	Create new docs		////////////////////////////////////
 

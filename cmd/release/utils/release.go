@@ -14,7 +14,7 @@ type Release struct {
 	number string
 
 	kubernetesGitTag       string // e.g. v1.23.1
-	tag                    string // e.g. v1-23-eks-2
+	tag                    string // e.g. v1-23-eks-1
 	manifestURL            string // e.g. https://distro.eks.amazonaws.com/kubernetes-1-23/kubernetes-1-23-eks-1.yaml
 }
 
