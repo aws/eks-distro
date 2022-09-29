@@ -56,7 +56,7 @@ func (r *Release) Number() string {
 	return r.number
 }
 
-// KubernetesGitTag return the full kubernetes version. Example: v.1.23.7
+// KubernetesGitTag return the full kubernetes version. Example: v1.23.7
 func (r *Release) KubernetesGitTag() string {
 	return r.kubernetesGitTag
 }
