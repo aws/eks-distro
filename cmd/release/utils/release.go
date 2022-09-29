@@ -13,13 +13,8 @@ type Release struct {
 	branch string
 	number string
 
-<<<<<<< HEAD
 	kubernetesMinorVersion string // e.g. 1.23
 	tag                    string // e.g. v1-23-eks-1
-=======
-	kubernetesGitTag       string // e.g. v1.20.1
-	tag                    string // e.g. v1-20-eks-2
->>>>>>> ccfa845 (Logic for getting and returning KubernetesVersion)
 	manifestURL            string // e.g. https://distro.eks.amazonaws.com/kubernetes-1-23/kubernetes-1-23-eks-1.yaml
 }
 
