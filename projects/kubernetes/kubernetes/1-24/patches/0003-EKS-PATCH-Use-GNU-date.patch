@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Micah Hausler <mhausler@amazon.com>
 Date: Sun, 1 Nov 2020 09:24:08 -0800
-Subject: --EKS-PATCH-- Use GNU date
+Subject: [PATCH] --EKS-PATCH-- Use GNU date
 
 Use GNU date if available for builds on darwin
 
