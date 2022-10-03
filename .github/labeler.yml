@@ -1,7 +1,7 @@
 documentation: 
 - 'docs/**/*'
 
-dependencies:
+project:
 - '**/GIT_TAG'
 
 patch:
