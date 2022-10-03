@@ -98,7 +98,7 @@ https://github.com/google/btree
 ** github.com/google/cadvisor; version v0.44.1 --
 https://github.com/google/cadvisor
 
-** github.com/google/cel-go; version v0.10.1 --
+** github.com/google/cel-go; version v0.10.2 --
 https://github.com/google/cel-go
 
 ** github.com/google/gnostic; version v0.5.7-v3refs --
@@ -338,7 +338,7 @@ https://github.com/kubernetes/kubectl
 ** k8s.io/kubelet; version v0.0.0 --
 https://github.com/kubernetes/kubelet
 
-** k8s.io/kubernetes; version v1.24.4 --
+** k8s.io/kubernetes; version v1.24.6 --
 https://github.com/kubernetes/kubernetes
 
 ** k8s.io/legacy-cloud-providers; version v0.0.0 --
@@ -949,7 +949,7 @@ https://github.com/aws/aws-sdk-go
 ** github.com/liggitt/tabwriter; version v0.0.0-20181228230101-89fcab3d43de --
 https://github.com/liggitt/tabwriter
 
-** golang.org/go; version go1.18.5 --
+** golang.org/go; version go1.18.6 --
 https://github.com/golang/go
 
 ** golang.org/x/crypto; version v0.0.0-20220214200702-86341886e292 --
@@ -985,7 +985,7 @@ https://github.com/kubernetes/apimachinery
 ** k8s.io/client-go/third_party/forked/golang/template; version v0.0.0 --
 https://github.com/kubernetes/client-go
 
-** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.24.4 --
+** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.24.6 --
 https://github.com/kubernetes/kubernetes
 
 ** k8s.io/utils/inotify; version v0.0.0-20220210201930-3a6ce19ff2f9 --
@@ -1862,7 +1862,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.24.4 --
+** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.24.6 --
 https://github.com/kubernetes/kubernetes
 
 Copyright ©2013 The gonum Authors. All rights reserved.

@@ -36,6 +36,14 @@ include $(BASE_DIRECTORY)/Common.mk
 
 $(GATHER_LICENSES_TARGETS): | $(FIX_LICENSES_GO_RUNNER_TARGET)
 
+# For 1.24 the project is built with 1.18 to match upstream but for some
+# unknown reason the go-licenses project does not properly parse the go module
+# with using 1.18 golang. This kind of an ugly solution
+# but since we have not seen this anywhere else with 1.18 based projects the hope is
+# this is super specific to this project and not something we have to do elsewhere
+# if we start seeing this elsewhere we should dig in more and try to fix go-licenses
+_output/1-24/attribution/go-license.csv: GOLANG_VERSION=1.17
+
 $(call IMAGE_TARGETS_FOR_NAME, kube-proxy-base): $(IPTABLES_WRAPPER)
 $(call IMAGE_TARGETS_FOR_NAME, kube-proxy-base): IMAGE_TARGET=$(RELEASE_VARIANT)
 $(call IMAGE_TARGETS_FOR_NAME, kube-proxy-base): BASE_IMAGE_NAME=$(KUBE_PROXY_BASE_BASE_IMAGE_NAME)
