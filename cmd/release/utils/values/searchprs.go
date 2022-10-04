@@ -8,6 +8,10 @@ import (
 	"github.com/google/go-github/v47/github"
 )
 
+const (
+	baseQuery = "repo:aws/eks-distro is:pr is:merged"
+)
+
 func GetChangelogPRs(releaseVersion string) (string, error) {
 	githubClient := github.NewClient(nil)
 
@@ -18,68 +22,32 @@ func GetChangelogPRs(releaseVersion string) (string, error) {
 		return "", fmt.Errorf("Getting PRs from %v: %v", githubClient, err)
 	}
 
-	lastDocRelease := prs.Issues[0].ClosedAt
+	lastDocRelease := prs.Issues[0].ClosedAt.Format("2006-01-02T15:04:05+00:00")
+	
+	patchPRs, _, err := githubClient.Search.Issues(ctx, fmt.Sprintf("%v merged:>%v label:patch label:%v", baseQuery, lastDocRelease, releaseVersion), opts)
 
-	patchPRs, _, err := githubClient.Search.Issues(ctx, "repo:aws/eks-distro is:pr is:merged label:patch label:" + releaseVersion + " merged:>" + fmt.Sprintf("%v", lastDocRelease), opts)
+	baseImgPRs, _, err := githubClient.Search.Issues(ctx, fmt.Sprintf("%v merged:>%v label:base-img-pkg-update label:%v",baseQuery, lastDocRelease, releaseVersion), opts)
 
-	baseImgPRs, _, err := githubClient.Search.Issues(ctx, "repo:aws/eks-distro is:pr is:merged label:base-image-pkg-update label:" + releaseVersion + " merged:>" + fmt.Sprintf("%v", lastDocRelease), opts)
-
-	versPRs, _, err := githubClient.Search.Issues(ctx, "repo:aws/eks-distro is:pr is:merged label:dependencies label:" + releaseVersion + " merged:>" + fmt.Sprintf("%v", lastDocRelease), opts)
+	versPRs, _, err := githubClient.Search.Issues(ctx, fmt.Sprintf("%v merged:>%v label:project label:%v",baseQuery, lastDocRelease, releaseVersion), opts)
 	
 	var changelog []string
-	patchSect, _ := patchPRsSinceLastRelease(patchPRs)
-	changelog = append(changelog, patchSect)
-	
-	versSect, _ := versionChangesSinceLastRelease(versPRs)
-	changelog = append(changelog, versSect)
-	
-	baseImgSect, _ := baseImageChangesSinceLastRelease(baseImgPRs)
-	changelog = append(changelog, baseImgSect)
+	changelog = append(changelog, PRsSinceLastRelease(patchPRs, "### Patches"))
+	changelog = append(changelog, PRsSinceLastRelease(versPRs, "### Projects"))
+	changelog = append(changelog, PRsSinceLastRelease(baseImgPRs, "### Base Image"))
 
 	return strings.Join(changelog, "\n"), nil
 }
 
-func patchPRsSinceLastRelease(patchPRs *github.IssuesSearchResult) (string, error) {
-	var patchSection []string
-	patchSection = append(patchSection, "### Patches")
-	
-	if len(patchPRs.Issues) == 0 {
-		patchSection = append(patchSection, "No patches applied since last release")
-		return strings.Join(patchSection, "\n"), nil
+func PRsSinceLastRelease(prs *github.IssuesSearchResult, sectionName string) (string) {
+	var section []string
+	section = append(section, sectionName)
+
+	if len(prs.Issues) == 0 {
+		section = append(section, "No changes since last release")
 	}
 
-	for _, pr := range patchPRs.Issues {
-		patchSection = append(patchSection, fmt.Sprintf("%v ([%v](%v), [%v](%v))", *pr.Title, *pr.ID, *pr.URL, *pr.User.Login, *pr.User.URL))
+	for _, pr := range prs.Issues {
+		section = append(section, fmt.Sprintf("* %v ([%v](%v))", *pr.Title, *pr.ID, *pr.URL))
 	}
-	return strings.Join(patchSection, "\n"), nil
-}
-
-func versionChangesSinceLastRelease(versPRs *github.IssuesSearchResult) (string, error) {
-	var versSection []string
-	versSection = append(versSection, "### Dependencies")
-	
-	if len(versPRs.Issues) == 0 {
-		versSection = append(versSection, "No changes since last release")
-		return strings.Join(versSection, "\n"), nil
-	}
-
-	for _, pr := range versPRs.Issues {
-		versSection = append(versSection, fmt.Sprintf("%v ([%v](%v), [%v](%v))", *pr.Title, *pr.ID, *pr.URL, *pr.User.Login, *pr.User.URL))
-	}
-	return strings.Join(versSection, "\n"), nil
-}
-
-func baseImageChangesSinceLastRelease(baseImgPRs *github.IssuesSearchResult) (string, error) {
-	var baseImgSection []string
-	baseImgSection = append(baseImgSection, "### Base Image Package Updates")
-
-	if len(baseImgPRs.Issues) == 0 {
-		baseImgSection = append(baseImgSection, "No changes since last release")
-		return strings.Join(baseImgSection, "\n"), nil
-	}
-
-	for _, pr := range baseImgPRs.Issues {
-		baseImgSection = append(baseImgSection, fmt.Sprintf("%v ([%v](%v), [%v](%v))", *pr.Title, *pr.ID, *pr.URL, *pr.User.Login, *pr.User.URL))
-	}
-	return strings.Join(baseImgSection, "\n"), nil
+	return strings.Join(section, "\n")
 }
