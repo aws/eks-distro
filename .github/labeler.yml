@@ -1,2 +1,8 @@
 documentation: 
 - 'docs/**/*'
+
+project:
+- '**/GIT_TAG'
+
+patch:
+- '**/*.patch'
