@@ -1,12 +1,12 @@
 ## EKS Distro Repository
 
-### 🚨🚨🚨 IMPORTANT INFORMATION ABOUT 1.19 SUPPORT 🚨🚨🚨
+### 🚨🚨🚨 IMPORTANT INFORMATION ABOUT 1.20 SUPPORT 🚨🚨🚨
 
-EKS-D will be discontinuing support of Kubernetes v1.19 soon. While there are no
-plans to removed EKS-D 1.19 images from the ECR, there will be no more updates 
-to 1.19 once support has stopped. **Due to the increased security risk this poses, 
-it is HIGHLY recommended that users of 1.19 update to a supported version 
-(1.20 - 1.23) as soon as possible.**
+EKS-D will be discontinuing support of Kubernetes v1.20 soon. While there are no
+plans to removed EKS-D 1.20 images from the ECR, there will be no more updates 
+to 1.20 once support has stopped. **Due to the increased security risk this poses, 
+it is HIGHLY recommended that users of 1.20 update to a supported version 
+(1.21 - 1.23) as soon as possible.**
 
 ---
 
@@ -70,7 +70,7 @@ no plans to remove these versions' images from EKS Distro ECR, there will be no
 more updates, including security fixes, for them.
 
 **Due to the increased security risk this poses, it is HIGHLY recommended that
-users of 1.18 and 1.19 update to a supported version (1.20 - 1.23) as soon as 
+users of 1.18 and 1.19 update to a supported version (1.21 - 1.23) as soon as 
 possible.**
 
 ## Development
