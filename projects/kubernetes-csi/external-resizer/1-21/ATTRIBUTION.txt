@@ -2,7 +2,7 @@
 ** github.com/container-storage-interface/spec/lib/go/csi; version v1.5.0 --
 https://github.com/container-storage-interface/spec
 
-** github.com/go-logr/logr; version v1.2.0 --
+** github.com/go-logr/logr; version v1.2.3 --
 https://github.com/go-logr/logr
 
 ** github.com/go-openapi/jsonpointer; version v0.19.5 --
@@ -26,7 +26,7 @@ https://github.com/google/gofuzz
 ** github.com/kubernetes-csi/csi-lib-utils; version v0.11.0 --
 https://github.com/kubernetes-csi/csi-lib-utils
 
-** github.com/kubernetes-csi/external-resizer; version v1.5.0 --
+** github.com/kubernetes-csi/external-resizer; version v1.6.0 --
 https://github.com/kubernetes-csi/external-resizer
 
 ** github.com/matttproud/golang_protobuf_extensions/pbutil; version v1.0.2-0.20181231171920-c182affec369 --
@@ -53,49 +53,49 @@ https://github.com/prometheus/procfs
 ** github.com/spf13/cobra; version v1.4.0 --
 https://github.com/spf13/cobra
 
-** google.golang.org/genproto/googleapis/rpc/status; version v0.0.0-20220107163113-42d7afdf6368 --
+** google.golang.org/genproto/googleapis/rpc/status; version v0.0.0-20220502173005-c8bf987b8c21 --
 https://github.com/googleapis/go-genproto
 
-** google.golang.org/grpc; version v1.40.0 --
+** google.golang.org/grpc; version v1.47.0 --
 https://github.com/grpc/grpc-go
 
 ** gopkg.in/yaml.v2; version v2.4.0 --
 https://gopkg.in/yaml.v2
 
-** k8s.io/api; version v0.24.0 --
+** k8s.io/api; version v0.25.0 --
 https://github.com/kubernetes/api
 
-** k8s.io/apimachinery/pkg; version v0.24.0 --
+** k8s.io/apimachinery/pkg; version v0.26.0-alpha.0 --
 https://github.com/kubernetes/apimachinery
 
-** k8s.io/apiserver/pkg/util/feature; version v0.24.0 --
+** k8s.io/apiserver/pkg/util/feature; version v0.25.0 --
 https://github.com/kubernetes/apiserver
 
-** k8s.io/client-go; version v0.24.0 --
+** k8s.io/client-go; version v0.25.0 --
 https://github.com/kubernetes/client-go
 
-** k8s.io/component-base; version v0.24.0 --
+** k8s.io/component-base; version v0.25.0 --
 https://github.com/kubernetes/component-base
 
-** k8s.io/csi-translation-lib; version v0.24.0 --
+** k8s.io/csi-translation-lib; version v0.25.0 --
 https://github.com/kubernetes/csi-translation-lib
 
-** k8s.io/klog/v2; version v2.60.1 --
+** k8s.io/klog/v2; version v2.70.1 --
 https://github.com/kubernetes/klog
 
-** k8s.io/kube-openapi/pkg; version v0.0.0-20220328201542-3ee0da9b0b42 --
+** k8s.io/kube-openapi/pkg; version v0.0.0-20220803162953-67bda5d908f1 --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kube-openapi/pkg/validation/spec; version v0.0.0-20220328201542-3ee0da9b0b42 --
+** k8s.io/kube-openapi/pkg/validation/spec; version v0.0.0-20220803162953-67bda5d908f1 --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/utils; version v0.0.0-20220210201930-3a6ce19ff2f9 --
+** k8s.io/utils; version v0.0.0-20220728103510-ee6ede2d64ed --
 https://github.com/kubernetes/utils
 
-** sigs.k8s.io/json; version v0.0.0-20211208200746-9f7c6b3444d2 --
+** sigs.k8s.io/json; version v0.0.0-20220713155537-f223a00ba0e2 --
 https://github.com/kubernetes-sigs/json
 
-** sigs.k8s.io/structured-merge-diff/v4; version v4.2.1 --
+** sigs.k8s.io/structured-merge-diff/v4; version v4.2.3 --
 https://github.com/kubernetes-sigs/structured-merge-diff
 
 
@@ -450,7 +450,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/google/go-cmp/cmp; version v0.5.5 --
+** github.com/google/go-cmp/cmp; version v0.5.6 --
 https://github.com/google/go-cmp
 
 Copyright (c) 2017 The Go Authors. All rights reserved.
@@ -611,7 +611,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 ** github.com/PuerkitoBio/urlesc; version v0.0.0-20170810143723-de5bf2ad4578 --
 https://github.com/PuerkitoBio/urlesc
 
-** k8s.io/utils/internal/third_party/forked/golang/net; version v0.0.0-20220210201930-3a6ce19ff2f9 --
+** k8s.io/utils/internal/third_party/forked/golang/net; version v0.0.0-20220728103510-ee6ede2d64ed --
 https://github.com/kubernetes/utils
 
 Copyright (c) 2012 The Go Authors. All rights reserved.
@@ -681,13 +681,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ** golang.org/go; version go1.18.6 --
 https://github.com/golang/go
 
-** golang.org/x/net; version v0.0.0-20220127200216-cd36cc0744dd --
+** golang.org/x/net; version v0.0.0-20220722155237-a158d28d115b --
 https://go.googlesource.com/net
 
 ** golang.org/x/oauth2; version v0.0.0-20211104180415-d3ed0bb246c8 --
 https://go.googlesource.com/oauth2
 
-** golang.org/x/sys; version v0.0.0-20220209214540-3681064d5158 --
+** golang.org/x/sys; version v0.0.0-20220722155257-8c9f86f7a55f --
 https://go.googlesource.com/sys
 
 ** golang.org/x/term; version v0.0.0-20210927222741-03fcf44c2211 --
@@ -699,7 +699,7 @@ https://go.googlesource.com/text
 ** golang.org/x/time/rate; version v0.0.0-20220210224613-90d013bbcef8 --
 https://go.googlesource.com/time
 
-** k8s.io/apimachinery/third_party/forked/golang; version v0.24.0 --
+** k8s.io/apimachinery/third_party/forked/golang; version v0.26.0-alpha.0 --
 https://github.com/kubernetes/apimachinery
 
 Copyright (c) 2009 The Go Authors. All rights reserved.
@@ -732,7 +732,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** google.golang.org/protobuf; version v1.27.1 --
+** google.golang.org/protobuf; version v1.28.0 --
 https://go.googlesource.com/protobuf
 
 Copyright (c) 2018 The Go Authors. All rights reserved.
@@ -832,8 +832,8 @@ Copyright (c) 2014 Benedikt Lang <github at benediktlang.de>
 https://github.com/cespare/xxhash/v2
 Copyright (c) 2016 Caleb Spare
 
-** github.com/emicklei/go-restful; version v2.9.5+incompatible --
-https://github.com/emicklei/go-restful
+** github.com/emicklei/go-restful/v3; version v3.8.0 --
+https://github.com/emicklei/go-restful/v3
 Copyright (c) 2012,2013 Ernest Micklei
 
 ** github.com/josharian/intern; version v1.0.0 --
@@ -868,7 +868,7 @@ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ------
 
-** gopkg.in/yaml.v3; version v3.0.0-20210107192922-496545a6307b --
+** gopkg.in/yaml.v3; version v3.0.1 --
 https://gopkg.in/yaml.v3
 Copyright (c) 2006-2010 Kirill Simonov
 Copyright (c) 2006-2011 Kirill Simonov
