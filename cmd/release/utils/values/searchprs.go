@@ -25,11 +25,20 @@ func GetChangelogPRs(releaseVersion string) (string, error) {
 	lastDocRelease := prs.Issues[0].ClosedAt.Format("2006-01-02T15:04:05+00:00")
 	
 	patchPRs, _, err := githubClient.Search.Issues(ctx, fmt.Sprintf("%v merged:>%v label:patch label:%v", baseQuery, lastDocRelease, releaseVersion), opts)
+	if err != nil {
+		return "", fmt.Errorf("Getting patch prs: %v", err)
+	}
 
 	baseImgPRs, _, err := githubClient.Search.Issues(ctx, fmt.Sprintf("%v merged:>%v label:base-img-pkg-update label:%v",baseQuery, lastDocRelease, releaseVersion), opts)
+	if err != nil {
+		return "", fmt.Errorf("Getting base image prs: %v", err)
+	}
 
 	versPRs, _, err := githubClient.Search.Issues(ctx, fmt.Sprintf("%v merged:>%v label:project label:%v",baseQuery, lastDocRelease, releaseVersion), opts)
-	
+	if err != nil {
+		return "", fmt.Errorf("Getting project prs: %v", err)
+	}
+
 	var changelog []string
 	changelog = append(changelog, PRsSinceLastRelease(patchPRs, "### Patches"))
 	changelog = append(changelog, PRsSinceLastRelease(versPRs, "### Projects"))
