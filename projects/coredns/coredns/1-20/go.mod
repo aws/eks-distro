@@ -14,7 +14,7 @@ require (
 	github.com/dustin/go-humanize v1.0.0 // indirect
 	github.com/farsightsec/golang-framestream v0.3.0
 	github.com/golang/protobuf v1.4.3
-	github.com/gorilla/websocket v1.4.0 // indirect
+	github.com/gorilla/websocket v1.4.1 // indirect
 	github.com/grpc-ecosystem/grpc-opentracing v0.0.0-20180507213350-8e809c8a8645
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/imdario/mergo v0.3.9 // indirect
@@ -40,3 +40,5 @@ require (
 	k8s.io/client-go v0.20.2
 	k8s.io/klog v1.0.0
 )
+
+replace github.com/gorilla/websocket => github.com/gorilla/websocket v1.4.1
