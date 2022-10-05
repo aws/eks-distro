@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Copyright 2020 Amazon.com Inc. or its affiliates. All Rights Reserved.
+# Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -77,18 +77,54 @@ function pr:create()
     fi
 }
 
+function pr::create::pr_body(){
+    pr_body=""
+    case $1 in
+    attribution)
+        pr_body=$(cat <<'EOF'
+This PR updates the ATTRIBUTION.txt files across all dependency projects if there have been changes.
+
+These files should only be changing due to project GIT_TAG bumps or Golang version upgrades. If changes are for any other reason, please review carefully before merging!
+EOF
+)
+        ;;
+    checksums)
+        pr_body=$(cat <<'EOF'
+This PR updates the CHECKSUMS files across all dependency projects if there have been changes.
+
+These files should only be changing due to project GIT_TAG bumps or Golang version upgrades. If changes are for any other reason, please review carefully before merging!
+EOF
+)
+        ;;
+    makehelp)
+        pr_body=$(cat <<'EOF'
+This PR updates the Help.mk files across all dependency projects if there have been changes.
+EOF
+)
+        ;;
+    go-mod)
+        pr_body=$(cat <<'EOF'
+This PR updates the checked in go.mod and go.sum files across all dependency projects to support automated vulnerability scanning.
+EOF
+)
+        ;;
+    *)
+        echo "Invalid argument: $1"
+        exit 1
+        ;;
+    esac
+    PROW_BUCKET_NAME=$(echo $JOB_SPEC | jq -r ".decoration_config.gcs_configuration.bucket" | awk -F// '{print $NF}')
+    full_pr_body=$(printf "%s\nClick [here](https://prow.eks.amazonaws.com/view/s3/$PROW_BUCKET_NAME/logs/$JOB_NAME/$BUILD_ID) to view job logs.\nBy submitting this pull request, I confirm that you can use, modify, copy, and redistribute this contribution, under the terms of your choice." "$pr_body")
+
+    echo $full_pr_body
+}
+
 function pr::create::attribution() {
     local -r pr_title="Update ATTRIBUTION.txt files"
     local -r commit_message="[PR BOT] Update ATTRIBUTION.txt files"
     local -r pr_branch="attribution-files-update-$MAIN_BRANCH"
-    local -r pr_body=$(cat <<EOF
-This PR updates the ATTRIBUTION.txt files across all dependency projects if there have been changes.
+    local -r pr_body=$(pr::create::pr_body "attribution")
 
-This files should only be changing due to project GIT_TAG bumps or golang version upgrades.  If changes are for any other reason please review carefully! 
-
-By submitting this pull request, I confirm that you can use, modify, copy, and redistribute this contribution, under the terms of your choice.
-EOF
-)
     pr:create "$pr_title" "$commit_message" "$pr_branch" "$pr_body"
 }
 
@@ -96,14 +132,8 @@ function pr::create::checksums() {
     local -r pr_title="Update CHECKSUMS files"
     local -r commit_message="[PR BOT] Update CHECKSUMS files"
     local -r pr_branch="checksums-files-update-$MAIN_BRANCH"
-    local -r pr_body=$(cat <<EOF
-This PR updates the CHECKSUMS files across all dependency projects if there have been changes.
+    local -r pr_body=$(pr::create::pr_body "checksums")
 
-This files should only be changing due to golang version upgrades.  If changes are for any other reason please do not merge!
-
-By submitting this pull request, I confirm that you can use, modify, copy, and redistribute this contribution, under the terms of your choice.
-EOF
-)
     pr:create "$pr_title" "$commit_message" "$pr_branch" "$pr_body"
 }
 
@@ -111,12 +141,8 @@ function pr::create::help() {
     local -r pr_title="Update Makefile generated help"
     local -r commit_message="[PR BOT] Update Help.mk files"
     local -r pr_branch="help-makefiles-update-$MAIN_BRANCH"
-    local -r pr_body=$(cat <<EOF
-This PR updates the Help.mk files across all dependency projects if there have been changes.
+    local -r pr_body=$(pr::create::pr_body "makehelp")
 
-By submitting this pull request, I confirm that you can use, modify, copy, and redistribute this contribution, under the terms of your choice.
-EOF
-)
     pr:create "$pr_title" "$commit_message" "$pr_branch" "$pr_body"
 }
 
@@ -124,12 +150,8 @@ function pr::create::go-mod() {
     local -r pr_title="Update go.mod files"
     local -r commit_message="[PR BOT] Update go.mod files"
     local -r pr_branch="go-mod-update-$MAIN_BRANCH"
-    local -r pr_body=$(cat <<EOF
-This PR updates the checked in go.mod and go.sum files across all dependency projects to support automated vulnerability scanning.
+    local -r pr_body=$(pr::create::pr_body "go-mod")
 
-By submitting this pull request, I confirm that you can use, modify, copy, and redistribute this contribution, under the terms of your choice.
-EOF
-)
     pr:create "$pr_title" "$commit_message" "$pr_branch" "$pr_body"
 }
 
