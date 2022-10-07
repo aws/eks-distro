@@ -12,13 +12,14 @@ checkout-repo: ## Checkout upstream tag based on value in GIT_TAG file
 patch-repo: ## Patch upstream repo with patches in patches directory
 
 ##@ Binary Targets
-binaries: ## Build all binaries: `bandwidth firewall flannel portmap sbr tuning bridge host-device ipvlan loopback macvlan ptp vlan dhcp host-local static ` for `linux/amd64 linux/arm64`
+binaries: ## Build all binaries: `bandwidth firewall flannel portmap sbr tuning vrf bridge host-device ipvlan loopback macvlan ptp vlan dhcp host-local static ` for `linux/amd64 linux/arm64`
 _output/1-21/bin/plugins/linux-amd64/bandwidth: ## Build `_output/1-21/bin/plugins/linux-amd64/bandwidth`
 _output/1-21/bin/plugins/linux-amd64/firewall: ## Build `_output/1-21/bin/plugins/linux-amd64/firewall`
 _output/1-21/bin/plugins/linux-amd64/flannel: ## Build `_output/1-21/bin/plugins/linux-amd64/flannel`
 _output/1-21/bin/plugins/linux-amd64/portmap: ## Build `_output/1-21/bin/plugins/linux-amd64/portmap`
 _output/1-21/bin/plugins/linux-amd64/sbr: ## Build `_output/1-21/bin/plugins/linux-amd64/sbr`
 _output/1-21/bin/plugins/linux-amd64/tuning: ## Build `_output/1-21/bin/plugins/linux-amd64/tuning`
+_output/1-21/bin/plugins/linux-amd64/vrf: ## Build `_output/1-21/bin/plugins/linux-amd64/vrf`
 _output/1-21/bin/plugins/linux-amd64/bridge: ## Build `_output/1-21/bin/plugins/linux-amd64/bridge`
 _output/1-21/bin/plugins/linux-amd64/host-device: ## Build `_output/1-21/bin/plugins/linux-amd64/host-device`
 _output/1-21/bin/plugins/linux-amd64/ipvlan: ## Build `_output/1-21/bin/plugins/linux-amd64/ipvlan`
@@ -35,6 +36,7 @@ _output/1-21/bin/plugins/linux-arm64/flannel: ## Build `_output/1-21/bin/plugins
 _output/1-21/bin/plugins/linux-arm64/portmap: ## Build `_output/1-21/bin/plugins/linux-arm64/portmap`
 _output/1-21/bin/plugins/linux-arm64/sbr: ## Build `_output/1-21/bin/plugins/linux-arm64/sbr`
 _output/1-21/bin/plugins/linux-arm64/tuning: ## Build `_output/1-21/bin/plugins/linux-arm64/tuning`
+_output/1-21/bin/plugins/linux-arm64/vrf: ## Build `_output/1-21/bin/plugins/linux-arm64/vrf`
 _output/1-21/bin/plugins/linux-arm64/bridge: ## Build `_output/1-21/bin/plugins/linux-arm64/bridge`
 _output/1-21/bin/plugins/linux-arm64/host-device: ## Build `_output/1-21/bin/plugins/linux-arm64/host-device`
 _output/1-21/bin/plugins/linux-arm64/ipvlan: ## Build `_output/1-21/bin/plugins/linux-arm64/ipvlan`
