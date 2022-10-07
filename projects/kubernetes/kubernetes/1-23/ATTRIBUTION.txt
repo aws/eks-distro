@@ -2,7 +2,7 @@
 ** cloud.google.com/go/compute/metadata; version v0.81.0 --
 https://github.com/googleapis/google-cloud-go
 
-** github.com/aws/aws-sdk-go; version v1.42.23 --
+** github.com/aws/aws-sdk-go; version v1.44.107 --
 https://github.com/aws/aws-sdk-go
 
 ** github.com/Azure/go-autorest/autorest; version v0.11.18 --
@@ -350,7 +350,7 @@ https://github.com/kubernetes/kubectl
 ** k8s.io/kubelet; version v0.0.0 --
 https://github.com/kubernetes/kubelet
 
-** k8s.io/kubernetes; version v1.23.9 --
+** k8s.io/kubernetes; version v1.23.12 --
 https://github.com/kubernetes/kubernetes
 
 ** k8s.io/legacy-cloud-providers; version v0.0.0 --
@@ -977,7 +977,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/aws/aws-sdk-go/internal/sync/singleflight; version v1.42.23 --
+** github.com/aws/aws-sdk-go/internal/sync/singleflight; version v1.44.107 --
 https://github.com/aws/aws-sdk-go
 
 ** github.com/liggitt/tabwriter; version v0.0.0-20181228230101-89fcab3d43de --
@@ -1019,7 +1019,7 @@ https://github.com/kubernetes/apimachinery
 ** k8s.io/client-go/third_party/forked/golang/template; version v0.0.0 --
 https://github.com/kubernetes/client-go
 
-** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.23.9 --
+** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.23.12 --
 https://github.com/kubernetes/kubernetes
 
 ** k8s.io/utils/inotify; version v0.0.0-20211116205334-6203023598ed --
@@ -1929,7 +1929,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.23.9 --
+** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.23.12 --
 https://github.com/kubernetes/kubernetes
 
 Copyright ©2013 The gonum Authors. All rights reserved.

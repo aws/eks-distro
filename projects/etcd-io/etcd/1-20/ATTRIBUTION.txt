@@ -50,7 +50,7 @@ https://github.com/soheilhy/cmux
 ** github.com/spf13/cobra; version v0.0.3 --
 https://github.com/spf13/cobra
 
-** go.etcd.io/etcd; version v3.4.18 --
+** go.etcd.io/etcd; version v3.4.20 --
 https://github.com/etcd-io/etcd
 
 ** google.golang.org/genproto; version v0.0.0-20190819201941-24fa4b261c55 --
@@ -59,7 +59,7 @@ https://github.com/googleapis/go-genproto
 ** google.golang.org/grpc; version v1.26.0 --
 https://github.com/grpc/grpc-go
 
-** gopkg.in/yaml.v2; version v2.2.8 --
+** gopkg.in/yaml.v2; version v2.4.0 --
 https://gopkg.in/yaml.v2
 
 
@@ -602,19 +602,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/go; version go1.15.15 --
+** golang.org/go; version go1.16.15 --
 https://github.com/golang/go
 
-** golang.org/x/crypto; version v0.0.0-20200622213623-75b288015ac9 --
+** golang.org/x/crypto; version v0.0.0-20220411220226-7b82a4e95df4 --
 https://go.googlesource.com/crypto
 
-** golang.org/x/net; version v0.0.0-20201021035429-f5854403a974 --
+** golang.org/x/net; version v0.0.0-20211112202133-69e39bad7dc2 --
 https://go.googlesource.com/net
 
-** golang.org/x/sys; version v0.0.0-20210119212857-b64e53b001e4 --
+** golang.org/x/sys; version v0.0.0-20211019181941-9d821ace8654 --
 https://go.googlesource.com/sys
 
-** golang.org/x/text; version v0.3.3 --
+** golang.org/x/text; version v0.3.7 --
 https://go.googlesource.com/text
 
 ** golang.org/x/time/rate; version v0.0.0-20180412165947-fbb02b2291d2 --
@@ -704,7 +704,7 @@ Copyright (c) 2016 Jeremy Saenz & Contributors
 https://github.com/xiang90/probing
 Copyright (c) 2015 Xiang Li
 
-** go.etcd.io/bbolt; version v1.3.3 --
+** go.etcd.io/bbolt; version v1.3.6 --
 https://github.com/etcd-io/bbolt
 Copyright (c) 2013 Ben Johnson
 
