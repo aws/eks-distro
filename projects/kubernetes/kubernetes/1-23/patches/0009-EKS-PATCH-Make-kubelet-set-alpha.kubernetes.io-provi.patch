@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Matthew Booth <mbooth@redhat.com>
 Date: Wed, 4 May 2022 17:54:36 +0100
-Subject: --EKS-PATCH-- Make kubelet set
+Subject: [PATCH] --EKS-PATCH-- Make kubelet set
  alpha.kubernetes.io/provided-node-ip unconditionally
 
 Cherry-pick of upstream Kubernetes PR #109794

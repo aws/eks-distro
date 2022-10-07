@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Jyoti Mahapatra <49211422+jyotimahapatra@users.noreply.github.com>
 Date: Wed, 26 Jan 2022 18:38:49 -0800
-Subject: --EKS-PATCH-- Parse ipv6 address before comparison (#107736)
+Subject: [PATCH] --EKS-PATCH-- Parse ipv6 address before comparison (#107736)
 
 Modified cherry-pick of upstream Kubernetes:
 https://github.com/kubernetes/kubernetes/pull/107736, which is
