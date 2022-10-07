@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Jordan Liggitt <liggitt@google.com>
 Date: Mon, 1 Feb 2021 10:06:10 -0500
-Subject: --EKS-PATCH-- Use private key fixtures for kubeadm unit tests
+Subject: [PATCH] --EKS-PATCH-- Use private key fixtures for kubeadm unit tests
 
 Cherry-pick of upstream Kubernetes:
 https://github.com/kubernetes/kubernetes/pull/98664, which is

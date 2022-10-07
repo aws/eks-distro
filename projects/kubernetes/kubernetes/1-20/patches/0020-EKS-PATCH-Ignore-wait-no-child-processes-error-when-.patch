@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Shyam Jeedigunta <jeedigv@amazon.com>
 Date: Mon, 19 Jul 2021 12:31:37 -0700
-Subject: --EKS-PATCH-- Ignore 'wait: no child processes' error when
+Subject: [PATCH] --EKS-PATCH-- Ignore 'wait: no child processes' error when
  calling mount/umount
 
 Cherry-pick of upstream Kubernetes:

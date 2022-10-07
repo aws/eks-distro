@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Manu Gupta <mgpta@amazon.com>
 Date: Tue, 12 Oct 2021 14:55:52 -0700
-Subject: --EKS-PATCH-- ConsistentRead tries 10 times
+Subject: [PATCH] --EKS-PATCH-- ConsistentRead tries 10 times
 
 Taken from commit on upstream Kubernetes:
 https://github.com/kubernetes/kubernetes/pull/102059/commits/82cfe9f14f8fb445d682ce2774ea44ce54885e81.

@@ -1,8 +1,8 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Xiang Li <lixiang1992@gwu.edu>
 Date: Mon, 15 Mar 2021 10:59:32 -0700
-Subject: --EKS PATCH-- delete leaked volume if driver doesn't know
- the volume status -- aws
+Subject: [PATCH] --EKS-PATCH-- delete leaked volume if driver doesn't know the
+ volume status -- aws
 
 Cherry-pick of upstream Kubernetes:
 https://github.com/kubernetes/kubernetes/pull/99664, which is

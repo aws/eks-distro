@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Qing Ju <juqing@amazon.com>
 Date: Sun, 18 Oct 2020 10:31:39 -0700
-Subject: --EKS-PATCH-- Bypassed admission controller webhook for
+Subject: [PATCH] --EKS-PATCH-- Bypassed admission controller webhook for
  cluster critical resources
 
 Workaround for Kubernetes issue:
