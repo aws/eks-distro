@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Jyoti Mahapatra <49211422+jyotimahapatra@users.noreply.github.com>
 Date: Mon, 31 Jan 2022 16:01:52 -0800
-Subject: --EKS-PATCH-- extend sa token if audience is apiserver
+Subject: [PATCH] --EKS-PATCH-- extend sa token if audience is apiserver
  (#105954)
 
 Cherry-pick of upstream Kubernetes PR
