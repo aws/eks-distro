@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Aleksandr Melnik <melnikal@amazon.com>
 Date: Wed, 8 Jan 2020 17:23:06 -0800
-Subject: --EKS-PATCH-- Lookup sts endpoint from custom map
+Subject: [PATCH] --EKS-PATCH-- Lookup sts endpoint from custom map
 
  Update STS endpoint to support different partitions.
 

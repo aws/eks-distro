@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Manu Gupta <mgpta@amazon.com>
 Date: Tue, 12 Oct 2021 14:43:34 -0700
-Subject: --EKS-PATCH-- Get inodes and disk usage via pure go.
+Subject: [PATCH] --EKS-PATCH-- Get inodes and disk usage via pure go.
 
 Cherry-pick of upstream Kubernetes:
 https://github.com/kubernetes/kubernetes/pull/96115, which was

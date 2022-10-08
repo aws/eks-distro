@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Eddie Zaneski <eddiezane@gmail.com>
 Date: Tue, 27 Jul 2021 11:46:45 -0600
-Subject: --EKS-PATCH-- Fix kubectl version unit test
+Subject: [PATCH] --EKS-PATCH-- Fix kubectl version unit test
 
 Cherry-pick of upstream Kubernetes:
 https://github.com/kubernetes/kubernetes/pull/103955, which is
