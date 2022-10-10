@@ -60,7 +60,7 @@ To receive notifications about new EKS-D releases, subscribe to the EKS-D update
 
 | Release | Manifest | Kubernetes Version |
 | --- | --- | --- |
-| 20 | [v1-20-eks-20](https://distro.eks.amazonaws.com/kubernetes-1-20/kubernetes-1-20-eks-20.yaml) | [v1.20.15](https://github.com/kubernetes/kubernetes/release/tag/v1.20.15) |
+| 21 | [v1-20-eks-21](https://distro.eks.amazonaws.com/kubernetes-1-20/kubernetes-1-20-eks-21.yaml) | [v1.20.15](https://github.com/kubernetes/kubernetes/release/tag/v1.20.15) |
 
 
 ### Kubernetes 1.18 and 1.19: DEPRECATED
