@@ -1,9 +1,9 @@
 package values
 
 import (
-	"context"
 	"fmt"
 	"strings"
+	"context"
 
 	"github.com/google/go-github/v47/github"
 )
@@ -17,29 +17,26 @@ func GetChangelogPRs(releaseVersion string) (string, error) {
 
 	ctx := context.Background()
 	opts := &github.SearchOptions{}
-	prs, _, err := githubClient.Search.Issues(ctx, "is:pr label:documentation repo:aws/eks-distro label:"+releaseVersion, opts)
+	prs, _, err := githubClient.Search.Issues(ctx, "is:pr label:documentation repo:aws/eks-distro label:" + releaseVersion, opts)
 	if err != nil {
-		return "", fmt.Errorf("getting PRs from %v: %w", githubClient, err)
+		return "", fmt.Errorf("Getting PRs from %v: %v", githubClient, err)
 	}
 
 	lastDocRelease := prs.Issues[0].ClosedAt.Format("2006-01-02T15:04:05+00:00")
-
-	patchPRs, _, err := githubClient.Search.Issues(ctx,
-		fmt.Sprintf("%v merged:>%v label:patch label:%v", baseQuery, lastDocRelease, releaseVersion), opts)
+	
+	patchPRs, _, err := githubClient.Search.Issues(ctx, fmt.Sprintf("%v merged:>%v label:patch label:%v", baseQuery, lastDocRelease, releaseVersion), opts)
 	if err != nil {
-		return "", fmt.Errorf("getting patch prs: %w", err)
+		return "", fmt.Errorf("Getting patch prs: %v", err)
 	}
 
-	baseImgPRs, _, err := githubClient.Search.Issues(ctx,
-		fmt.Sprintf("%v merged:>%v label:base-img-pkg-update label:%v", baseQuery, lastDocRelease, releaseVersion), opts)
+	baseImgPRs, _, err := githubClient.Search.Issues(ctx, fmt.Sprintf("%v merged:>%v label:base-img-pkg-update label:%v",baseQuery, lastDocRelease, releaseVersion), opts)
 	if err != nil {
-		return "", fmt.Errorf("getting base image prs: %w", err)
+		return "", fmt.Errorf("Getting base image prs: %v", err)
 	}
 
-	versPRs, _, err := githubClient.Search.Issues(ctx, fmt.Sprintf("%v merged:>%v label:project label:%v",
-		baseQuery, lastDocRelease, releaseVersion), opts)
+	versPRs, _, err := githubClient.Search.Issues(ctx, fmt.Sprintf("%v merged:>%v label:project label:%v",baseQuery, lastDocRelease, releaseVersion), opts)
 	if err != nil {
-		return "", fmt.Errorf("getting project prs: %w", err)
+		return "", fmt.Errorf("Getting project prs: %v", err)
 	}
 
 	var changelog []string
@@ -50,7 +47,7 @@ func GetChangelogPRs(releaseVersion string) (string, error) {
 	return strings.Join(changelog, "\n"), nil
 }
 
-func PRsSinceLastRelease(prs *github.IssuesSearchResult, sectionName string) string {
+func PRsSinceLastRelease(prs *github.IssuesSearchResult, sectionName string) (string) {
 	var section []string
 	section = append(section, sectionName)
 
@@ -59,7 +56,7 @@ func PRsSinceLastRelease(prs *github.IssuesSearchResult, sectionName string) str
 	}
 
 	for _, pr := range prs.Issues {
-		section = append(section, fmt.Sprintf("* %v ([%v](%v))", *pr.Title, *pr.Number, *pr.HTMLURL))
+		section = append(section, fmt.Sprintf("* %v ([%v](%v))", *pr.Title, *pr.ID, *pr.URL))
 	}
-	return strings.Join(section, "\n") + "\n"
+	return strings.Join(section, "\n")
 }
