@@ -59,7 +59,7 @@ func PRsSinceLastRelease(prs *github.IssuesSearchResult, sectionName string) str
 	}
 
 	for _, pr := range prs.Issues {
-		section = append(section, fmt.Sprintf("* %v ([%v](%v))", *pr.Title, *pr.Number, *pr.URL))
+		section = append(section, fmt.Sprintf("* %v ([%v](%v))", *pr.Title, *pr.Number, *pr.HTMLURL))
 	}
 	return strings.Join(section, "\n") + "\n"
 }
