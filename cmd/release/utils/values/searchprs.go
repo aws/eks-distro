@@ -17,7 +17,7 @@ func GetChangelogPRs(releaseVersion string) (string, error) {
 
 	ctx := context.Background()
 	opts := &github.SearchOptions{}
-	prs, _, err := githubClient.Search.Issues(ctx, "is:pr label:documentation repo:aws/eks-distro label:"+releaseVersion, opts)
+	prs, _, err := githubClient.Search.Issues(ctx, "is:pr is:merged label:documentation repo:aws/eks-distro label:" + releaseVersion, opts)
 	if err != nil {
 		return "", fmt.Errorf("getting PRs from %v: %w", githubClient, err)
 	}
