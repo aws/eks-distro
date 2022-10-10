@@ -5,7 +5,6 @@ This changelog highlights the changes for [v1-21-eks-19](https://github.com/aws/
 ## Changes
 
 ### Patches
-* Updated etcd to v3.4.20 for 1.20 and 1.21 ([1300](https://github.com/aws/eks-distro/pull/1300))
 * Added 6 patches for 1.21 ([1292](https://github.com/aws/eks-distro/pull/1292))
 
 ### Projects
@@ -18,4 +17,3 @@ This changelog highlights the changes for [v1-21-eks-19](https://github.com/aws/
 
 ### Base Image
 No changes since last release
-
