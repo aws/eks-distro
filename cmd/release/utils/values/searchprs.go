@@ -17,11 +17,13 @@ func GetChangelogPRs(releaseVersion string) (string, error) {
 
 	ctx := context.Background()
 	opts := &github.SearchOptions{}
+	//Get the date of the last document release for the release version
 	prs, _, err := githubClient.Search.Issues(ctx, "is:pr is:merged label:release label:documentation repo:aws/eks-distro label:" + releaseVersion, opts)
 	if err != nil {
 		return "", fmt.Errorf("getting PRs from %v: %w", githubClient, err)
 	}
 
+	//Select the most recent pr from the above query and format the date expected for the go-github client
 	lastDocRelease := prs.Issues[0].ClosedAt.Format("2006-01-02T15:04:05+00:00")
 
 	patchPRs, _, err := githubClient.Search.Issues(ctx,
