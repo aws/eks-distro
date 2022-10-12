@@ -21,6 +21,7 @@ if updating a released branch project.
     * if the dependency is an implicit dependency brought in via another, you may need to add a replace override
         * `go mod why` and `go mod graph` could be helpful in determining which dependency is pulling in implicit dependencies
     * pay close attention to replace override blocks, these may need updating as well
+    * include a [`replace` directive](https://go.dev/ref/mod#go-mod-file-replace) to replace all occurences of the modified dependency with the updated version
 1.  **After go.mod has been updated, run vendor update scripts**  
     * run `make update-vendor-for-dep-patch`
         * a number upstream projects which vendor their deps have a specific script for updating the vendor directly.
@@ -46,5 +47,5 @@ if updating a released branch project.
 	* If the above doesn't turn anything up, the issue may not apply, _only if the version is still in support_. Out of support version will *not* get patched and the vulnerability may definitely apply to them. So blanket "not affected" cannot be assumed for all versions. 
 
 	* If the vulnerability alert is new and nothing exists upstream yet, create an issue for it using the proper process for submitting security issues for the repo in question. If you can tackle the fix, consider doing so and submitting the PR.
-
-	* There may be many false positives in the vulnerability alerts. So the main value of this process is discovering if upstream has fixed something that affects out of support K8s version that we still support (>9 months ago) and we need to backport the fix to our additional supported versions. 
+    
+    * There may be many false positives in the vulnerability alerts. So the main value of this process is discovering if upstream has fixed something that affects out of support K8s version that we still support (>9 months ago) and we need to backport the fix to our additional supported versions. 
