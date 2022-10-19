@@ -50,7 +50,7 @@ https://github.com/soheilhy/cmux
 ** github.com/spf13/cobra; version v0.0.3 --
 https://github.com/spf13/cobra
 
-** go.etcd.io/etcd; version v3.4.20 --
+** go.etcd.io/etcd; version v3.4.21 --
 https://github.com/etcd-io/etcd
 
 ** google.golang.org/genproto; version v0.0.0-20190819201941-24fa4b261c55 --
