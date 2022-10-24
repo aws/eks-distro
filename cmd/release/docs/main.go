@@ -6,9 +6,9 @@ import (
 
 	"github.com/aws/eks-distro/cmd/release/docs/existingdocs"
 	"github.com/aws/eks-distro/cmd/release/docs/newdocs"
-	"github.com/aws/eks-distro/cmd/release/utils"
 	"github.com/aws/eks-distro/cmd/release/utils/changetype"
 	"github.com/aws/eks-distro/cmd/release/utils/git"
+	"github.com/aws/eks-distro/cmd/release/utils/release"
 	"github.com/aws/eks-distro/cmd/release/utils/values"
 )
 
@@ -24,7 +24,7 @@ func main() {
 	////////////	Create Release		////////////////////////////////////
 
 	// The actual release MUST already be out, and all upstream changes MUST be pulled down locally.
-	r, err := utils.NewRelease(*branch, changeType)
+	r, err := release.NewRelease(*branch, changeType)
 	if err != nil {
 		log.Fatalf("creating new release: %v", err)
 	}
@@ -72,7 +72,7 @@ func main() {
 
 	cleanUp := cleanUpFunc(gm)
 
-	var existingDocsUpdateFuncs = map[values.AbsolutePath]func(*utils.Release, string) error{
+	var existingDocsUpdateFuncs = map[values.AbsolutePath]func(*release.Release, string) error{
 		values.IndexPath:  existingdocs.UpdateDocsIndex,
 		values.ReadmePath: existingdocs.UpdateREADME,
 	}

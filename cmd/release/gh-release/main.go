@@ -9,8 +9,8 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"github.com/aws/eks-distro/cmd/release/utils"
 	"github.com/aws/eks-distro/cmd/release/utils/changetype"
+	"github.com/aws/eks-distro/cmd/release/utils/release"
 	"github.com/aws/eks-distro/cmd/release/utils/values"
 )
 
@@ -26,18 +26,30 @@ var (
 // TODO: implement number override for release
 func main() {
 	branch := flag.String("branch", "", "Release branch, e.g. 1-22")
+	overrideNumber := flag.String("overrideNumber", "", "Optional override number, e.g. 1")
+
 	flag.Parse()
 
-	release, err := utils.NewRelease(*branch, changetype.GHRelease)
-	if err != nil {
-		log.Fatalf("creating release values: %v", err)
+	var err error
+	var r = &release.Release{}
+	if len(*overrideNumber) == 0 {
+		r, err = release.NewRelease(*branch, changetype.GHRelease)
+		if err != nil {
+			log.Fatalf("creating release values: %v", err)
+		}
+	} else {
+		r, err = release.NewReleaseOverrideNumber(*branch, *overrideNumber)
+		if err != nil {
+			log.Fatalf("creating release values with override number: %v", err)
+		}
 	}
-	if err = createGitHubRelease(release); err != nil {
+
+	if err = createGitHubRelease(r); err != nil {
 		log.Fatalf("creating GitHub release: %v", err)
 	}
 }
 
-func createGitHubRelease(r *utils.Release) error {
+func createGitHubRelease(r *release.Release) error {
 	docsDirectory := values.GetReleaseDocsDirectory(r).String()
 
 	cmd := exec.Command(
