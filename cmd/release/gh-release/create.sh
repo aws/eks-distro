@@ -23,11 +23,14 @@ GIT_TAG="${1?...}"
 CHANGELOG_FILEPATH="${2?...}"
 INDEX_FILEPATH="${3?...}"
 
-# Removes the first to lines to get rid of H1 headers and an empty line.
+# Removes the first three lines to get rid of H1 headers and an empty line and the
+# changelog highlights from the changelog and first four lines from the index.md
+# including the additional information and the empty line for the github release
+# docs
 # The H1 headers are larger than the release titles on GitHub, and it
 # looks confusing with them.
-releaseNotes="$(sed '1,2d' "$CHANGELOG_FILEPATH")
+releaseNotes="$(sed '1,3d' "$CHANGELOG_FILEPATH")
 
-$(sed '1,2d' "$INDEX_FILEPATH")"
+$(sed '1,4d' "$INDEX_FILEPATH")"
 
 gh release create "$GIT_TAG" --title "EKS Distro $GIT_TAG Release" --notes "$releaseNotes"
