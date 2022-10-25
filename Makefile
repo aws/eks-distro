@@ -88,7 +88,7 @@ postsubmit-conformance: postsubmit-build kops-prow
 
 .PHONY: tag
 tag:
-	git tag --a $(RELEASE_GIT_TAG) -m $(RELEASE_GIT_TAG) $(RELEASE_GIT_COMMIT_HASH)
+	git tag -a $(RELEASE_GIT_TAG) $(RELEASE_GIT_COMMIT_HASH) -m $(RELEASE_GIT_TAG)
 	git push upstream $(RELEASE_GIT_TAG)
 
 .PHONY: upload
