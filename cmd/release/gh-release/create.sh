@@ -26,8 +26,8 @@ INDEX_FILEPATH="${3?...}"
 # Removes the first to lines to get rid of H1 headers and an empty line.
 # The H1 headers are larger than the release titles on GitHub, and it
 # looks confusing with them.
-releaseNotes="$(sed '1,2d' "$CHANGELOG_FILEPATH")
+releaseNotes="$(sed '1,3d' "$CHANGELOG_FILEPATH")
 
-$(sed '1,2d' "$INDEX_FILEPATH")"
+$(sed '1,4d' "$INDEX_FILEPATH")"
 
 gh release create "$GIT_TAG" --title "EKS Distro $GIT_TAG Release" --notes "$releaseNotes"
