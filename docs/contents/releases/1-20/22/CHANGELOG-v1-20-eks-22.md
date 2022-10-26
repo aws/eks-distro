@@ -8,7 +8,7 @@ This changelog highlights the changes for [v1-20-eks-22](https://github.com/aws/
 No changes since last release
 
 ### Projects
-No changes since last release
+* Updated etcd from v3.4.20 to v3.4.21 ([#1348](https://github.com/aws/eks-distro/pull/1348))
 
 ### Base Image
 No changes since last release
