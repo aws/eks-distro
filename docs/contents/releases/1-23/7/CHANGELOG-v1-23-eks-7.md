@@ -11,5 +11,5 @@ No changes since last release
 No changes since last release
 
 ### Base Image
-No changes since last release
+Updated base image ([#1343](https://github.com/aws/eks-distro/pull/1343) and [#358](https://github.com/aws/eks-distro/pull/1358))
 
