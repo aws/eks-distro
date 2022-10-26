@@ -11,5 +11,5 @@ No changes since last release
 * Updated etcd from v3.4.20 to v3.4.21 ([#1348](https://github.com/aws/eks-distro/pull/1348))
 
 ### Base Image
-No changes since last release
+* Updated base image ([#1343](https://github.com/aws/eks-distro/pull/1343) and [#358](https://github.com/aws/eks-distro/pull/1358))
 
