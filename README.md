@@ -2,17 +2,16 @@
 
 ### 🚨🚨🚨 IMPORTANT INFORMATION ABOUT 1.20 SUPPORT 🚨🚨🚨
 
-EKS-D will be discontinuing support of Kubernetes v1.20 soon. While there are no
-plans to removed EKS-D 1.20 images from the ECR, there will be no more updates 
-to 1.20 once support has stopped. **Due to the increased security risk this poses, 
-it is HIGHLY recommended that users of 1.20 update to a supported version 
-(1.21 - 1.23) as soon as possible.**
+EKS-D has discontinued support of Kubernetes v1.20. While there are no
+plans to removed EKS-D v1.20 images from the ECR, there will be no more 
+updates to v1.20. **Due to the increased security risk this poses, it is 
+HIGHLY recommended that users of v1.20 update to a supported version (v1.21+)
+as soon as possible.**
 
 ---
 
 | Release | Development Build Status |
 | --- | --- |
-| 1-20 | [![1-20](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-20-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-20-postsubmit) |
 | 1-21 | [![1-21](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-21-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-21-postsubmit) |
 | 1-22 | [![1-22](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-22-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-22-postsubmit) |
 | 1-23 | [![1-23](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-23-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-23-postsubmit) |
@@ -35,7 +34,7 @@ up the EKS Distro from source.
 
 Full documentation for releases can be found on [https://distro.eks.amazonaws.com](https://distro.eks.amazonaws.com).
 
-To receive notifications about new EKS-D releases, subscribe to the EKS-D updates SNS topic: 
+To receive notifications about new EKS-D releases, subscribe to the EKS-D updates SNS topic:
 `arn:aws:sns:us-east-1:379412251201:eks-distro-updates`
 
 ### Kubernetes 1-23
@@ -56,21 +55,15 @@ To receive notifications about new EKS-D releases, subscribe to the EKS-D update
 | --- | --- | --- |
 | 19 | [v1-21-eks-19](https://distro.eks.amazonaws.com/kubernetes-1-21/kubernetes-1-21-eks-19.yaml) | [v1.21.14](https://github.com/kubernetes/kubernetes/release/tag/v1.21.14) |
 
-### Kubernetes 1-20
 
-| Release | Manifest | Kubernetes Version |
-| --- | --- | --- |
-| 21 | [v1-20-eks-21](https://distro.eks.amazonaws.com/kubernetes-1-20/kubernetes-1-20-eks-21.yaml) | [v1.20.15](https://github.com/kubernetes/kubernetes/release/tag/v1.20.15) |
+### Kubernetes 1.18, 1.19, and 1.20: DEPRECATED
 
-
-### Kubernetes 1.18 and 1.19: DEPRECATED
-
-EKS Distro has discontinued support of Kubernetes 1.18 and 1.19. While there are
+EKS Distro has discontinued support of Kubernetes v1.18 - v1.20. While there are
 no plans to remove these versions' images from EKS Distro ECR, there will be no
 more updates, including security fixes, for them.
 
 **Due to the increased security risk this poses, it is HIGHLY recommended that
-users of 1.18 and 1.19 update to a supported version (1.21 - 1.23) as soon as 
+users of v1.18 - v1.20 update to a supported version (v1.21+) as soon as
 possible.**
 
 ## Development
@@ -81,7 +74,7 @@ Kubernetes CI/CD system. EKS operates an installation of Prow, which is visible
 at https://prow.eks.amazonaws.com/. Please read our
 [CONTRIBUTING](CONTRIBUTING.md) guide before making a Pull Request.
 
-For building EKS Distro locally, refer to the 
+For building EKS Distro locally, refer to the
 [building-locally](docs/development/building-locally.md) guide.
 
 For updating project dependencies, refer to the
