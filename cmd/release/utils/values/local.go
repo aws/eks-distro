@@ -40,3 +40,19 @@ func IsDefaultReleaseBranch(providedReleaseBranch string) (bool, error) {
 	defaultReleaseBranch := strings.TrimSpace(string(fileOutput))
 	return strings.Compare(providedReleaseBranch, defaultReleaseBranch) == 0, nil
 }
+
+func IsSupportedReleaseBranch(rb string) (bool, error) {
+	fileOutput, err := os.ReadFile(supportedReleaseBranchesPath.String())
+	if err != nil {
+		return false, fmt.Errorf("getting supported release branches at %s path:%w", supportedReleaseBranchesPath, err)
+	}
+
+	providedReleaseBranch := []byte(rb)
+	splitData := bytes.Split(bytes.TrimSpace(fileOutput), []byte("\n"))
+	for _, supportedReleaseBranch := range splitData {
+		if bytes.Equal(supportedReleaseBranch, providedReleaseBranch) {
+			return true, nil
+		}
+	}
+	return false, nil
+}
