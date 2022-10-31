@@ -62,6 +62,7 @@ func main() {
 	artifactBucket := flag.String("artifact-bucket", "", "S3 bucket for artifacts")
 	gitRoot := flag.String("git-root", "", "Git root directory")
 	dryRun := flag.Bool("dry-run", false, "Echo out commands, but don't run them")
+	rebuildAll := flag.Bool("rebuild-all", false, "Rebuild all projects, regardless of changes present")
 
 	flag.Parse()
 	log.Printf("Running postsubmit - dry-run: %t", *dryRun)
@@ -122,17 +123,22 @@ func main() {
 		projects[projectPath] = &changedStruct{}
 	}
 
-	for _, file := range filesChanged {
-		for projectPath := range projects {
-			if strings.Contains(file, projectPath) {
-				projects[projectPath].changed = true
+	if *rebuildAll {
+		allChanged = true
+	} else {
+		for _, file := range filesChanged {
+			for projectPath := range projects {
+				if strings.Contains(file, projectPath) {
+					projects[projectPath].changed = true
+				}
+			}
+			r := regexp.MustCompile("^Makefile$|^Common.mk$|cmd/main_postsubmit.go|EKS_DISTRO_.*_TAG_FILE|^release/.*|^build/lib/.*")
+			if r.MatchString(file) {
+				allChanged = true
 			}
 		}
-		r := regexp.MustCompile("^Makefile$|^Common.mk$|cmd/main_postsubmit.go|EKS_DISTRO_.*_TAG_FILE|^release/.*|^build/lib/.*")
-		if r.MatchString(file) {
-			allChanged = true
-		}
 	}
+
 	for _, projectPath := range buildOrder {
 		if projects[projectPath].changed || allChanged {
 			err = c.buildProject(projectPath)
