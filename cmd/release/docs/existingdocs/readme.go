@@ -4,12 +4,12 @@ import (
 	"bytes"
 	"fmt"
 	"os"
-	
-	"github.com/aws/eks-distro/cmd/release/utils"
+
+	"github.com/aws/eks-distro/cmd/release/utils/release"
 )
 
 // UpdateREADME updates the README to replace release manifest from previous patch release with the new one.
-func UpdateREADME(release *utils.Release, readmePath string) error {
+func UpdateREADME(release *release.Release, readmePath string) error {
 	data, err := os.ReadFile(readmePath)
 	if err != nil {
 		return fmt.Errorf("reading README: %w", err)

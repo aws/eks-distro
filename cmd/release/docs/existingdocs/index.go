@@ -6,14 +6,14 @@ import (
 	"os"
 	"time"
 
-	"github.com/aws/eks-distro/cmd/release/utils"
+	"github.com/aws/eks-distro/cmd/release/utils/release"
 	"github.com/aws/eks-distro/cmd/release/utils/values"
 )
 
 var linebreak = []byte("\n")
 
 // UpdateDocsIndex updates the doc's directory index.md file for the current release.
-func UpdateDocsIndex(r *utils.Release, docsIndexPath string) error {
+func UpdateDocsIndex(r *release.Release, docsIndexPath string) error {
 	data, err := os.ReadFile(docsIndexPath)
 	if err != nil {
 		return fmt.Errorf("reading doc index file: %w", err)
