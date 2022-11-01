@@ -385,7 +385,7 @@ SPECIAL_TARGET_SECONDARY=$(strip $(call FULL_FETCH_BINARIES_TARGETS, $(FETCH_BIN
 
 #################### TARGETS FOR OVERRIDING ########
 BUILD_TARGETS?=validate-checksums attribution $(if $(IMAGE_NAMES),local-images,) $(if $(filter true,$(HAS_S3_ARTIFACTS)),upload-artifacts,) attribution-pr
-RELEASE_TARGETS?=$(if $(filter true,$(SKIP_CHECKSUM_VALIDATION),$(BINARY_TARGETS),validate-checksums) $(if $(IMAGE_NAMES),images,) $(if $(filter true,$(HAS_S3_ARTIFACTS)),upload-artifacts,))
+RELEASE_TARGETS?=$(if $(filter true,$(SKIP_CHECKSUM_VALIDATION)),$(BINARY_TARGETS),validate-checksums) $(if $(IMAGE_NAMES),images,) $(if $(filter true,$(HAS_S3_ARTIFACTS)),upload-artifacts,))
 ####################################################
 
 define BUILDCTL
