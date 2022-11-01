@@ -67,5 +67,5 @@ patch-for-dep-update: ## After bumping dep in go.mod file and updating vendor, g
 
 ##@ Build Targets
 build: ## Called via prow presubmit, calls `validate-checksums attribution local-images upload-artifacts attribution-pr`
-release: ## Called via prow postsubmit + release jobs, calls `validate-checksums images upload-artifacts`
+release: ## Called via prow postsubmit + release jobs, calls `validate-checksums images upload-artifacts)`
 ########### END GENERATED ###########################
