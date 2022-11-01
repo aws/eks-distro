@@ -15,6 +15,8 @@ RELEASE_AWS_PROFILE?=default
 RELEASE_GIT_TAG?=v$(RELEASE_BRANCH)-eks-$(PROD_RELEASE)
 RELEASE_GIT_COMMIT_HASH?=$(shell git rev-parse @)
 
+REBUILD_ALL?=false
+
 ALL_PROJECTS=containernetworking_plugins coredns_coredns etcd-io_etcd kubernetes-csi_external-attacher kubernetes-csi_external-resizer \
 	kubernetes-csi_livenessprobe kubernetes-csi_node-driver-registrar kubernetes-sigs_aws-iam-authenticator kubernetes-sigs_metrics-server \
 	kubernetes-csi_external-snapshotter kubernetes-csi_external-provisioner kubernetes_release kubernetes_kubernetes
@@ -40,7 +42,8 @@ build:
 		--region=${AWS_REGION} \
 		--account-id=${AWS_ACCOUNT_ID} \
 		--image-repo=${IMAGE_REPO} \
-		--dry-run=true
+		--dry-run=true \
+		--rebuild-all=${REBUILD_ALL}
 	@echo 'Done' $(TARGET)
 
 .PHONY: postsubmit-build
@@ -54,7 +57,8 @@ postsubmit-build: setup
 		--account-id=${AWS_ACCOUNT_ID} \
 		--image-repo=${IMAGE_REPO} \
 		--artifact-bucket=$(ARTIFACT_BUCKET) \
-		--dry-run=false
+		--dry-run=false \
+		--rebuild-all=${REBUILD_ALL}
 
 .PHONY: kops-prow-arm
 kops-prow-arm: export NODE_INSTANCE_TYPE=t4g.medium
