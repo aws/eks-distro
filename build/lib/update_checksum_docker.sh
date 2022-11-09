@@ -26,14 +26,12 @@ MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd -P)"
 $MAKE_ROOT/build/lib/run_target_docker.sh $PROJECT "binaries attribution checksums" $IMAGE_REPO $RELEASE_BRANCH
 
 PROJECT_CHECKSUM=$PROJECT/CHECKSUMS
-PROJECT_ATTRIBUTION_DIR=$PROJECT
+PROJECT_ATTRIBUTION=$PROJECT/ATTRIBUTION.txt
 
 if [[ ! -z "$RELEASE_BRANCH" ]] && [ -d $MAKE_ROOT/projects/$PROJECT/$RELEASE_BRANCH ]; then
 	PROJECT_CHECKSUM=$PROJECT/$RELEASE_BRANCH/CHECKSUMS
-	PROJECT_ATTRIBUTION_DIR=$PROJECT/$RELEASE_BRANCH
+	PROJECT_ATTRIBUTION=$PROJECT/$RELEASE_BRANCH/ATTRIBUTION.txt
 fi
 
 docker cp eks-d-builder:/eks-distro/projects/$PROJECT_CHECKSUM $MAKE_ROOT/projects/$PROJECT_CHECKSUM
-for file in $(find $MAKE_ROOT/projects/$PROJECT_ATTRIBUTION_DIR -name '*TTRIBUTION.txt'); do
-	docker cp eks-d-builder:/eks-distro/projects/$PROJECT_ATTRIBUTION_DIR/$(basename $file) $file
-done
+docker cp eks-d-builder:/eks-distro/projects/$PROJECT_ATTRIBUTION $MAKE_ROOT/projects/$PROJECT_ATTRIBUTION

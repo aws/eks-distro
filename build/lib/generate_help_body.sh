@@ -153,7 +153,7 @@ ${GIT_TARGETS_HELP}${PATCHES_TARGET}${BINARY_TARGETS_HELP}${IMAGE_TARGETS_HELP}$
 ${EXTRA_HELP}
 
 ##@ Build Targets
-build: ## Called via prow presubmit, calls \`${BUILD_TARGETS}\`
+build: ## Called via prow presubmit, calls \`${BUILD_TARGETS//$PROJECT_ROOT\//""}\`
 release: ## Called via prow postsubmit + release jobs, calls \`${RELEASE_TARGETS}\`
 ${FOOTER}
 EOF

@@ -65,7 +65,8 @@ function build::simple::binaries(){
       index=0
       for source in $SOURCE_PATTERN; do
         if [ "$(basename $source)" != "${TARGET_FILES[$index]}" ]; then
-          mv $TARGET_FILE$(basename $source) $TARGET_FILE${TARGET_FILES[$index]}
+          # in the case of multiple target files but the first is a ., we cant move . but it should already be named correctly
+          [ -f $TARGET_FILE$(basename $source) ] && mv $TARGET_FILE$(basename $source) $TARGET_FILE${TARGET_FILES[$index]}
         fi
         ((index=index+1))
       done

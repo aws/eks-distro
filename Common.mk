@@ -25,8 +25,6 @@ PROJECT_PATH?=$(subst $(BASE_DIRECTORY)/,,$(MAKE_ROOT))
 BUILD_LIB=${BASE_DIRECTORY}/build/lib
 OUTPUT_BIN_DIR?=$(OUTPUT_DIR)/bin/$(REPO)
 
-SKIP_CHECKSUM_VALIDATION?=false
-
 #################### AWS ###########################
 AWS_REGION?=us-west-2
 AWS_ACCOUNT_ID?=$(shell aws sts get-caller-identity --query Account --output text)
@@ -52,6 +50,7 @@ endif
 CODEBUILD_CI?=false
 CI?=false
 JOB_TYPE?=
+CODEBUILD_BUILD_IMAGE?=
 CLONE_URL?=$(call GET_CLONE_URL,$(REPO_OWNER),$(REPO))
 #HELM_CLONE_URL=$(call GET_CLONE_URL,$(HELM_SOURCE_OWNER),$(HELM_SOURCE_REPOSITORY))
 HELM_CLONE_URL=https://github.com/$(HELM_SOURCE_OWNER)/$(HELM_SOURCE_REPOSITORY).git
@@ -68,6 +67,10 @@ else
 		BUILD_IDENTIFIER:=$(shell date "+%F-%s")
 	endif
 endif
+EXCLUDE_FROM_STAGING_BUILDSPEC?=false
+BUILDSPECS?=buildspec.yml
+BUILDSPEC_VARS_KEYS?=
+BUILDSPEC_VARS_VALUES?=
 ####################################################
 
 #################### GIT ###########################
@@ -75,16 +78,20 @@ GIT_CHECKOUT_TARGET?=$(REPO)/eks-distro-checkout-$(GIT_TAG)
 GIT_PATCH_TARGET?=$(REPO)/eks-distro-patched
 REPO_NO_CLONE?=false
 PATCHES_DIR=$(or $(wildcard $(PROJECT_ROOT)/patches),$(wildcard $(MAKE_ROOT)/patches))
+REPO_SPARSE_CHECKOUT?=
 ####################################################
 
 #################### RELEASE BRANCHES ##############
 HAS_RELEASE_BRANCHES?=false
 RELEASE_BRANCH?=
 SUPPORTED_K8S_VERSIONS:=$(shell cat $(BASE_DIRECTORY)/release/SUPPORTED_RELEASE_BRANCHES)
+# Comma-separated list of Kubernetes versions to skip building artifacts for
+SKIPPED_K8S_VERSIONS?=
 BINARIES_ARE_RELEASE_BRANCHED?=true
 IS_RELEASE_BRANCH_BUILD=$(filter true,$(HAS_RELEASE_BRANCHES))
 IS_UNRELEASE_BRANCH_TARGET=$(and $(filter false,$(BINARIES_ARE_RELEASE_BRANCHED)),$(filter binaries attribution checksums,$(MAKECMDGOALS)))
 TARGETS_ALLOWED_WITH_NO_RELEASE_BRANCH?=build release clean help
+MAKECMDGOALS_WITHOUT_VAR_VALUE=$(foreach t,$(MAKECMDGOALS),$(if $(findstring var-value-,$(t)),,$(t)))
 ifneq ($(and $(IS_RELEASE_BRANCH_BUILD),$(or $(RELEASE_BRANCH),$(IS_UNRELEASE_BRANCH_TARGET))),)
 	RELEASE_BRANCH_SUFFIX=$(if $(filter true,$(BINARIES_ARE_RELEASE_BRANCHED)),/$(RELEASE_BRANCH),)
 
@@ -98,9 +105,9 @@ ifneq ($(and $(IS_RELEASE_BRANCH_BUILD),$(or $(RELEASE_BRANCH),$(IS_UNRELEASE_BR
 
 	# include release branch info in latest tag
 	LATEST_TAG?=$(GIT_TAG)-eks-$(RELEASE_BRANCH)-$(LATEST)
-else ifneq ($(and $(IS_RELEASE_BRANCH_BUILD), $(filter-out $(TARGETS_ALLOWED_WITH_NO_RELEASE_BRANCH),$(MAKECMDGOALS))),)
+else ifneq ($(and $(IS_RELEASE_BRANCH_BUILD), $(filter-out $(TARGETS_ALLOWED_WITH_NO_RELEASE_BRANCH),$(MAKECMDGOALS_WITHOUT_VAR_VALUE))),)
 	# if project has release branches and not calling one of the above targets
-$(error When running targets for this project other than `build` or `release` a `RELEASE_BRANCH` is required)
+$(error When running targets for this project other than `$(TARGETS_ALLOWED_WITH_NO_RELEASE_BRANCH)` a `RELEASE_BRANCH` is required)
 else ifneq ($(IS_RELEASE_BRANCH_BUILD),)
 	# project has release branches and one was not specified, trigger target for all
 	BUILD_TARGETS=build/release-branches/all
@@ -141,7 +148,8 @@ IMAGE_TAG?=$(GIT_TAG)-$(GIT_HASH)
 # For projects with multiple containers this is defined to override the default
 # ex: CLUSTER_API_CONTROLLER_IMAGE_COMPONENT
 IMAGE_COMPONENT_VARIABLE=$(call TO_UPPER,$(IMAGE_NAME))_IMAGE_COMPONENT
-IMAGE=$(IMAGE_REPO)/$(call IF_OVERRIDE_VARIABLE,$(IMAGE_COMPONENT_VARIABLE),$(IMAGE_COMPONENT)):$(IMAGE_TAG)
+IMAGE_REPO_COMPONENT=$(call IF_OVERRIDE_VARIABLE,$(IMAGE_COMPONENT_VARIABLE),$(IMAGE_COMPONENT))
+IMAGE=$(IMAGE_REPO)/$(IMAGE_REPO_COMPONENT):$(IMAGE_TAG)
 LATEST_IMAGE=$(IMAGE:$(lastword $(subst :, ,$(IMAGE)))=$(LATEST_TAG))
 
 IMAGE_USERADD_USER_ID?=1000
@@ -168,13 +176,22 @@ BUILD_OCI_TARS?=false
 
 LOCAL_IMAGE_TARGETS=$(foreach image,$(IMAGE_NAMES),$(image)/images/amd64) $(if $(filter true,$(HAS_HELM_CHART)),helm/build,) 
 IMAGE_TARGETS=$(foreach image,$(IMAGE_NAMES),$(if $(filter true,$(BUILD_OCI_TARS)),$(call IMAGE_TARGETS_FOR_NAME,$(image)),$(image)/images/push)) $(if $(filter true,$(HAS_HELM_CHART)),helm/push,) 
+
+# If running in the builder base on prow or codebuild, grab the current tag to be used when building with cgo
+CURRENT_BUILDER_BASE_TAG=$(or $(and $(wildcard /config/BUILDER_BASE_TAG_FILE),$(shell cat /config/BUILDER_BASE_TAG_FILE)),latest)
+CURRENT_BUILDER_BASE_IMAGE=$(if $(CODEBUILD_BUILD_IMAGE),$(CODEBUILD_BUILD_IMAGE),$(BASE_IMAGE_REPO)/builder-base:$(CURRENT_BUILDER_BASE_TAG))
+
 ####################################################
 
 #################### HELM ##########################
 HAS_HELM_CHART?=false
 HELM_SOURCE_OWNER?=$(REPO_OWNER)
 HELM_SOURCE_REPOSITORY?=$(REPO)
+HELM_SOURCE_IMAGE_REPO?=$(IMAGE_REPO)
 HELM_GIT_TAG?=$(GIT_TAG)
+HELM_TAG?=$(GIT_TAG)-$(GIT_HASH)
+HELM_USE_UPSTREAM_IMAGE?=false
+# HELM_DIRECTORY must be a relative path from project root to the directory that contains a chart
 HELM_DIRECTORY?=.
 HELM_DESTINATION_REPOSITORY?=$(IMAGE_COMPONENT)
 HELM_IMAGE_LIST?=
@@ -223,7 +240,17 @@ IF_OVERRIDE_VARIABLE=$(if $(filter undefined,$(origin $1)),$(2),$(value $(1)))
 IMAGE_TARGETS_FOR_NAME=$(addsuffix /images/push, $(1)) $(addsuffix /images/amd64, $(1)) $(addsuffix /images/arm64, $(1))
 
 # $1 - binary file name
-FULL_FETCH_BINARIES_TARGETS=$(addprefix $(BINARY_DEPS_DIR)/linux-amd64/, $(1)) $(addprefix $(BINARY_DEPS_DIR)/linux-arm64/, $(1))
+FULL_FETCH_BINARIES_TARGETS=$(foreach platform,$(BINARY_PLATFORMS),$(addprefix $(BINARY_DEPS_DIR)/$(subst /,-,$(platform))/, $(1)))
+
+# Based on PROJECT_DEPENDENCIES, generate fetch binaries targets, only projects with s3 artifacts will be fetched
+PROJECT_DEPENDENCIES_TARGETS=$(foreach dep,$(PROJECT_DEPENDENCIES), \
+	$(eval project_path_parts:=$(subst /, ,$(dep))) \
+	$(eval project_path:=$(BASE_DIRECTORY)/projects/$(word 2,$(project_path_parts))/$(word 3,$(project_path_parts))) \
+	$(if $(or $(findstring eksd,$(dep)), \
+		$(and \
+			$(if $(wildcard $(project_path)),true,$(error Non-existent dependency: $(dep))), \
+			$(filter true,$(shell $(MAKE) -C $(project_path) var-value-HAS_S3_ARTIFACTS)) \
+		)),$(call FULL_FETCH_BINARIES_TARGETS,$(dep)),))
 
 # $1 - targets
 # $2 - platforms
@@ -328,13 +355,16 @@ $(call trimap,setup_uniq_go_mod_license_filters,$(BINARY_TARGET_FILES),$(SOURCE_
 GO_MOD_DOWNLOAD_TARGETS?=$(foreach path, $(UNIQ_GO_MOD_PATHS), $(call GO_MOD_DOWNLOAD_TARGET_FROM_GO_MOD_PATH,$(path)))
 
 VENDOR_UPDATE_SCRIPT?=
-
 #### CGO ############
 CGO_CREATE_BINARIES?=false
 CGO_SOURCE=$(OUTPUT_DIR)/source
 IS_ON_BUILDER_BASE?=$(shell if [ -f /buildkit.sh ]; then echo true; fi;)
 BUILDER_PLATFORM?=$(shell echo $$(go env GOHOSTOS)/$$(go env GOHOSTARCH))
 needs-cgo-builder=$(and $(if $(filter true,$(CGO_CREATE_BINARIES)),true,),$(if $(filter-out $(1),$(BUILDER_PLATFORM)),true,))
+USE_DOCKER_FOR_CGO_BUILD?=false
+DOCKER_USE_ID_FOR_LINUX=$(shell if [ "$$(uname -s)" = "Linux" ]; then echo "-u $$(id -u $${USER}):$$(id -g $${USER})"; fi)
+GO_MOD_CACHE=$(shell source $(BUILD_LIB)/common.sh && build::common::use_go_version $(GOLANG_VERSION) > /dev/null 2>&1 && go env GOMODCACHE)
+CGO_TARGET?=
 ######################
 
 #### BUILD FLAGS ####
@@ -355,11 +385,11 @@ GOBUILD_COMMAND?=build
 
 ############### BINARIES DEPS ######################
 BINARY_DEPS_DIR?=$(OUTPUT_DIR)/dependencies
-FETCH_BINARIES_TARGETS?=
+PROJECT_DEPENDENCIES?=
+HANDLE_DEPENDENCIES_TARGET=handle-dependencies
 ####################################################
 
 #################### LICENSES ######################
-LICENSE_PACKAGE_FILTER?=$(SOURCE_PATTERNS)
 HAS_LICENSES?=true
 ATTRIBUTION_TARGETS?=$(call pairmap,ATTRIBUTION_TARGET_FROM_BINARY_GO_MOD,$(BINARY_TARGET_FILES),$(GO_MOD_PATHS))
 GATHER_LICENSES_TARGETS?=$(call pairmap,LICENSE_TARGET_FROM_BINARY_GO_MOD,$(BINARY_TARGET_FILES),$(GO_MOD_PATHS))
@@ -375,36 +405,48 @@ SIMPLE_CREATE_TARBALLS?=true
 TAR_FILE_PREFIX?=$(REPO)
 FAKE_ARM_BINARIES_FOR_VALIDATION?=$(if $(filter linux/arm64,$(BINARY_PLATFORMS)),false,true)
 FAKE_ARM_IMAGES_FOR_VALIDATION?=false
+IMAGE_FORMAT?=
+IMAGE_OS?=
 ####################################################
 
 #################### OTHER #########################
 KUSTOMIZE_TARGET=$(OUTPUT_DIR)/kustomize
 GIT_DEPS_DIR?=$(OUTPUT_DIR)/gitdependencies
-SPECIAL_TARGET_SECONDARY=$(strip $(call FULL_FETCH_BINARIES_TARGETS, $(FETCH_BINARIES_TARGETS)) $(GO_MOD_DOWNLOAD_TARGETS))
+SPECIAL_TARGET_SECONDARY=$(strip $(PROJECT_DEPENDENCIES_TARGETS) $(GO_MOD_DOWNLOAD_TARGETS))
+SKIP_CHECKSUM_VALIDATION?=false
 ####################################################
 
 #################### TARGETS FOR OVERRIDING ########
-BUILD_TARGETS?=validate-checksums attribution $(if $(IMAGE_NAMES),local-images,) $(if $(filter true,$(HAS_S3_ARTIFACTS)),upload-artifacts,) attribution-pr
-RELEASE_TARGETS?=$(if $(filter true,$(SKIP_CHECKSUM_VALIDATION)),$(BINARY_TARGETS),validate-checksums) $(if $(IMAGE_NAMES),images,) $(if $(filter true,$(HAS_S3_ARTIFACTS)),upload-artifacts,)
+BUILD_TARGETS?=validate-checksums attribution $(if $(IMAGE_NAMES),local-images,) $(if $(filter true,$(HAS_HELM_CHART)),helm/build,) $(if $(filter true,$(HAS_S3_ARTIFACTS)),upload-artifacts,) attribution-pr
+RELEASE_TARGETS?=validate-checksums $(if $(IMAGE_NAMES),images,) $(if $(filter true,$(HAS_HELM_CHART)),helm/push,) $(if $(filter true,$(HAS_S3_ARTIFACTS)),upload-artifacts,)
 ####################################################
 
 define BUILDCTL
-	$(BUILD_LIB)/buildkit.sh \
-		build \
-		--frontend dockerfile.v0 \
-		--opt platform=$(IMAGE_PLATFORMS) \
-		--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
-		--opt build-arg:BUILDER_IMAGE=$(BUILDER_IMAGE) \
-		--opt build-arg:RELEASE_BRANCH=$(RELEASE_BRANCH) \
-		$(foreach BUILD_ARG,$(IMAGE_BUILD_ARGS),--opt build-arg:$(BUILD_ARG)=$($(BUILD_ARG))) \
-		--progress plain \
-		--local dockerfile=$(DOCKERFILE_FOLDER) \
-		--local context=$(IMAGE_CONTEXT_DIR) \
-		--opt target=$(IMAGE_TARGET) \
-		--output type=$(IMAGE_OUTPUT_TYPE),oci-mediatypes=true,\"name=$(IMAGE)\",$(IMAGE_OUTPUT) \
-		$(if $(filter push=true,$(IMAGE_OUTPUT)),--export-cache type=inline,) \
-		$(foreach IMPORT_CACHE,$(IMAGE_IMPORT_CACHE),--import-cache $(IMPORT_CACHE))
-
+	if [[ "$(USE_DOCKER_FOR_CGO_BUILD)" = "true" ]]; then \
+		source $(BUILD_LIB)/common.sh && build::docker::retry_pull $(BUILDER_IMAGE); \
+		docker run --rm -w /eks-anywhere-build-tooling/projects/$(COMPONENT) $(DOCKER_USE_ID_FOR_LINUX) \
+			--mount type=bind,source=$(BASE_DIRECTORY),target=/eks-anywhere-build-tooling \
+			--mount type=bind,source=$(GO_MOD_CACHE),target=/mod-cache \
+			-e GOPROXY=$(GOPROXY) -e GOMODCACHE=/mod-cache \
+			--platform $(IMAGE_PLATFORMS) \
+			--init --entrypoint make $(BUILDER_IMAGE) $(CGO_TARGET) BINARY_PLATFORMS=$(IMAGE_PLATFORMS); \
+	else \
+		$(BUILD_LIB)/buildkit.sh \
+			build \
+			--frontend dockerfile.v0 \
+			--opt platform=$(IMAGE_PLATFORMS) \
+			--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
+			--opt build-arg:BUILDER_IMAGE=$(BUILDER_IMAGE) \
+			--opt build-arg:RELEASE_BRANCH=$(RELEASE_BRANCH) \
+			$(foreach BUILD_ARG,$(IMAGE_BUILD_ARGS),--opt build-arg:$(BUILD_ARG)=$($(BUILD_ARG))) \
+			--progress plain \
+			--local dockerfile=$(DOCKERFILE_FOLDER) \
+			--local context=$(IMAGE_CONTEXT_DIR) \
+			--opt target=$(IMAGE_TARGET) \
+			--output type=$(IMAGE_OUTPUT_TYPE),oci-mediatypes=true,\"name=$(IMAGE),$(LATEST_IMAGE)\",$(IMAGE_OUTPUT) \
+			$(if $(filter push=true,$(IMAGE_OUTPUT)),--export-cache type=inline,) \
+			$(foreach IMPORT_CACHE,$(IMAGE_IMPORT_CACHE),--import-cache $(IMPORT_CACHE)); \
+	fi
 endef 
 
 define WRITE_LOCAL_IMAGE_TAG
@@ -420,7 +462,12 @@ endif
 #### Source repo + binary Targets
 ifneq ($(REPO_NO_CLONE),true)
 $(REPO):
-	git clone $(CLONE_URL) $(REPO)
+ifneq ($(REPO_SPARSE_CHECKOUT),)
+	source $(BUILD_LIB)/common.sh && retry git clone --depth 1 --filter=blob:none --sparse -b $(GIT_TAG) $(CLONE_URL) $(REPO)
+	git -C $(REPO) sparse-checkout set $(REPO_SPARSE_CHECKOUT) --cone --skip-checks
+else
+	source $(BUILD_LIB)/common.sh && retry git clone $(CLONE_URL) $(REPO)
+endif
 endif
 
 $(GIT_CHECKOUT_TARGET): | $(REPO)
@@ -445,7 +492,9 @@ $(REPO)/%ks-distro-go-mod-download: $(if $(PATCHES_DIR),$(GIT_PATCH_TARGET),$(GI
 ifneq ($(REPO),$(HELM_SOURCE_REPOSITORY))
 $(HELM_SOURCE_REPOSITORY):
 	git clone $(HELM_CLONE_URL) $(HELM_SOURCE_REPOSITORY)
+endif
 
+ifneq ($(GIT_TAG),$(HELM_GIT_TAG))
 $(HELM_GIT_CHECKOUT_TARGET): | $(HELM_SOURCE_REPOSITORY)
 	@echo rm -f $(HELM_SOURCE_REPOSITORY)/eks-distro-*
 	(cd $(HELM_SOURCE_REPOSITORY) && $(BASE_DIRECTORY)/build/lib/wait_for_tag.sh $(HELM_GIT_TAG))
@@ -456,7 +505,7 @@ endif
 $(HELM_GIT_PATCH_TARGET): $(HELM_GIT_CHECKOUT_TARGET)
 	git -C $(HELM_SOURCE_REPOSITORY) config user.email prow@amazonaws.com
 	git -C $(HELM_SOURCE_REPOSITORY) config user.name "Prow Bot"
-	git -C $(HELM_SOURCE_REPOSITORY) am --committer-date-is-author-date $(wildcard $(MAKE_ROOT)/helm/patches)/*
+	git -C $(HELM_SOURCE_REPOSITORY) am --committer-date-is-author-date $(wildcard $(PROJECT_ROOT)/helm/patches)/*
 	@touch $@
 
 ifeq ($(SIMPLE_CREATE_BINARIES),true)
@@ -497,9 +546,10 @@ patch-repo: checkout-repo
 $(OUTPUT_DIR)/images/%:
 	@mkdir -p $(@D)
 
+$(OUTPUT_DIR)/%TTRIBUTION.txt: SOURCE_FILE=$(@:_output/%=%) # we want to keep the release branch part which is in the OUTPUT var, hardcoding _output
 $(OUTPUT_DIR)/%TTRIBUTION.txt:
 	@mkdir -p $(OUTPUT_DIR)
-	@cp $(ATTRIBUTION_TARGETS) $(OUTPUT_DIR)
+	@cp $(SOURCE_FILE) $(OUTPUT_DIR)
 
 
 ## License Targets
@@ -564,7 +614,7 @@ endif
 
 .PHONY: validate-checksums
 validate-checksums: $(BINARY_TARGETS)
-ifneq ($(strip $(BINARY_TARGETS)),)
+ifneq ($(and $(strip $(BINARY_TARGETS)), $(filter false, $(SKIP_CHECKSUM_VALIDATION))),)
 	$(BASE_DIRECTORY)/build/lib/validate_checksums.sh $(MAKE_ROOT) $(PROJECT_ROOT) $(MAKE_ROOT)/$(OUTPUT_BIN_DIR) $(FAKE_ARM_BINARIES_FOR_VALIDATION)
 endif
 
@@ -596,15 +646,15 @@ endif
 %/images/amd64 %/images/arm64: IMAGE_OUTPUT_TYPE?=oci
 %/images/amd64 %/images/arm64: IMAGE_OUTPUT?=dest=$(IMAGE_OUTPUT_DIR)/$(IMAGE_OUTPUT_NAME).tar
 
-%/images/push: $(BINARY_TARGETS) $(LICENSES_TARGETS_FOR_PREREQ)
+%/images/push: $(BINARY_TARGETS) $(LICENSES_TARGETS_FOR_PREREQ) $(HANDLE_DEPENDENCIES_TARGET)
 	$(BUILDCTL)
 
-%/images/amd64: $(BINARY_TARGETS) $(LICENSES_TARGETS_FOR_PREREQ)
+%/images/amd64: $(BINARY_TARGETS) $(LICENSES_TARGETS_FOR_PREREQ) $(HANDLE_DEPENDENCIES_TARGET)
 	@mkdir -p $(IMAGE_OUTPUT_DIR)
 	$(BUILDCTL)
 	$(WRITE_LOCAL_IMAGE_TAG)
 
-%/images/arm64: $(BINARY_TARGETS) $(LICENSES_TARGETS_FOR_PREREQ)
+%/images/arm64: $(BINARY_TARGETS) $(LICENSES_TARGETS_FOR_PREREQ) $(HANDLE_DEPENDENCIES_TARGET)
 	@mkdir -p $(IMAGE_OUTPUT_DIR)
 	$(BUILDCTL)
 	$(WRITE_LOCAL_IMAGE_TAG)
@@ -628,7 +678,7 @@ prepare-cgo-folder:
 %/cgo/amd64 %/cgo/arm64: IMAGE_NAME=binary-builder
 %/cgo/amd64 %/cgo/arm64: IMAGE_BUILD_ARGS?=GOPROXY COMPONENT
 %/cgo/amd64 %/cgo/arm64: IMAGE_CONTEXT_DIR?=$(CGO_SOURCE)
-%/cgo/amd64 %/cgo/arm64: BUILDER_IMAGE=$(BASE_IMAGE_REPO)/builder-base:latest
+%/cgo/amd64 %/cgo/arm64: BUILDER_IMAGE=$(CURRENT_BUILDER_BASE_IMAGE)
 
 %/cgo/amd64: IMAGE_PLATFORMS=linux/amd64
 %/cgo/arm64: IMAGE_PLATFORMS=linux/arm64
@@ -638,6 +688,9 @@ prepare-cgo-folder:
 
 %/cgo/arm64: prepare-cgo-folder
 	$(BUILDCTL)
+
+# As an attempt to see if using docker is more stable for cgo builds in Codebuild
+binary-builder/cgo/%: USE_DOCKER_FOR_CGO_BUILD=$(shell command -v docker &> /dev/null && docker info > /dev/null 2>&1 && echo "true")
 
 ## Useradd targets
 %-useradd/images/export: IMAGE_OUTPUT_TYPE=local
@@ -651,23 +704,29 @@ prepare-cgo-folder:
 	$(BUILDCTL)
 
 ## Helm Targets
+.PHONY: helm/pull 
+helm/pull: 
+	$(BUILD_LIB)/helm_pull.sh $(HELM_PULL_LOCATION) $(HELM_REPO_URL) $(HELM_PULL_NAME) $(REPO) $(HELM_DIRECTORY) $(CHART_VERSION) $(COPY_CRDS)
 
 # Build helm chart
 .PHONY: helm/build
 helm/build: $(LICENSES_TARGETS_FOR_PREREQ)
 helm/build: $(if $(filter true,$(REPO_NO_CLONE)),,$(HELM_GIT_CHECKOUT_TARGET))
-helm/build: $(if $(wildcard $(MAKE_ROOT)/helm/patches),$(HELM_GIT_PATCH_TARGET),)
+helm/build: $(if $(wildcard $(PROJECT_ROOT)/helm/patches),$(HELM_GIT_PATCH_TARGET),)
 	$(BUILD_LIB)/helm_copy.sh $(HELM_SOURCE_REPOSITORY) $(HELM_DESTINATION_REPOSITORY) $(HELM_DIRECTORY) $(OUTPUT_DIR)
-	$(BUILD_LIB)/helm_require.sh $(IMAGE_REPO) $(HELM_DESTINATION_REPOSITORY) $(OUTPUT_DIR) $(IMAGE_TAG) $(LATEST) $(HELM_IMAGE_LIST)
+	$(BUILD_LIB)/helm_require.sh $(HELM_SOURCE_IMAGE_REPO) $(HELM_DESTINATION_REPOSITORY) $(OUTPUT_DIR) $(IMAGE_TAG) $(HELM_TAG) $(PROJECT_ROOT) $(LATEST) $(HELM_USE_UPSTREAM_IMAGE) $(HELM_IMAGE_LIST)
 	$(BUILD_LIB)/helm_replace.sh $(HELM_DESTINATION_REPOSITORY) $(OUTPUT_DIR)
 	$(BUILD_LIB)/helm_build.sh $(OUTPUT_DIR) $(HELM_DESTINATION_REPOSITORY)
 
 # Build helm chart and push to registry defined in IMAGE_REPO.
 .PHONY: helm/push
 helm/push: helm/build
-	$(BUILD_LIB)/helm_push.sh $(IMAGE_REPO) $(HELM_DESTINATION_REPOSITORY) $(IMAGE_TAG) $(OUTPUT_DIR)
+	$(BUILD_LIB)/helm_push.sh $(IMAGE_REPO) $(HELM_DESTINATION_REPOSITORY) $(HELM_TAG) $(GIT_TAG) $(OUTPUT_DIR) $(LATEST)
 
 ## Fetch Binary Targets
+.PHONY: handle-dependencies 
+handle-dependencies: $(call PROJECT_DEPENDENCIES_TARGETS)
+
 $(BINARY_DEPS_DIR)/linux-%:
 	$(BUILD_LIB)/fetch_binaries.sh $(BINARY_DEPS_DIR) $* $(ARTIFACTS_BUCKET) $(LATEST) $(RELEASE_BRANCH)
 
@@ -680,10 +739,13 @@ build: $(BUILD_TARGETS)
 .PHONY: release
 release: $(RELEASE_TARGETS)
 
+# Iterate over release branch versions, avoiding branches explicitly marked as skipped
 .PHONY: %/release-branches/all
 %/release-branches/all:
 	@for version in $(SUPPORTED_K8S_VERSIONS) ; do \
-		$(MAKE) $* RELEASE_BRANCH=$$version; \
+	    if ! [[ "$(SKIPPED_K8S_VERSIONS)" =~ $$version  ]]; then \
+			$(MAKE) $* RELEASE_BRANCH=$$version; \
+		fi \
 	done;
 
 ###  Clean Targets
@@ -713,7 +775,7 @@ add-generated-help-block: # Add or update generated help block to document proje
 add-generated-help-block:
 	$(BUILD_LIB)/generate_help_body.sh $(MAKE_ROOT) "$(BINARY_TARGET_FILES)" "$(BINARY_PLATFORMS)" "${BINARY_TARGETS}" \
 		$(REPO) $(if $(PATCHES_DIR),true,false) "$(LOCAL_IMAGE_TARGETS)" "$(IMAGE_TARGETS)" "$(BUILD_TARGETS)" "$(RELEASE_TARGETS)" \
-		"$(HAS_S3_ARTIFACTS)" "$(HAS_LICENSES)" "$(REPO_NO_CLONE)" "$(call FULL_FETCH_BINARIES_TARGETS,$(FETCH_BINARIES_TARGETS))" \
+		"$(HAS_S3_ARTIFACTS)" "$(HAS_LICENSES)" "$(REPO_NO_CLONE)" "$(PROJECT_DEPENDENCIES_TARGETS)" \
 		"$(HAS_HELM_CHART)"
 
 ## --------------------------------------
@@ -723,7 +785,7 @@ add-generated-help-block:
 
 .PHONY: run-target-in-docker
 run-target-in-docker: # Run `MAKE_TARGET` using builder base docker container
-	$(BUILD_LIB)/run_target_docker.sh $(COMPONENT) $(MAKE_TARGET) $(IMAGE_REPO) $(RELEASE_BRANCH) $(ARTIFACTS_BUCKET)
+	$(BUILD_LIB)/run_target_docker.sh $(COMPONENT) $(MAKE_TARGET) $(IMAGE_REPO) "$(RELEASE_BRANCH)" $(ARTIFACTS_BUCKET)
 
 .PHONY: update-attribution-checksums-docker
 update-attribution-checksums-docker: # Update attribution and checksums using the builder base docker container
@@ -755,3 +817,27 @@ update-vendor-for-dep-patch: checkout-repo
 patch-for-dep-update: # After bumping dep in go.mod file and updating vendor, generates patch
 patch-for-dep-update: checkout-repo
 	$(BUILD_LIB)/patch_for_dep_update.sh $(REPO) $(GIT_TAG) $(PROJECT_ROOT)/patches
+
+.PHONY: %/create-ecr-repo
+%/create-ecr-repo: IMAGE_NAME=$*
+%/create-ecr-repo:
+	cmd=( ecr ); \
+	if [[ "${IMAGE_REPO}" =~ ^public\.ecr\.aws/ ]]; then \
+		cmd=( ecr-public --region us-east-1 ); \
+	fi; \
+	repo=$(IMAGE_REPO_COMPONENT); \
+	if [ "$(IMAGE_NAME)" = "__helm__" ]; then \
+		repo="$(HELM_DESTINATION_REPOSITORY)"; \
+	fi; \
+	if ! aws $${cmd[*]} describe-repositories --repository-name "$$repo" > /dev/null 2>&1; then \
+		aws $${cmd[*]} create-repository --repository-name "$$repo"; \
+	fi;
+
+.PHONY: create-ecr-repos
+create-ecr-repos: # Create repos in ECR for project images for local testing
+create-ecr-repos: $(foreach image,$(IMAGE_NAMES),$(image)/create-ecr-repo) $(if $(filter true,$(HAS_HELM_CHART)),__helm__/create-ecr-repo,)
+
+.PHONY: var-value-%
+var-value-%:
+	@echo $($*)
+
