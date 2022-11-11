@@ -3,7 +3,7 @@ From: Gaige Pierce-Raison <gpiercer@amazon.com>
 Date: Fri, 30 Sep 2022 22:09:52 +0000
 Subject: [PATCH] --EKS-PATCH-- Update aws-sdk-go from v1.42.23 to v1.44.107
 
-Adds me-central-1 region
+Adds me-central-1 region foooo
 ---
  go.mod                                        |     4 +-
  go.sum                                        |     4 +-
