@@ -16,7 +16,6 @@ IMAGE_NAMES=go-runner kube-proxy-base
 # Name of base image to be used when building the kube-proxy-base image
 KUBE_PROXY_BASE_BASE_IMAGE_NAME=$(if $(IS_BUILDING_MINIMAL),eks-distro-minimal-base-iptables,eks-distro-base)
 
-LICENSE_PACKAGE_FILTER=./go-runner.go
 IPTABLES_WRAPPER=$(OUTPUT_DIR)/iptables-wrapper
 
 BINARY_TARGET_FILES=go-runner

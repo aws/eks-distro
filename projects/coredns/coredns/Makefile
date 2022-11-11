@@ -5,8 +5,6 @@ GOLANG_VERSION?=$(shell cat $(RELEASE_BRANCH)/GOLANG_VERSION)
 REPO=coredns
 REPO_OWNER=coredns
 
-LICENSE_PACKAGE_FILTER?=./coredns.go
-
 BINARY_TARGET_FILES=coredns
 SOURCE_PATTERNS=.
 EXTRA_GO_LDFLAGS=-X github.com/coredns/coredns/coremain.GitCommit=$(shell git -C $(REPO) rev-list -n 1  "${GIT_TAG}")

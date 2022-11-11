@@ -83,7 +83,9 @@ function build::gather_licenses() {
 
   # the version of go used here must be the version go-licenses was installed with
   # by default we use 1.16, but due to changes in 1.17, there are some changes that require using 1.17
-  if [ "$golang_version" == "1.18" ]; then
+  if [ "$golang_version" == "1.19" ]; then
+    build::common::use_go_version 1.19
+  elif [ "$golang_version" == "1.18" ]; then
     build::common::use_go_version 1.18
   elif [ "$golang_version" == "1.17" ]; then
     build::common::use_go_version 1.17
@@ -170,7 +172,7 @@ function build::non-golang::copy_licenses(){
   do
     license_dest=$destination_dir/$(dirname $file)
     mkdir -p $license_dest
-    cp "${source_dir}/${file}" $license_dest/$(basename $file)
+    cp -r "${source_dir}/${file}" $license_dest/$(basename $file)
   done
 }
 
@@ -243,10 +245,28 @@ function build::common::wait_for_tag() {
   sleep_interval=20
   for i in {1..60}; do
     echo "Checking for tag ${tag}..."
-    git fetch --tags > /dev/null 2>&1
     git rev-parse --verify --quiet "${tag}" && echo "Tag ${tag} exists!" && break
+    git fetch --tags > /dev/null 2>&1
     echo "Tag ${tag} does not exist!"
     echo "Waiting for tag ${tag}..."
+    sleep $sleep_interval
+    if [ "$i" = "60" ]; then
+      exit 1
+    fi
+  done
+}
+
+function build::common::wait_for_tarball() {
+  local -r tarball_url=$1
+  sleep_interval=20
+  for i in {1..60}; do
+    echo "Checking for URL ${tarball_url}..."
+    local -r http_code=$(curl -I -L -s -o /dev/null -w "%{http_code}" $tarball_url)
+    if [[ "$http_code" == "200" ]]; then 
+      echo "Tarball exists!" && break
+    fi
+    echo "Tarball does not exist!"
+    echo "Waiting for tarball to be uploaded to ${tarball_url}"
     sleep $sleep_interval
     if [ "$i" = "60" ]; then
       exit 1
@@ -265,4 +285,25 @@ function build::common::get_clone_url() {
   else
     echo "https://github.com/${org}/${repo}.git"
   fi
+}
+
+function retry() {
+  local n=1
+  local max=120
+  local delay=5
+  while true; do
+    "$@" && break || {
+      if [[ $n -lt $max ]]; then
+        ((n++))
+        echo "Command failed. Attempt $n/$max:"
+        sleep $delay;
+      else
+        fail "The command has failed after $n attempts."
+      fi
+    }
+  done
+}
+
+function build::docker::retry_pull() {
+  retry docker pull "$@"
 }
