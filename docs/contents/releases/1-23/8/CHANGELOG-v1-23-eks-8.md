@@ -14,5 +14,5 @@ This changelog highlights the changes for [v1-23-eks-8](https://github.com/aws/e
 * Bump aws-iam-auth project versions for all versions ([1423](https://github.com/aws/eks-distro/pull/1423))
 
 ### Base Image
-No changes since last release
+Updated base image [1401](https://github.com/aws/eks-distro/pull/1401)
 
