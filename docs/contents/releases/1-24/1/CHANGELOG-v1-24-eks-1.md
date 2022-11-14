@@ -4,3 +4,4 @@ This changelog highlights the changes for [v1-24-eks-1](https://github.com/aws/e
 
 ## Changes
 
+Initial release of Kubernetes 1.24 (v1.24.6)
