@@ -72,7 +72,7 @@ https://github.com/kubernetes/api
 https://github.com/kubernetes/apimachinery
 
 ** k8s.io/apiserver/pkg/util/feature; version v0.25.2 --
-https://k8s.io/apiserver
+https://github.com/kubernetes/apiserver
 
 ** k8s.io/client-go; version v0.25.2 --
 https://github.com/kubernetes/client-go
