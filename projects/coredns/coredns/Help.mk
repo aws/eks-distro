@@ -52,8 +52,9 @@ generate: ## Update UPSTREAM_PROJECTS.yaml
 update-go-mods: ## Update locally checked-in go sum to assist in vuln scanning
 update-vendor-for-dep-patch: ## After bumping dep in go.mod file, uses generic vendor update script or one provided from upstream project
 patch-for-dep-update: ## After bumping dep in go.mod file and updating vendor, generates patch
+create-ecr-repos: ## Create repos in ECR for project images for local testing
 
 ##@ Build Targets
-build: ## Called via prow presubmit, calls `validate-checksums attribution local-images upload-artifacts attribution-pr`
-release: ## Called via prow postsubmit + release jobs, calls `validate-checksums images upload-artifacts`
+build: ## Called via prow presubmit, calls `validate-checksums attribution local-images  upload-artifacts attribution-pr`
+release: ## Called via prow postsubmit + release jobs, calls `validate-checksums images  upload-artifacts`
 ########### END GENERATED ###########################
