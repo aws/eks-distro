@@ -37,6 +37,12 @@ Full documentation for releases can be found on [https://distro.eks.amazonaws.co
 To receive notifications about new EKS-D releases, subscribe to the EKS-D updates SNS topic:
 `arn:aws:sns:us-east-1:379412251201:eks-distro-updates`
 
+### Kubernetes 1-24
+
+| Release | Manifest | Kubernetes Version |
+| --- | --- | --- |
+| 1 | [v1-24-eks-1](https://distro.eks.amazonaws.com/kubernetes-1-24/kubernetes-1-24-eks-1.yaml) | [v1.24.6](https://github.com/kubernetes/kubernetes/release/tag/v1.24.6) |
+
 ### Kubernetes 1-23
 
 | Release | Manifest | Kubernetes Version |
