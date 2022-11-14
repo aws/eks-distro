@@ -41,7 +41,7 @@ To receive notifications about new EKS-D releases, subscribe to the EKS-D update
 
 | Release | Manifest | Kubernetes Version |
 | --- | --- | --- |
-| 2 | [v1-24-eks-2](https://distro.eks.amazonaws.com/kubernetes-1-24/kubernetes-1-24-eks-2.yaml) | [v1.24.6](https://github.com/kubernetes/kubernetes/release/tag/v1.24.6) |
+| 3 | [v1-24-eks-3](https://distro.eks.amazonaws.com/kubernetes-1-24/kubernetes-1-24-eks-3.yaml) | [v1.24.6](https://github.com/kubernetes/kubernetes/release/tag/v1.24.6) |
 
 ### Kubernetes 1-23
 
