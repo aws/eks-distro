@@ -154,24 +154,26 @@ makes-clean-%:
 .PHONY: attribution-files
 attribution-files: $(addprefix attribution-files-project-, $(ALL_PROJECTS))
 	cat _output/total_summary.txt
-	build/update-attribution-files/create_pr.sh
 
 .PHONY: attribution-files-project-%
 attribution-files-project-%:
 	$(eval PROJECT_PATH=projects/$(subst _,/,$*))
 	build/update-attribution-files/make_attribution.sh $(PROJECT_PATH) attribution
+	$(if $(findstring periodic,$(JOB_TYPE)),rm -rf /root/.cache/go-build /home/prow/go/pkg/mod $(PROJECT_PATH)/_output,)
 
 .PHONY: update-attribution-files
-update-attribution-files: add-generated-help-block go-mod-files attribution-files checksum-files
+update-attribution-files: add-generated-help-block go-mod-files attribution-files
+	build/lib/update_go_versions.sh
+	build/update-attribution-files/create_pr.sh
 
 .PHONY: checksum-files-project-%
 checksum-files-project-%:
 	$(eval PROJECT_PATH=projects/$(subst _,/,$*))
 	build/update-attribution-files/make_attribution.sh $(PROJECT_PATH) checksums
+	$(if $(findstring periodic,$(JOB_TYPE)),rm -rf /root/.cache/go-build /home/prow/go/pkg/mod && make -C $(PROJECT_PATH) clean,)
 
-.PHONY: checksum-files
-checksum-files: $(addprefix checksum-files-project-, $(ALL_PROJECTS))
-	build/lib/update_go_versions.sh
+.PHONY: update-checksum-files
+update-checksum-files: $(addprefix checksum-files-project-, $(ALL_PROJECTS))
 	build/update-attribution-files/create_pr.sh
 
 .PHONY: go-mod-files-project-%
