@@ -20,10 +20,14 @@ DOCKERFILE_FOLDER=./docker/linux/$(IMAGE_NAME)
 
 HAS_RELEASE_BRANCHES=true
 
+EXTRA_GO_LDFLAGS=-X main.version=$(GIT_TAG)
+
 VENDOR_UPDATE_SCRIPT=release-tools/update-vendor.sh
 
 include $(BASE_DIRECTORY)/Common.mk
 
+build: validate-cli-version
+release: validate-cli-version
 
 $(GATHER_LICENSES_TARGETS): $(SNAPSHOTTER_LICENSE)
 
@@ -33,6 +37,18 @@ $(GATHER_LICENSES_TARGETS): $(SNAPSHOTTER_LICENSE)
 $(SNAPSHOTTER_LICENSE): | $(GO_MOD_DOWNLOAD_TARGETS)
 	mkdir -p $(@D)
 	cp $(REPO)/LICENSE $@
+
+
+%/validate-cli-version: CLI=./$(OUTPUT_BIN_DIR)/$(subst /,-,$(BUILDER_PLATFORM))/$*
+%/validate-cli-version: $(BINARY_TARGETS)
+	$(CLI) --version
+	@if [[ "$$($(CLI) --version)" != *"$(GIT_TAG)"* ]]; then \
+		echo "Version set incorrectly on cli!"; \
+		exit 1; \
+	fi
+
+.PHONY: validate-cli-version
+validate-cli-version: csi-snapshotter/validate-cli-version snapshot-controller/validate-cli-version
 
 
 ########### DO NOT EDIT #############################
