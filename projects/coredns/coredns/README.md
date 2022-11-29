@@ -10,7 +10,7 @@
 ### Updating
 
 1. Work with EKS teams to decide on a new version. Review 
-   [releases](https://github.com/coredns/coredn/releases) on the
+   [releases](https://github.com/coredns/coredns/releases) on the
    `coredns/coredns` [repo](https://github.com/coredns/coredns) and the 
    [changelogs](https://coredns.io/blog/) on project's
    [website](https://coredns.io/). Please review changelogs carefully looking
