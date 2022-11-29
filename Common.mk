@@ -177,6 +177,23 @@ BUILD_OCI_TARS?=false
 LOCAL_IMAGE_TARGETS=$(foreach image,$(IMAGE_NAMES),$(image)/images/amd64) $(if $(filter true,$(HAS_HELM_CHART)),helm/build,) 
 IMAGE_TARGETS=$(foreach image,$(IMAGE_NAMES),$(if $(filter true,$(BUILD_OCI_TARS)),$(call IMAGE_TARGETS_FOR_NAME,$(image)),$(image)/images/push)) $(if $(filter true,$(HAS_HELM_CHART)),helm/push,) 
 
+
+############# WINDOWS #############################
+# similiar to https://github.com/kubernetes-csi/livenessprobe/blob/master/release-tools/prow.sh#L78
+WINDOWS_IMAGE_REGISTRY=mcr.microsoft.com/windows
+WINDOWS_BASE_IMAGE_NAME=nanoserver
+WINDOWS_ADDON_IMAGE_NAME=servercore
+WINDOWS_IMAGE_VERSIONS=1809 20H2 ltsc2022
+
+# if multiple platforms requested, remove windows since it will be
+# built by itself with a different dockerfile
+IMAGE_PLATFORMS_WITHOUT_WINDOWS=$(or $(subst windows/amd64,,$(IMAGE_PLATFORMS)),$(IMAGE_PLATFORMS))
+
+# <image>.<osversion</windows/images/push
+WINDOWS_IMAGE_BUILD_TARGETS_FOR_IMAGE=$(if $(findstring windows/amd64,$(IMAGE_PLATFORMS)) \
+	,$(foreach ver,$(WINDOWS_IMAGE_VERSIONS),$(IMAGE_NAME).$(ver)/windows/images/push),)
+####################################################
+
 # If running in the builder base on prow or codebuild, grab the current tag to be used when building with cgo
 CURRENT_BUILDER_BASE_TAG=$(or $(and $(wildcard /config/BUILDER_BASE_TAG_FILE),$(shell cat /config/BUILDER_BASE_TAG_FILE)),latest)
 CURRENT_BUILDER_BASE_IMAGE=$(if $(CODEBUILD_BUILD_IMAGE),$(CODEBUILD_BUILD_IMAGE),$(BASE_IMAGE_REPO)/builder-base:$(CURRENT_BUILDER_BASE_TAG))
@@ -434,7 +451,7 @@ define BUILDCTL
 		$(BUILD_LIB)/buildkit.sh \
 			build \
 			--frontend dockerfile.v0 \
-			--opt platform=$(IMAGE_PLATFORMS) \
+			--opt platform=$(IMAGE_PLATFORMS_WITHOUT_WINDOWS:,=) \
 			--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
 			--opt build-arg:BUILDER_IMAGE=$(BUILDER_IMAGE) \
 			--opt build-arg:RELEASE_BRANCH=$(RELEASE_BRANCH) \
@@ -442,10 +459,11 @@ define BUILDCTL
 			--progress plain \
 			--local dockerfile=$(DOCKERFILE_FOLDER) \
 			--local context=$(IMAGE_CONTEXT_DIR) \
-			--opt target=$(IMAGE_TARGET) \
-			--output type=$(IMAGE_OUTPUT_TYPE),oci-mediatypes=true,\"name=$(IMAGE),$(LATEST_IMAGE)\",$(IMAGE_OUTPUT) \
 			$(if $(filter push=true,$(IMAGE_OUTPUT)),--export-cache type=inline,) \
-			$(foreach IMPORT_CACHE,$(IMAGE_IMPORT_CACHE),--import-cache $(IMPORT_CACHE)); \
+			$(foreach IMPORT_CACHE,$(IMAGE_IMPORT_CACHE),--import-cache $(IMPORT_CACHE)) \
+			$(if $(IMAGE_METADATA_FILE),--metadata-file $(IMAGE_METADATA_FILE),) \
+			--opt target=$(IMAGE_TARGET) \
+			--output type=$(IMAGE_OUTPUT_TYPE),oci-mediatypes=true,\"name=$(ALL_IMAGE_TAGS)\",$(IMAGE_OUTPUT); \
 	fi
 endef 
 
@@ -631,12 +649,17 @@ endif
 %/images/push %/images/amd64 %/images/arm64: DOCKERFILE_FOLDER?=./docker/linux
 %/images/push %/images/amd64 %/images/arm64: IMAGE_CONTEXT_DIR?=.
 %/images/push %/images/amd64 %/images/arm64: IMAGE_BUILD_ARGS?=
+%/images/push %/images/amd64 %/images/arm64: ALL_IMAGE_TAGS?=$(IMAGE),$(LATEST_IMAGE)
+%/images/push %/images/amd64 %/images/arm64: IMAGE_METADATA_FILE?=
 
 # Build image using buildkit for all platforms, by default pushes to registry defined in IMAGE_REPO.
 %/images/push: IMAGE_PLATFORMS?=linux/amd64,linux/arm64
 %/images/push: IMAGE_OUTPUT_TYPE?=image
 %/images/push: IMAGE_OUTPUT?=push=true
-
+# if building windows containers produce metadata file and push by digest
+%/images/push: IMAGE_METADATA_FILE=$(if $(findstring windows/amd64,$(IMAGE_PLATFORMS)),/tmp/$(IMAGE_NAME)-metadata.json,)
+%/images/push: IMAGE_OUTPUT=push=true$(if $(findstring windows/amd64,$(IMAGE_PLATFORMS)),$(COMMA)push-by-digest=true,)
+%/images/push: ALL_IMAGE_TAGS=$(if $(findstring windows/amd64,$(IMAGE_PLATFORMS)),$(IMAGE_REPO)/$(IMAGE_REPO_COMPONENT),$(IMAGE)$(COMMA)$(LATEST_IMAGE))
 # Build image using buildkit only builds linux/amd64 oci and saves to local tar.
 %/images/amd64: IMAGE_PLATFORMS?=linux/amd64
 
@@ -646,8 +669,11 @@ endif
 %/images/amd64 %/images/arm64: IMAGE_OUTPUT_TYPE?=oci
 %/images/amd64 %/images/arm64: IMAGE_OUTPUT?=dest=$(IMAGE_OUTPUT_DIR)/$(IMAGE_OUTPUT_NAME).tar
 
-%/images/push: $(BINARY_TARGETS) $(LICENSES_TARGETS_FOR_PREREQ) $(HANDLE_DEPENDENCIES_TARGET)
+%/images/push: $(BINARY_TARGETS) $(LICENSES_TARGETS_FOR_PREREQ) $(HANDLE_DEPENDENCIES_TARGET) $$(WINDOWS_IMAGE_BUILD_TARGETS_FOR_IMAGE)
 	$(BUILDCTL)
+	@if [ -n "$(WINDOWS_IMAGE_BUILD_TARGETS_FOR_IMAGE)" ]; then \
+		$(BUILD_LIB)/create_windows_manifest_list.sh $(IMAGE_NAME) $(IMAGE) $(LATEST_IMAGE) "$(WINDOWS_IMAGE_VERSIONS)" $(WINDOWS_IMAGE_REGISTRY) $(WINDOWS_BASE_IMAGE_NAME); \
+	fi
 
 %/images/amd64: $(BINARY_TARGETS) $(LICENSES_TARGETS_FOR_PREREQ) $(HANDLE_DEPENDENCIES_TARGET)
 	@mkdir -p $(IMAGE_OUTPUT_DIR)
@@ -658,6 +684,16 @@ endif
 	@mkdir -p $(IMAGE_OUTPUT_DIR)
 	$(BUILDCTL)
 	$(WRITE_LOCAL_IMAGE_TAG)
+
+%/windows/images/push: IMAGE_NAME=$(word 1,$(subst ., ,$*))
+%/windows/images/push: WINDOWS_OS_VERSION=$(word 2,$(subst ., ,$*))
+%/windows/images/push: DOCKERFILE_FOLDER=./docker/windows
+%/windows/images/push: BUILDER_IMAGE=$(WINDOWS_IMAGE_REGISTRY)/$(WINDOWS_ADDON_IMAGE_NAME):$(WINDOWS_OS_VERSION)
+%/windows/images/push: BASE_IMAGE=$(WINDOWS_IMAGE_REGISTRY)/$(WINDOWS_BASE_IMAGE_NAME):$(WINDOWS_OS_VERSION)
+%/windows/images/push: IMAGE_PLATFORMS=windows/amd64
+%/windows/images/push: IMAGE_METADATA_FILE=/tmp/$(IMAGE_NAME)-$(WINDOWS_OS_VERSION)-metadata.json
+%/windows/images/push: $(BINARY_TARGETS) $(LICENSES_TARGETS_FOR_PREREQ) $(HANDLE_DEPENDENCIES_TARGET)
+	$(BUILDCTL)
 
 ## CGO Targets
 .PHONY: %/cgo/amd64 %/cgo/arm64 prepare-cgo-folder

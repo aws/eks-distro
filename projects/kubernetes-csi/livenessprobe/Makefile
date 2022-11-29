@@ -8,13 +8,18 @@ REPO_OWNER=kubernetes-csi
 BINARY_TARGET_FILES=livenessprobe
 SOURCE_PATTERNS=./cmd/livenessprobe
 
+BINARY_PLATFORMS=linux/amd64 linux/arm64 windows/amd64
+
 HAS_RELEASE_BRANCHES=true
 
 include $(BASE_DIRECTORY)/Common.mk
 
+
+livenessprobe/images/push: IMAGE_PLATFORMS=linux/amd64,linux/arm64,windows/amd64
+
 $(ATTRIBUTION_TARGETS): fix-licenses
 
-.PHONE: fix-licenses
+.PHONY: fix-licenses
 fix-licenses: $(GATHER_LICENSES_TARGETS)
 	build/fix_licenses.sh $(RELEASE_BRANCH)
 
