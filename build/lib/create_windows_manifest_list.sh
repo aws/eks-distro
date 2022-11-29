@@ -71,11 +71,11 @@ fi
 
 retry docker buildx imagetools create $CREATE_ARGS -t $IMAGE -t $LATEST_IMAGE
 
-if [ "$(docker buildx imagetools inspect $IMAGE --raw)" != "$(docker buildx imagetools inspect $LATEST_IMAGE --raw)" ]; then
+retry docker buildx imagetools inspect $IMAGE
+
+if ! diff <(retry docker buildx imagetools inspect $IMAGE --raw) <(retry docker buildx imagetools inspect $LATEST_IMAGE --raw); then
     echo "image manifest and latest manifest do not match!"
     exit 1
 fi
-
-retry docker buildx imagetools inspect $IMAGE
 
 rm -rf /tmp/$IMAGE_NAME-*.json
