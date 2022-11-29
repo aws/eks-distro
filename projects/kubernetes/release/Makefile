@@ -53,7 +53,7 @@ $(IPTABLES_WRAPPER): $(GIT_CHECKOUT_TARGET)
 	@mkdir -p $(@D)
 	cp $(REPO)/images/build/debian-iptables/buster/iptables-wrapper $@
 
-.PHONE: fix-licenses
+.PHONY: fix-licenses
 fix-licenses: $(GATHER_LICENSES_TARGETS)
 	build/fix_licenses.sh $(OUTPUT_DIR)
 
