@@ -11,9 +11,10 @@ clone-repo:  ## Clone upstream `livenessprobe`
 checkout-repo: ## Checkout upstream tag based on value in GIT_TAG file
 
 ##@ Binary Targets
-binaries: ## Build all binaries: `livenessprobe` for `linux/amd64 linux/arm64`
+binaries: ## Build all binaries: `livenessprobe` for `linux/amd64 linux/arm64 windows/amd64`
 _output/1-21/bin/livenessprobe/linux-amd64/livenessprobe: ## Build `_output/1-21/bin/livenessprobe/linux-amd64/livenessprobe`
 _output/1-21/bin/livenessprobe/linux-arm64/livenessprobe: ## Build `_output/1-21/bin/livenessprobe/linux-arm64/livenessprobe`
+_output/1-21/bin/livenessprobe/windows-amd64/livenessprobe.exe: ## Build `_output/1-21/bin/livenessprobe/windows-amd64/livenessprobe.exe`
 
 ##@ Image Targets
 local-images: ## Builds `livenessprobe/images/amd64` as oci tars for presumbit validation
