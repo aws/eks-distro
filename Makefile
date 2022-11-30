@@ -81,7 +81,7 @@ kops-prow-amd: kops-prereqs
 kops-prow: kops-prow-amd kops-prow-arm
 	@echo 'Done kops-prow'
 
-.PHONT: kops-prereqs
+.PHONY: kops-prereqs
 kops-prereqs: postsubmit-build
 	ssh-keygen -b 2048 -t rsa -f ~/.ssh/id_rsa -q -N ""
 	cd development/kops && RELEASE=$(RELEASE) ./install_requirements.sh
