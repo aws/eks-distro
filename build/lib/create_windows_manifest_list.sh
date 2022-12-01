@@ -73,9 +73,15 @@ retry docker buildx imagetools create $CREATE_ARGS -t $IMAGE -t $LATEST_IMAGE
 
 retry docker buildx imagetools inspect $IMAGE
 
-if ! diff <(retry docker buildx imagetools inspect $IMAGE --raw) <(retry docker buildx imagetools inspect $LATEST_IMAGE --raw); then
-    echo "image manifest and latest manifest do not match!"
-    exit 1
-fi
+# Public ecr's tagging appears to have some delay when retagging existing tags, like latest
+# retry the diff to give it time to make sure the latest manifest has been updated to new verion
+function validate_latest() {
+    if ! diff <(retry docker buildx imagetools inspect $IMAGE --raw) <(retry docker buildx imagetools inspect $LATEST_IMAGE --raw); then
+        echo "image manifest and latest manifest do not match!"
+        return 1
+    fi
+}
+
+retry validate_latest
 
 rm -rf /tmp/$IMAGE_NAME-*.json
