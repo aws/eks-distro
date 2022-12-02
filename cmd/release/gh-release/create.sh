@@ -33,4 +33,4 @@ releaseNotes="$(sed '1,3d' "$CHANGELOG_FILEPATH")
 
 $(sed '1,4d' "$INDEX_FILEPATH")"
 
-gh release create "$GIT_TAG" --title "EKS Distro $GIT_TAG Release" --notes "$releaseNotes"
+gh release create "$GIT_TAG" --title "EKS Distro $GIT_TAG Release" --notes "$releaseNotes" --repo "aws/eks-distro"
