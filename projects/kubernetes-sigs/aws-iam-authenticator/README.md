@@ -1,10 +1,11 @@
 ## AWS IAM Authenticator
 
-| Release | Version                                                      |
-|---------|--------------------------------------------------------------|
-| 1-21    | ![Version](https://img.shields.io/badge/version-v0.5.10-blue) |
-| 1-22    | ![Version](https://img.shields.io/badge/version-v0.5.10-blue) |
-| 1-23    | ![Version](https://img.shields.io/badge/version-v0.5.10-blue) |
+| Release | Version                                                       |
+|---------|---------------------------------------------------------------|
+| 1-21    | ![Version](https://img.shields.io/badge/version-v0.5.12-blue) |
+| 1-22    | ![Version](https://img.shields.io/badge/version-v0.5.12-blue) |
+| 1-23    | ![Version](https://img.shields.io/badge/version-v0.5.12-blue) |
+| 1-24    | ![Version](https://img.shields.io/badge/version-v0.5.12-blue) |
 
 
 ### Updating
