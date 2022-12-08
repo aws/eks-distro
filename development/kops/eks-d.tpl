@@ -7,10 +7,9 @@ spec:
     dns: {}
   authorization:
     rbac: {}
-  channel: stable
-  {{if .ipv6}}
-  cloudControllerManager: {}
-  {{end}}
+  channel: stable  
+  cloudControllerManager:
+    image: {{ .cloud_controller_manager.repository }}:{{ .cloud_controller_manager.tag }}  
   cloudProvider: aws
   configBase: {{ .configBase }}
   containerRuntime: containerd
