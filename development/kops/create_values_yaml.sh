@@ -35,13 +35,19 @@ function get_container_yaml() {
     then
         REPOSITORY_NAME="kubernetes-csi/external-snapshotter/csi-snapshotter"
     fi
+
+    if  [[ $REPOSITORY_NAME == "kubernetes/cloud-provider-aws" ]] 
+    then
+        REPOSITORY_NAME="kubernetes/cloud-provider-aws/cloud-controller-manager"
+    fi
+    
     echo "    repository: ${IMAGE_REPO}/${REPOSITORY_NAME}
     tag: ${VERSION}-eks-${RELEASE_BRANCH}-${RELEASE}"
 }
 
 function get_project_version(){
     REPOSITORY_NAME="${1}"
-    if  [[ $REPOSITORY_NAME == kubernetes/* ]] 
+    if  [[ $REPOSITORY_NAME == kubernetes/* ]] && [[ $REPOSITORY_NAME != "kubernetes/cloud-provider-aws" ]] 
     then
         REPOSITORY_NAME="kubernetes/kubernetes"
     fi
@@ -98,4 +104,6 @@ csi_livenessprobe:
 $(get_container_yaml kubernetes-csi/livenessprobe $RELEASE)
 etcd:
 $(get_container_yaml etcd-io/etcd $RELEASE)
+cloud_controller_manager:
+$(get_container_yaml kubernetes/cloud-provider-aws $RELEASE)
 EOF
