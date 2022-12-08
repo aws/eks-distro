@@ -102,6 +102,7 @@ func main() {
 	allChanged := false
 	buildOrder := [...]string{
 		"kubernetes/release",
+		"kubernetes/cloud-provider-aws",
 		"kubernetes/kubernetes",
 		"containernetworking/plugins",
 		"coredns/coredns",
