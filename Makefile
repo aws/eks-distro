@@ -60,7 +60,8 @@ postsubmit-build: setup
 		--artifact-bucket=$(ARTIFACT_BUCKET) \
 		--dry-run=false \
 		--rebuild-all=${REBUILD_ALL}
-
+	$(MAKE) clean-go-cache clean
+	
 .PHONY: kops-prow-arm
 kops-prow-arm: export NODE_INSTANCE_TYPE=t4g.medium
 kops-prow-arm: export NODE_ARCHITECTURE=arm64
@@ -89,7 +90,7 @@ kops-prereqs: postsubmit-build
 
 .PHONY: postsubmit-conformance
 postsubmit-conformance: RELEASE:=$(shell echo  $$(($(RELEASE) + 1))).pre
-postsubmit-conformance: postsubmit-build clean-go-cache clean kops-prow 
+postsubmit-conformance: postsubmit-build kops-prow 
 	@echo 'Done postsubmit-conformance'
 
 .PHONY: tag
