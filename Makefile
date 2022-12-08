@@ -89,7 +89,7 @@ kops-prereqs: postsubmit-build
 
 .PHONY: postsubmit-conformance
 postsubmit-conformance: RELEASE:=$(shell echo  $$(($(RELEASE) + 1))).pre
-postsubmit-conformance: postsubmit-build kops-prow 
+postsubmit-conformance: postsubmit-build clean-go-cache clean kops-prow 
 	@echo 'Done postsubmit-conformance'
 
 .PHONY: tag
@@ -147,6 +147,10 @@ stop-buildkit-and-registry:
 clean: $(addprefix makes-clean-, $(ALL_PROJECTS))
 	@echo 'Done' $(TARGET)
 
+.PHONY: clean-go-cache
+clean-go-cache:
+	rm -rf /root/.cache/go-build /home/prow/go/pkg/mod
+
 .PHONY: makes-clean-%
 makes-clean-%:
 	$(eval PROJECT_PATH=projects/$(subst _,/,$*))
@@ -160,7 +164,7 @@ attribution-files: $(addprefix attribution-files-project-, $(ALL_PROJECTS))
 attribution-files-project-%:
 	$(eval PROJECT_PATH=projects/$(subst _,/,$*))
 	build/update-attribution-files/make_attribution.sh $(PROJECT_PATH) attribution
-	$(if $(findstring periodic,$(JOB_TYPE)),rm -rf /root/.cache/go-build /home/prow/go/pkg/mod $(PROJECT_PATH)/_output,)
+	$(if $(findstring periodic,$(JOB_TYPE)),$(MAKE) clean-go-cache && rm -rf $(PROJECT_PATH)/_output,)
 
 .PHONY: update-attribution-files
 update-attribution-files: add-generated-help-block go-mod-files attribution-files
@@ -171,7 +175,7 @@ update-attribution-files: add-generated-help-block go-mod-files attribution-file
 checksum-files-project-%:
 	$(eval PROJECT_PATH=projects/$(subst _,/,$*))
 	build/update-attribution-files/make_attribution.sh $(PROJECT_PATH) checksums
-	$(if $(findstring periodic,$(JOB_TYPE)),rm -rf /root/.cache/go-build /home/prow/go/pkg/mod && make -C $(PROJECT_PATH) clean,)
+	$(if $(findstring periodic,$(JOB_TYPE)),$(MAKE) clean-go-cache && make -C $(PROJECT_PATH) clean,)
 
 .PHONY: update-checksum-files
 update-checksum-files: $(addprefix checksum-files-project-, $(ALL_PROJECTS))
