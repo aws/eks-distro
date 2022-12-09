@@ -51,7 +51,7 @@ build:
 postsubmit-build: setup
 	go vet cmd/main_postsubmit.go
 	go run cmd/main_postsubmit.go \
-		--target=release \
+		--target="release clean clean-go-cache" \
 		--release-branch=${RELEASE_BRANCH} \
 		--release=${RELEASE} \
 		--region=${AWS_REGION} \
@@ -110,7 +110,7 @@ release: $(addprefix makes-release-, $(ALL_PROJECTS)) upload
 .PHONY: makes-release-%
 makes-release-%:
 	$(eval PROJECT_PATH=projects/$(subst _,/,$*))
-	$(MAKE) release -C $(PROJECT_PATH)
+	$(MAKE) release clean clean-go-cache -C $(PROJECT_PATH)
 
 .PHONY: binaries
 binaries: $(addprefix makes-binaries-, $(ALL_PROJECTS))
