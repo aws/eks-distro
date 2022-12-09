@@ -17,18 +17,18 @@ FROM $BASE_IMAGE as base
 
 ARG TARGETARCH
 ARG TARGETOS
-ARG RELEASE_BRANCH
 
-COPY _output/$RELEASE_BRANCH/bin/release-src/$TARGETOS-$TARGETARCH/go-runner /go-runner
-COPY _output/$RELEASE_BRANCH/LICENSES /LICENSES
-COPY $RELEASE_BRANCH/ATTRIBUTION.txt /ATTRIBUTION.txt
+
+COPY bin/release-src/$TARGETOS-$TARGETARCH/go-runner /go-runner
+COPY LICENSES /LICENSES
+COPY ATTRIBUTION.txt /ATTRIBUTION.txt
 
 ENTRYPOINT ["/go-runner"]
 
 
 FROM base as standard
 
-ARG RELEASE_BRANCH
+
 
 # Installing dependencies listed in upstream here: https://github.com/kubernetes/release/blob/master/images/build/debian-iptables/buster/Dockerfile
 # Since we rely on AL2, necessary files from netbase are already included, and we aren't making the same optimizations as of now.
@@ -50,9 +50,9 @@ RUN update-alternatives \
 	--slave /usr/sbin/ip6tables-restore ip6tables-restore /usr/sbin/iptables-wrapper \
 	--slave /usr/sbin/ip6tables-save ip6tables-save /usr/sbin/iptables-wrapper
 
-ARG RELEASE_BRANCH
 
-COPY _output/$RELEASE_BRANCH/iptables-wrapper /usr/sbin/iptables-wrapper
+
+COPY iptables-wrapper /usr/sbin/iptables-wrapper
 
 ENTRYPOINT ["/go-runner"]
 

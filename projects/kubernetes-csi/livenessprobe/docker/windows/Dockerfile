@@ -21,11 +21,11 @@ COPY --from=servercore /Windows/System32/netapi32.dll /Windows/System32/netapi32
 
 ARG TARGETARCH
 ARG TARGETOS
-ARG RELEASE_BRANCH
 
-COPY _output/$RELEASE_BRANCH/LICENSES /LICENSES
-COPY $RELEASE_BRANCH/ATTRIBUTION.txt /ATTRIBUTION.txt
-COPY _output/$RELEASE_BRANCH/bin/livenessprobe/$TARGETOS-$TARGETARCH/livenessprobe.exe /livenessprobe.exe
+
+COPY LICENSES /LICENSES
+COPY ATTRIBUTION.txt /ATTRIBUTION.txt
+COPY bin/livenessprobe/$TARGETOS-$TARGETARCH/livenessprobe.exe /livenessprobe.exe
 
 USER ContainerAdministrator
 ENTRYPOINT ["/livenessprobe.exe"]

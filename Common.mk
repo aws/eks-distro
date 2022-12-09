@@ -154,29 +154,21 @@ IMAGE_USERADD_USER_ID?=1000
 IMAGE_USERADD_USER_NAME?=
 
 # Cache should be loaded from a number of potential sources
-# - latest prod release, if there the latest prod image cache matches what we are about to build, that should take precedent
-# - latest dev release
-# - last build to current tag
-# - previous dev build tag (release-number.pre)
+# Pulls cache from every kube version for cases where component versions match, the cache can be reused
+# - latest tag from repo, if there the latest prod image cache matches what we are about to build, that should take precedent
+# - latest tag from dev repo
 
-# $1 - registry
-# $2 - release branch
-CACHE_IMPORT_IMAGE=$(1)/$(call IF_OVERRIDE_VARIABLE,$(IMAGE_COMPONENT_VARIABLE),$(IMAGE_COMPONENT)):$(GIT_TAG)-eks-$(2)-latest
-
-# pause images have multiple tags, for caching import grab just the first
 COMMA=,
-FIRST_IMAGE_TAG?=$(word 1,$(subst $(COMMA), ,$(IMAGE)))
 
-IMAGE_IMPORT_CACHE?=$(foreach branch,$(SUPPORTED_K8S_VERSIONS), \
-	type=registry,ref=$(call CACHE_IMPORT_IMAGE,$(PROD_ECR_REG),$(branch)) \
-	type=registry,ref=$(call CACHE_IMPORT_IMAGE,$(DEV_ECR_REG),$(branch)) \
-) 
+# $1 - release branch
+CACHE_IMPORT_IMAGES=$(foreach reg,$(PROD_ECR_REG) $(DEV_ECR_REG),type=registry$(COMMA)ref=$(reg)/$(call IF_OVERRIDE_VARIABLE,$(IMAGE_COMPONENT_VARIABLE),$(IMAGE_COMPONENT)):$(GIT_TAG)-eks-$(1)-latest)
+
+IMAGE_IMPORT_CACHE?=$(foreach branch,$(SUPPORTED_K8S_VERSIONS),$(if $(filter $(GIT_TAG),$(shell cat ./$(branch)/GIT_TAG)),$(call CACHE_IMPORT_IMAGES,$(branch)),))
 
 BUILD_OCI_TARS?=false
 
 LOCAL_IMAGE_TARGETS=$(foreach image,$(IMAGE_NAMES),$(image)/images/amd64) $(if $(filter true,$(HAS_HELM_CHART)),helm/build,) 
 IMAGE_TARGETS=$(foreach image,$(IMAGE_NAMES),$(if $(filter true,$(BUILD_OCI_TARS)),$(call IMAGE_TARGETS_FOR_NAME,$(image)),$(image)/images/push)) $(if $(filter true,$(HAS_HELM_CHART)),helm/push,) 
-
 
 ############# WINDOWS #############################
 # similiar to https://github.com/kubernetes-csi/livenessprobe/blob/master/release-tools/prow.sh#L78
@@ -455,7 +447,6 @@ define BUILDCTL
 			--opt platform=$(IMAGE_PLATFORMS_WITHOUT_WINDOWS:,=) \
 			--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
 			--opt build-arg:BUILDER_IMAGE=$(BUILDER_IMAGE) \
-			--opt build-arg:RELEASE_BRANCH=$(RELEASE_BRANCH) \
 			$(foreach BUILD_ARG,$(IMAGE_BUILD_ARGS),--opt build-arg:$(BUILD_ARG)=$($(BUILD_ARG))) \
 			--progress plain \
 			--local dockerfile=$(DOCKERFILE_FOLDER) \
@@ -648,7 +639,7 @@ endif
 .PHONY: %/images/push %/images/amd64 %/images/arm64
 %/images/push %/images/amd64 %/images/arm64: IMAGE_NAME=$*
 %/images/push %/images/amd64 %/images/arm64: DOCKERFILE_FOLDER?=./docker/linux
-%/images/push %/images/amd64 %/images/arm64: IMAGE_CONTEXT_DIR?=.
+%/images/push %/images/amd64 %/images/arm64: IMAGE_CONTEXT_DIR?=$(OUTPUT_DIR)
 %/images/push %/images/amd64 %/images/arm64: IMAGE_BUILD_ARGS?=
 %/images/push %/images/amd64 %/images/arm64: ALL_IMAGE_TAGS?=$(IMAGE),$(LATEST_IMAGE)
 %/images/push %/images/amd64 %/images/arm64: IMAGE_METADATA_FILE?=
@@ -801,8 +792,7 @@ clean-repo:
 
 .PHONY: clean-output
 clean-output:
-	du -hs _output
-	@rm -rf _output	
+	$(if $(wildcard _output),du -hs _output && rm -rf _output,)
 
 .PHONY: clean
 clean: $(if $(filter true,$(REPO_NO_CLONE)),,clean-repo) clean-output
