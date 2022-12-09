@@ -60,7 +60,6 @@ postsubmit-build: setup
 		--artifact-bucket=$(ARTIFACT_BUCKET) \
 		--dry-run=false \
 		--rebuild-all=${REBUILD_ALL}
-	$(MAKE) clean-go-cache clean
 	
 .PHONY: kops-prow-arm
 kops-prow-arm: export NODE_INSTANCE_TYPE=t4g.medium
@@ -148,10 +147,6 @@ stop-buildkit-and-registry:
 clean: $(addprefix makes-clean-, $(ALL_PROJECTS))
 	@echo 'Done' $(TARGET)
 
-.PHONY: clean-go-cache
-clean-go-cache:
-	rm -rf /root/.cache/go-build /home/prow/go/pkg/mod
-
 .PHONY: makes-clean-%
 makes-clean-%:
 	$(eval PROJECT_PATH=projects/$(subst _,/,$*))
@@ -164,8 +159,7 @@ attribution-files: $(addprefix attribution-files-project-, $(ALL_PROJECTS))
 .PHONY: attribution-files-project-%
 attribution-files-project-%:
 	$(eval PROJECT_PATH=projects/$(subst _,/,$*))
-	build/update-attribution-files/make_attribution.sh $(PROJECT_PATH) attribution
-	$(if $(findstring periodic,$(JOB_TYPE)),$(MAKE) clean-go-cache && rm -rf $(PROJECT_PATH)/_output,)
+	build/update-attribution-files/make_attribution.sh $(PROJECT_PATH) "attribution clean-output clean-go-cache"
 
 .PHONY: update-attribution-files
 update-attribution-files: add-generated-help-block go-mod-files attribution-files
@@ -175,8 +169,7 @@ update-attribution-files: add-generated-help-block go-mod-files attribution-file
 .PHONY: checksum-files-project-%
 checksum-files-project-%:
 	$(eval PROJECT_PATH=projects/$(subst _,/,$*))
-	build/update-attribution-files/make_attribution.sh $(PROJECT_PATH) checksums
-	$(if $(findstring periodic,$(JOB_TYPE)),$(MAKE) clean-go-cache && make -C $(PROJECT_PATH) clean,)
+	build/update-attribution-files/make_attribution.sh $(PROJECT_PATH) "checksums clean-output clean-go-cache"
 
 .PHONY: update-checksum-files
 update-checksum-files: $(addprefix checksum-files-project-, $(ALL_PROJECTS))
