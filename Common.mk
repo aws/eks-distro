@@ -8,8 +8,6 @@ SHELL=bash
 RELEASE_BRANCH?=$(shell cat $(BASE_DIRECTORY)/release/DEFAULT_RELEASE_BRANCH)
 RELEASE_ENVIRONMENT?=development
 RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/$(RELEASE_ENVIRONMENT)/RELEASE)
-LAST_PROD_RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/production/RELEASE)
-LAST_DEV_RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/development/RELEASE)
 PROD_ECR_REG?=public.ecr.aws/eks-distro
 DEV_ECR_REG?=public.ecr.aws/h1r8a7l5
 
@@ -162,15 +160,17 @@ IMAGE_USERADD_USER_NAME?=
 # - previous dev build tag (release-number.pre)
 
 # $1 - registry
-# $2 - release number
-CACHE_IMPORT_IMAGE=$(1)/$(call IF_OVERRIDE_VARIABLE,$(IMAGE_COMPONENT_VARIABLE),$(IMAGE_COMPONENT)):$(GIT_TAG)-eks-$(RELEASE_BRANCH)-$(2)
+# $2 - release branch
+CACHE_IMPORT_IMAGE=$(1)/$(call IF_OVERRIDE_VARIABLE,$(IMAGE_COMPONENT_VARIABLE),$(IMAGE_COMPONENT)):$(GIT_TAG)-eks-$(2)-latest
 
 # pause images have multiple tags, for caching import grab just the first
 COMMA=,
 FIRST_IMAGE_TAG?=$(word 1,$(subst $(COMMA), ,$(IMAGE)))
 
-IMAGE_IMPORT_CACHE?=type=registry,ref=$(call CACHE_IMPORT_IMAGE,$(PROD_ECR_REG),$(LAST_PROD_RELEASE)) \
-	type=registry,ref=$(call CACHE_IMPORT_IMAGE,$(DEV_ECR_REG),$(LAST_DEV_RELEASE)) type=registry,ref=$(FIRST_IMAGE_TAG) type=registry,ref=$(FIRST_IMAGE_TAG).pre
+IMAGE_IMPORT_CACHE?=$(foreach branch,$(SUPPORTED_K8S_VERSIONS), \
+	type=registry,ref=$(call CACHE_IMPORT_IMAGE,$(PROD_ECR_REG),$(branch)) \
+	type=registry,ref=$(call CACHE_IMPORT_IMAGE,$(DEV_ECR_REG),$(branch)) \
+) 
 
 BUILD_OCI_TARS?=false
 
