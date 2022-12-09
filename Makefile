@@ -51,7 +51,7 @@ build:
 postsubmit-build: setup
 	go vet cmd/main_postsubmit.go
 	go run cmd/main_postsubmit.go \
-		--target="release clean clean-go-cache" \
+		--target=release,clean,clean-go-cache \
 		--release-branch=${RELEASE_BRANCH} \
 		--release=${RELEASE} \
 		--region=${AWS_REGION} \
