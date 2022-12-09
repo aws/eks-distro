@@ -17,7 +17,7 @@ FROM $BASE_IMAGE AS base
 
 ARG TARGETARCH
 ARG TARGETOS
-ARG RELEASE_BRANCH
+
 
 FROM base AS branch-version-amd64
 
@@ -26,10 +26,10 @@ ENV ETCD_UNSUPPORTED_ARCH=arm64
 
 FROM branch-version-${TARGETARCH} AS final
 
-COPY _output/$RELEASE_BRANCH/bin/etcd/$TARGETOS-$TARGETARCH/etcd /usr/local/bin/
-COPY _output/$RELEASE_BRANCH/bin/etcd/$TARGETOS-$TARGETARCH/etcdctl /usr/local/bin/
-COPY _output/$RELEASE_BRANCH/LICENSES /LICENSES
-COPY $RELEASE_BRANCH/ATTRIBUTION.txt /ATTRIBUTION.txt
+COPY bin/etcd/$TARGETOS-$TARGETARCH/etcd /usr/local/bin/
+COPY bin/etcd/$TARGETOS-$TARGETARCH/etcdctl /usr/local/bin/
+COPY LICENSES /LICENSES
+COPY ATTRIBUTION.txt /ATTRIBUTION.txt
 
 VOLUME /var/etcd/
 VOLUME /var/lib/etcd/

@@ -30,7 +30,6 @@ KUBE_PROXY_IMAGE_COMPONENT=kubernetes/kube-proxy
 IMAGE_NAMES=pause kube-proxy kube-apiserver kube-controller-manager kube-scheduler
 BUILD_OCI_TARS=true
 
-IMAGE_CONTEXT_DIR=$(OUTPUT_DIR)
 DOCKERFILE_FOLDER=./docker
 BASE_IMAGE=$(GO_RUNNER_IMAGE)
 IMAGE_BUILD_ARGS=BINARY PAUSE_VERSION
