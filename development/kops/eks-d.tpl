@@ -10,6 +10,9 @@ spec:
   channel: stable  
   cloudControllerManager:
     image: {{ .cloud_controller_manager.repository }}:{{ .cloud_controller_manager.tag }}  
+  cloudConfig:
+    awsEBSCSIDriver:
+      enabled: true
   cloudProvider: aws
   configBase: {{ .configBase }}
   containerRuntime: containerd
