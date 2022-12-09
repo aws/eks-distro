@@ -34,8 +34,9 @@ func (c *Command) buildProject(projectPath string) error {
 	commandArgs := []string{
 		"-C",
 		filepath.Join(c.gitRoot, "projects", projectPath),
-		c.makeTarget,
 	}
+	allMakeTargets := strings.Split(c.makeTarget, ",")
+	commandArgs = append(commandArgs, allMakeTargets...)
 	commandArgs = append(commandArgs, c.makeArgs...)
 
 	cmd := exec.Command("make", commandArgs...)
