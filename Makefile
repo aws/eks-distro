@@ -51,7 +51,7 @@ build:
 		--region=${AWS_REGION} \
 		--account-id=${AWS_ACCOUNT_ID} \
 		--image-repo=${IMAGE_REPO} \
-		--dry-run=true \
+		--dry-run=false \
 		--rebuild-all=${REBUILD_ALL} \
 		--build-kubernetes-first=$(if $(filter $(RELEASE_BRANCH),$(firstword $(SUPPORTED_RELEASE_BRANCHES))),false,true)
 	@echo 'Done' $(TARGET)
