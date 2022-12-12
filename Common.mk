@@ -785,6 +785,14 @@ clean-go-cache:
 # adding the perms neccessary to perform the delete
 	@chmod -fR 777 $(GO_MOD_CACHE) &> /dev/null || :
 	$(foreach folder,$(GO_MOD_CACHE) $(GO_BUILD_CACHE),$(if $(wildcard $(folder)),du -hs $(folder) && rm -rf $(folder);,))
+# When building go bins using mods which have been downloaded by go mod download/vendor which will exist in the go_mod_cache
+# there is additional checksum (?) information that is not preserved in the vendor directory within the project folder
+# This additional information gets written out into the resulting binary. If we did not run go mod vendor, which we do 
+# for all project builds, we could get checksum mismatches on the final binaries due to sometimes having the mod previously
+# downloaded in the go_mod_cahe.  Running go mod vendor always ensures that the go mod has always been downloaded
+# to the go_mod_cache directory. If we clear the go_mod_cache we need to delete the go_mod_download sentinel file
+# so the next time we run build go mods will be redownloaded
+	$(foreach file,$(GO_MOD_DOWNLOAD_TARGETS),$(if $(wildcard $(file)),rm -f $(file);,))
 
 .PHONY: clean-repo
 clean-repo:
