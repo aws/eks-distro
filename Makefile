@@ -33,6 +33,14 @@ setup:
 	development/ecr/ecr-command.sh install-ecr-public
 	development/ecr/ecr-command.sh login-ecr-public
 
+# For components which build the same versions across multiple kube versions
+# we use the first version which has the same git_tag as the current project build
+# as the buildctl import-cache to try and converge as many builds to the same image in ecr
+# This isnt neccessary since on the subsequent builds they should converge, but building
+# kube first for newer versions while build all other components gives us the best chance
+# to converge on the same image in the first build. This also doesnt handle cases where the
+# first version is different but the next 3 are the same, in those cases it would still
+# take two builds to converge 
 .PHONY: build
 build:
 	go vet cmd/main_postsubmit.go
@@ -44,7 +52,8 @@ build:
 		--account-id=${AWS_ACCOUNT_ID} \
 		--image-repo=${IMAGE_REPO} \
 		--dry-run=true \
-		--rebuild-all=${REBUILD_ALL}
+		--rebuild-all=${REBUILD_ALL} \
+		--build-kubernetes-first=$(if $(filter $(RELEASE_BRANCH),$(firstword $(SUPPORTED_RELEASE_BRANCHES))),false,true)
 	@echo 'Done' $(TARGET)
 
 .PHONY: postsubmit-build
