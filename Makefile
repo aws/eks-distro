@@ -236,3 +236,4 @@ github-release:
 	go run ./cmd/release/gh-release/main.go \
 		--branch=$(RELEASE_BRANCH) \
 		--overrideNumber=$(OVERRIDE_NUMBER)
+
