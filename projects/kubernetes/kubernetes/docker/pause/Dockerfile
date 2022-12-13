@@ -23,7 +23,7 @@ COPY pause/pause.c /pause.c
 RUN yum update -y && \
   yum install -y gcc glibc-static && \
   gcc -Os -Wall -Werror -static -DVERSION=${PAUSE_VERSION} -o /pause /pause.c && \
-  yum history undo 1 && \
+  yum autoremove -y gcc glibc-static && \
   yum clean all && \
   rm -rf /var/cache/yum
 
