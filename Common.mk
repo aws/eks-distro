@@ -154,7 +154,9 @@ IMAGE_USERADD_USER_ID?=1000
 IMAGE_USERADD_USER_NAME?=
 
 # Cache should be loaded from a number of potential sources
-# Pulls cache from every kube version for cases where component versions match, the cache can be reused
+# Pulls cache from the oldest (first in the list) kube version for cases where component versions match.
+# It uses the oldest, because that's the one that should be built first during the release and so be available
+# for the other release branches as a layer cache when they build the project in question. 
 # - latest tag from repo, if there the latest prod image cache matches what we are about to build, that should take precedent
 # - latest tag from dev repo
 
@@ -163,7 +165,9 @@ COMMA=,
 # $1 - release branch
 CACHE_IMPORT_IMAGES=$(foreach reg,$(PROD_ECR_REG) $(DEV_ECR_REG),type=registry$(COMMA)ref=$(reg)/$(call IF_OVERRIDE_VARIABLE,$(IMAGE_COMPONENT_VARIABLE),$(IMAGE_COMPONENT)):$(GIT_TAG)-eks-$(1)-latest)
 
-IMAGE_IMPORT_CACHE?=$(foreach branch,$(SUPPORTED_K8S_VERSIONS),$(if $(filter $(GIT_TAG),$(shell cat ./$(branch)/GIT_TAG)),$(call CACHE_IMPORT_IMAGES,$(branch)),))
+OLDEST_SUPPORTED_BRANCH=$(firstword $(SUPPORTED_K8S_VERSIONS))
+
+IMAGE_IMPORT_CACHE?=$(if $(filter $(GIT_TAG),$(shell cat ./$(OLDEST_SUPPORTED_BRANCH)/GIT_TAG)),$(call CACHE_IMPORT_IMAGES,$(OLDEST_SUPPORTED_BRANCH)),))
 
 BUILD_OCI_TARS?=false
 
@@ -452,7 +456,7 @@ define BUILDCTL
 			--local dockerfile=$(DOCKERFILE_FOLDER) \
 			--local context=$(IMAGE_CONTEXT_DIR) \
 			$(if $(filter push=true,$(IMAGE_OUTPUT)),--export-cache type=inline,) \
-			$(foreach IMPORT_CACHE,$(IMAGE_IMPORT_CACHE),--import-cache $(IMPORT_CACHE)) \
+			--import-cache $(IMAGE_IMPORT_CACHE)) \
 			$(if $(IMAGE_METADATA_FILE),--metadata-file $(IMAGE_METADATA_FILE),) \
 			--opt target=$(IMAGE_TARGET) \
 			--output type=$(IMAGE_OUTPUT_TYPE),oci-mediatypes=true,\"name=$(ALL_IMAGE_TAGS)\",$(IMAGE_OUTPUT); \
