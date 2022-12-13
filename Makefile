@@ -53,7 +53,7 @@ build:
 		--image-repo=${IMAGE_REPO} \
 		--dry-run=false \
 		--rebuild-all=${REBUILD_ALL} \
-		--build-kubernetes-first=$(if $(filter $(RELEASE_BRANCH),$(firstword $(SUPPORTED_RELEASE_BRANCHES))),false,true)
+		--build-kubernetes-first=false
 	@echo 'Done' $(TARGET)
 
 .PHONY: postsubmit-build
