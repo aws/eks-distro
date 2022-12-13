@@ -23,6 +23,10 @@ include $(BASE_DIRECTORY)/Common.mk
 build: validate-cli-version
 release: validate-cli-version
 
+.PHONY: images
+images:
+	echo "done"
+
 $(SOURCE_PATTERNS_TARGET): $(GIT_CHECKOUT_TARGET)
 	$(shell build/source_patterns.sh $(REPO) $(MAKE_ROOT)/$@)
 
