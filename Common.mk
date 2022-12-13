@@ -456,7 +456,7 @@ define BUILDCTL
 			--local dockerfile=$(DOCKERFILE_FOLDER) \
 			--local context=$(IMAGE_CONTEXT_DIR) \
 			$(if $(filter push=true,$(IMAGE_OUTPUT)),--export-cache type=inline,) \
-			--import-cache $(IMAGE_IMPORT_CACHE)) \
+			$(foreach IMPORT_CACHE,$(IMAGE_IMPORT_CACHE),--import-cache $(IMPORT_CACHE)) \
 			$(if $(IMAGE_METADATA_FILE),--metadata-file $(IMAGE_METADATA_FILE),) \
 			--opt target=$(IMAGE_TARGET) \
 			--output type=$(IMAGE_OUTPUT_TYPE),oci-mediatypes=true,\"name=$(ALL_IMAGE_TAGS)\",$(IMAGE_OUTPUT); \
