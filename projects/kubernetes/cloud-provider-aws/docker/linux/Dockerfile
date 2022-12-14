@@ -21,5 +21,5 @@ ARG TARGETOS
 
 COPY LICENSES /LICENSES
 COPY ATTRIBUTION.txt /ATTRIBUTION.txt
-COPY bin/cloud-provider-aws/$TARGETOS-$TARGETARCH/aws-cloud-controller-manager /bin/cloud-controller-manager
-ENTRYPOINT ["/bin/cloud-controller-manager"]
+COPY bin/cloud-provider-aws/$TARGETOS-$TARGETARCH/aws-cloud-controller-manager /bin/aws-cloud-controller-manager
+ENTRYPOINT ["/bin/aws-cloud-controller-manager"]
