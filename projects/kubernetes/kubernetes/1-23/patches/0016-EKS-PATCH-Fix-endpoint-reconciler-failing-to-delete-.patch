@@ -4,8 +4,13 @@ Date: Thu, 24 Nov 2022 11:26:11 +0100
 Subject: [PATCH] --EKS-PATCH-- Fix endpoint reconciler failing to delete
  masterlease
 
-add regression test as a different file for endpoint reconciler leases,
-since the original test can not be backported cleanly.
+Cherry-pick of upstream Kubernetes PR #114138. 
+
+This change fixes a bug introduced by Kubernetes PR #113686. 
+
+From the original PR description:
+    "Fix endpoint reconciler not being able to delete the apiserver lease on 
+    shutdown"
 ---
  .../reconcilers/endpointsadapter.go           |   1 +
  pkg/controlplane/reconcilers/helpers_test.go  | 133 +++++
