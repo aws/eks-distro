@@ -1,0 +1,209 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Matthew Booth <mbooth@redhat.com>
+Date: Wed, 4 May 2022 17:54:36 +0100
+Subject: [PATCH] --EKS-PATCH-- Make kubelet set
+ alpha.kubernetes.io/provided-node-ip unconditionally
+
+Cherry-pick of upstream Kubernetes PR #109794
+(https://github.com/kubernetes/kubernetes/pull/109794), which has not
+yet been approved and merged into upstream Kubernetes as of the latest
+EKS-D 1.23 release. If the PR is approved, Kubernetes currently
+intends to include it in the 1.25 release. This patch may change in
+future EKS-D releases as to stay aligned with any modification to the
+upstream PR on which it is based.
+
+This fixes a node addresses flapping bug related to legacy and external
+cloud controller manager migration, as described in upstream
+Kubernetes issue #109793
+(https://github.com/kubernetes/kubernetes/issues/109793)
+
+From the original PR description:
+  "The easier of two possible fixes for an issue where node addresses
+  flap during an upgrade to an external CCM. This fix causes kubelet to
+  apply the alpha.kubernetes.io/provided-node-ip annotation
+  unconditionally (not only when --cloud-provider=external). This does
+  not exclude a future fix involving the root cause of the issue,
+  which is that kubelet and cloud-controller-manager both attempt to
+  manage node addresses when --cloud-provider is not set to external."
+---
+ pkg/kubelet/nodestatus/setters.go      | 16 ++++-
+ pkg/kubelet/nodestatus/setters_test.go | 91 +++++++++++++++++++++-----
+ 2 files changed, 89 insertions(+), 18 deletions(-)
+
+diff --git a/pkg/kubelet/nodestatus/setters.go b/pkg/kubelet/nodestatus/setters.go
+index 984cad5a619..94ffc94172e 100644
+--- a/pkg/kubelet/nodestatus/setters.go
++++ b/pkg/kubelet/nodestatus/setters.go
+@@ -94,14 +94,28 @@ func NodeAddress(nodeIPs []net.IP, // typically Kubelet.nodeIPs
+ 			klog.V(4).InfoS("Using secondary node IP", "IP", secondaryNodeIP.String())
+ 		}
+ 
+-		if externalCloudProvider {
++		if externalCloudProvider || cloud != nil {
++			// Annotate the Node object with nodeIP for external cloud provider.
++			//
++			// We do this even when external CCM is not configured to cover a situation
++			// during migration from legacy to external CCM: when CCM is running the
++			// node controller in the cluster but kubelet is still running the in-tree
++			// provider. Adding this annotation in all cases ensures that while
++			// Addresses flap between the competing controllers, they at least flap
++			// consistently.
++			//
++			// We do not add the annotation in the case where there is no cloud
++			// controller at all, as we don't expect to migrate these clusters to use an
++			// external CCM.
+ 			if nodeIPSpecified {
+ 				if node.ObjectMeta.Annotations == nil {
+ 					node.ObjectMeta.Annotations = make(map[string]string)
+ 				}
+ 				node.ObjectMeta.Annotations[cloudproviderapi.AnnotationAlphaProvidedIPAddr] = nodeIP.String()
+ 			}
++		}
+ 
++		if externalCloudProvider {
+ 			// If --cloud-provider=external and node address is already set,
+ 			// then we return early because provider set addresses should take precedence.
+ 			// Otherwise, we try to look up the node IP and let the cloud provider override it later
+diff --git a/pkg/kubelet/nodestatus/setters_test.go b/pkg/kubelet/nodestatus/setters_test.go
+index da339907eb2..da26e60ee31 100644
+--- a/pkg/kubelet/nodestatus/setters_test.go
++++ b/pkg/kubelet/nodestatus/setters_test.go
+@@ -56,14 +56,21 @@ const (
+ 
+ // TODO(mtaufen): below is ported from the old kubelet_node_status_test.go code, potentially add more test coverage for NodeAddress setter in future
+ func TestNodeAddress(t *testing.T) {
++	type cloudProviderType int
++	const (
++		cloudProviderLegacy cloudProviderType = iota
++		cloudProviderExternal
++		cloudProviderNone
++	)
+ 	cases := []struct {
+-		name                  string
+-		hostnameOverride      bool
+-		nodeIP                net.IP
+-		externalCloudProvider bool
+-		nodeAddresses         []v1.NodeAddress
+-		expectedAddresses     []v1.NodeAddress
+-		shouldError           bool
++		name                string
++		hostnameOverride    bool
++		nodeIP              net.IP
++		cloudProviderType   cloudProviderType
++		nodeAddresses       []v1.NodeAddress
++		expectedAddresses   []v1.NodeAddress
++		expectedAnnotations map[string]string
++		shouldError         bool
+ 	}{
+ 		{
+ 			name:   "A single InternalIP",
+@@ -211,10 +218,10 @@ func TestNodeAddress(t *testing.T) {
+ 			shouldError:      false,
+ 		},
+ 		{
+-			name:                  "cloud provider is external",
+-			nodeIP:                netutils.ParseIPSloppy("10.0.0.1"),
+-			nodeAddresses:         []v1.NodeAddress{},
+-			externalCloudProvider: true,
++			name:              "cloud provider is external",
++			nodeIP:            netutils.ParseIPSloppy("10.0.0.1"),
++			nodeAddresses:     []v1.NodeAddress{},
++			cloudProviderType: cloudProviderExternal,
+ 			expectedAddresses: []v1.NodeAddress{
+ 				{Type: v1.NodeInternalIP, Address: "10.0.0.1"},
+ 				{Type: v1.NodeHostName, Address: testKubeletHostname},
+@@ -396,6 +403,55 @@ func TestNodeAddress(t *testing.T) {
+ 			},
+ 			shouldError: false,
+ 		},
++		{
++			name:              "Legacy cloud provider gets nodeIP annotation",
++			nodeIP:            netutils.ParseIPSloppy("10.1.1.1"),
++			cloudProviderType: cloudProviderLegacy,
++			nodeAddresses: []v1.NodeAddress{
++				{Type: v1.NodeInternalIP, Address: "10.1.1.1"},
++				{Type: v1.NodeHostName, Address: testKubeletHostname},
++			},
++			expectedAddresses: []v1.NodeAddress{
++				{Type: v1.NodeInternalIP, Address: "10.1.1.1"},
++				{Type: v1.NodeHostName, Address: testKubeletHostname},
++			},
++			expectedAnnotations: map[string]string{
++				"alpha.kubernetes.io/provided-node-ip": "10.1.1.1",
++			},
++			shouldError: false,
++		},
++		{
++			name:              "External cloud provider gets nodeIP annotation",
++			nodeIP:            netutils.ParseIPSloppy("10.1.1.1"),
++			cloudProviderType: cloudProviderExternal,
++			nodeAddresses: []v1.NodeAddress{
++				{Type: v1.NodeInternalIP, Address: "10.1.1.1"},
++				{Type: v1.NodeHostName, Address: testKubeletHostname},
++			},
++			expectedAddresses: []v1.NodeAddress{
++				{Type: v1.NodeInternalIP, Address: "10.1.1.1"},
++				{Type: v1.NodeHostName, Address: testKubeletHostname},
++			},
++			expectedAnnotations: map[string]string{
++				"alpha.kubernetes.io/provided-node-ip": "10.1.1.1",
++			},
++			shouldError: false,
++		},
++		{
++			name:              "No cloud provider does not get nodeIP annotation",
++			nodeIP:            netutils.ParseIPSloppy("10.1.1.1"),
++			cloudProviderType: cloudProviderNone,
++			nodeAddresses: []v1.NodeAddress{
++				{Type: v1.NodeInternalIP, Address: "10.1.1.1"},
++				{Type: v1.NodeHostName, Address: testKubeletHostname},
++			},
++			expectedAddresses: []v1.NodeAddress{
++				{Type: v1.NodeInternalIP, Address: "10.1.1.1"},
++				{Type: v1.NodeHostName, Address: testKubeletHostname},
++			},
++			expectedAnnotations: map[string]string{},
++			shouldError:         false,
++		},
+ 	}
+ 	for _, testCase := range cases {
+ 		t.Run(testCase.name, func(t *testing.T) {
+@@ -418,16 +474,13 @@ func TestNodeAddress(t *testing.T) {
+ 				return testCase.nodeAddresses, nil
+ 			}
+ 
+-			// cloud provider is expected to be nil if external provider is set
++			// cloud provider is expected to be nil if external provider is set or there is no cloud provider
+ 			var cloud cloudprovider.Interface
+-			if testCase.externalCloudProvider {
+-				cloud = nil
+-			} else {
++			if testCase.cloudProviderType == cloudProviderLegacy {
+ 				cloud = &fakecloud.Cloud{
+ 					Addresses: testCase.nodeAddresses,
+ 					Err:       nil,
+ 				}
+-
+ 			}
+ 
+ 			// construct setter
+@@ -435,7 +488,7 @@ func TestNodeAddress(t *testing.T) {
+ 				nodeIPValidator,
+ 				hostname,
+ 				testCase.hostnameOverride,
+-				testCase.externalCloudProvider,
++				testCase.cloudProviderType == cloudProviderExternal,
+ 				cloud,
+ 				nodeAddressesFunc)
+ 
+@@ -450,6 +503,10 @@ func TestNodeAddress(t *testing.T) {
+ 
+ 			assert.True(t, apiequality.Semantic.DeepEqual(testCase.expectedAddresses, existingNode.Status.Addresses),
+ 				"Diff: %s", diff.ObjectDiff(testCase.expectedAddresses, existingNode.Status.Addresses))
++			if testCase.expectedAnnotations != nil {
++				assert.True(t, apiequality.Semantic.DeepEqual(testCase.expectedAnnotations, existingNode.Annotations),
++					"Diff: %s", diff.ObjectDiff(testCase.expectedAnnotations, existingNode.Annotations))
++			}
+ 		})
+ 	}
+ }

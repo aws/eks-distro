@@ -1,0 +1,531 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kubernetes Prow Robot <k8s-ci-robot@users.noreply.github.com>
+Date: Thu, 14 Jul 2022 03:02:57 -0700
+Subject: [PATCH] --EKS-PATCH-- Skip mount point checks when possible during
+ mount cleanup.
+
+Cherry-pick of upstream Kubernetes PR #109676
+(https://github.com/kubernetes/kubernetes/pull/109676), which has been
+merged into upstream Kubernetes and Kubernetes currently
+intends to include it in the 1.25 release. This patch may change in
+future EKS-D releases as to stay aligned with any relevant modification
+to the upstream.
+---
+ .../src/k8s.io/mount-utils/fake_mounter.go    | 14 +++-
+ staging/src/k8s.io/mount-utils/mount.go       |  4 ++
+ .../k8s.io/mount-utils/mount_helper_common.go | 66 +++++++++++-------
+ .../k8s.io/mount-utils/mount_helper_test.go   | 40 ++++++++---
+ staging/src/k8s.io/mount-utils/mount_linux.go | 53 +++++++++++++--
+ .../k8s.io/mount-utils/mount_linux_test.go    | 67 +++++++++++++++++++
+ .../k8s.io/mount-utils/mount_unsupported.go   |  5 ++
+ .../src/k8s.io/mount-utils/mount_windows.go   |  5 ++
+ 8 files changed, 215 insertions(+), 39 deletions(-)
+
+diff --git a/staging/src/k8s.io/mount-utils/fake_mounter.go b/staging/src/k8s.io/mount-utils/fake_mounter.go
+index 55ea5e2986b..51e21980527 100644
+--- a/staging/src/k8s.io/mount-utils/fake_mounter.go
++++ b/staging/src/k8s.io/mount-utils/fake_mounter.go
+@@ -32,8 +32,9 @@ type FakeMounter struct {
+ 	MountCheckErrors map[string]error
+ 	// Some tests run things in parallel, make sure the mounter does not produce
+ 	// any golang's DATA RACE warnings.
+-	mutex       sync.Mutex
+-	UnmountFunc UnmountFunc
++	mutex               sync.Mutex
++	UnmountFunc         UnmountFunc
++	skipMountPointCheck bool
+ }
+ 
+ // UnmountFunc is a function callback to be executed during the Unmount() call.
+@@ -64,6 +65,11 @@ func NewFakeMounter(mps []MountPoint) *FakeMounter {
+ 	}
+ }
+ 
++func (f *FakeMounter) WithSkipMountPointCheck() *FakeMounter {
++	f.skipMountPointCheck = true
++	return f
++}
++
+ // ResetLog clears all the log entries in FakeMounter
+ func (f *FakeMounter) ResetLog() {
+ 	f.mutex.Lock()
+@@ -212,6 +218,10 @@ func (f *FakeMounter) IsLikelyNotMountPoint(file string) (bool, error) {
+ 	return true, nil
+ }
+ 
++func (f *FakeMounter) canSafelySkipMountPointCheck() bool {
++	return f.skipMountPointCheck
++}
++
+ // GetMountRefs finds all mount references to the path, returns a
+ // list of paths.
+ func (f *FakeMounter) GetMountRefs(pathname string) ([]string, error) {
+diff --git a/staging/src/k8s.io/mount-utils/mount.go b/staging/src/k8s.io/mount-utils/mount.go
+index a882fcc7399..eca644046f3 100644
+--- a/staging/src/k8s.io/mount-utils/mount.go
++++ b/staging/src/k8s.io/mount-utils/mount.go
+@@ -66,6 +66,10 @@ type Interface interface {
+ 	// care about such situations, this is a faster alternative to calling List()
+ 	// and scanning that output.
+ 	IsLikelyNotMountPoint(file string) (bool, error)
++	// canSafelySkipMountPointCheck indicates whether this mounter returns errors on
++	// operations for targets that are not mount points. If this returns true, no such
++	// errors will be returned.
++	canSafelySkipMountPointCheck() bool
+ 	// GetMountRefs finds all mount references to pathname, returning a slice of
+ 	// paths. Pathname can be a mountpoint path or a normal	directory
+ 	// (for bind mount). On Linux, pathname is excluded from the slice.
+diff --git a/staging/src/k8s.io/mount-utils/mount_helper_common.go b/staging/src/k8s.io/mount-utils/mount_helper_common.go
+index 196ae30ad1a..dc4131d78e3 100644
+--- a/staging/src/k8s.io/mount-utils/mount_helper_common.go
++++ b/staging/src/k8s.io/mount-utils/mount_helper_common.go
+@@ -31,7 +31,7 @@ import (
+ func CleanupMountPoint(mountPath string, mounter Interface, extensiveMountPointCheck bool) error {
+ 	pathExists, pathErr := PathExists(mountPath)
+ 	if !pathExists && pathErr == nil {
+-		klog.Warningf("Warning: Unmount skipped because path does not exist: %v", mountPath)
++		klog.Warningf("Warning: mount cleanup skipped because path does not exist: %v", mountPath)
+ 		return nil
+ 	}
+ 	corruptedMnt := IsCorruptedMnt(pathErr)
+@@ -44,36 +44,41 @@ func CleanupMountPoint(mountPath string, mounter Interface, extensiveMountPointC
+ func CleanupMountWithForce(mountPath string, mounter MounterForceUnmounter, extensiveMountPointCheck bool, umountTimeout time.Duration) error {
+ 	pathExists, pathErr := PathExists(mountPath)
+ 	if !pathExists && pathErr == nil {
+-		klog.Warningf("Warning: Unmount skipped because path does not exist: %v", mountPath)
++		klog.Warningf("Warning: mount cleanup skipped because path does not exist: %v", mountPath)
+ 		return nil
+ 	}
+ 	corruptedMnt := IsCorruptedMnt(pathErr)
+ 	if pathErr != nil && !corruptedMnt {
+ 		return fmt.Errorf("Error checking path: %v", pathErr)
+ 	}
+-	var notMnt bool
+-	var err error
+-	if !corruptedMnt {
+-		notMnt, err = removePathIfNotMountPoint(mountPath, mounter, extensiveMountPointCheck)
+-		// if mountPath was not a mount point - we would have attempted to remove mountPath
+-		// and hence return errors if any.
+-		if err != nil || notMnt {
++
++	if corruptedMnt || mounter.canSafelySkipMountPointCheck() {
++		klog.V(4).Infof("unmounting %q (corruptedMount: %t, mounterCanSkipMountPointChecks: %t)",
++			mountPath, corruptedMnt, mounter.canSafelySkipMountPointCheck())
++		if err := mounter.UnmountWithForce(mountPath, umountTimeout); err != nil {
+ 			return err
+ 		}
++		return removePath(mountPath)
++	}
++
++	notMnt, err := removePathIfNotMountPoint(mountPath, mounter, extensiveMountPointCheck)
++	// if mountPath is not a mount point, it's just been removed or there was an error
++	if err != nil || notMnt {
++		return err
+ 	}
+ 
+-	// Unmount the mount path
+ 	klog.V(4).Infof("%q is a mountpoint, unmounting", mountPath)
+ 	if err := mounter.UnmountWithForce(mountPath, umountTimeout); err != nil {
+ 		return err
+ 	}
+ 
+ 	notMnt, err = removePathIfNotMountPoint(mountPath, mounter, extensiveMountPointCheck)
+-	// mountPath is not a mount point we should return whatever error we saw
++	// if mountPath is not a mount point, it's either just been removed or there was an error
+ 	if notMnt {
+ 		return err
+ 	}
+-	return fmt.Errorf("Failed to unmount path %v", mountPath)
++	// mountPath is still a mount point
++	return fmt.Errorf("failed to cleanup mount point %v", mountPath)
+ }
+ 
+ // doCleanupMountPoint unmounts the given path and
+@@ -82,31 +87,35 @@ func CleanupMountWithForce(mountPath string, mounter MounterForceUnmounter, exte
+ // IsNotMountPoint will be called instead of IsLikelyNotMountPoint.
+ // IsNotMountPoint is more expensive but properly handles bind mounts within the same fs.
+ // if corruptedMnt is true, it means that the mountPath is a corrupted mountpoint, and the mount point check
+-// will be skipped
++// will be skipped. The mount point check will also be skipped if the mounter supports it.
+ func doCleanupMountPoint(mountPath string, mounter Interface, extensiveMountPointCheck bool, corruptedMnt bool) error {
+-	var notMnt bool
+-	var err error
+-	if !corruptedMnt {
+-		notMnt, err = removePathIfNotMountPoint(mountPath, mounter, extensiveMountPointCheck)
+-		// if mountPath was not a mount point - we would have attempted to remove mountPath
+-		// and hence return errors if any.
+-		if err != nil || notMnt {
++	if corruptedMnt || mounter.canSafelySkipMountPointCheck() {
++		klog.V(4).Infof("unmounting %q (corruptedMount: %t, mounterCanSkipMountPointChecks: %t)",
++			mountPath, corruptedMnt, mounter.canSafelySkipMountPointCheck())
++		if err := mounter.Unmount(mountPath); err != nil {
+ 			return err
+ 		}
++		return removePath(mountPath)
++	}
++
++	notMnt, err := removePathIfNotMountPoint(mountPath, mounter, extensiveMountPointCheck)
++	// if mountPath is not a mount point, it's just been removed or there was an error
++	if err != nil || notMnt {
++		return err
+ 	}
+ 
+-	// Unmount the mount path
+ 	klog.V(4).Infof("%q is a mountpoint, unmounting", mountPath)
+ 	if err := mounter.Unmount(mountPath); err != nil {
+ 		return err
+ 	}
+ 
+ 	notMnt, err = removePathIfNotMountPoint(mountPath, mounter, extensiveMountPointCheck)
+-	// mountPath is not a mount point we should return whatever error we saw
++	// if mountPath is not a mount point, it's either just been removed or there was an error
+ 	if notMnt {
+ 		return err
+ 	}
+-	return fmt.Errorf("Failed to unmount path %v", mountPath)
++	// mountPath is still a mount point
++	return fmt.Errorf("failed to cleanup mount point %v", mountPath)
+ }
+ 
+ // removePathIfNotMountPoint verifies if given mountPath is a mount point if not it attempts
+@@ -135,3 +144,14 @@ func removePathIfNotMountPoint(mountPath string, mounter Interface, extensiveMou
+ 	}
+ 	return notMnt, nil
+ }
++
++// removePath attempts to remove the directory. Returns nil if the directory was removed or does not exist.
++func removePath(mountPath string) error {
++	klog.V(4).Infof("Warning: deleting path %q", mountPath)
++	err := os.Remove(mountPath)
++	if os.IsNotExist(err) {
++		klog.V(4).Infof("%q does not exist", mountPath)
++		return nil
++	}
++	return err
++}
+diff --git a/staging/src/k8s.io/mount-utils/mount_helper_test.go b/staging/src/k8s.io/mount-utils/mount_helper_test.go
+index 34137ca6ac9..23f0680bf40 100644
+--- a/staging/src/k8s.io/mount-utils/mount_helper_test.go
++++ b/staging/src/k8s.io/mount-utils/mount_helper_test.go
+@@ -41,11 +41,14 @@ func TestDoCleanupMountPoint(t *testing.T) {
+ 		// the given base directory.
+ 		// Returns a fake MountPoint, a fake error for the mount point,
+ 		// and error if the prepare function encountered a fatal error.
+-		prepare   func(base string) (MountPoint, error, error)
+-		expectErr bool
++		prepareMnt func(base string) (MountPoint, error, error)
++		// Function that prepares the FakeMounter for the test.
++		// Returns error if prepareMntr function encountered a fatal error.
++		prepareMntr func(mntr *FakeMounter) error
++		expectErr   bool
+ 	}{
+ 		"mount-ok": {
+-			prepare: func(base string) (MountPoint, error, error) {
++			prepareMnt: func(base string) (MountPoint, error, error) {
+ 				path := filepath.Join(base, testMount)
+ 				if err := os.MkdirAll(path, defaultPerm); err != nil {
+ 					return MountPoint{}, nil, err
+@@ -54,13 +57,13 @@ func TestDoCleanupMountPoint(t *testing.T) {
+ 			},
+ 		},
+ 		"path-not-exist": {
+-			prepare: func(base string) (MountPoint, error, error) {
++			prepareMnt: func(base string) (MountPoint, error, error) {
+ 				path := filepath.Join(base, testMount)
+ 				return MountPoint{Device: "/dev/sdb", Path: path}, nil, nil
+ 			},
+ 		},
+ 		"mount-corrupted": {
+-			prepare: func(base string) (MountPoint, error, error) {
++			prepareMnt: func(base string) (MountPoint, error, error) {
+ 				path := filepath.Join(base, testMount)
+ 				if err := os.MkdirAll(path, defaultPerm); err != nil {
+ 					return MountPoint{}, nil, err
+@@ -70,7 +73,7 @@ func TestDoCleanupMountPoint(t *testing.T) {
+ 			corruptedMnt: true,
+ 		},
+ 		"mount-err-not-corrupted": {
+-			prepare: func(base string) (MountPoint, error, error) {
++			prepareMnt: func(base string) (MountPoint, error, error) {
+ 				path := filepath.Join(base, testMount)
+ 				if err := os.MkdirAll(path, defaultPerm); err != nil {
+ 					return MountPoint{}, nil, err
+@@ -79,6 +82,20 @@ func TestDoCleanupMountPoint(t *testing.T) {
+ 			},
+ 			expectErr: true,
+ 		},
++		"skip-mount-point-check": {
++			prepareMnt: func(base string) (MountPoint, error, error) {
++				path := filepath.Join(base, testMount)
++				if err := os.MkdirAll(path, defaultPerm); err != nil {
++					return MountPoint{Device: "/dev/sdb", Path: path}, nil, err
++				}
++				return MountPoint{Device: "/dev/sdb", Path: path}, nil, nil
++			},
++			prepareMntr: func(mntr *FakeMounter) error {
++				mntr.WithSkipMountPointCheck()
++				return nil
++			},
++			expectErr: false,
++		},
+ 	}
+ 
+ 	for name, tt := range tests {
+@@ -90,19 +107,22 @@ func TestDoCleanupMountPoint(t *testing.T) {
+ 			}
+ 			defer os.RemoveAll(tmpDir)
+ 
+-			if tt.prepare == nil {
+-				t.Fatalf("prepare function required")
++			if tt.prepareMnt == nil {
++				t.Fatalf("prepareMnt function required")
+ 			}
+ 
+-			mountPoint, mountError, err := tt.prepare(tmpDir)
++			mountPoint, mountError, err := tt.prepareMnt(tmpDir)
+ 			if err != nil {
+-				t.Fatalf("failed to prepare test: %v", err)
++				t.Fatalf("failed to prepareMnt for test: %v", err)
+ 			}
+ 
+ 			fake := NewFakeMounter(
+ 				[]MountPoint{mountPoint},
+ 			)
+ 			fake.MountCheckErrors = map[string]error{mountPoint.Path: mountError}
++			if tt.prepareMntr != nil {
++				tt.prepareMntr(fake)
++			}
+ 
+ 			err = doCleanupMountPoint(mountPoint.Path, fake, true, tt.corruptedMnt)
+ 			if tt.expectErr {
+diff --git a/staging/src/k8s.io/mount-utils/mount_linux.go b/staging/src/k8s.io/mount-utils/mount_linux.go
+index aaa592161d4..8718b6d4ee9 100644
+--- a/staging/src/k8s.io/mount-utils/mount_linux.go
++++ b/staging/src/k8s.io/mount-utils/mount_linux.go
+@@ -22,6 +22,7 @@ package mount
+ import (
+ 	"context"
+ 	"fmt"
++	"io/ioutil"
+ 	"os"
+ 	"os/exec"
+ 	"path/filepath"
+@@ -48,14 +49,17 @@ const (
+ 	fsckErrorsUncorrected = 4
+ 	// Error thrown by exec cmd.Run() when process spawned by cmd.Start() completes before cmd.Wait() is called (see - k/k issue #103753)
+ 	errNoChildProcesses = "wait: no child processes"
++	// Error returned by some `umount` implementations when the specified path is not a mount point
++	errNotMounted = "not mounted"
+ )
+ 
+ // Mounter provides the default implementation of mount.Interface
+ // for the linux platform.  This implementation assumes that the
+ // kubelet is running in the host's root mount namespace.
+ type Mounter struct {
+-	mounterPath string
+-	withSystemd bool
++	mounterPath                string
++	withSystemd                bool
++	withSafeNotMountedBehavior bool
+ }
+ 
+ var _ MounterForceUnmounter = &Mounter{}
+@@ -65,8 +69,9 @@ var _ MounterForceUnmounter = &Mounter{}
+ // mounterPath allows using an alternative to `/bin/mount` for mounting.
+ func New(mounterPath string) Interface {
+ 	return &Mounter{
+-		mounterPath: mounterPath,
+-		withSystemd: detectSystemd(),
++		mounterPath:                mounterPath,
++		withSystemd:                detectSystemd(),
++		withSafeNotMountedBehavior: detectSafeNotMountedBehavior(),
+ 	}
+ }
+ 
+@@ -223,6 +228,36 @@ func detectSystemd() bool {
+ 	return true
+ }
+ 
++// detectSafeNotMountedBehavior returns true if the umount implementation replies "not mounted"
++// when the specified path is not mounted. When not sure (permission errors, ...), it returns false.
++// When possible, we will trust umount's message and avoid doing our own mount point checks.
++// More info: https://github.com/util-linux/util-linux/blob/v2.2/mount/umount.c#L179
++func detectSafeNotMountedBehavior() bool {
++	return detectSafeNotMountedBehaviorWithExec(utilexec.New())
++}
++
++// detectSafeNotMountedBehaviorWithExec is for testing with FakeExec.
++func detectSafeNotMountedBehaviorWithExec(exec utilexec.Interface) bool {
++	// create a temp dir and try to umount it
++	path, err := ioutil.TempDir("", "kubelet-detect-safe-umount")
++	if err != nil {
++		klog.V(4).Infof("Cannot create temp dir to detect safe 'not mounted' behavior: %v", err)
++		return false
++	}
++	defer os.RemoveAll(path)
++	cmd := exec.Command("umount", path)
++	output, err := cmd.CombinedOutput()
++	if err != nil {
++		if strings.Contains(string(output), errNotMounted) {
++			klog.V(4).Infof("Detected umount with safe 'not mounted' behavior")
++			return true
++		}
++		klog.V(4).Infof("'umount %s' failed with: %v, output: %s", path, err, string(output))
++	}
++	klog.V(4).Infof("Detected umount with unsafe 'not mounted' behavior")
++	return false
++}
++
+ // MakeMountArgs makes the arguments to the mount(8) command.
+ // options MUST not contain sensitive material (like passwords).
+ func MakeMountArgs(source, target, fstype string, options []string) (mountArgs []string) {
+@@ -290,6 +325,7 @@ func AddSystemdScopeSensitive(systemdRunPath, mountName, command string, args []
+ }
+ 
+ // Unmount unmounts the target.
++// If the mounter has safe "not mounted" behavior, no error will be returned when the target is not a mount point.
+ func (mounter *Mounter) Unmount(target string) error {
+ 	klog.V(4).Infof("Unmounting %s", target)
+ 	command := exec.Command("umount", target)
+@@ -303,6 +339,10 @@ func (mounter *Mounter) Unmount(target string) error {
+ 			// Rewrite err with the actual exit error of the process.
+ 			err = &exec.ExitError{ProcessState: command.ProcessState}
+ 		}
++		if mounter.withSafeNotMountedBehavior && strings.Contains(string(output), errNotMounted) {
++			klog.V(4).Infof("ignoring 'not mounted' error for %s", target)
++			return nil
++		}
+ 		return fmt.Errorf("unmount failed: %v\nUnmounting arguments: %s\nOutput: %s", err, target, string(output))
+ 	}
+ 	return nil
+@@ -351,6 +391,11 @@ func (mounter *Mounter) IsLikelyNotMountPoint(file string) (bool, error) {
+ 	return true, nil
+ }
+ 
++// canSafelySkipMountPointCheck relies on the detected behavior of umount when given a target that is not a mount point.
++func (mounter *Mounter) canSafelySkipMountPointCheck() bool {
++	return mounter.withSafeNotMountedBehavior
++}
++
+ // GetMountRefs finds all mount references to pathname, returns a
+ // list of paths. Path could be a mountpoint or a normal
+ // directory (for bind mount).
+diff --git a/staging/src/k8s.io/mount-utils/mount_linux_test.go b/staging/src/k8s.io/mount-utils/mount_linux_test.go
+index 72547b91d94..dc5939041ab 100644
+--- a/staging/src/k8s.io/mount-utils/mount_linux_test.go
++++ b/staging/src/k8s.io/mount-utils/mount_linux_test.go
+@@ -20,11 +20,15 @@ limitations under the License.
+ package mount
+ 
+ import (
++	"errors"
+ 	"io/ioutil"
+ 	"os"
+ 	"reflect"
+ 	"strings"
+ 	"testing"
++
++	utilexec "k8s.io/utils/exec"
++	testexec "k8s.io/utils/exec/testing"
+ )
+ 
+ func TestReadProcMountsFrom(t *testing.T) {
+@@ -545,3 +549,66 @@ func mountArgsContainOption(t *testing.T, mountArgs []string, option string) boo
+ 
+ 	return strings.Contains(mountArgs[optionsIndex], option)
+ }
++
++func TestDetectSafeNotMountedBehavior(t *testing.T) {
++	// example output for umount from util-linux 2.30.2
++	notMountedOutput := "umount: /foo: not mounted."
++
++	// Arrange
++	testcases := []struct {
++		fakeCommandAction testexec.FakeCommandAction
++		expectedSafe      bool
++	}{
++		{
++			fakeCommandAction: makeFakeCommandAction(notMountedOutput, errors.New("any error")),
++			expectedSafe:      true,
++		},
++		{
++			fakeCommandAction: makeFakeCommandAction(notMountedOutput, nil),
++			expectedSafe:      false,
++		},
++		{
++			fakeCommandAction: makeFakeCommandAction("any output", nil),
++			expectedSafe:      false,
++		},
++		{
++			fakeCommandAction: makeFakeCommandAction("any output", errors.New("any error")),
++			expectedSafe:      false,
++		},
++	}
++
++	for _, v := range testcases {
++		// Prepare
++		fakeexec := &testexec.FakeExec{
++			LookPathFunc: func(s string) (string, error) {
++				return "fake-umount", nil
++			},
++			CommandScript: []testexec.FakeCommandAction{v.fakeCommandAction},
++		}
++		// Act
++		isSafe := detectSafeNotMountedBehaviorWithExec(fakeexec)
++		// Assert
++		if isSafe != v.expectedSafe {
++			var adj string
++			if v.expectedSafe {
++				adj = "safe"
++			} else {
++				adj = "unsafe"
++			}
++			t.Errorf("Expected to detect %s umount behavior, but did not", adj)
++		}
++	}
++}
++
++func makeFakeCommandAction(stdout string, err error) testexec.FakeCommandAction {
++	c := testexec.FakeCmd{
++		CombinedOutputScript: []testexec.FakeAction{
++			func() ([]byte, []byte, error) {
++				return []byte(stdout), nil, err
++			},
++		},
++	}
++	return func(cmd string, args ...string) utilexec.Cmd {
++		return testexec.InitFakeCmd(&c, cmd, args...)
++	}
++}
+diff --git a/staging/src/k8s.io/mount-utils/mount_unsupported.go b/staging/src/k8s.io/mount-utils/mount_unsupported.go
+index 93ba9b2e3f9..f3b18c15145 100644
+--- a/staging/src/k8s.io/mount-utils/mount_unsupported.go
++++ b/staging/src/k8s.io/mount-utils/mount_unsupported.go
+@@ -74,6 +74,11 @@ func (mounter *Mounter) IsLikelyNotMountPoint(file string) (bool, error) {
+ 	return true, errUnsupported
+ }
+ 
++// canSafelySkipMountPointCheck always returns false on unsupported platforms
++func (mounter *Mounter) canSafelySkipMountPointCheck() bool {
++	return false
++}
++
+ // GetMountRefs always returns an error on unsupported platforms
+ func (mounter *Mounter) GetMountRefs(pathname string) ([]string, error) {
+ 	return nil, errUnsupported
+diff --git a/staging/src/k8s.io/mount-utils/mount_windows.go b/staging/src/k8s.io/mount-utils/mount_windows.go
+index 3286a69c46b..c7fcde5fc98 100644
+--- a/staging/src/k8s.io/mount-utils/mount_windows.go
++++ b/staging/src/k8s.io/mount-utils/mount_windows.go
+@@ -244,6 +244,11 @@ func (mounter *Mounter) IsLikelyNotMountPoint(file string) (bool, error) {
+ 	return true, nil
+ }
+ 
++// canSafelySkipMountPointCheck always returns false on Windows
++func (mounter *Mounter) canSafelySkipMountPointCheck() bool {
++	return false
++}
++
+ // GetMountRefs : empty implementation here since there is no place to query all mount points on Windows
+ func (mounter *Mounter) GetMountRefs(pathname string) ([]string, error) {
+ 	windowsPath := NormalizeWindowsPath(pathname)
