@@ -25,19 +25,18 @@ TARGET="$2"
 MAKE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd -P)"
 PROJECT_ROOT=$MAKE_ROOT/$PROJECT
 
-mkdir -p _output
-touch _output/total_summary.txt
+OUTPUT_DIR=$MAKE_ROOT/_output
+mkdir -p $OUTPUT_DIR
+touch $OUTPUT_DIR/total_summary.txt
 
 function build::attribution::generate(){
-    if [ $# -ge 1 ]; then
-        export RELEASE_BRANCH="$1"
-    fi
     make -C $PROJECT_ROOT $TARGET
-    if [ -f $PROJECT_ROOT/_output/**/summary.txt ]; then
+
+    if ls $PROJECT_ROOT/_output/**/summary.txt 1> /dev/null 2>&1; then
         for summary in $PROJECT_ROOT/_output/**/summary.txt; do
             sed -i "s/+.*=/ =/g" $summary
-            awk -F" =\> " '{ count[$1]+=$2} END { for (item in count) printf("%s => %d\n", item, count[item]) }' \
-                $summary _output/total_summary.txt | sort > _output/total_summary.tmp && mv _output/total_summary.tmp _output/total_summary.txt
+            awk -F" => " '{ count[$1]+=$2} END { for (item in count) printf("%s => %d\n", item, count[item]) }' \
+                $summary $OUTPUT_DIR/total_summary.txt | sort > $OUTPUT_DIR/total_summary.tmp && mv $OUTPUT_DIR/total_summary.tmp $OUTPUT_DIR/total_summary.txt
         done
     fi
 }
@@ -50,7 +49,32 @@ RELEASE_FOLDER=$(find $PROJECT_ROOT -type d -name "1-*")
 if [ -z "${RELEASE_FOLDER}" ]; then
     build::attribution::generate
 else
+    LAST_GIT_TAG=""
+    LAST_RELEASE_BRANCH=""
     for release in $(cat $MAKE_ROOT/release/SUPPORTED_RELEASE_BRANCHES) ; do
-        build::attribution::generate $release
+        export RELEASE_BRANCH="$release"
+
+        GIT_TAG="$(cat $PROJECT_ROOT/$release/GIT_TAG)"
+        if [ "$GIT_TAG" != "$LAST_GIT_TAG" ]; then
+            # clean before regenerating to ensure there are no intermediate files left around
+            make -C $PROJECT_ROOT clean clean-go-cache
+            build::attribution::generate $release
+        else
+            # if the git_tags match across release branches, save the output state to avoid
+            # rebuilding/regenerating
+            if [[ $TARGET == *"checksums"* ]]; then
+                mkdir -p $PROJECT_ROOT/_output/$release
+                cp -rf $PROJECT_ROOT/_output/$LAST_RELEASE_BRANCH/bin $PROJECT_ROOT/_output/$release
+            fi
+            if [[ $TARGET == *"attribution"* ]]; then
+                mkdir -p $PROJECT_ROOT/_output/$release
+                cp -rf $PROJECT_ROOT/_output/$LAST_RELEASE_BRANCH/{attribution,LICENSES} $PROJECT_ROOT/_output/$release
+            fi
+            build::attribution::generate $release
+        fi
+        LAST_GIT_TAG="$GIT_TAG"
+        LAST_RELEASE_BRANCH="$release"
     done
 fi
+
+make -C $PROJECT_ROOT clean clean-go-cache
