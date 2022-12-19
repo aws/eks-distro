@@ -36,7 +36,7 @@ if updating a released branch project.
         help in future maintenance of these patches.
 1.  **Generate new checksums**
     * `make build` 
-        * can use `make update-attribution-checksums-docker` if you prefer to build in docker. See [building locally](building-locally.md) for more info
+        * can use `make run-attribution-checksums-in-docker` if you prefer to build in docker. See [building locally](building-locally.md) for more info
 
 1.  **Things to remember**
 	* If there's an alert that recommends a specific version to fix it, but it hasn't been incorporated in the last few versions from upstream, there's a good chance it's because they decided the versions are not affected. For example, there's a vulnerability in some part of a package that the code doesn't use. 
