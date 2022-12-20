@@ -29,7 +29,7 @@
    [`CSI_PROW_GO_VERSION_BUILD`](https://github.com/kubernetes-csi/external-attacher/blob/v3.5.0/release-tools/prow.sh#L89)
    is likely the correct one. Be sure to select the correct branch for the 
    project version when checking the Golang version.
-5. Update CHECKSUMS and attribution by using
-   `make update-attribution-checksums-docker PROJECT=kubernetes-csi/external-attacher RELEASE_BRANCH=<release_branch>` 
+5. Update CHECKSUMS and attribution by running from project root:
+   `make run-attribution-checksums-in-docker RELEASE_BRANCH=<release_branch>` 
    from the root of the EKS-Distro repo.
 6. Update the version at the top of this README.

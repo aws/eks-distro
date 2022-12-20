@@ -53,6 +53,6 @@ It may be easier to ensure building matches that in prow to use the builder-base
 		* `docker exec -it eks-d-builder bash`
 	* Subsequent calls to `make run-target-in-docker` will use the same running container.  To stop the container:
 		* `make stop-docker-builder`
-* Attribution and Checksum generation may be easier to run in docker to avoid needing specific golang versions locally.  A specific make target exists for these:
-	* `make update-attribution-checksums-docker PROJECT=<project> RELEASE_BRANCH=<1-X>`
+* Attribution and Checksum generation may be easier to run in docker to avoid needing specific golang versions locally.  Specific make targets exists for these:
+	* `make run-attribution-checksums-in-docker RELEASE_BRANCH=<1-X>`
 	* This will build, generate attribution and checksums and then copy the resulting files out of the container to host project location.

@@ -29,6 +29,7 @@ validate-cli-version: $(BINARY_TARGETS)
 		exit 1; \
 	fi
 
+
 ########### DO NOT EDIT #############################
 # To update call: make add-generated-help-block
 # This is added to help document dynamic targets and support shell autocompletion
