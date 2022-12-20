@@ -176,9 +176,6 @@ IMAGE_TARGETS=$(foreach image,$(IMAGE_NAMES),$(if $(filter true,$(BUILD_OCI_TARS
 
 ############# WINDOWS #############################
 # similiar to https://github.com/kubernetes-csi/livenessprobe/blob/master/release-tools/prow.sh#L78
-WINDOWS_IMAGE_REGISTRY=mcr.microsoft.com/windows
-WINDOWS_BASE_IMAGE_NAME=nanoserver
-WINDOWS_ADDON_IMAGE_NAME=servercore
 WINDOWS_IMAGE_VERSIONS=1809 20H2 ltsc2022
 
 # if multiple platforms requested, remove windows since it will be
@@ -668,7 +665,7 @@ endif
 %/images/push: $(BINARY_TARGETS) $(LICENSES_TARGETS_FOR_PREREQ) $(HANDLE_DEPENDENCIES_TARGET) $$(WINDOWS_IMAGE_BUILD_TARGETS_FOR_IMAGE)
 	$(BUILDCTL)
 	@if [ -n "$(WINDOWS_IMAGE_BUILD_TARGETS_FOR_IMAGE)" ]; then \
-		$(BUILD_LIB)/create_windows_manifest_list.sh $(IMAGE_NAME) $(IMAGE) $(LATEST_IMAGE) "$(WINDOWS_IMAGE_VERSIONS)" $(WINDOWS_IMAGE_REGISTRY) $(WINDOWS_BASE_IMAGE_NAME); \
+		$(BUILD_LIB)/create_windows_manifest_list.sh $(IMAGE_NAME) $(IMAGE) $(LATEST_IMAGE) "$(WINDOWS_IMAGE_VERSIONS)"; \
 	fi
 
 %/images/amd64: $(BINARY_TARGETS) $(LICENSES_TARGETS_FOR_PREREQ) $(HANDLE_DEPENDENCIES_TARGET)
@@ -684,8 +681,8 @@ endif
 %/windows/images/push: IMAGE_NAME=$(word 1,$(subst ., ,$*))
 %/windows/images/push: WINDOWS_OS_VERSION=$(word 2,$(subst ., ,$*))
 %/windows/images/push: DOCKERFILE_FOLDER=./docker/windows
-%/windows/images/push: BUILDER_IMAGE=$(WINDOWS_IMAGE_REGISTRY)/$(WINDOWS_ADDON_IMAGE_NAME):$(WINDOWS_OS_VERSION)
-%/windows/images/push: BASE_IMAGE=$(WINDOWS_IMAGE_REGISTRY)/$(WINDOWS_BASE_IMAGE_NAME):$(WINDOWS_OS_VERSION)
+%/windows/images/push: BASE_IMAGE_NAME=eks-distro-windows-base-$(WINDOWS_OS_VERSION)
+%/windows/images/push: BASE_IMAGE=$(BASE_IMAGE_REPO)/eks-distro-windows-base:$(BASE_IMAGE_TAG)
 %/windows/images/push: IMAGE_PLATFORMS=windows/amd64
 %/windows/images/push: IMAGE_METADATA_FILE=/tmp/$(IMAGE_NAME)-$(WINDOWS_OS_VERSION)-metadata.json
 %/windows/images/push: $(BINARY_TARGETS) $(LICENSES_TARGETS_FOR_PREREQ) $(HANDLE_DEPENDENCIES_TARGET)
