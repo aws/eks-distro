@@ -11,7 +11,7 @@ assignees: ''
   - [ ] [eks-distro](https://github.com/aws/eks-distro/pulls/eks-distro-pr-bot)
   - [ ] [eks-distro-build-tooling](https://github.com/aws/eks-distro-build-tooling/pulls/eks-distro-pr-bot)
   - [ ] [eks-distro-prow-jobs](https://github.com/aws/eks-distro-prow-jobs/pulls/eks-distro-pr-bot)
-- [ ]  For non-EKS-D-bot PRs in the below repos, review and merge all un-held/non-WIP/production-ready/non-breaking PRs intended for the release or release process; follow up with the authors of the remaining PRs about if the changes are intended for the release and, if so, what additional work needs to be done.
+- [ ]  For PRs not created by `eks-distro-pr-bot` in the below repos, review and merge all un-held/non-WIP/production-ready/non-breaking PRs intended for the release or release process; follow up with the authors of the remaining PRs about if the changes are intended for the release and, if so, what additional work needs to be done.
   - [ ] [eks-distro](https://github.com/aws/eks-distro/pulls?q=is%3Apr+is%3Aopen+-author%3Aeks-distro-pr-bot)
   - [ ] [eks-distro-build-tooling](https://github.com/aws/eks-distro-build-tooling/pulls?q=is%3Apr+is%3Aopen+-author%3Aeks-distro-pr-bot)
   - [ ] [eks-distro-prow-jobs](https://github.com/aws/eks-distro-prow-jobs/pulls?q=is%3Apr+is%3Aopen+-author%3Aeks-distro-pr-bot)
@@ -37,7 +37,7 @@ assignees: ''
   - [ ] Check for patches for all versions
 
 ### Start Code Freeze (Tues)
-- [ ] Announce code freeze for Non-Release Related Changes
+- [ ] Announce code freeze, via slack, for Non-Release Related Changes
 
 ### Recheck for new PRs (Wed)
 - [ ] After all the release-related changes are done, recheck for new PRs created by `eks-distro-pr-bot` in the below repos; review and merge them
