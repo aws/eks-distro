@@ -63,14 +63,16 @@ else
             # if the git_tags match across release branches, save the output state to avoid
             # rebuilding/regenerating
             if [[ $TARGET == *"checksums"* ]]; then
+                echo "Copying $LAST_RELEASE_BRANCH CHECKSUMS to $release"
                 mkdir -p $PROJECT_ROOT/_output/$release
-                cp -rf $PROJECT_ROOT/_output/$LAST_RELEASE_BRANCH/bin $PROJECT_ROOT/_output/$release
+                sed 's/$LAST_RELEASE_BRANCH/$release/' $PROJECT_ROOT/$LAST_RELEASE_BRANCH/CHECKSUMS > $PROJECT_ROOT/$release/CHECKSUMS
             fi
+
             if [[ $TARGET == *"attribution"* ]]; then
+                echo "Copying $LAST_RELEASE_BRANCH ATTRIBUTION to $release"
                 mkdir -p $PROJECT_ROOT/_output/$release
-                cp -rf $PROJECT_ROOT/_output/$LAST_RELEASE_BRANCH/{attribution,LICENSES} $PROJECT_ROOT/_output/$release
-            fi
-            build::attribution::generate $release
+                cp -rf $PROJECT_ROOT/$LAST_RELEASE_BRANCH/*TTRIBUTION.txt $PROJECT_ROOT/$release
+            fi            
         fi
         LAST_GIT_TAG="$GIT_TAG"
         LAST_RELEASE_BRANCH="$release"

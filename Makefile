@@ -168,7 +168,6 @@ attribution-files-project-%:
 
 .PHONY: update-attribution-files
 update-attribution-files: add-generated-help-block go-mod-files attribution-files
-	build/lib/update_go_versions.sh
 	build/update-attribution-files/create_pr.sh
 
 .PHONY: checksum-files-project-%
@@ -178,6 +177,7 @@ checksum-files-project-%:
 
 .PHONY: update-checksum-files
 update-checksum-files: $(addprefix checksum-files-project-, $(ALL_PROJECTS))
+	build/lib/update_go_versions.sh
 	build/update-attribution-files/create_pr.sh
 
 .PHONY: go-mod-files-project-%
