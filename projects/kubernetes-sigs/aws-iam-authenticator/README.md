@@ -2,10 +2,10 @@
 
 | Release | Version                                                       |
 |---------|---------------------------------------------------------------|
-| 1-21    | ![Version](https://img.shields.io/badge/version-v0.5.12-blue) |
-| 1-22    | ![Version](https://img.shields.io/badge/version-v0.5.12-blue) |
-| 1-23    | ![Version](https://img.shields.io/badge/version-v0.5.12-blue) |
-| 1-24    | ![Version](https://img.shields.io/badge/version-v0.5.12-blue) |
+| 1-21    | ![Version](https://img.shields.io/badge/version-v0.6.2-blue) |
+| 1-22    | ![Version](https://img.shields.io/badge/version-v0.6.2-blue) |
+| 1-23    | ![Version](https://img.shields.io/badge/version-v0.6.2-blue) |
+| 1-24    | ![Version](https://img.shields.io/badge/version-v0.6.2-blue) |
 
 
 ### Updating
@@ -24,9 +24,7 @@
    changes, dependencies, etc. Check the [gorelease config](https://github.com/kubernetes-sigs/aws-iam-authenticator/blob/master/.goreleaser.yaml)
    for LDFLAGS changes, these should match what is in their Makefile and the EKS-D Makefile.
 4. Verify the Golang version has not changed. The version specified in
-   [`go.mod`](https://github.com/kubernetes-sigs/aws-iam-authenticator/blob/master/go.mod)
-   seems to be kept up to date. Be sure to select the correct branch for the 
-   release when checking the Golang version.
+   [`Dockerfile`](https://github.com/kubernetes-sigs/aws-iam-authenticator/blob/master/Dockerfile). Be sure to select the correct branch for the release when checking the Golang version. If still need to double-check the version number check in [here](https://github.com/actions/setup-go).
 5. Update CHECKSUMS and attribution by running from project root:
    `make run-attribution-checksums-in-docker RELEASE_BRANCH=<release_branch>` 
    from the root of the EKS-Distro repo.
