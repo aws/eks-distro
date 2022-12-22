@@ -450,7 +450,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/go; version go1.19.2 --
+** golang.org/go; version go1.19.4 --
 https://github.com/golang/go
 
 ** golang.org/x/net; version v0.0.0-20220722155237-a158d28d115b --
