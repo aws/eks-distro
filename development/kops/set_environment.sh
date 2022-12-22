@@ -23,7 +23,7 @@ export ARTIFACT_BASE_URL="https://distro.eks.amazonaws.com"
 export NODE_INSTANCE_TYPE=${NODE_INSTANCE_TYPE:-t3.medium}
 export NODE_ARCHITECTURE=${NODE_ARCHITECTURE:-amd64}
 export IPV6=${IPV6:-false}
-export KOPS_VERSION="1.24.1"
+export KOPS_VERSION="1.25.3"
 
 if [ -n "$ARTIFACT_BUCKET" ]; then
     export ARTIFACT_BASE_URL="https://$ARTIFACT_BUCKET.s3.amazonaws.com"
