@@ -177,6 +177,9 @@ for FILE in $(find . -type f -name CHECKSUMS); do
     pr::file:add $FILE
 done
 
+# This file will be added if anything changed. The file will have been updated by the last lines of
+# ./build/lib/update_go_versions.sh, which replaces the go version with the relevant go version
+# if it used a different version than is in the install_go_versions.sh when running `make update-attribution-files`
 git add ./build/lib/install_go_versions.sh
 
 # stash attribution and help.mk files
