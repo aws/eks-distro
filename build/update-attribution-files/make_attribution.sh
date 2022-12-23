@@ -65,7 +65,7 @@ else
             if [[ $TARGET == *"checksums"* ]]; then
                 echo "Copying $LAST_RELEASE_BRANCH CHECKSUMS to $release"
                 mkdir -p $PROJECT_ROOT/_output/$release
-                sed 's/$LAST_RELEASE_BRANCH/$release/' $PROJECT_ROOT/$LAST_RELEASE_BRANCH/CHECKSUMS > $PROJECT_ROOT/$release/CHECKSUMS
+                sed "s/$LAST_RELEASE_BRANCH/$release/" $PROJECT_ROOT/$LAST_RELEASE_BRANCH/CHECKSUMS > $PROJECT_ROOT/$release/CHECKSUMS
             fi
 
             if [[ $TARGET == *"attribution"* ]]; then
