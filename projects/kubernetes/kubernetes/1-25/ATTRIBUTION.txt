@@ -1,20 +1,20 @@
 
-** cloud.google.com/go/compute/metadata; version v0.81.0 --
+** cloud.google.com/go/compute/metadata; version v0.97.0 --
 https://github.com/googleapis/google-cloud-go
 
 ** github.com/aws/aws-sdk-go; version v1.44.145 --
 https://github.com/aws/aws-sdk-go
 
-** github.com/Azure/go-autorest/autorest; version v0.11.18 --
+** github.com/Azure/go-autorest/autorest; version v0.11.27 --
 https://github.com/Azure/go-autorest/autorest
 
-** github.com/Azure/go-autorest/autorest/adal; version v0.9.13 --
+** github.com/Azure/go-autorest/autorest/adal; version v0.9.20 --
 https://github.com/Azure/go-autorest/autorest/adal
 
 ** github.com/Azure/go-autorest/autorest/date; version v0.3.0 --
 https://github.com/Azure/go-autorest/autorest/date
 
-** github.com/Azure/go-autorest/autorest/mocks; version v0.4.1 --
+** github.com/Azure/go-autorest/autorest/mocks; version v0.4.2 --
 https://github.com/Azure/go-autorest/autorest/mocks
 
 ** github.com/Azure/go-autorest/autorest/to; version v0.4.0 --
@@ -32,17 +32,11 @@ https://github.com/Azure/go-autorest/tracing
 ** github.com/checkpoint-restore/go-criu/v5; version v5.3.0 --
 https://github.com/checkpoint-restore/go-criu/v5
 
-** github.com/clusterhq/flocker-go; version v0.0.0-20160920122132-2b8b7259d313 --
-https://github.com/ClusterHQ/flocker-go
-
-** github.com/container-storage-interface/spec/lib/go/csi; version v1.5.0 --
+** github.com/container-storage-interface/spec/lib/go/csi; version v1.6.0 --
 https://github.com/container-storage-interface/spec
 
 ** github.com/containerd/console; version v1.0.3 --
 https://github.com/containerd/console
-
-** github.com/containerd/containerd/api; version v1.4.12 --
-https://github.com/containerd/containerd
 
 ** github.com/containerd/ttrpc; version v1.0.2 --
 https://github.com/containerd/ttrpc
@@ -50,7 +44,7 @@ https://github.com/containerd/ttrpc
 ** github.com/coredns/caddy/caddyfile; version v1.1.0 --
 https://github.com/coredns/caddy
 
-** github.com/coredns/corefile-migration/migration; version v1.0.14 --
+** github.com/coredns/corefile-migration/migration; version v1.0.17 --
 https://github.com/coredns/corefile-migration
 
 ** github.com/coreos/go-oidc; version v2.1.0+incompatible --
@@ -71,10 +65,10 @@ https://github.com/docker/go-units
 ** github.com/euank/go-kmsg-parser/kmsgparser; version v2.0.0+incompatible --
 https://github.com/euank/go-kmsg-parser
 
-** github.com/go-logr/logr; version v1.2.0 --
+** github.com/go-logr/logr; version v1.2.3 --
 https://github.com/go-logr/logr
 
-** github.com/go-logr/zapr; version v1.2.0 --
+** github.com/go-logr/zapr; version v1.2.3 --
 https://github.com/go-logr/zapr
 
 ** github.com/go-openapi/jsonpointer; version v0.19.5 --
@@ -95,10 +89,13 @@ https://github.com/golang/mock
 ** github.com/google/btree; version v1.0.1 --
 https://github.com/google/btree
 
-** github.com/google/cadvisor; version v0.44.1 --
+** github.com/google/cadvisor; version v0.45.0 --
 https://github.com/google/cadvisor
 
-** github.com/google/cel-go; version v0.10.2 --
+** github.com/google/cadvisor/third_party/containerd/api; version v0.45.0 --
+https://github.com/google/cadvisor
+
+** github.com/google/cel-go; version v0.12.5 --
 https://github.com/google/cel-go
 
 ** github.com/google/gnostic; version v0.5.7-v3refs --
@@ -110,7 +107,7 @@ https://github.com/google/gofuzz
 ** github.com/google/shlex; version v0.0.0-20191202100458-e7afc7fbc510 --
 https://github.com/google/shlex
 
-** github.com/GoogleCloudPlatform/k8s-cloud-provider/pkg/cloud; version v1.16.1-0.20210702024009-ea6160c1d0e3 --
+** github.com/GoogleCloudPlatform/k8s-cloud-provider/pkg/cloud; version v1.18.1-0.20220218231025-f11817397a1b --
 https://github.com/GoogleCloudPlatform/k8s-cloud-provider
 
 ** github.com/gophercloud/gophercloud; version v0.1.0 --
@@ -131,7 +128,7 @@ https://github.com/jonboulle/clockwork
 ** github.com/libopenstorage/openstorage; version v1.0.0 --
 https://github.com/libopenstorage/openstorage
 
-** github.com/matttproud/golang_protobuf_extensions/pbutil; version v1.0.2-0.20181231171920-c182affec369 --
+** github.com/matttproud/golang_protobuf_extensions/pbutil; version v1.0.1 --
 https://github.com/matttproud/golang_protobuf_extensions
 
 ** github.com/mindprince/gonvml; version v0.0.0-20190828220739-9ebdce4bb989 --
@@ -167,7 +164,7 @@ https://github.com/nytimes/gziphandler
 ** github.com/opencontainers/go-digest; version v1.0.0 --
 https://github.com/opencontainers/go-digest
 
-** github.com/opencontainers/runc; version v1.1.1 --
+** github.com/opencontainers/runc; version v1.1.3 --
 https://github.com/opencontainers/runc
 
 ** github.com/opencontainers/runtime-spec/specs-go; version v1.0.3-0.20210326190908-1c3f411f0417 --
@@ -176,7 +173,7 @@ https://github.com/opencontainers/runtime-spec
 ** github.com/opencontainers/selinux; version v1.10.0 --
 https://github.com/opencontainers/selinux
 
-** github.com/pquerna/cachecontrol; version v0.0.0-20171018203845-0dec1b30a021 --
+** github.com/pquerna/cachecontrol; version v0.1.0 --
 https://github.com/pquerna/cachecontrol
 
 ** github.com/prometheus/client_golang/prometheus; version v1.12.1 --
@@ -203,19 +200,22 @@ https://github.com/vishvananda/netns
 ** github.com/vmware/govmomi; version v0.20.3 --
 https://github.com/vmware/govmomi
 
-** go.etcd.io/etcd/api/v3; version v3.5.1 --
+** go.etcd.io/etcd/api/v3; version v3.5.4 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/client/pkg/v3; version v3.5.1 --
+** go.etcd.io/etcd/client/pkg/v3; version v3.5.4 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/client/v3; version v3.5.1 --
+** go.etcd.io/etcd/client/v3; version v3.5.4 --
 https://github.com/etcd-io/etcd
 
 ** go.opencensus.io; version v0.23.0 --
 https://github.com/census-instrumentation/opencensus-go
 
 ** go.opentelemetry.io/contrib; version v0.20.0 --
+https://github.com/open-telemetry/opentelemetry-go-contrib
+
+** go.opentelemetry.io/contrib/instrumentation/github.com/emicklei/go-restful/otelrestful; version v0.20.0 --
 https://github.com/open-telemetry/opentelemetry-go-contrib
 
 ** go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc; version v0.20.0 --
@@ -248,10 +248,10 @@ https://github.com/open-telemetry/opentelemetry-go
 ** go.opentelemetry.io/proto/otlp; version v0.7.0 --
 https://github.com/open-telemetry/opentelemetry-proto-go
 
-** google.golang.org/genproto; version v0.0.0-20220107163113-42d7afdf6368 --
+** google.golang.org/genproto; version v0.0.0-20220502173005-c8bf987b8c21 --
 https://github.com/googleapis/go-genproto
 
-** google.golang.org/grpc; version v1.40.0 --
+** google.golang.org/grpc; version v1.47.0 --
 https://github.com/grpc/grpc-go
 
 ** gopkg.in/square/go-jose.v2; version v2.2.2 --
@@ -302,7 +302,7 @@ https://github.com/kubernetes/cri-api
 ** k8s.io/csi-translation-lib; version v0.0.0 --
 https://github.com/kubernetes/csi-translation-lib
 
-** k8s.io/klog/v2; version v2.60.1 --
+** k8s.io/klog/v2; version v2.70.1 --
 https://github.com/kubernetes/klog
 
 ** k8s.io/kube-aggregator/pkg; version v0.0.0 --
@@ -311,19 +311,19 @@ https://github.com/kubernetes/kube-aggregator
 ** k8s.io/kube-controller-manager/config/v1alpha1; version v0.0.0 --
 https://github.com/kubernetes/kube-controller-manager
 
-** k8s.io/kube-openapi/pkg; version v0.0.0-20220328201542-3ee0da9b0b42 --
+** k8s.io/kube-openapi/pkg; version v0.0.0-20220803162953-67bda5d908f1 --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kube-openapi/pkg/validation/errors; version v0.0.0-20220328201542-3ee0da9b0b42 --
+** k8s.io/kube-openapi/pkg/validation/errors; version v0.0.0-20220803162953-67bda5d908f1 --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kube-openapi/pkg/validation/spec; version v0.0.0-20220328201542-3ee0da9b0b42 --
+** k8s.io/kube-openapi/pkg/validation/spec; version v0.0.0-20220803162953-67bda5d908f1 --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kube-openapi/pkg/validation/strfmt; version v0.0.0-20220328201542-3ee0da9b0b42 --
+** k8s.io/kube-openapi/pkg/validation/strfmt; version v0.0.0-20220803162953-67bda5d908f1 --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kube-openapi/pkg/validation/validate; version v0.0.0-20220328201542-3ee0da9b0b42 --
+** k8s.io/kube-openapi/pkg/validation/validate; version v0.0.0-20220803162953-67bda5d908f1 --
 https://github.com/kubernetes/kube-openapi
 
 ** k8s.io/kube-proxy/config/v1alpha1; version v0.0.0 --
@@ -338,7 +338,7 @@ https://github.com/kubernetes/kubectl
 ** k8s.io/kubelet; version v0.0.0 --
 https://github.com/kubernetes/kubelet
 
-** k8s.io/kubernetes; version v1.24.8 --
+** k8s.io/kubernetes; version v1.25.5 --
 https://github.com/kubernetes/kubernetes
 
 ** k8s.io/legacy-cloud-providers; version v0.0.0 --
@@ -356,25 +356,25 @@ https://github.com/kubernetes/pod-security-admission
 ** k8s.io/system-validators/validators; version v1.7.0 --
 https://github.com/kubernetes/system-validators
 
-** k8s.io/utils; version v0.0.0-20220210201930-3a6ce19ff2f9 --
+** k8s.io/utils; version v0.0.0-20220728103510-ee6ede2d64ed --
 https://github.com/kubernetes/utils
 
 ** sigs.k8s.io/apiserver-network-proxy/konnectivity-client; version v0.0.33 --
 https://github.com/kubernetes-sigs/apiserver-network-proxy
 
-** sigs.k8s.io/json; version v0.0.0-20211208200746-9f7c6b3444d2 --
+** sigs.k8s.io/json; version v0.0.0-20220713155537-f223a00ba0e2 --
 https://github.com/kubernetes-sigs/json
 
-** sigs.k8s.io/kustomize/api; version v0.11.4 --
+** sigs.k8s.io/kustomize/api; version v0.12.1 --
 https://github.com/kubernetes-sigs/kustomize
 
-** sigs.k8s.io/kustomize/kustomize/v4/commands/build; version v4.5.4 --
+** sigs.k8s.io/kustomize/kustomize/v4/commands/build; version v4.5.7 --
 https://github.com/kubernetes-sigs/kustomize
 
-** sigs.k8s.io/kustomize/kyaml; version v0.13.6 --
+** sigs.k8s.io/kustomize/kyaml; version v0.13.9 --
 https://github.com/kubernetes-sigs/kustomize
 
-** sigs.k8s.io/structured-merge-diff/v4; version v4.2.1 --
+** sigs.k8s.io/structured-merge-diff/v4; version v4.2.3 --
 https://github.com/kubernetes-sigs/structured-merge-diff
 
 
@@ -581,25 +581,6 @@ https://github.com/kubernetes-sigs/structured-merge-diff
    limitations under the License.
 
 
-* For github.com/containerd/containerd/api see also this required NOTICE:
-Docker
-Copyright 2012-2015 Docker, Inc.
-
-This product includes software developed at Docker, Inc. (https://www.docker.com).
-
-The following is courtesy of our legal counsel:
-
-
-Use and transfer of Docker may be subject to certain restrictions by the
-United States and other governments.
-It is your responsibility to ensure that your use and/or transfer does not
-violate applicable laws.
-
-For more information, please see https://www.bis.doc.gov
-
-See also https://www.apache.org/dev/crypto.html and/or seek legal counsel.
-
-
 * For github.com/coreos/go-oidc see also this required NOTICE:
 CoreOS Project
 Copyright 2014 CoreOS, Inc
@@ -622,6 +603,25 @@ Copyright 2018 CoreOS, Inc
 
 This product includes software developed at CoreOS, Inc.
 (http://www.coreos.com/).
+
+
+* For github.com/google/cadvisor/third_party/containerd/api see also this required NOTICE:
+Docker
+Copyright 2012-2015 Docker, Inc.
+
+This product includes software developed at Docker, Inc. (https://www.docker.com).
+
+The following is courtesy of our legal counsel:
+
+
+Use and transfer of Docker may be subject to certain restrictions by the
+United States and other governments.
+It is your responsibility to ensure that your use and/or transfer does not
+violate applicable laws.
+
+For more information, please see https://www.bis.doc.gov
+
+See also https://www.apache.org/dev/crypto.html and/or seek legal counsel.
 
 
 * For github.com/matttproud/golang_protobuf_extensions/pbutil see also this required NOTICE:
@@ -911,7 +911,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/antlr/antlr4/runtime/Go/antlr; version v0.0.0-20210826220005-b48c857c3a0e --
+** github.com/antlr/antlr4/runtime/Go/antlr; version v0.0.0-20220418222510-f25a4f6275ed --
 https://github.com/antlr/antlr4/runtime/Go/antlr
 
 Copyright 2021 The ANTLR Project
@@ -949,34 +949,34 @@ https://github.com/aws/aws-sdk-go
 ** github.com/liggitt/tabwriter; version v0.0.0-20181228230101-89fcab3d43de --
 https://github.com/liggitt/tabwriter
 
-** golang.org/go; version go1.18.7 --
+** golang.org/go; version go1.19.4 --
 https://github.com/golang/go
 
-** golang.org/x/crypto; version v0.0.0-20220214200702-86341886e292 --
+** golang.org/x/crypto; version v0.0.0-20220315160706-3147a52a75dd --
 https://go.googlesource.com/crypto
 
-** golang.org/x/net; version v0.0.0-20220127200216-cd36cc0744dd --
+** golang.org/x/net; version v0.3.1-0.20221206200815-1e63c2f08a10 --
 https://go.googlesource.com/net
 
 ** golang.org/x/oauth2; version v0.0.0-20211104180415-d3ed0bb246c8 --
 https://go.googlesource.com/oauth2
 
-** golang.org/x/sync/singleflight; version v0.0.0-20210220032951-036812b2e83c --
+** golang.org/x/sync/singleflight; version v0.0.0-20220722155255-886fb9371eb4 --
 https://go.googlesource.com/sync
 
-** golang.org/x/sys; version v0.0.0-20220209214540-3681064d5158 --
+** golang.org/x/sys/unix; version v0.3.0 --
 https://go.googlesource.com/sys
 
-** golang.org/x/term; version v0.0.0-20210927222741-03fcf44c2211 --
+** golang.org/x/term; version v0.3.0 --
 https://go.googlesource.com/term
 
-** golang.org/x/text; version v0.3.7 --
+** golang.org/x/text; version v0.5.0 --
 https://go.googlesource.com/text
 
 ** golang.org/x/time/rate; version v0.0.0-20220210224613-90d013bbcef8 --
 https://go.googlesource.com/time
 
-** golang.org/x/tools/container/intsets; version v0.1.10-0.20220218145154-897bd77cd717 --
+** golang.org/x/tools/container/intsets; version v0.1.12 --
 https://go.googlesource.com/tools
 
 ** k8s.io/apimachinery/third_party/forked/golang; version v0.0.0 --
@@ -985,10 +985,10 @@ https://github.com/kubernetes/apimachinery
 ** k8s.io/client-go/third_party/forked/golang/template; version v0.0.0 --
 https://github.com/kubernetes/client-go
 
-** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.24.8 --
+** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.25.5 --
 https://github.com/kubernetes/kubernetes
 
-** k8s.io/utils/inotify; version v0.0.0-20220210201930-3a6ce19ff2f9 --
+** k8s.io/utils/inotify; version v0.0.0-20220728103510-ee6ede2d64ed --
 https://github.com/kubernetes/utils
 
 Copyright (c) 2009 The Go Authors. All rights reserved.
@@ -1021,7 +1021,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/chai2010/gettext-go/gettext; version v0.0.0-20160711120539-c6fed771bfd5 --
+** github.com/chai2010/gettext-go; version v1.0.2 --
 https://github.com/chai2010/gettext-go
 
 Copyright 2013 ChaiShushan <chaishushan{AT}gmail.com>. All rights reserved.
@@ -1228,7 +1228,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/google/go-cmp/cmp; version v0.5.5 --
+** github.com/google/go-cmp/cmp; version v0.5.8 --
 https://github.com/google/go-cmp
 
 Copyright (c) 2017 The Go Authors. All rights reserved.
@@ -1294,7 +1294,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/googleapis/gax-go/v2; version v2.0.5 --
+** github.com/googleapis/gax-go/v2; version v2.1.1 --
 https://github.com/googleapis/gax-go/v2
 
 Copyright 2016, Google Inc.
@@ -1360,7 +1360,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/imdario/mergo; version v0.3.5 --
+** github.com/imdario/mergo; version v0.3.6 --
 https://github.com/imdario/mergo
 
 Copyright (c) 2013 Dario Castañé. All rights reserved.
@@ -1562,7 +1562,7 @@ https://github.com/vmware/govmomi
 ** gopkg.in/square/go-jose.v2/json; version v2.2.2 --
 https://gopkg.in/square/go-jose.v2
 
-** k8s.io/utils/internal/third_party/forked/golang; version v0.0.0-20220210201930-3a6ce19ff2f9 --
+** k8s.io/utils/internal/third_party/forked/golang; version v0.0.0-20220728103510-ee6ede2d64ed --
 https://github.com/kubernetes/utils
 
 Copyright (c) 2012 The Go Authors. All rights reserved.
@@ -1591,40 +1591,6 @@ LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
 DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-------
-
-** github.com/quobyte/api; version v0.1.8 --
-https://github.com/quobyte/api
-
-
-Copyright (c) 2016, Quobyte Inc.
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-
-* Redistributions of source code must retain the above copyright notice, this
-  list of conditions and the following disclaimer.
-
-* Redistributions in binary form must reproduce the above copyright notice,
-  this list of conditions and the following disclaimer in the documentation
-  and/or other materials provided with the distribution.
-
-* Neither the name of quobyte-automation nor the names of its
-  contributors may be used to endorse or promote products derived from
-  this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
@@ -1726,7 +1692,7 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ------
 
-** google.golang.org/api; version v0.46.0 --
+** google.golang.org/api; version v0.60.0 --
 https://github.com/googleapis/google-api-go-client
 
 Copyright (c) 2011 Google Inc. All rights reserved.
@@ -1759,7 +1725,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** google.golang.org/api/internal/third_party/uritemplates; version v0.46.0 --
+** google.golang.org/api/internal/third_party/uritemplates; version v0.60.0 --
 https://github.com/googleapis/google-api-go-client
 
 Copyright (c) 2013 Joshua Tacoma. All rights reserved.
@@ -1792,7 +1758,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** google.golang.org/protobuf; version v1.27.1 --
+** google.golang.org/protobuf; version v1.28.0 --
 https://go.googlesource.com/protobuf
 
 Copyright (c) 2018 The Go Authors. All rights reserved.
@@ -1862,7 +1828,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.24.8 --
+** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.25.5 --
 https://github.com/kubernetes/kubernetes
 
 Copyright ©2013 The gonum Authors. All rights reserved.
@@ -1941,8 +1907,8 @@ Copyright (c) 2017 Nathan Sweet
 Copyright (c) 2018, 2019 Cloudflare
 Copyright (c) 2019 Authors of Cilium
 
-** github.com/emicklei/go-restful; version v2.9.5+incompatible --
-https://github.com/emicklei/go-restful
+** github.com/emicklei/go-restful/v3; version v3.8.0 --
+https://github.com/emicklei/go-restful/v3
 Copyright (c) 2012,2013 Ernest Micklei
 
 ** github.com/exponent-io/jsonpath; version v0.0.0-20151013193312-d6023ce2651d --
@@ -1977,6 +1943,11 @@ Copyright (c) 2016, Qiang Xue
 https://github.com/gofrs/uuid
 Copyright (C) 2013-2018 by Maxim Bublis <b@codemonkey.ru>
 
+** github.com/golang-jwt/jwt/v4; version v4.2.0 --
+https://github.com/golang-jwt/jwt/v4
+Copyright (c) 2012 Dave Grijalva
+Copyright (c) 2021 golang-jwt maintainers
+
 ** github.com/josharian/intern; version v1.0.0 --
 https://github.com/josharian/intern
 Copyright (c) 2019 Josh Bleecher Snyder
@@ -1993,9 +1964,9 @@ Copyright (c) 2018 Peter Lithammer
 https://github.com/mailru/easyjson
 Copyright (c) 2016 Mail.Ru Group
 
-** github.com/MakeNowJust/heredoc; version v0.0.0-20170808103936-bb23615498cd --
+** github.com/MakeNowJust/heredoc; version v1.0.0 --
 https://github.com/makenowjust/heredoc
-Copyright (c) 2014-2017 TSUYUSATO Kitsune
+Copyright (c) 2014-2019 TSUYUSATO Kitsune
 
 ** github.com/mitchellh/go-wordwrap; version v1.0.0 --
 https://github.com/mitchellh/go-wordwrap
@@ -2054,7 +2025,7 @@ Copyright (c) 2016-2017 Uber Technologies, Inc.
 https://gopkg.in/natefinch/lumberjack.v2
 Copyright (c) 2014 Nate Finch 
 
-** sigs.k8s.io/kustomize/kyaml/internal/forked/github.com/qri-io/starlib/util; version v0.13.6 --
+** sigs.k8s.io/kustomize/kyaml/internal/forked/github.com/qri-io/starlib/util; version v0.13.9 --
 https://github.com/kubernetes-sigs/kustomize
 Copyright (c) 2018 QRI, Inc.
 
@@ -2084,7 +2055,7 @@ the Microsoft Corporation (https://www.microsoft.com).
 
 ------
 
-** github.com/daviddengcn/go-colortext; version v0.0.0-20160507010035-511bcaf42ccd --
+** github.com/daviddengcn/go-colortext; version v1.0.0 --
 https://github.com/daviddengcn/go-colortext
 Copyright (c) 2016, David Deng
 Copyright (c) 2016 David Deng
@@ -2183,55 +2154,7 @@ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ------
 
-** github.com/storageos/go-api; version v2.2.0+incompatible --
-https://github.com/storageos/go-api
-Copyright (c) 2015-2018 StorageOS
-Copyright (c) 2013-2017, go-dockerclient authors
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-
-
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-
-* Redistributions of source code must retain the above copyright notice,
-this list of conditions and the following disclaimer.
-* Redistributions in binary form must reproduce the above copyright notice,
-this list of conditions and the following disclaimer in the documentation
-and/or other materials provided with the distribution.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-------
-
-** github.com/xlab/treeprint; version v0.0.0-20181112141820-a009c3971eca --
+** github.com/xlab/treeprint; version v1.1.0 --
 https://github.com/xlab/treeprint
 
 Copyright © 2016 Maxim Kupriianov <max@kc.vc>
@@ -2261,7 +2184,7 @@ Copyright (c) 2006-2010 Kirill Simonov
 Copyright (c) 2006-2011 Kirill Simonov
 Copyright (c) 2011-2019 Canonical Ltd
 
-** sigs.k8s.io/kustomize/kyaml/internal/forked/github.com/go-yaml/yaml; version v0.13.6 --
+** sigs.k8s.io/kustomize/kyaml/internal/forked/github.com/go-yaml/yaml; version v0.13.9 --
 https://github.com/kubernetes-sigs/kustomize
 Copyright (c) 2006-2010 Kirill Simonov
 Copyright (c) 2006-2011 Kirill Simonov

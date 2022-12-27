@@ -47,61 +47,52 @@ https://github.com/soheilhy/cmux
 ** github.com/spf13/cobra; version v1.1.3 --
 https://github.com/spf13/cobra
 
-** go.etcd.io/etcd/api/v3; version v3.5.4 --
+** go.etcd.io/etcd/api/v3; version v3.5.6 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/client/pkg/v3; version v3.5.4 --
+** go.etcd.io/etcd/client/pkg/v3; version v3.5.6 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/client/v2; version v2.305.4 --
+** go.etcd.io/etcd/client/v2; version v2.305.6 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/client/v3; version v3.5.4 --
+** go.etcd.io/etcd/client/v3; version v3.5.6 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/pkg/v3; version v3.5.4 --
+** go.etcd.io/etcd/pkg/v3; version v3.5.6 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/raft/v3; version v3.5.4 --
+** go.etcd.io/etcd/raft/v3; version v3.5.6 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/server/v3; version v3.5.4 --
+** go.etcd.io/etcd/server/v3; version v3.5.6 --
 https://github.com/etcd-io/etcd
 
-** go.opentelemetry.io/contrib; version v0.20.0 --
+** go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc; version v0.25.0 --
 https://github.com/open-telemetry/opentelemetry-go-contrib
 
-** go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc; version v0.20.0 --
-https://github.com/open-telemetry/opentelemetry-go-contrib
-
-** go.opentelemetry.io/otel; version v0.20.0 --
+** go.opentelemetry.io/otel; version v1.0.1 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/otel/exporters/otlp; version v0.20.0 --
+** go.opentelemetry.io/otel/exporters/otlp/otlptrace; version v1.0.1 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/otel/metric; version v0.20.0 --
+** go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc; version v1.0.1 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/otel/sdk; version v0.20.0 --
+** go.opentelemetry.io/otel/sdk; version v1.0.1 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/otel/sdk/export/metric; version v0.20.0 --
+** go.opentelemetry.io/otel/trace; version v1.0.1 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/otel/sdk/metric; version v0.20.0 --
-https://github.com/open-telemetry/opentelemetry-go
-
-** go.opentelemetry.io/otel/trace; version v0.20.0 --
-https://github.com/open-telemetry/opentelemetry-go
-
-** go.opentelemetry.io/proto/otlp; version v0.7.0 --
+** go.opentelemetry.io/proto/otlp; version v0.9.0 --
 https://github.com/open-telemetry/opentelemetry-proto-go
 
 ** google.golang.org/genproto; version v0.0.0-20210602131652-f16073e35f0c --
 https://github.com/googleapis/go-genproto
 
-** google.golang.org/grpc; version v1.38.0 --
+** google.golang.org/grpc; version v1.41.0 --
 https://github.com/grpc/grpc-go
 
 ** gopkg.in/yaml.v2; version v2.4.0 --
@@ -609,7 +600,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ** golang.org/go; version go1.16.15 --
 https://github.com/golang/go
 
-** golang.org/x/crypto; version v0.0.0-20220131195533-30dcbda58838 --
+** golang.org/x/crypto; version v0.0.0-20220411220226-7b82a4e95df4 --
 https://go.googlesource.com/crypto
 
 ** golang.org/x/net; version v0.0.0-20211112202133-69e39bad7dc2 --
@@ -654,7 +645,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** google.golang.org/protobuf; version v1.26.0 --
+** google.golang.org/protobuf; version v1.27.1 --
 https://go.googlesource.com/protobuf
 
 Copyright (c) 2018 The Go Authors. All rights reserved.
@@ -691,13 +682,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 https://github.com/beorn7/perks
 Copyright (C) 2013 Blake Mizerany
 
+** github.com/cenkalti/backoff/v4; version v4.1.1 --
+https://github.com/cenkalti/backoff/v4
+Copyright (c) 2014 Cenk Altı
+
 ** github.com/cespare/xxhash/v2; version v2.1.1 --
 https://github.com/cespare/xxhash/v2
 Copyright (c) 2016 Caleb Spare
 
-** github.com/form3tech-oss/jwt-go; version v3.2.3+incompatible --
-https://github.com/form3tech-oss/jwt-go
+** github.com/golang-jwt/jwt/v4; version v4.4.2 --
+https://github.com/golang-jwt/jwt/v4
 Copyright (c) 2012 Dave Grijalva
+Copyright (c) 2021 golang-jwt maintainers
 
 ** github.com/json-iterator/go; version v1.1.11 --
 https://github.com/json-iterator/go
