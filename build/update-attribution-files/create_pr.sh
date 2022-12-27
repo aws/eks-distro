@@ -177,6 +177,9 @@ for FILE in $(find . -type f -name CHECKSUMS); do
     pr::file:add $FILE
 done
 
+# This file is being added as it may have been updated by the last lines of ./build/lib/update_go_versions.sh,
+# which replaces the go version in this script with the go version(s) in the builder base if they are newer 
+# when running `make update-checksum-files`
 git add ./build/lib/install_go_versions.sh
 
 # stash attribution and help.mk files
