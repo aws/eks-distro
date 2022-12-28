@@ -14,7 +14,14 @@ HAS_RELEASE_BRANCHES=true
 HAS_S3_ARTIFACTS=true
 IMAGE_NAMES=
 
-ifneq ($(filter-out clean,$(MAKECMDGOALS)),)
+# Generating the source patterns requires checking out the repo
+# delay this as much as possible by skipping when running docker targets
+# or all- targets
+SKIP_SOURCE_PATTERN_TARGETS=clean clean-go-cache \
+	$(foreach target,$(MAKECMDGOALS),$(if $(findstring in-docker,$(target)),$(target),)) \
+	$(foreach target,$(MAKECMDGOALS),$(if $(findstring all-,$(target)),$(target),))
+
+ifneq ($(filter-out $(SKIP_SOURCE_PATTERN_TARGETS),$(MAKECMDGOALS)),)
 -include $(SOURCE_PATTERNS_TARGET)
 endif
 

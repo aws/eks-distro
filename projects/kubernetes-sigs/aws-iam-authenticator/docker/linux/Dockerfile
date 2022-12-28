@@ -35,11 +35,11 @@ RUN yum install -y shadow-utils && \
     yum clean all && \
     rm -rf /var/cache/yum
 
-ARG RELEASE_BRANCH
 
-COPY --chown=aws-iam-authenticator _output/$RELEASE_BRANCH/bin/aws-iam-authenticator/$TARGETOS-$TARGETARCH/aws-iam-authenticator /
-COPY _output/$RELEASE_BRANCH/LICENSES /LICENSES
-COPY $RELEASE_BRANCH/ATTRIBUTION.txt /ATTRIBUTION.txt
+
+COPY --chown=aws-iam-authenticator bin/aws-iam-authenticator/$TARGETOS-$TARGETARCH/aws-iam-authenticator /
+COPY LICENSES /LICENSES
+COPY ATTRIBUTION.txt /ATTRIBUTION.txt
 
 
 FROM builder as standard

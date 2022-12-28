@@ -18,11 +18,14 @@ FROM ${BUILDER_IMAGE}
 
 ARG PAUSE_VERSION
 
-RUN yum update -y
-RUN yum install -y gcc glibc-static
-# Use as small a context as possible so Docker doesn't read all of _output
 COPY pause/pause.c /pause.c
-RUN gcc -Os -Wall -Werror -static -DVERSION=${PAUSE_VERSION} -o /pause /pause.c
+
+RUN yum update -y && \
+  yum install -y gcc glibc-static && \
+  gcc -Os -Wall -Werror -static -DVERSION=${PAUSE_VERSION} -o /pause /pause.c && \
+  yum autoremove -y gcc glibc-static && \
+  yum clean all && \
+  rm -rf /var/cache/yum
 
 FROM ${BASE_IMAGE}
 COPY --from=0 /pause /pause

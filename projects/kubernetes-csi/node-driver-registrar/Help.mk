@@ -11,9 +11,10 @@ clone-repo:  ## Clone upstream `node-driver-registrar`
 checkout-repo: ## Checkout upstream tag based on value in GIT_TAG file
 
 ##@ Binary Targets
-binaries: ## Build all binaries: `csi-node-driver-registrar` for `linux/amd64 linux/arm64`
+binaries: ## Build all binaries: `csi-node-driver-registrar` for `linux/amd64 linux/arm64 windows/amd64`
 _output/1-21/bin/node-driver-registrar/linux-amd64/csi-node-driver-registrar: ## Build `_output/1-21/bin/node-driver-registrar/linux-amd64/csi-node-driver-registrar`
 _output/1-21/bin/node-driver-registrar/linux-arm64/csi-node-driver-registrar: ## Build `_output/1-21/bin/node-driver-registrar/linux-arm64/csi-node-driver-registrar`
+_output/1-21/bin/node-driver-registrar/windows-amd64/csi-node-driver-registrar.exe: ## Build `_output/1-21/bin/node-driver-registrar/windows-amd64/csi-node-driver-registrar.exe`
 
 ##@ Image Targets
 local-images: ## Builds `node-driver-registrar/images/amd64` as oci tars for presumbit validation
@@ -24,11 +25,26 @@ node-driver-registrar/images/push: ## Builds/pushes `node-driver-registrar/image
 ##@ Checksum Targets
 checksums: ## Update checksums file based on currently built binaries.
 validate-checksums: # Validate checksums of currently built binaries against checksums file.
+all-checksums: ## Update checksums files for all RELEASE_BRANCHes.
+
+##@ Run in Docker Targets
+run-all-attributions-in-docker: ## Run `all-attributions` in docker builder container
+run-all-attributions-checksums-in-docker: ## Run `all-attributions-checksums` in docker builder container
+run-all-checksums-in-docker: ## Run `all-checksums` in docker builder container
+run-attribution-in-docker: ## Run `attribution` in docker builder container
+run-attribution-checksums-in-docker: ## Run `attribution-checksums` in docker builder container
+run-binaries-in-docker: ## Run `binaries` in docker builder container
+run-checksums-in-docker: ## Run `checksums` in docker builder container
+run-clean-in-docker: ## Run `clean` in docker builder container
+run-clean-go-cache-in-docker: ## Run `clean-go-cache` in docker builder container
 
 ##@ License Targets
 gather-licenses: ## Helper to call $(GATHER_LICENSES_TARGETS) which gathers all licenses
 attribution: ## Generates attribution from licenses gathered during `gather-licenses`.
 attribution-pr: ## Generates PR to update attribution files for projects
+attribution-checksums: ## Update attribution and checksums files.
+all-attributions: ## Update attribution files for all RELEASE_BRANCHes.
+all-attributions-checksums: ## Update attribution and checksums files for all RELEASE_BRANCHes.
 
 ##@ Clean Targets
 clean: ## Removes source and _output directory
@@ -40,7 +56,6 @@ add-generated-help-block: ## Add or update generated help block to document proj
 
 ##@Update Helpers
 run-target-in-docker: ## Run `MAKE_TARGET` using builder base docker container
-update-attribution-checksums-docker: ## Update attribution and checksums using the builder base docker container
 stop-docker-builder: ## Clean up builder base docker container
 generate: ## Update UPSTREAM_PROJECTS.yaml
 update-go-mods: ## Update locally checked-in go sum to assist in vuln scanning

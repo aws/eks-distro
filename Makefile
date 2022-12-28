@@ -19,7 +19,8 @@ REBUILD_ALL?=false
 
 ALL_PROJECTS=containernetworking_plugins coredns_coredns etcd-io_etcd kubernetes-csi_external-attacher kubernetes-csi_external-resizer \
 	kubernetes-csi_livenessprobe kubernetes-csi_node-driver-registrar kubernetes-sigs_aws-iam-authenticator kubernetes-sigs_metrics-server \
-	kubernetes-csi_external-snapshotter kubernetes-csi_external-provisioner kubernetes_release kubernetes_kubernetes
+	kubernetes-csi_external-snapshotter kubernetes-csi_external-provisioner kubernetes_release kubernetes_kubernetes \
+	kubernetes_cloud-provider-aws
 
 ifdef MAKECMDGOALS
 TARGET=$(MAKECMDGOALS)
@@ -32,6 +33,14 @@ setup:
 	development/ecr/ecr-command.sh install-ecr-public
 	development/ecr/ecr-command.sh login-ecr-public
 
+# For components which build the same versions across multiple kube versions
+# we use the first version which has the same git_tag as the current project build
+# as the buildctl import-cache to try and converge as many builds to the same image in ecr
+# This isnt neccessary since on the subsequent builds they should converge, but building
+# kube first for newer versions while build all other components gives us the best chance
+# to converge on the same image in the first build. This also doesnt handle cases where the
+# first version is different but the next 3 are the same, in those cases it would still
+# take two builds to converge 
 .PHONY: build
 build:
 	go vet cmd/main_postsubmit.go
@@ -43,14 +52,15 @@ build:
 		--account-id=${AWS_ACCOUNT_ID} \
 		--image-repo=${IMAGE_REPO} \
 		--dry-run=true \
-		--rebuild-all=${REBUILD_ALL}
+		--rebuild-all=${REBUILD_ALL} \
+		--build-kubernetes-first=$(if $(filter $(RELEASE_BRANCH),$(firstword $(SUPPORTED_RELEASE_BRANCHES))),false,true)
 	@echo 'Done' $(TARGET)
 
 .PHONY: postsubmit-build
 postsubmit-build: setup
 	go vet cmd/main_postsubmit.go
 	go run cmd/main_postsubmit.go \
-		--target=release \
+		--target=release,clean,clean-go-cache \
 		--release-branch=${RELEASE_BRANCH} \
 		--release=${RELEASE} \
 		--region=${AWS_REGION} \
@@ -59,7 +69,7 @@ postsubmit-build: setup
 		--artifact-bucket=$(ARTIFACT_BUCKET) \
 		--dry-run=false \
 		--rebuild-all=${REBUILD_ALL}
-
+	
 .PHONY: kops-prow-arm
 kops-prow-arm: export NODE_INSTANCE_TYPE=t4g.medium
 kops-prow-arm: export NODE_ARCHITECTURE=arm64
@@ -81,7 +91,7 @@ kops-prow-amd: kops-prereqs
 kops-prow: kops-prow-amd kops-prow-arm
 	@echo 'Done kops-prow'
 
-.PHONT: kops-prereqs
+.PHONY: kops-prereqs
 kops-prereqs: postsubmit-build
 	ssh-keygen -b 2048 -t rsa -f ~/.ssh/id_rsa -q -N ""
 	cd development/kops && RELEASE=$(RELEASE) ./install_requirements.sh
@@ -109,7 +119,7 @@ release: $(addprefix makes-release-, $(ALL_PROJECTS)) upload
 .PHONY: makes-release-%
 makes-release-%:
 	$(eval PROJECT_PATH=projects/$(subst _,/,$*))
-	$(MAKE) release -C $(PROJECT_PATH)
+	$(MAKE) release clean clean-go-cache -C $(PROJECT_PATH)
 
 .PHONY: binaries
 binaries: $(addprefix makes-binaries-, $(ALL_PROJECTS))
@@ -123,10 +133,6 @@ makes-binaries-%:
 .PHONY: run-target-in-docker
 run-target-in-docker:
 	build/lib/run_target_docker.sh $(PROJECT) $(MAKE_TARGET) $(IMAGE_REPO) $(RELEASE_BRANCH)
-
-.PHONY: update-attribution-checksums-docker
-update-attribution-checksums-docker:
-	build/lib/update_checksum_docker.sh $(PROJECT) $(IMAGE_REPO) $(RELEASE_BRANCH)
 
 .PHONY: stop-docker-builder
 stop-docker-builder:
@@ -158,28 +164,26 @@ attribution-files: $(addprefix attribution-files-project-, $(ALL_PROJECTS))
 .PHONY: attribution-files-project-%
 attribution-files-project-%:
 	$(eval PROJECT_PATH=projects/$(subst _,/,$*))
-	build/update-attribution-files/make_attribution.sh $(PROJECT_PATH) attribution
-	$(if $(findstring periodic,$(JOB_TYPE)),rm -rf /root/.cache/go-build /home/prow/go/pkg/mod $(PROJECT_PATH)/_output,)
+	$(MAKE) -C $(PROJECT_PATH) all-attributions
 
 .PHONY: update-attribution-files
 update-attribution-files: add-generated-help-block go-mod-files attribution-files
-	build/lib/update_go_versions.sh
 	build/update-attribution-files/create_pr.sh
 
 .PHONY: checksum-files-project-%
 checksum-files-project-%:
 	$(eval PROJECT_PATH=projects/$(subst _,/,$*))
-	build/update-attribution-files/make_attribution.sh $(PROJECT_PATH) checksums
-	$(if $(findstring periodic,$(JOB_TYPE)),rm -rf /root/.cache/go-build /home/prow/go/pkg/mod && make -C $(PROJECT_PATH) clean,)
+	$(MAKE) -C $(PROJECT_PATH) all-checksums
 
 .PHONY: update-checksum-files
 update-checksum-files: $(addprefix checksum-files-project-, $(ALL_PROJECTS))
+	build/lib/update_go_versions.sh
 	build/update-attribution-files/create_pr.sh
 
 .PHONY: go-mod-files-project-%
 go-mod-files-project-%:
 	$(eval PROJECT_PATH=projects/$(subst _,/,$*))
-	build/update-attribution-files/make_attribution.sh $(PROJECT_PATH) update-go-mods
+	$(MAKE) -C $(PROJECT_PATH) all-update-go-mods
 
 .PHONY: go-mod-files
 go-mod-files: $(addprefix go-mod-files-project-, $(ALL_PROJECTS))

@@ -34,8 +34,9 @@ func (c *Command) buildProject(projectPath string) error {
 	commandArgs := []string{
 		"-C",
 		filepath.Join(c.gitRoot, "projects", projectPath),
-		c.makeTarget,
 	}
+	allMakeTargets := strings.Split(c.makeTarget, ",")
+	commandArgs = append(commandArgs, allMakeTargets...)
 	commandArgs = append(commandArgs, c.makeArgs...)
 
 	cmd := exec.Command("make", commandArgs...)
@@ -63,6 +64,7 @@ func main() {
 	gitRoot := flag.String("git-root", "", "Git root directory")
 	dryRun := flag.Bool("dry-run", false, "Echo out commands, but don't run them")
 	rebuildAll := flag.Bool("rebuild-all", false, "Rebuild all projects, regardless of changes present")
+	buildKubeFirst := flag.Bool("build-kubernetes-first", true, "Build kubernetes projects first then other components")
 
 	flag.Parse()
 	log.Printf("Running postsubmit - dry-run: %t", *dryRun)
@@ -100,9 +102,13 @@ func main() {
 	filesChanged := strings.Fields(string(gitDiffOutput))
 
 	allChanged := false
-	buildOrder := [...]string{
+	buildOrderKube := []string{
 		"kubernetes/release",
 		"kubernetes/kubernetes",
+		"kubernetes/cloud-provider-aws",
+	}
+
+	buildOrder := []string{
 		"containernetworking/plugins",
 		"coredns/coredns",
 		"etcd-io/etcd",
@@ -115,6 +121,13 @@ func main() {
 		"kubernetes-csi/external-snapshotter",
 		"kubernetes-csi/external-provisioner",
 	}
+
+	if *buildKubeFirst {
+		buildOrder = append(buildOrderKube[:], buildOrder...)
+	} else {
+		buildOrder = append(buildOrder[:], buildOrderKube...)
+	}
+
 	type changedStruct struct {
 		changed bool
 	}

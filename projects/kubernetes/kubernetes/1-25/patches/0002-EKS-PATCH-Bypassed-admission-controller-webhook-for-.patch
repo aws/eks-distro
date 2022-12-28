@@ -1,0 +1,209 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Qing Ju <juqing@amazon.com>
+Date: Sun, 18 Oct 2020 10:31:39 -0700
+Subject: [PATCH] --EKS-PATCH-- Bypassed admission controller webhook for
+ cluster critical resources
+
+Workaround for Kubernetes issue:
+https://github.com/kubernetes/kubernetes/issues/92157
+
+This change allows for the bypassing of admission controller webhook
+for certain resources.
+
+Signed-off-by: Jyoti Mahapatra <jyotima@amazon.com>
+---
+ .../plugin/webhook/generic/webhook.go         |  30 ++++
+ .../plugin/webhook/generic/webhook_test.go    | 129 ++++++++++++++++++
+ 2 files changed, 159 insertions(+)
+
+diff --git a/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/webhook.go b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/webhook.go
+index c04225e94f7..58b725d3ad4 100644
+--- a/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/webhook.go
++++ b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/webhook.go
+@@ -222,9 +222,39 @@ func (a *Webhook) Dispatch(ctx context.Context, attr admission.Attributes, o adm
+ 	if rules.IsWebhookConfigurationResource(attr) {
+ 		return nil
+ 	}
++	if isClusterCriticalResource(attr) {
++		return nil
++	}
+ 	if !a.WaitForReady() {
+ 		return admission.NewForbidden(attr, fmt.Errorf("not yet ready to handle request"))
+ 	}
+ 	hooks := a.hookSource.Webhooks()
+ 	return a.dispatcher.Dispatch(ctx, attr, o, hooks)
+ }
++
++func isClusterCriticalResource(attr admission.Attributes) bool {
++	gvk := attr.GetKind()
++	name := attr.GetName()
++	ns := attr.GetNamespace()
++
++	const kubeControllerManager = "kube-controller-manager"
++	const kubeScheduler = "kube-scheduler"
++	const kubeSystem = "kube-system"
++
++	// TODO: juqing@ 10/16/20: the lease namespace, name or even Kind are configurable as flags.
++	// For simplicity, we use the default values which is how EKS clusters are getting configured.
++	if gvk.Group == "" && gvk.Kind == "Endpoints" {
++		if ns == kubeSystem && (name == kubeControllerManager || name == kubeScheduler) {
++			return true
++		}
++	}
++
++	// For 1.17+ clusters
++	if gvk.Group == "coordination.k8s.io" && gvk.Kind == "Lease" {
++		if ns == kubeSystem && (name == kubeControllerManager || name == kubeScheduler) {
++			return true
++		}
++	}
++
++	return false
++}
+diff --git a/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/webhook_test.go b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/webhook_test.go
+index 26dbefc1991..f2db46707b2 100644
+--- a/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/webhook_test.go
++++ b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/webhook_test.go
+@@ -17,6 +17,7 @@ limitations under the License.
+ package generic
+ 
+ import (
++	"context"
+ 	"fmt"
+ 	"strings"
+ 	"testing"
+@@ -34,6 +35,134 @@ import (
+ 	"k8s.io/apiserver/pkg/admission/plugin/webhook/object"
+ )
+ 
++type testCase struct {
++	testName   string
++	gvk        schema.GroupVersionKind
++	namespace  string
++	objectName string
++	expectErr  string
++}
++
++type testInput struct {
++	expectedGroup, expectedVersion, expectedKind, expectedNamespace, expectedObjectName string
++}
++
++func generateDispatchTestCases(input testInput) []testCase {
++	const noErr = ""
++	return []testCase{
++		{fmt.Sprintf("%s %s in %s namespace", input.expectedObjectName, input.expectedKind, input.expectedNamespace),
++			schema.GroupVersionKind{input.expectedGroup, input.expectedVersion, input.expectedKind},
++			input.expectedNamespace,
++			input.expectedObjectName,
++			noErr,
++		},
++		{
++			fmt.Sprintf("%s %s in %s namespace with new version", input.expectedObjectName, input.expectedKind, input.expectedNamespace),
++			schema.GroupVersionKind{input.expectedGroup, "v2", input.expectedKind},
++			input.expectedNamespace,
++			input.expectedObjectName,
++			noErr,
++		},
++		{
++			fmt.Sprintf("%s %s with incorrect namespace", input.expectedObjectName, input.expectedKind),
++			schema.GroupVersionKind{input.expectedGroup, input.expectedVersion, input.expectedKind},
++			"foo",
++			input.expectedObjectName,
++			"not yet ready to handle request",
++		},
++		{
++			fmt.Sprintf("%s %s with incorrect name", input.expectedObjectName, input.expectedKind),
++			schema.GroupVersionKind{input.expectedGroup, input.expectedVersion, input.expectedKind},
++			input.expectedNamespace,
++			"foo",
++			"not yet ready to handle request",
++		},
++		{
++			fmt.Sprintf("%s %s with incorrect group", input.expectedObjectName, input.expectedKind),
++			schema.GroupVersionKind{"foo", input.expectedVersion, input.expectedKind},
++			input.expectedNamespace,
++			input.expectedObjectName,
++			"not yet ready to handle request",
++		},
++		{
++			fmt.Sprintf("%s %s with incorrect kind", input.expectedObjectName, input.expectedKind),
++			schema.GroupVersionKind{input.expectedGroup, input.expectedVersion, "foo"},
++			input.expectedNamespace,
++			input.expectedObjectName,
++			"not yet ready to handle request",
++		},
++	}
++}
++
++func TestDispatch(t *testing.T) {
++	const (
++		core                  = ""
++		endpoints             = "Endpoints"
++		kubeSystem            = "kube-system"
++		kubeControllerManager = "kube-controller-manager"
++		kubeScheduler         = "kube-scheduler"
++		coordinationGroup     = "coordination.k8s.io"
++		lease                 = "Lease"
++	)
++
++	var testcases []testCase
++	// kube-controller-mananger endpoint
++	testcases = append(testcases, generateDispatchTestCases(testInput{
++		expectedGroup:      core,
++		expectedKind:       endpoints,
++		expectedNamespace:  kubeSystem,
++		expectedObjectName: kubeControllerManager,
++	})...)
++	// kube-controller-mananger lease
++	testcases = append(testcases, generateDispatchTestCases(testInput{
++		expectedGroup:      coordinationGroup,
++		expectedKind:       lease,
++		expectedNamespace:  kubeSystem,
++		expectedObjectName: kubeControllerManager,
++	})...)
++	// kube-scheduler endpoint
++	testcases = append(testcases, generateDispatchTestCases(testInput{
++		expectedGroup:      core,
++		expectedKind:       endpoints,
++		expectedNamespace:  kubeSystem,
++		expectedObjectName: kubeScheduler,
++	})...)
++	// kube-scheduler lease
++	testcases = append(testcases, generateDispatchTestCases(testInput{
++		expectedGroup:      coordinationGroup,
++		expectedKind:       lease,
++		expectedNamespace:  kubeSystem,
++		expectedObjectName: kubeScheduler,
++	})...)
++
++	unReadyHandler := admission.NewHandler(admission.Create)
++	unReadyHandler.SetReadyFunc(func() bool { return false })
++	interfaces := &admission.RuntimeObjectInterfaces{}
++	a := &Webhook{Handler: unReadyHandler, namespaceMatcher: &namespace.Matcher{}, objectMatcher: &object.Matcher{}}
++
++	for _, testcase := range testcases {
++		t.Run(testcase.testName, func(t *testing.T) {
++			// TODO: juqing@ 10/18/20: unReadyHandler takes 10 seconds in `WaitForReady`. Should mock that out.
++			t.Parallel()
++
++			attrs := admission.NewAttributesRecord(nil, nil, testcase.gvk, testcase.namespace, testcase.objectName, schema.GroupVersionResource{}, "", admission.Create, &metav1.CreateOptions{}, false, nil)
++
++			err := a.Dispatch(context.Background(), attrs, interfaces)
++			if err != nil {
++				if len(testcase.expectErr) == 0 {
++					t.Fatalf("didn't expect to fail, but failed with %+v", err)
++				}
++				if !strings.Contains(err.Error(), testcase.expectErr) {
++					t.Fatalf("expected error containing %q, got %s", testcase.expectErr, err.Error())
++				}
++				return
++			} else if len(testcase.expectErr) > 0 {
++				t.Fatalf("expected error %q, got no error and %+v", testcase.expectErr, attrs)
++			}
++		})
++	}
++}
++
+ func TestShouldCallHook(t *testing.T) {
+ 	a := &Webhook{namespaceMatcher: &namespace.Matcher{}, objectMatcher: &object.Matcher{}}
+ 

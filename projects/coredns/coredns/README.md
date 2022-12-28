@@ -10,7 +10,7 @@
 ### Updating
 
 1. Work with EKS teams to decide on a new version. Review 
-   [releases](https://github.com/coredns/coredn/releases) on the
+   [releases](https://github.com/coredns/coredns/releases) on the
    `coredns/coredns` [repo](https://github.com/coredns/coredns) and the 
    [changelogs](https://coredns.io/blog/) on project's
    [website](https://coredns.io/). Please review changelogs carefully looking
@@ -32,7 +32,7 @@
    kept up to date. Be sure to select the correct branch for the release when 
    checking the Golang version. If the version has changes, update 
    `GOLANG_VERSION` in the release branch.
-5. Update CHECKSUMS and attribution by using
-   `make update-attribution-checksums-docker PROJECT=coredns/coredns RELEASE_BRANCH=<release_branch>`
+5. Update CHECKSUMS and attribution by running from project root:
+   `make run-attribution-checksums-in-docker RELEASE_BRANCH=<release_branch>`
    from the root of the EKS-Distro repo.
 6. Update the version at the top of this README.

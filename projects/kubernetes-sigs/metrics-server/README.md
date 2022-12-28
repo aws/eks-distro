@@ -2,10 +2,10 @@
 
 | Release | Version                                                      |
 |---------|--------------------------------------------------------------|
-| 1-20    | ![Version](https://img.shields.io/badge/version-v0.6.1-blue) |
-| 1-21    | ![Version](https://img.shields.io/badge/version-v0.6.1-blue) |
-| 1-22    | ![Version](https://img.shields.io/badge/version-v0.6.1-blue) |
-| 1-23    | ![Version](https://img.shields.io/badge/version-v0.6.1-blue) |
+| 1-20    | ![Version](https://img.shields.io/badge/version-v0.6.2-blue) |
+| 1-21    | ![Version](https://img.shields.io/badge/version-v0.6.2-blue) |
+| 1-22    | ![Version](https://img.shields.io/badge/version-v0.6.2-blue) |
+| 1-23    | ![Version](https://img.shields.io/badge/version-v0.6.2-blue) |
 
 
 ### Updating
@@ -28,7 +28,7 @@
    seems to be kept up to date. Be sure to select the correct branch for the 
    release when checking the Golang version. If the version has changes, update
    `GOLANG_VERSION` in the release branch.
-5. Update CHECKSUMS and attribution by using
-   `make update-attribution-checksums-docker PROJECT=kubernetes-sigs/metrics-server RELEASE_BRANCH=<release_branch>`
+5. Update CHECKSUMS and attribution by running from project root:
+   `make run-attribution-checksums-in-docker RELEASE_BRANCH=<release_branch>`
    from the root of the EKS-Distro repo.
 6. Update the version at the top of this README.

@@ -8,12 +8,10 @@ SHELL=bash
 RELEASE_BRANCH?=$(shell cat $(BASE_DIRECTORY)/release/DEFAULT_RELEASE_BRANCH)
 RELEASE_ENVIRONMENT?=development
 RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/$(RELEASE_ENVIRONMENT)/RELEASE)
-LAST_PROD_RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/production/RELEASE)
-LAST_DEV_RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/development/RELEASE)
 PROD_ECR_REG?=public.ecr.aws/eks-distro
 DEV_ECR_REG?=public.ecr.aws/h1r8a7l5
 
-MINIMAL_VARIANT_VERSIONS=1-21 1-22 1-23 1-24
+MINIMAL_VARIANT_VERSIONS=1-21 1-22 1-23 1-24 1-25
 RELEASE_VARIANT?=$(if $(filter $(RELEASE_BRANCH),$(MINIMAL_VARIANT_VERSIONS)),minimal,standard)
 IS_BUILDING_MINIMAL=$(filter minimal, $(RELEASE_VARIANT))
 
@@ -90,7 +88,7 @@ SKIPPED_K8S_VERSIONS?=
 BINARIES_ARE_RELEASE_BRANCHED?=true
 IS_RELEASE_BRANCH_BUILD=$(filter true,$(HAS_RELEASE_BRANCHES))
 IS_UNRELEASE_BRANCH_TARGET=$(and $(filter false,$(BINARIES_ARE_RELEASE_BRANCHED)),$(filter binaries attribution checksums,$(MAKECMDGOALS)))
-TARGETS_ALLOWED_WITH_NO_RELEASE_BRANCH?=build release clean help
+TARGETS_ALLOWED_WITH_NO_RELEASE_BRANCH?=build release clean clean-go-cache help
 MAKECMDGOALS_WITHOUT_VAR_VALUE=$(foreach t,$(MAKECMDGOALS),$(if $(findstring var-value-,$(t)),,$(t)))
 ifneq ($(and $(IS_RELEASE_BRANCH_BUILD),$(or $(RELEASE_BRANCH),$(IS_UNRELEASE_BRANCH_TARGET))),)
 	RELEASE_BRANCH_SUFFIX=$(if $(filter true,$(BINARIES_ARE_RELEASE_BRANCHED)),/$(RELEASE_BRANCH),)
@@ -156,26 +154,38 @@ IMAGE_USERADD_USER_ID?=1000
 IMAGE_USERADD_USER_NAME?=
 
 # Cache should be loaded from a number of potential sources
-# - latest prod release, if there the latest prod image cache matches what we are about to build, that should take precedent
-# - latest dev release
-# - last build to current tag
-# - previous dev build tag (release-number.pre)
+# Pulls cache from the oldest (first in the list) kube version for cases where component versions match.
+# It uses the oldest, because that's the one that should be built first during the release and so be available
+# for the other release branches as a layer cache when they build the project in question. 
+# - latest tag from repo, if there the latest prod image cache matches what we are about to build, that should take precedent
+# - latest tag from dev repo
 
-# $1 - registry
-# $2 - release number
-CACHE_IMPORT_IMAGE=$(1)/$(call IF_OVERRIDE_VARIABLE,$(IMAGE_COMPONENT_VARIABLE),$(IMAGE_COMPONENT)):$(GIT_TAG)-eks-$(RELEASE_BRANCH)-$(2)
-
-# pause images have multiple tags, for caching import grab just the first
 COMMA=,
-FIRST_IMAGE_TAG?=$(word 1,$(subst $(COMMA), ,$(IMAGE)))
 
-IMAGE_IMPORT_CACHE?=type=registry,ref=$(call CACHE_IMPORT_IMAGE,$(PROD_ECR_REG),$(LAST_PROD_RELEASE)) \
-	type=registry,ref=$(call CACHE_IMPORT_IMAGE,$(DEV_ECR_REG),$(LAST_DEV_RELEASE)) type=registry,ref=$(FIRST_IMAGE_TAG) type=registry,ref=$(FIRST_IMAGE_TAG).pre
+# $1 - release branch
+CACHE_IMPORT_IMAGES=$(foreach reg,$(PROD_ECR_REG) $(DEV_ECR_REG),type=registry$(COMMA)ref=$(reg)/$(call IF_OVERRIDE_VARIABLE,$(IMAGE_COMPONENT_VARIABLE),$(IMAGE_COMPONENT)):$(GIT_TAG)-eks-$(1)-latest)
+
+OLDEST_BRANCH_WITH_SAME_GIT_TAG=$(firstword $(foreach branch,$(SUPPORTED_K8S_VERSIONS),$(if $(filter $(GIT_TAG),$(shell cat ./$(branch)/GIT_TAG)),$(branch))))
+
+IMAGE_IMPORT_CACHE?=$(call CACHE_IMPORT_IMAGES,$(OLDEST_BRANCH_WITH_SAME_GIT_TAG))
 
 BUILD_OCI_TARS?=false
 
 LOCAL_IMAGE_TARGETS=$(foreach image,$(IMAGE_NAMES),$(image)/images/amd64) $(if $(filter true,$(HAS_HELM_CHART)),helm/build,) 
 IMAGE_TARGETS=$(foreach image,$(IMAGE_NAMES),$(if $(filter true,$(BUILD_OCI_TARS)),$(call IMAGE_TARGETS_FOR_NAME,$(image)),$(image)/images/push)) $(if $(filter true,$(HAS_HELM_CHART)),helm/push,) 
+
+############# WINDOWS #############################
+# similiar to https://github.com/kubernetes-csi/livenessprobe/blob/master/release-tools/prow.sh#L78
+WINDOWS_IMAGE_VERSIONS=1809 20H2 ltsc2022
+
+# if multiple platforms requested, remove windows since it will be
+# built by itself with a different dockerfile
+IMAGE_PLATFORMS_WITHOUT_WINDOWS=$(or $(subst windows/amd64,,$(IMAGE_PLATFORMS)),$(IMAGE_PLATFORMS))
+
+# <image>.<osversion</windows/images/push
+WINDOWS_IMAGE_BUILD_TARGETS_FOR_IMAGE=$(if $(findstring windows/amd64,$(IMAGE_PLATFORMS)) \
+	,$(foreach ver,$(WINDOWS_IMAGE_VERSIONS),$(IMAGE_NAME).$(ver)/windows/images/push),)
+####################################################
 
 # If running in the builder base on prow or codebuild, grab the current tag to be used when building with cgo
 CURRENT_BUILDER_BASE_TAG=$(or $(and $(wildcard /config/BUILDER_BASE_TAG_FILE),$(shell cat /config/BUILDER_BASE_TAG_FILE)),latest)
@@ -362,8 +372,9 @@ IS_ON_BUILDER_BASE?=$(shell if [ -f /buildkit.sh ]; then echo true; fi;)
 BUILDER_PLATFORM?=$(shell echo $$(go env GOHOSTOS)/$$(go env GOHOSTARCH))
 needs-cgo-builder=$(and $(if $(filter true,$(CGO_CREATE_BINARIES)),true,),$(if $(filter-out $(1),$(BUILDER_PLATFORM)),true,))
 USE_DOCKER_FOR_CGO_BUILD?=false
-DOCKER_USE_ID_FOR_LINUX=$(shell if [ "$$(uname -s)" = "Linux" ]; then echo "-u $$(id -u $${USER}):$$(id -g $${USER})"; fi)
+DOCKER_USE_ID_FOR_LINUX=$(shell if [ "$$(uname -s)" = "Linux" ] && [ -n "$${USER:-}" ]; then echo "-u $$(id -u $${USER}):$$(id -g $${USER})"; fi)
 GO_MOD_CACHE=$(shell source $(BUILD_LIB)/common.sh && build::common::use_go_version $(GOLANG_VERSION) > /dev/null 2>&1 && go env GOMODCACHE)
+GO_BUILD_CACHE=$(shell source $(BUILD_LIB)/common.sh && build::common::use_go_version $(GOLANG_VERSION) > /dev/null 2>&1 && go env GOCACHE)
 CGO_TARGET?=
 ######################
 
@@ -414,6 +425,7 @@ KUSTOMIZE_TARGET=$(OUTPUT_DIR)/kustomize
 GIT_DEPS_DIR?=$(OUTPUT_DIR)/gitdependencies
 SPECIAL_TARGET_SECONDARY=$(strip $(PROJECT_DEPENDENCIES_TARGETS) $(GO_MOD_DOWNLOAD_TARGETS))
 SKIP_CHECKSUM_VALIDATION?=false
+IN_DOCKER_TARGETS=all-attributions all-attributions-checksums all-checksums attribution attribution-checksums binaries checksums clean clean-go-cache
 ####################################################
 
 #################### TARGETS FOR OVERRIDING ########
@@ -422,32 +434,44 @@ RELEASE_TARGETS?=validate-checksums $(if $(IMAGE_NAMES),images,) $(if $(filter t
 ####################################################
 
 define BUILDCTL
-	if [[ "$(USE_DOCKER_FOR_CGO_BUILD)" = "true" ]]; then \
-		source $(BUILD_LIB)/common.sh && build::docker::retry_pull $(BUILDER_IMAGE); \
-		docker run --rm -w /eks-anywhere-build-tooling/projects/$(COMPONENT) $(DOCKER_USE_ID_FOR_LINUX) \
-			--mount type=bind,source=$(BASE_DIRECTORY),target=/eks-anywhere-build-tooling \
-			--mount type=bind,source=$(GO_MOD_CACHE),target=/mod-cache \
-			-e GOPROXY=$(GOPROXY) -e GOMODCACHE=/mod-cache \
-			--platform $(IMAGE_PLATFORMS) \
-			--init --entrypoint make $(BUILDER_IMAGE) $(CGO_TARGET) BINARY_PLATFORMS=$(IMAGE_PLATFORMS); \
-	else \
 		$(BUILD_LIB)/buildkit.sh \
 			build \
 			--frontend dockerfile.v0 \
-			--opt platform=$(IMAGE_PLATFORMS) \
+			--opt platform=$(IMAGE_PLATFORMS_WITHOUT_WINDOWS:,=) \
 			--opt build-arg:BASE_IMAGE=$(BASE_IMAGE) \
 			--opt build-arg:BUILDER_IMAGE=$(BUILDER_IMAGE) \
-			--opt build-arg:RELEASE_BRANCH=$(RELEASE_BRANCH) \
 			$(foreach BUILD_ARG,$(IMAGE_BUILD_ARGS),--opt build-arg:$(BUILD_ARG)=$($(BUILD_ARG))) \
 			--progress plain \
 			--local dockerfile=$(DOCKERFILE_FOLDER) \
 			--local context=$(IMAGE_CONTEXT_DIR) \
-			--opt target=$(IMAGE_TARGET) \
-			--output type=$(IMAGE_OUTPUT_TYPE),oci-mediatypes=true,\"name=$(IMAGE),$(LATEST_IMAGE)\",$(IMAGE_OUTPUT) \
 			$(if $(filter push=true,$(IMAGE_OUTPUT)),--export-cache type=inline,) \
-			$(foreach IMPORT_CACHE,$(IMAGE_IMPORT_CACHE),--import-cache $(IMPORT_CACHE)); \
-	fi
-endef 
+			$(foreach IMPORT_CACHE,$(IMAGE_IMPORT_CACHE),--import-cache $(IMPORT_CACHE)) \
+			$(if $(IMAGE_METADATA_FILE),--metadata-file $(IMAGE_METADATA_FILE),) \
+			--opt target=$(IMAGE_TARGET) \
+			--output type=$(IMAGE_OUTPUT_TYPE),oci-mediatypes=true,\"name=$(ALL_IMAGE_TAGS)\",$(IMAGE_OUTPUT)
+endef
+
+define CGO_DOCKER
+	source $(BUILD_LIB)/common.sh && build::docker::retry_pull --platform $(IMAGE_PLATFORMS) $(BUILDER_IMAGE); \
+	INTERACTIVE="$(shell if [ -t 0 ]; then echo '-it'; fi)"; \
+	docker run --rm $$INTERACTIVE -w /eks-distro/projects/$(COMPONENT) $(DOCKER_USE_ID_FOR_LINUX) \
+		--mount type=bind,source=$(BASE_DIRECTORY),target=/eks-distro \
+		--mount type=bind,source=$(GO_MOD_CACHE),target=/mod-cache \
+		-e GOPROXY=$(GOPROXY) -e GOMODCACHE=/mod-cache \
+		--platform $(IMAGE_PLATFORMS) \
+		--init $(BUILDER_IMAGE) make $(CGO_TARGET) BINARY_PLATFORMS=$(IMAGE_PLATFORMS)
+endef
+
+define SIMPLE_CREATE_BINARIES_SHELL
+	$(BASE_DIRECTORY)/build/lib/simple_create_binaries.sh $(MAKE_ROOT) $(MAKE_ROOT)/$(OUTPUT_PATH) $(REPO) $(GOLANG_VERSION) $(PLATFORM) "$(SOURCE_PATTERN)" \
+		"$(GOBUILD_COMMAND)" "$(EXTRA_GOBUILD_FLAGS)" "$(GO_LDFLAGS)" $(CGO_ENABLED) "$(CGO_LDFLAGS)" "$(GO_MOD_PATH)" "$(BINARY_TARGET_FILES_BUILD_TOGETHER)"
+endef
+
+# $1 - make target
+# $2 - target directory
+define CGO_CREATE_BINARIES_SHELL
+	$(MAKE) binary-builder/cgo/$(PLATFORM:linux/%=%) IMAGE_OUTPUT=dest=$(OUTPUT_BIN_DIR)/$(2) CGO_TARGET=$(1) IMAGE_BUILD_ARGS="GOPROXY COMPONENT CGO_TARGET"
+endef
 
 define WRITE_LOCAL_IMAGE_TAG
 	echo $(IMAGE_TAG) > $(IMAGE_OUTPUT_DIR)/$(IMAGE_OUTPUT_NAME).docker_tag
@@ -517,12 +541,7 @@ $(OUTPUT_BIN_DIR)/%: SOURCE_PATTERN=$(if $(filter $(BINARY_TARGET),$(BINARY_TARG
 $(OUTPUT_BIN_DIR)/%: OUTPUT_PATH=$(if $(and $(if $(filter false,$(call IS_ONE_WORD,$(BINARY_TARGET_FILES_BUILD_TOGETHER))),$(filter $(BINARY_TARGET),$(BINARY_TARGET_FILES_BUILD_TOGETHER)))),$(@D)/,$@)
 $(OUTPUT_BIN_DIR)/%: GO_MOD_PATH=$($(call GO_MOD_TARGET_FOR_BINARY_VAR_NAME,$(BINARY_TARGET)))
 $(OUTPUT_BIN_DIR)/%: $$(call GO_MOD_DOWNLOAD_TARGET_FROM_GO_MOD_PATH,$$(GO_MOD_PATH))
-	if [ "$(call needs-cgo-builder,$(PLATFORM))" == "true" ]; then \
-		$(MAKE) binary-builder/cgo/$(PLATFORM:linux/%=%) IMAGE_OUTPUT=dest=$(OUTPUT_BIN_DIR)/$(*D) CGO_TARGET=$@ IMAGE_BUILD_ARGS="GOPROXY COMPONENT CGO_TARGET"; \
-	else \
-		$(BASE_DIRECTORY)/build/lib/simple_create_binaries.sh $(MAKE_ROOT) $(MAKE_ROOT)/$(OUTPUT_PATH) $(REPO) $(GOLANG_VERSION) $(PLATFORM) "$(SOURCE_PATTERN)" \
-			"$(GOBUILD_COMMAND)" "$(EXTRA_GOBUILD_FLAGS)" "$(GO_LDFLAGS)" $(CGO_ENABLED) "$(CGO_LDFLAGS)" "$(GO_MOD_PATH)" "$(BINARY_TARGET_FILES_BUILD_TOGETHER)"; \
-	fi
+	$(if $(filter true,$(call needs-cgo-builder,$(PLATFORM))),$(call CGO_CREATE_BINARIES_SHELL,$@,$(*D)),$(call SIMPLE_CREATE_BINARIES_SHELL))
 endif
 
 .PHONY: binaries
@@ -580,6 +599,11 @@ attribution: $(and $(filter true,$(HAS_LICENSES)),$(ATTRIBUTION_TARGETS))
 attribution-pr: attribution
 	$(BASE_DIRECTORY)/build/update-attribution-files/create_pr.sh
 
+.PHONY: all-attributions
+all-attributions:
+	$(BASE_DIRECTORY)/build/update-attribution-files/make_attribution.sh projects/$(COMPONENT) attribution
+
+
 #### Tarball Targets
 
 .PHONY: tarballs
@@ -618,6 +642,18 @@ ifneq ($(and $(strip $(BINARY_TARGETS)), $(filter false, $(SKIP_CHECKSUM_VALIDAT
 	$(BASE_DIRECTORY)/build/lib/validate_checksums.sh $(MAKE_ROOT) $(PROJECT_ROOT) $(MAKE_ROOT)/$(OUTPUT_BIN_DIR) $(FAKE_ARM_BINARIES_FOR_VALIDATION)
 endif
 
+.PHONY: attribution-checksums
+attribution-checksums: attribution checksums
+
+.PHONY: all-checksums
+all-checksums:
+	$(BASE_DIRECTORY)/build/update-attribution-files/make_attribution.sh projects/$(COMPONENT) checksums
+
+.PHONY: all-attributions-checksums
+all-attributions-checksums:
+	$(BASE_DIRECTORY)/build/update-attribution-files/make_attribution.sh projects/$(COMPONENT) "attribution checksums"
+
+
 #### Image Helpers
 
 ifneq ($(IMAGE_NAMES),)
@@ -629,14 +665,19 @@ endif
 .PHONY: %/images/push %/images/amd64 %/images/arm64
 %/images/push %/images/amd64 %/images/arm64: IMAGE_NAME=$*
 %/images/push %/images/amd64 %/images/arm64: DOCKERFILE_FOLDER?=./docker/linux
-%/images/push %/images/amd64 %/images/arm64: IMAGE_CONTEXT_DIR?=.
+%/images/push %/images/amd64 %/images/arm64: IMAGE_CONTEXT_DIR?=$(OUTPUT_DIR)
 %/images/push %/images/amd64 %/images/arm64: IMAGE_BUILD_ARGS?=
+%/images/push %/images/amd64 %/images/arm64: ALL_IMAGE_TAGS?=$(IMAGE),$(LATEST_IMAGE)
+%/images/push %/images/amd64 %/images/arm64: IMAGE_METADATA_FILE?=
 
 # Build image using buildkit for all platforms, by default pushes to registry defined in IMAGE_REPO.
 %/images/push: IMAGE_PLATFORMS?=linux/amd64,linux/arm64
 %/images/push: IMAGE_OUTPUT_TYPE?=image
 %/images/push: IMAGE_OUTPUT?=push=true
-
+# if building windows containers produce metadata file and push by digest
+%/images/push: IMAGE_METADATA_FILE=$(if $(findstring windows/amd64,$(IMAGE_PLATFORMS)),/tmp/$(IMAGE_NAME)-metadata.json,)
+%/images/push: IMAGE_OUTPUT=push=true$(if $(findstring windows/amd64,$(IMAGE_PLATFORMS)),$(COMMA)push-by-digest=true,)
+%/images/push: ALL_IMAGE_TAGS=$(if $(findstring windows/amd64,$(IMAGE_PLATFORMS)),$(IMAGE_REPO)/$(IMAGE_REPO_COMPONENT),$(IMAGE)$(COMMA)$(LATEST_IMAGE))
 # Build image using buildkit only builds linux/amd64 oci and saves to local tar.
 %/images/amd64: IMAGE_PLATFORMS?=linux/amd64
 
@@ -646,8 +687,11 @@ endif
 %/images/amd64 %/images/arm64: IMAGE_OUTPUT_TYPE?=oci
 %/images/amd64 %/images/arm64: IMAGE_OUTPUT?=dest=$(IMAGE_OUTPUT_DIR)/$(IMAGE_OUTPUT_NAME).tar
 
-%/images/push: $(BINARY_TARGETS) $(LICENSES_TARGETS_FOR_PREREQ) $(HANDLE_DEPENDENCIES_TARGET)
+%/images/push: $(BINARY_TARGETS) $(LICENSES_TARGETS_FOR_PREREQ) $(HANDLE_DEPENDENCIES_TARGET) $$(WINDOWS_IMAGE_BUILD_TARGETS_FOR_IMAGE)
 	$(BUILDCTL)
+	@if [ -n "$(WINDOWS_IMAGE_BUILD_TARGETS_FOR_IMAGE)" ]; then \
+		$(BUILD_LIB)/create_windows_manifest_list.sh $(IMAGE_NAME) $(IMAGE) $(LATEST_IMAGE) "$(WINDOWS_IMAGE_VERSIONS)"; \
+	fi
 
 %/images/amd64: $(BINARY_TARGETS) $(LICENSES_TARGETS_FOR_PREREQ) $(HANDLE_DEPENDENCIES_TARGET)
 	@mkdir -p $(IMAGE_OUTPUT_DIR)
@@ -659,9 +703,20 @@ endif
 	$(BUILDCTL)
 	$(WRITE_LOCAL_IMAGE_TAG)
 
+%/windows/images/push: IMAGE_NAME=$(word 1,$(subst ., ,$*))
+%/windows/images/push: WINDOWS_OS_VERSION=$(word 2,$(subst ., ,$*))
+%/windows/images/push: DOCKERFILE_FOLDER=./docker/windows
+%/windows/images/push: BASE_IMAGE_NAME=eks-distro-windows-base-$(WINDOWS_OS_VERSION)
+%/windows/images/push: BASE_IMAGE=$(BASE_IMAGE_REPO)/eks-distro-windows-base:$(BASE_IMAGE_TAG)
+%/windows/images/push: IMAGE_PLATFORMS=windows/amd64
+%/windows/images/push: IMAGE_METADATA_FILE=/tmp/$(IMAGE_NAME)-$(WINDOWS_OS_VERSION)-metadata.json
+%/windows/images/push: $(BINARY_TARGETS) $(LICENSES_TARGETS_FOR_PREREQ) $(HANDLE_DEPENDENCIES_TARGET)
+	$(BUILDCTL)
+
 ## CGO Targets
 .PHONY: %/cgo/amd64 %/cgo/arm64 prepare-cgo-folder
 
+# .git folder needed so git properly finds the root of the repo
 prepare-cgo-folder:
 	@mkdir -p $(CGO_SOURCE)/eks-distro/
 	rsync -rm  --exclude='.git/***' \
@@ -669,7 +724,6 @@ prepare-cgo-folder:
 		--include='projects/$(COMPONENT)/***' --include='*/' --exclude='projects/***'  \
 		$(BASE_DIRECTORY)/ $(CGO_SOURCE)/eks-distro/
 	@mkdir -p $(OUTPUT_BIN_DIR)/$(subst /,-,$(IMAGE_PLATFORMS))
-	# Need so git properly finds the root of the repo
 	@mkdir -p $(CGO_SOURCE)/eks-distro/.git/{refs,objects}
 	@cp $(BASE_DIRECTORY)/.git/HEAD $(CGO_SOURCE)/eks-distro/.git
 
@@ -678,16 +732,16 @@ prepare-cgo-folder:
 %/cgo/amd64 %/cgo/arm64: IMAGE_NAME=binary-builder
 %/cgo/amd64 %/cgo/arm64: IMAGE_BUILD_ARGS?=GOPROXY COMPONENT
 %/cgo/amd64 %/cgo/arm64: IMAGE_CONTEXT_DIR?=$(CGO_SOURCE)
-%/cgo/amd64 %/cgo/arm64: BUILDER_IMAGE=$(CURRENT_BUILDER_BASE_IMAGE)
+%/cgo/amd64 %/cgo/arm64: BUILDER_IMAGE=$(GOLANG_GCC_BUILDER_IMAGE)
 
 %/cgo/amd64: IMAGE_PLATFORMS=linux/amd64
 %/cgo/arm64: IMAGE_PLATFORMS=linux/arm64
 
 %/cgo/amd64: prepare-cgo-folder
-	$(BUILDCTL)
+	$(if $(filter true, $(USE_DOCKER_FOR_CGO_BUILD)),$(CGO_DOCKER),$(BUILDCTL))
 
 %/cgo/arm64: prepare-cgo-folder
-	$(BUILDCTL)
+	$(if $(filter true, $(USE_DOCKER_FOR_CGO_BUILD)),$(CGO_DOCKER),$(BUILDCTL))
 
 # As an attempt to see if using docker is more stable for cgo builds in Codebuild
 binary-builder/cgo/%: USE_DOCKER_FOR_CGO_BUILD=$(shell command -v docker &> /dev/null && docker info > /dev/null 2>&1 && echo "true")
@@ -750,13 +804,32 @@ release: $(RELEASE_TARGETS)
 
 ###  Clean Targets
 
+.PHONY: clean-go-cache
+clean-go-cache:
+# When go downloads pkg to the module cache, GOPATH/pkg/mod, it removes the write permissions
+# prevent accident modifications since files/checksums are tightly controlled
+# adding the perms neccessary to perform the delete
+	@chmod -fR 777 $(GO_MOD_CACHE) &> /dev/null || :
+	$(foreach folder,$(GO_MOD_CACHE) $(GO_BUILD_CACHE),$(if $(wildcard $(folder)),du -hs $(folder) && rm -rf $(folder);,))
+# When building go bins using mods which have been downloaded by go mod download/vendor which will exist in the go_mod_cache
+# there is additional checksum (?) information that is not preserved in the vendor directory within the project folder
+# This additional information gets written out into the resulting binary. If we did not run go mod vendor, which we do 
+# for all project builds, we could get checksum mismatches on the final binaries due to sometimes having the mod previously
+# downloaded in the go_mod_cahe.  Running go mod vendor always ensures that the go mod has always been downloaded
+# to the go_mod_cache directory. If we clear the go_mod_cache we need to delete the go_mod_download sentinel file
+# so the next time we run build go mods will be redownloaded
+	$(foreach file,$(GO_MOD_DOWNLOAD_TARGETS),$(if $(wildcard $(file)),rm -f $(file);,))
+
 .PHONY: clean-repo
 clean-repo:
 	@rm -rf $(REPO)	$(HELM_SOURCE_REPOSITORY)
 
+.PHONY: clean-output
+clean-output:
+	$(if $(wildcard _output),du -hs _output && rm -rf _output,)
+
 .PHONY: clean
-clean: $(if $(filter true,$(REPO_NO_CLONE)),,clean-repo)
-	@rm -rf _output	
+clean: $(if $(filter true,$(REPO_NO_CLONE)),,clean-repo) clean-output
 
 ## --------------------------------------
 ## Help
@@ -776,7 +849,7 @@ add-generated-help-block:
 	$(BUILD_LIB)/generate_help_body.sh $(MAKE_ROOT) "$(BINARY_TARGET_FILES)" "$(BINARY_PLATFORMS)" "${BINARY_TARGETS}" \
 		$(REPO) $(if $(PATCHES_DIR),true,false) "$(LOCAL_IMAGE_TARGETS)" "$(IMAGE_TARGETS)" "$(BUILD_TARGETS)" "$(RELEASE_TARGETS)" \
 		"$(HAS_S3_ARTIFACTS)" "$(HAS_LICENSES)" "$(REPO_NO_CLONE)" "$(PROJECT_DEPENDENCIES_TARGETS)" \
-		"$(HAS_HELM_CHART)"
+		"$(HAS_HELM_CHART)" "$(IN_DOCKER_TARGETS)"
 
 ## --------------------------------------
 ## Update Helpers
@@ -786,10 +859,6 @@ add-generated-help-block:
 .PHONY: run-target-in-docker
 run-target-in-docker: # Run `MAKE_TARGET` using builder base docker container
 	$(BUILD_LIB)/run_target_docker.sh $(COMPONENT) $(MAKE_TARGET) $(IMAGE_REPO) "$(RELEASE_BRANCH)" $(ARTIFACTS_BUCKET)
-
-.PHONY: update-attribution-checksums-docker
-update-attribution-checksums-docker: # Update attribution and checksums using the builder base docker container
-	$(BUILD_LIB)/update_checksum_docker.sh $(COMPONENT) $(IMAGE_REPO) $(RELEASE_BRANCH)
 
 .PHONY: stop-docker-builder
 stop-docker-builder: # Clean up builder base docker container
@@ -807,6 +876,10 @@ update-go-mods: checkout-repo
 		mkdir -p $(DEST_PATH); \
 		cp $(REPO)/$$gomod/go.{mod,sum} $(DEST_PATH); \
 	done
+
+.PHONY: all-update-go-mods
+all-update-go-mods:
+	$(BASE_DIRECTORY)/build/update-attribution-files/make_attribution.sh projects/$(COMPONENT) update-go-mods
 
 .PHONY: update-vendor-for-dep-patch
 update-vendor-for-dep-patch: # After bumping dep in go.mod file, uses generic vendor update script or one provided from upstream project
@@ -841,3 +914,14 @@ create-ecr-repos: $(foreach image,$(IMAGE_NAMES),$(image)/create-ecr-repo) $(if 
 var-value-%:
 	@echo $($*)
 
+## --------------------------------------
+## Docker Helpers
+## --------------------------------------
+# $1 - target
+define RUN_IN_DOCKER_TARGET
+.PHONY: run-$(1)-in-docker
+run-$(1)-in-docker: MAKE_TARGET=$(1)
+run-$(1)-in-docker: run-target-in-docker
+endef
+
+$(foreach target,$(IN_DOCKER_TARGETS),$(eval $(call RUN_IN_DOCKER_TARGET,$(target))))

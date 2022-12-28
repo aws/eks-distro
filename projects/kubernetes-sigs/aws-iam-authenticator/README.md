@@ -1,10 +1,11 @@
 ## AWS IAM Authenticator
 
-| Release | Version                                                      |
-|---------|--------------------------------------------------------------|
-| 1-21    | ![Version](https://img.shields.io/badge/version-v0.5.10-blue) |
-| 1-22    | ![Version](https://img.shields.io/badge/version-v0.5.10-blue) |
-| 1-23    | ![Version](https://img.shields.io/badge/version-v0.5.10-blue) |
+| Release | Version                                                       |
+|---------|---------------------------------------------------------------|
+| 1-21    | ![Version](https://img.shields.io/badge/version-v0.5.12-blue) |
+| 1-22    | ![Version](https://img.shields.io/badge/version-v0.5.12-blue) |
+| 1-23    | ![Version](https://img.shields.io/badge/version-v0.5.12-blue) |
+| 1-24    | ![Version](https://img.shields.io/badge/version-v0.5.12-blue) |
 
 
 ### Updating
@@ -26,7 +27,7 @@
    [`go.mod`](https://github.com/kubernetes-sigs/aws-iam-authenticator/blob/master/go.mod)
    seems to be kept up to date. Be sure to select the correct branch for the 
    release when checking the Golang version.
-5. Update CHECKSUMS and attribution by using
-   `make update-attribution-checksums-docker PROJECT=kubernetes-sigs/aws-iam-authenticator RELEASE_BRANCH=<release_branch>` 
+5. Update CHECKSUMS and attribution by running from project root:
+   `make run-attribution-checksums-in-docker RELEASE_BRANCH=<release_branch>` 
    from the root of the EKS-Distro repo.
 6. Update the version at the top of this README.
