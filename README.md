@@ -3,8 +3,8 @@
 ### 🚨🚨🚨 IMPORTANT INFORMATION ABOUT 1.20 SUPPORT 🚨🚨🚨
 
 EKS-D has discontinued support of Kubernetes v1.20. While there are no
-plans to removed EKS-D v1.20 images from the ECR, there will be no more 
-updates to v1.20. **Due to the increased security risk this poses, it is 
+plans to removed EKS-D v1.20 images from the ECR, there will be no more
+updates to v1.20. **Due to the increased security risk this poses, it is
 HIGHLY recommended that users of v1.20 update to a supported version (v1.21+)
 as soon as possible.**
 
@@ -37,6 +37,11 @@ Full documentation for releases can be found on [https://distro.eks.amazonaws.co
 
 To receive notifications about new EKS-D releases, subscribe to the EKS-D updates SNS topic:
 `arn:aws:sns:us-east-1:379412251201:eks-distro-updates`
+
+[<img src="docs/contents/certified-kubernetes-1.24-color.svg" height=150>](https://github.com/cncf/k8s-conformance/pull/2252)
+<!--
+Source: https://github.com/cncf/artwork/tree/master/projects/kubernetes/certified-kubernetes
+-->
 
 ### Kubernetes 1-24
 
