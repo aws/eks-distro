@@ -3,8 +3,8 @@
 ### 🚨🚨🚨 IMPORTANT INFORMATION ABOUT 1.20 SUPPORT 🚨🚨🚨
 
 EKS-D has discontinued support of Kubernetes v1.20. While there are no
-plans to removed EKS-D v1.20 images from the ECR, there will be no more 
-updates to v1.20. **Due to the increased security risk this poses, it is 
+plans to removed EKS-D v1.20 images from the ECR, there will be no more
+updates to v1.20. **Due to the increased security risk this poses, it is
 HIGHLY recommended that users of v1.20 update to a supported version (v1.21+)
 as soon as possible.**
 
@@ -38,29 +38,34 @@ Full documentation for releases can be found on [https://distro.eks.amazonaws.co
 To receive notifications about new EKS-D releases, subscribe to the EKS-D updates SNS topic:
 `arn:aws:sns:us-east-1:379412251201:eks-distro-updates`
 
+[<img src="docs/contents/certified-kubernetes-1.24-color.svg" height=150>](https://github.com/cncf/k8s-conformance/pull/2252)
+<!--
+Source: https://github.com/cncf/artwork/tree/master/projects/kubernetes/certified-kubernetes
+-->
+
 ### Kubernetes 1-24
 
 | Release | Manifest | Kubernetes Version |
 | --- | --- | --- |
-| 4 | [v1-24-eks-4](https://distro.eks.amazonaws.com/kubernetes-1-24/kubernetes-1-24-eks-4.yaml) | [v1.24.7](https://github.com/kubernetes/kubernetes/release/tag/v1.24.7) |
+| 5 | [v1-24-eks-5](https://distro.eks.amazonaws.com/kubernetes-1-24/kubernetes-1-24-eks-5.yaml) | [v1.24.8](https://github.com/kubernetes/kubernetes/release/tag/v1.24.8) |
 
 ### Kubernetes 1-23
 
 | Release | Manifest | Kubernetes Version |
 | --- | --- | --- |
-| 9 | [v1-23-eks-9](https://distro.eks.amazonaws.com/kubernetes-1-23/kubernetes-1-23-eks-9.yaml) | [v1.23.13](https://github.com/kubernetes/kubernetes/release/tag/v1.23.13) |
+| 10 | [v1-23-eks-10](https://distro.eks.amazonaws.com/kubernetes-1-23/kubernetes-1-23-eks-10.yaml) | [v1.23.14](https://github.com/kubernetes/kubernetes/release/tag/v1.23.14) |
 
 ### Kubernetes 1-22
 
 | Release | Manifest | Kubernetes Version |
 | --- | --- | --- |
-| 14 | [v1-22-eks-14](https://distro.eks.amazonaws.com/kubernetes-1-22/kubernetes-1-22-eks-14.yaml) | [v1.22.16](https://github.com/kubernetes/kubernetes/release/tag/v1.22.16) |
+| 15 | [v1-22-eks-15](https://distro.eks.amazonaws.com/kubernetes-1-22/kubernetes-1-22-eks-15.yaml) | [v1.22.16](https://github.com/kubernetes/kubernetes/release/tag/v1.22.16) |
 
 ### Kubernetes 1-21
 
 | Release | Manifest | Kubernetes Version |
 | --- | --- | --- |
-| 21 | [v1-21-eks-21](https://distro.eks.amazonaws.com/kubernetes-1-21/kubernetes-1-21-eks-21.yaml) | [v1.21.14](https://github.com/kubernetes/kubernetes/release/tag/v1.21.14) |
+| 22 | [v1-21-eks-22](https://distro.eks.amazonaws.com/kubernetes-1-21/kubernetes-1-21-eks-22.yaml) | [v1.21.14](https://github.com/kubernetes/kubernetes/release/tag/v1.21.14) |
 
 
 ### Kubernetes 1.18, 1.19, and 1.20: DEPRECATED

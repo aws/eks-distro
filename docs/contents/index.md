@@ -107,7 +107,7 @@ commands:
 
 ```bash
 RELEASE_BRANCH=1-24
-RELEASE=4
+RELEASE=5
 kubectl apply -f https://distro.eks.amazonaws.com/crds/releases.distro.eks.amazonaws.com-v1alpha1.yaml
 kubectl apply -f https://distro.eks.amazonaws.com/kubernetes-${RELEASE_BRANCH}/kubernetes-${RELEASE_BRANCH}-eks-${RELEASE}.yaml
 kubectl get release kubernetes-${RELEASE_BRANCH}-eks-${RELEASE}
@@ -122,12 +122,14 @@ repository for the [EKS Optimized AMI](https://github.com/awslabs/amazon-eks-ami
 if you are interested in the AL2 container runtime kernel version.
 
 #### EKS-D 1.24 Version Dependencies
+* [v1-24-eks-5](releases/1-24/5/index.md) (December 16, 2022)
 * [v1-24-eks-4](releases/1-24/4/index.md) (December 01, 2022)
 * [v1-24-eks-3](releases/1-24/3/index.md) (November 11, 2022)
 * [v1-24-eks-2](releases/1-24/2/index.md) (October 26, 2022)
 * [v1-24-eks-1](releases/1-24/1/index.md) (October 10, 2022)
 
 #### EKS-D 1.23 Version Dependencies
+* [v1-23-eks-10](releases/1-23/10/index.md) (December 16, 2022)
 * [v1-23-eks-9](releases/1-23/9/index.md) (December 01, 2022)
 * [v1-23-eks-8](releases/1-23/8/index.md) (November 11, 2022)
 * [v1-23-eks-7](releases/1-23/7/index.md) (October 26, 2022)
@@ -139,6 +141,7 @@ if you are interested in the AL2 container runtime kernel version.
 * [v1-23-eks-1](releases/1-23/1/index.md) (June 2, 2022)
 
 #### EKS-D 1.22 Version Dependencies
+* [v1-22-eks-15](releases/1-22/15/index.md) (December 16, 2022)
 * [v1-22-eks-14](releases/1-22/14/index.md) (December 01, 2022)
 * [v1-22-eks-13](releases/1-22/13/index.md) (November 11, 2022)
 * [v1-22-eks-12](releases/1-22/12/index.md) (October 26, 2022)
@@ -155,6 +158,7 @@ if you are interested in the AL2 container runtime kernel version.
 * [v1-22-eks-1](releases/1-22/1/index.md) (March 6, 2022)
 
 #### EKS-D 1.21 Version Dependencies
+* [v1-21-eks-22](releases/1-21/22/index.md) (December 16, 2022)
 * [v1-21-eks-21](releases/1-21/21/index.md) (November 11, 2022)
 * [v1-21-eks-20](releases/1-21/20/index.md) (October 26, 2022)
 * [v1-21-eks-19](releases/1-21/19/index.md) (October 10, 2022)

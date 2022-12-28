@@ -12,16 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ARG BUILDER_IMAGE
 ARG BASE_IMAGE
-FROM $BUILDER_IMAGE as servercore
 FROM $BASE_IMAGE
-
-COPY --from=servercore /Windows/System32/netapi32.dll /Windows/System32/netapi32.dll
 
 ARG TARGETARCH
 ARG TARGETOS
-
 
 COPY LICENSES /LICENSES
 COPY ATTRIBUTION.txt /ATTRIBUTION.txt

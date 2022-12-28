@@ -2,9 +2,10 @@
 
 | Release | Version                                                       |
 |---------|---------------------------------------------------------------|
-| 1-21    | ![Version](https://img.shields.io/badge/version-v3.4.21-blue) |
-| 1-22    | ![Version](https://img.shields.io/badge/version-v3.5.4-blue)  |
-| 1-23    | ![Version](https://img.shields.io/badge/version-v3.5.4-blue)  |
+| 1-21    | ![Version](https://img.shields.io/badge/version-v3.4.20-blue) |
+| 1-22    | ![Version](https://img.shields.io/badge/version-v3.5.6-blue)  |
+| 1-23    | ![Version](https://img.shields.io/badge/version-v3.5.6-blue)  |
+| 1-24    | ![Version](https://img.shields.io/badge/version-v3.5.6-blue)  |
 
 ### Updating
 
@@ -17,5 +18,5 @@ ex: [3.4.14 compared to 3.4.15](https://github.com/etcd-io/etcd/compare/v3.4.14.
 The EKS-D build does not call the build script from upstream directly so pay close attention [build.sh](https://github.com/etcd-io/etcd/blob/main/scripts/build.sh) for changes
 to ldflags.
 1. Verify the golang version has not changed. The version specified in `go.mod` seems to be kept up to date, but verify against the [Makefile](https://github.com/etcd-io/etcd/blob/main/Makefile#L42)
-1. Update checksums and attribution using `make update-attribution-checksums-docker PROJECT=etcd-io/etcd RELEASE_BRANCH=<release_branch>` from the root of the repo.
+1. Update checksums and attribution using `make run-attribution-checksums-in-docker RELEASE_BRANCH=<release_branch>` from the project root.
 1. Update the version at the top of this Readme.

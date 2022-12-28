@@ -24,8 +24,6 @@ IMAGE_NAME="$1"
 IMAGE="$2"
 LATEST_IMAGE="$3"
 WINDOWS_IMAGE_VERSIONS="$4"
-WINDOWS_IMAGE_REGISTRY="$5"
-WINDOWS_BASE_IMAGE_NAME="$6"
 
 # this metadate file contains the linux/amd+arm images
 if [ ! -f /tmp/$IMAGE_NAME-metadata.json ]; then
@@ -43,9 +41,12 @@ for version in "${VERSIONS[@]}"; do
         echo "No metadata file for image: /tmp/$IMAGE_NAME-$version-metadata.json!"
         exit 1
     fi
+
+    BASE_IMAGE=$(jq -r '."containerimage.buildinfo".attrs."build-arg:BASE_IMAGE"' /tmp/$IMAGE_NAME-$version-metadata.json)
+
     # need to remove mediaType from descri since buildx segfaults when it is set
     jq -r '."containerimage.descriptor"  | {size, digest}' /tmp/$IMAGE_NAME-$version-metadata.json > /tmp/$IMAGE_NAME-$version-descr.json
-    retry docker buildx imagetools inspect --raw $WINDOWS_IMAGE_REGISTRY/$WINDOWS_BASE_IMAGE_NAME:$version | jq '.manifests[0] | {platform}' | jq add -s - /tmp/$IMAGE_NAME-$version-descr.json > /tmp/$IMAGE_NAME-$version-descr-final.json
+    retry docker buildx imagetools inspect --raw $BASE_IMAGE | jq '.manifests[0] | {platform}' | jq add -s - /tmp/$IMAGE_NAME-$version-descr.json > /tmp/$IMAGE_NAME-$version-descr-final.json
     CREATE_ARGS+="-f /tmp/$IMAGE_NAME-$version-descr-final.json "
 done
 

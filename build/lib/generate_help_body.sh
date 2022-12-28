@@ -32,6 +32,7 @@ HAS_LICENSES="${12}"
 REPO_NO_CLONE="${13}"
 FETCH_BINARIES_TARGETS="${14}"
 HAS_HELM_CHART="${15}"
+IN_DOCKER_TARGETS="${16}"
 
 NL=$'\n'
 HEADER="########### DO NOT EDIT #############################"
@@ -70,6 +71,7 @@ if [ ! -z "$(echo "$BINARY_TARGETS" | xargs)" ]; then
     CHECKSUMS_TARGETS_HELP+="${NL}${NL}##@ Checksum Targets"
     CHECKSUMS_TARGETS_HELP+="${NL}checksums: ## Update checksums file based on currently built binaries."
     CHECKSUMS_TARGETS_HELP+="${NL}validate-checksums: # Validate checksums of currently built binaries against checksums file."
+    CHECKSUMS_TARGETS_HELP+="${NL}all-checksums: ## Update checksums files for all RELEASE_BRANCHes."
 fi
 
 GIT_TARGETS_HELP=""
@@ -121,6 +123,9 @@ if [[ "$HAS_LICENSES" == "true" ]]; then
     LICENSES_TARGETS+="${NL}gather-licenses: ## Helper to call \$(GATHER_LICENSES_TARGETS) which gathers all licenses"
     LICENSES_TARGETS+="${NL}attribution: ## Generates attribution from licenses gathered during \`gather-licenses\`."
     LICENSES_TARGETS+="${NL}attribution-pr: ## Generates PR to update attribution files for projects"
+    LICENSES_TARGETS+="${NL}attribution-checksums: ## Update attribution and checksums files."
+    LICENSES_TARGETS+="${NL}all-attributions: ## Update attribution files for all RELEASE_BRANCHes."
+    LICENSES_TARGETS+="${NL}all-attributions-checksums: ## Update attribution and checksums files for all RELEASE_BRANCHes."
 fi
 
 CLEAN_TARGETS="${NL}${NL}##@ Clean Targets"
@@ -145,11 +150,17 @@ if [[ "$HAS_HELM_CHART" == "true" ]]; then
     HELM_TARGETS+="${NL}helm/push: ## Build helm chart and push to registry defined in IMAGE_REPO."
 fi
 
+TARGETS=(${IN_DOCKER_TARGETS// / })
+DOCKER_TARGETS="${NL}${NL}##@ Run in Docker Targets"
+for target in "${TARGETS[@]}"; do
+    DOCKER_TARGETS+="${NL}run-${target}-in-docker: ## Run \`${target}\` in docker builder container"
+done
+
 cat >> $HELPFILE << EOF
 ${NL}${NL}${NL}${HEADER}
 # To update call: make add-generated-help-block
 # This is added to help document dynamic targets and support shell autocompletion
-${GIT_TARGETS_HELP}${PATCHES_TARGET}${BINARY_TARGETS_HELP}${IMAGE_TARGETS_HELP}${HELM_TARGETS}${FETCH_BINARY_TARGETS_HELP}${CHECKSUMS_TARGETS_HELP}${ARTIFACTS_TARGETS}${LICENSES_TARGETS}${CLEAN_TARGETS}
+${GIT_TARGETS_HELP}${PATCHES_TARGET}${BINARY_TARGETS_HELP}${IMAGE_TARGETS_HELP}${HELM_TARGETS}${FETCH_BINARY_TARGETS_HELP}${CHECKSUMS_TARGETS_HELP}${DOCKER_TARGETS}${ARTIFACTS_TARGETS}${LICENSES_TARGETS}${CLEAN_TARGETS}
 ${EXTRA_HELP}
 
 ##@ Build Targets

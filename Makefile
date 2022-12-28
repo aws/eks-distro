@@ -134,10 +134,6 @@ makes-binaries-%:
 run-target-in-docker:
 	build/lib/run_target_docker.sh $(PROJECT) $(MAKE_TARGET) $(IMAGE_REPO) $(RELEASE_BRANCH)
 
-.PHONY: update-attribution-checksums-docker
-update-attribution-checksums-docker:
-	build/lib/update_checksum_docker.sh $(PROJECT) $(IMAGE_REPO) $(RELEASE_BRANCH)
-
 .PHONY: stop-docker-builder
 stop-docker-builder:
 	docker rm -f -v eks-d-builder
@@ -168,26 +164,26 @@ attribution-files: $(addprefix attribution-files-project-, $(ALL_PROJECTS))
 .PHONY: attribution-files-project-%
 attribution-files-project-%:
 	$(eval PROJECT_PATH=projects/$(subst _,/,$*))
-	build/update-attribution-files/make_attribution.sh $(PROJECT_PATH) "attribution clean-output clean-go-cache"
+	$(MAKE) -C $(PROJECT_PATH) all-attributions
 
 .PHONY: update-attribution-files
 update-attribution-files: add-generated-help-block go-mod-files attribution-files
-	build/lib/update_go_versions.sh
 	build/update-attribution-files/create_pr.sh
 
 .PHONY: checksum-files-project-%
 checksum-files-project-%:
 	$(eval PROJECT_PATH=projects/$(subst _,/,$*))
-	build/update-attribution-files/make_attribution.sh $(PROJECT_PATH) "checksums clean-output clean-go-cache"
+	$(MAKE) -C $(PROJECT_PATH) all-checksums
 
 .PHONY: update-checksum-files
 update-checksum-files: $(addprefix checksum-files-project-, $(ALL_PROJECTS))
+	build/lib/update_go_versions.sh
 	build/update-attribution-files/create_pr.sh
 
 .PHONY: go-mod-files-project-%
 go-mod-files-project-%:
 	$(eval PROJECT_PATH=projects/$(subst _,/,$*))
-	build/update-attribution-files/make_attribution.sh $(PROJECT_PATH) update-go-mods
+	$(MAKE) -C $(PROJECT_PATH) all-update-go-mods
 
 .PHONY: go-mod-files
 go-mod-files: $(addprefix go-mod-files-project-, $(ALL_PROJECTS))
