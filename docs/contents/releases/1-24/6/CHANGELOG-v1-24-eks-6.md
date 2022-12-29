@@ -5,8 +5,7 @@ This changelog highlights the changes for [v1-24-eks-6](https://github.com/aws/e
 ## Changes
 
 ### Patches
-* Bump Kubernetes 1.24 to 1.24.9 and update patches ([1596](https://github.com/aws/eks-distro/pull/1596))
-* Update cloud-provider-aws for 1.21 - 1.24 ([1593](https://github.com/aws/eks-distro/pull/1593))
+* Patch for deleting apiserver lease on shutdown dropped when moving Kubernetes to 1.24.9 ([1596](https://github.com/aws/eks-distro/pull/1596))
 
 ### Projects
 * Bump Kubernetes 1.24 to 1.24.9 and update patches ([1596](https://github.com/aws/eks-distro/pull/1596))
