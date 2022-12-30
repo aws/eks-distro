@@ -75,7 +75,7 @@ function pr:create()
     gh auth login --with-token < /secrets/github-secrets/token
     local -r pr_exists=$(gh pr list | grep -c "$pr_branch" || true)
     if [ $pr_exists -eq 0 ]; then
-        gh pr create --title "$pr_title" --body "$pr_body" --base $MAIN_BRANCH --label "do-not-merge/hold"
+        gh pr create --title "$pr_title" --body "$pr_body" --base $MAIN_BRANCH
     fi
 }
 
@@ -116,7 +116,7 @@ EOF
         ;;
     esac
     PROW_BUCKET_NAME=$(echo $JOB_SPEC | jq -r ".decoration_config.gcs_configuration.bucket" | awk -F// '{print $NF}')
-    full_pr_body=$(printf "%s\nClick [here](https://prow.eks.amazonaws.com/view/s3/$PROW_BUCKET_NAME/logs/$JOB_NAME/$BUILD_ID) to view job logs.\nBy submitting this pull request, I confirm that you can use, modify, copy, and redistribute this contribution, under the terms of your choice." "$pr_body")
+    full_pr_body=$(printf "%s\nClick [here](https://prow.eks.amazonaws.com/view/s3/$PROW_BUCKET_NAME/logs/$JOB_NAME/$BUILD_ID) to view job logs.\n\n/hold\n\nBy submitting this pull request, I confirm that you can use, modify, copy, and redistribute this contribution, under the terms of your choice." "$pr_body")
 
     echo $full_pr_body
 }
