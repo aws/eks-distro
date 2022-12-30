@@ -3,10 +3,12 @@ module k8s.io/cloud-provider-aws
 go 1.17
 
 require (
-	github.com/aws/aws-sdk-go v1.44.107
+	github.com/aws/aws-sdk-go v1.44.145
 	github.com/golang/mock v1.5.0
 	github.com/google/go-cmp v0.5.5
+	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.7.0
+	golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac
 	gopkg.in/gcfg.v1 v1.2.0
 	k8s.io/api v0.23.5
 	k8s.io/apimachinery v0.23.5
@@ -14,6 +16,7 @@ require (
 	k8s.io/cloud-provider v0.23.5
 	k8s.io/code-generator v0.23.5
 	k8s.io/component-base v0.23.5
+	k8s.io/controller-manager v0.23.5
 	k8s.io/csi-translation-lib v0.23.5
 	k8s.io/klog/v2 v2.30.0
 	k8s.io/kubelet v0.23.5
@@ -66,7 +69,6 @@ require (
 	github.com/prometheus/common v0.28.0 // indirect
 	github.com/prometheus/procfs v0.6.0 // indirect
 	github.com/spf13/cobra v1.2.1 // indirect
-	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/objx v0.2.0 // indirect
 	go.etcd.io/etcd/api/v3 v3.5.0 // indirect
 	go.etcd.io/etcd/client/pkg/v3 v3.5.0 // indirect
@@ -85,17 +87,15 @@ require (
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/multierr v1.6.0 // indirect
 	go.uber.org/zap v1.19.0 // indirect
-	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5 // indirect
-	golang.org/x/mod v0.4.2 // indirect
-	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd // indirect
+	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
+	golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4 // indirect
+	golang.org/x/net v0.1.0 // indirect
 	golang.org/x/oauth2 v0.0.0-20210819190943-2bc19b11175f // indirect
-	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
-	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
-	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
-	golang.org/x/text v0.3.7 // indirect
-	golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac // indirect
-	golang.org/x/tools v0.1.6-0.20210820212750-d4cc65f0b2ff // indirect
-	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
+	golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4 // indirect
+	golang.org/x/sys v0.1.0 // indirect
+	golang.org/x/term v0.1.0 // indirect
+	golang.org/x/text v0.4.0 // indirect
+	golang.org/x/tools v0.1.12 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20210831024726-fe130286e0e2 // indirect
 	google.golang.org/grpc v1.40.0 // indirect
@@ -107,7 +107,6 @@ require (
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 	k8s.io/apiserver v0.23.5 // indirect
 	k8s.io/component-helpers v0.23.5 // indirect
-	k8s.io/controller-manager v0.23.5 // indirect
 	k8s.io/gengo v0.0.0-20210813121822-485abfe95c7c // indirect
 	k8s.io/kube-openapi v0.0.0-20211115234752-e816edb12b65 // indirect
 	sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.0.30 // indirect
