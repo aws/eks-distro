@@ -26,7 +26,8 @@ OUTPUT_BIN_DIR?=$(OUTPUT_DIR)/bin/$(REPO)
 #################### AWS ###########################
 AWS_REGION?=us-west-2
 AWS_ACCOUNT_ID?=$(shell aws sts get-caller-identity --query Account --output text)
-ARTIFACT_BUCKET?=my-s3-bucket # TODO: in eks-a we use ARTIFACTS_BUCKET
+ARTIFACT_BUCKET?=my-s3-bucket
+ARTIFACTS_BUCKET?=$(ARTIFACT_BUCKET)
 IMAGE_REPO?=$(if $(AWS_ACCOUNT_ID),$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com,localhost:5000)
 ####################################################
 
@@ -614,7 +615,7 @@ endif
 
 .PHONY: upload-artifacts
 upload-artifacts: s3-artifacts
-	$(BASE_DIRECTORY)/release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACT_BUCKET) false $(UPLOAD_DRY_RUN)
+	$(BASE_DIRECTORY)/release/s3_sync.sh $(RELEASE_BRANCH) $(RELEASE) $(ARTIFACTS_BUCKET) false $(UPLOAD_DRY_RUN)
 
 .PHONY: s3-artifacts
 s3-artifacts: tarballs
