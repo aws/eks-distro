@@ -26,8 +26,6 @@ COPY ATTRIBUTION.txt /ATTRIBUTION.txt
 ENTRYPOINT ["/go-runner"]
 
 
-FROM base as standard
-
 
 
 # Installing dependencies listed in upstream here: https://github.com/kubernetes/release/blob/master/images/build/debian-iptables/buster/Dockerfile

@@ -42,7 +42,6 @@ COPY LICENSES /LICENSES
 COPY ATTRIBUTION.txt /ATTRIBUTION.txt
 
 
-FROM builder as standard
 
 USER aws-iam-authenticator
 ENTRYPOINT ["/aws-iam-authenticator"]

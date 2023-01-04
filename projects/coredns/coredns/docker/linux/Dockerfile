@@ -31,7 +31,6 @@ FROM $BUILDER_IMAGE as builder
 RUN yum update -y
 RUN yum install -y ca-certificates && update-ca-trust
 
-FROM base as standard
 COPY --from=builder /etc/ssl/certs /etc/ssl/certs
 
 FROM base as minimal

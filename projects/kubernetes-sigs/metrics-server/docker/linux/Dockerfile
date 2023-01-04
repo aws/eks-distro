@@ -26,8 +26,6 @@ COPY ATTRIBUTION.txt /ATTRIBUTION.txt
 ENTRYPOINT ["/metrics-server"]
 
 
-FROM base as standard
-
 
 FROM base as minimal
 USER 65534
