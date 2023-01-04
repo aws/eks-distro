@@ -11,9 +11,7 @@ RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/$(RELEASE_ENVIR
 PROD_ECR_REG?=public.ecr.aws/eks-distro
 DEV_ECR_REG?=public.ecr.aws/h1r8a7l5
 
-MINIMAL_VARIANT_VERSIONS=1-21 1-22 1-23 1-24 1-25
-RELEASE_VARIANT?=$(if $(filter $(RELEASE_BRANCH),$(MINIMAL_VARIANT_VERSIONS)),minimal,standard)
-IS_BUILDING_MINIMAL=$(filter minimal, $(RELEASE_VARIANT))
+RELEASE_VARIANT?=minimal
 
 GIT_HASH=eks-$(RELEASE_BRANCH)-$(RELEASE)
 
@@ -126,7 +124,7 @@ endif
 
 #################### BASE IMAGES ###################
 BASE_IMAGE_REPO?=public.ecr.aws/eks-distro-build-tooling
-BASE_IMAGE_NAME?=$(if $(IS_BUILDING_MINIMAL),eks-distro-minimal-base,eks-distro-base)
+BASE_IMAGE_NAME?=eks-distro-minimal-base
 BASE_IMAGE_TAG_FILE?=$(BASE_DIRECTORY)/$(shell echo $(BASE_IMAGE_NAME) | tr '[:lower:]' '[:upper:]' | tr '-' '_')_TAG_FILE
 BASE_IMAGE_TAG?=$(shell cat $(BASE_IMAGE_TAG_FILE))
 BASE_IMAGE?=$(BASE_IMAGE_REPO)/$(BASE_IMAGE_NAME):$(BASE_IMAGE_TAG)
