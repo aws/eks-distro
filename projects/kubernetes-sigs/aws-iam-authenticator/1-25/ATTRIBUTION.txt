@@ -1,5 +1,5 @@
 
-** github.com/aws/aws-sdk-go; version v1.44.145 --
+** github.com/aws/aws-sdk-go; version v1.44.107 --
 https://github.com/aws/aws-sdk-go
 
 ** github.com/go-logr/logr; version v0.4.0 --
@@ -50,16 +50,16 @@ https://gopkg.in/ini.v1
 ** gopkg.in/yaml.v2; version v2.4.0 --
 https://gopkg.in/yaml.v2
 
-** k8s.io/api; version v0.22.1 --
+** k8s.io/api; version v0.22.0 --
 https://github.com/kubernetes/api
 
-** k8s.io/apimachinery; version v0.22.1 --
+** k8s.io/apimachinery; version v0.23.0-alpha.0 --
 https://github.com/kubernetes/apimachinery
 
-** k8s.io/client-go; version v0.22.1 --
+** k8s.io/client-go; version v0.22.0 --
 https://github.com/kubernetes/client-go
 
-** k8s.io/component-base/featuregate; version v0.22.1 --
+** k8s.io/component-base/featuregate; version v0.22.0 --
 https://github.com/kubernetes/component-base
 
 ** k8s.io/klog/v2; version v2.9.0 --
@@ -68,13 +68,13 @@ https://github.com/kubernetes/klog
 ** k8s.io/kube-openapi/pkg/util/proto; version v0.0.0-20210421082810-95288971da7e --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/sample-controller/pkg/signals; version v0.22.1 --
+** k8s.io/sample-controller/pkg/signals; version v0.22.0 --
 https://github.com/kubernetes/sample-controller
 
 ** k8s.io/utils; version v0.0.0-20210707171843-4b05e18ac7d9 --
 https://github.com/kubernetes/utils
 
-** sigs.k8s.io/aws-iam-authenticator; version v0.5.12 --
+** sigs.k8s.io/aws-iam-authenticator; version v0.6.2 --
 https://github.com/kubernetes-sigs/aws-iam-authenticator
 
 ** sigs.k8s.io/structured-merge-diff/v4; version v4.1.2 --
@@ -388,25 +388,25 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/aws/aws-sdk-go/internal/sync/singleflight; version v1.44.145 --
+** github.com/aws/aws-sdk-go/internal/sync/singleflight; version v1.44.107 --
 https://github.com/aws/aws-sdk-go
 
 ** golang.org/go; version go1.19.4 --
 https://github.com/golang/go
 
-** golang.org/x/net; version v0.1.0 --
+** golang.org/x/net; version v0.0.0-20220127200216-cd36cc0744dd --
 https://go.googlesource.com/net
 
 ** golang.org/x/oauth2; version v0.0.0-20200107190931-bf48bf16ab8d --
 https://go.googlesource.com/oauth2
 
-** golang.org/x/sys/unix; version v0.1.0 --
+** golang.org/x/sys; version v0.0.0-20211216021012-1d35b9e2eb4e --
 https://go.googlesource.com/sys
 
-** golang.org/x/term; version v0.1.0 --
+** golang.org/x/term; version v0.0.0-20210927222741-03fcf44c2211 --
 https://go.googlesource.com/term
 
-** golang.org/x/text; version v0.4.0 --
+** golang.org/x/text; version v0.3.7 --
 https://go.googlesource.com/text
 
 ** golang.org/x/time/rate; version v0.0.0-20210723032227-1f47c861a9ac --

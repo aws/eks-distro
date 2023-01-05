@@ -1,23 +1,23 @@
 
-** github.com/container-storage-interface/spec/lib/go/csi; version v1.6.0 --
+** github.com/container-storage-interface/spec/lib/go/csi; version v1.7.0 --
 https://github.com/container-storage-interface/spec
 
 ** github.com/go-logr/logr; version v1.2.3 --
 https://github.com/go-logr/logr
 
-** github.com/kubernetes-csi/csi-lib-utils; version v0.11.0 --
+** github.com/kubernetes-csi/csi-lib-utils; version v0.12.0 --
 https://github.com/kubernetes-csi/csi-lib-utils
 
-** github.com/kubernetes-csi/livenessprobe; version v2.8.0 --
+** github.com/kubernetes-csi/livenessprobe; version v2.9.0 --
 https://github.com/kubernetes-csi/livenessprobe
 
-** github.com/matttproud/golang_protobuf_extensions/pbutil; version v1.0.2-0.20181231171920-c182affec369 --
+** github.com/matttproud/golang_protobuf_extensions/pbutil; version v1.0.2 --
 https://github.com/matttproud/golang_protobuf_extensions
 
-** github.com/prometheus/client_golang/prometheus; version v1.12.2 --
+** github.com/prometheus/client_golang/prometheus; version v1.14.0 --
 https://github.com/prometheus/client_golang
 
-** github.com/prometheus/client_model/go; version v0.2.0 --
+** github.com/prometheus/client_model/go; version v0.3.0 --
 https://github.com/prometheus/client_model
 
 ** github.com/prometheus/common; version v0.37.0 --
@@ -29,16 +29,16 @@ https://github.com/prometheus/procfs
 ** google.golang.org/genproto/googleapis/rpc/status; version v0.0.0-20220804142021-4e6b2dfa6612 --
 https://github.com/googleapis/go-genproto
 
-** google.golang.org/grpc; version v1.48.0 --
+** google.golang.org/grpc; version v1.49.0 --
 https://github.com/grpc/grpc-go
 
-** k8s.io/apimachinery/pkg; version v0.25.2 --
+** k8s.io/apimachinery/pkg; version v0.26.0 --
 https://github.com/kubernetes/apimachinery
 
-** k8s.io/component-base; version v0.25.2 --
+** k8s.io/component-base; version v0.26.0 --
 https://github.com/kubernetes/component-base
 
-** k8s.io/klog/v2; version v2.70.1 --
+** k8s.io/klog/v2; version v2.80.1 --
 https://github.com/kubernetes/klog
 
 
@@ -406,16 +406,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/go; version go1.18.9 --
+** golang.org/go; version go1.19.4 --
 https://github.com/golang/go
 
-** golang.org/x/net; version v0.0.0-20220921203646-d300de134e69 --
+** golang.org/x/net; version v0.4.0 --
 https://go.googlesource.com/net
 
-** golang.org/x/sys; version v0.0.0-20220731174439-a90be440212d --
+** golang.org/x/sys/unix; version v0.3.0 --
 https://go.googlesource.com/sys
 
-** golang.org/x/text; version v0.3.8 --
+** golang.org/x/text; version v0.5.0 --
 https://go.googlesource.com/text
 
 Copyright (c) 2009 The Go Authors. All rights reserved.
