@@ -118,7 +118,7 @@ EOF
     PROW_BUCKET_NAME=$(echo $JOB_SPEC | jq -r ".decoration_config.gcs_configuration.bucket" | awk -F// '{print $NF}')
     full_pr_body=$(printf "%s\nClick [here](https://prow.eks.amazonaws.com/view/s3/$PROW_BUCKET_NAME/logs/$JOB_NAME/$BUILD_ID) to view job logs.\n\n/hold\n\nBy submitting this pull request, I confirm that you can use, modify, copy, and redistribute this contribution, under the terms of your choice." "$pr_body")
 
-    echo $full_pr_body
+    printf "$full_pr_body"
 }
 
 function pr::create::attribution() {
