@@ -15,8 +15,6 @@ EXTRA_GO_LDFLAGS=-X $(PKG)/version.gitVersion=$(GIT_TAG) -X $(PKG)/version.gitCo
 
 HAS_RELEASE_BRANCHES=true
 
-IMAGE_TARGET=$(RELEASE_VARIANT)
-
 include $(BASE_DIRECTORY)/Common.mk
 
 

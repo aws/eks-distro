@@ -14,11 +14,10 @@
 
 ARG BASE_IMAGE
 ARG BUILDER_IMAGE
-FROM $BASE_IMAGE as base
+FROM $BASE_IMAGE
 
 ARG TARGETARCH
 ARG TARGETOS
-
 
 COPY bin/coredns/$TARGETOS-$TARGETARCH/coredns /coredns
 COPY LICENSES /LICENSES
@@ -26,12 +25,3 @@ COPY ATTRIBUTION.txt /ATTRIBUTION.txt
 
 EXPOSE 53 53/udp
 ENTRYPOINT ["/coredns"]
-
-FROM $BUILDER_IMAGE as builder
-RUN yum update -y
-RUN yum install -y ca-certificates && update-ca-trust
-
-FROM base as standard
-COPY --from=builder /etc/ssl/certs /etc/ssl/certs
-
-FROM base as minimal

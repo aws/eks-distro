@@ -12,16 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 ARG BASE_IMAGE
 ARG BUILDER_IMAGE
 
 FROM $BASE_IMAGE as base
 
 FROM $BUILDER_IMAGE as builder
-
-ARG TARGETARCH
-ARG TARGETOS
 
 COPY --from=base /etc/group /etc/group
 COPY --from=base /etc/passwd /etc/passwd
@@ -35,26 +31,16 @@ RUN yum install -y shadow-utils && \
     yum clean all && \
     rm -rf /var/cache/yum
 
+FROM $BASE_IMAGE
 
-
-COPY --chown=aws-iam-authenticator bin/aws-iam-authenticator/$TARGETOS-$TARGETARCH/aws-iam-authenticator /
-COPY LICENSES /LICENSES
-COPY ATTRIBUTION.txt /ATTRIBUTION.txt
-
-
-FROM builder as standard
-
-USER aws-iam-authenticator
-ENTRYPOINT ["/aws-iam-authenticator"]
-
-
-FROM $BASE_IMAGE as minimal
+ARG TARGETARCH
+ARG TARGETOS
 
 COPY --from=builder /etc/group /etc/group
 COPY --from=builder /etc/passwd /etc/passwd
-COPY --from=builder /aws-iam-authenticator /aws-iam-authenticator
-COPY --from=builder /LICENSES /LICENSES
-COPY --from=builder /ATTRIBUTION.txt /ATTRIBUTION.txt
+COPY --chown=aws-iam-authenticator bin/aws-iam-authenticator/$TARGETOS-$TARGETARCH/aws-iam-authenticator /
+COPY LICENSES /LICENSES
+COPY ATTRIBUTION.txt /ATTRIBUTION.txt
 
 USER aws-iam-authenticator
 ENTRYPOINT ["/aws-iam-authenticator"]

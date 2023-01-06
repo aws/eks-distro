@@ -11,10 +11,6 @@ RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/$(RELEASE_ENVIR
 PROD_ECR_REG?=public.ecr.aws/eks-distro
 DEV_ECR_REG?=public.ecr.aws/h1r8a7l5
 
-MINIMAL_VARIANT_VERSIONS=1-21 1-22 1-23 1-24 1-25
-RELEASE_VARIANT?=$(if $(filter $(RELEASE_BRANCH),$(MINIMAL_VARIANT_VERSIONS)),minimal,standard)
-IS_BUILDING_MINIMAL=$(filter minimal, $(RELEASE_VARIANT))
-
 GIT_HASH=eks-$(RELEASE_BRANCH)-$(RELEASE)
 
 COMPONENT?=$(REPO_OWNER)/$(REPO)
@@ -126,7 +122,7 @@ endif
 
 #################### BASE IMAGES ###################
 BASE_IMAGE_REPO?=public.ecr.aws/eks-distro-build-tooling
-BASE_IMAGE_NAME?=$(if $(IS_BUILDING_MINIMAL),eks-distro-minimal-base,eks-distro-base)
+BASE_IMAGE_NAME?=eks-distro-minimal-base
 BASE_IMAGE_TAG_FILE?=$(BASE_DIRECTORY)/$(shell echo $(BASE_IMAGE_NAME) | tr '[:lower:]' '[:upper:]' | tr '-' '_')_TAG_FILE
 BASE_IMAGE_TAG?=$(shell cat $(BASE_IMAGE_TAG_FILE))
 BASE_IMAGE?=$(BASE_IMAGE_REPO)/$(BASE_IMAGE_NAME):$(BASE_IMAGE_TAG)
@@ -176,7 +172,7 @@ LOCAL_IMAGE_TARGETS=$(foreach image,$(IMAGE_NAMES),$(image)/images/amd64) $(if $
 IMAGE_TARGETS=$(foreach image,$(IMAGE_NAMES),$(if $(filter true,$(BUILD_OCI_TARS)),$(call IMAGE_TARGETS_FOR_NAME,$(image)),$(image)/images/push)) $(if $(filter true,$(HAS_HELM_CHART)),helm/push,) 
 
 ############# WINDOWS #############################
-# similiar to https://github.com/kubernetes-csi/livenessprobe/blob/master/release-tools/prow.sh#L78
+# similar to https://github.com/kubernetes-csi/livenessprobe/blob/master/release-tools/prow.sh#L78
 WINDOWS_IMAGE_VERSIONS=1809 20H2 ltsc2022
 
 # if multiple platforms requested, remove windows since it will be
@@ -268,7 +264,7 @@ PROJECT_DEPENDENCIES_TARGETS=$(foreach dep,$(PROJECT_DEPENDENCIES), \
 BINARY_TARGETS_FROM_FILES_PLATFORMS=$(foreach platform, $(2), $(foreach target, $(1), \
 		$(OUTPUT_BIN_DIR)/$(subst /,-,$(platform))/$(if $(findstring windows,$(platform)),$(target).exe,$(target))))
 
-# This "function" is used to construt the git clone URL for projects.
+# This "function" is used to construct the git clone URL for projects.
 # Indenting the block results in the URL getting prefixed with a
 # space, hence no indentation below.
 # $1 - repo owner
@@ -318,8 +314,8 @@ IS_ONE_WORD=$(if $(filter 1,$(words $(1))),true,false)
 ####################################################
 
 #################### BINARIES ######################
-# if the pattern ends in the same as a previous pattern, binary must be built seperately
-# if the go mod path has changed from the main, must be built seperately
+# if the pattern ends in the same as a previous pattern, binary must be built separately
+# if the go mod path has changed from the main, must be built separately
 # if binary is already in the BINARY_TARGET_FILES_BUILD_ALONE list do not add, but properly add source pattern and go mod
 # $1 - binary file name
 # $2 - source pattern
@@ -336,7 +332,7 @@ setup_build_alone_vs_together = \
 	$(eval _UNIQ_PATTERN_$(notdir $(2)):=1)
 
 # Setup vars UNIQ_GO_MOD_PATHS UNIQ_GO_MOD_TARGET_FILES
-# which will store the mapping of uniq go_mod paths to first target file for repsective go mod
+# which will store the mapping of uniq go_mod paths to first target file for respective go mod
 # $1 - binary file name
 # $2 - source pattern
 # $3 - go mod path for binary
@@ -619,7 +615,7 @@ upload-artifacts: s3-artifacts
 
 .PHONY: s3-artifacts
 s3-artifacts: tarballs
-# Images (oci tarballs) always go to the kubernetes bin directly to match upstream, thats why kubernetes is passed as the first arg below instead of $(REPO) like when copying other artifacts
+# Images (oci tarballs) always go to the kubernetes bin directly to match upstream. That's why kubernetes is passed as the first arg below instead of $(REPO) like when copying other artifacts
 	if [ -d $(ARTIFACTS_PATH) ]; then \
 		$(BASE_DIRECTORY)/release/copy_artifacts.sh $(REPO) $(ARTIFACTS_PATH) $(RELEASE_BRANCH) $(RELEASE) $(GIT_TAG); \
 		$(BUILD_LIB)/validate_artifacts.sh $(MAKE_ROOT) $(ARTIFACTS_PATH) $(GIT_TAG) $(FAKE_ARM_BINARIES_FOR_VALIDATION); \
@@ -809,7 +805,7 @@ release: $(RELEASE_TARGETS)
 clean-go-cache:
 # When go downloads pkg to the module cache, GOPATH/pkg/mod, it removes the write permissions
 # prevent accident modifications since files/checksums are tightly controlled
-# adding the perms neccessary to perform the delete
+# adding the perms necessary to perform the delete
 	@chmod -fR 777 $(GO_MOD_CACHE) &> /dev/null || :
 	$(foreach folder,$(GO_MOD_CACHE) $(GO_BUILD_CACHE),$(if $(wildcard $(folder)),du -hs $(folder) && rm -rf $(folder);,))
 # When building go bins using mods which have been downloaded by go mod download/vendor which will exist in the go_mod_cache

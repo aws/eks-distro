@@ -4,7 +4,7 @@ GOLANG_VERSION?=$(shell cat ./$(RELEASE_BRANCH)/GOLANG_VERSION)
 
 REPO=release-src
 REPO_OWNER=kubernetes
-# REPO cant be releae since there is a phony release target
+# REPO can't be release since there is a phony release target
 # using release-src and overriding component
 COMPONENT=$(REPO_OWNER)/release
 CLONE_URL=https://github.com/$(COMPONENT).git
@@ -14,13 +14,13 @@ KUBE_PROXY_BASE_IMAGE_COMPONENT?=kubernetes/kube-proxy-base
 IMAGE_NAMES=go-runner kube-proxy-base
 
 # Name of base image to be used when building the kube-proxy-base image
-KUBE_PROXY_BASE_BASE_IMAGE_NAME=$(if $(IS_BUILDING_MINIMAL),eks-distro-minimal-base-iptables,eks-distro-base)
+KUBE_PROXY_BASE_BASE_IMAGE_NAME=eks-distro-minimal-base-iptables
 
 IPTABLES_WRAPPER=$(OUTPUT_DIR)/iptables-wrapper
 
 BINARY_TARGET_FILES=go-runner
 GO_MOD_PATHS=images/build/go-runner
-# create default attribution name and save licneses in default _output/attribution folder instead
+# create default attribution name and save licenses in default _output/attribution folder instead
 # of with go-runner prefix
 GO_RUNNER_ATTRIBUTION_OVERRIDE=
 
@@ -44,7 +44,6 @@ $(GATHER_LICENSES_TARGETS): | $(FIX_LICENSES_GO_RUNNER_TARGET)
 _output/1-24/attribution/go-license.csv: GOLANG_VERSION=1.17
 
 $(call IMAGE_TARGETS_FOR_NAME, kube-proxy-base): $(IPTABLES_WRAPPER)
-$(call IMAGE_TARGETS_FOR_NAME, kube-proxy-base): IMAGE_TARGET=$(RELEASE_VARIANT)
 $(call IMAGE_TARGETS_FOR_NAME, kube-proxy-base): BASE_IMAGE_NAME=$(KUBE_PROXY_BASE_BASE_IMAGE_NAME)
 
 $(ATTRIBUTION_TARGETS): fix-licenses

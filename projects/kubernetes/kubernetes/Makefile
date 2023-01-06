@@ -79,7 +79,7 @@ kube-proxy/images/%: BASE_IMAGE=$(KUBE_PROXY_BASE_IMAGE)
 # wildcard match doesnt work for add pre-req so have to use helper
 pause/images/%: DOCKERFILE_FOLDER=./docker/pause
 pause/images/%: BASE_IMAGE_NAME=eks-distro-minimal-base-nonroot
-pause/images/%: BASE_IMAGE=$(if $(IS_BUILDING_MINIMAL),$(BASE_IMAGE_REPO)/$(BASE_IMAGE_NAME):$(BASE_IMAGE_TAG),scratch)
+pause/images/%: BASE_IMAGE=$(BASE_IMAGE_REPO)/$(BASE_IMAGE_NAME):$(BASE_IMAGE_TAG)
 pause/images/%: IMAGE=$(PAUSE_IMAGE)
 $(call IMAGE_TARGETS_FOR_NAME, pause): $(PAUSE_DST)
 

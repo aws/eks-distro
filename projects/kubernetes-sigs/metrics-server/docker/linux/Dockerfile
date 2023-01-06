@@ -13,21 +13,15 @@
 # limitations under the License.
 
 ARG BASE_IMAGE
-FROM $BASE_IMAGE as base
+FROM $BASE_IMAGE
 
 ARG TARGETARCH
 ARG TARGETOS
-
 
 COPY bin/metrics-server/$TARGETOS-$TARGETARCH/metrics-server /metrics-server
 COPY LICENSES /LICENSES
 COPY ATTRIBUTION.txt /ATTRIBUTION.txt
 
-ENTRYPOINT ["/metrics-server"]
-
-
-FROM base as standard
-
-
-FROM base as minimal
 USER 65534
+
+ENTRYPOINT ["/metrics-server"]
