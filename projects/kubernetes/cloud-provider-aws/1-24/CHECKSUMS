@@ -1,2 +1,2 @@
-37d1e7dc1ac49d2095d22c38fe5c9580896784d81e98f215dc3848e2c48a5370  _output/1-24/bin/cloud-provider-aws/linux-amd64/aws-cloud-controller-manager
-02a5f5f832cf72797398dc5b455e15defd256694b2dd9bd2dc05449cbd951467  _output/1-24/bin/cloud-provider-aws/linux-arm64/aws-cloud-controller-manager
+690f2001f00bcd459652b99ea74587729d79354cee3e061b4fb5989b6f634b9e  _output/1-24/bin/cloud-provider-aws/linux-amd64/aws-cloud-controller-manager
+3641223512dae853e71d148b3425ee74e2abfda97e9aea4883c08af70c7c777f  _output/1-24/bin/cloud-provider-aws/linux-arm64/aws-cloud-controller-manager
