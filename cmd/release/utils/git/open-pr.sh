@@ -27,8 +27,15 @@ echo "pushed!"
 
 PR_REPO="eks-distro"
 
+GITHUB_USERNAME_REGEX="s/(https:\/\/|git@)github\.com(\/|:)(.*)\/${PR_REPO}.git/\3/p"
+GITHUB_USERNAME=$(git remote get-url origin | sed -n -E "$GITHUB_USERNAME_REGEX")
+if [ -z "$GITHUB_USERNAME" ]
+then
+echo "Failed to parse Github username! Ensure you have a remote 'origin' set." && return 1
+fi
+
 pr_arguments=(
-  --head "$(git remote get-url origin | sed -n -e "s|git@github.com:\(.*\)/${PR_REPO}.git|\1|p"):${PR_BRANCH}"
+  --head "${GITHUB_USERNAME}:${PR_BRANCH}"
   --repo "aws/${PR_REPO}"
   --title "${PR_TITLE}"
   --web
