@@ -27,8 +27,10 @@ echo "pushed!"
 
 PR_REPO="eks-distro"
 
+GITHUB_USERNAME_REGEX="s/(https:\/\/|git@)github\.com(\/|:)(.*)\/${PR_REPO}.git/\3/p"
+
 pr_arguments=(
-  --head "$(git remote get-url origin | sed -n -e "s|git@github.com:\(.*\)/${PR_REPO}.git|\1|p"):${PR_BRANCH}"
+  --head "$(git remote get-url origin | sed -n -E "$GITHUB_USERNAME_REGEX"):${PR_BRANCH}"
   --repo "aws/${PR_REPO}"
   --title "${PR_TITLE}"
   --web
