@@ -5,7 +5,7 @@ This changelog highlights the changes for [v1-21-eks-24](https://github.com/aws/
 ## Changes
 
 ### Patches
-* Updated aws-iam-auth to v0.6.2 for all versions ([1628](https://github.com/aws/eks-distro/pull/1628))
+* Regenerated patches to accommodate the update to aws-iam-auth v0.6.2 for all versions ([1628](https://github.com/aws/eks-distro/pull/1628))
 
 ### Projects
 * Updated aws-iam-auth to v0.6.2 for all versions ([1628](https://github.com/aws/eks-distro/pull/1628))
