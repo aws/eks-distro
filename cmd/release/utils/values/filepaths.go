@@ -8,9 +8,6 @@ import (
 var (
 	IndexPath  = getAbsolutePath("docs", "contents", IndexFileName)
 	ReadmePath = getAbsolutePath("README.md")
-
-	defaultReleaseBranchPath     = getAbsolutePath("release", "DEFAULT_RELEASE_BRANCH")
-	supportedReleaseBranchesPath = getAbsolutePath("release", "SUPPORTED_RELEASE_BRANCHES")
 )
 
 type PathValues interface {
