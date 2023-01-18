@@ -1,0 +1,66 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Rasita Pai <prasita@amazon.com>
+Date: Wed, 13 Oct 2021 10:46:18 -0700
+Subject: [PATCH] --EKS-PATCH-- Pass region to sts client
+
+First, this change explicitly sets the region from metadata.
+Second, it uses .WithSTSRegionalEndpoint(endpoints.RegionalSTSEndpoint)
+to enable the regional STS endpoint. This is required because, as of
+SDK v1.42.23, the default is legacy (endpoints.LegacySTSEndpoint).
+
+Signed-off-by: Nick Turner <nic@amazon.com>
+---
+ .../k8s.io/legacy-cloud-providers/aws/aws.go  | 32 ++++++++++++++++++-
+ 1 file changed, 31 insertions(+), 1 deletion(-)
+
+diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
+index 93ed45472b9..2aceff30890 100644
+--- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
++++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
+@@ -1190,8 +1190,12 @@ func init() {
+ 			return nil, fmt.Errorf("unable to validate custom endpoint overrides: %v", err)
+ 		}
+ 
++		regionName, err := getRegionFromMetadata(cfg)
++		if err != nil {
++			return nil, err
++		}
+ 		sess, err := session.NewSessionWithOptions(session.Options{
+-			Config:            aws.Config{},
++			Config:            *aws.NewConfig().WithRegion(regionName).WithSTSRegionalEndpoint(endpoints.RegionalSTSEndpoint),
+ 			SharedConfigState: session.SharedConfigEnable,
+ 		})
+ 		if err != nil {
+@@ -1218,6 +1222,32 @@ func init() {
+ 	})
+ }
+ 
++func getRegionFromMetadata(cfg *CloudConfig) (string, error) {
++	klog.Infof("Get AWS region from metadata client")
++
++	metadata, err := newAWSSDKProvider(nil, cfg).Metadata()
++	if err != nil {
++		return "", fmt.Errorf("error creating AWS metadata client: %q", err)
++	}
++
++	err = updateConfigZone(cfg, metadata)
++	if err != nil {
++		return "", fmt.Errorf("unable to determine AWS zone from cloud provider config or EC2 instance metadata: %v", err)
++	}
++
++	zone := cfg.Global.Zone
++	if len(zone) <= 1 {
++		return "", fmt.Errorf("invalid AWS zone in config file: %s", zone)
++	}
++
++	regionName, err := azToRegion(zone)
++	if err != nil {
++		return "", err
++	}
++
++	return regionName, nil
++}
++
+ // readAWSCloudConfig reads an instance of AWSCloudConfig from config reader.
+ func readAWSCloudConfig(config io.Reader) (*CloudConfig, error) {
+ 	var cfg CloudConfig
