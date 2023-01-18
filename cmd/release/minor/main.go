@@ -129,7 +129,9 @@ func copyDir(existingBRPath, newRBPath, existingReleaseBranch, newReleaseBranch 
 			if err = os.Mkdir(newRBDirPath, 0755); err != nil {
 				return fmt.Errorf("creating new directory to copy %s", newRBDirPath)
 			}
-			return copyDir(existingChildPath, newRBDirPath, existingReleaseBranch, newReleaseBranch)
+			if err = copyDir(existingChildPath, newRBDirPath, existingReleaseBranch, newReleaseBranch); err != nil {
+				return fmt.Errorf("copying child directory %s", existingChildPath)
+			}
 		} else {
 			if err := copyFile(existingChildPath, newRBDirPath, existingReleaseBranch, newReleaseBranch); err != nil {
 				return fmt.Errorf("coping file: %w", err)
