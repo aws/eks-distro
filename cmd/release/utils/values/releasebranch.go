@@ -4,11 +4,12 @@ import (
 	"bytes"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 )
 
 var (
-	SupportedReleaseBranchesPath = getAbsolutePath("release", "SUPPORTED_RELEASE_BRANCHES").String()
+	supportedReleaseBranchesPath = getAbsolutePath("release", "SUPPORTED_RELEASE_BRANCHES").String()
 	defaultReleaseBranchPath     = getAbsolutePath("release", "DEFAULT_RELEASE_BRANCH").String()
 )
 
@@ -37,9 +38,9 @@ func IsSupportedReleaseBranch(rb string) (bool, error) {
 }
 
 func GetSupportedReleaseBranches() ([][]byte, error) {
-	fileOutput, err := os.ReadFile(SupportedReleaseBranchesPath)
+	fileOutput, err := os.ReadFile(supportedReleaseBranchesPath)
 	if err != nil {
-		return [][]byte{}, fmt.Errorf("getting supported release branches at %s path:%w", SupportedReleaseBranchesPath, err)
+		return [][]byte{}, fmt.Errorf("getting supported release branches at %s path:%w", supportedReleaseBranchesPath, err)
 	}
 	return bytes.Split(bytes.TrimSpace(fileOutput), []byte("\n")), nil
 }
@@ -50,4 +51,39 @@ func GetLatestSupportedReleaseBranch() ([]byte, error) {
 		return []byte{}, fmt.Errorf("getting release branches to find lastest supported release branches: %w", err)
 	}
 	return supportedReleaseBranches[len(supportedReleaseBranches)-1], nil
+}
+
+// AddNextReleaseBranch Returns added release branch if no error adding it to file
+func AddNextReleaseBranch() ([]byte, error) {
+	nextReleaseBranch, err := getNextReleaseBranch()
+	if err != nil {
+		return []byte{}, fmt.Errorf("getting next release branch to add to supported: %w", err)
+	}
+
+	releaseBranches, err := GetSupportedReleaseBranches()
+	if err != nil {
+		return []byte{}, fmt.Errorf("getting supported release branches to add %v: %w", nextReleaseBranch, err)
+	}
+	releaseBranches = append(releaseBranches, nextReleaseBranch)
+
+	if err = os.WriteFile(supportedReleaseBranchesPath,
+		append(bytes.Join(releaseBranches, []byte("\n")), []byte("\n")...), 0644); err != nil {
+		return []byte{}, fmt.Errorf("writing supported release branches to file: %w", err)
+	}
+	return nextReleaseBranch, nil
+}
+
+func getNextReleaseBranch() ([]byte, error) {
+	latestSupportedReleaseBranch, err := GetLatestSupportedReleaseBranch()
+	if err != nil {
+		return []byte{}, fmt.Errorf("getting lastest supported release branch to find next release branch: %w", err)
+	}
+	// latestSupportedReleaseBranch format expected to be 1-XX, e.g. 1-26
+	prefix := string(latestSupportedReleaseBranch[:2])
+	latestMinorNum, err := strconv.Atoi(string(latestSupportedReleaseBranch[2:]))
+	if err != nil {
+		return []byte{}, fmt.Errorf("converting the minor release number %v to int: %w", latestMinorNum, err)
+	}
+
+	return []byte(prefix + strconv.Itoa(latestMinorNum+1)), nil
 }

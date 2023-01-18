@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 )
 
-var projectPath = filepath.Join(GetGitRootDirectory(), "projects")
+var projectPathRoot = filepath.Join(GetGitRootDirectory(), "projects")
 
 type Project struct {
 	org  string
@@ -14,7 +14,7 @@ type Project struct {
 }
 
 func GetProjects() ([]Project, error) {
-	orgDirs, err := os.ReadDir(projectPath)
+	orgDirs, err := os.ReadDir(projectPathRoot)
 	if err != nil {
 		return []Project{}, fmt.Errorf("reading projects path: %w", err)
 	}
@@ -25,7 +25,7 @@ func GetProjects() ([]Project, error) {
 		if !orgDir.IsDir() {
 			continue
 		}
-		repoDirs, err := os.ReadDir(filepath.Join(projectPath, orgDir.Name()))
+		repoDirs, err := os.ReadDir(filepath.Join(projectPathRoot, orgDir.Name()))
 		if err != nil {
 			return []Project{}, fmt.Errorf("reading repos paths: %w", err)
 		}
@@ -40,5 +40,9 @@ func GetProjects() ([]Project, error) {
 }
 
 func (p *Project) GetFilePath() string {
-	return filepath.Join(projectPath, p.org, p.repo)
+	return filepath.Join(projectPathRoot, p.org, p.repo)
+}
+
+func GetProjectPathRoot() string {
+	return projectPathRoot
 }
