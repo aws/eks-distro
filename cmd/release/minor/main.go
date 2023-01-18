@@ -22,7 +22,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("getting the new release branch: %v", err)
 	}
-	log.Printf("Added %v to SUPPORTED_RELEASE_BRANCHES", addedReleaseBranch)
+	log.Printf("Added %s to SUPPORTED_RELEASE_BRANCHES", addedReleaseBranch)
 
 	prevReleaseBranch, nextReleaseBranch := string(latestSupportedReleaseBranch), string(addedReleaseBranch)
 

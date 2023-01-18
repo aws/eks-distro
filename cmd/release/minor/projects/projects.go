@@ -44,8 +44,15 @@ func CreateFilesAndDirectories(prevReleaseBranchInput string, nextReleaseBranchI
 		}
 	}
 
-	prevReleaseBranchFileCount, _ := getFileCount(prevReleaseBranch)
-	nextReleaseBranchFileCount, _ := getFileCount(nextReleaseBranch)
+	// Validate results
+	prevReleaseBranchFileCount, err := getFileCount(prevReleaseBranch)
+	if err != nil {
+		return -1, fmt.Errorf("getting previous release branch project file count: %w", err)
+	}
+	nextReleaseBranchFileCount, err := getFileCount(nextReleaseBranch)
+	if err != nil {
+		return -1, fmt.Errorf("getting next release branch project file count: %w", err)
+	}
 	if prevReleaseBranchFileCount != nextReleaseBranchFileCount {
 		return -1, fmt.Errorf("expected previous release branch file count (%d) to match next release branch file count (%d)",
 			prevReleaseBranchFileCount, nextReleaseBranchFileCount)
@@ -114,11 +121,11 @@ func copyFile(prevReleaseBranchFilePath, nextReleaseBranchFilePath string) error
 
 func getFileCount(releaseBranch string) (int, error) {
 	pathPattern := filepath.Join(values.GetProjectPathRoot(), "*", "*", releaseBranch, "*")
-	out, err := exec.Command("find", pathPattern, "-type", "f", "|", "wc", "-l").Output()
+	out, err := exec.Command("bash", "-c", fmt.Sprintf("find %s -type f | wc -l", pathPattern)).Output()
 	if err != nil {
 		return -1, fmt.Errorf("getting file count for %s: %w", releaseBranch, err)
 	}
-	count, err := strconv.Atoi(string(out))
+	count, err := strconv.Atoi(strings.TrimSpace(string(out)))
 	if err != nil {
 		return -1, fmt.Errorf("converting file count %v to int: %w", out, err)
 	}
