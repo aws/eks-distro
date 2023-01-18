@@ -49,7 +49,7 @@ function build::binaries::kube_bins() {
         cmd/kube-controller-manager \
         cmd/kube-scheduler"
 
-    make generated_files
+    hack/update-codegen.sh
 
     # Linux
     export KUBE_BUILD_PLATFORMS="linux/amd64 linux/arm64"
