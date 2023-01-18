@@ -9,7 +9,7 @@
 
 ### Updating
 
-1. Work with EKS teams to decide on a new version. From the upstream [repo](https://github.com/etcd-io/etcd) repo checkout the version tag branch and find the release.yaml file. This file should mention the [go-version](https://github.com/etcd-io/etcd/blob/cecbe35ce0703cd0f8d2063dad4a9e541ae317e5/.github/workflows/release.yaml#L10) the current tag is using. 
+1. Work with EKS teams to decide on a new version. From the upstream [repo](https://github.com/etcd-io/etcd) checkout the version tag branch and find the release.yaml file. This file should mention the [go-version](https://github.com/etcd-io/etcd/blob/cecbe35ce0703cd0f8d2063dad4a9e541ae317e5/.github/workflows/release.yaml#L10) the current tag is using. 
 Please review the [changelogs](https://github.com/etcd-io/etcd/blob/main/CHANGELOG/CHANGELOG-3.6.md) carefully looking for specific version to verify the changes that may affect EKS-D or downstream projects like EKS-A, especially if the new
 version is greater than the one used in upstream Kubernetes.
 1. Update the `GIT_TAG` file to have the new desired version based on the upstream release tags.
