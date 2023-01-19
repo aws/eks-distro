@@ -49,7 +49,11 @@ function build::binaries::kube_bins() {
         cmd/kube-controller-manager \
         cmd/kube-scheduler"
 
-    hack/update-codegen.sh
+    if [ "$release_branch" == "1-26" ]; then
+      hack/update-codegen.sh
+    else
+        make generated_files
+    fi
 
     # Linux
     export KUBE_BUILD_PLATFORMS="linux/amd64 linux/arm64"
