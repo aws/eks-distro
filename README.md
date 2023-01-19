@@ -76,7 +76,7 @@ no plans to remove these versions' images from EKS Distro ECR, there will be no
 more updates, including security fixes, for them.
 
 **Due to the increased security risk this poses, it is HIGHLY recommended that
-users of v1.18 - v1.20 update to a supported version (v1.22+) as soon as
+users of v1.18 - v1.21 update to a supported version (v1.22+) as soon as
 possible.**
 
 ## Development
