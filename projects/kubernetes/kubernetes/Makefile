@@ -103,7 +103,7 @@ test: $(BINARY_TARGETS)
 
 .PHONY: fix-licenses
 fix-licenses: $(GIT_PATCH_TARGET)
-	build/fix_licenses.sh $(REPO) $(OUTPUT_DIR)
+	build/fix_licenses.sh $(REPO) $(OUTPUT_DIR) $(RELEASE_BRANCH)
 
 $(KUBE_GIT_VERSION_FILE): $(GIT_PATCH_TARGET)
 	build/create_version_file.sh $(GIT_TAG) $(RELEASE_BRANCH)

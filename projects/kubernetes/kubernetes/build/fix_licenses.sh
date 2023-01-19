@@ -19,6 +19,7 @@ set -o pipefail
 
 REPO="$1"
 OUTPUT_DIR="$2"
+RELEASE_BRANCH="$3"
 
 # The heketi/heketi dependency is dual licensed between Apache 2.0 or LGPLv3+
 # this was done at the request of the kubernetes project since the original license
@@ -27,8 +28,14 @@ OUTPUT_DIR="$2"
 # https://github.com/heketi/heketi/pull/1419
 # https://github.com/kubernetes/kubernetes/pull/70828
 # Copy the apache2 license into place in the vendor directory
-cp $REPO/vendor/github.com/heketi/heketi/LICENSE-APACHE2 $REPO/vendor/github.com/heketi/heketi/LICENSE 
-rm -f $REPO/vendor/github.com/heketi/heketi/COPYING-*
+#
+# For Kubernetes 1.26+, heketi was removed https://github.com/kubernetes/kubernetes/pull/112015
+# This block should be removed once 1-25 is no longer supported.
+MINOR_VERSION=${RELEASE_BRANCH: -2}
+if [[ $MINOR_VERSION -le 25 ]]; then
+  cp $REPO/vendor/github.com/heketi/heketi/LICENSE-APACHE2 $REPO/vendor/github.com/heketi/heketi/LICENSE
+  rm -f $REPO/vendor/github.com/heketi/heketi/COPYING-*
+fi
 
 # a number of k8s.io dependencies which come from the main repo show
 # up in the list and since they are in the repo they have no version
