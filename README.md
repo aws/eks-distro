@@ -63,7 +63,7 @@ Source: https://github.com/cncf/artwork/tree/master/projects/kubernetes/certifie
 In alignment with the [Amazon EKS release calendar](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html#kubernetes-release-calendar), 
 EKS Distro will be discontinuing support of Kubernetes v1.21 soon. 
 
-While there are no plans to removed EKS-D v1.21 images from the [ECR](https://gallery.ecr.aws/eks-distro),
+While there are no plans to remove EKS-D v1.21 images from the [ECR](https://gallery.ecr.aws/eks-distro),
 there will be no more updates, including critical vulnerability fixes, to
 EKS-D v1.21 once support ends. **Due to the increased security risk this
 poses, it is HIGHLY recommended that users of v1.21 update to a supported
