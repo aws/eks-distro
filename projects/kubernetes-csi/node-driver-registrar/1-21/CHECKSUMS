@@ -1,3 +1,3 @@
-9c8d4ce8a2e2d425fa4c5c895f0336db5d71ba31c45fb2f26eb14fcf81d1e3b4  _output/1-21/bin/node-driver-registrar/linux-amd64/csi-node-driver-registrar
-5dbef1265ba37f9a006e28fe067bf51c2adb8427d7349ae46b7d1b19e9713028  _output/1-21/bin/node-driver-registrar/linux-arm64/csi-node-driver-registrar
-45b5bca2f71e93ddc5314f12227934300ab87b443696b03f4770338dff923c4e  _output/1-21/bin/node-driver-registrar/windows-amd64/csi-node-driver-registrar.exe
+98ea5c68aae00344fb7dada0d528ca877c358d70fab7f2781fb01f4a0fddfd7a  _output/1-21/bin/node-driver-registrar/linux-amd64/csi-node-driver-registrar
+ebe199c6c622e963a805654031c2de1183e7d600076d67682f16acf359dee4b1  _output/1-21/bin/node-driver-registrar/linux-arm64/csi-node-driver-registrar
+90386918db9a3be65052995240b1cd80919c31b2cb99455103f81aa756d359c0  _output/1-21/bin/node-driver-registrar/windows-amd64/csi-node-driver-registrar.exe
