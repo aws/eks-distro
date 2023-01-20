@@ -500,7 +500,7 @@ $(GIT_CHECKOUT_TARGET): | $(REPO)
 $(GIT_PATCH_TARGET): $(GIT_CHECKOUT_TARGET)
 	git -C $(REPO) config user.email prow@amazonaws.com
 	git -C $(REPO) config user.name "Prow Bot"
-	git -C $(REPO) am --committer-date-is-author-date $(PATCHES_DIR)/*
+	if [ -n "$(PATCHES_DIR)" ]; then git -C $(REPO) am --committer-date-is-author-date $(PATCHES_DIR)/*; fi
 	@touch $@
 
 
