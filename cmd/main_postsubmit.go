@@ -93,7 +93,7 @@ func main() {
 		fmt.Sprintf("IMAGE_REPO=%s", *imageRepo),
 	}
 
-	cmd := exec.Command("git", "-C", *gitRoot, "diff", "--name-only", "HEAD^", "HEAD")
+	cmd := exec.Command("git", "-C", c.gitRoot, "diff", "--name-only", "HEAD^", "HEAD")
 	log.Printf("Executing command: %s", strings.Join(cmd.Args, " "))
 	gitDiffOutput, err := cmd.Output()
 	if err != nil {
