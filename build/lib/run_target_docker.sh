@@ -42,7 +42,15 @@ if ! docker ps -f name=eks-d-builder | grep -w eks-d-builder; then
 		NETRC="--mount type=bind,source=$HOME/.netrc,target=/root/.netrc"
 	fi
 
-	docker run -d --name eks-d-builder --privileged $NETRC \
+	# on a linux host, the uid needs to match the host user otherwise
+	# git will complain about user permissions on the repo, when go
+	# goes to figure out the vcs information
+	USER_ID=""
+	if [ "$(uname -s)" = "Linux" ] && [ -n "${USER:-}" ]; then
+		USER_ID="-u $(id -u ${USER}):$(id -g ${USER})"
+	fi
+
+	docker run -d --name eks-d-builder --privileged $NETRC $USER_ID \
 		--mount type=bind,source=$MAKE_ROOT,target=/eks-distro \
 		-e GOPROXY=${GOPROXY:-} --entrypoint sleep \
 		public.ecr.aws/eks-distro-build-tooling/builder-base:latest infinity
