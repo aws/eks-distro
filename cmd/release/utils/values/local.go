@@ -31,28 +31,3 @@ func GetGitTag(projectOrg, projectName, releaseBranch string) ([]byte, error) {
 	}
 	return bytes.TrimSpace(fileOutput), nil
 }
-
-func IsDefaultReleaseBranch(providedReleaseBranch string) (bool, error) {
-	fileOutput, err := os.ReadFile(defaultReleaseBranchPath.String())
-	if err != nil {
-		return false, fmt.Errorf("getting default release branch at %s path:%w", defaultReleaseBranchPath, err)
-	}
-	defaultReleaseBranch := strings.TrimSpace(string(fileOutput))
-	return strings.Compare(providedReleaseBranch, defaultReleaseBranch) == 0, nil
-}
-
-func IsSupportedReleaseBranch(rb string) (bool, error) {
-	fileOutput, err := os.ReadFile(supportedReleaseBranchesPath.String())
-	if err != nil {
-		return false, fmt.Errorf("getting supported release branches at %s path:%w", supportedReleaseBranchesPath, err)
-	}
-
-	providedReleaseBranch := []byte(rb)
-	splitData := bytes.Split(bytes.TrimSpace(fileOutput), []byte("\n"))
-	for _, supportedReleaseBranch := range splitData {
-		if bytes.Equal(supportedReleaseBranch, providedReleaseBranch) {
-			return true, nil
-		}
-	}
-	return false, nil
-}

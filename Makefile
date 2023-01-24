@@ -232,3 +232,8 @@ github-release:
 	go run ./cmd/release/gh-release/main.go \
 		--branch=$(RELEASE_BRANCH) \
 		--overrideNumber=$(OVERRIDE_NUMBER)
+
+.PHONY: minor-release-foundation
+minor-release-foundation:
+	go vet ./cmd/release/minor
+	go run ./cmd/release/minor/main.go
