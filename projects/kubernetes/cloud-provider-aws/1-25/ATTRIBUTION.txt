@@ -1,5 +1,5 @@
 
-** github.com/aws/aws-sdk-go; version v1.44.107 --
+** github.com/aws/aws-sdk-go; version v1.44.145 --
 https://github.com/aws/aws-sdk-go
 
 ** github.com/coreos/go-semver/semver; version v0.3.0 --
@@ -131,7 +131,7 @@ https://github.com/kubernetes/client-go
 ** k8s.io/cloud-provider; version v0.25.3 --
 https://github.com/kubernetes/cloud-provider
 
-** k8s.io/cloud-provider-aws; version v1.25.1 --
+** k8s.io/cloud-provider-aws; version v1.25.2 --
 https://github.com/kubernetes/cloud-provider-aws
 
 ** k8s.io/component-base; version v0.25.3 --
@@ -524,7 +524,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/aws/aws-sdk-go/internal/sync/singleflight; version v1.44.107 --
+** github.com/aws/aws-sdk-go/internal/sync/singleflight; version v1.44.145 --
 https://github.com/aws/aws-sdk-go
 
 ** golang.org/go; version go1.19.5 --
@@ -533,7 +533,7 @@ https://github.com/golang/go
 ** golang.org/x/crypto; version v0.0.0-20220315160706-3147a52a75dd --
 https://go.googlesource.com/crypto
 
-** golang.org/x/net; version v0.0.0-20220722155237-a158d28d115b --
+** golang.org/x/net; version v0.1.0 --
 https://go.googlesource.com/net
 
 ** golang.org/x/oauth2; version v0.0.0-20211104180415-d3ed0bb246c8 --
@@ -542,13 +542,13 @@ https://go.googlesource.com/oauth2
 ** golang.org/x/sync/singleflight; version v0.0.0-20220722155255-886fb9371eb4 --
 https://go.googlesource.com/sync
 
-** golang.org/x/sys; version v0.0.0-20220722155257-8c9f86f7a55f --
+** golang.org/x/sys/unix; version v0.1.0 --
 https://go.googlesource.com/sys
 
-** golang.org/x/term; version v0.0.0-20210927222741-03fcf44c2211 --
+** golang.org/x/term; version v0.1.0 --
 https://go.googlesource.com/term
 
-** golang.org/x/text; version v0.3.7 --
+** golang.org/x/text; version v0.4.0 --
 https://go.googlesource.com/text
 
 ** golang.org/x/time/rate; version v0.0.0-20220210224613-90d013bbcef8 --
