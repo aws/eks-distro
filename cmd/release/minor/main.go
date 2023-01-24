@@ -29,14 +29,14 @@ func main() {
 	// Adds project files new release branch
 	projectFilesAddedCount, err := projects.CreateFilesAndDirectories(prevReleaseBranch, nextReleaseBranch)
 	if err != nil {
-		log.Fatalf("at the end: %v", err)
+		log.Fatalf("creating project files and directories: %v", err)
 	}
 	log.Printf("Generated %d project files", projectFilesAddedCount)
 
 	// Adds release directory and sets RELEASE values to "0"
 	err = createReleaseDirectoryAndFiles(nextReleaseBranch)
 	if err != nil {
-		log.Fatalf("at the end: %v", err)
+		log.Fatalf("creating RELEASE files: %v", err)
 	}
 	log.Printf("Generated RELEASE files")
 }

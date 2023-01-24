@@ -90,13 +90,13 @@ func copyDir(prevReleaseBranchPath, nextReleaseBranchPath string) error {
 func copyFile(prevReleaseBranchFilePath, nextReleaseBranchFilePath string) error {
 	existingFile, err := os.Open(prevReleaseBranchFilePath)
 	if err != nil {
-		return err
+		return fmt.Errorf("opening file %s to copy: %w", prevReleaseBranchFilePath, err)
 	}
 	defer existingFile.Close()
 
 	newFile, err := os.Create(nextReleaseBranchFilePath)
 	if err != nil {
-		return err
+		return fmt.Errorf("creating file %s to write to as a copy: %w", nextReleaseBranchFilePath, err)
 	}
 	defer newFile.Close()
 
