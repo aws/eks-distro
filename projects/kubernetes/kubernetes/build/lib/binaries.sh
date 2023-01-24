@@ -14,12 +14,12 @@
 # limitations under the License.
 
 function build::binaries::kube_bins() {
-    local -r repository="$1"
-    local -r release_branch="$2"
-    local -r git_tag="$3"
-    local -r kube_git_version_file="$4"
+  local -r repository="$1"
+  local -r release_branch="$2"
+  local -r git_tag="$3"
+  local -r kube_git_version_file="$4"
 
-    export KUBE_GIT_VERSION_FILE=$kube_git_version_file
+  export KUBE_GIT_VERSION_FILE=$kube_git_version_file
 
     cd $repository
     
@@ -49,7 +49,14 @@ function build::binaries::kube_bins() {
         cmd/kube-controller-manager \
         cmd/kube-scheduler"
 
+  # For Kubernetes 1.23 and older, removing `make generated_files` results in this error:
+  # cmd/kube-apiserver/app/server.go:401:80: undefined: "k8s.io/kubernetes/pkg/generated/openapi".GetOpenAPIDefinitions
+  #
+  # This block should be removes when 1.23 is no longer supported.
+  local -r minor_version=${release_branch: -2}
+  if [[ $minor_version -le 23 ]]; then
     make generated_files
+  fi
 
     # Linux
     export KUBE_BUILD_PLATFORMS="linux/amd64 linux/arm64"
