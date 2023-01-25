@@ -1,0 +1,23 @@
+# Changelog for v1-22-eks-18
+
+This changelog highlights the changes for [v1-22-eks-18](https://github.com/aws/eks-distro/tree/v1-22-eks-18).
+
+## Changes
+
+### Patches
+* Bump iam-authenticator verisons for 1.21-1.25 ([1663](https://github.com/aws/eks-distro/pull/1663))
+* Updated aws-iam-auth to v0.6.2 for all versions ([1628](https://github.com/aws/eks-distro/pull/1628))
+
+### Projects
+* Bump iam-authenticator verisons for 1.21-1.25 ([1663](https://github.com/aws/eks-distro/pull/1663))
+* Updated aws-iam-auth to v0.6.2 for all versions ([1628](https://github.com/aws/eks-distro/pull/1628))
+* Updated node-driver-registrar to v2.7.0 for all versions ([1626](https://github.com/aws/eks-distro/pull/1626))
+* Updated livenessprobe to v2.9.0 for all versions ([1625](https://github.com/aws/eks-distro/pull/1625))
+* Updated external snapshotter to v6.2.0 for all versions ([1624](https://github.com/aws/eks-distro/pull/1624))
+* Updated external resizer to v1.7.0 for all versions ([1623](https://github.com/aws/eks-distro/pull/1623))
+* Updated external provisioner to v3.4.0 for all versions ([1622](https://github.com/aws/eks-distro/pull/1622))
+* Updated external attacher to v4.1.0 for all versions ([1621](https://github.com/aws/eks-distro/pull/1621))
+
+### Base Image
+No changes since last release
+
