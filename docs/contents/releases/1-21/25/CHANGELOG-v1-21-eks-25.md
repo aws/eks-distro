@@ -5,11 +5,11 @@ This changelog highlights the changes for [v1-21-eks-25](https://github.com/aws/
 ## Changes
 
 ### Patches
-* Bump iam-authenticator verisons for 1.21-1.25 ([1663](https://github.com/aws/eks-distro/pull/1663))
-* Updated aws-iam-auth to v0.6.2 for all versions ([1628](https://github.com/aws/eks-distro/pull/1628))
+* Add patch to bump Go Version iam-authenticator for all versions ([1663](https://github.com/aws/eks-distro/pull/1663))
+* Add patch to bump Go Version aws-iam-auth for all versions ([1628](https://github.com/aws/eks-distro/pull/1628))
 
 ### Projects
-* Bump iam-authenticator verisons for 1.21-1.25 ([1663](https://github.com/aws/eks-distro/pull/1663))
+* Bump iam-authenticator verisons for all versions ([1663](https://github.com/aws/eks-distro/pull/1663))
 * Updated aws-iam-auth to v0.6.2 for all versions ([1628](https://github.com/aws/eks-distro/pull/1628))
 * Updated node-driver-registrar to v2.7.0 for all versions ([1626](https://github.com/aws/eks-distro/pull/1626))
 * Updated livenessprobe to v2.9.0 for all versions ([1625](https://github.com/aws/eks-distro/pull/1625))
