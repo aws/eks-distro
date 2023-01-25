@@ -9,6 +9,7 @@ patch:
 
 release:
 - 'release/**/*'
+- 'docs/contents/releases/**/*'
 
 v1.21:
 - '**/1-21/**/*'
