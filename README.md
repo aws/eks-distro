@@ -56,7 +56,7 @@ Source: https://github.com/cncf/artwork/tree/master/projects/kubernetes/certifie
 
 | Release | Manifest | Kubernetes Version |
 | --- | --- | --- |
-| 24 | [v1-21-eks-24](https://distro.eks.amazonaws.com/kubernetes-1-21/kubernetes-1-21-eks-24.yaml) | [v1.21.14](https://github.com/kubernetes/kubernetes/release/tag/v1.21.14) |
+| 25 | [v1-21-eks-25](https://distro.eks.amazonaws.com/kubernetes-1-21/kubernetes-1-21-eks-25.yaml) | [v1.21.14](https://github.com/kubernetes/kubernetes/release/tag/v1.21.14) |
 
 **🚨 IMPORTANT INFORMATION ABOUT v1.21 SUPPORT 🚨**
 
