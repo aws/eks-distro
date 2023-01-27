@@ -43,7 +43,7 @@ index 52df53af82b..28ff1f82951 100644
  	return a.dispatcher.Dispatch(ctx, attr, o, hooks)
  }
 +
-+func isClusterCrititcalResource(attr admission.Attributes) bool {
++func isClusterCriticalResource(attr admission.Attributes) bool {
 +	gvk := attr.GetKind()
 +	name := attr.GetName()
 +	ns := attr.GetNamespace()
