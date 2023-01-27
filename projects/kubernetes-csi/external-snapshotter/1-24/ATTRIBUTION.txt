@@ -29,7 +29,7 @@ https://github.com/kubernetes-csi/csi-lib-utils
 ** github.com/kubernetes-csi/external-snapshotter/client/v6; version v6.1.0 --
 https://github.com/kubernetes-csi/external-snapshotter/client/v6
 
-** github.com/kubernetes-csi/external-snapshotter/v6; version v6.2.0 --
+** github.com/kubernetes-csi/external-snapshotter/v6; version v6.2.1 --
 https://github.com/kubernetes-csi/external-snapshotter/v6
 
 ** github.com/matttproud/golang_protobuf_extensions/pbutil; version v1.0.4 --

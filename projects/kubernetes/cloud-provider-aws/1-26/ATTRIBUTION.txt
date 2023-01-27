@@ -1,32 +1,38 @@
 
-** github.com/aws/aws-sdk-go; version v1.44.107 --
+** github.com/aws/aws-sdk-go; version v1.44.159 --
 https://github.com/aws/aws-sdk-go
 
 ** github.com/coreos/go-semver/semver; version v0.3.0 --
 https://github.com/coreos/go-semver
 
-** github.com/coreos/go-systemd/v22; version v22.3.2 --
+** github.com/coreos/go-systemd/v22; version v22.5.0 --
 https://github.com/coreos/go-systemd/v22
 
 ** github.com/go-logr/logr; version v1.2.3 --
 https://github.com/go-logr/logr
 
+** github.com/go-logr/stdr; version v1.2.2 --
+https://github.com/go-logr/stdr
+
 ** github.com/go-openapi/jsonpointer; version v0.19.5 --
 https://github.com/go-openapi/jsonpointer
 
-** github.com/go-openapi/jsonreference; version v0.19.5 --
+** github.com/go-openapi/jsonreference; version v0.20.0 --
 https://github.com/go-openapi/jsonreference
 
-** github.com/go-openapi/swag; version v0.19.14 --
+** github.com/go-openapi/swag; version v0.22.3 --
 https://github.com/go-openapi/swag
 
 ** github.com/golang/groupcache/lru; version v0.0.0-20210331224755-41bb18bfe9da --
 https://github.com/golang/groupcache
 
-** github.com/google/gnostic; version v0.5.7-v3refs --
+** github.com/google/cel-go; version v0.13.0 --
+https://github.com/google/cel-go
+
+** github.com/google/gnostic; version v0.6.9 --
 https://github.com/google/gnostic
 
-** github.com/google/gofuzz; version v1.1.0 --
+** github.com/google/gofuzz; version v1.2.0 --
 https://github.com/google/gofuzz
 
 ** github.com/grpc-ecosystem/go-grpc-prometheus; version v1.2.0 --
@@ -35,10 +41,10 @@ https://github.com/grpc-ecosystem/go-grpc-prometheus
 ** github.com/jmespath/go-jmespath; version v0.4.0 --
 https://github.com/jmespath/go-jmespath
 
-** github.com/matttproud/golang_protobuf_extensions/pbutil; version v1.0.2-0.20181231171920-c182affec369 --
+** github.com/matttproud/golang_protobuf_extensions/pbutil; version v1.0.4 --
 https://github.com/matttproud/golang_protobuf_extensions
 
-** github.com/moby/term; version v0.0.0-20210619224110-3f7ff695adc6 --
+** github.com/moby/term; version v0.0.0-20221205130635-1aeaba878587 --
 https://github.com/moby/term
 
 ** github.com/modern-go/concurrent; version v0.0.0-20180306012644-bacd9c7ef1dd --
@@ -50,118 +56,118 @@ https://github.com/modern-go/reflect2
 ** github.com/NYTimes/gziphandler; version v1.1.1 --
 https://github.com/nytimes/gziphandler
 
-** github.com/prometheus/client_golang/prometheus; version v1.12.1 --
+** github.com/prometheus/client_golang/prometheus; version v1.14.0 --
 https://github.com/prometheus/client_golang
 
-** github.com/prometheus/client_model/go; version v0.2.0 --
+** github.com/prometheus/client_model/go; version v0.3.0 --
 https://github.com/prometheus/client_model
 
-** github.com/prometheus/common; version v0.32.1 --
+** github.com/prometheus/common; version v0.39.0 --
 https://github.com/prometheus/common
 
-** github.com/prometheus/procfs; version v0.7.3 --
+** github.com/prometheus/procfs; version v0.8.0 --
 https://github.com/prometheus/procfs
 
-** github.com/spf13/cobra; version v1.4.0 --
+** github.com/spf13/cobra; version v1.6.1 --
 https://github.com/spf13/cobra
 
-** go.etcd.io/etcd/api/v3; version v3.5.4 --
+** go.etcd.io/etcd/api/v3; version v3.5.6 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/client/pkg/v3; version v3.5.4 --
+** go.etcd.io/etcd/client/pkg/v3; version v3.5.6 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/client/v3; version v3.5.4 --
+** go.etcd.io/etcd/client/v3; version v3.5.6 --
 https://github.com/etcd-io/etcd
 
-** go.opentelemetry.io/contrib; version v0.20.0 --
+** go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc; version v0.37.0 --
 https://github.com/open-telemetry/opentelemetry-go-contrib
 
-** go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc; version v0.20.0 --
+** go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp; version v0.37.0 --
 https://github.com/open-telemetry/opentelemetry-go-contrib
 
-** go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp; version v0.20.0 --
-https://github.com/open-telemetry/opentelemetry-go-contrib
-
-** go.opentelemetry.io/otel; version v0.20.0 --
+** go.opentelemetry.io/otel; version v1.11.2 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/otel/exporters/otlp; version v0.20.0 --
+** go.opentelemetry.io/otel/exporters/otlp/internal/retry; version v1.11.2 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/otel/metric; version v0.20.0 --
+** go.opentelemetry.io/otel/exporters/otlp/otlptrace; version v1.11.2 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/otel/sdk; version v0.20.0 --
+** go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc; version v1.11.2 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/otel/sdk/export/metric; version v0.20.0 --
+** go.opentelemetry.io/otel/metric; version v0.34.0 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/otel/sdk/metric; version v0.20.0 --
+** go.opentelemetry.io/otel/sdk; version v1.11.2 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/otel/trace; version v0.20.0 --
+** go.opentelemetry.io/otel/trace; version v1.11.2 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/proto/otlp; version v0.7.0 --
+** go.opentelemetry.io/proto/otlp; version v0.19.0 --
 https://github.com/open-telemetry/opentelemetry-proto-go
 
-** google.golang.org/genproto; version v0.0.0-20220502173005-c8bf987b8c21 --
+** google.golang.org/genproto; version v0.0.0-20221207170731-23e4bf6bdc37 --
 https://github.com/googleapis/go-genproto
 
-** google.golang.org/grpc; version v1.47.0 --
+** google.golang.org/grpc; version v1.51.0 --
 https://github.com/grpc/grpc-go
 
 ** gopkg.in/yaml.v2; version v2.4.0 --
 https://gopkg.in/yaml.v2
 
-** k8s.io/api; version v0.25.3 --
+** k8s.io/api; version v0.26.0 --
 https://github.com/kubernetes/api
 
-** k8s.io/apimachinery/pkg; version v0.25.3 --
+** k8s.io/apimachinery/pkg; version v0.26.0 --
 https://github.com/kubernetes/apimachinery
 
-** k8s.io/apiserver; version v0.25.3 --
+** k8s.io/apiserver; version v0.26.0 --
 https://github.com/kubernetes/apiserver
 
-** k8s.io/client-go; version v0.25.3 --
+** k8s.io/client-go; version v0.26.0 --
 https://github.com/kubernetes/client-go
 
-** k8s.io/cloud-provider; version v0.25.3 --
+** k8s.io/cloud-provider; version v0.26.0 --
 https://github.com/kubernetes/cloud-provider
 
-** k8s.io/cloud-provider-aws; version v1.25.1 --
+** k8s.io/cloud-provider-aws; version v1.26.0 --
 https://github.com/kubernetes/cloud-provider-aws
 
-** k8s.io/component-base; version v0.25.3 --
+** k8s.io/component-base; version v0.26.0 --
 https://github.com/kubernetes/component-base
 
-** k8s.io/component-helpers/node/util; version v0.25.3 --
+** k8s.io/component-helpers/node/util; version v0.26.0 --
 https://github.com/kubernetes/component-helpers
 
-** k8s.io/controller-manager; version v0.25.3 --
+** k8s.io/controller-manager; version v0.26.0 --
 https://github.com/kubernetes/controller-manager
 
-** k8s.io/csi-translation-lib/plugins; version v0.25.0 --
+** k8s.io/csi-translation-lib/plugins; version v0.26.0 --
 https://github.com/kubernetes/csi-translation-lib
 
-** k8s.io/klog/v2; version v2.70.1 --
+** k8s.io/klog/v2; version v2.80.1 --
 https://github.com/kubernetes/klog
 
-** k8s.io/kube-openapi/pkg; version v0.0.0-20220803162953-67bda5d908f1 --
+** k8s.io/kms/apis; version v0.26.0 --
+https://github.com/kubernetes/kms
+
+** k8s.io/kube-openapi/pkg; version v0.0.0-20221207184640-f3cff1453715 --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kube-openapi/pkg/validation/spec; version v0.0.0-20220803162953-67bda5d908f1 --
+** k8s.io/kube-openapi/pkg/validation/spec; version v0.0.0-20221207184640-f3cff1453715 --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/utils; version v0.0.0-20220728103510-ee6ede2d64ed --
+** k8s.io/utils; version v0.0.0-20221128185143-99ec85e7a448 --
 https://github.com/kubernetes/utils
 
 ** sigs.k8s.io/apiserver-network-proxy/konnectivity-client; version v0.0.33 --
 https://github.com/kubernetes-sigs/apiserver-network-proxy
 
-** sigs.k8s.io/json; version v0.0.0-20220713155537-f223a00ba0e2 --
+** sigs.k8s.io/json; version v0.0.0-20221116044647-bc3834ca7abd --
 https://github.com/kubernetes-sigs/json
 
 ** sigs.k8s.io/structured-merge-diff/v4; version v4.2.3 --
@@ -524,37 +530,69 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/aws/aws-sdk-go/internal/sync/singleflight; version v1.44.107 --
+** github.com/antlr/antlr4/runtime/Go/antlr; version v1.4.10 --
+https://github.com/antlr/antlr4/runtime/Go/antlr
+
+Copyright 2021 The ANTLR Project
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+    1. Redistributions of source code must retain the above copyright notice,
+    this list of conditions and the following disclaimer.
+
+    2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+
+    3. Neither the name of the copyright holder nor the names of its
+    contributors may be used to endorse or promote products derived from this
+    software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+------
+
+** github.com/aws/aws-sdk-go/internal/sync/singleflight; version v1.44.159 --
 https://github.com/aws/aws-sdk-go
 
 ** golang.org/go; version go1.19.5 --
 https://github.com/golang/go
 
-** golang.org/x/crypto; version v0.0.0-20220315160706-3147a52a75dd --
+** golang.org/x/crypto; version v0.4.0 --
 https://go.googlesource.com/crypto
 
-** golang.org/x/net; version v0.0.0-20220722155237-a158d28d115b --
+** golang.org/x/net; version v0.4.0 --
 https://go.googlesource.com/net
 
-** golang.org/x/oauth2; version v0.0.0-20211104180415-d3ed0bb246c8 --
+** golang.org/x/oauth2; version v0.3.0 --
 https://go.googlesource.com/oauth2
 
-** golang.org/x/sync/singleflight; version v0.0.0-20220722155255-886fb9371eb4 --
+** golang.org/x/sync/singleflight; version v0.1.0 --
 https://go.googlesource.com/sync
 
-** golang.org/x/sys; version v0.0.0-20220722155257-8c9f86f7a55f --
+** golang.org/x/sys/unix; version v0.3.0 --
 https://go.googlesource.com/sys
 
-** golang.org/x/term; version v0.0.0-20210927222741-03fcf44c2211 --
+** golang.org/x/term; version v0.3.0 --
 https://go.googlesource.com/term
 
-** golang.org/x/text; version v0.3.7 --
+** golang.org/x/text; version v0.5.0 --
 https://go.googlesource.com/text
 
-** golang.org/x/time/rate; version v0.0.0-20220210224613-90d013bbcef8 --
+** golang.org/x/time/rate; version v0.3.0 --
 https://go.googlesource.com/time
 
-** k8s.io/apimachinery/third_party/forked/golang; version v0.25.3 --
+** k8s.io/apimachinery/third_party/forked/golang; version v0.26.0 --
 https://github.com/kubernetes/apimachinery
 
 Copyright (c) 2009 The Go Authors. All rights reserved.
@@ -587,7 +625,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/evanphx/json-patch; version v4.12.0+incompatible --
+** github.com/evanphx/json-patch; version v5.6.0+incompatible --
 https://github.com/evanphx/json-patch
 
 Copyright (c) 2014, Evan Phoenix
@@ -618,37 +656,34 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/fsnotify/fsnotify; version v1.4.9 --
+** github.com/fsnotify/fsnotify; version v1.6.0 --
 https://github.com/fsnotify/fsnotify
 
-Copyright (c) 2012 The Go Authors. All rights reserved.
-Copyright (c) 2012-2019 fsnotify Authors. All rights reserved.
+Copyright © 2012 The Go Authors. All rights reserved.
+Copyright © fsnotify Authors. All rights reserved.
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are
-met:
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
 
-   * Redistributions of source code must retain the above copyright
-notice, this list of conditions and the following disclaimer.
-   * Redistributions in binary form must reproduce the above
-copyright notice, this list of conditions and the following disclaimer
-in the documentation and/or other materials provided with the
-distribution.
-   * Neither the name of Google Inc. nor the names of its
-contributors may be used to endorse or promote products derived from
-this software without specific prior written permission.
+* Redistributions of source code must retain the above copyright notice, this
+  list of conditions and the following disclaimer.
+* Redistributions in binary form must reproduce the above copyright notice, this
+  list of conditions and the following disclaimer in the documentation and/or
+  other materials provided with the distribution.
+* Neither the name of Google Inc. nor the names of its contributors may be used
+  to endorse or promote products derived from this software without specific
+  prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
@@ -727,7 +762,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/google/go-cmp/cmp; version v0.5.8 --
+** github.com/google/go-cmp/cmp; version v0.5.9 --
 https://github.com/google/go-cmp
 
 Copyright (c) 2017 The Go Authors. All rights reserved.
@@ -760,7 +795,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/google/uuid; version v1.1.4 --
+** github.com/google/uuid; version v1.3.0 --
 https://github.com/google/uuid
 
 Copyright (c) 2009,2014 Google Inc. All rights reserved.
@@ -793,8 +828,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/grpc-ecosystem/grpc-gateway; version v1.16.0 --
-https://github.com/grpc-ecosystem/grpc-gateway
+** github.com/grpc-ecosystem/grpc-gateway/v2; version v2.14.0 --
+https://github.com/grpc-ecosystem/grpc-gateway/v2
 
 Copyright (c) 2015, Gengo, Inc.
 All rights reserved.
@@ -826,7 +861,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/imdario/mergo; version v0.3.11 --
+** github.com/imdario/mergo; version v0.3.13 --
 https://github.com/imdario/mergo
 
 Copyright (c) 2013 Dario Castañé. All rights reserved.
@@ -897,7 +932,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/prometheus/common/internal/bitbucket.org/ww/goautoneg; version v0.32.1 --
+** github.com/prometheus/common/internal/bitbucket.org/ww/goautoneg; version v0.39.0 --
 https://github.com/prometheus/common
 
 Copyright (c) 2011, Open Knowledge Foundation Ltd.
@@ -931,60 +966,6 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-------
-
-** github.com/PuerkitoBio/purell; version v1.1.1 --
-https://github.com/PuerkitoBio/purell
-
-Copyright (c) 2012, Martin Angers
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
-
-* Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-
-* Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
-
-* Neither the name of the author nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-------
-
-** github.com/PuerkitoBio/urlesc; version v0.0.0-20170810143723-de5bf2ad4578 --
-https://github.com/PuerkitoBio/urlesc
-
-** k8s.io/utils/internal/third_party/forked/golang; version v0.0.0-20220728103510-ee6ede2d64ed --
-https://github.com/kubernetes/utils
-
-Copyright (c) 2012 The Go Authors. All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are
-met:
-
-   * Redistributions of source code must retain the above copyright
-notice, this list of conditions and the following disclaimer.
-   * Redistributions in binary form must reproduce the above
-copyright notice, this list of conditions and the following disclaimer
-in the documentation and/or other materials provided with the
-distribution.
-   * Neither the name of Google Inc. nor the names of its
-contributors may be used to endorse or promote products derived from
-this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 ------
 
 ** github.com/spf13/pflag; version v1.0.5 --
@@ -1021,7 +1002,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** google.golang.org/protobuf; version v1.28.0 --
+** google.golang.org/protobuf; version v1.28.1 --
 https://go.googlesource.com/protobuf
 
 Copyright (c) 2018 The Go Authors. All rights reserved.
@@ -1091,6 +1072,72 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
+** k8s.io/kube-openapi/pkg/internal/third_party/go-json-experiment/json; version v0.0.0-20221207184640-f3cff1453715 --
+https://github.com/kubernetes/kube-openapi
+
+Copyright (c) 2020 The Go Authors. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+   * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+   * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+------
+
+** k8s.io/utils/internal/third_party/forked/golang; version v0.0.0-20221128185143-99ec85e7a448 --
+https://github.com/kubernetes/utils
+
+Copyright (c) 2012 The Go Authors. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+   * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+   * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+------
+
 ** github.com/davecgh/go-spew/spew; version v1.1.1 --
 https://github.com/davecgh/go-spew
 
@@ -1120,15 +1167,19 @@ Copyright (C) 2013 Blake Mizerany
 https://github.com/blang/semver/v4
 Copyright (c) 2014 Benedikt Lang <github at benediktlang.de>
 
-** github.com/cespare/xxhash/v2; version v2.1.2 --
+** github.com/cenkalti/backoff/v4; version v4.2.0 --
+https://github.com/cenkalti/backoff/v4
+Copyright (c) 2014 Cenk Altı
+
+** github.com/cespare/xxhash/v2; version v2.2.0 --
 https://github.com/cespare/xxhash/v2
 Copyright (c) 2016 Caleb Spare
 
-** github.com/emicklei/go-restful/v3; version v3.8.0 --
+** github.com/emicklei/go-restful/v3; version v3.10.1 --
 https://github.com/emicklei/go-restful/v3
 Copyright (c) 2012,2013 Ernest Micklei
 
-** github.com/felixge/httpsnoop; version v1.0.1 --
+** github.com/felixge/httpsnoop; version v1.0.3 --
 https://github.com/felixge/httpsnoop
 Copyright (c) 2016 Felix Geisendörfer (felix@debuggable.com)
 
@@ -1140,19 +1191,23 @@ Copyright (c) 2019 Josh Bleecher Snyder
 https://github.com/json-iterator/go
 Copyright (c) 2016 json-iterator
 
-** github.com/mailru/easyjson; version v0.7.6 --
+** github.com/mailru/easyjson; version v0.7.7 --
 https://github.com/mailru/easyjson
 Copyright (c) 2016 Mail.Ru Group
 
-** go.uber.org/atomic; version v1.7.0 --
+** github.com/stoewer/go-strcase; version v1.2.0 --
+https://github.com/stoewer/go-strcase
+Copyright (c) 2017, Adrian Stoewer <adrian.stoewer@rz.ifi.lmu.de>
+
+** go.uber.org/atomic; version v1.10.0 --
 https://github.com/uber-go/atomic
 Copyright (c) 2016 Uber Technologies, Inc.
 
-** go.uber.org/multierr; version v1.6.0 --
+** go.uber.org/multierr; version v1.9.0 --
 https://github.com/uber-go/multierr
-Copyright (c) 2017 Uber Technologies, Inc.
+Copyright (c) 2017-2021 Uber Technologies, Inc.
 
-** go.uber.org/zap; version v1.19.0 --
+** go.uber.org/zap; version v1.24.0 --
 https://github.com/uber-go/zap
 Copyright (c) 2016-2017 Uber Technologies, Inc.
 
