@@ -1,0 +1,214 @@
+From 8e17e7dc184d0a83522ae04d07687eab209eb87f Mon Sep 17 00:00:00 2001
+From: Cameron Rozean <rcrozean@amazon.com>
+Date: Mon, 30 Jan 2023 15:12:12 -0800
+Subject: [PATCH] rm exclusionrule package and move to generic
+
+---
+ .../generic/{exclusionrules => }/exclusion.go |  7 ++++---
+ .../{exclusionrules => }/exclusion_test.go    |  5 +++--
+ .../generic/{exclusionrules => }/matcher.go   |  2 +-
+ .../{exclusionrules => }/matcher_test.go      |  5 +++--
+ .../plugin/webhook/generic/webhook.go         |  5 ++---
+ .../webhook_exclusion_rules_test.go           | 20 +++++++++----------
+ 6 files changed, 23 insertions(+), 21 deletions(-)
+ rename staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/{exclusionrules => }/exclusion.go (99%)
+ rename staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/{exclusionrules => }/exclusion_test.go (99%)
+ rename staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/{exclusionrules => }/matcher.go (99%)
+ rename staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/{exclusionrules => }/matcher_test.go (99%)
+
+diff --git a/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/exclusion.go b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusion.go
+similarity index 99%
+rename from staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/exclusion.go
+rename to staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusion.go
+index 012a7a2b2a5..4cf1766160a 100644
+--- a/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/exclusion.go
++++ b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusion.go
+@@ -1,11 +1,12 @@
+-package exclusionrules
++package generic
+ 
+ import (
+ 	"encoding/json"
++	"os"
++
+ 	v1 "k8s.io/api/admissionregistration/v1"
+ 	"k8s.io/apiserver/pkg/admission"
+ 	"k8s.io/klog/v2"
+-	"os"
+ )
+ 
+ // Enables you to pass a config file to kube-api-server
+@@ -73,7 +74,7 @@ func filterValidRules(inputExclusionRules []ExclusionRule) []ExclusionRule {
+ 			klog.Errorf("Invalid webhook admission exclusion rule, scope not set")
+ 			continue
+ 		}
+-		
++
+ 		// No wildcards
+ 		if *rule.Scope == v1.AllScopes || rule.APIGroup == "*" || rule.APIVersion == "*" || rule.Namespace == "*" || rule.Kind == "*" {
+ 			klog.Errorf("Invalid webhook admission exclusion rule, wildcard not allowed, skipping rule")
+diff --git a/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/exclusion_test.go b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusion_test.go
+similarity index 99%
+rename from staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/exclusion_test.go
+rename to staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusion_test.go
+index ab6da215728..ea0f25a1a37 100644
+--- a/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/exclusion_test.go
++++ b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusion_test.go
+@@ -1,11 +1,12 @@
+-package exclusionrules
++package generic
+ 
+ import (
++	"testing"
++
+ 	v1 "k8s.io/api/admissionregistration/v1"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	"k8s.io/apimachinery/pkg/runtime/schema"
+ 	"k8s.io/apiserver/pkg/admission"
+-	"testing"
+ )
+ 
+ func getAttributes() admission.Attributes {
+diff --git a/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/matcher.go b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/matcher.go
+similarity index 99%
+rename from staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/matcher.go
+rename to staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/matcher.go
+index 029abc43cd6..54ce74236f7 100644
+--- a/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/matcher.go
++++ b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/matcher.go
+@@ -1,4 +1,4 @@
+-package exclusionrules
++package generic
+ 
+ import (
+ 	v1 "k8s.io/api/admissionregistration/v1"
+diff --git a/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/matcher_test.go b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/matcher_test.go
+similarity index 99%
+rename from staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/matcher_test.go
+rename to staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/matcher_test.go
+index 3f7abbb9d90..a3cc8b89d0c 100644
+--- a/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/matcher_test.go
++++ b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/matcher_test.go
+@@ -1,13 +1,14 @@
+-package exclusionrules
++package generic
+ 
+ import (
+ 	"fmt"
++	"testing"
++
+ 	adreg "k8s.io/api/admissionregistration/v1"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	"k8s.io/apimachinery/pkg/runtime"
+ 	"k8s.io/apimachinery/pkg/runtime/schema"
+ 	"k8s.io/apimachinery/pkg/util/sets"
+-	"testing"
+ 
+ 	"k8s.io/apiserver/pkg/admission"
+ )
+diff --git a/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/webhook.go b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/webhook.go
+index 9584f11993c..024c8eb689c 100644
+--- a/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/webhook.go
++++ b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/webhook.go
+@@ -20,11 +20,10 @@ import (
+ 	"context"
+ 	"fmt"
+ 	"io"
+-	"k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules"
+ 
+ 	admissionv1 "k8s.io/api/admission/v1"
+ 	admissionv1beta1 "k8s.io/api/admission/v1beta1"
+-	"k8s.io/api/admissionregistration/v1"
++	v1 "k8s.io/api/admissionregistration/v1"
+ 	apierrors "k8s.io/apimachinery/pkg/api/errors"
+ 	"k8s.io/apimachinery/pkg/runtime/schema"
+ 	"k8s.io/apiserver/pkg/admission"
+@@ -154,7 +153,7 @@ func (a *Webhook) ShouldCallHook(h webhook.WebhookAccessor, attr admission.Attri
+ 		return nil, nil
+ 	}
+ 
+-	if exclusionrules.ShouldSkipWebhookDueToExclusionRules(attr) {
++	if ShouldSkipWebhookDueToExclusionRules(attr) {
+ 		return nil, nil
+ 	}
+ 
+diff --git a/test/integration/apiserver/admissionwebhook/webhook_exclusion_rules_test.go b/test/integration/apiserver/admissionwebhook/webhook_exclusion_rules_test.go
+index f89b972275f..e64fa68fbdd 100644
+--- a/test/integration/apiserver/admissionwebhook/webhook_exclusion_rules_test.go
++++ b/test/integration/apiserver/admissionwebhook/webhook_exclusion_rules_test.go
+@@ -3,7 +3,6 @@ package admissionwebhook
+ import (
+ 	"context"
+ 	"fmt"
+-	"k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules"
+ 	"os"
+ 	"testing"
+ 	"time"
+@@ -12,6 +11,7 @@ import (
+ 	appsv1 "k8s.io/api/apps/v1"
+ 	corev1 "k8s.io/api/core/v1"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apiserver/pkg/admission/plugin/webhook/generic"
+ 	"k8s.io/client-go/kubernetes"
+ 	kubeapiservertesting "k8s.io/kubernetes/cmd/kube-apiserver/app/testing"
+ 	"k8s.io/kubernetes/test/integration/framework"
+@@ -50,11 +50,11 @@ func TestWebhookExclusionRulesEnvVarSetNoFile(t *testing.T) {
+ 	}
+ 
+ 	//Test env var set but no file, should be broken webhook
+-	err = os.Setenv(exclusionrules.ADMISSION_WEBHOOK_EXCLUSION_ENV_VAR, exclusionRulesFile)
++	err = os.Setenv(generic.ADMISSION_WEBHOOK_EXCLUSION_ENV_VAR, exclusionRulesFile)
+ 	if err != nil {
+-		t.Fatalf("unexpected error clearing %v env var", exclusionrules.ADMISSION_WEBHOOK_EXCLUSION_ENV_VAR)
++		t.Fatalf("unexpected error clearing %v env var", generic.ADMISSION_WEBHOOK_EXCLUSION_ENV_VAR)
+ 	}
+-	exclusionrules.LoadRules()
++	generic.LoadRules()
+ 
+ 	createBrokenWebhook(t, client)
+ 
+@@ -67,9 +67,9 @@ func TestWebhookExclusionRulesEnvVarSetNoFile(t *testing.T) {
+ 
+ func TestWebhookExclusionRulesEnvVarSetBadFile(t *testing.T) {
+ 	// Test env var set, bad file, should be broken webhook
+-	err := os.Setenv(exclusionrules.ADMISSION_WEBHOOK_EXCLUSION_ENV_VAR, exclusionRulesFile)
++	err := os.Setenv(generic.ADMISSION_WEBHOOK_EXCLUSION_ENV_VAR, exclusionRulesFile)
+ 	if err != nil {
+-		t.Fatalf("unexpected error clearing %v env var", exclusionrules.ADMISSION_WEBHOOK_EXCLUSION_ENV_VAR)
++		t.Fatalf("unexpected error clearing %v env var", generic.ADMISSION_WEBHOOK_EXCLUSION_ENV_VAR)
+ 	}
+ 
+ 	if err := os.WriteFile(exclusionRulesFile, []byte("bad file"), os.FileMode(0755)); err != nil {
+@@ -77,7 +77,7 @@ func TestWebhookExclusionRulesEnvVarSetBadFile(t *testing.T) {
+ 	}
+ 	defer os.Remove(exclusionRulesFile)
+ 
+-	exclusionrules.LoadRules()
++	generic.LoadRules()
+ 	server := kubeapiservertesting.StartTestServerOrDie(t, nil, nil, framework.SharedEtcd())
+ 	defer server.TearDownFn()
+ 
+@@ -95,9 +95,9 @@ func TestWebhookExclusionRulesEnvVarSetBadFile(t *testing.T) {
+ }
+ 
+ func TestWebhookExclusionRules(t *testing.T) {
+-	err := os.Setenv(exclusionrules.ADMISSION_WEBHOOK_EXCLUSION_ENV_VAR, exclusionRulesFile)
++	err := os.Setenv(generic.ADMISSION_WEBHOOK_EXCLUSION_ENV_VAR, exclusionRulesFile)
+ 	if err != nil {
+-		t.Fatalf("unexpected error clearing %v env var", exclusionrules.ADMISSION_WEBHOOK_EXCLUSION_ENV_VAR)
++		t.Fatalf("unexpected error clearing %v env var", generic.ADMISSION_WEBHOOK_EXCLUSION_ENV_VAR)
+ 	}
+ 
+ 	//test env var set, exclusion file should exclude
+@@ -118,7 +118,7 @@ func TestWebhookExclusionRules(t *testing.T) {
+ 	}
+ 	defer os.Remove(exclusionRulesFile)
+ 
+-	exclusionrules.LoadRules()
++	generic.LoadRules()
+ 	server := kubeapiservertesting.StartTestServerOrDie(t, nil, nil, framework.SharedEtcd())
+ 	defer server.TearDownFn()
+ 
+-- 
+2.39.0
+
