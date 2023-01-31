@@ -1,8 +1,9 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kirsten Schumy <ksschumy@amazon.com>
 Date: Mon, 30 Jan 2023 22:46:46 -0800
-Subject: [PATCH] --EKS-PATCH-- Update aws-sdk-go for new regions
+Subject: [PATCHg] --EKS-PATCH-- Update aws-sdk-go for new regions
 
+Updated to v1.44.145
 ---
  go.mod                                        |    2 +-
  go.sum                                        |   13 +-
