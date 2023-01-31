@@ -15,7 +15,8 @@ for certain resources.
  .../generic/exclusionrules/matcher_test.go    | 333 ++++++++++++++
  .../plugin/webhook/generic/webhook.go         |   5 +
  .../webhook_exclusion_rules_test.go           | 231 ++++++++++
- 6 files changed, 1203 insertions(+)
+ vendor/modules.txt                            |   1 +
+ 7 files changed, 1204 insertions(+)
  create mode 100644 staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/exclusion.go
  create mode 100644 staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/exclusion_test.go
  create mode 100644 staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/matcher.go
@@ -24,7 +25,7 @@ for certain resources.
 
 diff --git a/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/exclusion.go b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/exclusion.go
 new file mode 100644
-index 00000000000..ea1cc6f98d5
+index 00000000000..012a7a2b2a5
 --- /dev/null
 +++ b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/exclusion.go
 @@ -0,0 +1,128 @@
@@ -1273,3 +1274,15 @@ index 00000000000..f89b972275f
 +		},
 +	}
 +}
+diff --git a/vendor/modules.txt b/vendor/modules.txt
+index a2d889e0bbb..948aa4e98cc 100644
+--- a/vendor/modules.txt
++++ b/vendor/modules.txt
+@@ -1455,6 +1455,7 @@ k8s.io/apiserver/pkg/admission/plugin/webhook/config/apis/webhookadmission/v1
+ k8s.io/apiserver/pkg/admission/plugin/webhook/config/apis/webhookadmission/v1alpha1
+ k8s.io/apiserver/pkg/admission/plugin/webhook/errors
+ k8s.io/apiserver/pkg/admission/plugin/webhook/generic
++k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules
+ k8s.io/apiserver/pkg/admission/plugin/webhook/initializer
+ k8s.io/apiserver/pkg/admission/plugin/webhook/mutating
+ k8s.io/apiserver/pkg/admission/plugin/webhook/predicates/namespace
