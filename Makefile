@@ -237,3 +237,8 @@ github-release:
 minor-release-foundation:
 	go vet ./cmd/release/minor
 	go run ./cmd/release/minor/main.go
+
+.PHONY: print-versions
+print-versions:
+	go vet ./cmd/print-versions
+	go run ./cmd/print-versions/main.go

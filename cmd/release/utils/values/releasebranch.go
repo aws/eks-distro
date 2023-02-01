@@ -45,6 +45,18 @@ func GetSupportedReleaseBranches() ([][]byte, error) {
 	return bytes.Split(bytes.TrimSpace(fileOutput), []byte("\n")), nil
 }
 
+func GetSupportedReleaseBranchesStrings() ([]string, error) {
+	rbs, err := GetSupportedReleaseBranches()
+	if err != nil {
+		return []string{}, fmt.Errorf("getting supported release before converting to string:%w", err)
+	}
+	var rbsStrings []string
+	for _, rb := range rbs {
+		rbsStrings = append(rbsStrings, string(rb))
+	}
+	return rbsStrings, nil
+}
+
 func GetLatestSupportedReleaseBranch() ([]byte, error) {
 	supportedReleaseBranches, err := GetSupportedReleaseBranches()
 	if err != nil {
