@@ -61,7 +61,7 @@ index 55ea5e2986b..51e21980527 100644
  // list of paths.
  func (f *FakeMounter) GetMountRefs(pathname string) ([]string, error) {
 diff --git a/staging/src/k8s.io/mount-utils/mount.go b/staging/src/k8s.io/mount-utils/mount.go
-index a882fcc7399..eca644046f3 100644
+index 7cd981c2f26..a93e6d2fab8 100644
 --- a/staging/src/k8s.io/mount-utils/mount.go
 +++ b/staging/src/k8s.io/mount-utils/mount.go
 @@ -66,6 +66,10 @@ type Interface interface {
