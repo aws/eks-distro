@@ -1,0 +1,1351 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Igor Velichkovich <igorveli@amazon.com>
+Date: Wed, 21 Dec 2022 20:12:26 -0600
+Subject: [PATCH] --EKS-PATCH-- admission webhook exclusion from file
+
+---
+ .../generic/exclusionrules/exclusion.go       | 149 ++++++
+ .../generic/exclusionrules/exclusion_test.go  | 425 ++++++++++++++++++
+ .../webhook/generic/exclusionrules/matcher.go |  81 ++++
+ .../generic/exclusionrules/matcher_test.go    | 333 ++++++++++++++
+ .../plugin/webhook/generic/webhook.go         |   5 +
+ .../webhook_exclusion_rules_test.go           | 278 ++++++++++++
+ vendor/modules.txt                            |   1 +
+ 7 files changed, 1272 insertions(+)
+ create mode 100644 staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/exclusion.go
+ create mode 100644 staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/exclusion_test.go
+ create mode 100644 staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/matcher.go
+ create mode 100644 staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/matcher_test.go
+ create mode 100644 test/integration/apiserver/admissionwebhook/webhook_exclusion_rules_test.go
+
+diff --git a/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/exclusion.go b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/exclusion.go
+new file mode 100644
+index 00000000000..31c2247580e
+--- /dev/null
++++ b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/exclusion.go
+@@ -0,0 +1,149 @@
++package exclusionrules
++
++import (
++	"encoding/json"
++	v1 "k8s.io/api/admissionregistration/v1"
++	"k8s.io/apiserver/pkg/admission"
++	"k8s.io/klog/v2"
++	"os"
++)
++
++// Enables you to pass a config file to kube-api-server
++// that defines resources to exempt from admission webhooks.
++const ADMISSION_WEBHOOK_EXCLUSION_ENV_VAR = "EKS_PATCH_EXCLUSION_RULES_FILE"
++
++func init() {
++	LoadRules()
++}
++
++type ExclusionRule struct {
++	// APIGroup is the API groups the resources belong to.
++	// Required.
++	APIGroup string `json:"apiGroup,omitempty"`
++
++	// APIVersions is the API versions the resources belong to.
++	// Required.
++	APIVersion string `json:"apiVersion,omitempty"`
++
++	// Name is a list of object names this rule applies to.
++	// '*' for name only allowed for Leases in kube-node-lease namespace otherwise rule is ignored
++	// Required.
++	Name []string `json:"name,omitempty"`
++
++	// Kind to exclude.
++	Kind string `json:"kind,omitempty"`
++
++	// Namespace is the namespaces this rule applies to.
++	Namespace string `json:"namespace,omitempty"`
++
++	// Scope specifies the scope of this rule.
++	// Valid values are "Cluster", "Namespaced"
++	// "Cluster" means that only cluster-scoped resources will match this rule.
++	// Namespace API objects are cluster-scoped.
++	// "Namespaced" means that only namespaced resources will match this rule.
++	// Namespace field required for "Namespaced" scope otherwise namespace field disallowed
++	Scope *v1.ScopeType `json:"scope,omitempty"`
++}
++
++var exclusionRules []ExclusionRule
++
++func readFile() []ExclusionRule {
++	//Default values for backwards compatability for eks-d
++	defaultExclusion := []ExclusionRule{
++		{
++			APIGroup:   "coordination.k8s.io",
++			APIVersion: "v1",
++			Kind:       "Lease",
++			Namespace:  "kube-system",
++			Name:       []string{"kube-controller-manager", "kube-scheduler"},
++		},
++		{
++			APIGroup:   "",
++			APIVersion: "v1",
++			Kind:       "Endpoints",
++			Namespace:  "kube-system",
++			Name:       []string{"kube-controller-manager", "kube-scheduler"},
++		},
++	}
++
++	if fileLocation, ok := os.LookupEnv(ADMISSION_WEBHOOK_EXCLUSION_ENV_VAR); ok {
++		file, err := os.ReadFile(fileLocation)
++		if err != nil {
++			klog.Errorf("Error reading %v file: %v", ADMISSION_WEBHOOK_EXCLUSION_ENV_VAR, err)
++			return defaultExclusion
++		}
++		data := []ExclusionRule{}
++		err = json.Unmarshal(file, &data)
++		if err != nil {
++			klog.Errorf("Error converting %v file to exclusion rules: %v", ADMISSION_WEBHOOK_EXCLUSION_ENV_VAR, err)
++			return defaultExclusion
++		}
++		klog.Infof("Successfully found and loaded %v exclusion rules", len(data))
++		return data
++	}
++	klog.Info("No environment variable set, using default exclusion rules")
++	return defaultExclusion
++}
++
++func filterValidRules(inputExclusionRules []ExclusionRule) []ExclusionRule {
++	// * only allowed for name if targeting leases in kube-node-lease
++	// * not allowed for Scope, APIVersion, APIGroup, Namespace or Kind
++	filteredRules := []ExclusionRule{}
++	for _, rule := range inputExclusionRules {
++		if rule.Scope == nil {
++			klog.Errorf("Invalid webhook admission exclusion rule, scope not set")
++			continue
++		}
++
++		// No wildcards
++		if *rule.Scope == v1.AllScopes || rule.APIGroup == "*" || rule.APIVersion == "*" || rule.Namespace == "*" || rule.Kind == "*" {
++			klog.Errorf("Invalid webhook admission exclusion rule, wildcard not allowed, skipping rule")
++			continue
++		}
++		if contains(rule.Name, "*") && isDisallowedNameWildcard(rule) {
++			klog.Errorf("Invalid webhook admission exclusion rule, wildcard only allowed for name for Lease in kube-node-lease, skipping rule")
++			continue
++		}
++		// No namespace if cluster scoped
++		if *rule.Scope == v1.ClusterScope && rule.Namespace != "" {
++			klog.Errorf("Invalid webhook admission exclusion rule, cannot set namespace with Cluster Scope")
++			continue
++		}
++		// Required namespace if Namespaced scope
++		if *rule.Scope == v1.NamespacedScope && rule.Namespace == "" {
++			klog.Errorf("Invalid webhook admission exclusion rule, must set namespace with Namespaced Scope")
++			continue
++		}
++		filteredRules = append(filteredRules, rule)
++	}
++	return filteredRules
++}
++
++func isDisallowedNameWildcard(rule ExclusionRule) bool {
++	return !(rule.APIGroup == "coordination.k8s.io" && rule.APIVersion == "v1" && rule.Kind == "Lease" && rule.Namespace == "kube-node-lease")
++}
++
++func contains(s []string, str string) bool {
++	for _, v := range s {
++		if v == str {
++			return true
++		}
++	}
++
++	return false
++}
++
++func LoadRules() {
++	exclusionRulesFromFile := readFile()
++	exclusionRules = filterValidRules(exclusionRulesFromFile)
++}
++
++func ShouldSkipWebhookDueToExclusionRules(attr admission.Attributes) bool {
++	for _, r := range exclusionRules {
++		m := Matcher{ExclusionRule: r, Attr: attr}
++		if m.Matches() {
++			return true
++		}
++	}
++	return false
++}
+diff --git a/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/exclusion_test.go b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/exclusion_test.go
+new file mode 100644
+index 00000000000..ab6da215728
+--- /dev/null
++++ b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/exclusion_test.go
+@@ -0,0 +1,425 @@
++package exclusionrules
++
++import (
++	v1 "k8s.io/api/admissionregistration/v1"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/runtime/schema"
++	"k8s.io/apiserver/pkg/admission"
++	"testing"
++)
++
++func getAttributes() admission.Attributes {
++	return admission.NewAttributesRecord(
++		nil,
++		nil,
++		schema.GroupVersionKind{"apps", "v1", "Deployment"},
++		"ns",
++		"testName",
++		schema.GroupVersionResource{"apps", "v1", "deployments"},
++		"",
++		admission.Create,
++		&metav1.CreateOptions{},
++		false,
++		nil,
++	)
++}
++
++func TestShouldSkipWebhookDueToExclusionRules(t *testing.T) {
++	namespace := v1.NamespacedScope
++	testcases := []struct {
++		name           string
++		exclusionRules []ExclusionRule
++		result         bool
++		attr           admission.Attributes
++	}{
++		{
++			name: "Matches attribute first exclusion rule",
++			exclusionRules: []ExclusionRule{
++				{
++					APIGroup:   "apps",
++					APIVersion: "v1",
++					Kind:       "Deployment",
++					Name:       []string{"testName"},
++					Namespace:  "ns",
++					Scope:      &namespace,
++				},
++				{
++					APIGroup:   "",
++					APIVersion: "v1",
++					Kind:       "Configmap",
++					Name:       []string{"mismatch"},
++					Namespace:  "ns",
++					Scope:      &namespace,
++				},
++			},
++			result: true,
++			attr:   getAttributes(),
++		},
++		{
++			name: "Matches attribute second exclusion rule",
++			exclusionRules: []ExclusionRule{
++				{
++					APIGroup:   "",
++					APIVersion: "v1",
++					Kind:       "Configmap",
++					Name:       []string{"mismatch"},
++					Namespace:  "ns",
++					Scope:      &namespace,
++				},
++				{
++					APIGroup:   "apps",
++					APIVersion: "v1",
++					Kind:       "Deployment",
++					Name:       []string{"testName"},
++					Namespace:  "ns",
++					Scope:      &namespace,
++				},
++			},
++			result: true,
++			attr:   getAttributes(),
++		},
++		{
++			name: "Does not match exclusion rules",
++			exclusionRules: []ExclusionRule{
++				{
++					APIGroup:   "",
++					APIVersion: "v1",
++					Kind:       "Configmap",
++					Name:       []string{"mismatch"},
++					Namespace:  "ns",
++					Scope:      &namespace,
++				},
++				{
++					APIGroup:   "apps",
++					APIVersion: "v1",
++					Kind:       "Deployment",
++					Name:       []string{"mismatch"},
++					Namespace:  "ns",
++					Scope:      &namespace,
++				},
++			},
++			result: false,
++			attr:   getAttributes(),
++		},
++		{
++			name:           "No exclusion rules exist",
++			exclusionRules: []ExclusionRule{},
++			result:         false,
++			attr:           getAttributes(),
++		},
++	}
++	for _, testcase := range testcases {
++		t.Run(testcase.name, func(t *testing.T) {
++			exclusionRules = testcase.exclusionRules
++			result := ShouldSkipWebhookDueToExclusionRules(testcase.attr)
++			if result != testcase.result {
++				t.Fatalf("Unexpected result %v for test case %v", result, testcase.name)
++			}
++		})
++	}
++}
++
++func TestFilterValidRules(t *testing.T) {
++	cluster := v1.ClusterScope
++	namespace := v1.NamespacedScope
++	allscopes := v1.AllScopes
++	testcases := []struct {
++		name                string
++		inputRules          []ExclusionRule
++		expectedOutputRules int
++	}{
++		{
++			name: "No wildcard for APIGroup",
++			inputRules: []ExclusionRule{
++				{
++					APIGroup:   "apps",
++					APIVersion: "v1",
++					Kind:       "Deployment",
++					Name:       []string{"testName"},
++					Namespace:  "ns",
++					Scope:      &namespace,
++				},
++				{
++					APIGroup:   "*",
++					APIVersion: "v1",
++					Kind:       "Deployment",
++					Name:       []string{"testName"},
++					Namespace:  "ns",
++					Scope:      &namespace,
++				},
++			},
++			expectedOutputRules: 1,
++		},
++		{
++			name: "No wildcard for APIVersion",
++			inputRules: []ExclusionRule{
++				{
++					APIGroup:   "apps",
++					APIVersion: "v1",
++					Kind:       "Deployment",
++					Name:       []string{"testName"},
++					Namespace:  "ns",
++					Scope:      &namespace,
++				},
++				{
++					APIGroup:   "apps",
++					APIVersion: "*",
++					Kind:       "Deployment",
++					Name:       []string{"testName"},
++					Namespace:  "ns",
++					Scope:      &namespace,
++				},
++			},
++			expectedOutputRules: 1,
++		},
++		{
++			name: "No wildcard for Kind",
++			inputRules: []ExclusionRule{
++				{
++					APIGroup:   "apps",
++					APIVersion: "v1",
++					Kind:       "Deployment",
++					Name:       []string{"testName"},
++					Namespace:  "ns",
++					Scope:      &namespace,
++				},
++				{
++					APIGroup:   "apps",
++					APIVersion: "v1",
++					Kind:       "*",
++					Name:       []string{"testName"},
++					Namespace:  "ns",
++					Scope:      &namespace,
++				},
++			},
++			expectedOutputRules: 1,
++		},
++		{
++			name: "No wildcard for Namespace",
++			inputRules: []ExclusionRule{
++				{
++					APIGroup:   "apps",
++					APIVersion: "v1",
++					Kind:       "Deployment",
++					Name:       []string{"testName"},
++					Namespace:  "ns",
++					Scope:      &namespace,
++				},
++				{
++					APIGroup:   "apps",
++					APIVersion: "v1",
++					Kind:       "Deployment",
++					Name:       []string{"testName"},
++					Namespace:  "*",
++					Scope:      &namespace,
++				},
++			},
++			expectedOutputRules: 1,
++		},
++		{
++			name: "No Empty Scope",
++			inputRules: []ExclusionRule{
++				{
++					APIGroup:   "apps",
++					APIVersion: "v1",
++					Kind:       "Deployment",
++					Name:       []string{"testName"},
++					Namespace:  "ns",
++					Scope:      &namespace,
++				},
++				{
++					APIGroup:   "apps",
++					APIVersion: "v1",
++					Kind:       "Deployment",
++					Name:       []string{"testName"},
++					Namespace:  "ns",
++				},
++			},
++			expectedOutputRules: 1,
++		},
++		{
++			name: "No AllScopes",
++			inputRules: []ExclusionRule{
++				{
++					APIGroup:   "apps",
++					APIVersion: "v1",
++					Kind:       "Deployment",
++					Name:       []string{"testName"},
++					Namespace:  "ns",
++					Scope:      &namespace,
++				},
++				{
++					APIGroup:   "apps",
++					APIVersion: "v1",
++					Kind:       "Deployment",
++					Name:       []string{"testName"},
++					Namespace:  "ns",
++					Scope:      &allscopes,
++				},
++			},
++			expectedOutputRules: 1,
++		},
++		{
++			name: "No Name wildcard, not lease",
++			inputRules: []ExclusionRule{
++				{
++					APIGroup:   "apps",
++					APIVersion: "v1",
++					Kind:       "Deployment",
++					Name:       []string{"testName"},
++					Namespace:  "ns",
++					Scope:      &namespace,
++				},
++				{
++					APIGroup:   "apps",
++					APIVersion: "v1",
++					Kind:       "Deployment",
++					Name:       []string{"*"},
++					Namespace:  "ns",
++					Scope:      &namespace,
++				},
++			},
++			expectedOutputRules: 1,
++		},
++		{
++			name: "No Name wildcard, not kube-node-lease",
++			inputRules: []ExclusionRule{
++				{
++					APIGroup:   "apps",
++					APIVersion: "v1",
++					Kind:       "Deployment",
++					Name:       []string{"testName"},
++					Namespace:  "ns",
++					Scope:      &namespace,
++				},
++				{
++					APIGroup:   "coordination.k8s.io",
++					APIVersion: "v1",
++					Kind:       "Lease",
++					Name:       []string{"*"},
++					Namespace:  "ns",
++					Scope:      &namespace,
++				},
++			},
++			expectedOutputRules: 1,
++		},
++		{
++			name: "No Name wildcard, not coordination.k8s.io",
++			inputRules: []ExclusionRule{
++				{
++					APIGroup:   "apps",
++					APIVersion: "v1",
++					Kind:       "Deployment",
++					Name:       []string{"testName"},
++					Namespace:  "ns",
++					Scope:      &namespace,
++				},
++				{
++					APIGroup:   "wrong",
++					APIVersion: "v1",
++					Kind:       "Lease",
++					Name:       []string{"*"},
++					Namespace:  "ns",
++					Scope:      &namespace,
++				},
++			},
++			expectedOutputRules: 1,
++		},
++		{
++			name: "No Name wildcard, not v1",
++			inputRules: []ExclusionRule{
++				{
++					APIGroup:   "apps",
++					APIVersion: "v1",
++					Kind:       "Deployment",
++					Name:       []string{"testName"},
++					Namespace:  "ns",
++					Scope:      &namespace,
++				},
++				{
++					APIGroup:   "coordination.k8s.io",
++					APIVersion: "v1beta1",
++					Kind:       "Lease",
++					Name:       []string{"*"},
++					Namespace:  "ns",
++					Scope:      &namespace,
++				},
++			},
++			expectedOutputRules: 1,
++		},
++		{
++			name: "Allowed name wildcard",
++			inputRules: []ExclusionRule{
++				{
++					APIGroup:   "apps",
++					APIVersion: "v1",
++					Kind:       "Deployment",
++					Name:       []string{"testName"},
++					Namespace:  "ns",
++					Scope:      &namespace,
++				},
++				{
++					APIGroup:   "coordination.k8s.io",
++					APIVersion: "v1",
++					Kind:       "Lease",
++					Name:       []string{"*"},
++					Namespace:  "kube-node-lease",
++					Scope:      &namespace,
++				},
++			},
++			expectedOutputRules: 2,
++		},
++		{
++			name: "Cluster scoped does not allow namespace",
++			inputRules: []ExclusionRule{
++				{
++					APIGroup:   "apps",
++					APIVersion: "v1",
++					Kind:       "Deployment",
++					Name:       []string{"testName"},
++					Namespace:  "ns",
++					Scope:      &namespace,
++				},
++				{
++					APIGroup:   "apps",
++					APIVersion: "v1",
++					Kind:       "Deployment",
++					Name:       []string{"testName"},
++					Namespace:  "ns",
++					Scope:      &cluster,
++				},
++			},
++			expectedOutputRules: 1,
++		},
++		{
++			name: "Namespaced scoped requires namespace",
++			inputRules: []ExclusionRule{
++				{
++					APIGroup:   "apps",
++					APIVersion: "v1",
++					Kind:       "Deployment",
++					Name:       []string{"testName"},
++					Namespace:  "ns",
++					Scope:      &namespace,
++				},
++				{
++					APIGroup:   "apps",
++					APIVersion: "v1",
++					Kind:       "Deployment",
++					Name:       []string{"testName"},
++					Namespace:  "",
++					Scope:      &namespace,
++				},
++			},
++			expectedOutputRules: 1,
++		},
++	}
++	for _, testcase := range testcases {
++		t.Run(testcase.name, func(t *testing.T) {
++			result := filterValidRules(testcase.inputRules)
++			if len(result) != testcase.expectedOutputRules {
++				t.Fatalf("Unexpected result length of filtered rules %v for test case %v", len(result), testcase.name)
++			}
++		})
++	}
++}
+diff --git a/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/matcher.go b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/matcher.go
+new file mode 100644
+index 00000000000..029abc43cd6
+--- /dev/null
++++ b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/matcher.go
+@@ -0,0 +1,81 @@
++package exclusionrules
++
++import (
++	v1 "k8s.io/api/admissionregistration/v1"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/runtime/schema"
++	"k8s.io/apiserver/pkg/admission"
++)
++
++var namespaceResource = schema.GroupVersionResource{Group: "", Version: "v1", Resource: "namespaces"}
++
++// Matcher determines if the Attr matches the Rule.
++type Matcher struct {
++	ExclusionRule ExclusionRule
++	Attr          admission.Attributes
++}
++
++// Matches returns if the Attr matches the Rule.
++func (r *Matcher) Matches() bool {
++	return r.name() &&
++		r.namespace() &&
++		r.group() &&
++		r.version() &&
++		r.kind()
++}
++
++func exactOrWildcard(items []string, requested string) bool {
++	for _, item := range items {
++		if item == "*" {
++			return true
++		}
++		if item == requested {
++			return true
++		}
++	}
++
++	return false
++}
++
++func (r *Matcher) scope() bool {
++	if r.ExclusionRule.Scope == nil || *r.ExclusionRule.Scope == v1.AllScopes {
++		// Not valid
++		return false
++	}
++	// attr.GetNamespace() is set to the name of the namespace for requests of the namespace object itself.
++	switch *r.ExclusionRule.Scope {
++	case v1.NamespacedScope:
++		// first make sure that we are not requesting a namespace object (namespace objects are cluster-scoped)
++		// this will return true for a resource that has a namespace and is not a Namespace itself
++		// i.e. true for Deployment and Role
++		//      false for Namespace and ClusterRole
++		return r.Attr.GetResource() != namespaceResource && r.Attr.GetNamespace() != metav1.NamespaceNone
++	case v1.ClusterScope:
++		// also return true if the request is for a namespace object (namespace objects are cluster-scoped)
++		// i.e. false for Deployment and Role
++		//      true for Namespace and ClusterRole
++		return r.Attr.GetResource() == namespaceResource || r.Attr.GetNamespace() == metav1.NamespaceNone
++	default:
++		return false
++	}
++}
++
++func (r *Matcher) group() bool {
++	return r.ExclusionRule.APIGroup == r.Attr.GetResource().Group
++}
++
++func (r *Matcher) name() bool {
++	return exactOrWildcard(r.ExclusionRule.Name, r.Attr.GetName())
++}
++
++func (r *Matcher) namespace() bool {
++	return r.ExclusionRule.Namespace == r.Attr.GetNamespace()
++}
++
++func (r *Matcher) version() bool {
++	return r.ExclusionRule.APIVersion == r.Attr.GetResource().Version
++}
++
++func (r *Matcher) kind() bool {
++	return r.ExclusionRule.Kind == r.Attr.GetKind().Kind
++}
+diff --git a/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/matcher_test.go b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/matcher_test.go
+new file mode 100644
+index 00000000000..3f7abbb9d90
+--- /dev/null
++++ b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/matcher_test.go
+@@ -0,0 +1,333 @@
++package exclusionrules
++
++import (
++	"fmt"
++	adreg "k8s.io/api/admissionregistration/v1"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/runtime"
++	"k8s.io/apimachinery/pkg/runtime/schema"
++	"k8s.io/apimachinery/pkg/util/sets"
++	"testing"
++
++	"k8s.io/apiserver/pkg/admission"
++)
++
++type exclusionRuleTest struct {
++	exclusionRule ExclusionRule
++	match         []admission.Attributes
++	noMatch       []admission.Attributes
++}
++type tests map[string]exclusionRuleTest
++
++func attrList(a ...admission.Attributes) []admission.Attributes {
++	return a
++}
++
++func a(group, version, kind, namespace, name string) admission.Attributes {
++	return admission.NewAttributesRecord(
++		nil, nil,
++		schema.GroupVersionKind{Group: group, Version: version, Kind: kind},
++		namespace, name,
++		schema.GroupVersionResource{Group: group, Version: version, Resource: ""}, "",
++		"",
++		nil,
++		false,
++		nil,
++	)
++}
++
++func namespacedAttributes(group, version, resource, subresource, name string, operation admission.Operation, operationOptions runtime.Object) admission.Attributes {
++	return admission.NewAttributesRecord(
++		nil, nil,
++		schema.GroupVersionKind{Group: group, Version: version, Kind: "k" + resource},
++		"ns", name,
++		schema.GroupVersionResource{Group: group, Version: version, Resource: resource}, subresource,
++		operation,
++		operationOptions,
++		false,
++		nil,
++	)
++}
++
++func clusterScopedAttributes(group, version, resource, subresource, name string, operation admission.Operation, operationOptions runtime.Object) admission.Attributes {
++	return admission.NewAttributesRecord(
++		nil, nil,
++		schema.GroupVersionKind{Group: group, Version: version, Kind: "k" + resource},
++		"", name,
++		schema.GroupVersionResource{Group: group, Version: version, Resource: resource}, subresource,
++		operation,
++		operationOptions,
++		false,
++		nil,
++	)
++}
++
++func TestGroup(t *testing.T) {
++	table := tests{
++		"exact": {
++			exclusionRule: ExclusionRule{
++				APIGroup: "g1",
++			},
++			match: attrList(
++				a("g1", "v", "r", "", "name"),
++				a("g1", "v2", "r3", "", "name"),
++			),
++			noMatch: attrList(
++				a("g3", "v", "r", "", "name"),
++				a("g4", "v", "r", "", "name"),
++			),
++		},
++	}
++
++	for name, tt := range table {
++		for i, m := range tt.match {
++			t.Run(fmt.Sprintf("%s_match_%d", name, i), func(t *testing.T) {
++				r := Matcher{tt.exclusionRule, m}
++				if !r.group() {
++					t.Errorf("%v: expected match %#v", name, m)
++				}
++			})
++		}
++		for i, m := range tt.noMatch {
++			t.Run(fmt.Sprintf("%s_match_%d", name, i), func(t *testing.T) {
++				r := Matcher{tt.exclusionRule, m}
++				if r.group() {
++					t.Errorf("%v: expected match %#v", name, m)
++				}
++			})
++		}
++	}
++}
++
++func TestVersion(t *testing.T) {
++	table := tests{
++		"exact": {
++			exclusionRule: ExclusionRule{
++				APIVersion: "v1",
++			},
++			match: attrList(
++				a("g1", "v1", "r", "", "name"),
++				a("g2", "v1", "r", "", "name"),
++			),
++			noMatch: attrList(
++				a("g1", "v3", "r", "", "name"),
++				a("g2", "v4", "r", "", "name"),
++			),
++		},
++	}
++	for name, tt := range table {
++		for i, m := range tt.match {
++			t.Run(fmt.Sprintf("%s_match_%d", name, i), func(t *testing.T) {
++				r := Matcher{tt.exclusionRule, m}
++				if !r.version() {
++					t.Errorf("%v: expected match %#v", name, m)
++				}
++			})
++		}
++		for i, m := range tt.noMatch {
++			t.Run(fmt.Sprintf("%s_match_%d", name, i), func(t *testing.T) {
++				r := Matcher{tt.exclusionRule, m}
++				if r.version() {
++					t.Errorf("%v: expected match %#v", name, m)
++				}
++			})
++		}
++	}
++}
++
++func TestKind(t *testing.T) {
++	table := tests{
++		"exact": {
++			exclusionRule: ExclusionRule{
++				Kind: "Lease",
++			},
++			match: attrList(
++				a("g1", "v1", "Lease", "", "name"),
++				a("g2", "v2", "Lease", "", "name"),
++			),
++			noMatch: attrList(
++				a("g1", "v3", "Deployment", "", "name"),
++				a("g2", "v4", "Pod", "", "name"),
++			),
++		},
++	}
++	for name, tt := range table {
++		for i, m := range tt.match {
++			t.Run(fmt.Sprintf("%s_match_%d", name, i), func(t *testing.T) {
++				r := Matcher{tt.exclusionRule, m}
++				if !r.kind() {
++					t.Errorf("%v: expected match %#v", name, m)
++				}
++			})
++		}
++		for i, m := range tt.noMatch {
++			t.Run(fmt.Sprintf("%s_match_%d", name, i), func(t *testing.T) {
++				r := Matcher{tt.exclusionRule, m}
++				if r.kind() {
++					t.Errorf("%v: expected match %#v", name, m)
++				}
++			})
++		}
++	}
++}
++
++func TestName(t *testing.T) {
++	table := tests{
++		"wildcard": {
++			exclusionRule: ExclusionRule{
++				Name: []string{"*"},
++			},
++			match: attrList(
++				a("g1", "v1", "Lease", "", "kube-scheduler"),
++			),
++		},
++		"exact": {
++			exclusionRule: ExclusionRule{
++				Name: []string{"kube-scheduler"},
++			},
++			match: attrList(
++				a("g1", "v1", "Lease", "", "kube-scheduler"),
++				a("g2", "v2", "Lease", "", "kube-scheduler"),
++			),
++			noMatch: attrList(
++				a("g1", "v3", "Deployment", "", "something"),
++				a("g2", "v4", "Pod", "", "else"),
++			),
++		},
++	}
++	for name, tt := range table {
++		for i, m := range tt.match {
++			t.Run(fmt.Sprintf("%s_match_%d", name, i), func(t *testing.T) {
++				r := Matcher{tt.exclusionRule, m}
++				if !r.name() {
++					t.Errorf("%v: expected match %#v", name, m)
++				}
++			})
++		}
++		for i, m := range tt.noMatch {
++			t.Run(fmt.Sprintf("%s_match_%d", name, i), func(t *testing.T) {
++				r := Matcher{tt.exclusionRule, m}
++				if r.name() {
++					t.Errorf("%v: expected match %#v", name, m)
++				}
++			})
++		}
++	}
++}
++
++func TestNamespace(t *testing.T) {
++	table := tests{
++		"exact": {
++			exclusionRule: ExclusionRule{
++				Namespace: "kube-system",
++			},
++			match: attrList(
++				a("g1", "v1", "Lease", "kube-system", ""),
++				a("g2", "v2", "Endpoint", "kube-system", ""),
++			),
++			noMatch: attrList(
++				a("g1", "v3", "Deployment", "something", "something"),
++				a("g2", "v4", "Pod", "else", "else"),
++			),
++		},
++	}
++	for name, tt := range table {
++		for i, m := range tt.match {
++			t.Run(fmt.Sprintf("%s_match_%d", name, i), func(t *testing.T) {
++				r := Matcher{tt.exclusionRule, m}
++				if !r.namespace() {
++					t.Errorf("%v: expected match %#v", name, m)
++				}
++			})
++		}
++		for i, m := range tt.noMatch {
++			t.Run(fmt.Sprintf("%s_match_%d", name, i), func(t *testing.T) {
++				r := Matcher{tt.exclusionRule, m}
++				if r.namespace() {
++					t.Errorf("%v: expected match %#v", name, m)
++				}
++			})
++		}
++	}
++}
++
++func TestScope(t *testing.T) {
++	cluster := adreg.ClusterScope
++	namespace := adreg.NamespacedScope
++	allscopes := adreg.AllScopes
++	table := tests{
++		"cluster scope": {
++			exclusionRule: ExclusionRule{
++				Scope: &cluster,
++			},
++			match: attrList(
++				clusterScopedAttributes("g", "v", "r", "", "name", admission.Create, &metav1.CreateOptions{}),
++				clusterScopedAttributes("g", "v", "r", "exec", "name", admission.Create, &metav1.CreateOptions{}),
++				clusterScopedAttributes("", "v1", "namespaces", "", "ns", admission.Create, &metav1.CreateOptions{}),
++				clusterScopedAttributes("", "v1", "namespaces", "finalize", "ns", admission.Create, &metav1.CreateOptions{}),
++				namespacedAttributes("", "v1", "namespaces", "", "ns", admission.Create, &metav1.CreateOptions{}),
++				namespacedAttributes("", "v1", "namespaces", "finalize", "ns", admission.Create, &metav1.CreateOptions{}),
++			),
++			noMatch: attrList(
++				namespacedAttributes("g", "v", "r", "", "name", admission.Create, &metav1.CreateOptions{}),
++				namespacedAttributes("g", "v", "r", "exec", "name", admission.Create, &metav1.CreateOptions{}),
++			),
++		},
++		"namespace scope": {
++			exclusionRule: ExclusionRule{
++				Scope: &namespace,
++			},
++			match: attrList(
++				namespacedAttributes("g", "v", "r", "", "name", admission.Create, &metav1.CreateOptions{}),
++				namespacedAttributes("g", "v", "r", "exec", "name", admission.Create, &metav1.CreateOptions{}),
++			),
++			noMatch: attrList(
++				clusterScopedAttributes("", "v1", "namespaces", "", "ns", admission.Create, &metav1.CreateOptions{}),
++				clusterScopedAttributes("", "v1", "namespaces", "finalize", "ns", admission.Create, &metav1.CreateOptions{}),
++				namespacedAttributes("", "v1", "namespaces", "", "ns", admission.Create, &metav1.CreateOptions{}),
++				namespacedAttributes("", "v1", "namespaces", "finalize", "ns", admission.Create, &metav1.CreateOptions{}),
++				clusterScopedAttributes("g", "v", "r", "", "name", admission.Create, &metav1.CreateOptions{}),
++				clusterScopedAttributes("g", "v", "r", "exec", "name", admission.Create, &metav1.CreateOptions{}),
++			),
++		},
++		"all scopes": {
++			exclusionRule: ExclusionRule{
++				Scope: &allscopes,
++			},
++			noMatch: attrList(
++				namespacedAttributes("g", "v", "r", "", "name", admission.Create, &metav1.CreateOptions{}),
++				namespacedAttributes("g", "v", "r", "exec", "name", admission.Create, &metav1.CreateOptions{}),
++				clusterScopedAttributes("g", "v", "r", "", "name", admission.Create, &metav1.CreateOptions{}),
++				clusterScopedAttributes("g", "v", "r", "exec", "name", admission.Create, &metav1.CreateOptions{}),
++				clusterScopedAttributes("", "v1", "namespaces", "", "ns", admission.Create, &metav1.CreateOptions{}),
++				clusterScopedAttributes("", "v1", "namespaces", "finalize", "ns", admission.Create, &metav1.CreateOptions{}),
++				namespacedAttributes("", "v1", "namespaces", "", "ns", admission.Create, &metav1.CreateOptions{}),
++				namespacedAttributes("", "v1", "namespaces", "finalize", "ns", admission.Create, &metav1.CreateOptions{}),
++			),
++			match: attrList(),
++		},
++	}
++	keys := sets.NewString()
++	for name := range table {
++		keys.Insert(name)
++	}
++	for _, name := range keys.List() {
++		tt := table[name]
++		for i, m := range tt.match {
++			t.Run(fmt.Sprintf("%s_match_%d", name, i), func(t *testing.T) {
++				r := Matcher{tt.exclusionRule, m}
++				if !r.scope() {
++					t.Errorf("%v: expected match %#v", name, m)
++				}
++			})
++		}
++		for i, m := range tt.noMatch {
++			t.Run(fmt.Sprintf("%s_nomatch_%d", name, i), func(t *testing.T) {
++				r := Matcher{tt.exclusionRule, m}
++				if r.scope() {
++					t.Errorf("%v: expected no match %#v", name, m)
++				}
++			})
++		}
++	}
++}
+diff --git a/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/webhook.go b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/webhook.go
+index c04225e94f7..f12f920e29e 100644
+--- a/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/webhook.go
++++ b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/webhook.go
+@@ -20,6 +20,7 @@ import (
+ 	"context"
+ 	"fmt"
+ 	"io"
++	"k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules"
+ 
+ 	admissionv1 "k8s.io/api/admission/v1"
+ 	admissionv1beta1 "k8s.io/api/admission/v1beta1"
+@@ -153,6 +154,10 @@ func (a *Webhook) ShouldCallHook(h webhook.WebhookAccessor, attr admission.Attri
+ 		return nil, nil
+ 	}
+ 
++	if exclusionrules.ShouldSkipWebhookDueToExclusionRules(attr) {
++		return nil, nil
++	}
++
+ 	var invocation *WebhookInvocation
+ 	for _, r := range h.GetRules() {
+ 		m := rules.Matcher{Rule: r, Attr: attr}
+diff --git a/test/integration/apiserver/admissionwebhook/webhook_exclusion_rules_test.go b/test/integration/apiserver/admissionwebhook/webhook_exclusion_rules_test.go
+new file mode 100644
+index 00000000000..0575b054b10
+--- /dev/null
++++ b/test/integration/apiserver/admissionwebhook/webhook_exclusion_rules_test.go
+@@ -0,0 +1,278 @@
++package admissionwebhook
++
++import (
++	"context"
++	"fmt"
++	coordinationv1 "k8s.io/api/coordination/v1"
++	"k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules"
++	"os"
++	"testing"
++	"time"
++
++	admissionregistrationv1 "k8s.io/api/admissionregistration/v1"
++	appsv1 "k8s.io/api/apps/v1"
++	corev1 "k8s.io/api/core/v1"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/client-go/kubernetes"
++	kubeapiservertesting "k8s.io/kubernetes/cmd/kube-apiserver/app/testing"
++	"k8s.io/kubernetes/test/integration/framework"
++)
++
++var (
++	exclusionRulesFile           = "exclusion-rules-config.json"
++	webhookNameExclusionRules    = "integration-exclusion-rules-test-webhook-config"
++	deploymentNameExclusionRules = "integration-exclusion-rules-test-deployment"
++	kubeSystem                   = "kube-system"
++	kubeControllerManager        = "kube-controller-manager"
++	kubeScheduler                = "kube-scheduler"
++)
++
++func TestWebhookExclusionRulesNoEnvVarSet(t *testing.T) {
++	t.Logf("starting server")
++	server := kubeapiservertesting.StartTestServerOrDie(t, nil, nil, framework.SharedEtcd())
++	defer server.TearDownFn()
++
++	client, err := kubernetes.NewForConfig(server.ClientConfig)
++	if err != nil {
++		t.Fatalf("unexpected error: %v", err)
++	}
++	createBrokenWebhook(t, client)
++	// Creating deployment that should be blocked by webhook
++	_, err = client.AppsV1().Deployments("default").Create(context.TODO(), exampleDeploymentExclusionRules(deploymentNameExclusionRules), metav1.CreateOptions{})
++	if err == nil {
++		t.Fatalf("was able to create deployment but should've been blocked: %v", err)
++	}
++	// Default rules should be set
++	validateDefaultExclusionRulesSet(t, client)
++}
++
++func TestWebhookExclusionRulesEnvVarSetNoFile(t *testing.T) {
++	server := kubeapiservertesting.StartTestServerOrDie(t, nil, nil, framework.SharedEtcd())
++	defer server.TearDownFn()
++
++	client, err := kubernetes.NewForConfig(server.ClientConfig)
++	if err != nil {
++		t.Fatalf("unexpected error: %v", err)
++	}
++
++	// Test env var set but no file, should be broken webhook
++	err = os.Setenv(exclusionrules.ADMISSION_WEBHOOK_EXCLUSION_ENV_VAR, exclusionRulesFile)
++	if err != nil {
++		t.Fatalf("unexpected error clearing %v env var", exclusionrules.ADMISSION_WEBHOOK_EXCLUSION_ENV_VAR)
++	}
++	exclusionrules.LoadRules()
++
++	createBrokenWebhook(t, client)
++
++	//Creating deployment that should be blocked by webhook
++	_, err = client.AppsV1().Deployments("default").Create(context.TODO(), exampleDeploymentExclusionRules(deploymentNameExclusionRules), metav1.CreateOptions{})
++	if err == nil {
++		t.Fatalf("was able to create deployment but should've been blocked: %v", err)
++	}
++	// Default rules should be set
++	validateDefaultExclusionRulesSet(t, client)
++}
++
++func TestWebhookExclusionRulesEnvVarSetBadFile(t *testing.T) {
++	// Test env var set, bad file, should be broken webhook
++	err := os.Setenv(exclusionrules.ADMISSION_WEBHOOK_EXCLUSION_ENV_VAR, exclusionRulesFile)
++	if err != nil {
++		t.Fatalf("unexpected error clearing %v env var", exclusionrules.ADMISSION_WEBHOOK_EXCLUSION_ENV_VAR)
++	}
++
++	if err := os.WriteFile(exclusionRulesFile, []byte("bad file"), os.FileMode(0755)); err != nil {
++		t.Fatal(err)
++	}
++	defer os.Remove(exclusionRulesFile)
++
++	exclusionrules.LoadRules()
++	server := kubeapiservertesting.StartTestServerOrDie(t, nil, nil, framework.SharedEtcd())
++	defer server.TearDownFn()
++
++	client, err := kubernetes.NewForConfig(server.ClientConfig)
++	if err != nil {
++		t.Fatalf("unexpected error: %v", err)
++	}
++	createBrokenWebhook(t, client)
++
++	//Creating deployment that should be blocked by webhook
++	_, err = client.AppsV1().Deployments("default").Create(context.TODO(), exampleDeploymentExclusionRules(deploymentNameExclusionRules), metav1.CreateOptions{})
++	if err == nil {
++		t.Fatalf("was able to create deployment but should've been blocked: %v", err)
++	}
++	// Default rules should be set
++	validateDefaultExclusionRulesSet(t, client)
++}
++
++func TestWebhookExclusionRules(t *testing.T) {
++	err := os.Setenv(exclusionrules.ADMISSION_WEBHOOK_EXCLUSION_ENV_VAR, exclusionRulesFile)
++	if err != nil {
++		t.Fatalf("unexpected error clearing %v env var", exclusionrules.ADMISSION_WEBHOOK_EXCLUSION_ENV_VAR)
++	}
++
++	//test env var set, exclusion file should exclude
++	configFile := fmt.Sprintf(`
++[
++	{
++		"apiGroup": "apps",
++		"apiVersion": "v1",
++		"kind": "Deployment",
++		"namespace": "default",
++		"name": ["%v"],
++		"scope": "Namespaced"
++	}
++]`, deploymentNameExclusionRules)
++
++	if err := os.WriteFile(exclusionRulesFile, []byte(configFile), os.FileMode(0755)); err != nil {
++		t.Fatal(err)
++	}
++	defer os.Remove(exclusionRulesFile)
++
++	exclusionrules.LoadRules()
++	server := kubeapiservertesting.StartTestServerOrDie(t, nil, nil, framework.SharedEtcd())
++	defer server.TearDownFn()
++
++	client, err := kubernetes.NewForConfig(server.ClientConfig)
++	if err != nil {
++		t.Fatalf("unexpected error: %v", err)
++	}
++
++	createBrokenWebhook(t, client)
++
++	t.Logf("Creating Deployment which should be allowed due to exclusion rules")
++	_, err = client.AppsV1().Deployments("default").Create(context.TODO(), exampleDeploymentExclusionRules(deploymentNameExclusionRules), metav1.CreateOptions{})
++	if err != nil {
++		t.Fatalf("Failed to create deployment: %v", err)
++	}
++
++	t.Logf("Creating Deployment with different name which should be blocked due to webhook")
++	_, err = client.AppsV1().Deployments("default").Create(context.TODO(), exampleDeploymentExclusionRules("test-different-name"), metav1.CreateOptions{})
++	if err == nil {
++		t.Fatalf("was able to create deployment but should've been blocked: %v", err)
++	}
++}
++
++func validateDefaultExclusionRulesSet(t *testing.T, client *kubernetes.Clientset) {
++	_, err := client.CoreV1().Endpoints("kube-system").Create(context.TODO(), exampleEndpoints(kubeControllerManager), metav1.CreateOptions{})
++	if err != nil {
++		t.Fatalf("was not able to create endpoint but should've been allowed: %v", err)
++	}
++	_, err = client.CoreV1().Endpoints("kube-system").Create(context.TODO(), exampleEndpoints(kubeScheduler), metav1.CreateOptions{})
++	if err != nil {
++		t.Fatalf("was not able to create endpoint but should've been allowed: %v", err)
++	}
++	_, err = client.CoordinationV1().Leases("kube-system").Create(context.TODO(), exampleLease(kubeControllerManager), metav1.CreateOptions{})
++	if err != nil {
++		t.Fatalf("was not able to create lease but should've been allowed: %v", err)
++	}
++	_, err = client.CoordinationV1().Leases("kube-system").Create(context.TODO(), exampleLease(kubeScheduler), metav1.CreateOptions{})
++	if err != nil {
++		t.Fatalf("was not able to create lease but should've been allowed: %v", err)
++	}
++}
++
++func createBrokenWebhook(t *testing.T, client *kubernetes.Clientset) {
++	t.Logf("Creating Broken Webhook that will block all operations on all objects")
++	brokenWebhook := brokenWebhookConfigExclusionRules(webhookNameExclusionRules)
++	_, err := client.AdmissionregistrationV1().ValidatingWebhookConfigurations().Create(context.TODO(), brokenWebhook, metav1.CreateOptions{})
++	if err != nil {
++		t.Fatalf("Failed to register broken webhook: %v", err)
++	}
++
++	for i := 0; i < 10; i++ {
++		time.Sleep(2 * time.Second)
++		_, err := client.AdmissionregistrationV1().ValidatingWebhookConfigurations().Get(context.TODO(), brokenWebhook.Name, metav1.GetOptions{})
++		if err == nil {
++			t.Log("Successfully registered broken webhook")
++			return
++		}
++	}
++	t.Fatal("Timed out waiting for test bad webhook to create")
++}
++
++func exampleDeploymentExclusionRules(name string) *appsv1.Deployment {
++	var replicas int32 = 1
++	return &appsv1.Deployment{
++		TypeMeta: metav1.TypeMeta{
++			Kind:       "Deployment",
++			APIVersion: "apps/v1",
++		},
++		ObjectMeta: metav1.ObjectMeta{
++			Namespace: "default",
++			Name:      name,
++		},
++		Spec: appsv1.DeploymentSpec{
++			Replicas: &replicas,
++			Selector: &metav1.LabelSelector{
++				MatchLabels: map[string]string{"foo": "bar"},
++			},
++			Template: corev1.PodTemplateSpec{
++				ObjectMeta: metav1.ObjectMeta{
++					Labels: map[string]string{"foo": "bar"},
++				},
++				Spec: corev1.PodSpec{
++					Containers: []corev1.Container{
++						{
++							Name:  "foo",
++							Image: "foo",
++						},
++					},
++				},
++			},
++		},
++	}
++}
++
++func exampleEndpoints(name string) *corev1.Endpoints {
++	return &corev1.Endpoints{
++		ObjectMeta: metav1.ObjectMeta{
++			Name:      name,
++			Namespace: kubeSystem,
++		},
++	}
++}
++
++func exampleLease(name string) *coordinationv1.Lease {
++	return &coordinationv1.Lease{
++		ObjectMeta: metav1.ObjectMeta{
++			Name:      name,
++			Namespace: kubeSystem,
++		},
++	}
++}
++
++func brokenWebhookConfigExclusionRules(name string) *admissionregistrationv1.ValidatingWebhookConfiguration {
++	var path string
++	failurePolicy := admissionregistrationv1.Fail
++	return &admissionregistrationv1.ValidatingWebhookConfiguration{
++		ObjectMeta: metav1.ObjectMeta{
++			Name: name,
++		},
++		Webhooks: []admissionregistrationv1.ValidatingWebhook{
++			{
++				Name: "broken-webhook.k8s.io",
++				Rules: []admissionregistrationv1.RuleWithOperations{{
++					Operations: []admissionregistrationv1.OperationType{admissionregistrationv1.OperationAll},
++					Rule: admissionregistrationv1.Rule{
++						APIGroups:   []string{"*"},
++						APIVersions: []string{"*"},
++						Resources:   []string{"deployments"},
++					},
++				}},
++				// This client config references a non existent service
++				// so it should always fail.
++				ClientConfig: admissionregistrationv1.WebhookClientConfig{
++					Service: &admissionregistrationv1.ServiceReference{
++						Namespace: "default",
++						Name:      "invalid-webhook-service",
++						Path:      &path,
++					},
++					CABundle: nil,
++				},
++				FailurePolicy:           &failurePolicy,
++				SideEffects:             &noSideEffects,
++				AdmissionReviewVersions: []string{"v1"},
++			},
++		},
++	}
++}
+diff --git a/vendor/modules.txt b/vendor/modules.txt
+index efba9109a3c..c168f2e55b4 100644
+--- a/vendor/modules.txt
++++ b/vendor/modules.txt
+@@ -1545,6 +1545,7 @@ k8s.io/apiserver/pkg/admission/plugin/webhook/config/apis/webhookadmission/v1
+ k8s.io/apiserver/pkg/admission/plugin/webhook/config/apis/webhookadmission/v1alpha1
+ k8s.io/apiserver/pkg/admission/plugin/webhook/errors
+ k8s.io/apiserver/pkg/admission/plugin/webhook/generic
++k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules
+ k8s.io/apiserver/pkg/admission/plugin/webhook/initializer
+ k8s.io/apiserver/pkg/admission/plugin/webhook/mutating
+ k8s.io/apiserver/pkg/admission/plugin/webhook/namespace
