@@ -22,7 +22,7 @@ Signed-off-by: Jyoti Mahapatra<jyotima@amazon.com>
  3 files changed, 79 insertions(+), 6 deletions(-)
 
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-index 2a5f44356e6..280e3d830a5 100644
+index 2aceff30890..434df20cc2e 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
 @@ -24,6 +24,8 @@ import (
@@ -34,7 +34,7 @@ index 2a5f44356e6..280e3d830a5 100644
  	"path"
  	"regexp"
  	"sort"
-@@ -1495,6 +1497,17 @@ func (c *Cloud) HasClusterID() bool {
+@@ -1497,6 +1499,17 @@ func (c *Cloud) HasClusterID() bool {
  	return len(c.tagging.clusterID()) > 0
  }
  
@@ -52,7 +52,7 @@ index 2a5f44356e6..280e3d830a5 100644
  // NodeAddresses is an implementation of Instances.NodeAddresses.
  func (c *Cloud) NodeAddresses(ctx context.Context, name types.NodeName) ([]v1.NodeAddress, error) {
  	if c.selfAWSInstance.nodeName == name || len(name) == 0 {
-@@ -1549,6 +1562,27 @@ func (c *Cloud) NodeAddresses(ctx context.Context, name types.NodeName) ([]v1.No
+@@ -1551,6 +1564,27 @@ func (c *Cloud) NodeAddresses(ctx context.Context, name types.NodeName) ([]v1.No
  			}
  		}
  
@@ -80,7 +80,7 @@ index 2a5f44356e6..280e3d830a5 100644
  		externalIP, err := c.metadata.GetMetadata("public-ipv4")
  		if err != nil {
  			//TODO: It would be nice to be able to determine the reason for the failure,
-@@ -1638,6 +1672,25 @@ func extractNodeAddresses(instance *ec2.Instance) ([]v1.NodeAddress, error) {
+@@ -1640,6 +1674,25 @@ func extractNodeAddresses(instance *ec2.Instance) ([]v1.NodeAddress, error) {
  		}
  	}
  
