@@ -14,10 +14,10 @@ Signed-off-by: Nick Turner <nic@amazon.com>
  1 file changed, 31 insertions(+), 1 deletion(-)
 
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-index 541f741cfd1..2a5f44356e6 100644
+index 93ed45472b9..2aceff30890 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
 +++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
-@@ -1188,8 +1188,12 @@ func init() {
+@@ -1190,8 +1190,12 @@ func init() {
  			return nil, fmt.Errorf("unable to validate custom endpoint overrides: %v", err)
  		}
  
@@ -31,7 +31,7 @@ index 541f741cfd1..2a5f44356e6 100644
  			SharedConfigState: session.SharedConfigEnable,
  		})
  		if err != nil {
-@@ -1216,6 +1220,32 @@ func init() {
+@@ -1218,6 +1222,32 @@ func init() {
  	})
  }
  
