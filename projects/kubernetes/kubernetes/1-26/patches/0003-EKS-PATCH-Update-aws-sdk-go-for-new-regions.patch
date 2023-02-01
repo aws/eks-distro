@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Kirsten Schumy <ksschumy@amazon.com>
-Date: Mon, 30 Jan 2023 22:46:46 -0800
-Subject: [PATCHg] --EKS-PATCH-- Update aws-sdk-go for new regions
+From: Ernest Wong <ernwong@amazon.com>
+Date: Mon, 12 Dec 2022 06:15:33 +0000
+Subject: [PATCH] --EKS-PATCH-- Update aws-sdk-go for new regions
 
 Updated to v1.44.145
 ---
@@ -31,7 +31,7 @@ Updated to v1.44.145
  create mode 100644 vendor/github.com/aws/aws-sdk-go/internal/shareddefaults/shared_config_resolve_home_go1.12.go
 
 diff --git a/go.mod b/go.mod
-index 03336387cae..fd264fd8652 100644
+index 799908dabfc..d666b73497c 100644
 --- a/go.mod
 +++ b/go.mod
 @@ -20,7 +20,7 @@ require (
@@ -44,7 +44,7 @@ index 03336387cae..fd264fd8652 100644
  	github.com/container-storage-interface/spec v1.7.0
  	github.com/coredns/corefile-migration v1.0.17
 diff --git a/go.sum b/go.sum
-index a76b6258866..44464e122e4 100644
+index 521a055135f..c31bf57d8be 100644
 --- a/go.sum
 +++ b/go.sum
 @@ -107,8 +107,8 @@ github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5/go.mod h1:wHh0iHkY
@@ -6757,7 +6757,7 @@ index 2b7e675ab86..c0706bec93d 100644
  	// You can pass a session tag with the same key as a tag that is already attached
  	// to the user you are federating. When you do, session tags override a user
 diff --git a/vendor/modules.txt b/vendor/modules.txt
-index 948aa4e98cc..12c0e6e288c 100644
+index b96fd06df9a..4d7cef478ed 100644
 --- a/vendor/modules.txt
 +++ b/vendor/modules.txt
 @@ -105,7 +105,7 @@ github.com/armon/go-socks5

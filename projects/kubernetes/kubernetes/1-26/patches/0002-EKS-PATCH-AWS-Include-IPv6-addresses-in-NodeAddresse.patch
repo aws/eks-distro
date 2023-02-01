@@ -1,8 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Angus Lees <gus@inodes.org>
 Date: Thu, 19 Nov 2020 17:34:07 +1100
-Subject: [PATCH] --EKS-PATCH-- AWS: Include IPv6 addresses in
- NodeAddresses
+Subject: [PATCH] --EKS-PATCH-- AWS: Include IPv6 addresses in NodeAddresses
 
 This patch is taken from this commit:
 https://github.com/anguslees/kubernetes/commit/f8ea814e2d459a900bfb5e6f613dbe521b31515b.
