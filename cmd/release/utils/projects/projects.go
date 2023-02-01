@@ -1,12 +1,14 @@
-package values
+package projects
 
 import (
 	"fmt"
 	"os"
 	"path/filepath"
+
+	"github.com/aws/eks-distro/cmd/release/utils/values"
 )
 
-var projectPathRoot = filepath.Join(GetGitRootDirectory(), "projects")
+var projectPathRoot = filepath.Join(values.GetGitRootDirectory(), "projects")
 
 type Project struct {
 	org  string
@@ -41,6 +43,34 @@ func GetProjects() ([]Project, error) {
 
 func (p *Project) GetFilePath() string {
 	return filepath.Join(projectPathRoot, p.org, p.repo)
+}
+
+func (p *Project) GetRepo() string {
+	return p.repo
+}
+
+func (p *Project) GetOrg() string {
+	return p.org
+}
+
+func (p *Project) GetGitHubURL() string {
+	return fmt.Sprintf("https://github.com/%s/%s", p.GetOrg(), p.GetRepo())
+}
+
+func (p *Project) GetVersion(releaseBranch string) (Version, error) {
+	releaseBranchPath := filepath.Join(p.GetFilePath(), releaseBranch)
+	gitTagVersion, err := readGitTagVersionFile(releaseBranchPath)
+	if err != nil {
+		return Version{}, fmt.Errorf("getting GitTag version: %w", err)
+	}
+	golangVersion, err := readGolangVersionFile(releaseBranchPath)
+	if err != nil {
+		return Version{}, fmt.Errorf("getting Golang version: %w", err)
+	}
+	return Version{
+		gitTag: string(gitTagVersion),
+		golang: string(golangVersion),
+	}, nil
 }
 
 func GetProjectPathRoot() string {

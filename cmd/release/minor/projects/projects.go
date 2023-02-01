@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/aws/eks-distro/cmd/release/utils/values"
+	"github.com/aws/eks-distro/cmd/release/utils/projects"
 )
 
 var (
@@ -22,11 +22,11 @@ var (
 func CreateFilesAndDirectories(prevReleaseBranchInput string, nextReleaseBranchInput string) (int, error) {
 	prevReleaseBranch, nextReleaseBranch = prevReleaseBranchInput, nextReleaseBranchInput
 
-	projects, err := values.GetProjects()
+	eksdProjects, err := projects.GetProjects()
 	if err != nil {
 		return -1, fmt.Errorf("getting projects: %w", err)
 	}
-	for _, project := range projects {
+	for _, project := range eksdProjects {
 		projectPath := project.GetFilePath()
 		prevReleaseBranchRepoPath := filepath.Join(projectPath, prevReleaseBranch)
 		if _, err = os.Stat(prevReleaseBranchRepoPath); os.IsNotExist(err) {
@@ -120,7 +120,7 @@ func copyFile(prevReleaseBranchFilePath, nextReleaseBranchFilePath string) error
 }
 
 func getFileCount(releaseBranch string) (int, error) {
-	pathPattern := filepath.Join(values.GetProjectPathRoot(), "*", "*", releaseBranch, "*")
+	pathPattern := filepath.Join(projects.GetProjectPathRoot(), "*", "*", releaseBranch, "*")
 	out, err := exec.Command("bash", "-c", fmt.Sprintf("find %s -type f | wc -l", pathPattern)).Output()
 	if err != nil {
 		return -1, fmt.Errorf("getting file count for %s: %w", releaseBranch, err)
