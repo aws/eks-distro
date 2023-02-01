@@ -128,6 +128,8 @@ spec:
     profile: {{ .controlPlaneInstanceProfileArn }}
   {{- end }}
   image: 099720109477/ubuntu/images/hvm-ssd/ubuntu-focal-20.04-{{ .architecture }}-server-20221018
+  instanceMetadata:
+    httpTokens: required
   machineType: {{ .instanceType }}
   maxSize: 1
   minSize: 1
@@ -158,6 +160,8 @@ spec:
     profile: {{ .nodeInstanceProfileArn }}
   {{- end }}
   image: 099720109477/ubuntu/images/hvm-ssd/ubuntu-focal-20.04-{{ .architecture }}-server-20221018
+  instanceMetadata:
+    httpTokens: required
   machineType: {{ .instanceType }}
   maxSize: 3
   minSize: 3
