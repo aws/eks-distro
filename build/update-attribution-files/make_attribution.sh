@@ -72,7 +72,13 @@ else
                 echo "Copying $LAST_RELEASE_BRANCH ATTRIBUTION to $release"
                 mkdir -p $PROJECT_ROOT/_output/$release
                 cp -rf $PROJECT_ROOT/$LAST_RELEASE_BRANCH/*TTRIBUTION.txt $PROJECT_ROOT/$release
-            fi            
+            fi        
+            
+            if [[ $TARGET == "update-go-mods" ]]; then
+                echo "Copying $LAST_RELEASE_BRANCH go.mod and go.sum to $release"
+                mkdir -p $PROJECT_ROOT/_output/$release
+                cp -rf $PROJECT_ROOT/$LAST_RELEASE_BRANCH/go.{mod,sum} $PROJECT_ROOT/$release
+            fi     
         fi
         LAST_GIT_TAG="$GIT_TAG"
         LAST_RELEASE_BRANCH="$release"
