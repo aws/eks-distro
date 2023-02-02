@@ -98,7 +98,7 @@ https://github.com/google/btree
 ** github.com/google/cadvisor; version v0.44.1 --
 https://github.com/google/cadvisor
 
-** github.com/google/cel-go; version v0.10.2 --
+** github.com/google/cel-go; version v0.10.4 --
 https://github.com/google/cel-go
 
 ** github.com/google/gnostic; version v0.5.7-v3refs --
@@ -338,7 +338,7 @@ https://github.com/kubernetes/kubectl
 ** k8s.io/kubelet; version v0.0.0 --
 https://github.com/kubernetes/kubelet
 
-** k8s.io/kubernetes; version v1.24.9 --
+** k8s.io/kubernetes; version v1.24.10 --
 https://github.com/kubernetes/kubernetes
 
 ** k8s.io/legacy-cloud-providers; version v0.0.0 --
@@ -353,13 +353,13 @@ https://github.com/kubernetes/mount-utils
 ** k8s.io/pod-security-admission; version v0.0.0 --
 https://github.com/kubernetes/pod-security-admission
 
-** k8s.io/system-validators/validators; version v1.7.0 --
+** k8s.io/system-validators/validators; version v1.8.0 --
 https://github.com/kubernetes/system-validators
 
 ** k8s.io/utils; version v0.0.0-20220210201930-3a6ce19ff2f9 --
 https://github.com/kubernetes/utils
 
-** sigs.k8s.io/apiserver-network-proxy/konnectivity-client; version v0.0.33 --
+** sigs.k8s.io/apiserver-network-proxy/konnectivity-client; version v0.0.35 --
 https://github.com/kubernetes-sigs/apiserver-network-proxy
 
 ** sigs.k8s.io/json; version v0.0.0-20211208200746-9f7c6b3444d2 --
@@ -374,7 +374,7 @@ https://github.com/kubernetes-sigs/kustomize
 ** sigs.k8s.io/kustomize/kyaml; version v0.13.6 --
 https://github.com/kubernetes-sigs/kustomize
 
-** sigs.k8s.io/structured-merge-diff/v4; version v4.2.1 --
+** sigs.k8s.io/structured-merge-diff/v4; version v4.2.3 --
 https://github.com/kubernetes-sigs/structured-merge-diff
 
 
@@ -985,7 +985,7 @@ https://github.com/kubernetes/apimachinery
 ** k8s.io/client-go/third_party/forked/golang/template; version v0.0.0 --
 https://github.com/kubernetes/client-go
 
-** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.24.9 --
+** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.24.10 --
 https://github.com/kubernetes/kubernetes
 
 ** k8s.io/utils/inotify; version v0.0.0-20220210201930-3a6ce19ff2f9 --
@@ -1862,7 +1862,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.24.9 --
+** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.24.10 --
 https://github.com/kubernetes/kubernetes
 
 Copyright ©2013 The gonum Authors. All rights reserved.
