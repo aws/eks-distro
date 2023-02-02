@@ -5,7 +5,7 @@ Subject: [PATCH] --EKS-PATCH-- Update naming for a const
 
 Cherry-pick of upstream Kubernetes PR # 110706
 The upstream PR is merged and should be available in future k/k releases.
-However we need the STS throttling fix for 1.20-1.23.
+However we need the STS throttling fix for 1.19-1.23.
 
 We can remove this patch from version 1.22-1.23 versions once the upstream cherry-picks for this patch get merged.
 1.22 - upstream cherry-pick PR # 111260
