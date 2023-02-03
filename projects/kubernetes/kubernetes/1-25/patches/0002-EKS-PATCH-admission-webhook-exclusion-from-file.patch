@@ -4,14 +4,14 @@ Date: Wed, 21 Dec 2022 20:12:26 -0600
 Subject: [PATCH] --EKS-PATCH-- admission webhook exclusion from file
 
 ---
- .../generic/exclusionrules/exclusion.go       | 149 ++++++
+ .../generic/exclusionrules/exclusion.go       | 152 +++++++
  .../generic/exclusionrules/exclusion_test.go  | 425 ++++++++++++++++++
  .../webhook/generic/exclusionrules/matcher.go |  81 ++++
  .../generic/exclusionrules/matcher_test.go    | 333 ++++++++++++++
  .../plugin/webhook/generic/webhook.go         |   5 +
  .../webhook_exclusion_rules_test.go           | 278 ++++++++++++
  vendor/modules.txt                            |   1 +
- 7 files changed, 1272 insertions(+)
+ 7 files changed, 1275 insertions(+)
  create mode 100644 staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/exclusion.go
  create mode 100644 staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/exclusion_test.go
  create mode 100644 staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/matcher.go
@@ -20,10 +20,10 @@ Subject: [PATCH] --EKS-PATCH-- admission webhook exclusion from file
 
 diff --git a/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/exclusion.go b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/exclusion.go
 new file mode 100644
-index 00000000000..31c2247580e
+index 00000000000..71c4f548854
 --- /dev/null
 +++ b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/exclusion.go
-@@ -0,0 +1,149 @@
+@@ -0,0 +1,152 @@
 +package exclusionrules
 +
 +import (
@@ -75,6 +75,7 @@ index 00000000000..31c2247580e
 +
 +func readFile() []ExclusionRule {
 +	//Default values for backwards compatability for eks-d
++	namespace := v1.NamespacedScope
 +	defaultExclusion := []ExclusionRule{
 +		{
 +			APIGroup:   "coordination.k8s.io",
@@ -82,6 +83,7 @@ index 00000000000..31c2247580e
 +			Kind:       "Lease",
 +			Namespace:  "kube-system",
 +			Name:       []string{"kube-controller-manager", "kube-scheduler"},
++			Scope:      &namespace,
 +		},
 +		{
 +			APIGroup:   "",
@@ -89,6 +91,7 @@ index 00000000000..31c2247580e
 +			Kind:       "Endpoints",
 +			Namespace:  "kube-system",
 +			Name:       []string{"kube-controller-manager", "kube-scheduler"},
++			Scope:      &namespace,
 +		},
 +	}
 +
