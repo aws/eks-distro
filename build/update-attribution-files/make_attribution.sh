@@ -55,7 +55,7 @@ else
         export RELEASE_BRANCH="$release"
 
         GIT_TAG="$(cat $PROJECT_ROOT/$release/GIT_TAG)"
-        if [ "$GIT_TAG" != "$LAST_GIT_TAG" ]; then
+        if [ "$GIT_TAG" != "$LAST_GIT_TAG" ] || [ $TARGET == "update-go-mods" ]; then
             # clean before regenerating to ensure there are no intermediate files left around
             make -C $PROJECT_ROOT clean clean-go-cache
             build::attribution::generate $release

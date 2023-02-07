@@ -5,7 +5,7 @@ GOLANG_VERSION?=$(shell cat $(RELEASE_BRANCH)/GOLANG_VERSION)
 REPO=etcd
 REPO_OWNER=etcd-io
 
-BINARY_TARGET_FILES=etcd etcdctl
+BINARY_TARGET_FILES=server etcdctl
 SOURCE_PATTERNS=go.etcd.io/etcd ./etcdctl
 EXTRA_GOBUILD_FLAGS=-installsuffix cgo
 
