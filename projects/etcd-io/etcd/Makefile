@@ -5,7 +5,7 @@ GOLANG_VERSION?=$(shell cat $(RELEASE_BRANCH)/GOLANG_VERSION)
 REPO=etcd
 REPO_OWNER=etcd-io
 
-BINARY_TARGET_FILES=server etcdctl
+BINARY_TARGET_FILES=etcd etcdctl
 SOURCE_PATTERNS=go.etcd.io/etcd ./etcdctl
 EXTRA_GOBUILD_FLAGS=-installsuffix cgo
 
@@ -31,6 +31,8 @@ release: validate-cli-version
 .PHONY: validate-cli-version
 validate-cli-version: CLI=$(OUTPUT_BIN_DIR)/$(subst /,-,$(BUILDER_PLATFORM))/$(REPO)
 validate-cli-version:
+	echo "What is release branch" $(RELEASE_BRANCH)
+	echo "What is binary target files" $(BINARY_TARGET_FILES)
 	$(MAKE) $(CLI) BINARY_PLATFORMS=$(BUILDER_PLATFORM)
 	$(CLI) --version
 	@if [[ "$$($(CLI) --version)" != *"etcd Version: $(GIT_TAG:v%=%)"* ]]; then \
