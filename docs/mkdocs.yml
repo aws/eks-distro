@@ -57,3 +57,4 @@ markdown_extensions:
 - admonition
 - codehilite:
     linenums: true
+    use_pygments: False
