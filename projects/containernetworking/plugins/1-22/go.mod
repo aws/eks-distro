@@ -15,19 +15,15 @@ require (
 	github.com/d2g/dhcp4server v0.0.0-20181031114812-7d4a0a7f59a5
 	github.com/d2g/hardwareaddr v0.0.0-20190221164911-e7d9fbe030e4 // indirect
 	github.com/godbus/dbus v0.0.0-20180201030542-885f9cc04c9c
-	github.com/golang/protobuf v1.3.1 // indirect
 	github.com/j-keck/arping v0.0.0-20160618110441-2cf9dc699c56
 	github.com/mattn/go-shellwords v1.0.3
-	github.com/onsi/ginkgo v0.0.0-20151202141238-7f8ab55aaf3b
-	github.com/onsi/gomega v0.0.0-20151007035656-2152b45fa28a
+	github.com/onsi/ginkgo v1.12.1
+	github.com/onsi/gomega v1.10.3
 	github.com/safchain/ethtool v0.0.0-20190326074333-42ed695e3de8
 	github.com/sirupsen/logrus v1.0.6 // indirect
 	github.com/stretchr/testify v1.3.0 // indirect
-	github.com/vishvananda/netlink v0.0.0-20181108222139-023a6dafdcdf
-	github.com/vishvananda/netns v0.0.0-20180720170159-13995c7128cc // indirect
-	golang.org/x/crypto v0.0.0-20181009213950-7c1a557ab941 // indirect
-	golang.org/x/net v0.0.0-20181011144130-49bb7cea24b1 // indirect
-	golang.org/x/sys v0.0.0-20190616124812-15dcb6c0061f
+	github.com/vishvananda/netlink v1.1.1-0.20201029203352-d40f9887b852
+	golang.org/x/sys v0.0.0-20201117170446-d9b008d0a637
 	gopkg.in/airbrake/gobrake.v2 v2.0.9 // indirect
 	gopkg.in/gemnasium/logrus-airbrake-hook.v2 v2.1.2 // indirect
 )
