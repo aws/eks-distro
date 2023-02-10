@@ -31,4 +31,4 @@ cd $REPO/$REPO_SUBPATH
 CACHE_KEY=$(echo $PROJECT_ROOT | sed 's/\(.*\)\//\1-/' | xargs basename)
 build::common::use_go_version $GOLANG_VERSION
 build::common::set_go_cache $CACHE_KEY $TAG
-go mod vendor
+build::common::echo_and_run go mod vendor
