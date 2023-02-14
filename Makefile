@@ -95,11 +95,12 @@ kops-arm-ubuntu-22: export NODE_ARCHITECTURE=arm64
 kops-arm-ubuntu-22: export UBUNTU_RELEASE=jammy-22.04
 kops-arm-ubuntu-22: export UBUNTU_RELEASE_DATE=20230115
 kops-arm-ubuntu-22: kops-prereqs
-	export IPV6=true; \
+	export IPV6=true;
+	sleep 10m; \
 	RELEASE=$(RELEASE) development/kops/prow.sh;
 
 .PHONY: kops-prow
-kops-prow: kops-arm-ubuntu-22
+kops-prow: kops-prow-amd kops-prow-arm kops-arm-ubuntu-22
 	@echo 'Done kops-prow'
 
 .PHONY: kops-prereqs
