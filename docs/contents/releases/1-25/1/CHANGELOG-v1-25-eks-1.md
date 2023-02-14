@@ -4,3 +4,4 @@ This changelog highlights the changes for [v1-25-eks-1](https://github.com/aws/e
 
 ## Changes
 
+Initial release of Kubernetes 1.25 (v1.25.5)

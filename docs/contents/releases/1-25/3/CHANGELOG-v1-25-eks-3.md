@@ -4,3 +4,7 @@ This changelog highlights the changes for [v1-25-eks-3](https://github.com/aws/e
 
 ## Changes
 
+### Projects Version Updates
+
+* aws-iam-authenticator: v0.6.2 -> v0.6.3
+
