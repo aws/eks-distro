@@ -127,7 +127,7 @@ spec:
   iam:
     profile: {{ .controlPlaneInstanceProfileArn }}
   {{- end }}
-  image: 099720109477/ubuntu/images/hvm-ssd/ubuntu-focal-20.04-{{ .architecture }}-server-20221018
+  image: 099720109477/ubuntu/images/hvm-ssd/ubuntu-{{ .ubuntuRelease }}-{{ .architecture }}-server-{{ .ubuntuReleaseDate }}
   instanceMetadata:
     httpTokens: required
   machineType: {{ .instanceType }}

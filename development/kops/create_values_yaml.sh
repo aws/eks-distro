@@ -73,6 +73,8 @@ controlPlaneInstanceProfileArn: $CONTROL_PLANE_INSTANCE_PROFILE
 nodeInstanceProfileArn: $NODE_INSTANCE_PROFILE
 instanceType: $NODE_INSTANCE_TYPE
 architecture: $NODE_ARCHITECTURE
+ubuntuRelease: $UBUNTU_RELEASE
+ubuntuReleaseDate: $UBUNTU_RELEASE_DATE
 ipv6: $IPV6
 pause:
 $(get_container_yaml kubernetes/pause $RELEASE)
