@@ -74,7 +74,7 @@ postsubmit-build: setup
 kops-prow-arm: export NODE_INSTANCE_TYPE=t4g.medium
 kops-prow-arm: export NODE_ARCHITECTURE=arm64
 kops-prow-arm: export UBUNTU_RELEASE=focal-20.04
-kops-prow-arm: export UBUNTU_RELEASE_DATE=20221018
+kops-prow-arm: export UBUNTU_RELEASE_DATE=server-20221018
 kops-prow-arm: kops-prereqs
 	$(eval MINOR_VERSION=$(subst 1-,,$(RELEASE_BRANCH)))
 	if [[ $(MINOR_VERSION) -ge 22 ]]; then \
@@ -85,13 +85,13 @@ kops-prow-arm: kops-prereqs
 
 .PHONY: kops-prow-amd
 kops-prow-amd: export UBUNTU_RELEASE=focal-20.04
-kops-prow-amd: export UBUNTU_RELEASE_DATE=20221018
+kops-prow-amd: export UBUNTU_RELEASE_DATE=server-20221018
 kops-prow-amd: kops-prereqs
 	RELEASE=$(RELEASE) development/kops/prow.sh
 
 .PHONY: kops-arm-ubuntu-22
 kops-arm-ubuntu-22: export UBUNTU_RELEASE=jammy-22.04
-kops-arm-ubuntu-22: export UBUNTU_RELEASE_DATE=20230115
+kops-arm-ubuntu-22: export UBUNTU_RELEASE_DATE=server-20230115
 kops-arm-ubuntu-22: kops-prereqs
 	sleep 10m; \
 	RELEASE=$(RELEASE) development/kops/prow.sh;

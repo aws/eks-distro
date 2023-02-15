@@ -127,7 +127,7 @@ spec:
   iam:
     profile: {{ .controlPlaneInstanceProfileArn }}
   {{- end }}
-  image: 099720109477/ubuntu/images/hvm-ssd/ubuntu-{{ .ubuntuRelease }}-{{ .architecture }}-server-{{ .ubuntuReleaseDate }}
+  image: 099720109477/ubuntu/images/hvm-ssd/ubuntu-{{ .ubuntuRelease }}-{{ .architecture }}-{{ .ubuntuReleaseDate }}
   instanceMetadata:
     httpTokens: required
   machineType: {{ .instanceType }}
