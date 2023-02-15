@@ -80,25 +80,34 @@ kops-codebuild: kops-amd kops-arm
 
 .PHONY: kops-prow
 kops-prow: KOPS_ENTRYPOINT=development/kops/prow.sh
-kops-prow: kops-amd kops-arm
+kops-prow: kops-amd kops-arm kops-arm-ubuntu-22
 	@echo 'Done kops-prow'
 
 .PHONY: kops-amd
+kops-amd: export UBUNTU_RELEASE=focal-20.04
+kops-amd: export UBUNTU_RELEASE_DATE=20221018
 kops-amd: kops-prereqs
 	RELEASE=$(RELEASE) $(KOPS_ENTRYPOINT)
 
 .PHONY: kops-arm
 kops-arm: export NODE_INSTANCE_TYPE=t4g.medium
 kops-arm: export NODE_ARCHITECTURE=arm64
+kops-arm: export UBUNTU_RELEASE=focal-20.04
+kops-arm: export UBUNTU_RELEASE_DATE=20221018
 kops-arm: kops-prereqs
 	$(eval MINOR_VERSION=$(subst 1-,,$(RELEASE_BRANCH)))
 	if [[ $(MINOR_VERSION) -ge 22 ]]; then \
 		export IPV6=true; \
 	fi; \
-	if [[ $(MINOR_VERSION) -ge 21 ]]; then \
-		sleep 5m; \
-		RELEASE=$(RELEASE) $(KOPS_ENTRYPOINT); \
-	fi;
+	sleep 5m; \
+	RELEASE=$(RELEASE) $(KOPS_ENTRYPOINT);
+
+.PHONY: kops-arm-ubuntu-22
+kops-arm-ubuntu-22: export UBUNTU_RELEASE=jammy-22.04
+kops-arm-ubuntu-22: export UBUNTU_RELEASE_DATE=20230115
+kops-arm-ubuntu-22: kops-prereqs
+	sleep 10m; \
+	RELEASE=$(RELEASE) $(KOPS_ENTRYPOINT);
 
 .PHONY: kops-prereqs
 kops-prereqs: postsubmit-build
