@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -x
 set -o errexit
 set -o nounset
 set -o pipefail
@@ -35,6 +34,17 @@ ALL_TARGET_FILES="${13:-}"
 SCRIPT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 source "${SCRIPT_ROOT}/common.sh"
 
+function build::simple::print_go_env(){
+  for var in "GOOS" "GOARCH" "CGO_ENABLED" "GOCACHE" "GOFLAGS"; do
+    if [ -n "${!var:-}" ]; then
+      echo "$var: ${!var:-}"
+    fi
+    if [ "$var" = "CGO_ENABLED" ] && [ "${!var:-}" = "1" ]; then
+      for other in "CGO_LDFLAGS" "CGO_CFLAGS" "LD_LIBRARY_PATH" "PKG_CONFIG_PATH"; do echo "$other: ${!other:-}"; done
+    fi
+  done
+}
+
 function build::simple::binaries(){
   mkdir -p $(dirname $TARGET_FILE)
   cd "$PROJECT_ROOT/$REPO/$REPO_SUBPATH"
@@ -52,11 +62,15 @@ function build::simple::binaries(){
 
     # target file is meant to be treated as a folder since multiple binaries will written out
     if [[ "$TARGET_FILE" == */ ]]; then
-      mkdir -p $TARGET_FILE
+      mkdir -p $TARGET_FILE      
     fi
 
-    CGO_ENABLED=$CGO_ENABLED GOOS=$OS GOARCH=$ARCH \
-      go $GOBUILD_COMMAND -trimpath -a -ldflags "$GO_LDFLAGS" $EXTRA_GOBUILD_FLAGS -o $TARGET_FILE $SOURCE_PATTERN
+    echo "Building binary(s): $ALL_TARGET_FILES"
+    export CGO_ENABLED=$CGO_ENABLED GOOS=$OS GOARCH=$ARCH 
+    
+    build::simple::print_go_env
+    
+    build::common::echo_and_run go $GOBUILD_COMMAND -trimpath -a -ldflags "$GO_LDFLAGS" $EXTRA_GOBUILD_FLAGS -o $TARGET_FILE $SOURCE_PATTERN
 
     if [[ "$TARGET_FILE" == */ ]]; then
       # in the case of outputing to a directory, the files will be named by the basename of the source pattern
@@ -64,9 +78,9 @@ function build::simple::binaries(){
       TARGET_FILES=(${ALL_TARGET_FILES// / })
       index=0
       for source in $SOURCE_PATTERN; do
-        if [ "$(basename $source)" != "${TARGET_FILES[$index]}" ]; then
-          # in the case of multiple target files but the first is a ., we cant move . but it should already be named correctly
-          [ -f $TARGET_FILE$(basename $source) ] && mv $TARGET_FILE$(basename $source) $TARGET_FILE${TARGET_FILES[$index]}
+        if [ "$(basename $source)" != "${TARGET_FILES[$index]}" ] && [ -f $TARGET_FILE$(basename $source) ]; then
+          # in the case of multiple target files but the first is a ., we cant move . but it should already be named correctly          
+          build::common::echo_and_run mv $TARGET_FILE$(basename $source) $TARGET_FILE${TARGET_FILES[$index]}
         fi
         ((index=index+1))
       done

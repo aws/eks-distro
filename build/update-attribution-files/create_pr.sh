@@ -15,7 +15,6 @@
 
 set -e
 set -o pipefail
-set -x
 
 if [[ -z "$JOB_TYPE" ]]; then
     exit 0
@@ -37,17 +36,20 @@ git config user.email "aws-model-rocket-bots+eksdistroprbot@amazon.com"
 git config remote.origin.url >&- || git remote add origin git@github.com:${ORIGIN_ORG}/eks-distro.git
 git config remote.upstream.url >&- || git remote add upstream https://github.com/${UPSTREAM_ORG}/eks-distro.git
 
-# Files have already changed, stash to perform rebase
-git stash
-retry git fetch upstream
+build::common::echo_and_run git status
 
-git checkout $MAIN_BRANCH
+# Files have already changed, stash to perform rebase
+build::common::echo_and_run git stash
+build::common::echo_and_run retry git fetch upstream
+
+build::common::echo_and_run git checkout $MAIN_BRANCH
 # there will be conflicts before we are on the bots fork at this point
 # -Xtheirs instructs git to favor the changes from the current branch
-git rebase -Xtheirs upstream/$MAIN_BRANCH
+build::common::echo_and_run git rebase -Xtheirs upstream/$MAIN_BRANCH
 
 if [ "$(git stash list)" != "" ]; then
-    git stash pop
+    build::common::echo_and_run git stash pop
+    build::common::echo_and_run git status
 fi
 
 function pr:create()
@@ -75,6 +77,7 @@ function pr:create()
     gh auth login --with-token < /secrets/github-secrets/token
     local -r pr_exists=$(gh pr list | grep -c "$pr_branch" || true)
     if [ $pr_exists -eq 0 ]; then
+        echo "Creating PR $pr_title"
         gh pr create --title "$pr_title" --body "$pr_body" --base $MAIN_BRANCH
     fi
 }
@@ -172,6 +175,7 @@ function pr::file:add() {
     git add $file
 }
 
+echo "Adding Checksum files"
 # Add checksum files
 for FILE in $(find . -type f -name CHECKSUMS); do
     pr::file:add $FILE
@@ -190,9 +194,11 @@ pr::create::checksums
 git checkout $MAIN_BRANCH
 
 if [ "$(git stash list)" != "" ]; then
-    git stash pop
+    build::common::echo_and_run git stash pop
+    build::common::echo_and_run git status
 fi
 
+echo "Adding ATTRIBUTION files"
 # Add attribution files
 for FILE in $(find . -type f \( -name "*ATTRIBUTION.txt" ! -path "*/_output/*" \)); do
     pr::file:add $FILE
@@ -206,8 +212,12 @@ pr::create::attribution
 git checkout $MAIN_BRANCH
 
 if [ "$(git stash list)" != "" ]; then
-    git stash pop
+    build::common::echo_and_run git stash pop
+    build::common::echo_and_run git status
 fi
+
+echo "Adding Help.mk files"
+
 # Add help.mk/Makefile files
 for FILE in $(find . -type f \( -name Help.mk -o -name Makefile \)); do
     pr::file:add $FILE
@@ -221,9 +231,11 @@ pr::create::help
 git checkout $MAIN_BRANCH
 
 if [ "$(git stash list)" != "" ]; then
-    git stash pop
+    build::common::echo_and_run git stash pop
+    build::common::echo_and_run git status
 fi
 
+echo "Adding go.mod and go.sum files"
 # Add go.mod files
 for FILE in $(find . -type f \( -name go.sum -o -name go.mod \)); do    
     git check-ignore -q $FILE || git add $FILE

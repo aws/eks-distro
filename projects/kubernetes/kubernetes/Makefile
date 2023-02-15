@@ -62,7 +62,9 @@ s3-artifacts: cleanup-artifacts
 # Do not pass down overrides we add in common makefile
 $(BINARY_TARGETS): MAKEFLAGS=
 $(BINARY_TARGETS): $(KUBE_GIT_VERSION_FILE) | $(GIT_PATCH_TARGET)
+	@echo -e $(call TARGET_START_LOG)
 	build/create_binaries.sh $(REPO) $(GOLANG_VERSION) $(GIT_TAG) $(RELEASE_BRANCH)
+	@echo -e $(call TARGET_END_LOG)
 
 # There are a couple of fixes needed to the licenses and root-module name before running gather licenses
 $(GATHER_LICENSES_TARGETS): fix-licenses
@@ -87,8 +89,10 @@ $(PAUSE_DST): $(GIT_PATCH_TARGET)
 	@mkdir -p $(dir $(PAUSE_DST))
 	cp $(PAUSE_SRC_DIR)/linux/pause.c $(PAUSE_DST) || cp $(PAUSE_SRC_DIR)/pause.c $(PAUSE_DST)
 
-tarballs: $(KUBE_GIT_VERSION_FILE) 
+tarballs: $(KUBE_GIT_VERSION_FILE)
+	@echo -e $(call TARGET_START_LOG)
 	build/create_tarballs.sh $(REPO) $(GIT_TAG) $(RELEASE_BRANCH)
+	@echo -e $(call TARGET_END_LOG)
 
 .PHONY: cleanup-artifacts
 cleanup-artifacts:

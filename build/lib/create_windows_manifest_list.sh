@@ -25,6 +25,8 @@ IMAGE="$2"
 LATEST_IMAGE="$3"
 WINDOWS_IMAGE_VERSIONS="$4"
 
+echo "Creating windows manifest for $IMAGE_NAME"
+
 # this metadate file contains the linux/amd+arm images
 if [ ! -f /tmp/$IMAGE_NAME-metadata.json ]; then
     echo "No metadata file for image: /tmp/$IMAGE_NAME-metadata.json!"
@@ -46,12 +48,13 @@ for version in "${VERSIONS[@]}"; do
 
     # need to remove mediaType from descri since buildx segfaults when it is set
     jq -r '."containerimage.descriptor"  | {size, digest}' /tmp/$IMAGE_NAME-$version-metadata.json > /tmp/$IMAGE_NAME-$version-descr.json
-    retry docker buildx imagetools inspect --raw $BASE_IMAGE | jq '.manifests[0] | {platform}' | jq add -s - /tmp/$IMAGE_NAME-$version-descr.json > /tmp/$IMAGE_NAME-$version-descr-final.json
+    build::common::echo_and_run retry docker buildx imagetools inspect --raw $BASE_IMAGE | jq '.manifests[0] | {platform}' | jq add -s - /tmp/$IMAGE_NAME-$version-descr.json > /tmp/$IMAGE_NAME-$version-descr-final.json
+    cat /tmp/$IMAGE_NAME-$version-descr-final.json
     CREATE_ARGS+="-f /tmp/$IMAGE_NAME-$version-descr-final.json "
 done
 
 
-retry docker buildx imagetools create --dry-run $CREATE_ARGS -t $IMAGE -t $LATEST_IMAGE > /tmp/$IMAGE_NAME-manfiest-final.json
+build::common::echo_and_run retry docker buildx imagetools create --dry-run $CREATE_ARGS -t $IMAGE -t $LATEST_IMAGE > /tmp/$IMAGE_NAME-manfiest-final.json
 
 cat  /tmp/$IMAGE_NAME-manfiest-final.json
 
@@ -70,9 +73,9 @@ if [ "$(jq '.manifests[].platform | select( has("os.version") == true ) | ."os.v
     exit 1
 fi
 
-retry docker buildx imagetools create $CREATE_ARGS -t $IMAGE -t $LATEST_IMAGE
+build::common::echo_and_run retry docker buildx imagetools create $CREATE_ARGS -t $IMAGE -t $LATEST_IMAGE
 
-retry docker buildx imagetools inspect $IMAGE
+build::common::echo_and_run retry docker buildx imagetools inspect $IMAGE
 
 # Public ecr's tagging appears to have some delay when retagging existing tags, like latest
 # retry the diff to give it time to make sure the latest manifest has been updated to new verion

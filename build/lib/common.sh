@@ -14,6 +14,11 @@
 # limitations under the License.
 
 
+if [ -n "${OUTPUT_DEBUG_LOG:-}" ]; then
+    set -x
+fi
+
+
 function build::common::ensure_tar() {
   if [[ -n "${TAR:-}" ]]; then
     return
@@ -43,7 +48,7 @@ function build::common::create_tarball() {
   local -r stagingdir=$2
   local -r repository=$3
 
-  "${TAR}" czf "${tarfile}" -C "${stagingdir}" $repository --owner=0 --group=0
+  build::common::echo_and_run "${TAR}" czf "${tarfile}" -C "${stagingdir}" $repository --owner=0 --group=0
 }
 
 # Generate shasum of tarballs. $1 is the directory of the tarballs.
@@ -105,15 +110,15 @@ function build::gather_licenses() {
   # data about each dependency to generate the amazon approved attribution.txt files
   # go-deps is needed for module versions
   # go-licenses are all the dependencies found from the module(s) that were passed in via patterns
-  go list -deps=true -json ./... | jq -s ''  > "${outputdir}/attribution/go-deps.json"
+  build::common::echo_and_run go list -deps=true -json ./... | jq -s ''  > "${outputdir}/attribution/go-deps.json"
 
   # go-licenses can be a bit noisy with its output and lot of it can be confusing 
   # the following messages are safe to ignore since we do not need the license url for our process
   NOISY_MESSAGES="cannot determine URL for|Error discovering license URL|unsupported package host|contains non-Go code|has empty version|vendor.*\.s$"
 
-  go-licenses save --force $patterns --save_path="${outputdir}/LICENSES" 2>  >(grep -vE "$NOISY_MESSAGES" >&2)
+  build::common::echo_and_run go-licenses save --force $patterns --save_path "${outputdir}/LICENSES" 2> >(grep -vE "$NOISY_MESSAGES")
   
-  go-licenses csv $patterns > "${outputdir}/attribution/go-license.csv" 2>  >(grep -vE "$NOISY_MESSAGES" >&2)
+  build::common::echo_and_run go-licenses csv $patterns 2> >(grep -vE "$NOISY_MESSAGES") > "${outputdir}/attribution/go-license.csv"  
 
   if cat "${outputdir}/attribution/go-license.csv" | grep -q "^vendor\/golang.org\/x"; then
       echo " go-licenses created a file with a std golang package (golang.org/x/*)"
@@ -193,7 +198,7 @@ function build::generate_attribution(){
     exit 1
   fi
 
-  generate-attribution $root_module_name $project_root $golang_version_tag $output_directory 
+  build::common::echo_and_run generate-attribution $root_module_name $project_root $golang_version_tag $output_directory 
   cp -f "${output_directory}/attribution/ATTRIBUTION.txt" $attribution_file
 }
 
@@ -306,4 +311,9 @@ function retry() {
 
 function build::docker::retry_pull() {
   retry docker pull "$@"
+}
+
+function build::common::echo_and_run() {
+  >&2 echo "($(pwd)) \$ $*"
+  "$@"
 }

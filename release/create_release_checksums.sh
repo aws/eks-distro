@@ -13,10 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -x
 set -o errexit
 set -o nounset
 set -o pipefail
+
+SCRIPT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+BASE_DIRECTORY="$(cd "${SCRIPT_ROOT}/.." && pwd -P)"
+source ${BASE_DIRECTORY}/build/lib/common.sh
 
 ASSET_ROOT="$1"
 
@@ -31,7 +34,7 @@ SHA256SUM=$(dirname ${ASSET_ROOT})/SHA256SUM
 SHA512SUM=$(dirname ${ASSET_ROOT})/SHA512SUM
 rm -f $SHA256SUM
 rm -f $SHA512SUM
-echo "Writing artifact hashes to SHA256SUM/SHA512SUM files..."
+echo "Writing artifact hashes to SHA256SUM/SHA512SUM files in folder: $ASSET_ROOT"
 cd $ASSET_ROOT
 for file in $(find ${ASSET_ROOT} -type f -not -path '*\.sha[25][51][62]' -not -path '*\.docker_*' \( -path '*bin/linux*' -o -path '*bin/windows*' -o -path '*bin/darwin*' -o -name '*tar\.gz' \) ); do
     filepath=$(realpath --relative-base=${ASSET_ROOT} $file )
