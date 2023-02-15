@@ -69,7 +69,6 @@ postsubmit-build: setup
 		--artifact-bucket=$(ARTIFACT_BUCKET) \
 		--dry-run=false \
 		--rebuild-all=${REBUILD_ALL}
-<<<<<<< HEAD
 
 .PHONY: kops
 kops: $(if $(CODEBUILD_BUILD_ID),kops-codebuild,kops-prow)
