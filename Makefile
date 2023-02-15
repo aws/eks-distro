@@ -69,6 +69,7 @@ postsubmit-build: setup
 		--artifact-bucket=$(ARTIFACT_BUCKET) \
 		--dry-run=false \
 		--rebuild-all=${REBUILD_ALL}
+<<<<<<< HEAD
 
 .PHONY: kops
 kops: $(if $(CODEBUILD_BUILD_ID),kops-codebuild,kops-prow)
@@ -85,7 +86,7 @@ kops-prow: kops-amd kops-arm kops-arm-ubuntu-22
 
 .PHONY: kops-amd
 kops-amd: export UBUNTU_RELEASE=focal-20.04
-kops-amd: export UBUNTU_RELEASE_DATE=20221018
+kops-amd: export UBUNTU_RELEASE_DATE=server-20221018
 kops-amd: kops-prereqs
 	RELEASE=$(RELEASE) $(KOPS_ENTRYPOINT)
 
@@ -93,7 +94,7 @@ kops-amd: kops-prereqs
 kops-arm: export NODE_INSTANCE_TYPE=t4g.medium
 kops-arm: export NODE_ARCHITECTURE=arm64
 kops-arm: export UBUNTU_RELEASE=focal-20.04
-kops-arm: export UBUNTU_RELEASE_DATE=20221018
+kops-arm: export UBUNTU_RELEASE_DATE=server-20221018
 kops-arm: kops-prereqs
 	$(eval MINOR_VERSION=$(subst 1-,,$(RELEASE_BRANCH)))
 	if [[ $(MINOR_VERSION) -ge 22 ]]; then \
@@ -104,7 +105,7 @@ kops-arm: kops-prereqs
 
 .PHONY: kops-arm-ubuntu-22
 kops-arm-ubuntu-22: export UBUNTU_RELEASE=jammy-22.04
-kops-arm-ubuntu-22: export UBUNTU_RELEASE_DATE=20230115
+kops-arm-ubuntu-22: export UBUNTU_RELEASE_DATE=server-20230115
 kops-arm-ubuntu-22: kops-prereqs
 	sleep 10m; \
 	RELEASE=$(RELEASE) $(KOPS_ENTRYPOINT);
