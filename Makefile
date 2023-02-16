@@ -69,36 +69,43 @@ postsubmit-build: setup
 		--artifact-bucket=$(ARTIFACT_BUCKET) \
 		--dry-run=false \
 		--rebuild-all=${REBUILD_ALL}
-	
-.PHONY: kops-prow-arm
-kops-prow-arm: export NODE_INSTANCE_TYPE=t4g.medium
-kops-prow-arm: export NODE_ARCHITECTURE=arm64
-kops-prow-arm: export UBUNTU_RELEASE=focal-20.04
-kops-prow-arm: export UBUNTU_RELEASE_DATE=server-20221018
-kops-prow-arm: kops-prereqs
+
+.PHONY: kops
+kops: export UBUNTU_RELEASE=focal-20.04
+kops: export UBUNTU_RELEASE_DATE=server-20221018
+kops: $(if $(CODEBUILD_BUILD_ID),kops-codebuild,kops-prow)
+
+.PHONY: kops-codebuild
+kops-codebuild: KOPS_ENTRYPOINT=development/kops/codebuild.sh
+kops-codebuild: kops-amd kops-arm
+	@echo 'Done kops-codebuild'
+
+.PHONY: kops-prow
+kops-prow: KOPS_ENTRYPOINT=development/kops/prow.sh
+kops-prow: kops-amd kops-arm
+	@echo 'Done kops-prow'
+
+.PHONY: kops-amd
+kops-amd: kops-prereqs
+	RELEASE=$(RELEASE) $(KOPS_ENTRYPOINT)
+
+.PHONY: kops-arm
+kops-arm: export NODE_INSTANCE_TYPE=t4g.medium
+kops-arm: export NODE_ARCHITECTURE=arm64
+kops-arm: kops-prereqs
 	$(eval MINOR_VERSION=$(subst 1-,,$(RELEASE_BRANCH)))
 	if [[ $(MINOR_VERSION) -ge 22 ]]; then \
 		export IPV6=true; \
 	fi; \
 	sleep 5m; \
-	RELEASE=$(RELEASE) development/kops/prow.sh;
-
-.PHONY: kops-prow-amd
-kops-prow-amd: export UBUNTU_RELEASE=focal-20.04
-kops-prow-amd: export UBUNTU_RELEASE_DATE=server-20221018
-kops-prow-amd: kops-prereqs
-	RELEASE=$(RELEASE) development/kops/prow.sh
+	RELEASE=$(RELEASE) $(KOPS_ENTRYPOINT);
 
 .PHONY: kops-arm-ubuntu-22
 kops-arm-ubuntu-22: export UBUNTU_RELEASE=jammy-22.04
 kops-arm-ubuntu-22: export UBUNTU_RELEASE_DATE=server-20230115
 kops-arm-ubuntu-22: kops-prereqs
 	sleep 10m; \
-	RELEASE=$(RELEASE) development/kops/prow.sh;
-
-.PHONY: kops-prow
-kops-prow: kops-prow-amd kops-prow-arm kops-arm-ubuntu-22
-	@echo 'Done kops-prow'
+	RELEASE=$(RELEASE) $(KOPS_ENTRYPOINT);
 
 .PHONY: kops-prereqs
 kops-prereqs: postsubmit-build
@@ -107,7 +114,7 @@ kops-prereqs: postsubmit-build
 
 .PHONY: postsubmit-conformance
 postsubmit-conformance: RELEASE:=$(shell echo  $$(($(RELEASE) + 1))).pre
-postsubmit-conformance: postsubmit-build kops-prow 
+postsubmit-conformance: postsubmit-build kops
 	@echo 'Done postsubmit-conformance'
 
 .PHONY: tag

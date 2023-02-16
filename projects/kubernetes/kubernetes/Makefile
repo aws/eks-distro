@@ -96,7 +96,7 @@ tarballs: $(KUBE_GIT_VERSION_FILE)
 
 .PHONY: cleanup-artifacts
 cleanup-artifacts:
-	@mkdir $(ARTIFACTS_PATH)/bin
+	@mkdir -p $(ARTIFACTS_PATH)/bin
 	rm -rf $(OUTPUT_DIR)/{attribution,LICENSES,pause} $(OUTPUT_DIR)/bin/{LICENSES,ATTRIBUTION.txt}
 	mv $(OUTPUT_DIR)/bin/* $(ARTIFACTS_PATH)/bin
 	cp $(OUTPUT_DIR)/ATTRIBUTION.txt $(ARTIFACTS_PATH)

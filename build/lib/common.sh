@@ -283,13 +283,8 @@ function build::common::get_clone_url() {
   local -r org=$1
   local -r repo=$2
   local -r aws_region=$3
-  local -r codebuild_ci=$4
 
-  if [ "$codebuild_ci" = "true" ]; then
-    echo "https://git-codecommit.${aws_region}.amazonaws.com/v1/repos/${org}.${repo}"
-  else
-    echo "https://github.com/${org}/${repo}.git"
-  fi
+  echo "https://github.com/${org}/${repo}.git"
 }
 
 function retry() {

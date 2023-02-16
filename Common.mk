@@ -49,12 +49,11 @@ CODEBUILD_BUILD_IMAGE?=
 CLONE_URL?=$(call GET_CLONE_URL,$(REPO_OWNER),$(REPO))
 #HELM_CLONE_URL=$(call GET_CLONE_URL,$(HELM_SOURCE_OWNER),$(HELM_SOURCE_REPOSITORY))
 HELM_CLONE_URL=https://github.com/$(HELM_SOURCE_OWNER)/$(HELM_SOURCE_REPOSITORY).git
+ARTIFACTS_PATH?=$(MAKE_ROOT)/_output/tar
 ifeq ($(CODEBUILD_CI),true)
-	ARTIFACTS_PATH?=$(CODEBUILD_SRC_DIR)/$(PROJECT_PATH)/$(CODEBUILD_BUILD_NUMBER)-$(CODEBUILD_RESOLVED_SOURCE_VERSION)/artifacts
 	UPLOAD_DRY_RUN=false
 	BUILD_IDENTIFIER=$(CODEBUILD_BUILD_NUMBER)
 else
-	ARTIFACTS_PATH?=$(MAKE_ROOT)/_output/tar
 	UPLOAD_DRY_RUN=$(if $(findstring postsubmit,$(JOB_TYPE)),false,true)
 	ifeq ($(CI),true)
 		BUILD_IDENTIFIER=$(PROW_JOB_ID)
@@ -269,7 +268,7 @@ BINARY_TARGETS_FROM_FILES_PLATFORMS=$(foreach platform, $(2), $(foreach target, 
 # space, hence no indentation below.
 # $1 - repo owner
 # $2 - repo
-GET_CLONE_URL=$(shell source $(BUILD_LIB)/common.sh && build::common::get_clone_url $(1) $(2) $(AWS_REGION) $(CODEBUILD_CI))
+GET_CLONE_URL=$(shell source $(BUILD_LIB)/common.sh && build::common::get_clone_url $(1) $(2) $(AWS_REGION))
 
 # $1 - binary file name
 # $2 - go mod path for binary
