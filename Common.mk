@@ -428,8 +428,8 @@ IN_DOCKER_TARGETS=all-attributions all-attributions-checksums all-checksums attr
 #################### LOGGING #######################
 DATE_CMD=TZ=utc $(shell if [ "$$(uname -s)" = "Darwin" ] && command -v gdate &> /dev/null; then echo gdate; else echo date; fi)
 DATE_NANO=$(shell if [ "$$(uname -s)" = "Linux" ] || command -v gdate &> /dev/null; then echo %3N; fi)
-TARGET_START_LOG?=$(eval _START_TIME:=$(shell $(DATE_CMD) +%s.$(DATE_NANO)))\\n------------------- $(shell $(DATE_CMD) +"%Y-%m-%dT%H:%M:%S.$(DATE_NANO)%z") Starting $@ target ------------------- 
-TARGET_END_LOG?="------------------- `$(DATE_CMD) +'%Y-%m-%dT%H:%M:%S.$(DATE_NANO)%z'` Finished $@ target (duration `echo $$($(DATE_CMD) +%s.$(DATE_NANO)) - $(_START_TIME) | bc` seconds) -------------------\\n"
+TARGET_START_LOG?=$(eval _START_TIME:=$(shell $(DATE_CMD) +%s.$(DATE_NANO)))\\n------------------- $(shell $(DATE_CMD) +"%Y-%m-%dT%H:%M:%S.$(DATE_NANO)%z") Starting target=$@ -------------------
+TARGET_END_LOG?="------------------- `$(DATE_CMD) +'%Y-%m-%dT%H:%M:%S.$(DATE_NANO)%z'` Finished target=$@ duration=`echo $$($(DATE_CMD) +%s.$(DATE_NANO)) - $(_START_TIME) | bc` seconds -------------------\\n"
 ####################################################
 
 #################### TARGETS FOR OVERRIDING ########
