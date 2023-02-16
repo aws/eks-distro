@@ -77,7 +77,8 @@ kops: $(if $(CODEBUILD_BUILD_ID),kops-codebuild,kops-prow)
 
 .PHONY: kops-codebuild
 kops-codebuild: KOPS_ENTRYPOINT=development/kops/codebuild.sh
-kops-codebuild: kops-amd kops-arm
+# kops-codebuild: kops-amd kops-arm
+kops-codebuild: kops-arm-ubuntu-22
 	@echo 'Done kops-codebuild'
 
 .PHONY: kops-prow
