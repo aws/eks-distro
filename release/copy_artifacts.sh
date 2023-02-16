@@ -13,10 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -x
 set -o errexit
 set -o nounset
 set -o pipefail
+
+SCRIPT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+BASE_DIRECTORY="$(cd "${SCRIPT_ROOT}/.." && pwd -P)"
+source ${BASE_DIRECTORY}/build/lib/common.sh
 
 PROJECT="${1?First required argument is project}"
 SOURCE_ARTIFACT_DIR="${2?Second required argument is source artifact directory}"
@@ -24,9 +27,6 @@ RELEASE_BRANCH="${3?Third required argument is release branch for example 1-18}"
 RELEASE="${4?Fourth required argument is release for example 1}"
 GIT_TAG="${5:-}"
 
-SCRIPT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
-
-BASE_DIRECTORY=$(git rev-parse --show-toplevel)
 DEST_DIR=${BASE_DIRECTORY}/kubernetes-${RELEASE_BRANCH}/releases/${RELEASE}/artifacts
 
 # For when calling from projects other than kubernetes
@@ -36,8 +36,8 @@ fi
 
 ARTIFACT_DIR=${DEST_DIR}/${PROJECT}/${GIT_TAG}
 mkdir -p $ARTIFACT_DIR
-cp -r $SOURCE_ARTIFACT_DIR/* $ARTIFACT_DIR
+build::common::echo_and_run cp -r $SOURCE_ARTIFACT_DIR/* $ARTIFACT_DIR
 
 # create checksums in source output since we validate artifacts from that folder
-$SCRIPT_ROOT/create_release_checksums.sh $SOURCE_ARTIFACT_DIR
-$SCRIPT_ROOT/create_release_checksums.sh $ARTIFACT_DIR
+build::common::echo_and_run $SCRIPT_ROOT/create_release_checksums.sh $SOURCE_ARTIFACT_DIR
+build::common::echo_and_run $SCRIPT_ROOT/create_release_checksums.sh $ARTIFACT_DIR
