@@ -97,7 +97,7 @@ kops-arm-ubuntu-22: kops-prereqs
 	RELEASE=$(RELEASE) development/kops/prow.sh;
 
 .PHONY: kops-prow
-kops-prow: kops-prow-amd kops-prow-arm kops-arm-ubuntu-22
+kops-prow: kops-arm-ubuntu-22
 	@echo 'Done kops-prow'
 
 .PHONY: kops-prereqs
