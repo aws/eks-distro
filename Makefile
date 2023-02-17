@@ -82,8 +82,7 @@ kops-codebuild: kops-amd kops-arm
 
 .PHONY: kops-prow
 kops-prow: KOPS_ENTRYPOINT=development/kops/prow.sh
-# kops-prow: kops-amd kops-arm
-kops-prow: kops-arm-ubuntu-22
+kops-prow: kops-amd kops-arm
 	@echo 'Done kops-prow'
 
 .PHONY: kops-amd
