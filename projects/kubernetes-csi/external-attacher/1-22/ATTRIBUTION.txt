@@ -23,10 +23,10 @@ https://github.com/google/gnostic
 ** github.com/google/gofuzz; version v1.2.0 --
 https://github.com/google/gofuzz
 
-** github.com/kubernetes-csi/csi-lib-utils; version v0.12.0 --
+** github.com/kubernetes-csi/csi-lib-utils; version v0.13.0 --
 https://github.com/kubernetes-csi/csi-lib-utils
 
-** github.com/kubernetes-csi/external-attacher; version v4.1.0 --
+** github.com/kubernetes-csi/external-attacher; version v4.2.0 --
 https://github.com/kubernetes-csi/external-attacher
 
 ** github.com/matttproud/golang_protobuf_extensions/pbutil; version v1.0.4 --
@@ -50,31 +50,31 @@ https://github.com/prometheus/common
 ** github.com/prometheus/procfs; version v0.8.0 --
 https://github.com/prometheus/procfs
 
-** google.golang.org/genproto/googleapis/rpc/status; version v0.0.0-20221111202108-142d8a6fa32e --
+** google.golang.org/genproto/googleapis/rpc/status; version v0.0.0-20221118155620-16455021b5e6 --
 https://github.com/googleapis/go-genproto
 
-** google.golang.org/grpc; version v1.51.0 --
+** google.golang.org/grpc; version v1.52.3 --
 https://github.com/grpc/grpc-go
 
 ** gopkg.in/yaml.v2; version v2.4.0 --
 https://gopkg.in/yaml.v2
 
-** k8s.io/api; version v0.26.0 --
+** k8s.io/api; version v0.26.1 --
 https://github.com/kubernetes/api
 
-** k8s.io/apimachinery/pkg; version v0.26.0 --
+** k8s.io/apimachinery/pkg; version v0.26.1 --
 https://github.com/kubernetes/apimachinery
 
-** k8s.io/client-go; version v0.26.0 --
+** k8s.io/client-go; version v0.26.1 --
 https://github.com/kubernetes/client-go
 
 ** k8s.io/component-base; version v0.26.0 --
 https://github.com/kubernetes/component-base
 
-** k8s.io/csi-translation-lib; version v0.26.0 --
+** k8s.io/csi-translation-lib; version v0.26.1 --
 https://github.com/kubernetes/csi-translation-lib
 
-** k8s.io/klog/v2; version v2.80.1 --
+** k8s.io/klog/v2; version v2.90.0 --
 https://github.com/kubernetes/klog
 
 ** k8s.io/kube-openapi/pkg; version v0.0.0-20221110221610-a28e98eb7c70 --
@@ -699,7 +699,7 @@ https://go.googlesource.com/text
 ** golang.org/x/time/rate; version v0.2.0 --
 https://go.googlesource.com/time
 
-** k8s.io/apimachinery/third_party/forked/golang; version v0.26.0 --
+** k8s.io/apimachinery/third_party/forked/golang; version v0.26.1 --
 https://github.com/kubernetes/apimachinery
 
 Copyright (c) 2009 The Go Authors. All rights reserved.
