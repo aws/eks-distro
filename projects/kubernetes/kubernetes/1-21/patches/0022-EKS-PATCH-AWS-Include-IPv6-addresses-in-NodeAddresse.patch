@@ -9,7 +9,7 @@ Some of this code was original in upstream Kubernetes PR #86918
 (https://github.com/kubernetes/kubernetes/pull/86918), but it was
 closed without being added because it was not merged before the
 freezing of features in the legacy cloud providers, which happened
-starting in Kubernetes 1.21.
+starting in Kubernetes 1.21gi
 
 The change modifies the in-tree cloud provider code to append ipv6
 addresses to the Node object advertised by the kubelet.
