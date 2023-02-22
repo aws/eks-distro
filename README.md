@@ -2,10 +2,11 @@
 
 
 | Release | Development Build Status |
-| --- | --- |
+|------| --- |
 | 1-22 | [![1-22](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-22-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-22-postsubmit) |
 | 1-23 | [![1-23](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-23-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-23-postsubmit) |
 | 1-24 | [![1-24](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-24-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-24-postsubmit) |
+| 1-25 | [![1-25](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-25-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-25-postsubmit) |
 
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/6111/badge)](https://bestpractices.coreinfrastructure.org/projects/6111)
 
@@ -32,6 +33,13 @@ To receive notifications about new EKS-D releases, subscribe to the EKS-D update
 <!--
 Source: https://github.com/cncf/artwork/tree/master/projects/kubernetes/certified-kubernetes
 -->
+
+### Kubernetes 1-25
+
+| Release | Manifest | Kubernetes Version |
+| -- | --- | --- |
+| 6 | [v1-25-eks-6](https://distro.eks.amazonaws.com/kubernetes-1-25/kubernetes-1-25-eks-6.yaml) | [v1.25.6](https://github.com/kubernetes/kubernetes/release/tag/v1.25.6) |
+
 
 ### Kubernetes 1-24
 

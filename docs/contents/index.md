@@ -67,7 +67,7 @@ You can install the CRD API type, the release channel manifest for EKS-D, and
 view the release channel by running the following commands:
 
 ```bash
-RELEASE_BRANCH=1-24
+RELEASE_BRANCH=1-25
 kubectl apply -f https://distro.eks.amazonaws.com/crds/releasechannels.distro.eks.amazonaws.com-v1alpha1.yaml
 kubectl apply -f https://distro.eks.amazonaws.com/releasechannels/${RELEASE_BRANCH}.yaml
 kubectl get -o yaml releasechannels
@@ -106,8 +106,8 @@ manifest for EKS Distro, and view the release by running the following
 commands:
 
 ```bash
-RELEASE_BRANCH=1-24
-RELEASE=9
+RELEASE_BRANCH=1-25
+RELEASE=6
 kubectl apply -f https://distro.eks.amazonaws.com/crds/releases.distro.eks.amazonaws.com-v1alpha1.yaml
 kubectl apply -f https://distro.eks.amazonaws.com/kubernetes-${RELEASE_BRANCH}/kubernetes-${RELEASE_BRANCH}-eks-${RELEASE}.yaml
 kubectl get release kubernetes-${RELEASE_BRANCH}-eks-${RELEASE}
@@ -120,6 +120,14 @@ The EKS Distro of Kubernetes source repository does not include any AMIs (Amazon
 Machine Images), but it does use the EKS Optimized AMI. See the project
 repository for the [EKS Optimized AMI](https://github.com/awslabs/amazon-eks-ami)
 if you are interested in the AL2 container runtime kernel version.
+
+#### EKS-D 1.25 Version Dependencies
+* [v1-25-eks-6](releases/1-25/6/index.md) (February 22, 2023)
+* [v1-25-eks-5](releases/1-25/5/index.md) (February 5, 2023)
+* [v1-25-eks-4](releases/1-25/4/index.md) (February 2, 2023)
+* [v1-25-eks-3](releases/1-25/3/index.md) (January 24, 2023)
+* [v1-25-eks-2](releases/1-25/2/index.md) (January 11, 2023)
+* [v1-25-eks-1](releases/1-25/1/index.md) (December 29, 2022)
 
 #### EKS-D 1.24 Version Dependencies
 * [v1-24-eks-9](releases/1-24/9/index.md) (February 08, 2023)
@@ -169,7 +177,7 @@ if you are interested in the AL2 container runtime kernel version.
 * [v1-22-eks-2](releases/1-22/2/index.md) (March 17, 2022)
 * [v1-22-eks-1](releases/1-22/1/index.md) (March 6, 2022)
 
-#### EKS-D 1.21 Version Dependencies
+#### EKS-D 1.21 Version Dependencies (DEPRECATED)
 * [v1-21-eks-26](releases/1-21/26/index.md) (February 08, 2023)
 * [v1-21-eks-25](releases/1-21/25/index.md) (January 25, 2023)
 * [v1-21-eks-24](releases/1-21/24/index.md) (January 12, 2023)
