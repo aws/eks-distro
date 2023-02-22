@@ -107,7 +107,7 @@ commands:
 
 ```bash
 RELEASE_BRANCH=1-25
-RELEASE=5
+RELEASE=6
 kubectl apply -f https://distro.eks.amazonaws.com/crds/releases.distro.eks.amazonaws.com-v1alpha1.yaml
 kubectl apply -f https://distro.eks.amazonaws.com/kubernetes-${RELEASE_BRANCH}/kubernetes-${RELEASE_BRANCH}-eks-${RELEASE}.yaml
 kubectl get release kubernetes-${RELEASE_BRANCH}-eks-${RELEASE}
@@ -122,6 +122,7 @@ repository for the [EKS Optimized AMI](https://github.com/awslabs/amazon-eks-ami
 if you are interested in the AL2 container runtime kernel version.
 
 #### EKS-D 1.25 Version Dependencies
+* [v1-25-eks-6](releases/1-25/6/index.md) (February 22, 2023)
 * [v1-25-eks-5](releases/1-25/5/index.md) (February 5, 2023)
 * [v1-25-eks-4](releases/1-25/4/index.md) (February 2, 2023)
 * [v1-25-eks-3](releases/1-25/3/index.md) (January 24, 2023)
