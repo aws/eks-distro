@@ -14,11 +14,14 @@ import (
 
 const changeType = changetype.Docs
 
-// Generates docs for release. Value for 'branch' flag must be provided. The release MUST already be out, and all
-// upstream changes MUST be pulled down locally.
+// Generates docs for release. The release MUST already be out, and all upstream changes MUST be pulled down locally.
+// Value for 'branch' flag must be provided. Value for 'hasGenerateChangelogChanges' flag should be 'false' if auto-
+// generating the changes in the changelog will cause an error.
 // TODO: fix all logic around undoing changes if error.
 func main() {
 	branch := flag.String("branch", "", "Release branch, e.g. 1-23")
+	hasGenerateChangelogChanges :=
+		flag.Bool("generateChangelogChanges", true, "If changes in changelog should be generated")
 	flag.Parse()
 
 	////////////	Create Release		////////////////////////////////////
@@ -42,7 +45,7 @@ func main() {
 
 	abandon := abandonFunc(gm)
 
-	docs, err := newdocs.CreateNewDocsInput(r)
+	docs, err := newdocs.CreateNewDocsInput(r, *hasGenerateChangelogChanges)
 	if err != nil {
 		abandon()
 		log.Fatalf("creating new docs input: %v", err)
