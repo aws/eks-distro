@@ -12,5 +12,5 @@ No changes since last release
 * Updated external-attacher to 4.2.0 ([1769](https://github.com/aws/eks-distro/pull/1769))
 
 ### Base Image
-* Update base image tag in tag file(s) ([1789](https://github.com/aws/eks-distro/pull/1789)
+* Update base image for ca-certs fix ([1789](https://github.com/aws/eks-distro/pull/1789)
 
