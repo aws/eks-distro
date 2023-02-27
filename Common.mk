@@ -921,7 +921,7 @@ update-go-mods: checkout-repo
 	for gomod in $(GO_MOD_PATHS); do \
 		mkdir -p $(DEST_PATH); \
 		cp $(REPO)/$$gomod/go.{mod,sum} $(DEST_PATH); \
-		sed -i '' -e "s,go 1.*,go 1.19," $(DEST_PATH)/go.mod; \
+		sed -i $(DEST_PATH)/go.mod "s,go 1.*,go 1.19,"; \
 		go mod tidy; \
 	done
 
