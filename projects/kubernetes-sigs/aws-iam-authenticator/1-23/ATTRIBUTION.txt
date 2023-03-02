@@ -74,7 +74,7 @@ https://github.com/kubernetes/sample-controller
 ** k8s.io/utils; version v0.0.0-20210707171843-4b05e18ac7d9 --
 https://github.com/kubernetes/utils
 
-** sigs.k8s.io/aws-iam-authenticator; version v0.5.12 --
+** sigs.k8s.io/aws-iam-authenticator; version v0.5.13 --
 https://github.com/kubernetes-sigs/aws-iam-authenticator
 
 ** sigs.k8s.io/structured-merge-diff/v4; version v4.1.2 --
