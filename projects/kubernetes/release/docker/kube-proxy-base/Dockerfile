@@ -22,4 +22,6 @@ COPY bin/release-src/$TARGETOS-$TARGETARCH/go-runner /go-runner
 COPY LICENSES /LICENSES
 COPY ATTRIBUTION.txt /ATTRIBUTION.txt
 
+RUN ["update-alternatives", "--set", "iptables", "/usr/sbin/iptables-wrapper"]
+
 ENTRYPOINT ["/go-runner"]
