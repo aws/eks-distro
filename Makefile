@@ -93,10 +93,7 @@ kops-amd: kops-prereqs
 kops-arm: export NODE_INSTANCE_TYPE=t4g.medium
 kops-arm: export NODE_ARCHITECTURE=arm64
 kops-arm: kops-prereqs
-	$(eval MINOR_VERSION=$(subst 1-,,$(RELEASE_BRANCH)))
-	if [[ $(MINOR_VERSION) -ge 22 ]]; then \
-		export IPV6=true; \
-	fi; \
+	export IPV6=true; \
 	sleep 5m; \
 	RELEASE=$(RELEASE) $(KOPS_ENTRYPOINT);
 
