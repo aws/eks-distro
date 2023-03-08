@@ -12,8 +12,8 @@ checkout-repo: ## Checkout upstream tag based on value in GIT_TAG file
 
 ##@ Binary Targets
 binaries: ## Build all binaries: `csi-resizer` for `linux/amd64 linux/arm64`
-_output/1-21/bin/external-resizer/linux-amd64/csi-resizer: ## Build `_output/1-21/bin/external-resizer/linux-amd64/csi-resizer`
-_output/1-21/bin/external-resizer/linux-arm64/csi-resizer: ## Build `_output/1-21/bin/external-resizer/linux-arm64/csi-resizer`
+_output/1-26/bin/external-resizer/linux-amd64/csi-resizer: ## Build `_output/1-26/bin/external-resizer/linux-amd64/csi-resizer`
+_output/1-26/bin/external-resizer/linux-arm64/csi-resizer: ## Build `_output/1-26/bin/external-resizer/linux-arm64/csi-resizer`
 
 ##@ Image Targets
 local-images: ## Builds `external-resizer/images/amd64` as oci tars for presumbit validation

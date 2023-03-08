@@ -13,10 +13,10 @@ patch-repo: ## Patch upstream repo with patches in patches directory
 
 ##@ Binary Targets
 binaries: ## Build all binaries: `aws-iam-authenticator` for `linux/amd64 linux/arm64 darwin/amd64 windows/amd64`
-_output/1-21/bin/aws-iam-authenticator/linux-amd64/aws-iam-authenticator: ## Build `_output/1-21/bin/aws-iam-authenticator/linux-amd64/aws-iam-authenticator`
-_output/1-21/bin/aws-iam-authenticator/linux-arm64/aws-iam-authenticator: ## Build `_output/1-21/bin/aws-iam-authenticator/linux-arm64/aws-iam-authenticator`
-_output/1-21/bin/aws-iam-authenticator/darwin-amd64/aws-iam-authenticator: ## Build `_output/1-21/bin/aws-iam-authenticator/darwin-amd64/aws-iam-authenticator`
-_output/1-21/bin/aws-iam-authenticator/windows-amd64/aws-iam-authenticator.exe: ## Build `_output/1-21/bin/aws-iam-authenticator/windows-amd64/aws-iam-authenticator.exe`
+_output/1-26/bin/aws-iam-authenticator/linux-amd64/aws-iam-authenticator: ## Build `_output/1-26/bin/aws-iam-authenticator/linux-amd64/aws-iam-authenticator`
+_output/1-26/bin/aws-iam-authenticator/linux-arm64/aws-iam-authenticator: ## Build `_output/1-26/bin/aws-iam-authenticator/linux-arm64/aws-iam-authenticator`
+_output/1-26/bin/aws-iam-authenticator/darwin-amd64/aws-iam-authenticator: ## Build `_output/1-26/bin/aws-iam-authenticator/darwin-amd64/aws-iam-authenticator`
+_output/1-26/bin/aws-iam-authenticator/windows-amd64/aws-iam-authenticator.exe: ## Build `_output/1-26/bin/aws-iam-authenticator/windows-amd64/aws-iam-authenticator.exe`
 
 ##@ Image Targets
 local-images: ## Builds `aws-iam-authenticator/images/amd64` as oci tars for presumbit validation

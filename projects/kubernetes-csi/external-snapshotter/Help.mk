@@ -12,12 +12,12 @@ checkout-repo: ## Checkout upstream tag based on value in GIT_TAG file
 
 ##@ Binary Targets
 binaries: ## Build all binaries: `snapshot-controller csi-snapshotter snapshot-validation-webhook` for `linux/amd64 linux/arm64`
-_output/1-21/bin/external-snapshotter/linux-amd64/snapshot-controller: ## Build `_output/1-21/bin/external-snapshotter/linux-amd64/snapshot-controller`
-_output/1-21/bin/external-snapshotter/linux-amd64/csi-snapshotter: ## Build `_output/1-21/bin/external-snapshotter/linux-amd64/csi-snapshotter`
-_output/1-21/bin/external-snapshotter/linux-amd64/snapshot-validation-webhook: ## Build `_output/1-21/bin/external-snapshotter/linux-amd64/snapshot-validation-webhook`
-_output/1-21/bin/external-snapshotter/linux-arm64/snapshot-controller: ## Build `_output/1-21/bin/external-snapshotter/linux-arm64/snapshot-controller`
-_output/1-21/bin/external-snapshotter/linux-arm64/csi-snapshotter: ## Build `_output/1-21/bin/external-snapshotter/linux-arm64/csi-snapshotter`
-_output/1-21/bin/external-snapshotter/linux-arm64/snapshot-validation-webhook: ## Build `_output/1-21/bin/external-snapshotter/linux-arm64/snapshot-validation-webhook`
+_output/1-26/bin/external-snapshotter/linux-amd64/snapshot-controller: ## Build `_output/1-26/bin/external-snapshotter/linux-amd64/snapshot-controller`
+_output/1-26/bin/external-snapshotter/linux-amd64/csi-snapshotter: ## Build `_output/1-26/bin/external-snapshotter/linux-amd64/csi-snapshotter`
+_output/1-26/bin/external-snapshotter/linux-amd64/snapshot-validation-webhook: ## Build `_output/1-26/bin/external-snapshotter/linux-amd64/snapshot-validation-webhook`
+_output/1-26/bin/external-snapshotter/linux-arm64/snapshot-controller: ## Build `_output/1-26/bin/external-snapshotter/linux-arm64/snapshot-controller`
+_output/1-26/bin/external-snapshotter/linux-arm64/csi-snapshotter: ## Build `_output/1-26/bin/external-snapshotter/linux-arm64/csi-snapshotter`
+_output/1-26/bin/external-snapshotter/linux-arm64/snapshot-validation-webhook: ## Build `_output/1-26/bin/external-snapshotter/linux-arm64/snapshot-validation-webhook`
 
 ##@ Image Targets
 local-images: ## Builds `csi-snapshotter/images/amd64 snapshot-controller/images/amd64 snapshot-validation-webhook/images/amd64` as oci tars for presumbit validation
