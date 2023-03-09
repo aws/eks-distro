@@ -4,25 +4,25 @@ Date: Wed, 21 Dec 2022 20:12:26 -0600
 Subject: [PATCH] --EKS-PATCH-- admission webhook exclusion from file
 
 ---
- .../generic/exclusionrules/exclusion.go       | 152 +++++++
- .../generic/exclusionrules/exclusion_test.go  | 425 ++++++++++++++++++
+ .../exclusionrules/critical_path_excluder.go  | 152 +++++++
+ .../critical_path_excluder_test.go            | 427 ++++++++++++++++++
  .../webhook/generic/exclusionrules/matcher.go |  81 ++++
  .../generic/exclusionrules/matcher_test.go    | 333 ++++++++++++++
- .../plugin/webhook/generic/webhook.go         |   5 +
- .../webhook_exclusion_rules_test.go           | 278 ++++++++++++
+ .../plugin/webhook/generic/webhook.go         |  24 +
+ .../webhook_exclusion_rules_test.go           | 281 ++++++++++++
  vendor/modules.txt                            |   1 +
- 7 files changed, 1275 insertions(+)
- create mode 100644 staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/exclusion.go
- create mode 100644 staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/exclusion_test.go
+ 7 files changed, 1299 insertions(+)
+ create mode 100644 staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/critical_path_excluder.go
+ create mode 100644 staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/critical_path_excluder_test.go
  create mode 100644 staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/matcher.go
  create mode 100644 staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/matcher_test.go
  create mode 100644 test/integration/apiserver/admissionwebhook/webhook_exclusion_rules_test.go
 
-diff --git a/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/exclusion.go b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/exclusion.go
+diff --git a/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/critical_path_excluder.go b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/critical_path_excluder.go
 new file mode 100644
-index 00000000000..71c4f548854
+index 00000000000..65abc4496a8
 --- /dev/null
-+++ b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/exclusion.go
++++ b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/critical_path_excluder.go
 @@ -0,0 +1,152 @@
 +package exclusionrules
 +
@@ -35,11 +35,10 @@ index 00000000000..71c4f548854
 +)
 +
 +// Enables you to pass a config file to kube-api-server
-+// that defines resources to exempt from admission webhooks.
 +const ADMISSION_WEBHOOK_EXCLUSION_ENV_VAR = "EKS_PATCH_EXCLUSION_RULES_FILE"
 +
-+func init() {
-+	LoadRules()
++type CriticalPathExcluder struct {
++	exclusionRules []ExclusionRule
 +}
 +
 +type ExclusionRule struct {
@@ -71,7 +70,13 @@ index 00000000000..71c4f548854
 +	Scope *v1.ScopeType `json:"scope,omitempty"`
 +}
 +
-+var exclusionRules []ExclusionRule
++func NewCriticalPathExcluder() CriticalPathExcluder {
++	exclusionRulesFromFile := readFile()
++	filteredExclusionRules := filterValidRules(exclusionRulesFromFile)
++	return CriticalPathExcluder{
++		exclusionRules: filteredExclusionRules,
++	}
++}
 +
 +func readFile() []ExclusionRule {
 +	//Default values for backwards compatability for eks-d
@@ -162,13 +167,8 @@ index 00000000000..71c4f548854
 +	return false
 +}
 +
-+func LoadRules() {
-+	exclusionRulesFromFile := readFile()
-+	exclusionRules = filterValidRules(exclusionRulesFromFile)
-+}
-+
-+func ShouldSkipWebhookDueToExclusionRules(attr admission.Attributes) bool {
-+	for _, r := range exclusionRules {
++func (excludor CriticalPathExcluder) ShouldSkipWebhookDueToExclusionRules(attr admission.Attributes) bool {
++	for _, r := range excludor.exclusionRules {
 +		m := Matcher{ExclusionRule: r, Attr: attr}
 +		if m.Matches() {
 +			return true
@@ -176,12 +176,12 @@ index 00000000000..71c4f548854
 +	}
 +	return false
 +}
-diff --git a/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/exclusion_test.go b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/exclusion_test.go
+diff --git a/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/critical_path_excluder_test.go b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/critical_path_excluder_test.go
 new file mode 100644
-index 00000000000..ab6da215728
+index 00000000000..481348aa463
 --- /dev/null
-+++ b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/exclusion_test.go
-@@ -0,0 +1,425 @@
++++ b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/critical_path_excluder_test.go
+@@ -0,0 +1,427 @@
 +package exclusionrules
 +
 +import (
@@ -294,8 +294,10 @@ index 00000000000..ab6da215728
 +	}
 +	for _, testcase := range testcases {
 +		t.Run(testcase.name, func(t *testing.T) {
-+			exclusionRules = testcase.exclusionRules
-+			result := ShouldSkipWebhookDueToExclusionRules(testcase.attr)
++			criticalPathExcluder := CriticalPathExcluder{
++				exclusionRules: testcase.exclusionRules,
++			}
++			result := criticalPathExcluder.ShouldSkipWebhookDueToExclusionRules(testcase.attr)
 +			if result != testcase.result {
 +				t.Fatalf("Unexpected result %v for test case %v", result, testcase.name)
 +			}
@@ -1034,22 +1036,55 @@ index 00000000000..3f7abbb9d90
 +	}
 +}
 diff --git a/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/webhook.go b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/webhook.go
-index c04225e94f7..f12f920e29e 100644
+index c04225e94f7..8d9c56c9db6 100644
 --- a/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/webhook.go
 +++ b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/webhook.go
-@@ -20,6 +20,7 @@ import (
+@@ -20,6 +20,8 @@ import (
  	"context"
  	"fmt"
  	"io"
 +	"k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules"
- 
++	"sync"
+
  	admissionv1 "k8s.io/api/admission/v1"
  	admissionv1beta1 "k8s.io/api/admission/v1beta1"
-@@ -153,6 +154,10 @@ func (a *Webhook) ShouldCallHook(h webhook.WebhookAccessor, attr admission.Attri
+@@ -38,6 +40,20 @@ import (
+ 	clientset "k8s.io/client-go/kubernetes"
+ )
+
++var criticalPathExcluder exclusionrules.CriticalPathExcluder
++var LoadCriticalPathExcluder *sync.Once
++
++func init() {
++	// We are using a pointer to sync.Once in order to "reset" the sync.Once within our integration tests
++	// so that when the integration test api-server starts up, sync.Once has not been exhausted
++	// this is required because LoadCriticalPathExcluder is a global variable and when a suite of tests run
++	// the first test that starts an api-server will use up the sync.Once and subsequent launches of the api-server will
++	// not try to load the exclusion rules.
++	// see: test/integration/apiserver/admissionwebhook/webhook_exclusion_rules_test.go
++	// see: https://github.com/golang/go/issues/25955#issuecomment-398278056
++	LoadCriticalPathExcluder = new(sync.Once)
++}
++
+ // Webhook is an abstract admission plugin with all the infrastructure to define Admit or Validate on-top.
+ type Webhook struct {
+ 	*admission.Handler
+@@ -85,6 +101,10 @@ func NewWebhook(handler *admission.Handler, configFile io.Reader, sourceFactory
+ 	cm.SetAuthenticationInfoResolver(authInfoResolver)
+ 	cm.SetServiceResolver(webhookutil.NewDefaultServiceResolver())
+
++	LoadCriticalPathExcluder.Do(func() {
++		criticalPathExcluder = exclusionrules.NewCriticalPathExcluder()
++	})
++
+ 	return &Webhook{
+ 		Handler:          handler,
+ 		sourceFactory:    sourceFactory,
+@@ -153,6 +173,10 @@ func (a *Webhook) ShouldCallHook(h webhook.WebhookAccessor, attr admission.Attri
  		return nil, nil
  	}
  
-+	if exclusionrules.ShouldSkipWebhookDueToExclusionRules(attr) {
++	if criticalPathExcluder.ShouldSkipWebhookDueToExclusionRules(attr) {
 +		return nil, nil
 +	}
 +
@@ -1058,18 +1093,20 @@ index c04225e94f7..f12f920e29e 100644
  		m := rules.Matcher{Rule: r, Attr: attr}
 diff --git a/test/integration/apiserver/admissionwebhook/webhook_exclusion_rules_test.go b/test/integration/apiserver/admissionwebhook/webhook_exclusion_rules_test.go
 new file mode 100644
-index 00000000000..0575b054b10
+index 00000000000..3388050d507
 --- /dev/null
 +++ b/test/integration/apiserver/admissionwebhook/webhook_exclusion_rules_test.go
-@@ -0,0 +1,278 @@
+@@ -0,0 +1,281 @@
 +package admissionwebhook
 +
 +import (
 +	"context"
 +	"fmt"
 +	coordinationv1 "k8s.io/api/coordination/v1"
++	"k8s.io/apiserver/pkg/admission/plugin/webhook/generic"
 +	"k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules"
 +	"os"
++	"sync"
 +	"testing"
 +	"time"
 +
@@ -1092,6 +1129,7 @@ index 00000000000..0575b054b10
 +)
 +
 +func TestWebhookExclusionRulesNoEnvVarSet(t *testing.T) {
++	generic.LoadCriticalPathExcluder = new(sync.Once) //reset sync.Once to force behavior of new startup https://github.com/golang/go/issues/25955#issuecomment-398278056
 +	t.Logf("starting server")
 +	server := kubeapiservertesting.StartTestServerOrDie(t, nil, nil, framework.SharedEtcd())
 +	defer server.TearDownFn()
@@ -1111,6 +1149,7 @@ index 00000000000..0575b054b10
 +}
 +
 +func TestWebhookExclusionRulesEnvVarSetNoFile(t *testing.T) {
++	generic.LoadCriticalPathExcluder = new(sync.Once) //reset sync.Once to force behavior of new startup https://github.com/golang/go/issues/25955#issuecomment-398278056
 +	server := kubeapiservertesting.StartTestServerOrDie(t, nil, nil, framework.SharedEtcd())
 +	defer server.TearDownFn()
 +
@@ -1124,7 +1163,6 @@ index 00000000000..0575b054b10
 +	if err != nil {
 +		t.Fatalf("unexpected error clearing %v env var", exclusionrules.ADMISSION_WEBHOOK_EXCLUSION_ENV_VAR)
 +	}
-+	exclusionrules.LoadRules()
 +
 +	createBrokenWebhook(t, client)
 +
@@ -1138,6 +1176,7 @@ index 00000000000..0575b054b10
 +}
 +
 +func TestWebhookExclusionRulesEnvVarSetBadFile(t *testing.T) {
++	generic.LoadCriticalPathExcluder = new(sync.Once) //reset sync.Once to force behavior of new startup https://github.com/golang/go/issues/25955#issuecomment-398278056
 +	// Test env var set, bad file, should be broken webhook
 +	err := os.Setenv(exclusionrules.ADMISSION_WEBHOOK_EXCLUSION_ENV_VAR, exclusionRulesFile)
 +	if err != nil {
@@ -1149,7 +1188,6 @@ index 00000000000..0575b054b10
 +	}
 +	defer os.Remove(exclusionRulesFile)
 +
-+	exclusionrules.LoadRules()
 +	server := kubeapiservertesting.StartTestServerOrDie(t, nil, nil, framework.SharedEtcd())
 +	defer server.TearDownFn()
 +
@@ -1169,6 +1207,7 @@ index 00000000000..0575b054b10
 +}
 +
 +func TestWebhookExclusionRules(t *testing.T) {
++	generic.LoadCriticalPathExcluder = new(sync.Once) //reset sync.Once to force behavior of new startup https://github.com/golang/go/issues/25955#issuecomment-398278056
 +	err := os.Setenv(exclusionrules.ADMISSION_WEBHOOK_EXCLUSION_ENV_VAR, exclusionRulesFile)
 +	if err != nil {
 +		t.Fatalf("unexpected error clearing %v env var", exclusionrules.ADMISSION_WEBHOOK_EXCLUSION_ENV_VAR)
@@ -1192,7 +1231,6 @@ index 00000000000..0575b054b10
 +	}
 +	defer os.Remove(exclusionRulesFile)
 +
-+	exclusionrules.LoadRules()
 +	server := kubeapiservertesting.StartTestServerOrDie(t, nil, nil, framework.SharedEtcd())
 +	defer server.TearDownFn()
 +
