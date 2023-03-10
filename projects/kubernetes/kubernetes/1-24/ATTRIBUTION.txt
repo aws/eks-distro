@@ -2,7 +2,7 @@
 ** cloud.google.com/go/compute/metadata; version v0.81.0 --
 https://github.com/googleapis/google-cloud-go
 
-** github.com/aws/aws-sdk-go; version v1.44.145 --
+** github.com/aws/aws-sdk-go; version v1.44.216 --
 https://github.com/aws/aws-sdk-go
 
 ** github.com/Azure/go-autorest/autorest; version v0.11.18 --
@@ -943,7 +943,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/aws/aws-sdk-go/internal/sync/singleflight; version v1.44.145 --
+** github.com/aws/aws-sdk-go/internal/sync/singleflight; version v1.44.216 --
 https://github.com/aws/aws-sdk-go
 
 ** github.com/liggitt/tabwriter; version v0.0.0-20181228230101-89fcab3d43de --
