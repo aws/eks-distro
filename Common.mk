@@ -960,6 +960,16 @@ create-ecr-repos: $(foreach image,$(IMAGE_NAMES),$(image)/create-ecr-repo) $(if 
 var-value-%:
 	@echo $($*)
 
+.PHONY: check-for-supported-release-branch
+check-for-supported-release-branch:
+	@if [ -d $(MAKE_ROOT)/$(RELEASE_BRANCH) ]; then \
+		echo "Supported version to build"; \
+		exit 0; \
+	else \
+		echo "Not a supported version to build"; \
+		exit 1; \
+	fi
+
 ## --------------------------------------
 ## Docker Helpers
 ## --------------------------------------
