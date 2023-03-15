@@ -527,7 +527,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ** github.com/aws/aws-sdk-go/internal/sync/singleflight; version v1.44.145 --
 https://github.com/aws/aws-sdk-go
 
-** golang.org/go; version go1.19.6 --
+** golang.org/go; version go1.19.7 --
 https://github.com/golang/go
 
 ** golang.org/x/crypto; version v0.0.0-20220315160706-3147a52a75dd --
