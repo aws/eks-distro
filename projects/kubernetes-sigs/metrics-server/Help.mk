@@ -12,8 +12,8 @@ checkout-repo: ## Checkout upstream tag based on value in GIT_TAG file
 
 ##@ Binary Targets
 binaries: ## Build all binaries: `metrics-server` for `linux/amd64 linux/arm64`
-_output/1-21/bin/metrics-server/linux-amd64/metrics-server: ## Build `_output/1-21/bin/metrics-server/linux-amd64/metrics-server`
-_output/1-21/bin/metrics-server/linux-arm64/metrics-server: ## Build `_output/1-21/bin/metrics-server/linux-arm64/metrics-server`
+_output/1-26/bin/metrics-server/linux-amd64/metrics-server: ## Build `_output/1-26/bin/metrics-server/linux-amd64/metrics-server`
+_output/1-26/bin/metrics-server/linux-arm64/metrics-server: ## Build `_output/1-26/bin/metrics-server/linux-arm64/metrics-server`
 
 ##@ Image Targets
 local-images: ## Builds `metrics-server/images/amd64` as oci tars for presumbit validation

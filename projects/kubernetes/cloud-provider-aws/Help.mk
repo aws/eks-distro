@@ -9,12 +9,11 @@
 ##@ GIT/Repo Targets
 clone-repo:  ## Clone upstream `cloud-provider-aws`
 checkout-repo: ## Checkout upstream tag based on value in GIT_TAG file
-patch-repo: ## Patch upstream repo with patches in patches directory
 
 ##@ Binary Targets
 binaries: ## Build all binaries: `aws-cloud-controller-manager` for `linux/amd64 linux/arm64`
-_output/1-21/bin/cloud-provider-aws/linux-amd64/aws-cloud-controller-manager: ## Build `_output/1-21/bin/cloud-provider-aws/linux-amd64/aws-cloud-controller-manager`
-_output/1-21/bin/cloud-provider-aws/linux-arm64/aws-cloud-controller-manager: ## Build `_output/1-21/bin/cloud-provider-aws/linux-arm64/aws-cloud-controller-manager`
+_output/1-26/bin/cloud-provider-aws/linux-amd64/aws-cloud-controller-manager: ## Build `_output/1-26/bin/cloud-provider-aws/linux-amd64/aws-cloud-controller-manager`
+_output/1-26/bin/cloud-provider-aws/linux-arm64/aws-cloud-controller-manager: ## Build `_output/1-26/bin/cloud-provider-aws/linux-arm64/aws-cloud-controller-manager`
 
 ##@ Image Targets
 local-images: ## Builds `cloud-controller-manager/images/amd64` as oci tars for presumbit validation
