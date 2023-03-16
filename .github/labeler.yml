@@ -14,9 +14,6 @@ release:
 base-img-pkg-update:
 - 'EKS_DISTRO_BASE_TAG_FILE'
 
-v1.21:
-- '**/1-21/**/*'
-
 v1.22:
 - '**/1-22/**/*'
 
