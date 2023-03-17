@@ -19,7 +19,7 @@ BASEDIR=$(dirname "$0")
 source ${BASEDIR}/set_environment.sh
 $PREFLIGHT_CHECK_PASSED || exit 1
 
-CONFORMANCE_IMAGE=k8s.gcr.io/conformance:${KUBERNETES_VERSION}
+CONFORMANCE_IMAGE=registry.k8s.io/conformance:${KUBERNETES_VERSION}
 echo "Testing cluster ${KOPS_CLUSTER_NAME}"
 
 COUNT=0

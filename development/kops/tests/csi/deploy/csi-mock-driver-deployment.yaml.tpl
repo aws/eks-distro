@@ -94,7 +94,7 @@ spec:
           - mountPath: /csi
             name: socket-dir
         - name: mock-driver
-          image: k8s.gcr.io/sig-storage/mock-driver:v4.1.0
+          image: registry.k8s.io/sig-storage/mock-driver:v4.1.0
           args:
             - "--attach-limit=50"
             # Required for e2e test log parsing
