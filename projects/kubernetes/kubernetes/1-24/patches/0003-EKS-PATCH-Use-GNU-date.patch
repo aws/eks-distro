@@ -3,7 +3,32 @@ From: Micah Hausler <mhausler@amazon.com>
 Date: Sun, 1 Nov 2020 09:24:08 -0800
 Subject: [PATCH] --EKS-PATCH-- Use GNU date
 
-Use GNU date if available for builds on darwin
+Description:
+* Use GNU date if available for builds on darwin.
+
+Upstream PR, Issue, KEP, etc. links:
+* Based on unmerged and closed Kubernetes PR #113210 (https://github.com/kubernetes/kubernetes/pull/100044). See below
+for additional information.
+
+If this patch is based on an upstream commit, how (if at all) do this patch and the upstream source differ?
+* There are minor differences between this patch and the upstream implementation of this feature. When this patch was
+created, it was taken from the proposed changes in PR #100044 (https://github.com/kubernetes/kubernetes/pull/100044).
+Due to inactivity, the PR closed without being merged and left a couple of comments unanswered. Later, PR #113210
+(https://github.com/kubernetes/kubernetes/pull/113210) was opened to implement the same feature, but it included
+additional changes aimed to address the open questions from the previous PR. This PR was approved and merged by
+upstream.
+
+If this patch's changes have not been added by upstream, why not?
+* N/A
+
+Other patches related to this patch:
+* None
+
+Changes made to this patch after its initial creation and reasons for these changes:
+* None
+
+Kubernetes version this patch can be dropped:
+* v1.26 -- upstream will include this feature with https://github.com/kubernetes/kubernetes/pull/113210)
 
 Signed-off-by: Jyoti Mahapatra<jyotima@amazon.com>
 ---
