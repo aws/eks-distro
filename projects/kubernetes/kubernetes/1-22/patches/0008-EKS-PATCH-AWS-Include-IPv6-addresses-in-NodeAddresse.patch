@@ -8,7 +8,7 @@ Description:
 
 Upstream PR, Issue, KEP, etc. links:
 * Taken from commit https://github.com/anguslees/kubernetes/commit/f8ea814e2d459a900bfb5e6f613dbe521b31515b.
-* Some of these changes was prosed in PR #86918 (https://github.com/kubernetes/kubernetes/pull/86918), and the exact
+* Some of these changes were proposed in PR #86918 (https://github.com/kubernetes/kubernetes/pull/86918), and the exact
 changes from this patch were put forth in PR #113114 (https://github.com/kubernetes/kubernetes/pull/113114). But both
 PRs were closed without being merged. See below for info about why they weren't.
 

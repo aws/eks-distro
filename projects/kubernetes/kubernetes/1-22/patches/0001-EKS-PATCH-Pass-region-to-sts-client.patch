@@ -22,8 +22,8 @@ If this patch's changes have not been added by upstream, why not?
 
 Other patches related to this patch:
 * EKS-PATCH-Update-aws-sdk-go-to-include-new-regions.patch -- other commit in the Kubernetes PR (#113084) that contains
-this this patch's changes. The other patch has changed since the PR was merged, but the purpose of it remain the same.
-This patch is need because the other one updates to an AWS SDK version that requires it.
+this patch's changes. The other patch has changed since the PR was merged, but the purpose of it remain the same. This
+patch is needed because the other one updates to an AWS SDK version that requires it.
 
 Changes made to this patch after its initial creation and reasons for these changes:
 * None
