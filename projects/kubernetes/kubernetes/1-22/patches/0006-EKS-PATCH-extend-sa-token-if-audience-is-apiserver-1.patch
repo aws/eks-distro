@@ -4,13 +4,27 @@ Date: Mon, 31 Jan 2022 16:01:52 -0800
 Subject: [PATCH] --EKS-PATCH-- extend sa token if audience is apiserver
  (#105954)
 
-Cherry-pick of upstream Kubernetes PR
-https://github.com/kubernetes/kubernetes/pull/105954, which is
-included in Kubernetes 1.24.
+Description:
+* This fixes a bug related to extended SA token expiration when the audience is not kube-apiserver.
 
-This fixes a bug related to extended SA token expiration when the
-audience is not kube-apiserver, as described in Kubernetes
-issue #105801 (https://github.com/kubernetes/kubernetes/issues/105801)
+Upstream PR, Issue, KEP, etc. links:
+* Cherry pick of Kubernetes PR #105954 (https://github.com/kubernetes/kubernetes/pull/105954)
+* Fixes Kubernetes Issue #105801 (https://github.com/kubernetes/kubernetes/issues/105801)
+
+If this patch is based on an upstream commit, how (if at all) do this patch and the upstream source differ?
+* No differences.
+
+If this patch's changes have not been added by upstream, why not?
+* N/A
+
+Other patches related to this patch:
+* None
+
+Changes made to this patch after its initial creation and reasons for these changes:
+* None
+
+Kubernetes version this patch can be dropped:
+* v1.24 -- upstream includes these changes starting in this version
 
 Signed-off-by: Jyoti Mahapatra <jyotima@amazon.com>
 ---

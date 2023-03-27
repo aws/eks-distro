@@ -4,13 +4,30 @@ Date: Mon, 20 Jun 2022 17:35:35 -0500
 Subject: [PATCH] --EKS-PATCH-- Add rate limiting when calling STS assume role
  API
 
-Cherry-pick of upstream Kubernetes PR # 110706
-The upstream PR is merged and should be available in future k/k releases.
-However we need the STS throttling fix for 1.19-1.23.
+Description:
+* "Fixed a bug which reduces the number of unnecessary calls to STS in the event of assume role failures in the legacy
+cloud provider." (PR description)
 
-We can remove this patch from version 1.22-1.23 versions once the upstream cherry-picks for this patch get merged.
-1.22 - upstream cherry-pick PR # 111260
-1.23 - upstream cherry-pick PR # 111261
+Upstream PR, Issue, KEP, etc. links:
+* Taken from commit https://github.com/kubernetes/kubernetes/pull/110706/commits/b346cedefb1a27227e270495ab4ff82a06c3a0a6.
+This is the first of two commits in Kubernetes PR #110706 (https://github.com/kubernetes/kubernetes/pull/110706).
+* PR #111260 to cherry-pick this change to 1.22 was not merged before support for this minor version ended.
+* Fixes AWS cloud provider Issue #284 (https://github.com/kubernetes/cloud-provider-aws/issues/284)
+
+If this patch is based on an upstream commit, how (if at all) do this patch and the upstream source differ?
+* No differences.
+
+If this patch's changes have not been added by upstream, why not?
+* N/A
+
+Other patches related to this patch:
+* EKS-PATCH-Add-rate-limiting-when-calling-STS-assume-.patch -- second commit in the PR that this patch is from.
+
+Changes made to this patch after its initial creation and reasons for these changes:
+* None
+
+Kubernetes version this patch can be dropped:
+* v1.23 -- cherry-picked by https://github.com/kubernetes/kubernetes/pull/111261)
 ---
  .../k8s.io/legacy-cloud-providers/aws/aws.go  |   2 +-
  .../aws/aws_assumerole_provider.go            |  62 ++++++++
