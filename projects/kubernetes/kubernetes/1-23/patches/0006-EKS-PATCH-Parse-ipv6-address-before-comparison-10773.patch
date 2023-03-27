@@ -3,12 +3,27 @@ From: Jyoti Mahapatra <49211422+jyotimahapatra@users.noreply.github.com>
 Date: Wed, 26 Jan 2022 18:38:49 -0800
 Subject: [PATCH] --EKS-PATCH-- Parse ipv6 address before comparison (#107736)
 
-Modified cherry-pick of upstream Kubernetes:
-https://github.com/kubernetes/kubernetes/pull/107736, which is
-included in Kubernetes 1.24.
+Description:
+* Fixes a bug related to ipv6 clusters.
 
-This fixes a bug related to ipv6 clusters, as described in Kubernetes
-issue #107735 (https://github.com/kubernetes/kubernetes/issues/107735)
+Upstream PR, Issue, KEP, etc. links:
+* Cherry pick of Kubernetes PR #107736 (https://github.com/kubernetes/kubernetes/pull/107736)
+* Fixes Kubernetes Issue #107735 (https://github.com/kubernetes/kubernetes/issues/107735)
+
+If this patch is based on an upstream commit, how (if at all) do this patch and the upstream source differ?
+* Minor difference.
+
+If this patch's changes have not been added by upstream, why not?
+* N/A
+
+Other patches related to this patch:
+* None
+
+Changes made to this patch after its initial creation and reasons for these changes:
+* None
+
+Kubernetes version this patch can be dropped:
+* v1.24 -- upstream includes these changes starting in this version
 
 Signed-off-by: Jyoti Mahapatra <jyotima@amazon.com>
 ---
