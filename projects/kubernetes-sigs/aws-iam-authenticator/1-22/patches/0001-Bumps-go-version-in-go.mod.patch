@@ -1,6 +1,6 @@
-From cbd9679b5e85349eb069f86f55a4f831cbc669d1 Mon Sep 17 00:00:00 2001
-From: Sajia Zafreen <szafreen@amazon.com>
-Date: Wed, 18 Jan 2023 16:26:54 -0800
+From 463857d41d6ea7370ec8d1e341feaea29472070c Mon Sep 17 00:00:00 2001
+From: Kirsten Schumy <ksschumy@amazon.com>
+Date: Thu, 23 Mar 2023 20:30:28 -0700
 Subject: [PATCH] update go.mod and go.sum
 
 When deps are downloaded with `go mod vendor` which our
@@ -17,7 +17,7 @@ Signed-off-by: Sajia Zafreen <szafreen@amazon.com>
  2 files changed, 61 insertions(+), 2 deletions(-)
 
 diff --git a/go.mod b/go.mod
-index 67045338..ba4d5e30 100644
+index bbf531e3..b6adcedb 100644
 --- a/go.mod
 +++ b/go.mod
 @@ -1,6 +1,6 @@
@@ -27,7 +27,7 @@ index 67045338..ba4d5e30 100644
 +go 1.19
  
  require (
- 	github.com/aws/aws-sdk-go v1.44.145
+ 	github.com/aws/aws-sdk-go v1.44.213
 @@ -21,3 +21,63 @@ require (
  	k8s.io/sample-controller v0.22.1
  	sigs.k8s.io/yaml v1.2.0
@@ -93,7 +93,7 @@ index 67045338..ba4d5e30 100644
 +	sigs.k8s.io/structured-merge-diff/v4 v4.1.2 // indirect
 +)
 diff --git a/go.sum b/go.sum
-index badc07ab..c8e5c32b 100644
+index d1e70160..69f3c74e 100644
 --- a/go.sum
 +++ b/go.sum
 @@ -61,7 +61,6 @@ github.com/bgentry/speakeasy v0.1.0/go.mod h1:+zsyZBPWlz7T6j88CTgSN5bM796AkVf0kB
@@ -105,5 +105,5 @@ index badc07ab..c8e5c32b 100644
  github.com/cespare/xxhash/v2 v2.1.1 h1:6MnRN8NT7+YBpUIWxHtefFZOKTAPgGjpQSxqLNn0+qY=
  github.com/cespare/xxhash/v2 v2.1.1/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
 -- 
-2.39.0
+2.39.2
 
