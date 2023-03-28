@@ -6,7 +6,7 @@ Subject: [PATCH] --EKS-PATCH-- Pass region to sts client
 First, this change explicitly sets the region from metadata.
 Second, it uses .WithSTSRegionalEndpoint(endpoints.RegionalSTSEndpoint)
 to enable the regional STS endpoint. This is required because, as of
-SDK v1.42.23, the default is legacy (endpoints.LegacySTSEndpoint).
+SDK 1.42.23, the default is legacy (endpoints.LegacySTSEndpoint).
 
 Signed-off-by: Nick Turner <nic@amazon.com>
 ---
