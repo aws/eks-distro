@@ -1,8 +1,36 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Sajia Zafreen <szafreen@amazon.com>
-Date: Tue, 14 Mar 2023 16:44:33 -0700
+From: Ernest Wong <ernwong@amazon.com>
+Date: Mon, 12 Dec 2022 06:15:33 +0000
 Subject: [PATCH] --EKS-PATCH-- Update aws-sdk-go for new regions
 
+Description:
+* Adds support for new AWS regions by updating aws-sdk-go versions
+
+Upstream PR, Issue, KEP, etc. links:
+* This patch was initially based on cherry pick of Kubernetes commit af76f3b72a0937b2236279dcfa9bbf8460a02fbf
+(https://github.com/kubernetes/kubernetes/pull/113084/commits/af76f3b72a0937b2236279dcfa9bbf8460a02fbf), which is part
+of PR #113084 (https://github.com/kubernetes/kubernetes/pull/113084). But changes have been made to it to update the
+aws-sdk-go version to a newer one that the original PR did.
+
+If this patch is based on an upstream commit, how (if at all) do this patch and the upstream source differ?
+* As mentioned above, this patch has been changed - and continues to be changed - to update the aws-sdk-go version to a
+newer version. While these causes a number of differences in terms of number of lines, the only meaningful change is the
+enabling of newer aws-sdk-go versions and the features that come with it.
+
+If this patch's changes have not been added by upstream, why not?
+* N/A
+
+Other patches related to this patch:
+* EKS-PATCH-Pass-region-to-sts-client.patch
+
+Changes made to this patch after its initial creation and reasons for these changes:
+* Previously, multiple patches were used to update version of aws-sdk-go. They were replaced by this one patch.
+* This patch is updated whenever a new region needs to be added
+
+Kubernetes version this patch can be dropped:
+* Likely 1.27 -- https://github.com/kubernetes/kubernetes/pull/116329
+
+Signed-off-by: Davanum Srinivas <davanum@gmail.com>
 ---
  go.mod                                        |     2 +-
  go.sum                                        |    13 +-
