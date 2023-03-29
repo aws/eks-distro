@@ -3,11 +3,34 @@ From: Igor Velichkovich <igorveli@amazon.com>
 Date: Wed, 21 Dec 2022 20:12:26 -0600
 Subject: [PATCH] --EKS-PATCH-- admission webhook exclusion from file
 
-Workaround for Kubernetes issue:
-https://github.com/kubernetes/kubernetes/issues/92157
+Description:
+* Allows for the bypassing of admission controller webhook for certain resources.
 
-This change allows for the bypassing of admission controller webhook
-for certain resources.
+Upstream PR, Issue, KEP, etc. links:
+* See below.
+
+If this patch is based on an upstream commit, how (if at all) do this patch and the upstream source differ?
+* N/A
+
+If this patch's changes have not been added by upstream, why not?
+* This patch has not been added by upstream, but work is being actively done to add the ability to filter webhooks. See:
+    - KEP-3716 -- https://github.com/kubernetes/enhancements/tree/master/keps/sig-api-machinery/3716-admission-webhook-match-conditions
+    and https://github.com/kubernetes/enhancements/pull/3717
+    - Tracking issue -- https://github.com/kubernetes/enhancements/issues/3716
+    - Kubernetes PR #116261 -- https://github.com/kubernetes/kubernetes/pull/116261
+
+Other patches related to this patch:
+* None
+
+Changes made to this patch after its initial creation and reasons for these changes:
+* February 2, 2023 -- This patch replaced 0002-EKS-PATCH-Bypassed-admission-controller-webhook-for-.patch
+(https://github.com/aws/eks-distro/blob/v1-22-eks-18/projects/kubernetes/kubernetes/1-22/patches/0002-EKS-PATCH-Bypassed-admission-controller-webhook-for-.patch).
+The difference between this patch and its predecessor is that this patch allows for users to supply a config file that
+defines which webhooks should be excluded. If this files is not provided, this patch and the previous one function the
+same.
+
+Kubernetes version this patch can be dropped:
+* When the upstream efforts to implement these changes are merged.
 ---
  .../src/k8s.io/apiextensions-apiserver/go.sum |   5 -
  .../exclusionrules/critical_path_excluder.go  | 152 +++++++

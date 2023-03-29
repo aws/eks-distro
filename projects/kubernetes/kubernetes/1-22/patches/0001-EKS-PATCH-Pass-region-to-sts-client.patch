@@ -3,10 +3,33 @@ From: Rasita Pai <prasita@amazon.com>
 Date: Wed, 13 Oct 2021 10:46:18 -0700
 Subject: [PATCH] --EKS-PATCH-- Pass region to sts client
 
-First, this change explicitly sets the region from metadata.
-Second, it uses .WithSTSRegionalEndpoint(endpoints.RegionalSTSEndpoint)
-to enable the regional STS endpoint. This is required because, as of
-SDK v1.42.23, the default is legacy (endpoints.LegacySTSEndpoint).
+Description:
+* "First, this change explicitly sets the region from metadata. Second, it uses
+.WithSTSRegionalEndpoint(endpoints.RegionalSTSEndpoint) to enable the regional STS endpoint. This is required because,
+as of SDK v1.42.23, the default is legacy (endpoints.LegacySTSEndpoint)" (original commit message)
+
+Upstream PR, Issue, KEP, etc. links:
+* Cherry pick of Kubernetes commit 715f2af8e2342469d3c780c3d15c8545224af777
+(https://github.com/kubernetes/kubernetes/pull/113084/commits/715f2af8e2342469d3c780c3d15c8545224af777), which is part
+of PR #113084 (https://github.com/kubernetes/kubernetes/pull/113084).
+
+If this patch is based on an upstream commit, how (if at all) do this patch and the upstream source differ?
+* The patch is the same as the upstream commit, but the PR it is part of includes additional changes to update AWS SDK,
+which are in a different patch.
+
+If this patch's changes have not been added by upstream, why not?
+* N/A
+
+Other patches related to this patch:
+* EKS-PATCH-Update-aws-sdk-go-to-include-new-regions.patch -- other commit in the Kubernetes PR (#113084) that contains
+this patch's changes. The other patch has changed since the PR was merged, but the purpose of it remain the same. This
+patch is needed because the other one updates to an AWS SDK version that requires it.
+
+Changes made to this patch after its initial creation and reasons for these changes:
+* None
+
+Kubernetes version this patch can be dropped:
+* v1.26 -- upstream includes these changes starting in this version
 
 Signed-off-by: Nick Turner <nic@amazon.com>
 ---

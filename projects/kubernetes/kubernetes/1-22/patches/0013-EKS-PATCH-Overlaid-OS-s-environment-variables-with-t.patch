@@ -4,10 +4,28 @@ Date: Fri, 23 Jul 2021 09:45:19 +0530
 Subject: [PATCH] --EKS-PATCH-- Overlaid OS's environment variables with the
  ones specified in the CredentialProviderConfig
 
-Cherrypick of https://github.com/kubernetes/kubernetes/pull/103231
+Description:
+* "Fixed an issue which didn't append OS's environment variables with the one provided in Credential Provider Config
+file, which may lead to failed execution of external credential provider binary" (PR description)
 
-- Removed dependency with cmd.Run's stub
-- Added test cases
+Upstream PR, Issue, KEP, etc. links:
+* Cherry pick of Kubernetes PR #103231 (https://github.com/kubernetes/kubernetes/pull/103231)
+* Fixes Kubernetes Issue #102750 (https://github.com/kubernetes/kubernetes/issues/102750)
+
+If this patch is based on an upstream commit, how (if at all) do this patch and the upstream source differ?
+* No differences
+
+If this patch's changes have not been added by upstream, why not?
+* N/A
+
+Other patches related to this patch:
+* None
+
+Changes made to this patch after its initial creation and reasons for these changes:
+* None
+
+Kubernetes version this patch can be dropped:
+* 1.23 -- upstream includes these changes starting in this version
 
 Signed-off-by: Neeraj Shah <neerajx86@gmail.com>
 ---
