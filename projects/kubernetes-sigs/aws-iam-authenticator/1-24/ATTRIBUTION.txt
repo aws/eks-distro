@@ -1,5 +1,5 @@
 
-** github.com/aws/aws-sdk-go; version v1.44.145 --
+** github.com/aws/aws-sdk-go; version v1.44.213 --
 https://github.com/aws/aws-sdk-go
 
 ** github.com/go-logr/logr; version v0.4.0 --
@@ -74,7 +74,7 @@ https://github.com/kubernetes/sample-controller
 ** k8s.io/utils; version v0.0.0-20210707171843-4b05e18ac7d9 --
 https://github.com/kubernetes/utils
 
-** sigs.k8s.io/aws-iam-authenticator; version v0.5.13 --
+** sigs.k8s.io/aws-iam-authenticator; version v0.5.15 --
 https://github.com/kubernetes-sigs/aws-iam-authenticator
 
 ** sigs.k8s.io/structured-merge-diff/v4; version v4.1.2 --
@@ -388,7 +388,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/aws/aws-sdk-go/internal/sync/singleflight; version v1.44.145 --
+** github.com/aws/aws-sdk-go/internal/sync/singleflight; version v1.44.213 --
 https://github.com/aws/aws-sdk-go
 
 ** golang.org/go; version go1.19.7 --
