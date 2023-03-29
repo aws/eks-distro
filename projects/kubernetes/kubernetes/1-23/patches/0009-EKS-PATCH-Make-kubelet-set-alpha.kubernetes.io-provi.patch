@@ -25,6 +25,8 @@ From the original PR description:
   not exclude a future fix involving the root cause of the issue,
   which is that kubelet and cloud-controller-manager both attempt to
   manage node addresses when --cloud-provider is not set to external."
+
+Signed-off-by: Davanum Srinivas <davanum@gmail.com>
 ---
  pkg/kubelet/nodestatus/setters.go      | 16 ++++-
  pkg/kubelet/nodestatus/setters_test.go | 91 +++++++++++++++++++++-----
