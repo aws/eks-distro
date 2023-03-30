@@ -240,8 +240,14 @@ update-all-release-numbers:
 release-docs:
 	go vet ./cmd/release/docs
 	go run ./cmd/release/docs/main.go \
+		--branch=$(RELEASE_BRANCH)
+
+.PHONY: release-docs-no-git
+release-docs:
+	go vet ./cmd/release/docs
+	go run ./cmd/release/docs/main.go \
 		--branch=$(RELEASE_BRANCH) \
-		--generateChangelogChanges=false \
+		--generateChangelogChanges=true \
 		--openPR=false
 
 .PHONY: github-release

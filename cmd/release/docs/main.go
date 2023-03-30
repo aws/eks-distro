@@ -68,9 +68,11 @@ func main() {
 		cleanUpDir()
 		log.Fatalf("creating new docs: %v", err)
 	}
-	if err = gm.AddAndCommitDirectory(*newDocsDir); err != nil {
-		cleanUpDir()
-		log.Fatalf("adding and committing new docs %q\n%v", newDocsDir, err)
+	if *hasOpenPR {
+		if err = gm.AddAndCommitDirectory(*newDocsDir); err != nil {
+			cleanUpDir()
+			log.Fatalf("adding and committing new docs %q\n%v", newDocsDir, err)
+		}
 	}
 	log.Println("Finished creating new docs\n--------------------------")
 
@@ -91,9 +93,11 @@ func main() {
 			cleanUp(ap)
 			log.Fatalf("updating %s: %v", ap, err)
 		}
-		if err = gm.AddAndCommit(ap); err != nil {
-			cleanUp(ap)
-			log.Fatalf("adding and committing %s after changes had been made: %v", ap, err)
+		if *hasOpenPR {
+			if err = gm.AddAndCommit(ap); err != nil {
+				cleanUp(ap)
+				log.Fatalf("adding and committing %s after changes had been made: %v", ap, err)
+			}
 		}
 		log.Printf("Successfully updated %v\n", ap)
 	}
