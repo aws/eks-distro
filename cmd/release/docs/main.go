@@ -23,7 +23,7 @@ func main() {
 	hasGenerateChangelogChanges :=
 		flag.Bool("generateChangelogChanges", true, "If changes in changelog should be generated")
 	hasOpenPR := flag.Bool("openPR", true, "If PR and all git stuff should be done")
-	hasReleaseAnnouncement := flag.Bool("hasAnnouncement", true, "If changes in changelog should be generated")
+	hasReleaseAnnouncement := flag.Bool("releaseAnnouncement", true, "If changes in changelog should be generated")
 	flag.Parse()
 
 	////////////	Create Release		////////////////////////////////////
