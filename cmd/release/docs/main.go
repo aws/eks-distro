@@ -17,7 +17,7 @@ const changeType = changetype.Docs
 // Generates docs for release. The release MUST already be out, and all upstream changes MUST be pulled down locally.
 // Value for 'branch' flag must be provided. Value for 'hasGenerateChangelogChanges' flag should be 'false' if auto-
 // generating the changes in the changelog will cause an error.
-// TODO: fix all logic around undoing changes if error.
+// TODO: fix the hacky code related to opening PRs and git commands. It is bad, and I am sorry.
 func main() {
 	branch := flag.String("branch", "", "Release branch, e.g. 1-23")
 	hasGenerateChangelogChanges :=
