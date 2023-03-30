@@ -14,11 +14,16 @@ import (
 
 const changeType = changetype.Docs
 
-// Generates docs for release. Value for 'branch' flag must be provided. The release MUST already be out, and all
-// upstream changes MUST be pulled down locally.
-// TODO: fix all logic around undoing changes if error.
+// Generates docs for release. The release MUST already be out, and all upstream changes MUST be pulled down locally.
+// Value for 'branch' flag must be provided. Value for 'hasGenerateChangelogChanges' flag should be 'false' if auto-
+// generating the changes in the changelog will cause an error.
+// TODO: fix the hacky code related to opening PRs and git commands. It is bad, and I am sorry.
 func main() {
 	branch := flag.String("branch", "", "Release branch, e.g. 1-23")
+	hasGenerateChangelogChanges :=
+		flag.Bool("generateChangelogChanges", true, "If changes in changelog should be generated")
+	hasOpenPR := flag.Bool("openPR", true, "If PR and all git stuff should be done")
+	hasReleaseAnnouncement := flag.Bool("releaseAnnouncement", true, "If changes in changelog should be generated")
 	flag.Parse()
 
 	////////////	Create Release		////////////////////////////////////
@@ -31,9 +36,12 @@ func main() {
 
 	////////////	Create Git Manager	////////////////////////////////////
 
-	gm, err := git.CreateGitManager(r.Branch(), r.Number(), changeType)
-	if err != nil {
-		log.Fatalf("creating new git manager: %v", err)
+	var gm *git.Manager
+	if *hasOpenPR {
+		gm, err = git.CreateGitManager(r.Branch(), r.Number(), changeType)
+		if err != nil {
+			log.Fatalf("creating new git manager: %v", err)
+		}
 	}
 
 	////////////	Create new docs		////////////////////////////////////
@@ -42,7 +50,7 @@ func main() {
 
 	abandon := abandonFunc(gm)
 
-	docs, err := newdocs.CreateNewDocsInput(r)
+	docs, err := newdocs.CreateNewDocsInput(r, *hasGenerateChangelogChanges, *hasReleaseAnnouncement)
 	if err != nil {
 		abandon()
 		log.Fatalf("creating new docs input: %v", err)
@@ -60,9 +68,11 @@ func main() {
 		cleanUpDir()
 		log.Fatalf("creating new docs: %v", err)
 	}
-	if err = gm.AddAndCommitDirectory(*newDocsDir); err != nil {
-		cleanUpDir()
-		log.Fatalf("adding and committing new docs %q\n%v", newDocsDir, err)
+	if *hasOpenPR {
+		if err = gm.AddAndCommitDirectory(*newDocsDir); err != nil {
+			cleanUpDir()
+			log.Fatalf("adding and committing new docs %q\n%v", newDocsDir, err)
+		}
 	}
 	log.Println("Finished creating new docs\n--------------------------")
 
@@ -83,9 +93,11 @@ func main() {
 			cleanUp(ap)
 			log.Fatalf("updating %s: %v", ap, err)
 		}
-		if err = gm.AddAndCommit(ap); err != nil {
-			cleanUp(ap)
-			log.Fatalf("adding and committing %s after changes had been made: %v", ap, err)
+		if *hasOpenPR {
+			if err = gm.AddAndCommit(ap); err != nil {
+				cleanUp(ap)
+				log.Fatalf("adding and committing %s after changes had been made: %v", ap, err)
+			}
 		}
 		log.Printf("Successfully updated %v\n", ap)
 	}
@@ -93,13 +105,18 @@ func main() {
 
 	////////////	Open PR		////////////////////////////////////
 
-	if err = gm.OpenPR(); err != nil {
-		log.Fatalf("opening PR: %v", err)
+	if *hasOpenPR {
+		if err = gm.OpenPR(); err != nil {
+			log.Fatalf("opening PR: %v", err)
+		}
 	}
 
 }
 
 func abandonFunc(gm *git.Manager) func() {
+	if gm == nil {
+		return func() {}
+	}
 	return func() {
 		if abandonErr := gm.Abandon(); abandonErr != nil {
 			log.Printf("encountered error while attemptng to abandon branch due to earlier error: %v", abandonErr)
@@ -108,6 +125,9 @@ func abandonFunc(gm *git.Manager) func() {
 }
 
 func cleanUpDirFunc(gm *git.Manager, nd values.NewDirectory) func() {
+	if gm == nil {
+		return func() {}
+	}
 	return func() {
 		if cleanUpErr := gm.DeleteDirectoryAndAbandonAllChanges(&nd); cleanUpErr != nil {
 			log.Printf("encountered an error while attemptng to clean up due to earlier error: %v", cleanUpErr)
@@ -116,6 +136,9 @@ func cleanUpDirFunc(gm *git.Manager, nd values.NewDirectory) func() {
 }
 
 func cleanUpFunc(gm *git.Manager) func(values.AbsolutePath) {
+	if gm == nil {
+		return func(values.AbsolutePath) {}
+	}
 	return func(ap values.AbsolutePath) {
 		cleanUpErrs := gm.RestoreFileAndAbandonAllChanges(ap)
 		if len(cleanUpErrs) > 0 {

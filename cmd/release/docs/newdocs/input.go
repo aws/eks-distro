@@ -19,7 +19,7 @@ type releaseInfo interface {
 	KubernetesMinorVersion() string
 }
 
-func CreateNewDocsInput(ri releaseInfo) ([]NewDocInput, error) {
+func CreateNewDocsInput(ri releaseInfo, hasGenerateChangelogChanges bool, hasAnnouncement bool) ([]NewDocInput, error) {
 	changeLogWriter, err := getTemplateWriter(ri, changelogTemplateInput)
 	if err != nil {
 		return []NewDocInput{}, fmt.Errorf("getting template writer for changelog: %w", err)
@@ -30,28 +30,37 @@ func CreateNewDocsInput(ri releaseInfo) ([]NewDocInput, error) {
 		return []NewDocInput{}, fmt.Errorf("getting template writer for index: %w", err)
 	}
 
-	releaseAnnouncementWriter, err := getTemplateWriter(ri, releaseAnnouncementTemplateInput)
-	if err != nil {
-		return []NewDocInput{}, fmt.Errorf("getting template writer for release announcement: %w", err)
+	var changelogAppendToEnd func() (string, error)
+	if hasGenerateChangelogChanges {
+		changelogAppendToEnd = getPrInfoForChangelogFunc(ri)
 	}
 
-	return []NewDocInput{
+	newDocInput := []NewDocInput{
 		{
 			FileName:       values.GetChangelogFileName(ri),
 			TemplateWriter: changeLogWriter,
-			AppendToEnd:    getPrInfoForChangelogFunc(ri),
+			AppendToEnd:    changelogAppendToEnd,
 		},
 		{
 			FileName:       values.IndexFileName,
 			TemplateWriter: indexWriter,
 			AppendToEnd:    getComponentsFromReleaseManifestFunc(ri),
 		},
-		{
+	}
+
+	if hasAnnouncement {
+		releaseAnnouncementWriter, err := getTemplateWriter(ri, releaseAnnouncementTemplateInput)
+		if err != nil {
+			return []NewDocInput{}, fmt.Errorf("getting template writer for release announcement: %w", err)
+		}
+		newDocInput = append(newDocInput, NewDocInput{
 			FileName:       values.ReleaseAnnouncementFileName,
 			TemplateWriter: releaseAnnouncementWriter,
 			AppendToEnd:    nil,
-		},
-	}, nil
+		})
+	}
+
+	return newDocInput, nil
 }
 
 var getComponentsFromReleaseManifestFunc = func(ri releaseInfo) func() (string, error) {
