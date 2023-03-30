@@ -242,13 +242,14 @@ release-docs:
 	go run ./cmd/release/docs/main.go \
 		--branch=$(RELEASE_BRANCH)
 
-.PHONY: release-docs-no-git
-release-docs-no-git:
+.PHONY: release-docs-no-git-no-announcement
+release-docs-no-git-no-announcement:
 	go vet ./cmd/release/docs
 	go run ./cmd/release/docs/main.go \
 		--branch=$(RELEASE_BRANCH) \
 		--generateChangelogChanges=true \
-		--openPR=false
+		--openPR=false \
+		--releaseAnnouncement=false
 
 .PHONY: github-release
 github-release:

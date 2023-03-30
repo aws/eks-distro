@@ -22,8 +22,8 @@ func main() {
 	branch := flag.String("branch", "", "Release branch, e.g. 1-23")
 	hasGenerateChangelogChanges :=
 		flag.Bool("generateChangelogChanges", true, "If changes in changelog should be generated")
-	hasOpenPR :=
-		flag.Bool("openPR", true, "If changes in changelog should be generated")
+	hasOpenPR := flag.Bool("openPR", true, "If PR and all git stuff should be done")
+	hasReleaseAnnouncement := flag.Bool("hasAnnouncement", true, "If changes in changelog should be generated")
 	flag.Parse()
 
 	////////////	Create Release		////////////////////////////////////
@@ -50,7 +50,7 @@ func main() {
 
 	abandon := abandonFunc(gm)
 
-	docs, err := newdocs.CreateNewDocsInput(r, *hasGenerateChangelogChanges)
+	docs, err := newdocs.CreateNewDocsInput(r, *hasGenerateChangelogChanges, *hasReleaseAnnouncement)
 	if err != nil {
 		abandon()
 		log.Fatalf("creating new docs input: %v", err)
