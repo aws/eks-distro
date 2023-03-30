@@ -243,7 +243,7 @@ release-docs:
 		--branch=$(RELEASE_BRANCH)
 
 .PHONY: release-docs-no-git
-release-docs:
+release-docs-no-git:
 	go vet ./cmd/release/docs
 	go run ./cmd/release/docs/main.go \
 		--branch=$(RELEASE_BRANCH) \
