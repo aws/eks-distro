@@ -12,8 +12,8 @@ checkout-repo: ## Checkout upstream tag based on value in GIT_TAG file
 
 ##@ Binary Targets
 binaries: ## Build all binaries: `csi-provisioner` for `linux/amd64 linux/arm64`
-_output/1-21/bin/external-provisioner/linux-amd64/csi-provisioner: ## Build `_output/1-21/bin/external-provisioner/linux-amd64/csi-provisioner`
-_output/1-21/bin/external-provisioner/linux-arm64/csi-provisioner: ## Build `_output/1-21/bin/external-provisioner/linux-arm64/csi-provisioner`
+_output/1-26/bin/external-provisioner/linux-amd64/csi-provisioner: ## Build `_output/1-26/bin/external-provisioner/linux-amd64/csi-provisioner`
+_output/1-26/bin/external-provisioner/linux-arm64/csi-provisioner: ## Build `_output/1-26/bin/external-provisioner/linux-arm64/csi-provisioner`
 
 ##@ Image Targets
 local-images: ## Builds `external-provisioner/images/amd64` as oci tars for presumbit validation

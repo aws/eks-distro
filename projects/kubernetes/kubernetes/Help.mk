@@ -13,7 +13,7 @@ patch-repo: ## Patch upstream repo with patches in patches directory
 
 ##@ Binary Targets
 binaries: ## Build all binaries: `kubelet` for `linux/amd64 linux/arm64`
-_output/1-21/bin/linux/amd64/kubelet: ## Build `_output/1-21/bin/linux/amd64/kubelet`
+_output/1-26/bin/linux/amd64/kubelet: ## Build `_output/1-26/bin/linux/amd64/kubelet`
 
 ##@ Image Targets
 local-images: ## Builds `pause/images/amd64 kube-proxy/images/amd64 kube-apiserver/images/amd64 kube-controller-manager/images/amd64 kube-scheduler/images/amd64` as oci tars for presumbit validation

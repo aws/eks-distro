@@ -13,9 +13,9 @@ patch-repo: ## Patch upstream repo with patches in patches directory
 
 ##@ Binary Targets
 binaries: ## Build all binaries: `livenessprobe` for `linux/amd64 linux/arm64 windows/amd64`
-_output/1-21/bin/livenessprobe/linux-amd64/livenessprobe: ## Build `_output/1-21/bin/livenessprobe/linux-amd64/livenessprobe`
-_output/1-21/bin/livenessprobe/linux-arm64/livenessprobe: ## Build `_output/1-21/bin/livenessprobe/linux-arm64/livenessprobe`
-_output/1-21/bin/livenessprobe/windows-amd64/livenessprobe.exe: ## Build `_output/1-21/bin/livenessprobe/windows-amd64/livenessprobe.exe`
+_output/1-26/bin/livenessprobe/linux-amd64/livenessprobe: ## Build `_output/1-26/bin/livenessprobe/linux-amd64/livenessprobe`
+_output/1-26/bin/livenessprobe/linux-arm64/livenessprobe: ## Build `_output/1-26/bin/livenessprobe/linux-arm64/livenessprobe`
+_output/1-26/bin/livenessprobe/windows-amd64/livenessprobe.exe: ## Build `_output/1-26/bin/livenessprobe/windows-amd64/livenessprobe.exe`
 
 ##@ Image Targets
 local-images: ## Builds `livenessprobe/images/amd64` as oci tars for presumbit validation

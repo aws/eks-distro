@@ -3,16 +3,33 @@ From: Angus Lees <gus@inodes.org>
 Date: Thu, 19 Nov 2020 17:34:07 +1100
 Subject: [PATCH] --EKS-PATCH-- AWS: Include IPv6 addresses in NodeAddresses
 
-This patch is taken from this commit:
-https://github.com/anguslees/kubernetes/commit/f8ea814e2d459a900bfb5e6f613dbe521b31515b.
-Some of this code was original in upstream Kubernetes PR #86918
-(https://github.com/kubernetes/kubernetes/pull/86918), but it was
-closed without being added because it was not merged before the
-freezing of features in the legacy cloud providers, which happened
-starting in Kubernetes 1.21.
+Description:
+* Modifies the in-tree cloud provider code to append ipv6 addresses to the Node object advertised by the kubelet.
 
-The change modifies the in-tree cloud provider code to append ipv6
-addresses to the Node object advertised by the kubelet.
+Upstream PR, Issue, KEP, etc. links:
+* Taken from commit https://github.com/anguslees/kubernetes/commit/f8ea814e2d459a900bfb5e6f613dbe521b31515b.
+* Some of these changes were proposed in PR #86918 (https://github.com/kubernetes/kubernetes/pull/86918), and the exact
+changes from this patch were put forth in PR #113114 (https://github.com/kubernetes/kubernetes/pull/113114). But both
+PRs were closed without being merged. See below for info about why they weren't.
+
+If this patch is based on an upstream commit, how (if at all) do this patch and the upstream source differ?
+* N/A
+
+If this patch's changes have not been added by upstream, why not?
+* In-tree cloud provider code, which this patch modifies, has been in in feature freeze since Kubernetes 1.21. Both of
+the upstream PRs (#86918 and #113114) that aimed to enable this functionality were not merged before the feature freeze
+began. Since this change is a feature and not a critical security fix, Kubernetes is not going to add it. See
+https://github.com/kubernetes/kubernetes/pull/113114#issuecomment-1282460346
+
+Other patches related to this patch:
+* None
+
+Changes made to this patch after its initial creation and reasons for these changes:
+* None
+
+Kubernetes version this patch can be dropped:
+* Likely will need to be dropped or changed in v1.27, as AWS is removed from legacy-cloud-providers in this version.
+See https://github.com/kubernetes/kubernetes/pull/115838
 
 Signed-off-by: Jyoti Mahapatra<jyotima@amazon.com>
 ---

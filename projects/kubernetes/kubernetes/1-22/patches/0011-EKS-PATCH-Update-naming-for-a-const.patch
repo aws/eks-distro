@@ -3,13 +3,29 @@ From: Prateek Gogia <pgogia@amazon.com>
 Date: Thu, 14 Jul 2022 19:13:22 -0500
 Subject: [PATCH] --EKS-PATCH-- Update naming for a const
 
-Cherry-pick of upstream Kubernetes PR # 110706
-The upstream PR is merged and should be available in future k/k releases.
-However we need the STS throttling fix for 1.19-1.23.
+Description:
+* "Adds rate limiting for Assume role call when failing to assume an IAM role in CCM. It caches the assume role API call result for 1 second and blocks all call till the cache is valid."
+(PR description)
 
-We can remove this patch from version 1.22-1.23 versions once the upstream cherry-picks for this patch get merged.
-1.22 - upstream cherry-pick PR # 111260
-1.23 - upstream cherry-pick PR # 111261
+Upstream PR, Issue, KEP, etc. links:
+* Taken from commit https://github.com/kubernetes/kubernetes/pull/110706/commits/3f412cdf5d792b192af64187b9ece1433d55b007.
+This is the second of two commits in Kubernetes PR #110706 (https://github.com/kubernetes/kubernetes/pull/110706).
+* Fixes AWS cloud provider provides Issue #284 (https://github.com/kubernetes/cloud-provider-aws/issues/284)
+
+If this patch is based on an upstream commit, how (if at all) do this patch and the upstream source differ?
+* No differences.
+
+If this patch's changes have not been added by upstream, why not?
+* N/A
+
+Other patches related to this patch:
+* EKS-PATCH-Add-rate-limiting-when-calling-STS-assume-.patch -- first commit in the PR that this patch is from.
+
+Changes made to this patch after its initial creation and reasons for these changes:
+* None
+
+Kubernetes version this patch can be dropped:
+* v1.23 -- cherry-picked by https://github.com/kubernetes/kubernetes/pull/111261
 ---
  .../aws/aws_assumerole_provider.go            | 12 ++---
  .../aws/aws_assumerole_provider_test.go       | 48 +++++++++----------

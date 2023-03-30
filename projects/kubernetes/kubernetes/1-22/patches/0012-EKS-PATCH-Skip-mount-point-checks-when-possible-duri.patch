@@ -4,12 +4,31 @@ Date: Thu, 14 Jul 2022 03:02:57 -0700
 Subject: [PATCH] --EKS-PATCH-- Skip mount point checks when possible during
  mount cleanup.
 
-Cherry-pick of upstream Kubernetes PR #109676
-(https://github.com/kubernetes/kubernetes/pull/109676), which has been
-merged into upstream Kubernetes and Kubernetes currently
-intends to include it in the 1.25 release. This patch may change in
-future EKS-D releases as to stay aligned with any relevant modification
-to the upstream.
+Description:
+* "Calls to mounter.Unmount are preceded and followed by expensive mount point checks. These checks are not necessary
+on *nix-s with a umount implementation that performs a similar check itself. This PR adds a mechanism to detect the
+"safe" behavior, and avoid mount point checks when possible. This change represents a significant optimization of
+CleanupMountPoint; enabling use-cases where pods have many mounts, and there is high pod churn. We (EKS) have observed
+several cases of instability and poor node health in such scenarios, which were resolved with this change." (PR
+description)
+
+Upstream PR, Issue, KEP, etc. links:
+* Cherry pick of upstream Kubernetes PR #109676 (https://github.com/kubernetes/kubernetes/pull/109676)
+
+If this patch is based on an upstream commit, how (if at all) do this patch and the upstream source differ?
+* No differences
+
+If this patch's changes have not been added by upstream, why not?
+* N/A
+
+Other patches related to this patch:
+* None
+
+Changes made to this patch after its initial creation and reasons for these changes:
+* None
+
+Kubernetes version this patch can be dropped:
+* v1.25 -- upstream includes these changes starting in this version
 ---
  .../src/k8s.io/mount-utils/fake_mounter.go    | 14 +++-
  staging/src/k8s.io/mount-utils/mount.go       |  4 ++

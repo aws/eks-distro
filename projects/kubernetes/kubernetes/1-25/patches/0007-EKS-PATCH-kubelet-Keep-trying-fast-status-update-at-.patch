@@ -4,7 +4,9 @@ Date: Wed, 9 Nov 2022 13:30:53 -0800
 Subject: [PATCH] --EKS-PATCH-- kubelet: Keep trying fast status update at
  startup until node is ready
 
-Cherry-pick of https://github.com/kubernetes/kubernetes/pull/112618
+Merge pull request #112618 from jingyuanliang/fastStatusUpdateOnce
+
+Signed-off-by: Davanum Srinivas <davanum@gmail.com>
 ---
  pkg/kubelet/kubelet.go                  |  71 ++++++----
  pkg/kubelet/kubelet_node_status.go      | 169 +++++++++++++++++++-----

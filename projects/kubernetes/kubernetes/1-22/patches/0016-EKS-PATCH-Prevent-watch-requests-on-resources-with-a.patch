@@ -1,0 +1,728 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Antonio Ojea <antonio.ojea.garcia@gmail.com>
+Date: Thu, 3 Mar 2022 12:01:59 +0100
+Subject: [PATCH] --EKS-PATCH-- Prevent watch requests on resources with an
+ uninitialized watch-cache from indefinitely counting as an inflight request
+
+Description:
+
+Upstream PR, Issue, KEP, etc. links:
+
+If this patch is based on an upstream commit, how (if at all) do this patch and the upstream source differ?
+
+If this patch's changes have not been added by upstream, why not?
+
+Other patches related to this patch:
+
+Changes made to this patch after its initial creation and reasons for these changes:
+
+Kubernetes version this patch can be dropped:
+
+---
+ .../apiserver/pkg/storage/cacher/cacher.go    |  52 ++----
+ .../storage/cacher/cacher_whitebox_test.go    | 147 +++++++++++++--
+ .../apiserver/pkg/storage/cacher/ready.go     | 141 ++++++++++++++
+ .../pkg/storage/cacher/ready_test.go          | 174 ++++++++++++++++++
+ 4 files changed, 462 insertions(+), 52 deletions(-)
+ create mode 100644 staging/src/k8s.io/apiserver/pkg/storage/cacher/ready.go
+ create mode 100644 staging/src/k8s.io/apiserver/pkg/storage/cacher/ready_test.go
+
+diff --git a/staging/src/k8s.io/apiserver/pkg/storage/cacher/cacher.go b/staging/src/k8s.io/apiserver/pkg/storage/cacher/cacher.go
+index 03efddb5bc7..457949a7b2d 100644
+--- a/staging/src/k8s.io/apiserver/pkg/storage/cacher/cacher.go
++++ b/staging/src/k8s.io/apiserver/pkg/storage/cacher/cacher.go
+@@ -457,7 +457,9 @@ func (c *Cacher) Watch(ctx context.Context, key string, opts storage.ListOptions
+ 		return nil, err
+ 	}
+ 
+-	c.ready.wait()
++	if err := c.ready.wait(ctx); err != nil {
++		return nil, errors.NewServiceUnavailable(err.Error())
++	}
+ 
+ 	triggerValue, triggerSupported := "", false
+ 	if c.indexedTrigger != nil {
+@@ -566,7 +568,9 @@ func (c *Cacher) Get(ctx context.Context, key string, opts storage.GetOptions, o
+ 
+ 	// Do not create a trace - it's not for free and there are tons
+ 	// of Get requests. We can add it if it will be really needed.
+-	c.ready.wait()
++	if err := c.ready.wait(ctx); err != nil {
++		return errors.NewServiceUnavailable(err.Error())
++	}
+ 
+ 	objVal, err := conversion.EnforcePtr(objPtr)
+ 	if err != nil {
+@@ -634,7 +638,9 @@ func (c *Cacher) GetToList(ctx context.Context, key string, opts storage.ListOpt
+ 	trace := utiltrace.New("cacher list", utiltrace.Field{"type", c.objectType.String()})
+ 	defer trace.LogIfLong(500 * time.Millisecond)
+ 
+-	c.ready.wait()
++	if err := c.ready.wait(ctx); err != nil {
++		return errors.NewServiceUnavailable(err.Error())
++	}
+ 	trace.Step("Ready")
+ 
+ 	// List elements with at least 'listRV' from cache.
+@@ -699,7 +705,7 @@ func (c *Cacher) List(ctx context.Context, key string, opts storage.ListOptions,
+ 	trace := utiltrace.New("cacher list", utiltrace.Field{"type", c.objectType.String()})
+ 	defer trace.LogIfLong(500 * time.Millisecond)
+ 
+-	c.ready.wait()
++	c.ready.wait(ctx)
+ 	trace.Step("Ready")
+ 
+ 	// List elements with at least 'listRV' from cache.
+@@ -1061,6 +1067,7 @@ func (c *Cacher) Stop() {
+ 		return
+ 	}
+ 	c.stopped = true
++	c.ready.stop()
+ 	c.stopLock.Unlock()
+ 	close(c.stopCh)
+ 	c.stopWg.Wait()
+@@ -1090,7 +1097,9 @@ func filterWithAttrsFunction(key string, p storage.SelectionPredicate) filterWit
+ 
+ // LastSyncResourceVersion returns resource version to which the underlying cache is synced.
+ func (c *Cacher) LastSyncResourceVersion() (uint64, error) {
+-	c.ready.wait()
++	if err := c.ready.wait(context.Background()); err != nil {
++		return 0, errors.NewServiceUnavailable(err.Error())
++	}
+ 
+ 	resourceVersion := c.reflector.LastSyncResourceVersion()
+ 	return c.versioner.ParseResourceVersion(resourceVersion)
+@@ -1437,36 +1446,3 @@ func (c *cacheWatcher) process(ctx context.Context, initEvents []*watchCacheEven
+ 		}
+ 	}
+ }
+-
+-type ready struct {
+-	ok bool
+-	c  *sync.Cond
+-}
+-
+-func newReady() *ready {
+-	return &ready{c: sync.NewCond(&sync.RWMutex{})}
+-}
+-
+-func (r *ready) wait() {
+-	r.c.L.Lock()
+-	for !r.ok {
+-		r.c.Wait()
+-	}
+-	r.c.L.Unlock()
+-}
+-
+-// TODO: Make check() function more sophisticated, in particular
+-// allow it to behave as "waitWithTimeout".
+-func (r *ready) check() bool {
+-	rwMutex := r.c.L.(*sync.RWMutex)
+-	rwMutex.RLock()
+-	defer rwMutex.RUnlock()
+-	return r.ok
+-}
+-
+-func (r *ready) set(ok bool) {
+-	r.c.L.Lock()
+-	defer r.c.L.Unlock()
+-	r.ok = ok
+-	r.c.Broadcast()
+-}
+diff --git a/staging/src/k8s.io/apiserver/pkg/storage/cacher/cacher_whitebox_test.go b/staging/src/k8s.io/apiserver/pkg/storage/cacher/cacher_whitebox_test.go
+index 69fc6e38e3c..2bff6a96a57 100644
+--- a/staging/src/k8s.io/apiserver/pkg/storage/cacher/cacher_whitebox_test.go
++++ b/staging/src/k8s.io/apiserver/pkg/storage/cacher/cacher_whitebox_test.go
+@@ -28,6 +28,7 @@ import (
+ 
+ 	v1 "k8s.io/api/core/v1"
+ 	apiequality "k8s.io/apimachinery/pkg/api/equality"
++	apierrors "k8s.io/apimachinery/pkg/api/errors"
+ 	"k8s.io/apimachinery/pkg/api/meta"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	"k8s.io/apimachinery/pkg/fields"
+@@ -341,7 +342,9 @@ func TestListCacheBypass(t *testing.T) {
+ 	result := &example.PodList{}
+ 
+ 	// Wait until cacher is initialized.
+-	cacher.ready.wait()
++	if err := cacher.ready.wait(context.Background()); err != nil {
++		t.Fatalf("unexpected error waiting for the cache to be ready")
++	}
+ 
+ 	// Inject error to underlying layer and check if cacher is not bypassed.
+ 	backingStorage.err = errDummy
+@@ -376,7 +379,9 @@ func TestGetToListCacheBypass(t *testing.T) {
+ 	result := &example.PodList{}
+ 
+ 	// Wait until cacher is initialized.
+-	cacher.ready.wait()
++	if err := cacher.ready.wait(context.Background()); err != nil {
++		t.Fatalf("unexpected error waiting for the cache to be ready")
++	}
+ 
+ 	// Inject error to underlying layer and check if cacher is not bypassed.
+ 	backingStorage.err = errDummy
+@@ -408,7 +413,9 @@ func TestGetCacheBypass(t *testing.T) {
+ 	result := &example.Pod{}
+ 
+ 	// Wait until cacher is initialized.
+-	cacher.ready.wait()
++	if err := cacher.ready.wait(context.Background()); err != nil {
++		t.Fatalf("unexpected error waiting for the cache to be ready")
++	}
+ 
+ 	// Inject error to underlying layer and check if cacher is not bypassed.
+ 	backingStorage.err = errDummy
+@@ -429,6 +436,34 @@ func TestGetCacheBypass(t *testing.T) {
+ 	}
+ }
+ 
++func TestWatchNotHangingOnStartupFailure(t *testing.T) {
++	// Configure cacher so that it can't initialize, because of
++	// constantly failing lists to the underlying storage.
++	dummyErr := fmt.Errorf("dummy")
++	backingStorage := &dummyStorage{err: dummyErr}
++	cacher, _, err := newTestCacher(backingStorage)
++	if err != nil {
++		t.Fatalf("Couldn't create cacher: %v", err)
++	}
++	defer cacher.Stop()
++
++	ctx, cancel := context.WithCancel(context.Background())
++	// Cancel the watch after some time to check if it will properly
++	// terminate instead of hanging forever.
++	go func() {
++		defer cancel()
++		cacher.clock.Sleep(5 * time.Second)
++	}()
++
++	// Watch hangs waiting on watchcache being initialized.
++	// Ensure that it terminates when its context is cancelled
++	// (e.g. the request is terminated for whatever reason).
++	_, err = cacher.Watch(ctx, "pods/ns", storage.ListOptions{ResourceVersion: "0"})
++	if err == nil || err.Error() != apierrors.NewServiceUnavailable(context.Canceled.Error()).Error() {
++		t.Errorf("Unexpected error: %#v", err)
++	}
++}
++
+ func TestWatcherNotGoingBackInTime(t *testing.T) {
+ 	backingStorage := &dummyStorage{}
+ 	cacher, _, err := newTestCacher(backingStorage)
+@@ -438,7 +473,9 @@ func TestWatcherNotGoingBackInTime(t *testing.T) {
+ 	defer cacher.Stop()
+ 
+ 	// Wait until cacher is initialized.
+-	cacher.ready.wait()
++	if err := cacher.ready.wait(context.Background()); err != nil {
++		t.Fatalf("unexpected error waiting for the cache to be ready")
++	}
+ 
+ 	// Ensure there is some budget for slowing down processing.
+ 	cacher.dispatchTimeoutBudget.returnUnused(100 * time.Millisecond)
+@@ -562,7 +599,9 @@ func TestCacheWatcherStoppedOnDestroy(t *testing.T) {
+ 	defer cacher.Stop()
+ 
+ 	// Wait until cacher is initialized.
+-	cacher.ready.wait()
++	if err := cacher.ready.wait(context.Background()); err != nil {
++		t.Fatalf("unexpected error waiting for the cache to be ready")
++	}
+ 
+ 	w, err := cacher.Watch(context.Background(), "pods/ns", storage.ListOptions{ResourceVersion: "0", Predicate: storage.Everything})
+ 	if err != nil {
+@@ -592,6 +631,68 @@ func TestCacheWatcherStoppedOnDestroy(t *testing.T) {
+ 
+ }
+ 
++func TestCacheDontAcceptRequestsStopped(t *testing.T) {
++	backingStorage := &dummyStorage{}
++	cacher, _, err := newTestCacher(backingStorage)
++	if err != nil {
++		t.Fatalf("Couldn't create cacher: %v", err)
++	}
++
++	// Wait until cacher is initialized.
++	if err := cacher.ready.wait(context.Background()); err != nil {
++		t.Fatalf("unexpected error waiting for the cache to be ready")
++	}
++
++	w, err := cacher.Watch(context.Background(), "pods/ns", storage.ListOptions{ResourceVersion: "0", Predicate: storage.Everything})
++	if err != nil {
++		t.Fatalf("Failed to create watch: %v", err)
++	}
++
++	watchClosed := make(chan struct{})
++	go func() {
++		defer close(watchClosed)
++		for event := range w.ResultChan() {
++			switch event.Type {
++			case watch.Added, watch.Modified, watch.Deleted:
++				// ok
++			default:
++				t.Errorf("unexpected event %#v", event)
++			}
++		}
++	}()
++
++	cacher.Stop()
++
++	_, err = cacher.Watch(context.Background(), "pods/ns", storage.ListOptions{ResourceVersion: "0", Predicate: storage.Everything})
++	if err == nil {
++		t.Fatalf("Success to create Watch: %v", err)
++	}
++
++	result := &example.Pod{}
++	err = cacher.Get(context.TODO(), "pods/ns/pod-0", storage.GetOptions{
++		IgnoreNotFound:  true,
++		ResourceVersion: "1",
++	}, result)
++	if err == nil {
++		t.Fatalf("Success to create Get: %v", err)
++	}
++
++	err = cacher.GetToList(context.TODO(), "pods/ns", storage.ListOptions{
++		ResourceVersion: "1",
++                Predicate:       storage.Everything,
++	}, result)
++	if err == nil {
++		t.Fatalf("Success to create GetList: %v", err)
++	}
++
++	select {
++	case <-watchClosed:
++	case <-time.After(wait.ForeverTestTimeout):
++		t.Errorf("timed out waiting for watch to close")
++	}
++
++}
++
+ func TestTimeBucketWatchersBasic(t *testing.T) {
+ 	filter := func(_ string, _ labels.Set, _ fields.Set) bool {
+ 		return true
+@@ -643,7 +744,9 @@ func TestCacherNoLeakWithMultipleWatchers(t *testing.T) {
+ 	defer cacher.Stop()
+ 
+ 	// Wait until cacher is initialized.
+-	cacher.ready.wait()
++	if err := cacher.ready.wait(context.Background()); err != nil {
++		t.Fatalf("unexpected error waiting for the cache to be ready")
++	}
+ 	pred := storage.Everything
+ 	pred.AllowWatchBookmarks = true
+ 
+@@ -731,7 +834,9 @@ func testCacherSendBookmarkEvents(t *testing.T, allowWatchBookmarks, expectedBoo
+ 	defer cacher.Stop()
+ 
+ 	// Wait until cacher is initialized.
+-	cacher.ready.wait()
++	if err := cacher.ready.wait(context.Background()); err != nil {
++		t.Fatalf("unexpected error waiting for the cache to be ready")
++	}
+ 	pred := storage.Everything
+ 	pred.AllowWatchBookmarks = allowWatchBookmarks
+ 
+@@ -823,7 +928,9 @@ func TestCacherSendsMultipleWatchBookmarks(t *testing.T) {
+ 	cacher.bookmarkWatchers.bookmarkFrequency = time.Second
+ 
+ 	// Wait until cacher is initialized.
+-	cacher.ready.wait()
++	if err := cacher.ready.wait(context.Background()); err != nil {
++		t.Fatalf("unexpected error waiting for the cache to be ready")
++	}
+ 	pred := storage.Everything
+ 	pred.AllowWatchBookmarks = true
+ 
+@@ -890,7 +997,9 @@ func TestDispatchingBookmarkEventsWithConcurrentStop(t *testing.T) {
+ 	defer cacher.Stop()
+ 
+ 	// Wait until cacher is initialized.
+-	cacher.ready.wait()
++	if err := cacher.ready.wait(context.Background()); err != nil {
++		t.Fatalf("unexpected error waiting for the cache to be ready")
++	}
+ 
+ 	// Ensure there is some budget for slowing down processing.
+ 	cacher.dispatchTimeoutBudget.returnUnused(100 * time.Millisecond)
+@@ -966,7 +1075,9 @@ func TestBookmarksOnResourceVersionUpdates(t *testing.T) {
+ 	cacher.bookmarkWatchers = newTimeBucketWatchers(clock.RealClock{}, 2*time.Second)
+ 
+ 	// Wait until cacher is initialized.
+-	cacher.ready.wait()
++	if err := cacher.ready.wait(context.Background()); err != nil {
++		t.Fatalf("unexpected error waiting for the cache to be ready")
++	}
+ 
+ 	makePod := func(i int) *examplev1.Pod {
+ 		return &examplev1.Pod{
+@@ -1036,7 +1147,9 @@ func TestStartingResourceVersion(t *testing.T) {
+ 	defer cacher.Stop()
+ 
+ 	// Wait until cacher is initialized.
+-	cacher.ready.wait()
++	if err := cacher.ready.wait(context.Background()); err != nil {
++		t.Fatalf("unexpected error waiting for the cache to be ready")
++	}
+ 
+ 	// Ensure there is some budget for slowing down processing.
+ 	// We use the fakeTimeBudget to prevent this test from flaking under
+@@ -1117,7 +1230,9 @@ func TestDispatchEventWillNotBeBlockedByTimedOutWatcher(t *testing.T) {
+ 	defer cacher.Stop()
+ 
+ 	// Wait until cacher is initialized.
+-	cacher.ready.wait()
++	if err := cacher.ready.wait(context.Background()); err != nil {
++		t.Fatalf("unexpected error waiting for the cache to be ready")
++	}
+ 
+ 	// Ensure there is some budget for slowing down processing.
+ 	// We use the fakeTimeBudget to prevent this test from flaking under
+@@ -1226,7 +1341,9 @@ func TestCachingDeleteEvents(t *testing.T) {
+ 	defer cacher.Stop()
+ 
+ 	// Wait until cacher is initialized.
+-	cacher.ready.wait()
++	if err := cacher.ready.wait(context.Background()); err != nil {
++		t.Fatalf("unexpected error waiting for the cache to be ready")
++	}
+ 
+ 	fooPredicate := storage.SelectionPredicate{
+ 		Label: labels.SelectorFromSet(map[string]string{"foo": "true"}),
+@@ -1306,7 +1423,9 @@ func testCachingObjects(t *testing.T, watchersCount int) {
+ 	defer cacher.Stop()
+ 
+ 	// Wait until cacher is initialized.
+-	cacher.ready.wait()
++	if err := cacher.ready.wait(context.Background()); err != nil {
++		t.Fatalf("unexpected error waiting for the cache to be ready")
++	}
+ 
+ 	dispatchedEvents := []*watchCacheEvent{}
+ 	cacher.watchCache.eventHandler = func(event *watchCacheEvent) {
+diff --git a/staging/src/k8s.io/apiserver/pkg/storage/cacher/ready.go b/staging/src/k8s.io/apiserver/pkg/storage/cacher/ready.go
+new file mode 100644
+index 00000000000..47e03fe9e27
+--- /dev/null
++++ b/staging/src/k8s.io/apiserver/pkg/storage/cacher/ready.go
+@@ -0,0 +1,141 @@
++/*
++Copyright 2022 The Kubernetes Authors.
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++*/
++
++package cacher
++
++import (
++	"context"
++	"fmt"
++	"sync"
++)
++
++type status int
++
++const (
++	Pending status = iota
++	Ready
++	Stopped
++)
++
++// ready is a three state condition variable that blocks until is Ready if is not Stopped.
++// Its initial state is Pending and its state machine diagram is as follow.
++//
++// Pending <------> Ready -----> Stopped
++//
++//	|                           ^
++//	└---------------------------┘
++type ready struct {
++	state       status        // represent the state of the variable
++	lock        sync.RWMutex  // protect the state variable
++	restartLock sync.Mutex    // protect the transition from ready to pending where the channel is recreated
++	waitCh      chan struct{} // blocks until is ready or stopped
++}
++
++func newReady() *ready {
++	return &ready{
++		waitCh: make(chan struct{}),
++		state:  Pending,
++	}
++}
++
++// done close the channel once the state is Ready or Stopped
++func (r *ready) done() chan struct{} {
++	r.restartLock.Lock()
++	defer r.restartLock.Unlock()
++	return r.waitCh
++}
++
++// wait blocks until it is Ready or Stopped, it returns an error if is Stopped.
++func (r *ready) wait(ctx context.Context) error {
++	for {
++		// r.done() only blocks if state is Pending
++		select {
++		case <-ctx.Done():
++			return ctx.Err()
++		case <-r.done():
++		}
++
++		r.lock.RLock()
++		switch r.state {
++		case Pending:
++			// since we allow to switch between the states Pending and Ready
++			// if there is a quick transition from Pending -> Ready -> Pending
++			// a process that was waiting can get unblocked and see a Pending
++			// state again. If the state is Pending we have to wait again to
++			// avoid an inconsistent state on the system, with some processes not
++			// waiting despite the state moved back to Pending.
++			r.lock.RUnlock()
++		case Ready:
++			r.lock.RUnlock()
++			return nil
++		case Stopped:
++			r.lock.RUnlock()
++			return fmt.Errorf("apiserver cacher is stopped")
++		default:
++			r.lock.RUnlock()
++			return fmt.Errorf("unexpected apiserver cache state: %v", r.state)
++		}
++	}
++}
++
++// check returns true only if it is Ready.
++func (r *ready) check() bool {
++	r.lock.RLock()
++	defer r.lock.RUnlock()
++	return r.state == Ready
++}
++
++// set the state to Pending (false) or Ready (true), it does not have effect if the state is Stopped.
++func (r *ready) set(ok bool) {
++	r.lock.Lock()
++	defer r.lock.Unlock()
++	if r.state == Stopped {
++		return
++	}
++	if ok && r.state == Pending {
++		r.state = Ready
++		select {
++		case <-r.waitCh:
++		default:
++			close(r.waitCh)
++		}
++	} else if !ok && r.state == Ready {
++		// creating the waitCh can be racy if
++		// something enter the wait() method
++		select {
++		case <-r.waitCh:
++			r.restartLock.Lock()
++			r.waitCh = make(chan struct{})
++			r.restartLock.Unlock()
++		default:
++		}
++		r.state = Pending
++	}
++}
++
++// stop the condition variable and set it as Stopped. This state is irreversible.
++func (r *ready) stop() {
++	r.lock.Lock()
++	defer r.lock.Unlock()
++	if r.state != Stopped {
++		r.state = Stopped
++	}
++	select {
++	case <-r.waitCh:
++	default:
++		close(r.waitCh)
++	}
++}
+diff --git a/staging/src/k8s.io/apiserver/pkg/storage/cacher/ready_test.go b/staging/src/k8s.io/apiserver/pkg/storage/cacher/ready_test.go
+new file mode 100644
+index 00000000000..18556630d70
+--- /dev/null
++++ b/staging/src/k8s.io/apiserver/pkg/storage/cacher/ready_test.go
+@@ -0,0 +1,174 @@
++/*
++Copyright 2022 The Kubernetes Authors.
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++*/
++
++package cacher
++
++import (
++	"context"
++	"testing"
++	"time"
++)
++
++func Test_newReady(t *testing.T) {
++	errCh := make(chan error, 10)
++	ready := newReady()
++	ready.set(false)
++	// create 10 goroutines waiting for ready
++	for i := 0; i < 10; i++ {
++		go func() {
++			errCh <- ready.wait(context.Background())
++		}()
++	}
++	select {
++	case <-time.After(1 * time.Second):
++	case <-errCh:
++		t.Errorf("ready should be blocking")
++	}
++	ready.set(true)
++	for i := 0; i < 10; i++ {
++		if err := <-errCh; err != nil {
++			t.Errorf("unexpected error on channel %d", i)
++		}
++	}
++}
++
++func Test_newReadySetIdempotent(t *testing.T) {
++	errCh := make(chan error, 10)
++	ready := newReady()
++	ready.set(false)
++	ready.set(false)
++	ready.set(false)
++	ready.set(true)
++	ready.set(true)
++	ready.set(true)
++	ready.set(false)
++	// create 10 goroutines waiting for ready and stop
++	for i := 0; i < 10; i++ {
++		go func() {
++			errCh <- ready.wait(context.Background())
++		}()
++	}
++	select {
++	case <-time.After(1 * time.Second):
++	case <-errCh:
++		t.Errorf("ready should be blocking")
++	}
++	ready.set(true)
++	for i := 0; i < 10; i++ {
++		if err := <-errCh; err != nil {
++			t.Errorf("unexpected error on channel %d", i)
++		}
++	}
++}
++
++// Test_newReadyRacy executes all the possible transitions randomly.
++// It must run with the race detector enabled.
++func Test_newReadyRacy(t *testing.T) {
++	concurrency := 1000
++	errCh := make(chan error, concurrency)
++	ready := newReady()
++	ready.set(false)
++	for i := 0; i < concurrency; i++ {
++		go func() {
++			errCh <- ready.wait(context.Background())
++		}()
++		go func() {
++			ready.set(false)
++		}()
++		go func() {
++			ready.set(true)
++		}()
++	}
++	ready.set(true)
++	for i := 0; i < concurrency; i++ {
++		if err := <-errCh; err != nil {
++			t.Errorf("unexpected error %v on channel %d", err, i)
++		}
++	}
++}
++
++func Test_newReadyStop(t *testing.T) {
++	errCh := make(chan error, 10)
++	ready := newReady()
++	ready.set(false)
++	// create 10 goroutines waiting for ready and stop
++	for i := 0; i < 10; i++ {
++		go func() {
++			errCh <- ready.wait(context.Background())
++		}()
++	}
++	select {
++	case <-time.After(1 * time.Second):
++	case <-errCh:
++		t.Errorf("ready should be blocking")
++	}
++	ready.stop()
++	for i := 0; i < 10; i++ {
++		if err := <-errCh; err == nil {
++			t.Errorf("unexpected success on channel %d", i)
++		}
++	}
++}
++
++func Test_newReadyCheck(t *testing.T) {
++	ready := newReady()
++	// it starts as false
++	if ready.check() {
++		t.Errorf("unexpected ready state %v", ready.check())
++	}
++	ready.set(true)
++	if !ready.check() {
++		t.Errorf("unexpected ready state %v", ready.check())
++	}
++	// stop sets ready to false
++	ready.stop()
++	if ready.check() {
++		t.Errorf("unexpected ready state %v", ready.check())
++	}
++	// can not set to true if is stopped
++	ready.set(true)
++	if ready.check() {
++		t.Errorf("unexpected ready state %v", ready.check())
++	}
++	err := ready.wait(context.Background())
++	if err == nil {
++		t.Errorf("expected error waiting on a stopped state")
++	}
++}
++
++func Test_newReadyCancelPending(t *testing.T) {
++	errCh := make(chan error, 10)
++	ready := newReady()
++	ready.set(false)
++	ctx, cancel := context.WithCancel(context.Background())
++	// create 10 goroutines stuck on pending
++	for i := 0; i < 10; i++ {
++		go func() {
++			errCh <- ready.wait(ctx)
++		}()
++	}
++	select {
++	case <-time.After(1 * time.Second):
++	case <-errCh:
++		t.Errorf("ready should be blocking")
++	}
++	cancel()
++	for i := 0; i < 10; i++ {
++		if err := <-errCh; err == nil {
++			t.Errorf("unexpected success on channel %d", i)
++		}
++	}
++}
