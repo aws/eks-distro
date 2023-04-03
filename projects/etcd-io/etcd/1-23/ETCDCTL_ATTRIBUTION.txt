@@ -538,19 +538,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 https://github.com/golang/go
 
 ** golang.org/x/crypto; version v0.0.0-20220411220226-7b82a4e95df4 --
-https://go.googlesource.com/crypto
+https://golang.org/x/crypto
 
 ** golang.org/x/net; version v0.0.0-20211112202133-69e39bad7dc2 --
-https://go.googlesource.com/net
+https://golang.org/x/net
 
 ** golang.org/x/sys; version v0.0.0-20210615035016-665e8c7367d1 --
-https://go.googlesource.com/sys
+https://golang.org/x/sys
 
 ** golang.org/x/text; version v0.3.6 --
-https://go.googlesource.com/text
+https://golang.org/x/text
 
 ** golang.org/x/time/rate; version v0.0.0-20210220033141-f8bda1e9f3ba --
-https://go.googlesource.com/time
+https://golang.org/x/time
 
 Copyright (c) 2009 The Go Authors. All rights reserved.
 
