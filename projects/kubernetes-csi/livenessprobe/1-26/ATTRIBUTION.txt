@@ -410,13 +410,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 https://github.com/golang/go
 
 ** golang.org/x/net; version v0.7.0 --
-https://go.googlesource.com/net
+https://golang.org/x/net
 
 ** golang.org/x/sys/unix; version v0.5.0 --
-https://go.googlesource.com/sys
+https://golang.org/x/sys
 
 ** golang.org/x/text; version v0.7.0 --
-https://go.googlesource.com/text
+https://golang.org/x/text
 
 Copyright (c) 2009 The Go Authors. All rights reserved.
 

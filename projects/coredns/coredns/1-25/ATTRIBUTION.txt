@@ -519,25 +519,25 @@ https://github.com/aws/aws-sdk-go
 https://github.com/golang/go
 
 ** golang.org/x/crypto; version v0.0.0-20220525230936-793ad666bf5e --
-https://go.googlesource.com/crypto
+https://golang.org/x/crypto
 
 ** golang.org/x/net; version v0.0.0-20220520000938-2e3eb7b945c2 --
-https://go.googlesource.com/net
+https://golang.org/x/net
 
 ** golang.org/x/oauth2; version v0.0.0-20220411215720-9780585627b5 --
-https://go.googlesource.com/oauth2
+https://golang.org/x/oauth2
 
 ** golang.org/x/sys; version v0.0.0-20220520151302-bc2c85ada10a --
-https://go.googlesource.com/sys
+https://golang.org/x/sys
 
 ** golang.org/x/term; version v0.0.0-20210927222741-03fcf44c2211 --
-https://go.googlesource.com/term
+https://golang.org/x/term
 
 ** golang.org/x/text; version v0.3.7 --
-https://go.googlesource.com/text
+https://golang.org/x/text
 
 ** golang.org/x/time/rate; version v0.0.0-20220210224613-90d013bbcef8 --
-https://go.googlesource.com/time
+https://golang.org/x/time
 
 ** k8s.io/apimachinery/third_party/forked/golang/reflect; version v0.24.0 --
 https://github.com/kubernetes/apimachinery
@@ -1014,7 +1014,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ------
 
 ** golang.org/x/xerrors; version v0.0.0-20220517211312-f3a8303e98df --
-https://go.googlesource.com/xerrors
+https://golang.org/x/xerrors
 
 Copyright (c) 2019 The Go Authors. All rights reserved.
 
