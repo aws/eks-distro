@@ -5,6 +5,7 @@ This changelog highlights the changes for [v1-26-eks-3](https://github.com/aws/e
 ## Changes
 
 ### Projects Version Updates
+No changes since last release
 
-
-
+### Base Image
+* Base Image Update ([1789](https://github.com/aws/eks-distro/pull/1789))

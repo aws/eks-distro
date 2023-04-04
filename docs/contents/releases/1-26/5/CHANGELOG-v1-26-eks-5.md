@@ -4,12 +4,13 @@ This changelog highlights the changes for [v1-26-eks-5](https://github.com/aws/e
 
 ## Changes
 
-### Projects Version Updates
+### Patches
+* Bump to Kubernetes 1.26.2 ([1854](https://github.com/aws/eks-distro/pull/1854))
 
+### Projects Version Updates
 * kube-apiserver : v1.26.1 -> v1.26.2
 * kube-controller-manager : v1.26.1 -> v1.26.2
 * kube-proxy : v1.26.1 -> v1.26.2
-* kube-proxy-base : v1.26.1 -> v1.26.2
 * kube-scheduler : v1.26.1 -> v1.26.2
 * pause : v1.26.1 -> v1.26.2
 
