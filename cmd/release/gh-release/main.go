@@ -56,7 +56,7 @@ func createGitHubRelease(r *release.Release) error {
 		"/bin/bash",
 		ghReleaseScriptPath,
 		r.Tag(),
-		filepath.Join(docsDirectory, values.GetChangelogFileName(r, overrideNumber)),
+		filepath.Join(docsDirectory, values.GetChangelogFileName(r)),
 		filepath.Join(docsDirectory, "index.md"),
 	)
 
