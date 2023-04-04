@@ -13,9 +13,7 @@ import (
 	"github.com/aws/eks-distro/cmd/release/utils/values"
 )
 
-const (
-	changeType = changetype.Docs
-)
+const changeType = changetype.Docs
 
 // Generates docs for release. The release MUST already be out, and all upstream changes MUST be pulled down locally.
 // Value for 'branch' flag must be provided. Value for 'hasChangelogChanges' flag should be 'false' if auto-
