@@ -55,7 +55,7 @@ func main() {
 
 	abandon := abandonFunc(gm)
 
-	docs, err := newdocs.CreateNewDocsInput(r, *hasReleaseAnnouncement, *overrideNumber)
+	docs, err := newdocs.CreateNewDocsInput(r, *hasReleaseAnnouncement)
 
 	if err != nil {
 		abandon()

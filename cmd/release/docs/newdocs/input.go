@@ -21,7 +21,7 @@ type releaseInfo interface {
 	Number() string
 }
 
-func CreateNewDocsInput(ri releaseInfo, hasAnnouncement bool, overrideNumber int) ([]NewDocInput, error) {
+func CreateNewDocsInput(ri releaseInfo, hasAnnouncement bool) ([]NewDocInput, error) {
 	changeLogWriter, err := getTemplateWriter(ri, changelogTemplateInput)
 	if err != nil {
 		return []NewDocInput{}, fmt.Errorf("getting template writer for changelog: %w", err)
