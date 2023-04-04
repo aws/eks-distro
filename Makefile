@@ -239,8 +239,8 @@ release-docs:
 	go run ./cmd/release/docs/main.go \
 		--branch=$(RELEASE_BRANCH)
 
-.PHONY: release-docs-no-git-no-announcement
-release-docs-no-git-no-announcement:
+.PHONY: release-docs-limited
+release-docs-limited:
 	go vet ./cmd/release/docs
 	go run ./cmd/release/docs/main.go \
 		--branch=$(RELEASE_BRANCH) \
