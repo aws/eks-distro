@@ -4,7 +4,7 @@ SUPPORTED_RELEASE_BRANCHES?=$(shell cat $(BASE_DIRECTORY)/release/SUPPORTED_RELE
 RELEASE_ENVIRONMENT?=development
 RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/$(RELEASE_ENVIRONMENT)/RELEASE)
 PROD_RELEASE=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/production/RELEASE)
-OVERRIDE_NUMBER?=""
+OVERRIDE_NUMBER?=-1
 ARTIFACT_BUCKET?=my-s3-bucket
 
 AWS_ACCOUNT_ID?=$(shell aws sts get-caller-identity --query Account --output text)
@@ -239,14 +239,15 @@ release-docs:
 	go run ./cmd/release/docs/main.go \
 		--branch=$(RELEASE_BRANCH)
 
-.PHONY: release-docs-no-git-no-announcement
-release-docs-no-git-no-announcement:
+.PHONY: release-docs-limited
+release-docs-limited:
 	go vet ./cmd/release/docs
 	go run ./cmd/release/docs/main.go \
 		--branch=$(RELEASE_BRANCH) \
-		--generateChangelogChanges=true \
-		--openPR=false \
-		--releaseAnnouncement=false
+		--generateChangelogChanges=false \
+		--manageGitAndOpenPR=false \
+		--releaseAnnouncement=false \
+		--optionalOverrideNumber=$(OVERRIDE_NUMBER)
 
 .PHONY: github-release
 github-release:

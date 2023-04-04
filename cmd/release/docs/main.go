@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"log"
+	"strconv"
 
 	"github.com/aws/eks-distro/cmd/release/docs/existingdocs"
 	"github.com/aws/eks-distro/cmd/release/docs/newdocs"
@@ -15,29 +16,34 @@ import (
 const changeType = changetype.Docs
 
 // Generates docs for release. The release MUST already be out, and all upstream changes MUST be pulled down locally.
-// Value for 'branch' flag must be provided. Value for 'hasGenerateChangelogChanges' flag should be 'false' if auto-
+// Value for 'branch' flag must be provided. Value for 'hasChangelogChanges' flag should be 'false' if auto-
 // generating the changes in the changelog will cause an error.
 // TODO: fix the hacky code related to opening PRs and git commands. It is bad, and I am sorry.
 func main() {
 	branch := flag.String("branch", "", "Release branch, e.g. 1-23")
-	hasGenerateChangelogChanges :=
-		flag.Bool("generateChangelogChanges", true, "If changes in changelog should be generated")
-	hasOpenPR := flag.Bool("openPR", true, "If PR and all git stuff should be done")
+	hasChangelogChanges := flag.Bool("generateChangelogChanges", true, "If changes in changelog should be generated")
+	hasManageGitAndPR := flag.Bool("manageGitAndOpenPR", true, "If PR and all git should be done")
 	hasReleaseAnnouncement := flag.Bool("releaseAnnouncement", true, "If changes in changelog should be generated")
+	overrideNumber := flag.Int("optionalOverrideNumber", release.InvalidNumberUpperLimit,
+		"USE WITH CAUTION! Value to force override for number. Any value less than or equal to "+
+			strconv.Itoa(release.InvalidNumberUpperLimit)+" is considered an indication that the number should not be overridden.")
 	flag.Parse()
 
 	////////////	Create Release		////////////////////////////////////
 
 	// The actual release MUST already be out, and all upstream changes MUST be pulled down locally.
-	r, err := release.NewRelease(*branch, changeType)
-	if err != nil {
-		log.Fatalf("creating new release: %v", err)
-	}
+	r, err := func(overrideNum int, branch *string) (*release.Release, error) {
+		if overrideNum > release.InvalidNumberUpperLimit {
+			return release.NewReleaseOverrideNumber(*branch, strconv.Itoa(overrideNum))
+		} else {
+			return release.NewRelease(*branch, changeType)
+		}
+	}(*overrideNumber, branch)
 
 	////////////	Create Git Manager	////////////////////////////////////
 
 	var gm *git.Manager
-	if *hasOpenPR {
+	if *hasManageGitAndPR {
 		gm, err = git.CreateGitManager(r.Branch(), r.Number(), changeType)
 		if err != nil {
 			log.Fatalf("creating new git manager: %v", err)
@@ -50,7 +56,7 @@ func main() {
 
 	abandon := abandonFunc(gm)
 
-	docs, err := newdocs.CreateNewDocsInput(r, *hasGenerateChangelogChanges, *hasReleaseAnnouncement)
+	docs, err := newdocs.CreateNewDocsInput(r, *hasChangelogChanges, *hasReleaseAnnouncement)
 	if err != nil {
 		abandon()
 		log.Fatalf("creating new docs input: %v", err)
@@ -68,7 +74,7 @@ func main() {
 		cleanUpDir()
 		log.Fatalf("creating new docs: %v", err)
 	}
-	if *hasOpenPR {
+	if *hasManageGitAndPR {
 		if err = gm.AddAndCommitDirectory(*newDocsDir); err != nil {
 			cleanUpDir()
 			log.Fatalf("adding and committing new docs %q\n%v", newDocsDir, err)
@@ -93,7 +99,7 @@ func main() {
 			cleanUp(ap)
 			log.Fatalf("updating %s: %v", ap, err)
 		}
-		if *hasOpenPR {
+		if *hasManageGitAndPR {
 			if err = gm.AddAndCommit(ap); err != nil {
 				cleanUp(ap)
 				log.Fatalf("adding and committing %s after changes had been made: %v", ap, err)
@@ -105,7 +111,7 @@ func main() {
 
 	////////////	Open PR		////////////////////////////////////
 
-	if *hasOpenPR {
+	if *hasManageGitAndPR {
 		if err = gm.OpenPR(); err != nil {
 			log.Fatalf("opening PR: %v", err)
 		}

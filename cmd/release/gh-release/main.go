@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
 
 	"github.com/aws/eks-distro/cmd/release/utils/changetype"
 	"github.com/aws/eks-distro/cmd/release/utils/release"
@@ -23,22 +24,21 @@ var (
 
 // Generates a release on GitHub. IMPORTANT! Only run after the prod release is out, you've pulled down the latest
 // changes, and the git tag for the release is on GitHub.
-// TODO: implement number override for release
 func main() {
 	branch := flag.String("branch", "", "Release branch, e.g. 1-22")
-	overrideNumber := flag.String("overrideNumber", "", "Optional override number, e.g. 1")
+	overrideNumber := flag.Int("overrideNumber", release.InvalidNumberUpperLimit, "Optional override number, e.g. 1")
 
 	flag.Parse()
 
 	var err error
 	var r = &release.Release{}
-	if len(*overrideNumber) == 0 {
+	if *overrideNumber <= release.InvalidNumberUpperLimit {
 		r, err = release.NewRelease(*branch, changetype.GHRelease)
 		if err != nil {
 			log.Fatalf("creating release values: %v", err)
 		}
 	} else {
-		r, err = release.NewReleaseOverrideNumber(*branch, *overrideNumber)
+		r, err = release.NewReleaseOverrideNumber(*branch, strconv.Itoa(*overrideNumber))
 		if err != nil {
 			log.Fatalf("creating release values with override number: %v", err)
 		}

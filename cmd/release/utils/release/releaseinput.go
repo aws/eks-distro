@@ -2,16 +2,14 @@ package release
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/aws/eks-distro/cmd/release/utils/changetype"
 	"github.com/aws/eks-distro/cmd/release/utils/values"
 )
 
-const (
-	minOverrideNumber = "0"
-	defaultReleaseEnv = changetype.Prod
-)
+const defaultReleaseEnv = changetype.Prod
 
 func newRelease(releaseBranchInput string, overrideNumInput string, hasOverrideNum bool) (*Release, error) {
 	rb, num, err := generateReleaseInput(releaseBranchInput, overrideNumInput, hasOverrideNum)
@@ -65,9 +63,9 @@ func generateReleaseInput(releaseBranchInput string, overrideNumInput string, ha
 		return "", "", fmt.Errorf("determining number: %w", err)
 	}
 	if hasOverrideNum {
-		if strings.Compare(minOverrideNumber, overrideNum) == 1 || strings.Compare(overrideNum, localNum) == 1 {
-			return "", "", fmt.Errorf("override number %s must between min number %s and local number %s (inclusive)",
-				overrideNum, minOverrideNumber, localNum)
+		if strings.Compare(strconv.Itoa(MinNumber), overrideNum) == 1 || strings.Compare(overrideNum, localNum) == 1 {
+			return "", "", fmt.Errorf("override number %s must between min number %d and local number %s (inclusive)",
+				overrideNum, MinNumber, localNum)
 		}
 		number = overrideNum
 	} else {
