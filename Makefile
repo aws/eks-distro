@@ -244,7 +244,7 @@ release-docs-no-git-no-announcement:
 	go vet ./cmd/release/docs
 	go run ./cmd/release/docs/main.go \
 		--branch=$(RELEASE_BRANCH) \
-		--generateChangelogChanges=true \
+		--generateChangelogChanges=false \
 		--openPR=false \
 		--releaseAnnouncement=false
 
