@@ -245,8 +245,9 @@ release-docs-limited:
 	go run ./cmd/release/docs/main.go \
 		--branch=$(RELEASE_BRANCH) \
 		--generateChangelogChanges=false \
-		--openPR=false \
-		--releaseAnnouncement=false
+		--manageGitAndOpenPR=false \
+		--releaseAnnouncement=false \
+		--optionalOverrideNumber=$(OVERRIDE_NUMBER)
 
 .PHONY: github-release
 github-release:
