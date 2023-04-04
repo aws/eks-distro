@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"log"
+	"strconv"
 
 	"github.com/aws/eks-distro/cmd/release/docs/existingdocs"
 	"github.com/aws/eks-distro/cmd/release/docs/newdocs"
@@ -13,9 +14,7 @@ import (
 )
 
 const (
-	changeType              = changetype.Docs
-	minNumber               = 0
-	invalidNumberUpperLimit = minNumber - 1
+	changeType = changetype.Docs
 )
 
 // Generates docs for release. The release MUST already be out, and all upstream changes MUST be pulled down locally.
@@ -27,19 +26,19 @@ func main() {
 	hasChangelogChanges := flag.Bool("generateChangelogChanges", true, "If changes in changelog should be generated")
 	hasManageGitAndPR := flag.Bool("manageGitAndOpenPR", true, "If PR and all git should be done")
 	hasReleaseAnnouncement := flag.Bool("releaseAnnouncement", true, "If changes in changelog should be generated")
-	overrideNumber := flag.Int("optionalOverrideNumber", invalidNumberUpperLimit,
+	overrideNumber := flag.Int("optionalOverrideNumber", release.InvalidNumberUpperLimit,
 		"USE WITH CAUTION! Value to force override for number. Any value less than or equal to "+
-			string(rune(invalidNumberUpperLimit))+" is considered an indication that the number should not be overridden.")
+			strconv.Itoa(release.InvalidNumberUpperLimit)+" is considered an indication that the number should not be overridden.")
 	flag.Parse()
 
 	////////////	Create Release		////////////////////////////////////
 
 	// The actual release MUST already be out, and all upstream changes MUST be pulled down locally.
 	r, err := func(overrideNum int, branch *string) (*release.Release, error) {
-		if overrideNum > invalidNumberUpperLimit {
-			return release.NewRelease(*branch, changeType)
+		if overrideNum > release.InvalidNumberUpperLimit {
+			return release.NewReleaseOverrideNumber(*branch, strconv.Itoa(overrideNum))
 		} else {
-			return release.NewReleaseOverrideNumber(*branch, string(rune(overrideNum)))
+			return release.NewRelease(*branch, changeType)
 		}
 	}(*overrideNumber, branch)
 

@@ -4,7 +4,7 @@ SUPPORTED_RELEASE_BRANCHES?=$(shell cat $(BASE_DIRECTORY)/release/SUPPORTED_RELE
 RELEASE_ENVIRONMENT?=development
 RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/$(RELEASE_ENVIRONMENT)/RELEASE)
 PROD_RELEASE=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/production/RELEASE)
-OVERRIDE_NUMBER?=""
+OVERRIDE_NUMBER?=-1
 ARTIFACT_BUCKET?=my-s3-bucket
 
 AWS_ACCOUNT_ID?=$(shell aws sts get-caller-identity --query Account --output text)
