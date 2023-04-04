@@ -21,9 +21,8 @@ const changeType = changetype.Docs
 // TODO: fix the hacky code related to opening PRs and git commands. It is bad, and I am sorry.
 func main() {
 	branch := flag.String("branch", "", "Release branch, e.g. 1-23")
-	hasChangelogChanges :=
-		flag.Bool("generateChangelogChanges", true, "If changes in changelog should be generated")
-	hasManageGitAndPR := flag.Bool("manageGitAndOpenPR", true, "If PR and all git stuff should be done")
+	hasChangelogChanges := flag.Bool("generateChangelogChanges", true, "If changes in changelog should be generated")
+	hasManageGitAndPR := flag.Bool("manageGitAndOpenPR", true, "If PR and all git should be done")
 	hasReleaseAnnouncement := flag.Bool("releaseAnnouncement", true, "If changes in changelog should be generated")
 	overrideNumber := flag.Int("optionalOverrideNumber", release.InvalidNumberUpperLimit,
 		"USE WITH CAUTION! Value to force override for number. Any value less than or equal to "+
@@ -58,6 +57,7 @@ func main() {
 	abandon := abandonFunc(gm)
 
 	docs, err := newdocs.CreateNewDocsInput(r, *hasChangelogChanges, *hasReleaseAnnouncement, *overrideNumber)
+
 	if err != nil {
 		abandon()
 		log.Fatalf("creating new docs input: %v", err)
