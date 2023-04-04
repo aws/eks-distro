@@ -19,7 +19,7 @@ type releaseInfo interface {
 	KubernetesMinorVersion() string
 }
 
-func CreateNewDocsInput(ri releaseInfo, hasGenerateChangelogChanges bool, hasAnnouncement bool) ([]NewDocInput, error) {
+func CreateNewDocsInput(ri releaseInfo, hasGenerateChangelogChanges bool, hasAnnouncement bool, overrideNumber int) ([]NewDocInput, error) {
 	changeLogWriter, err := getTemplateWriter(ri, changelogTemplateInput)
 	if err != nil {
 		return []NewDocInput{}, fmt.Errorf("getting template writer for changelog: %w", err)
@@ -32,7 +32,7 @@ func CreateNewDocsInput(ri releaseInfo, hasGenerateChangelogChanges bool, hasAnn
 
 	var changelogAppendToEnd func() (string, error)
 	if hasGenerateChangelogChanges {
-		changelogAppendToEnd = getPrInfoForChangelogFunc(ri)
+		changelogAppendToEnd = getPrInfoForChangelogFunc(ri, overrideNumber)
 	}
 
 	newDocInput := []NewDocInput{
@@ -70,9 +70,9 @@ var getComponentsFromReleaseManifestFunc = func(ri releaseInfo) func() (string, 
 	}
 }
 
-var getPrInfoForChangelogFunc = func(ri releaseInfo) func() (string, error) {
+var getPrInfoForChangelogFunc = func(ri releaseInfo, overrideNumber int) func() (string, error) {
 	releaseVersion := "v" + ri.KubernetesMinorVersion()
 	return func() (string, error) {
-		return values.GetChangelogPRs(releaseVersion)
+		return values.GetChangelogPRs(releaseVersion, overrideNumber)
 	}
 }
