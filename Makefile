@@ -244,7 +244,6 @@ release-docs-limited:
 	go vet ./cmd/release/docs
 	go run ./cmd/release/docs/main.go \
 		--branch=$(RELEASE_BRANCH) \
-		--generateChangelogChanges=false \
 		--manageGitAndOpenPR=false \
 		--releaseAnnouncement=false \
 		--optionalOverrideNumber=$(OVERRIDE_NUMBER)
