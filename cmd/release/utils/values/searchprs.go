@@ -9,7 +9,8 @@ import (
 )
 
 const (
-	baseQuery = "repo:aws/eks-distro is:pr is:merged"
+	baseQuery        = "repo:aws/eks-distro is:pr is:merged"
+	githubTimeFormat = "2006-01-02T15:04:05+00:00"
 )
 
 func GetChangelogPRs(releaseVersion string, overrideNumber int) (string, error) {
@@ -23,8 +24,8 @@ func GetChangelogPRs(releaseVersion string, overrideNumber int) (string, error) 
 		return "", fmt.Errorf("getting PRs from %v: %w", githubClient, err)
 	}
 
-	lastDocRelease := "2006-01-02T15:04:05+00:00"
-	prevDocRelease := "2006-01-02T15:04:05+00:00"
+	lastDocRelease := githubTimeFormat
+	prevDocRelease := githubTimeFormat
 	if len(prs.Issues) > 0 {
 		//Select the most recent pr from the above query and format the date expected for the go-github client
 		lastDocRelease = prs.Issues[0].ClosedAt.Format("2006-01-02T15:04:05+00:00")
@@ -37,10 +38,10 @@ func GetChangelogPRs(releaseVersion string, overrideNumber int) (string, error) 
 			return "", fmt.Errorf("get PRs from %v: %w", githubClient, err)
 		}
 		if overrideNumber == 1 {
-			lastDocRelease = prs.Issues[overrideNumber-1].ClosedAt.Format("2006-01-02T15:04:05+00:00")
+			lastDocRelease = prs.Issues[overrideNumber-1].ClosedAt.Format(githubTimeFormat)
 		} else {
-			lastDocRelease = prs.Issues[overrideNumber-1].ClosedAt.Format("2006-01-02T15:04:05+00:00")
-			prevDocRelease = prs.Issues[overrideNumber-2].ClosedAt.Format("2006-01-02T15:04:05+00:00")
+			lastDocRelease = prs.Issues[overrideNumber-1].ClosedAt.Format(githubTimeFormat)
+			prevDocRelease = prs.Issues[overrideNumber-2].ClosedAt.Format(githubTimeFormat)
 		}
 
 	}
