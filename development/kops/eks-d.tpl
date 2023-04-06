@@ -127,7 +127,7 @@ spec:
   iam:
     profile: {{ .controlPlaneInstanceProfileArn }}
   {{- end }}
-  image: 099720109477/ubuntu/images/hvm-ssd/ubuntu-{{ .ubuntuRelease }}-{{ .architecture }}-{{ .ubuntuReleaseDate }}
+  image: 099720109477/{{ .ubuntuAmi }}
   instanceMetadata:
     httpTokens: required
   machineType: {{ .instanceType }}
@@ -159,7 +159,7 @@ spec:
   iam:
     profile: {{ .nodeInstanceProfileArn }}
   {{- end }}
-  image: 099720109477/ubuntu/images/hvm-ssd/ubuntu-{{ .ubuntuRelease }}-{{ .architecture }}-{{ .ubuntuReleaseDate }}
+  image: 099720109477/{{ .ubuntuAmi }}
   instanceMetadata:
     httpTokens: required
   machineType: {{ .instanceType }}

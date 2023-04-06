@@ -72,7 +72,6 @@ postsubmit-build: setup
 
 .PHONY: kops
 kops: export UBUNTU_RELEASE=focal-20.04
-kops: export UBUNTU_RELEASE_DATE=server-20221018
 kops: $(if $(CODEBUILD_BUILD_ID),kops-codebuild,kops-prow)
 
 .PHONY: kops-codebuild
@@ -99,7 +98,6 @@ kops-arm: kops-prereqs
 
 .PHONY: kops-arm-ubuntu-22
 kops-arm-ubuntu-22: export UBUNTU_RELEASE=jammy-22.04
-kops-arm-ubuntu-22: export UBUNTU_RELEASE_DATE=server-20230115
 kops-arm-ubuntu-22: kops-prereqs
 	sleep 10m; \
 	RELEASE=$(RELEASE) $(KOPS_ENTRYPOINT);
