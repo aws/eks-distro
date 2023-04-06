@@ -62,6 +62,8 @@ function get_project_version(){
     echo $VERSION
 }
 
+# Get latest ubuntu ami based on desired release and arch
+UBUNTU_AMI=$(aws ec2 describe-images --owners 099720109477 --filters "Name=name,Values=ubuntu/images/hvm-ssd/ubuntu-$UBUNTU_RELEASE-$NODE_ARCHITECTURE-server-*" --query 'sort_by(Images, &CreationDate)[-1].[Name]' --output text)
 
 echo "Creating ./${KOPS_CLUSTER_NAME}/values.yaml"
 cat << EOF > ./${KOPS_CLUSTER_NAME}/values.yaml
@@ -73,8 +75,7 @@ controlPlaneInstanceProfileArn: $CONTROL_PLANE_INSTANCE_PROFILE
 nodeInstanceProfileArn: $NODE_INSTANCE_PROFILE
 instanceType: $NODE_INSTANCE_TYPE
 architecture: $NODE_ARCHITECTURE
-ubuntuRelease: $UBUNTU_RELEASE
-ubuntuReleaseDate: $UBUNTU_RELEASE_DATE
+ubuntuAmi: $UBUNTU_AMI
 ipv6: $IPV6
 pause:
 $(get_container_yaml kubernetes/pause $RELEASE)
