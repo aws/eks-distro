@@ -4,8 +4,11 @@ This changelog highlights the changes for [v1-26-eks-2](https://github.com/aws/e
 
 ## Changes
 
-### Projects Version Updates
-* external-attacher: v4.1.0 -> v4.2.0
+### Patches
+No changes since last release
+
+### Projects
+* Updated external-attacher to 4.2.0 ([1769](https://github.com/aws/eks-distro/pull/1769))
 
 ### Base Image
 * Base Image Update ([1748](https://github.com/aws/eks-distro/pull/1748))

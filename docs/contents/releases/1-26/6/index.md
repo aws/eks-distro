@@ -1,4 +1,4 @@
-# EKS-D v1-26-eks-5 Release
+# EKS-D v1-26-eks-6 Release
 
 For additional information, see the [changelog](CHANGELOG-v1-26-eks-6.md) for this release.
 

@@ -7,12 +7,9 @@ This changelog highlights the changes for [v1-26-eks-4](https://github.com/aws/e
 ### Patches
 * Updated patches for Kubernetes v1.26 ([1827](https://github.com/aws/eks-distro/pull/1827))
 
-### Projects Version Updates
-* aws-iam-authenticator : v0.6.3 -> v0.6.4
+### Projects
+* Upgrade iam-auth for versions 1.21 to 1.26 ([1813](https://github.com/aws/eks-distro/pull/1813))
 
 ### Base Image
-* Base Image Update ([1819](https://github.com/aws/eks-distro/pull/1819))
-* Base Image Update ([1828](https://github.com/aws/eks-distro/pull/1828))
-
-
+No changes since last release
 
