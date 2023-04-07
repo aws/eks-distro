@@ -4,7 +4,7 @@ SUPPORTED_RELEASE_BRANCHES?=$(shell cat $(BASE_DIRECTORY)/release/SUPPORTED_RELE
 RELEASE_ENVIRONMENT?=development
 RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/$(RELEASE_ENVIRONMENT)/RELEASE)
 PROD_RELEASE=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/production/RELEASE)
-OVERRIDE_NUMBER?=""
+OVERRIDE_NUMBER?=-1
 ARTIFACT_BUCKET?=my-s3-bucket
 
 AWS_ACCOUNT_ID?=$(shell aws sts get-caller-identity --query Account --output text)
@@ -72,7 +72,6 @@ postsubmit-build: setup
 
 .PHONY: kops
 kops: export UBUNTU_RELEASE=focal-20.04
-kops: export UBUNTU_RELEASE_DATE=server-20221018
 kops: $(if $(CODEBUILD_BUILD_ID),kops-codebuild,kops-prow)
 
 .PHONY: kops-codebuild
@@ -99,7 +98,6 @@ kops-arm: kops-prereqs
 
 .PHONY: kops-arm-ubuntu-22
 kops-arm-ubuntu-22: export UBUNTU_RELEASE=jammy-22.04
-kops-arm-ubuntu-22: export UBUNTU_RELEASE_DATE=server-20230115
 kops-arm-ubuntu-22: kops-prereqs
 	sleep 10m; \
 	RELEASE=$(RELEASE) $(KOPS_ENTRYPOINT);
@@ -239,14 +237,14 @@ release-docs:
 	go run ./cmd/release/docs/main.go \
 		--branch=$(RELEASE_BRANCH)
 
-.PHONY: release-docs-no-git-no-announcement
-release-docs-no-git-no-announcement:
+.PHONY: release-docs-limited
+release-docs-limited:
 	go vet ./cmd/release/docs
 	go run ./cmd/release/docs/main.go \
 		--branch=$(RELEASE_BRANCH) \
-		--generateChangelogChanges=true \
-		--openPR=false \
-		--releaseAnnouncement=false
+		--manageGitAndOpenPR=false \
+		--releaseAnnouncement=false \
+		--optionalOverrideNumber=$(OVERRIDE_NUMBER)
 
 .PHONY: github-release
 github-release:

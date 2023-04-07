@@ -311,7 +311,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 https://github.com/golang/go
 
 ** golang.org/x/sys; version v0.0.0-20210809222454-d867a43fc93e --
-https://go.googlesource.com/sys
+https://golang.org/x/sys
 
 Copyright (c) 2009 The Go Authors. All rights reserved.
 

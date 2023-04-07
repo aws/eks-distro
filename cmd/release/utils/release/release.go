@@ -6,6 +6,11 @@ import (
 	"github.com/aws/eks-distro/cmd/release/utils/changetype"
 )
 
+const (
+	MinNumber               = 0
+	InvalidNumberUpperLimit = MinNumber - 1
+)
+
 type Release struct {
 	branch string
 	number string

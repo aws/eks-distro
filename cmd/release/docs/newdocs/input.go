@@ -3,6 +3,7 @@ package newdocs
 import (
 	"bytes"
 	"fmt"
+	"strconv"
 
 	"github.com/aws/eks-distro/cmd/release/utils/values"
 )
@@ -17,9 +18,10 @@ type releaseInfo interface {
 	Tag() string
 	ManifestURL() string
 	KubernetesMinorVersion() string
+	Number() string
 }
 
-func CreateNewDocsInput(ri releaseInfo, hasGenerateChangelogChanges bool, hasAnnouncement bool) ([]NewDocInput, error) {
+func CreateNewDocsInput(ri releaseInfo, hasAnnouncement bool) ([]NewDocInput, error) {
 	changeLogWriter, err := getTemplateWriter(ri, changelogTemplateInput)
 	if err != nil {
 		return []NewDocInput{}, fmt.Errorf("getting template writer for changelog: %w", err)
@@ -30,16 +32,11 @@ func CreateNewDocsInput(ri releaseInfo, hasGenerateChangelogChanges bool, hasAnn
 		return []NewDocInput{}, fmt.Errorf("getting template writer for index: %w", err)
 	}
 
-	var changelogAppendToEnd func() (string, error)
-	if hasGenerateChangelogChanges {
-		changelogAppendToEnd = getPrInfoForChangelogFunc(ri)
-	}
-
 	newDocInput := []NewDocInput{
 		{
 			FileName:       values.GetChangelogFileName(ri),
 			TemplateWriter: changeLogWriter,
-			AppendToEnd:    changelogAppendToEnd,
+			AppendToEnd:    getPrInfoForChangelogFunc(ri),
 		},
 		{
 			FileName:       values.IndexFileName,
@@ -73,6 +70,10 @@ var getComponentsFromReleaseManifestFunc = func(ri releaseInfo) func() (string, 
 var getPrInfoForChangelogFunc = func(ri releaseInfo) func() (string, error) {
 	releaseVersion := "v" + ri.KubernetesMinorVersion()
 	return func() (string, error) {
-		return values.GetChangelogPRs(releaseVersion)
+		riNum, err := strconv.Atoi(ri.Number())
+		if err != nil {
+			return "", fmt.Errorf("converting release number %v: %w", ri.Number(), err)
+		}
+		return values.GetChangelogPRs(releaseVersion, riNum)
 	}
 }
