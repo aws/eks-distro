@@ -47,25 +47,25 @@ https://github.com/soheilhy/cmux
 ** github.com/spf13/cobra; version v1.1.3 --
 https://github.com/spf13/cobra
 
-** go.etcd.io/etcd/api/v3; version v3.5.6 --
+** go.etcd.io/etcd/api/v3; version v3.5.7 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/client/pkg/v3; version v3.5.6 --
+** go.etcd.io/etcd/client/pkg/v3; version v3.5.7 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/client/v2; version v2.305.6 --
+** go.etcd.io/etcd/client/v2; version v2.305.7 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/client/v3; version v3.5.6 --
+** go.etcd.io/etcd/client/v3; version v3.5.7 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/pkg/v3; version v3.5.6 --
+** go.etcd.io/etcd/pkg/v3; version v3.5.7 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/raft/v3; version v3.5.6 --
+** go.etcd.io/etcd/raft/v3; version v3.5.7 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/server/v3; version v3.5.6 --
+** go.etcd.io/etcd/server/v3; version v3.5.7 --
 https://github.com/etcd-io/etcd
 
 ** go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc; version v0.25.0 --
@@ -597,19 +597,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/go; version go1.16.15 --
+** golang.org/go; version go1.19.7 --
 https://github.com/golang/go
 
 ** golang.org/x/crypto; version v0.0.0-20220411220226-7b82a4e95df4 --
 https://golang.org/x/crypto
 
-** golang.org/x/net; version v0.0.0-20211112202133-69e39bad7dc2 --
+** golang.org/x/net; version v0.4.0 --
 https://golang.org/x/net
 
-** golang.org/x/sys; version v0.0.0-20210615035016-665e8c7367d1 --
+** golang.org/x/sys/unix; version v0.3.0 --
 https://golang.org/x/sys
 
-** golang.org/x/text; version v0.3.6 --
+** golang.org/x/text; version v0.5.0 --
 https://golang.org/x/text
 
 ** golang.org/x/time/rate; version v0.0.0-20210220033141-f8bda1e9f3ba --
