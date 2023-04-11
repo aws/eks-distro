@@ -18,6 +18,8 @@ _output
 **/1-25/go.sum
 **/1-26/go.mod
 **/1-26/go.sum
+**/1-27/go.mod
+**/1-27/go.sum
 **/*/server/go.mod
 **/*/server/go.sum
 **/*/etcdctl/go.mod
