@@ -5,8 +5,6 @@ The best way to try out EKS Distro (EKS-D) is to use one of the
 You may also find a community-supported installation method useful. Community-supported 
 installation methods are found on our
 [community-supported installation page](../users/install/index.md).
-If you want to build EKS-D from source code, follow the instructions
-in [Build Prerequisites](build-prerequisites.md) and [Build EKS-D](build.md).
 
 ## Exploring EKS Distro
 
