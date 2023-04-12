@@ -1,0 +1,825 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Carter McKinnon <mckdev@amazon.com>
+Date: Mon, 6 Mar 2023 15:12:03 -0800
+Subject: [PATCH] --EKS-PATCH-- Add ConcurrentNodeSyncs option to node
+ controller in cloud controller manager
+
+This patch is taken from this commit:
+https://github.com/kubernetes/kubernetes/commit/fc7b25cf720b607908868a3f7b6ef13ac9202a5c
+
+Merged upstream to Kubernetes 1.27 in this PR:
+https://github.com/kubernetes/kubernetes/pull/113104
+
+This patch has not been, and will not be, cherry-picked upstream.
+
+This patch modifies the node controller of cloud controller manager
+to accept a `ConcurrentNodeSyncs` parameter, which is the number of
+workers concurrently synchronizing node objects.
+
+Signed-off-by: Carter McKinnon<mckdev@amazon.com>
+---
+ api/api-rules/violation_exceptions.list       |  1 +
+ pkg/generated/openapi/zz_generated.openapi.go | 11 ++-
+ staging/src/k8s.io/cloud-provider/app/core.go |  1 +
+ .../src/k8s.io/cloud-provider/config/types.go |  5 ++
+ .../config/v1alpha1/defaults.go               |  3 +
+ .../cloud-provider/config/v1alpha1/types.go   |  4 ++
+ .../v1alpha1/zz_generated.conversion.go       |  7 ++
+ .../config/v1alpha1/zz_generated.deepcopy.go  |  1 +
+ .../config/zz_generated.deepcopy.go           |  1 +
+ .../controllers/node/config/types.go          | 24 +++++++
+ .../node/config/v1alpha1/conversion.go        | 39 +++++++++++
+ .../node/config/v1alpha1/defaults.go          | 23 +++++++
+ .../controllers/node/config/v1alpha1/doc.go   | 21 ++++++
+ .../node/config/v1alpha1/register.go          | 31 +++++++++
+ .../controllers/node/config/v1alpha1/types.go | 24 +++++++
+ .../v1alpha1/zz_generated.conversion.go       | 58 ++++++++++++++++
+ .../config/v1alpha1/zz_generated.deepcopy.go  | 38 +++++++++++
+ .../controllers/node/node_controller.go       |  9 ++-
+ .../cloud-provider/options/nodecontroller.go  | 62 +++++++++++++++++
+ .../options/nodecontroller_test.go            | 68 +++++++++++++++++++
+ .../k8s.io/cloud-provider/options/options.go  |  7 ++
+ .../cloud-provider/options/options_test.go    | 12 ++++
+ vendor/modules.txt                            |  2 +
+ 23 files changed, 448 insertions(+), 4 deletions(-)
+ create mode 100644 staging/src/k8s.io/cloud-provider/controllers/node/config/types.go
+ create mode 100644 staging/src/k8s.io/cloud-provider/controllers/node/config/v1alpha1/conversion.go
+ create mode 100644 staging/src/k8s.io/cloud-provider/controllers/node/config/v1alpha1/defaults.go
+ create mode 100644 staging/src/k8s.io/cloud-provider/controllers/node/config/v1alpha1/doc.go
+ create mode 100644 staging/src/k8s.io/cloud-provider/controllers/node/config/v1alpha1/register.go
+ create mode 100644 staging/src/k8s.io/cloud-provider/controllers/node/config/v1alpha1/types.go
+ create mode 100644 staging/src/k8s.io/cloud-provider/controllers/node/config/v1alpha1/zz_generated.conversion.go
+ create mode 100644 staging/src/k8s.io/cloud-provider/controllers/node/config/v1alpha1/zz_generated.deepcopy.go
+ create mode 100644 staging/src/k8s.io/cloud-provider/options/nodecontroller.go
+ create mode 100644 staging/src/k8s.io/cloud-provider/options/nodecontroller_test.go
+
+diff --git a/api/api-rules/violation_exceptions.list b/api/api-rules/violation_exceptions.list
+index 46d053734d1..d7f48672394 100644
+--- a/api/api-rules/violation_exceptions.list
++++ b/api/api-rules/violation_exceptions.list
+@@ -458,6 +458,7 @@ API rule violation: names_match,k8s.io/client-go/pkg/apis/clientauthentication/v
+ API rule violation: names_match,k8s.io/client-go/pkg/apis/clientauthentication/v1beta1,Cluster,TLSServerName
+ API rule violation: names_match,k8s.io/cloud-provider/config/v1alpha1,CloudControllerManagerConfiguration,Generic
+ API rule violation: names_match,k8s.io/cloud-provider/config/v1alpha1,CloudControllerManagerConfiguration,KubeCloudShared
++API rule violation: names_match,k8s.io/cloud-provider/config/v1alpha1,CloudControllerManagerConfiguration,NodeController
+ API rule violation: names_match,k8s.io/cloud-provider/config/v1alpha1,CloudControllerManagerConfiguration,NodeStatusUpdateFrequency
+ API rule violation: names_match,k8s.io/cloud-provider/config/v1alpha1,CloudControllerManagerConfiguration,ServiceController
+ API rule violation: names_match,k8s.io/cloud-provider/config/v1alpha1,CloudProviderConfiguration,CloudConfigFile
+diff --git a/pkg/generated/openapi/zz_generated.openapi.go b/pkg/generated/openapi/zz_generated.openapi.go
+index 7205a3189ff..8f527bd0bd7 100644
+--- a/pkg/generated/openapi/zz_generated.openapi.go
++++ b/pkg/generated/openapi/zz_generated.openapi.go
+@@ -51107,6 +51107,13 @@ func schema_k8sio_cloud_provider_config_v1alpha1_CloudControllerManagerConfigura
+ 							Ref:         ref("k8s.io/cloud-provider/config/v1alpha1.KubeCloudSharedConfiguration"),
+ 						},
+ 					},
++					"NodeController": {
++						SchemaProps: spec.SchemaProps{
++							Description: "NodeController holds configuration for node controller related features.",
++							Default:     map[string]interface{}{},
++							Ref:         ref("k8s.io/cloud-provider/controllers/node/config/v1alpha1.NodeControllerConfiguration"),
++						},
++					},
+ 					"ServiceController": {
+ 						SchemaProps: spec.SchemaProps{
+ 							Description: "ServiceControllerConfiguration holds configuration for ServiceController related features.",
+@@ -51122,11 +51129,11 @@ func schema_k8sio_cloud_provider_config_v1alpha1_CloudControllerManagerConfigura
+ 						},
+ 					},
+ 				},
+-				Required: []string{"Generic", "KubeCloudShared", "ServiceController", "NodeStatusUpdateFrequency"},
++				Required: []string{"Generic", "KubeCloudShared", "NodeController", "ServiceController", "NodeStatusUpdateFrequency"},
+ 			},
+ 		},
+ 		Dependencies: []string{
+-			"k8s.io/apimachinery/pkg/apis/meta/v1.Duration", "k8s.io/cloud-provider/config/v1alpha1.KubeCloudSharedConfiguration", "k8s.io/cloud-provider/controllers/service/config/v1alpha1.ServiceControllerConfiguration", "k8s.io/controller-manager/config/v1alpha1.GenericControllerManagerConfiguration"},
++			"k8s.io/apimachinery/pkg/apis/meta/v1.Duration", "k8s.io/cloud-provider/config/v1alpha1.KubeCloudSharedConfiguration", "k8s.io/cloud-provider/controllers/node/config/v1alpha1.NodeControllerConfiguration", "k8s.io/cloud-provider/controllers/service/config/v1alpha1.ServiceControllerConfiguration", "k8s.io/controller-manager/config/v1alpha1.GenericControllerManagerConfiguration"},
+ 	}
+ }
+ 
+diff --git a/staging/src/k8s.io/cloud-provider/app/core.go b/staging/src/k8s.io/cloud-provider/app/core.go
+index baa8411cdf9..d94c29d4113 100644
+--- a/staging/src/k8s.io/cloud-provider/app/core.go
++++ b/staging/src/k8s.io/cloud-provider/app/core.go
+@@ -48,6 +48,7 @@ func startCloudNodeController(ctx context.Context, initContext ControllerInitCon
+ 		completedConfig.ClientBuilder.ClientOrDie(initContext.ClientName),
+ 		cloud,
+ 		completedConfig.ComponentConfig.NodeStatusUpdateFrequency.Duration,
++		completedConfig.ComponentConfig.NodeController.ConcurrentNodeSyncs,
+ 	)
+ 	if err != nil {
+ 		klog.Warningf("failed to start cloud node controller: %s", err)
+diff --git a/staging/src/k8s.io/cloud-provider/config/types.go b/staging/src/k8s.io/cloud-provider/config/types.go
+index bcb523e9173..ada14b36153 100644
+--- a/staging/src/k8s.io/cloud-provider/config/types.go
++++ b/staging/src/k8s.io/cloud-provider/config/types.go
+@@ -18,6 +18,7 @@ package config
+ 
+ import (
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	nodeconfig "k8s.io/cloud-provider/controllers/node/config"
+ 	serviceconfig "k8s.io/cloud-provider/controllers/service/config"
+ 	cmconfig "k8s.io/controller-manager/config"
+ )
+@@ -34,6 +35,10 @@ type CloudControllerManagerConfiguration struct {
+ 	// both in cloud controller manager and kube-controller manager.
+ 	KubeCloudShared KubeCloudSharedConfiguration
+ 
++	// NodeController holds configuration for node controller
++	// related features.
++	NodeController nodeconfig.NodeControllerConfiguration
++
+ 	// ServiceControllerConfiguration holds configuration for ServiceController
+ 	// related features.
+ 	ServiceController serviceconfig.ServiceControllerConfiguration
+diff --git a/staging/src/k8s.io/cloud-provider/config/v1alpha1/defaults.go b/staging/src/k8s.io/cloud-provider/config/v1alpha1/defaults.go
+index a47cf53384e..c7f4760b47c 100644
+--- a/staging/src/k8s.io/cloud-provider/config/v1alpha1/defaults.go
++++ b/staging/src/k8s.io/cloud-provider/config/v1alpha1/defaults.go
+@@ -21,6 +21,7 @@ import (
+ 
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	"k8s.io/apimachinery/pkg/runtime"
++	nodeconfigv1alpha1 "k8s.io/cloud-provider/controllers/node/config/v1alpha1"
+ 	serviceconfigv1alpha1 "k8s.io/cloud-provider/controllers/service/config/v1alpha1"
+ 	cmconfigv1alpha1 "k8s.io/controller-manager/config/v1alpha1"
+ 	utilpointer "k8s.io/utils/pointer"
+@@ -49,6 +50,8 @@ func SetDefaults_CloudControllerManagerConfiguration(obj *CloudControllerManager
+ 	cmconfigv1alpha1.RecommendedDefaultGenericControllerManagerConfiguration(&obj.Generic)
+ 	// Use the default RecommendedDefaultServiceControllerConfiguration options
+ 	serviceconfigv1alpha1.RecommendedDefaultServiceControllerConfiguration(&obj.ServiceController)
++	// Use the default RecommendedDefaultNodeControllerConfiguration options
++	nodeconfigv1alpha1.RecommendedDefaultNodeControllerConfiguration(&obj.NodeController)
+ }
+ 
+ func SetDefaults_KubeCloudSharedConfiguration(obj *KubeCloudSharedConfiguration) {
+diff --git a/staging/src/k8s.io/cloud-provider/config/v1alpha1/types.go b/staging/src/k8s.io/cloud-provider/config/v1alpha1/types.go
+index 0aed1aa2471..145d612d532 100644
+--- a/staging/src/k8s.io/cloud-provider/config/v1alpha1/types.go
++++ b/staging/src/k8s.io/cloud-provider/config/v1alpha1/types.go
+@@ -18,6 +18,7 @@ package v1alpha1
+ 
+ import (
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	nodeconfigv1alpha1 "k8s.io/cloud-provider/controllers/node/config/v1alpha1"
+ 	serviceconfigv1alpha1 "k8s.io/cloud-provider/controllers/service/config/v1alpha1"
+ 	cmconfigv1alpha1 "k8s.io/controller-manager/config/v1alpha1"
+ )
+@@ -32,6 +33,9 @@ type CloudControllerManagerConfiguration struct {
+ 	// KubeCloudSharedConfiguration holds configuration for shared related features
+ 	// both in cloud controller manager and kube-controller manager.
+ 	KubeCloudShared KubeCloudSharedConfiguration
++	// NodeController holds configuration for node controller
++	// related features.
++	NodeController nodeconfigv1alpha1.NodeControllerConfiguration
+ 	// ServiceControllerConfiguration holds configuration for ServiceController
+ 	// related features.
+ 	ServiceController serviceconfigv1alpha1.ServiceControllerConfiguration
+diff --git a/staging/src/k8s.io/cloud-provider/config/v1alpha1/zz_generated.conversion.go b/staging/src/k8s.io/cloud-provider/config/v1alpha1/zz_generated.conversion.go
+index 76acd4d41b3..ecb6cc09145 100644
+--- a/staging/src/k8s.io/cloud-provider/config/v1alpha1/zz_generated.conversion.go
++++ b/staging/src/k8s.io/cloud-provider/config/v1alpha1/zz_generated.conversion.go
+@@ -26,6 +26,7 @@ import (
+ 	conversion "k8s.io/apimachinery/pkg/conversion"
+ 	runtime "k8s.io/apimachinery/pkg/runtime"
+ 	config "k8s.io/cloud-provider/config"
++	nodeconfigv1alpha1 "k8s.io/cloud-provider/controllers/node/config/v1alpha1"
+ 	serviceconfigv1alpha1 "k8s.io/cloud-provider/controllers/service/config/v1alpha1"
+ 	configv1alpha1 "k8s.io/controller-manager/config/v1alpha1"
+ )
+@@ -77,6 +78,9 @@ func autoConvert_v1alpha1_CloudControllerManagerConfiguration_To_config_CloudCon
+ 	if err := Convert_v1alpha1_KubeCloudSharedConfiguration_To_config_KubeCloudSharedConfiguration(&in.KubeCloudShared, &out.KubeCloudShared, s); err != nil {
+ 		return err
+ 	}
++	if err := nodeconfigv1alpha1.Convert_v1alpha1_NodeControllerConfiguration_To_config_NodeControllerConfiguration(&in.NodeController, &out.NodeController, s); err != nil {
++		return err
++	}
+ 	if err := serviceconfigv1alpha1.Convert_v1alpha1_ServiceControllerConfiguration_To_config_ServiceControllerConfiguration(&in.ServiceController, &out.ServiceController, s); err != nil {
+ 		return err
+ 	}
+@@ -96,6 +100,9 @@ func autoConvert_config_CloudControllerManagerConfiguration_To_v1alpha1_CloudCon
+ 	if err := Convert_config_KubeCloudSharedConfiguration_To_v1alpha1_KubeCloudSharedConfiguration(&in.KubeCloudShared, &out.KubeCloudShared, s); err != nil {
+ 		return err
+ 	}
++	if err := nodeconfigv1alpha1.Convert_config_NodeControllerConfiguration_To_v1alpha1_NodeControllerConfiguration(&in.NodeController, &out.NodeController, s); err != nil {
++		return err
++	}
+ 	if err := serviceconfigv1alpha1.Convert_config_ServiceControllerConfiguration_To_v1alpha1_ServiceControllerConfiguration(&in.ServiceController, &out.ServiceController, s); err != nil {
+ 		return err
+ 	}
+diff --git a/staging/src/k8s.io/cloud-provider/config/v1alpha1/zz_generated.deepcopy.go b/staging/src/k8s.io/cloud-provider/config/v1alpha1/zz_generated.deepcopy.go
+index 06eca856ed5..c60f2c1ae3e 100644
+--- a/staging/src/k8s.io/cloud-provider/config/v1alpha1/zz_generated.deepcopy.go
++++ b/staging/src/k8s.io/cloud-provider/config/v1alpha1/zz_generated.deepcopy.go
+@@ -31,6 +31,7 @@ func (in *CloudControllerManagerConfiguration) DeepCopyInto(out *CloudController
+ 	out.TypeMeta = in.TypeMeta
+ 	in.Generic.DeepCopyInto(&out.Generic)
+ 	in.KubeCloudShared.DeepCopyInto(&out.KubeCloudShared)
++	out.NodeController = in.NodeController
+ 	out.ServiceController = in.ServiceController
+ 	out.NodeStatusUpdateFrequency = in.NodeStatusUpdateFrequency
+ 	return
+diff --git a/staging/src/k8s.io/cloud-provider/config/zz_generated.deepcopy.go b/staging/src/k8s.io/cloud-provider/config/zz_generated.deepcopy.go
+index dc3cc5307c1..47dd9346537 100644
+--- a/staging/src/k8s.io/cloud-provider/config/zz_generated.deepcopy.go
++++ b/staging/src/k8s.io/cloud-provider/config/zz_generated.deepcopy.go
+@@ -31,6 +31,7 @@ func (in *CloudControllerManagerConfiguration) DeepCopyInto(out *CloudController
+ 	out.TypeMeta = in.TypeMeta
+ 	in.Generic.DeepCopyInto(&out.Generic)
+ 	out.KubeCloudShared = in.KubeCloudShared
++	out.NodeController = in.NodeController
+ 	out.ServiceController = in.ServiceController
+ 	out.NodeStatusUpdateFrequency = in.NodeStatusUpdateFrequency
+ 	return
+diff --git a/staging/src/k8s.io/cloud-provider/controllers/node/config/types.go b/staging/src/k8s.io/cloud-provider/controllers/node/config/types.go
+new file mode 100644
+index 00000000000..af7c7880351
+--- /dev/null
++++ b/staging/src/k8s.io/cloud-provider/controllers/node/config/types.go
+@@ -0,0 +1,24 @@
++/*
++Copyright 2022 The Kubernetes Authors.
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++*/
++
++package config
++
++// NodeControllerConfiguration contains elements describing NodeController.
++type NodeControllerConfiguration struct {
++	// ConcurrentNodeSyncs is the number of workers
++	// concurrently synchronizing nodes
++	ConcurrentNodeSyncs int32
++}
+diff --git a/staging/src/k8s.io/cloud-provider/controllers/node/config/v1alpha1/conversion.go b/staging/src/k8s.io/cloud-provider/controllers/node/config/v1alpha1/conversion.go
+new file mode 100644
+index 00000000000..07dc75d31ce
+--- /dev/null
++++ b/staging/src/k8s.io/cloud-provider/controllers/node/config/v1alpha1/conversion.go
+@@ -0,0 +1,39 @@
++/*
++Copyright 2022 The Kubernetes Authors.
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++*/
++
++package v1alpha1
++
++import (
++	"k8s.io/apimachinery/pkg/conversion"
++	"k8s.io/cloud-provider/controllers/node/config"
++)
++
++// Important! The public back-and-forth conversion functions for the types in this generic
++// package with ComponentConfig types need to be manually exposed like this in order for
++// other packages that reference this package to be able to call these conversion functions
++// in an autogenerated manner.
++// TODO: Fix the bug in conversion-gen so it automatically discovers these Convert_* functions
++// in autogenerated code as well.
++
++// Convert_config_NodeControllerConfiguration_To_v1alpha1_NodeControllerConfiguration is an autogenerated conversion function.
++func Convert_config_NodeControllerConfiguration_To_v1alpha1_NodeControllerConfiguration(in *config.NodeControllerConfiguration, out *NodeControllerConfiguration, s conversion.Scope) error {
++	return autoConvert_config_NodeControllerConfiguration_To_v1alpha1_NodeControllerConfiguration(in, out, s)
++}
++
++// Convert_v1alpha1_NodeControllerConfiguration_To_config_NodeControllerConfiguration is an autogenerated conversion function.
++func Convert_v1alpha1_NodeControllerConfiguration_To_config_NodeControllerConfiguration(in *NodeControllerConfiguration, out *config.NodeControllerConfiguration, s conversion.Scope) error {
++	return autoConvert_v1alpha1_NodeControllerConfiguration_To_config_NodeControllerConfiguration(in, out, s)
++}
+diff --git a/staging/src/k8s.io/cloud-provider/controllers/node/config/v1alpha1/defaults.go b/staging/src/k8s.io/cloud-provider/controllers/node/config/v1alpha1/defaults.go
+new file mode 100644
+index 00000000000..5f5ff95ff12
+--- /dev/null
++++ b/staging/src/k8s.io/cloud-provider/controllers/node/config/v1alpha1/defaults.go
+@@ -0,0 +1,23 @@
++/*
++Copyright 2022 The Kubernetes Authors.
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++*/
++
++package v1alpha1
++
++func RecommendedDefaultNodeControllerConfiguration(obj *NodeControllerConfiguration) {
++	if obj.ConcurrentNodeSyncs == 0 {
++		obj.ConcurrentNodeSyncs = 1
++	}
++}
+diff --git a/staging/src/k8s.io/cloud-provider/controllers/node/config/v1alpha1/doc.go b/staging/src/k8s.io/cloud-provider/controllers/node/config/v1alpha1/doc.go
+new file mode 100644
+index 00000000000..eff177166e8
+--- /dev/null
++++ b/staging/src/k8s.io/cloud-provider/controllers/node/config/v1alpha1/doc.go
+@@ -0,0 +1,21 @@
++/*
++Copyright 2022 The Kubernetes Authors.
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++*/
++
++// +k8s:deepcopy-gen=package
++// +k8s:conversion-gen=k8s.io/cloud-provider/controllers/node/config
++// +k8s:conversion-gen=k8s.io/cloud-provider/controllers/node/config/v1alpha1
++
++package v1alpha1 // import "k8s.io/cloud-provider/controllers/node/config/v1alpha1"
+diff --git a/staging/src/k8s.io/cloud-provider/controllers/node/config/v1alpha1/register.go b/staging/src/k8s.io/cloud-provider/controllers/node/config/v1alpha1/register.go
+new file mode 100644
+index 00000000000..a25accd070f
+--- /dev/null
++++ b/staging/src/k8s.io/cloud-provider/controllers/node/config/v1alpha1/register.go
+@@ -0,0 +1,31 @@
++/*
++Copyright 2022 The Kubernetes Authors.
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++*/
++
++package v1alpha1
++
++import (
++	"k8s.io/apimachinery/pkg/runtime"
++)
++
++var (
++	// SchemeBuilder is the scheme builder with scheme init functions to run for this API package
++	SchemeBuilder runtime.SchemeBuilder
++	// localSchemeBuilder extends the SchemeBuilder instance with the external types. In this package,
++	// defaulting and conversion init funcs are registered as well.
++	localSchemeBuilder = &SchemeBuilder
++	// AddToScheme is a global function that registers this API group & version to a scheme
++	AddToScheme = localSchemeBuilder.AddToScheme
++)
+diff --git a/staging/src/k8s.io/cloud-provider/controllers/node/config/v1alpha1/types.go b/staging/src/k8s.io/cloud-provider/controllers/node/config/v1alpha1/types.go
+new file mode 100644
+index 00000000000..ca85a557cbf
+--- /dev/null
++++ b/staging/src/k8s.io/cloud-provider/controllers/node/config/v1alpha1/types.go
+@@ -0,0 +1,24 @@
++/*
++Copyright 2020 The Kubernetes Authors.
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++*/
++
++package v1alpha1
++
++// NodeControllerConfiguration contains elements describing NodeController.
++type NodeControllerConfiguration struct {
++	// ConcurrentNodeSyncs is the number of workers
++	// concurrently synchronizing nodes
++	ConcurrentNodeSyncs int32
++}
+diff --git a/staging/src/k8s.io/cloud-provider/controllers/node/config/v1alpha1/zz_generated.conversion.go b/staging/src/k8s.io/cloud-provider/controllers/node/config/v1alpha1/zz_generated.conversion.go
+new file mode 100644
+index 00000000000..cf3852db294
+--- /dev/null
++++ b/staging/src/k8s.io/cloud-provider/controllers/node/config/v1alpha1/zz_generated.conversion.go
+@@ -0,0 +1,58 @@
++//go:build !ignore_autogenerated
++// +build !ignore_autogenerated
++
++/*
++Copyright The Kubernetes Authors.
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++*/
++
++// Code generated by conversion-gen. DO NOT EDIT.
++
++package v1alpha1
++
++import (
++	conversion "k8s.io/apimachinery/pkg/conversion"
++	runtime "k8s.io/apimachinery/pkg/runtime"
++	config "k8s.io/cloud-provider/controllers/node/config"
++)
++
++func init() {
++	localSchemeBuilder.Register(RegisterConversions)
++}
++
++// RegisterConversions adds conversion functions to the given scheme.
++// Public to allow building arbitrary schemes.
++func RegisterConversions(s *runtime.Scheme) error {
++	if err := s.AddConversionFunc((*config.NodeControllerConfiguration)(nil), (*NodeControllerConfiguration)(nil), func(a, b interface{}, scope conversion.Scope) error {
++		return Convert_config_NodeControllerConfiguration_To_v1alpha1_NodeControllerConfiguration(a.(*config.NodeControllerConfiguration), b.(*NodeControllerConfiguration), scope)
++	}); err != nil {
++		return err
++	}
++	if err := s.AddConversionFunc((*NodeControllerConfiguration)(nil), (*config.NodeControllerConfiguration)(nil), func(a, b interface{}, scope conversion.Scope) error {
++		return Convert_v1alpha1_NodeControllerConfiguration_To_config_NodeControllerConfiguration(a.(*NodeControllerConfiguration), b.(*config.NodeControllerConfiguration), scope)
++	}); err != nil {
++		return err
++	}
++	return nil
++}
++
++func autoConvert_v1alpha1_NodeControllerConfiguration_To_config_NodeControllerConfiguration(in *NodeControllerConfiguration, out *config.NodeControllerConfiguration, s conversion.Scope) error {
++	out.ConcurrentNodeSyncs = in.ConcurrentNodeSyncs
++	return nil
++}
++
++func autoConvert_config_NodeControllerConfiguration_To_v1alpha1_NodeControllerConfiguration(in *config.NodeControllerConfiguration, out *NodeControllerConfiguration, s conversion.Scope) error {
++	out.ConcurrentNodeSyncs = in.ConcurrentNodeSyncs
++	return nil
++}
+diff --git a/staging/src/k8s.io/cloud-provider/controllers/node/config/v1alpha1/zz_generated.deepcopy.go b/staging/src/k8s.io/cloud-provider/controllers/node/config/v1alpha1/zz_generated.deepcopy.go
+new file mode 100644
+index 00000000000..7e7c1b9fadd
+--- /dev/null
++++ b/staging/src/k8s.io/cloud-provider/controllers/node/config/v1alpha1/zz_generated.deepcopy.go
+@@ -0,0 +1,38 @@
++//go:build !ignore_autogenerated
++// +build !ignore_autogenerated
++
++/*
++Copyright The Kubernetes Authors.
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++*/
++
++// Code generated by deepcopy-gen. DO NOT EDIT.
++
++package v1alpha1
++
++// DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
++func (in *NodeControllerConfiguration) DeepCopyInto(out *NodeControllerConfiguration) {
++	*out = *in
++	return
++}
++
++// DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new NodeControllerConfiguration.
++func (in *NodeControllerConfiguration) DeepCopy() *NodeControllerConfiguration {
++	if in == nil {
++		return nil
++	}
++	out := new(NodeControllerConfiguration)
++	in.DeepCopyInto(out)
++	return out
++}
+diff --git a/staging/src/k8s.io/cloud-provider/controllers/node/node_controller.go b/staging/src/k8s.io/cloud-provider/controllers/node/node_controller.go
+index c14fe43b8f8..7dfbbd88cb8 100644
+--- a/staging/src/k8s.io/cloud-provider/controllers/node/node_controller.go
++++ b/staging/src/k8s.io/cloud-provider/controllers/node/node_controller.go
+@@ -101,6 +101,7 @@ type CloudNodeController struct {
+ 	cloud cloudprovider.Interface
+ 
+ 	nodeStatusUpdateFrequency time.Duration
++	workerCount               int32
+ 
+ 	nodesLister corelisters.NodeLister
+ 	nodesSynced cache.InformerSynced
+@@ -112,7 +113,8 @@ func NewCloudNodeController(
+ 	nodeInformer coreinformers.NodeInformer,
+ 	kubeClient clientset.Interface,
+ 	cloud cloudprovider.Interface,
+-	nodeStatusUpdateFrequency time.Duration) (*CloudNodeController, error) {
++	nodeStatusUpdateFrequency time.Duration,
++	workerCount int32) (*CloudNodeController, error) {
+ 
+ 	eventBroadcaster := record.NewBroadcaster()
+ 	recorder := eventBroadcaster.NewRecorder(scheme.Scheme, v1.EventSource{Component: "cloud-node-controller"})
+@@ -130,6 +132,7 @@ func NewCloudNodeController(
+ 		recorder:                  recorder,
+ 		cloud:                     cloud,
+ 		nodeStatusUpdateFrequency: nodeStatusUpdateFrequency,
++		workerCount:               workerCount,
+ 		nodesLister:               nodeInformer.Lister(),
+ 		nodesSynced:               nodeInformer.Informer().HasSynced,
+ 		workqueue:                 workqueue.NewNamedRateLimitingQueue(workqueue.DefaultControllerRateLimiter(), "Nodes"),
+@@ -178,7 +181,9 @@ func (cnc *CloudNodeController) Run(stopCh <-chan struct{}, controllerManagerMet
+ 		}
+ 	}, cnc.nodeStatusUpdateFrequency, stopCh)
+ 
+-	go wait.Until(cnc.runWorker, time.Second, stopCh)
++	for i := int32(0); i < cnc.workerCount; i++ {
++		go wait.Until(cnc.runWorker, time.Second, stopCh)
++	}
+ 
+ 	<-stopCh
+ }
+diff --git a/staging/src/k8s.io/cloud-provider/options/nodecontroller.go b/staging/src/k8s.io/cloud-provider/options/nodecontroller.go
+new file mode 100644
+index 00000000000..4823c437b16
+--- /dev/null
++++ b/staging/src/k8s.io/cloud-provider/options/nodecontroller.go
+@@ -0,0 +1,62 @@
++/*
++Copyright 2022 The Kubernetes Authors.
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++*/
++
++package options
++
++import (
++	"fmt"
++
++	"github.com/spf13/pflag"
++
++	nodeconfig "k8s.io/cloud-provider/controllers/node/config"
++)
++
++// NodeControllerOptions holds the ServiceController options.
++type NodeControllerOptions struct {
++	*nodeconfig.NodeControllerConfiguration
++}
++
++// AddFlags adds flags related to ServiceController for controller manager to the specified FlagSet.
++func (o *NodeControllerOptions) AddFlags(fs *pflag.FlagSet) {
++	if o == nil {
++		return
++	}
++
++	fs.Int32Var(&o.ConcurrentNodeSyncs, "concurrent-node-syncs", o.ConcurrentNodeSyncs, "Number of workers concurrently synchronizing nodes.")
++}
++
++// ApplyTo fills up ServiceController config with options.
++func (o *NodeControllerOptions) ApplyTo(cfg *nodeconfig.NodeControllerConfiguration) error {
++	if o == nil {
++		return nil
++	}
++
++	cfg.ConcurrentNodeSyncs = o.ConcurrentNodeSyncs
++
++	return nil
++}
++
++// Validate checks validation of NodeControllerOptions.
++func (o *NodeControllerOptions) Validate() []error {
++	if o == nil {
++		return nil
++	}
++	var errors []error
++	if o.ConcurrentNodeSyncs <= 0 {
++		errors = append(errors, fmt.Errorf("concurrent-node-syncs must be a positive number"))
++	}
++	return errors
++}
+diff --git a/staging/src/k8s.io/cloud-provider/options/nodecontroller_test.go b/staging/src/k8s.io/cloud-provider/options/nodecontroller_test.go
+new file mode 100644
+index 00000000000..6c024a9dabe
+--- /dev/null
++++ b/staging/src/k8s.io/cloud-provider/options/nodecontroller_test.go
+@@ -0,0 +1,68 @@
++/*
++Copyright 2022 The Kubernetes Authors.
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++*/
++
++package options
++
++import (
++	"fmt"
++	"testing"
++
++	nodeconfig "k8s.io/cloud-provider/controllers/node/config"
++)
++
++func errSliceEq(a []error, b []error) bool {
++	if len(a) != len(b) {
++		return false
++	}
++	for i := 0; i < len(a); i++ {
++		if a[i].Error() != b[i].Error() {
++			return false
++		}
++	}
++	return true
++}
++
++func TestNodeControllerConcurrentNodeSyncsValidation(t *testing.T) {
++	testCases := []struct {
++		desc   string
++		input  *NodeControllerOptions
++		expect []error
++	}{
++		{
++			desc: "empty options",
++		},
++		{
++			desc:   "negative value",
++			input:  &NodeControllerOptions{NodeControllerConfiguration: &nodeconfig.NodeControllerConfiguration{ConcurrentNodeSyncs: -5}},
++			expect: []error{fmt.Errorf("concurrent-node-syncs must be a positive number")},
++		},
++		{
++			desc:   "zero value",
++			input:  &NodeControllerOptions{NodeControllerConfiguration: &nodeconfig.NodeControllerConfiguration{ConcurrentNodeSyncs: 0}},
++			expect: []error{fmt.Errorf("concurrent-node-syncs must be a positive number")},
++		},
++		{
++			desc:  "positive value",
++			input: &NodeControllerOptions{NodeControllerConfiguration: &nodeconfig.NodeControllerConfiguration{ConcurrentNodeSyncs: 5}},
++		},
++	}
++	for _, tc := range testCases {
++		got := tc.input.Validate()
++		if !errSliceEq(tc.expect, got) {
++			t.Errorf("%v: expected: %v  got: %v", tc.desc, tc.expect, got)
++		}
++	}
++}
+diff --git a/staging/src/k8s.io/cloud-provider/options/options.go b/staging/src/k8s.io/cloud-provider/options/options.go
+index 908c79fc777..fdf8e65c704 100644
+--- a/staging/src/k8s.io/cloud-provider/options/options.go
++++ b/staging/src/k8s.io/cloud-provider/options/options.go
+@@ -57,6 +57,7 @@ type CloudControllerManagerOptions struct {
+ 	Generic           *cmoptions.GenericControllerManagerConfigurationOptions
+ 	KubeCloudShared   *KubeCloudSharedOptions
+ 	ServiceController *ServiceControllerOptions
++	NodeController    *NodeControllerOptions
+ 
+ 	SecureServing  *apiserveroptions.SecureServingOptionsWithLoopback
+ 	Authentication *apiserveroptions.DelegatingAuthenticationOptions
+@@ -79,6 +80,9 @@ func NewCloudControllerManagerOptions() (*CloudControllerManagerOptions, error)
+ 	s := CloudControllerManagerOptions{
+ 		Generic:         cmoptions.NewGenericControllerManagerConfigurationOptions(&componentConfig.Generic),
+ 		KubeCloudShared: NewKubeCloudSharedOptions(&componentConfig.KubeCloudShared),
++		NodeController: &NodeControllerOptions{
++			NodeControllerConfiguration: &componentConfig.NodeController,
++		},
+ 		ServiceController: &ServiceControllerOptions{
+ 			ServiceControllerConfiguration: &componentConfig.ServiceController,
+ 		},
+@@ -111,6 +115,7 @@ func NewDefaultComponentConfig() (*ccmconfig.CloudControllerManagerConfiguration
+ 	if err := ccmconfigscheme.Scheme.Convert(versioned, internal, nil); err != nil {
+ 		return nil, err
+ 	}
++
+ 	return internal, nil
+ }
+ 
+@@ -119,6 +124,7 @@ func (o *CloudControllerManagerOptions) Flags(allControllers, disabledByDefaultC
+ 	fss := cliflag.NamedFlagSets{}
+ 	o.Generic.AddFlags(&fss, allControllers, disabledByDefaultControllers)
+ 	o.KubeCloudShared.AddFlags(fss.FlagSet("generic"))
++	o.NodeController.AddFlags(fss.FlagSet("node controller"))
+ 	o.ServiceController.AddFlags(fss.FlagSet("service controller"))
+ 
+ 	o.SecureServing.AddFlags(fss.FlagSet("secure serving"))
+@@ -198,6 +204,7 @@ func (o *CloudControllerManagerOptions) ApplyTo(c *config.Config, userAgent stri
+ 	// sync back to component config
+ 	// TODO: find more elegant way than syncing back the values.
+ 	c.ComponentConfig.NodeStatusUpdateFrequency = o.NodeStatusUpdateFrequency
++	c.ComponentConfig.NodeController.ConcurrentNodeSyncs = o.NodeController.ConcurrentNodeSyncs
+ 
+ 	return nil
+ }
+diff --git a/staging/src/k8s.io/cloud-provider/options/options_test.go b/staging/src/k8s.io/cloud-provider/options/options_test.go
+index 194f455380b..b7d10ca5d2c 100644
+--- a/staging/src/k8s.io/cloud-provider/options/options_test.go
++++ b/staging/src/k8s.io/cloud-provider/options/options_test.go
+@@ -26,6 +26,7 @@ import (
+ 	"k8s.io/apimachinery/pkg/util/diff"
+ 	apiserveroptions "k8s.io/apiserver/pkg/server/options"
+ 	cpconfig "k8s.io/cloud-provider/config"
++	nodeconfig "k8s.io/cloud-provider/controllers/node/config"
+ 	serviceconfig "k8s.io/cloud-provider/controllers/service/config"
+ 	componentbaseconfig "k8s.io/component-base/config"
+ 	cmconfig "k8s.io/controller-manager/config"
+@@ -84,6 +85,11 @@ func TestDefaultFlags(t *testing.T) {
+ 				},
+ 			},
+ 		},
++		NodeController: &NodeControllerOptions{
++			NodeControllerConfiguration: &nodeconfig.NodeControllerConfiguration{
++				ConcurrentNodeSyncs: 1,
++			},
++		},
+ 		ServiceController: &ServiceControllerOptions{
+ 			ServiceControllerConfiguration: &serviceconfig.ServiceControllerConfiguration{
+ 				ConcurrentServiceSyncs: 1,
+@@ -169,6 +175,7 @@ func TestAddFlags(t *testing.T) {
+ 		"--route-reconciliation-period=30s",
+ 		"--secure-port=10001",
+ 		"--use-service-account-credentials=false",
++		"--concurrent-node-syncs=5",
+ 	}
+ 	err = fs.Parse(args)
+ 	if err != nil {
+@@ -222,6 +229,11 @@ func TestAddFlags(t *testing.T) {
+ 				},
+ 			},
+ 		},
++		NodeController: &NodeControllerOptions{
++			NodeControllerConfiguration: &nodeconfig.NodeControllerConfiguration{
++				ConcurrentNodeSyncs: 5,
++			},
++		},
+ 		ServiceController: &ServiceControllerOptions{
+ 			ServiceControllerConfiguration: &serviceconfig.ServiceControllerConfiguration{
+ 				ConcurrentServiceSyncs: 1,
+diff --git a/vendor/modules.txt b/vendor/modules.txt
+index 81ab861de0e..1bdb7d0050b 100644
+--- a/vendor/modules.txt
++++ b/vendor/modules.txt
+@@ -1948,6 +1948,8 @@ k8s.io/cloud-provider/config
+ k8s.io/cloud-provider/config/install
+ k8s.io/cloud-provider/config/v1alpha1
+ k8s.io/cloud-provider/controllers/node
++k8s.io/cloud-provider/controllers/node/config
++k8s.io/cloud-provider/controllers/node/config/v1alpha1
+ k8s.io/cloud-provider/controllers/nodelifecycle
+ k8s.io/cloud-provider/controllers/route
+ k8s.io/cloud-provider/controllers/service
