@@ -7,6 +7,8 @@
 | 1-23 | [![1-23](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-23-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-23-postsubmit) |
 | 1-24 | [![1-24](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-24-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-24-postsubmit) |
 | 1-25 | [![1-25](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-25-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-25-postsubmit) |
+| 1-26 | [![1-26](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-26-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-26-postsubmit) |
+
 
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/6111/badge)](https://bestpractices.coreinfrastructure.org/projects/6111)
 
@@ -29,10 +31,17 @@ Full documentation for releases can be found on [https://distro.eks.amazonaws.co
 To receive notifications about new EKS-D releases, subscribe to the EKS-D updates SNS topic:
 `arn:aws:sns:us-east-1:379412251201:eks-distro-updates`
 
-[<img src="docs/contents/certified-kubernetes-1.25-color.svg" height=150>](https://github.com/cncf/k8s-conformance/pull/2452)
+[<img src="docs/contents/certified-kubernetes-1.26-color.svg" height=150>](https://github.com/cncf/k8s-conformance/pull/2507)
 <!--
 Source: https://github.com/cncf/artwork/tree/master/projects/kubernetes/certified-kubernetes
 -->
+
+### Kubernetes 1-26
+
+| Release | Manifest | Kubernetes Version |
+| -- | --- | --- |
+| 6 | [v1-26-eks-6](https://distro.eks.amazonaws.com/kubernetes-1-26/kubernetes-1-26-eks-6.yaml) | [v1.26.2](https://github.com/kubernetes/kubernetes/release/tag/v1.26.2) |
+
 
 ### Kubernetes 1-25
 
