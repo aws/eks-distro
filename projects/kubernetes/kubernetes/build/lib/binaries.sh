@@ -76,14 +76,21 @@ function build::binaries::kube_bins() {
     rm -rf ./_output/local/go/cache
 
     # Windows
+    # TODO: figure out if any of these can be combined without causing an out-of-space error
     export KUBE_BUILD_PLATFORMS="windows/amd64"
-    hack/make-rules/build.sh -trimpath cmd/kubelet \
-    	cmd/kube-proxy
+    hack/make-rules/build.sh -trimpath cmd/kubelet
 
     # In presubmit builds space is very limited so build is split
     rm -rf ./_output/local/go/cache
-    hack/make-rules/build.sh -trimpath cmd/kubeadm \
-        cmd/kubectl
+    hack/make-rules/build.sh -trimpath cmd/kube-proxy
+
+    # In presubmit builds space is very limited so build is split
+    rm -rf ./_output/local/go/cache
+    hack/make-rules/build.sh -trimpath cmd/kubeadm
+
+    # In presubmit builds space is very limited so build is split
+    rm -rf ./_output/local/go/cache
+    hack/make-rules/build.sh -trimpath cmd/kubectl
 
     # In presubmit builds space is very limited
     rm -rf ./_output/local/go/cache
