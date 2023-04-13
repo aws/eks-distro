@@ -78,9 +78,15 @@ function build::binaries::kube_bins() {
     # Windows
     export KUBE_BUILD_PLATFORMS="windows/amd64"
     hack/make-rules/build.sh -trimpath cmd/kubelet \
-    	cmd/kube-proxy \
-        cmd/kubeadm \
+    	cmd/kube-proxy
+
+    # In presubmit builds space is very limited so build is split
+    rm -rf ./_output/local/go/cache
+    hack/make-rules/build.sh -trimpath cmd/kubeadm \
         cmd/kubectl
+
+    # In presubmit builds space is very limited
+    rm -rf ./_output/local/go/cache
 
     # Darwin
     export KUBE_BUILD_PLATFORMS="darwin/amd64"
