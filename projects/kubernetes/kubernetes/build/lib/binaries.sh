@@ -60,15 +60,15 @@ function build::binaries::kube_bins() {
 
     # Linux
     export KUBE_BUILD_PLATFORMS="linux/amd64 linux/arm64"
-	hack/make-rules/build.sh -trimpath cmd/kubelet \
+	  hack/make-rules/build.sh -trimpath cmd/kubelet \
         cmd/kube-proxy \
         cmd/kubeadm \
         cmd/kubectl
 
-  # In presubmit builds space is very limited so build is split
-  rm -rf ./_output/local/go/cache
+    # In presubmit builds space is very limited so build is split
+    rm -rf ./_output/local/go/cache
 
-  hack/make-rules/build.sh -trimpath cmd/kube-apiserver \
+    hack/make-rules/build.sh -trimpath cmd/kube-apiserver \
         cmd/kube-controller-manager \
         cmd/kube-scheduler
 
