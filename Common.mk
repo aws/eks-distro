@@ -370,6 +370,7 @@ needs-cgo-builder=$(and $(if $(filter true,$(CGO_CREATE_BINARIES)),true,),$(if $
 USE_DOCKER_FOR_CGO_BUILD?=false
 DOCKER_USE_ID_FOR_LINUX=$(shell if [ "$$(uname -s)" = "Linux" ] && [ -n "$${USER:-}" ]; then echo "-u $$(id -u $${USER}):$$(id -g $${USER})"; fi)
 GO_MOD_CACHE=$(shell source $(BUILD_LIB)/common.sh && build::common::use_go_version $(GOLANG_VERSION) > /dev/null 2>&1 && go env GOMODCACHE)
+EXTRA_GO_MOD_CACHE?=
 GO_BUILD_CACHE=$(shell source $(BUILD_LIB)/common.sh && build::common::use_go_version $(GOLANG_VERSION) > /dev/null 2>&1 && go env GOCACHE)
 CGO_TARGET?=
 ######################
@@ -854,8 +855,8 @@ clean-go-cache:
 # When go downloads pkg to the module cache, GOPATH/pkg/mod, it removes the write permissions
 # prevent accident modifications since files/checksums are tightly controlled
 # adding the perms necessary to perform the delete
-	@chmod -fR 777 $(GO_MOD_CACHE) &> /dev/null || :
-	$(foreach folder,$(GO_MOD_CACHE) $(GO_BUILD_CACHE),$(if $(wildcard $(folder)),du -hs $(folder) && rm -rf $(folder);,))
+	@chmod -fR 777 $(GO_MOD_CACHE) $(EXTRA_GO_MOD_CACHE) &> /dev/null || :
+	$(foreach folder,$(GO_MOD_CACHE) $(EXTRA_GO_MOD_CACHE) $(GO_BUILD_CACHE),$(if $(wildcard $(folder)),du -hs $(folder) && rm -rf $(folder);,))
 # When building go bins using mods which have been downloaded by go mod download/vendor which will exist in the go_mod_cache
 # there is additional checksum (?) information that is not preserved in the vendor directory within the project folder
 # This additional information gets written out into the resulting binary. If we did not run go mod vendor, which we do 

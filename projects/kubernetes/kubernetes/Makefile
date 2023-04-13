@@ -54,6 +54,8 @@ HAS_S3_ARTIFACTS=true
 
 KUBE_GIT_VERSION_FILE=$(RELEASE_BRANCH)/KUBE_GIT_VERSION_FILE
 
+EXTRA_GO_MOD_CACHE=$(MAKE_ROOT)/$(REPO)/_output/local/go/cache
+
 include $(BASE_DIRECTORY)/Common.mk
 
 # Validate version file before uploading artifacts since that runs in both build and release
