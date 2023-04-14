@@ -12,6 +12,6 @@ None
 * Update external-provisioner to v3.4.1 (#1913)
 
 ### Base Image
-* https://github.com/aws/eks-distro/pull/1919
-* https://github.com/aws/eks-distro/pull/1911
+* Update base image tag in tag file(s) (#1919)
+* Update base image tag in tag file(s) (#1911)
 
