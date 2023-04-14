@@ -5,21 +5,7 @@ This changelog highlights the changes for [v1-22-eks-25](https://github.com/aws/
 ## Changes
 
 ### Patches
-* Added patch and descriptions to 1.22 ([1879](https://github.com/aws/eks-distro/pull/1879))
-* Update iam auth for 1.22 - 1.26 ([1878](https://github.com/aws/eks-distro/pull/1878))
-* Patch to bump x/net to 0.7.0 for 1-22 to 1-26 in node-driver-registrar ([1856](https://github.com/aws/eks-distro/pull/1856))
-* Patch to bump x/net to 0.7.0 for 1-22 to 1-26 in livenessprobe and external-attacher ([1855](https://github.com/aws/eks-distro/pull/1855))
-* Updated patches for Kubernetes v1.22 ([1821](https://github.com/aws/eks-distro/pull/1821))
-* Updated patches for 1.22 ([1716](https://github.com/aws/eks-distro/pull/1716))
-* Bump iam-authenticator verisons for 1.21-1.25 ([1663](https://github.com/aws/eks-distro/pull/1663))
-* Updated aws-iam-auth to v0.6.2 for all versions ([1628](https://github.com/aws/eks-distro/pull/1628))
-* Bump Kubernetes 1-22 to v1.22.16 ([1594](https://github.com/aws/eks-distro/pull/1594))
-* Update cloud-provider-aws for 1.21 - 1.24 ([1593](https://github.com/aws/eks-distro/pull/1593))
-* 1.22: consolidate SDK patch ([1558](https://github.com/aws/eks-distro/pull/1558))
-* POC: Iam auth v0.5.12 ([1526](https://github.com/aws/eks-distro/pull/1526))
-* update version 1-22 ([1487](https://github.com/aws/eks-distro/pull/1487))
-* Added CVE patches for 1.22 ([1443](https://github.com/aws/eks-distro/pull/1443))
-* Updated to 1.22.15 and added patch ([1327](https://github.com/aws/eks-distro/pull/1327))
+None
 
 ### Projects
 * Update iam auth for 1.22 - 1.26 ([1878](https://github.com/aws/eks-distro/pull/1878))
