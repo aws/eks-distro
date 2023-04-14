@@ -12,5 +12,6 @@ None
 * Update external-provisioner to v3.4.1 (#1913)
 
 ### Base Image
-No changes since last release
+* https://github.com/aws/eks-distro/pull/1919
+* https://github.com/aws/eks-distro/pull/1911
 
