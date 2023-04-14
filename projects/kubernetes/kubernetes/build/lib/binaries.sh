@@ -65,17 +65,19 @@ function build::binaries::kube_bins() {
   fi
 
   # Linux
-  export KUBE_BUILD_PLATFORMS="linux/amd64 linux/arm64"
-	hack/make-rules/build.sh -trimpath cmd/kubelet \
-        cmd/kube-proxy \
-        cmd/kubeadm \
-        cmd/kubectl \
-        cmd/kube-apiserver \
-        cmd/kube-controller-manager \
-        cmd/kube-scheduler
+  for arch in linux/amd64 linux/arm64; do
+    export KUBE_BUILD_PLATFORMS="$arch"
+    hack/make-rules/build.sh -trimpath cmd/kubelet \
+          cmd/kube-proxy \
+          cmd/kubeadm \
+          cmd/kubectl \
+          cmd/kube-apiserver \
+          cmd/kube-controller-manager \
+          cmd/kube-scheduler
 
-  # In presubmit builds space is very limited
-  rm -rf ./_output/local/go/cache
+    # In presubmit builds space is very limited
+    rm -rf ./_output/local/go/cache
+  done
   
   # Windows
   export KUBE_BUILD_PLATFORMS="windows/amd64"
