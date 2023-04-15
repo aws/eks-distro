@@ -102,7 +102,7 @@ cleanup-artifacts:
 	cp $(OUTPUT_DIR)/ATTRIBUTION.txt $(ARTIFACTS_PATH)
 
 .PHONY: test
-test:
+test: $(GIT_PATCH_TARGET)
 	build/run_tests.sh $(RELEASE_BRANCH) $(GOLANG_VERSION)
 
 .PHONY: fix-licenses
