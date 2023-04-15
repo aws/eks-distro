@@ -51,8 +51,11 @@ cd $MAKE_ROOT/kubernetes
 
 export PATH="${GOPATH}/bin:${MAKE_ROOT}/kubernetes/third_party/etcd:${PATH}"
 
-# avoid caching built objects to preserve space on presubmit
-export GOFLAGS="-count=1"
+# kube build scripts set GOCACHE and GOMODCACHE to be in the ./_output/local/go/cache directory
+# relative to the kubernetes source folder instead
+# unsetting these two which we set in our common script to allow kube to fully manage these locations
+# and keep the directories we need to clean consistent through versions
+unset GOCACHE GOMODCACHE
 
 MAX_RETRIES=5
 # There are flakes in upstream tests, the process also caches passing results
