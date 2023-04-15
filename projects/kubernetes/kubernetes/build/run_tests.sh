@@ -51,6 +51,9 @@ cd $MAKE_ROOT/kubernetes
 
 export PATH="${GOPATH}/bin:${MAKE_ROOT}/kubernetes/third_party/etcd:${PATH}"
 
+# avoid caching built objects to preserve space on presubmit
+export GOCACHE=off
+
 MAX_RETRIES=5
 # There are flakes in upstream tests, the process also caches passing results
 # so on rerun it only runs the tests which failed
