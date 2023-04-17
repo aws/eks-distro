@@ -102,7 +102,7 @@ cleanup-artifacts:
 	cp $(OUTPUT_DIR)/ATTRIBUTION.txt $(ARTIFACTS_PATH)
 
 .PHONY: test
-test: $(GIT_PATCH_TARGET)
+test: $(BINARY_TARGETS)
 	@echo “!!!GIT_PATCH_TARGET!!! : $(GIT_PATCH_TARGET)”
 	@echo “!!!BINARY_TARGETS!!!: $(BINARY_TARGETS)”
 	build/run_tests.sh $(RELEASE_BRANCH) $(GOLANG_VERSION)
