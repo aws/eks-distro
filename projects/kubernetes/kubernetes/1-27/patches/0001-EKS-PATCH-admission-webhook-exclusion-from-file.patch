@@ -7,7 +7,7 @@ Description:
 * Allows for the bypassing of admission controller webhook for certain resources.
 
 Upstream PR, Issue, KEP, etc. links:
-* See below.
+* See below
 
 If this patch is based on an upstream commit, how (if at all) do this patch and the upstream source differ?
 * N/A
