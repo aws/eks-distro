@@ -102,7 +102,9 @@ cleanup-artifacts:
 	cp $(OUTPUT_DIR)/ATTRIBUTION.txt $(ARTIFACTS_PATH)
 
 .PHONY: test
-test: $(BINARY_TARGETS)
+test: $(GIT_PATCH_TARGET)
+	@echo “!!!GIT_PATCH_TARGET!!! : $(GIT_PATCH_TARGET)”
+	@echo “!!!BINARY_TARGETS!!!: $(BINARY_TARGETS)”
 	build/run_tests.sh $(RELEASE_BRANCH) $(GOLANG_VERSION)
 
 .PHONY: fix-licenses
