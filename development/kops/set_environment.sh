@@ -27,7 +27,7 @@ export IPV6=${IPV6:-false}
 
 # Remove once kops 1.27 is stable and working for all versions
 if [ "$RELEASE_BRANCH" == "1-27" ]; then
-    export KOPS_VERSION="1.27.0-alpha.1"
+    export KOPS_VERSION="995bdda1588b7225dca29543ae73d09ae27f767d"
 else
     export KOPS_VERSION="1.26.2"
 fi
