@@ -34,7 +34,7 @@ if [ ! -x ${KOPS} ]
 then
     echo "Determine kops version"
     echo "Download kops"
-    KOPS_URL="s3://eks-d-postsubmit-artifacts/kops/${KOPS_VERSION}/${OS}/${ARCH}/kops"
+    KOPS_URL="https://eks-d-postsubmit-artifacts.s3.us-west-2.amazonaws.com/kops/${KOPS_VERSION}/${OS}/${ARCH}/kops"
     set -x
     curl -L -o ${KOPS} "${KOPS_URL}"
     chmod 755 ${KOPS}
