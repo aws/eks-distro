@@ -198,7 +198,6 @@ go-mod-files-project-%:
 
 .PHONY: go-mod-files
 go-mod-files: $(addprefix go-mod-files-project-, $(ALL_PROJECTS))
-	build/update-attribution-files/create_pr.sh
 
 .PHONY: add-generated-help-block-project-%
 add-generated-help-block-project-%:
