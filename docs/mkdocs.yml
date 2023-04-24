@@ -19,9 +19,6 @@ nav:
       - Install with kubeadm (tested on Raspberry Pi): 'users/install/kubeadm.md'
       - Install with kOps: 'users/install/kops.md'
       - Install with kubeinit (Ansible on Libvirt hosts): 'users/install/kubeinit.md'
-  - Build EKS Distro:
-    - Build Prerequisites: 'users/build-prerequisites.md'
-    - Build EKS-D: 'users/build.md'
 - Community:
   - Overview: 'community/overview.md'
   - Contributing: 'community/contributing.md'
