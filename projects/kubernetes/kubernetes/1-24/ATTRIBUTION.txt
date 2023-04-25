@@ -338,7 +338,7 @@ https://github.com/kubernetes/kubectl
 ** k8s.io/kubelet; version v0.0.0 --
 https://github.com/kubernetes/kubelet
 
-** k8s.io/kubernetes; version v1.24.12 --
+** k8s.io/kubernetes; version v1.24.13 --
 https://github.com/kubernetes/kubernetes
 
 ** k8s.io/legacy-cloud-providers; version v0.0.0 --
@@ -359,7 +359,7 @@ https://github.com/kubernetes/system-validators
 ** k8s.io/utils; version v0.0.0-20220210201930-3a6ce19ff2f9 --
 https://github.com/kubernetes/utils
 
-** sigs.k8s.io/apiserver-network-proxy/konnectivity-client; version v0.0.35 --
+** sigs.k8s.io/apiserver-network-proxy/konnectivity-client; version v0.0.36 --
 https://github.com/kubernetes-sigs/apiserver-network-proxy
 
 ** sigs.k8s.io/json; version v0.0.0-20211208200746-9f7c6b3444d2 --
@@ -985,7 +985,7 @@ https://github.com/kubernetes/apimachinery
 ** k8s.io/client-go/third_party/forked/golang/template; version v0.0.0 --
 https://github.com/kubernetes/client-go
 
-** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.24.12 --
+** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.24.13 --
 https://github.com/kubernetes/kubernetes
 
 ** k8s.io/utils/inotify; version v0.0.0-20220210201930-3a6ce19ff2f9 --
@@ -1862,7 +1862,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.24.12 --
+** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.24.13 --
 https://github.com/kubernetes/kubernetes
 
 Copyright ©2013 The gonum Authors. All rights reserved.
