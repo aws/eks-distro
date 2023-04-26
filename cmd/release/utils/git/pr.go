@@ -26,12 +26,7 @@ func (gm *Manager) OpenPR() error {
 		return fmt.Errorf("getting PR description: %w", err)
 	}
 
-	cmd := exec.Command(
-		"/bin/bash", prScriptPathFromRoot,
-		gm.changesBranch,
-		prTitle,
-		gm.version,
-	)
+	cmd := exec.Command("/bin/bash", prScriptPathFromRoot, gm.changesBranch, prTitle)
 
 	cmd.Stdout = outputStream
 	cmd.Stderr = errStream

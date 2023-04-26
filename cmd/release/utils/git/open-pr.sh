@@ -19,7 +19,6 @@ set -x
 
 PR_BRANCH="${1?...}"
 PR_TITLE="${2?...}"
-VERSION_FOR_LABEL="${3?...}"
 
 echo "pushing..."
 git push origin "${PR_BRANCH}"
@@ -41,10 +40,5 @@ pr_arguments=(
   --web
   --body "By submitting this pull request, I confirm that you can use, modify, copy, and redistribute this contribution, under the terms of your choice."
 )
-
-labels="do-not-merge/hold release v$VERSION_FOR_LABEL"
-for label in $labels; do
-     pr_arguments+=(--label "${label}")
-done
 
 gh pr create "${pr_arguments[@]}"
