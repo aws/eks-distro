@@ -11,6 +11,16 @@ release:
 - 'release/**/*'
 - 'docs/contents/releases/**/*'
 
+PROD-release:
+- 'release/*/production/RELEASE'
+
+DEV-release:
+- 'release/*/development/RELEASE'
+
+do-not-merge/hold:
+- 'release/**/*'
+- 'docs/contents/releases/**/*'
+
 base-img-pkg-update:
 - 'EKS_DISTRO_BASE_TAG_FILE'
 
