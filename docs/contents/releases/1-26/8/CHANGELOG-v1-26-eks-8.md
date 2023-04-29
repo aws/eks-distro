@@ -2,6 +2,10 @@
 
 This changelog highlights the changes for [v1-26-eks-8](https://github.com/aws/eks-distro/tree/v1-26-eks-8).
 
+## Community Contributor Recognition
+
+Thank you to community member [@notamyth](https://github.com/notamyth) for their contribution to EKS-Distro in PR [#1920](https://github.com/aws/eks-distro/pull/1920)!
+
 ## Changes
 
 ### Patches
