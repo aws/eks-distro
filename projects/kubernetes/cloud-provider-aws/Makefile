@@ -14,6 +14,7 @@ GO_RUNNER_IMAGE?=$(IMAGE_REPO)/kubernetes/go-runner:$(KUBE_BASE_TAG)
 BASE_IMAGE=$(GO_RUNNER_IMAGE)
 
 HAS_RELEASE_BRANCHES=true
+HAS_S3_ARTIFACTS=true
 
 EXTRA_GO_LDFLAGS=-X k8s.io/component-base/version.gitVersion=$(GIT_TAG)
 
