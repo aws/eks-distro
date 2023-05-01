@@ -5,8 +5,8 @@ GOLANG_VERSION?=$(shell cat ./$(RELEASE_BRANCH)/GOLANG_VERSION)
 REPO=cloud-provider-aws
 REPO_OWNER=kubernetes
 
-BINARY_TARGET_FILES=aws-cloud-controller-manager
-SOURCE_PATTERNS=./cmd/aws-cloud-controller-manager
+BINARY_TARGET_FILES=aws-cloud-controller-manager ecr-credential-provider
+SOURCE_PATTERNS=./cmd/aws-cloud-controller-manager ./cmd/ecr-credential-provider
 
 KUBE_BASE_GIT_TAG?=$(shell cat $(BASE_DIRECTORY)/projects/kubernetes/release/$(RELEASE_BRANCH)/GIT_TAG)
 KUBE_BASE_TAG?=${KUBE_BASE_GIT_TAG}-eks-${RELEASE_BRANCH}-${RELEASE}
@@ -17,9 +17,10 @@ HAS_RELEASE_BRANCHES=true
 
 EXTRA_GO_LDFLAGS=-X k8s.io/component-base/version.gitVersion=$(GIT_TAG)
 
-IMAGE_NAMES=cloud-controller-manager
+IMAGE_NAMES=cloud-controller-manager ecr-credential-provider
 
 CLOUD_CONTROLLER_MANAGER_IMAGE_COMPONENT?=kubernetes/cloud-provider-aws/cloud-controller-manager
+ECR_CREDENTIAL_PROVIDER_IMAGE_COMPONENT?=kubernetes/cloud-provider-aws/ecr-credential-provider
 
 include $(BASE_DIRECTORY)/Common.mk
 
