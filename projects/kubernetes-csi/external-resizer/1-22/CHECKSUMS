@@ -1,2 +1,2 @@
-c1d857bc5102643c88d8ceb37c550ca25d4f6b8f50a9cf0d1b85f53202fe6101  _output/1-22/bin/external-provisioner/linux-amd64/csi-provisioner
-0fcdcd45a08b7c94becd86a30216887d7c2e7c6b0d84a9e1950d02b876828dd9  _output/1-22/bin/external-provisioner/linux-arm64/csi-provisioner
+47c0f139d02396765f5bafcf69aecee0155ce3a93fef991800bcdbd788880d39  _output/1-22/bin/external-resizer/linux-amd64/csi-resizer
+0660231f931149ee7f6b69b2be9ac06ab85a472ad6572cb84e059e3bb7f64170  _output/1-22/bin/external-resizer/linux-arm64/csi-resizer
