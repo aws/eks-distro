@@ -1,0 +1,12 @@
+SHA256SUM
+SHA256SUM.sha256
+SHA256SUM.sha512
+SHA512SUM
+SHA512SUM.sha256
+SHA512SUM.sha512
+cloud-provider-aws-linux-amd64-$GIT_TAG.tar.gz
+cloud-provider-aws-linux-amd64-$GIT_TAG.tar.gz.sha256
+cloud-provider-aws-linux-amd64-$GIT_TAG.tar.gz.sha512
+cloud-provider-aws-linux-arm64-$GIT_TAG.tar.gz
+cloud-provider-aws-linux-arm64-$GIT_TAG.tar.gz.sha256
+cloud-provider-aws-linux-arm64-$GIT_TAG.tar.gz.sha512

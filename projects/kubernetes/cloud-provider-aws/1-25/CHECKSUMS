@@ -1,2 +1,4 @@
 9444e868db207d63e02780725f959b3d04e6ab2801aa87f7944240c33416acb4  _output/1-25/bin/cloud-provider-aws/linux-amd64/aws-cloud-controller-manager
+baeb4de835d37f6bd94627209c3a95ec7a44ff1f9ff10c7388207b10cc95e519  _output/1-25/bin/cloud-provider-aws/linux-amd64/ecr-credential-provider
 091b98dbe5a617c353fbc901abce28ea91adf26dcae20b737bb9f1c3add2b58e  _output/1-25/bin/cloud-provider-aws/linux-arm64/aws-cloud-controller-manager
+7fad509de0c8f58c4fdd7fa14c4f658757cec037ebefe76b989f75932e5264d5  _output/1-25/bin/cloud-provider-aws/linux-arm64/ecr-credential-provider
