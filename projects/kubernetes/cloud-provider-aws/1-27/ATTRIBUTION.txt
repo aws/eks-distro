@@ -167,6 +167,9 @@ https://github.com/kubernetes/kube-openapi
 ** k8s.io/kube-openapi/pkg/validation/strfmt; version v0.0.0-20230327201221-f5883ff37f0c --
 https://github.com/kubernetes/kube-openapi
 
+** k8s.io/kubelet/pkg/apis/credentialprovider; version v0.27.0 --
+https://github.com/kubernetes/kubelet
+
 ** k8s.io/utils; version v0.0.0-20230406110748-d93618cff8a2 --
 https://github.com/kubernetes/utils
 

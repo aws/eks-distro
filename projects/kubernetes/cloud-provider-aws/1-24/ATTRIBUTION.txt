@@ -155,6 +155,9 @@ https://github.com/kubernetes/kube-openapi
 ** k8s.io/kube-openapi/pkg/validation/spec; version v0.0.0-20220328201542-3ee0da9b0b42 --
 https://github.com/kubernetes/kube-openapi
 
+** k8s.io/kubelet/pkg/apis/credentialprovider; version v0.24.9 --
+https://github.com/kubernetes/kubelet
+
 ** k8s.io/utils; version v0.0.0-20220728103510-ee6ede2d64ed --
 https://github.com/kubernetes/utils
 
