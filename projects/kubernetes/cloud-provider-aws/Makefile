@@ -18,12 +18,9 @@ HAS_S3_ARTIFACTS=true
 
 EXTRA_GO_LDFLAGS=-X k8s.io/component-base/version.gitVersion=$(GIT_TAG)
 
-IMAGE_NAMES=cloud-controller-manager ecr-credential-provider
-
-DOCKERFILE_FOLDER=./docker/linux/$(IMAGE_NAME)
+IMAGE_NAMES=cloud-controller-manager
 
 CLOUD_CONTROLLER_MANAGER_IMAGE_COMPONENT?=kubernetes/cloud-provider-aws/cloud-controller-manager
-ECR_CREDENTIAL_PROVIDER_IMAGE_COMPONENT?=kubernetes/cloud-provider-aws/ecr-credential-provider
 
 include $(BASE_DIRECTORY)/Common.mk
 

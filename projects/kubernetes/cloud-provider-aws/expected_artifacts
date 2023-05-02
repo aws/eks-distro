@@ -10,9 +10,3 @@ cloud-provider-aws-linux-amd64-$GIT_TAG.tar.gz.sha512
 cloud-provider-aws-linux-arm64-$GIT_TAG.tar.gz
 cloud-provider-aws-linux-arm64-$GIT_TAG.tar.gz.sha256
 cloud-provider-aws-linux-arm64-$GIT_TAG.tar.gz.sha512
-ecr-credential-provider-linux-amd64-$GIT_TAG.tar.gz
-ecr-credential-provider-linux-amd64-$GIT_TAG.tar.gz.sha256
-ecr-credential-provider-linux-amd64-$GIT_TAG.tar.gz.sha512
-ecr-credential-provider-linux-arm64-$GIT_TAG.tar.gz
-ecr-credential-provider-linux-arm64-$GIT_TAG.tar.gz.sha256
-ecr-credential-provider-linux-arm64-$GIT_TAG.tar.gz.sha512
