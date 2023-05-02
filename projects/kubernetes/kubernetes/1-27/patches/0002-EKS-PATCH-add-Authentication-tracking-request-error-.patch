@@ -1,0 +1,331 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: HirazawaUi <695097494plus@gmail.com>
+Date: Tue, 11 Apr 2023 22:35:14 +0800
+Subject: [PATCH] --EKS-PATCH-- add Authentication tracking request/error
+ counts and latency metrics
+
+Description:
+  "Apiserver adds two new metrics `authorization_attempts_total` and `authorization_duration_seconds` that allow users
+  to monitor requests to authorization webhooks, split by result." (PR description)
+
+Upstream PR, Issue, KEP, etc. links:
+  * Take from upstream Kubernetes PR #117211 (https://github.com/kubernetes/kubernetes/pull/117211), which, at the time
+  this patch was added, had not been merged yet.
+  * Partially fixes Kubernetes Issue #117167 (https://github.com/kubernetes/kubernetes/issues/117167)
+
+If this patch is based on an upstream commit, how (if at all) do this patch and the upstream source differ?
+  TBD after change is merged by upstream
+
+If this patch's changes have not been added by upstream, why not?
+  Change is proposed to upstream
+
+Other patches related to this patch:
+  None
+
+Changes made to this patch after its initial creation and reasons for these changes:
+  None
+
+Kubernetes version this patch can be dropped:
+  TBD after change is merged by upstream
+
+---
+ .../pkg/endpoints/filters/authentication.go   |   6 +-
+ .../pkg/endpoints/filters/authorization.go    |  18 ++-
+ .../pkg/endpoints/filters/metrics.go          |  48 ++++++-
+ .../pkg/endpoints/filters/metrics_test.go     | 120 +++++++++++++++++-
+ 4 files changed, 181 insertions(+), 11 deletions(-)
+
+diff --git a/staging/src/k8s.io/apiserver/pkg/endpoints/filters/authentication.go b/staging/src/k8s.io/apiserver/pkg/endpoints/filters/authentication.go
+index d6741bf3a3a..277bdcdfe5f 100644
+--- a/staging/src/k8s.io/apiserver/pkg/endpoints/filters/authentication.go
++++ b/staging/src/k8s.io/apiserver/pkg/endpoints/filters/authentication.go
+@@ -34,17 +34,17 @@ import (
+ 	"k8s.io/klog/v2"
+ )
+ 
+-type recordMetrics func(context.Context, *authenticator.Response, bool, error, authenticator.Audiences, time.Time, time.Time)
++type authenticationRecordMetricsFunc func(context.Context, *authenticator.Response, bool, error, authenticator.Audiences, time.Time, time.Time)
+ 
+ // WithAuthentication creates an http handler that tries to authenticate the given request as a user, and then
+ // stores any such user found onto the provided context for the request. If authentication fails or returns an error
+ // the failed handler is used. On success, "Authorization" header is removed from the request and handler
+ // is invoked to serve the request.
+ func WithAuthentication(handler http.Handler, auth authenticator.Request, failed http.Handler, apiAuds authenticator.Audiences, requestHeaderConfig *authenticatorfactory.RequestHeaderConfig) http.Handler {
+-	return withAuthentication(handler, auth, failed, apiAuds, requestHeaderConfig, recordAuthMetrics)
++	return withAuthentication(handler, auth, failed, apiAuds, requestHeaderConfig, recordAuthenticationMetrics)
+ }
+ 
+-func withAuthentication(handler http.Handler, auth authenticator.Request, failed http.Handler, apiAuds authenticator.Audiences, requestHeaderConfig *authenticatorfactory.RequestHeaderConfig, metrics recordMetrics) http.Handler {
++func withAuthentication(handler http.Handler, auth authenticator.Request, failed http.Handler, apiAuds authenticator.Audiences, requestHeaderConfig *authenticatorfactory.RequestHeaderConfig, metrics authenticationRecordMetricsFunc) http.Handler {
+ 	if auth == nil {
+ 		klog.Warning("Authentication is disabled")
+ 		return handler
+diff --git a/staging/src/k8s.io/apiserver/pkg/endpoints/filters/authorization.go b/staging/src/k8s.io/apiserver/pkg/endpoints/filters/authorization.go
+index f7648d41ced..e102a1e3281 100644
+--- a/staging/src/k8s.io/apiserver/pkg/endpoints/filters/authorization.go
++++ b/staging/src/k8s.io/apiserver/pkg/endpoints/filters/authorization.go
+@@ -20,6 +20,7 @@ import (
+ 	"context"
+ 	"errors"
+ 	"net/http"
++	"time"
+ 
+ 	"k8s.io/klog/v2"
+ 
+@@ -41,14 +42,21 @@ const (
+ 	reasonError    = "internal error"
+ )
+ 
+-// WithAuthorizationCheck passes all authorized requests on to handler, and returns a forbidden error otherwise.
+-func WithAuthorization(handler http.Handler, a authorizer.Authorizer, s runtime.NegotiatedSerializer) http.Handler {
++type recordAuthorizationMetricsFunc func(ctx context.Context, authorized authorizer.Decision, err error, authStart time.Time, authFinish time.Time)
++
++// WithAuthorization passes all authorized requests on to handler, and returns a forbidden error otherwise.
++func WithAuthorization(hhandler http.Handler, auth authorizer.Authorizer, s runtime.NegotiatedSerializer) http.Handler {
++	return withAuthorization(hhandler, auth, s, recordAuthorizationMetrics)
++}
++
++func withAuthorization(handler http.Handler, a authorizer.Authorizer, s runtime.NegotiatedSerializer, metrics recordAuthorizationMetricsFunc) http.Handler {
+ 	if a == nil {
+ 		klog.Warning("Authorization is disabled")
+ 		return handler
+ 	}
+ 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+ 		ctx := req.Context()
++		authorizationStart := time.Now()
+ 
+ 		attributes, err := GetAuthorizerAttributes(ctx)
+ 		if err != nil {
+@@ -56,6 +64,12 @@ func WithAuthorization(handler http.Handler, a authorizer.Authorizer, s runtime.
+ 			return
+ 		}
+ 		authorized, reason, err := a.Authorize(ctx, attributes)
++
++		authorizationFinish := time.Now()
++		defer func() {
++			metrics(ctx, authorized, err, authorizationStart, authorizationFinish)
++		}()
++
+ 		// an authorizer like RBAC could encounter evaluation errors and still allow the request, so authorizer decision is checked before error here.
+ 		if authorized == authorizer.DecisionAllow {
+ 			audit.AddAuditAnnotations(ctx,
+diff --git a/staging/src/k8s.io/apiserver/pkg/endpoints/filters/metrics.go b/staging/src/k8s.io/apiserver/pkg/endpoints/filters/metrics.go
+index 47e1be847c7..39ad4269b33 100644
+--- a/staging/src/k8s.io/apiserver/pkg/endpoints/filters/metrics.go
++++ b/staging/src/k8s.io/apiserver/pkg/endpoints/filters/metrics.go
+@@ -18,6 +18,7 @@ package filters
+ 
+ import (
+ 	"context"
++	"k8s.io/apiserver/pkg/authorization/authorizer"
+ 	"strings"
+ 	"time"
+ 
+@@ -38,6 +39,10 @@ const (
+ 	successLabel = "success"
+ 	failureLabel = "failure"
+ 	errorLabel   = "error"
++
++	allowedLabel   = "allowed"
++	forbiddenLabel = "forbidden"
++	noOpinionLabel = "no-opinion"
+ )
+ 
+ var (
+@@ -68,15 +73,56 @@ var (
+ 		},
+ 		[]string{"result"},
+ 	)
++
++	authorizationAttemptsCounter = metrics.NewCounterVec(
++		&metrics.CounterOpts{
++			Name:           "authorization_attempts_total",
++			Help:           "Counter of authorization attempts broken down by result. It can be either 'allowed', 'forbidden', 'no-opinion' or 'error'.",
++			StabilityLevel: metrics.ALPHA,
++		},
++		[]string{"result"},
++	)
++
++	authorizationLatency = metrics.NewHistogramVec(
++		&metrics.HistogramOpts{
++			Name:           "authorization_duration_seconds",
++			Help:           "Authorization duration in seconds broken out by result.",
++			Buckets:        metrics.ExponentialBuckets(0.001, 2, 15),
++			StabilityLevel: metrics.ALPHA,
++		},
++		[]string{"result"},
++	)
+ )
+ 
+ func init() {
+ 	legacyregistry.MustRegister(authenticatedUserCounter)
+ 	legacyregistry.MustRegister(authenticatedAttemptsCounter)
+ 	legacyregistry.MustRegister(authenticationLatency)
++	legacyregistry.MustRegister(authorizationAttemptsCounter)
++	legacyregistry.MustRegister(authorizationLatency)
++}
++
++func recordAuthorizationMetrics(ctx context.Context, authorized authorizer.Decision, err error, authStart time.Time, authFinish time.Time) {
++	var resultLabel string
++
++	switch {
++	//Follow the behavior in withAuthorization, even encounter evaluation errors and still allow the request
++	//Will not judge whether there is an error
++	case authorized == authorizer.DecisionAllow:
++		resultLabel = allowedLabel
++	case err != nil:
++		resultLabel = errorLabel
++	case authorized == authorizer.DecisionDeny:
++		resultLabel = forbiddenLabel
++	case authorized == authorizer.DecisionNoOpinion:
++		resultLabel = noOpinionLabel
++	}
++
++	authorizationAttemptsCounter.WithContext(ctx).WithLabelValues(resultLabel).Inc()
++	authorizationLatency.WithContext(ctx).WithLabelValues(resultLabel).Observe(authFinish.Sub(authStart).Seconds())
+ }
+ 
+-func recordAuthMetrics(ctx context.Context, resp *authenticator.Response, ok bool, err error, apiAudiences authenticator.Audiences, authStart time.Time, authFinish time.Time) {
++func recordAuthenticationMetrics(ctx context.Context, resp *authenticator.Response, ok bool, err error, apiAudiences authenticator.Audiences, authStart time.Time, authFinish time.Time) {
+ 	var resultLabel string
+ 
+ 	switch {
+diff --git a/staging/src/k8s.io/apiserver/pkg/endpoints/filters/metrics_test.go b/staging/src/k8s.io/apiserver/pkg/endpoints/filters/metrics_test.go
+index e20eee417bd..68b17f36963 100644
+--- a/staging/src/k8s.io/apiserver/pkg/endpoints/filters/metrics_test.go
++++ b/staging/src/k8s.io/apiserver/pkg/endpoints/filters/metrics_test.go
+@@ -18,15 +18,18 @@ package filters
+ 
+ import (
+ 	"errors"
+-	"net/http"
+-	"net/http/httptest"
+-	"strings"
+-	"testing"
+-
++	"k8s.io/apimachinery/pkg/runtime"
++	"k8s.io/apimachinery/pkg/runtime/serializer"
++	auditinternal "k8s.io/apiserver/pkg/apis/audit"
+ 	"k8s.io/apiserver/pkg/authentication/authenticator"
+ 	"k8s.io/apiserver/pkg/authentication/user"
++	"k8s.io/apiserver/pkg/authorization/authorizer"
+ 	"k8s.io/component-base/metrics/legacyregistry"
+ 	"k8s.io/component-base/metrics/testutil"
++	"net/http"
++	"net/http/httptest"
++	"strings"
++	"testing"
+ )
+ 
+ func TestMetrics(t *testing.T) {
+@@ -158,3 +161,110 @@ func TestMetrics(t *testing.T) {
+ 		})
+ 	}
+ }
++
++func TestRecordAuthorizationMetricsMetrics(t *testing.T) {
++	// Excluding authorization_duration_seconds since it is difficult to predict its values.
++	metrics := []string{
++		"authorization_attempts_total",
++		"authorization_decision_annotations_total",
++	}
++
++	testCases := []struct {
++		desc       string
++		authorizer fakeAuthorizer
++		want       string
++	}{
++		{
++			desc: "auth ok",
++			authorizer: fakeAuthorizer{
++				authorizer.DecisionAllow,
++				"RBAC: allowed to patch pod",
++				nil,
++			},
++			want: `
++			# HELP authorization_attempts_total [ALPHA] Counter of authorization attempts broken down by result. It can be either 'allowed', 'forbidden', 'no-opinion' or 'error'.
++			# TYPE authorization_attempts_total counter
++			authorization_attempts_total{result="allowed"} 1
++				`,
++		},
++		{
++			desc: "decision forbid",
++			authorizer: fakeAuthorizer{
++				authorizer.DecisionDeny,
++				"RBAC: not allowed to patch pod",
++				nil,
++			},
++			want: `
++			# HELP authorization_attempts_total [ALPHA] Counter of authorization attempts broken down by result. It can be either 'allowed', 'forbidden', 'no-opinion' or 'error'.
++			# TYPE authorization_attempts_total counter
++			authorization_attempts_total{result="forbidden"} 1
++				`,
++		},
++		{
++			desc: "authorizer failed with error",
++			authorizer: fakeAuthorizer{
++				authorizer.DecisionNoOpinion,
++				"",
++				errors.New("can't parse user info"),
++			},
++			want: `
++			# HELP authorization_attempts_total [ALPHA] Counter of authorization attempts broken down by result. It can be either 'allowed', 'forbidden', 'no-opinion' or 'error'.
++			# TYPE authorization_attempts_total counter
++			authorization_attempts_total{result="error"} 1
++				`,
++		},
++		{
++			desc: "authorizer decided allow with error",
++			authorizer: fakeAuthorizer{
++				authorizer.DecisionAllow,
++				"",
++				errors.New("can't parse user info"),
++			},
++			want: `
++			# HELP authorization_attempts_total [ALPHA] Counter of authorization attempts broken down by result. It can be either 'allowed', 'forbidden', 'no-opinion' or 'error'.
++			# TYPE authorization_attempts_total counter
++			authorization_attempts_total{result="allowed"} 1
++				`,
++		},
++		{
++			desc: "authorizer failed with error",
++			authorizer: fakeAuthorizer{
++				authorizer.DecisionNoOpinion,
++				"",
++				nil,
++			},
++			want: `
++			# HELP authorization_attempts_total [ALPHA] Counter of authorization attempts broken down by result. It can be either 'allowed', 'forbidden', 'no-opinion' or 'error'.
++			# TYPE authorization_attempts_total counter
++			authorization_attempts_total{result="no-opinion"} 1
++				`,
++		},
++	}
++
++	// Since prometheus' gatherer is global, other tests may have updated metrics already, so
++	// we need to reset them prior running this test.
++	// This also implies that we can't run this test in parallel with other auth tests.
++	authorizationAttemptsCounter.Reset()
++
++	scheme := runtime.NewScheme()
++	negotiatedSerializer := serializer.NewCodecFactory(scheme).WithoutConversion()
++
++	for _, tt := range testCases {
++		t.Run(tt.desc, func(t *testing.T) {
++			defer authorizationAttemptsCounter.Reset()
++
++			audit := &auditinternal.Event{Level: auditinternal.LevelMetadata}
++			handler := WithAuthorization(&fakeHTTPHandler{}, tt.authorizer, negotiatedSerializer)
++			// TODO: fake audit injector
++
++			req, _ := http.NewRequest("GET", "/api/v1/namespaces/default/pods", nil)
++			req = withTestContext(req, nil, audit)
++			req.RemoteAddr = "127.0.0.1"
++			handler.ServeHTTP(httptest.NewRecorder(), req)
++
++			if err := testutil.GatherAndCompare(legacyregistry.DefaultGatherer, strings.NewReader(tt.want), metrics...); err != nil {
++				t.Fatal(err)
++			}
++		})
++	}
++}
