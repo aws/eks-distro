@@ -3,6 +3,10 @@ From: Sajia Zafreen <szafreen@amazon.com>
 Date: Tue, 2 May 2023 22:10:52 +0000
 Subject: [PATCH] Bump-golang-x-net-and-golang-x-text-dependency
 
+Fixes [CVE 41723](https://github.com/advisories/GHSA-vvpx-j8f3-3w6h). Any `golang/x/net` dependency < 0.7.0 is vulnerable to this CVE. 
+Fixes [CVE-2022-32149](https://nvd.nist.gov/vuln/detail/cve-2022-32149) by bumping golang/x/text to v0.3.8
+These patches are temporary fix until EKS update to the latest release where these CVEs are fixed. 
+
 Signed-off-by: Sajia Zafreen <szafreen@amazon.com>
 ---
  go.mod | 17 ++++++----
