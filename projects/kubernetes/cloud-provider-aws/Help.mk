@@ -11,9 +11,11 @@ clone-repo:  ## Clone upstream `cloud-provider-aws`
 checkout-repo: ## Checkout upstream tag based on value in GIT_TAG file
 
 ##@ Binary Targets
-binaries: ## Build all binaries: `aws-cloud-controller-manager` for `linux/amd64 linux/arm64`
+binaries: ## Build all binaries: `aws-cloud-controller-manager ecr-credential-provider` for `linux/amd64 linux/arm64`
 _output/1-26/bin/cloud-provider-aws/linux-amd64/aws-cloud-controller-manager: ## Build `_output/1-26/bin/cloud-provider-aws/linux-amd64/aws-cloud-controller-manager`
+_output/1-26/bin/cloud-provider-aws/linux-amd64/ecr-credential-provider: ## Build `_output/1-26/bin/cloud-provider-aws/linux-amd64/ecr-credential-provider`
 _output/1-26/bin/cloud-provider-aws/linux-arm64/aws-cloud-controller-manager: ## Build `_output/1-26/bin/cloud-provider-aws/linux-arm64/aws-cloud-controller-manager`
+_output/1-26/bin/cloud-provider-aws/linux-arm64/ecr-credential-provider: ## Build `_output/1-26/bin/cloud-provider-aws/linux-arm64/ecr-credential-provider`
 
 ##@ Image Targets
 local-images: ## Builds `cloud-controller-manager/images/amd64` as oci tars for presumbit validation
@@ -36,6 +38,11 @@ run-binaries-in-docker: ## Run `binaries` in docker builder container
 run-checksums-in-docker: ## Run `checksums` in docker builder container
 run-clean-in-docker: ## Run `clean` in docker builder container
 run-clean-go-cache-in-docker: ## Run `clean-go-cache` in docker builder container
+
+##@ Artifact Targets
+tarballs: ## Create tarballs by calling build/lib/simple_create_tarballs.sh unless SIMPLE_CREATE_TARBALLS=false, then tarballs must be defined in project Makefile
+s3-artifacts: # Prepare ARTIFACTS_PATH folder structure with tarballs/manifests/other items to be uploaded to s3
+upload-artifacts: # Upload tarballs and other artifacts from ARTIFACTS_PATH to S3
 
 ##@ License Targets
 gather-licenses: ## Helper to call $(GATHER_LICENSES_TARGETS) which gathers all licenses
@@ -63,6 +70,6 @@ patch-for-dep-update: ## After bumping dep in go.mod file and updating vendor, g
 create-ecr-repos: ## Create repos in ECR for project images for local testing
 
 ##@ Build Targets
-build: ## Called via prow presubmit, calls `validate-checksums attribution local-images   attribution-pr`
-release: ## Called via prow postsubmit + release jobs, calls `validate-checksums images  `
+build: ## Called via prow presubmit, calls `validate-checksums attribution local-images  upload-artifacts attribution-pr`
+release: ## Called via prow postsubmit + release jobs, calls `validate-checksums images  upload-artifacts`
 ########### END GENERATED ###########################
