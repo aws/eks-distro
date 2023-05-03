@@ -3,6 +3,9 @@ From: Sajia Zafreen <szafreen@amazon.com>
 Date: Tue, 2 May 2023 20:06:37 +0000
 Subject: [PATCH] bump golang/x/net to 0.7.0
 
+Fixes [CVE 41723](https://github.com/advisories/GHSA-vvpx-j8f3-3w6h). Any `golang/x/net `dependency < 0.7.0 is vulnerable to this CVE. 
+While we are waiting on EKS bumping to `etcd 3.5.8` (which could be end of June) we are patching the `golang/x/net` dependency to use `0.7.0`.
+
 Signed-off-by: Sajia Zafreen <szafreen@amazon.com>
 ---
  go.mod |  5 +++--
