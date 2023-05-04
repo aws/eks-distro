@@ -521,19 +521,19 @@ https://github.com/golang/go
 ** golang.org/x/crypto; version v0.0.0-20220525230936-793ad666bf5e --
 https://golang.org/x/crypto
 
-** golang.org/x/net; version v0.0.0-20220520000938-2e3eb7b945c2 --
+** golang.org/x/net; version v0.7.0 --
 https://golang.org/x/net
 
 ** golang.org/x/oauth2; version v0.0.0-20220411215720-9780585627b5 --
 https://golang.org/x/oauth2
 
-** golang.org/x/sys; version v0.0.0-20220520151302-bc2c85ada10a --
+** golang.org/x/sys/unix; version v0.5.0 --
 https://golang.org/x/sys
 
-** golang.org/x/term; version v0.0.0-20210927222741-03fcf44c2211 --
+** golang.org/x/term; version v0.5.0 --
 https://golang.org/x/term
 
-** golang.org/x/text; version v0.3.7 --
+** golang.org/x/text; version v0.3.8 --
 https://golang.org/x/text
 
 ** golang.org/x/time/rate; version v0.0.0-20220210224613-90d013bbcef8 --
