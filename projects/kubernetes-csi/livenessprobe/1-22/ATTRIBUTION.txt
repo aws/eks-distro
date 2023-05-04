@@ -8,7 +8,7 @@ https://github.com/go-logr/logr
 ** github.com/kubernetes-csi/csi-lib-utils; version v0.12.0 --
 https://github.com/kubernetes-csi/csi-lib-utils
 
-** github.com/kubernetes-csi/livenessprobe; version v2.9.0 --
+** github.com/kubernetes-csi/livenessprobe; version v2.10.0 --
 https://github.com/kubernetes-csi/livenessprobe
 
 ** github.com/matttproud/golang_protobuf_extensions/pbutil; version v1.0.2 --
@@ -29,16 +29,16 @@ https://github.com/prometheus/procfs
 ** google.golang.org/genproto/googleapis/rpc/status; version v0.0.0-20220804142021-4e6b2dfa6612 --
 https://github.com/googleapis/go-genproto
 
-** google.golang.org/grpc; version v1.49.0 --
+** google.golang.org/grpc; version v1.51.0 --
 https://github.com/grpc/grpc-go
 
-** k8s.io/apimachinery/pkg; version v0.26.0 --
+** k8s.io/apimachinery/pkg; version v0.27.0 --
 https://github.com/kubernetes/apimachinery
 
-** k8s.io/component-base; version v0.26.0 --
+** k8s.io/component-base; version v0.27.0 --
 https://github.com/kubernetes/component-base
 
-** k8s.io/klog/v2; version v2.80.1 --
+** k8s.io/klog/v2; version v2.90.1 --
 https://github.com/kubernetes/klog
 
 
@@ -302,7 +302,7 @@ SoundCloud Ltd. (http://soundcloud.com/).
 
 ------
 
-** github.com/golang/protobuf; version v1.5.2 --
+** github.com/golang/protobuf; version v1.5.3 --
 https://github.com/golang/protobuf
 
 Copyright 2010 The Go Authors.  All rights reserved.
@@ -406,16 +406,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/go; version go1.19.8 --
+** golang.org/go; version go1.20.3 --
 https://github.com/golang/go
 
-** golang.org/x/net; version v0.7.0 --
+** golang.org/x/net; version v0.8.0 --
 https://golang.org/x/net
 
-** golang.org/x/sys/unix; version v0.5.0 --
+** golang.org/x/sys/unix; version v0.6.0 --
 https://golang.org/x/sys
 
-** golang.org/x/text; version v0.7.0 --
+** golang.org/x/text; version v0.8.0 --
 https://golang.org/x/text
 
 Copyright (c) 2009 The Go Authors. All rights reserved.
