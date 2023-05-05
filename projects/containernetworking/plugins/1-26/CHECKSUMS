@@ -1,6 +1,6 @@
 eb7a766234a8e34e57ba7869f25b797e940f77398946dc735e5686517ce166d4  _output/1-26/bin/plugins/linux-amd64/bandwidth
 f9ff591b387d157e9004582120ea1941392a9397a7fefa93d14585f275dd1ec0  _output/1-26/bin/plugins/linux-amd64/bridge
-2046a25aee5f28aec30f37a42a080be7f0fd8509ec3886978022b6d27c6b6cb5  _output/1-26/bin/plugins/linux-amd64/dhcp
+423bc74471a4e632b3b4e29bf1e405220dd474f40130cbf9f49927944e0426b7  _output/1-26/bin/plugins/linux-amd64/dhcp
 74f7939271030c0b7e029b461bbf03830d976ec8e7057a997f104ff2b6413464  _output/1-26/bin/plugins/linux-amd64/firewall
 8639a1d7473966238ed47bc32b677f063974c12596d9722a5f6676bbe0dc4ae8  _output/1-26/bin/plugins/linux-amd64/host-device
 7c74d8eeb22957a26d96bd1b13318c2b90d8210cc352cb30a26bad4deb603d3c  _output/1-26/bin/plugins/linux-amd64/host-local
@@ -16,7 +16,7 @@ ee8489a7f6d0ddfd9f42c8a67aef50e35d969b7e7112be57653357d08582adb3  _output/1-26/b
 dc8bbe441e06a35ac5a34aaefaaa1bb79995a7bfc5ac6b40dde58da16fc6c5dc  _output/1-26/bin/plugins/linux-amd64/vrf
 f1361648ee16117a2d72635446cdd4fe98ec56c38a4fa73b4ecfeb7d11202740  _output/1-26/bin/plugins/linux-arm64/bandwidth
 c026cecbc1caca1eb8501a8d565c0282cd231f5c535af81af6a2f7d3d97a0b5d  _output/1-26/bin/plugins/linux-arm64/bridge
-95c5671439ea44405b95f111a9068c3e5a799747d6e6665dd7fe249ee9ec0a3c  _output/1-26/bin/plugins/linux-arm64/dhcp
+9ae99e33d598e870c12f6e038f559a3d2984ec0e56fdd839d1b03d490fda5ff6  _output/1-26/bin/plugins/linux-arm64/dhcp
 bd65d404b3f9260a3c6343d947be8039903eee603763373b1b4968818b372b1c  _output/1-26/bin/plugins/linux-arm64/firewall
 881e88e2834757a151a9c5ad6aecaeefce45e9e9224a516bda5cb6a9e47d6016  _output/1-26/bin/plugins/linux-arm64/host-device
 35cbe321ec54b90a2391669154294fb550b66031ee9f39090f80d4a820496e18  _output/1-26/bin/plugins/linux-arm64/host-local
