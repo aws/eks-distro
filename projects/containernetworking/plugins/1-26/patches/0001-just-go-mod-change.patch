@@ -1,0 +1,28 @@
+From 7e882d439d108af35523f9735f5b4dc67edba449 Mon Sep 17 00:00:00 2001
+From: Kirsten Schumy <ksschumy@amazon.com>
+Date: Wed, 10 May 2023 00:25:13 -0700
+Subject: [PATCH] just go mod change
+
+---
+ go.mod | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/go.mod b/go.mod
+index eef23b7..64fa8ec 100644
+--- a/go.mod
++++ b/go.mod
+@@ -1,6 +1,10 @@
+ module github.com/containernetworking/plugins
+ 
+-go 1.17
++go 1.18
++
++replace (
++	golang.org/x/net => golang.org/x/net v0.7.0
++)
+ 
+ require (
+ 	github.com/Microsoft/hcsshim v0.9.6
+-- 
+2.40.1
+
