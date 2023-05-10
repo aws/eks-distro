@@ -1,8 +1,15 @@
-From c766c06f98102e6823e778a377a8f35aed2a18f2 Mon Sep 17 00:00:00 2001
+From 79d18689be37033c160ce7e6649c6b69a33c2eee Mon Sep 17 00:00:00 2001
 From: Kirsten Schumy <ksschumy@amazon.com>
-Date: Wed, 10 May 2023 08:53:40 -0700
-Subject: [PATCH] Bump golang x net dependency
+Date: Wed, 10 May 2023 00:25:13 -0700
+Subject: [PATCH] Bump golang/x/net to 0.7.0
 
+Fixes CVE 41723 (https://github.com/advisories/GHSA-vvpx-j8f3-3w6h,
+CVE-2021-38561 (https://nvd.nist.gov/vuln/detail/cve-2021-38561)
+and CVE-2021-33194 (https://nvd.nist.gov/vuln/detail/CVE-2021-33194)
+by bumping `golang/x/net` dependency >= 0.7.0.
+
+Patch can be removed once upstream version used already has x/net
+version >= 0.7.0
 ---
  go.mod                                        |   8 +-
  go.sum                                        |  74 +---
@@ -170,9 +177,9 @@ index eef23b7..dc3a799 100644
 --- a/go.mod
 +++ b/go.mod
 @@ -2,6 +2,8 @@ module github.com/containernetworking/plugins
- 
+
  go 1.17
- 
+
 +replace golang.org/x/net => golang.org/x/net v0.7.0
 +
  require (
@@ -188,7 +195,7 @@ index eef23b7..dc3a799 100644
 -	golang.org/x/sys v0.4.0
 +	golang.org/x/sys v0.8.0
  )
- 
+
  require (
 @@ -35,7 +37,7 @@ require (
  	github.com/vishvananda/netns v0.0.0-20210104183010-2eb08e3e575f // indirect
@@ -368,19 +375,19 @@ index 1f14622..e443675 100644
 +++ b/vendor/github.com/safchain/ethtool/README.md
 @@ -1,23 +1,18 @@
  # ethtool go package #
- 
+
 -[![Build Status](https://travis-ci.org/safchain/ethtool.png?branch=master)](https://travis-ci.org/safchain/ethtool)
 +![Build Status](https://github.com/safchain/ethtool/actions/workflows/unittests.yml/badge.svg)
  [![GoDoc](https://godoc.org/github.com/safchain/ethtool?status.svg)](https://godoc.org/github.com/safchain/ethtool)
- 
+
 -The ethtool package aims to provide a library giving a simple access to the Linux SIOCETHTOOL ioctl operations. It can be used to retrieve informations from a network device like statistics, driver related informations or even the peer of a VETH interface.
- 
+
 -## Build and Test ##
 +The ethtool package aims to provide a library that provides easy access to the Linux SIOCETHTOOL ioctl operations. It can be used to retrieve information from a network device such as statistics, driver related information or even the peer of a VETH interface.
- 
+
 -go get command:
 +# Installation
- 
+
 -    go get github.com/safchain/ethtool
 -
 -Testing
@@ -391,10 +398,10 @@ index 1f14622..e443675 100644
 +```shell
 +go get github.com/safchain/ethtool
 +```
- 
+
 -## Examples ##
 +# How to use
- 
+
  ```go
  package main
 diff --git a/vendor/github.com/safchain/ethtool/ethtool.go b/vendor/github.com/safchain/ethtool/ethtool.go
@@ -404,7 +411,7 @@ index 2409116..4d8dec6 100644
 @@ -19,10 +19,10 @@
   *
   */
- 
+
 -// Package ethtool  aims to provide a library giving a simple access to the
 -// Linux SIOCETHTOOL ioctl operations. It can be used to retrieve informations
 -// from a network device like statistics, driver related informations or
@@ -414,10 +421,10 @@ index 2409116..4d8dec6 100644
 +// from a network device such as statistics, driver related information or even
 +// the peer of a VETH interface.
  package ethtool
- 
+
  import (
 @@ -47,12 +47,14 @@ const (
- 
+
  // ethtool stats related constants.
  const (
 -	ETH_GSTRING_LEN  = 32
@@ -449,7 +456,7 @@ index 2409116..4d8dec6 100644
  	ETHTOOL_GSSET_INFO    = 0x00000037 /* Get string set info */
 +	ETHTOOL_GET_TS_INFO   = 0x00000041 /* Get time stamping and PHC info */
  )
- 
+
  // MAX_GSTRINGS maximum number of stats entries that ethtool can
  // retrieve currently.
  const (
@@ -461,7 +468,7 @@ index 2409116..4d8dec6 100644
 @@ -191,6 +194,88 @@ type Coalesce struct {
  	RateSampleInterval       uint32
  }
- 
+
 +const (
 +	SOF_TIMESTAMPING_TX_HARDWARE  = (1 << 0)
 +	SOF_TIMESTAMPING_TX_SOFTWARE  = (1 << 1)
@@ -550,7 +557,7 @@ index 2409116..4d8dec6 100644
 @@ -336,6 +421,15 @@ func (e *Ethtool) GetCoalesce(intf string) (Coalesce, error) {
  	return coalesce, nil
  }
- 
+
 +// GetTimestampingInformation returns the PTP timestamping information for the given interface name.
 +func (e *Ethtool) GetTimestampingInformation(intf string) (TimestampingInformation, error) {
 +	ts, err := e.getTimestampingInformation(intf)
@@ -566,7 +573,7 @@ index 2409116..4d8dec6 100644
 @@ -422,6 +516,18 @@ func (e *Ethtool) getCoalesce(intf string) (Coalesce, error) {
  	return coalesce, nil
  }
- 
+
 +func (e *Ethtool) getTimestampingInformation(intf string) (TimestampingInformation, error) {
 +	ts := TimestampingInformation{
 +		Cmd: ETHTOOL_GET_TS_INFO,
@@ -589,7 +596,7 @@ index 291c919..46a89ed 100644
 @@ -184,7 +184,7 @@ func (p *parser) clearStackToContext(s scope) {
  	}
  }
- 
+
 -// parseGenericRawTextElements implements the generic raw text element parsing
 +// parseGenericRawTextElement implements the generic raw text element parsing
  // algorithm defined in 12.2.6.2.
@@ -646,7 +653,7 @@ index ae24a6f..50f7c6a 100644
 @@ -645,6 +649,35 @@ func (z *Tokenizer) readComment() {
  	}
  }
- 
+
 +func (z *Tokenizer) calculateAbruptCommentDataEnd() int {
 +	raw := z.Raw()
 +	const prefixLen = len("<!--")
@@ -686,12 +693,12 @@ index c4fce0e..f98a1c5 100644
 @@ -2,8 +2,8 @@
  // Use of this source code is governed by a BSD-style
  // license that can be found in the LICENSE file.
- 
+
 -// +build gccgo,!hurd
 -// +build !aix,!hurd
 +//go:build gccgo && !aix && !hurd
 +// +build gccgo,!aix,!hurd
- 
+
  #include <errno.h>
  #include <stdint.h>
 diff --git a/vendor/golang.org/x/sys/unix/ioctl_signed.go b/vendor/golang.org/x/sys/unix/ioctl_signed.go
@@ -780,19 +787,19 @@ index 1c51b0e..649913d 100644
 @@ -2,13 +2,12 @@
  // Use of this source code is governed by a BSD-style
  // license that can be found in the LICENSE file.
- 
+
 -//go:build aix || darwin || dragonfly || freebsd || hurd || linux || netbsd || openbsd || solaris
 -// +build aix darwin dragonfly freebsd hurd linux netbsd openbsd solaris
 +//go:build darwin || dragonfly || freebsd || hurd || linux || netbsd || openbsd
 +// +build darwin dragonfly freebsd hurd linux netbsd openbsd
- 
+
  package unix
- 
+
  import (
 -	"runtime"
  	"unsafe"
  )
- 
+
 @@ -27,7 +26,7 @@ func IoctlSetInt(fd int, req uint, value int) error {
  // passing the integer value directly.
  func IoctlSetPointerInt(fd int, req uint, value int) error {
@@ -800,7 +807,7 @@ index 1c51b0e..649913d 100644
 -	return ioctl(fd, req, uintptr(unsafe.Pointer(&v)))
 +	return ioctlPtr(fd, req, unsafe.Pointer(&v))
  }
- 
+
  // IoctlSetWinsize performs an ioctl on fd with a *Winsize argument.
 @@ -36,9 +35,7 @@ func IoctlSetPointerInt(fd int, req uint, value int) error {
  func IoctlSetWinsize(fd int, req uint, value *Winsize) error {
@@ -811,7 +818,7 @@ index 1c51b0e..649913d 100644
 -	return err
 +	return ioctlPtr(fd, req, unsafe.Pointer(value))
  }
- 
+
  // IoctlSetTermios performs an ioctl on fd with a *Termios.
 @@ -46,9 +43,7 @@ func IoctlSetWinsize(fd int, req uint, value *Winsize) error {
  // The req value will usually be TCSETA or TIOCSETA.
@@ -822,7 +829,7 @@ index 1c51b0e..649913d 100644
 -	return err
 +	return ioctlPtr(fd, req, unsafe.Pointer(value))
  }
- 
+
  // IoctlGetInt performs an ioctl operation which gets an integer value
 @@ -58,18 +53,18 @@ func IoctlSetTermios(fd int, req uint, value *Termios) error {
  // for those, IoctlRetInt should be used instead of this function.
@@ -832,14 +839,14 @@ index 1c51b0e..649913d 100644
 +	err := ioctlPtr(fd, req, unsafe.Pointer(&value))
  	return value, err
  }
- 
+
  func IoctlGetWinsize(fd int, req uint) (*Winsize, error) {
  	var value Winsize
 -	err := ioctl(fd, req, uintptr(unsafe.Pointer(&value)))
 +	err := ioctlPtr(fd, req, unsafe.Pointer(&value))
  	return &value, err
  }
- 
+
  func IoctlGetTermios(fd int, req uint) (*Termios, error) {
  	var value Termios
 -	err := ioctl(fd, req, uintptr(unsafe.Pointer(&value)))
@@ -851,14 +858,14 @@ index 5384e7d..cdc21bf 100644
 --- a/vendor/golang.org/x/sys/unix/ioctl_zos.go
 +++ b/vendor/golang.org/x/sys/unix/ioctl_zos.go
 @@ -17,25 +17,23 @@ import (
- 
+
  // IoctlSetInt performs an ioctl operation which sets an integer value
  // on fd, using the specified request number.
 -func IoctlSetInt(fd int, req uint, value int) error {
 +func IoctlSetInt(fd int, req int, value int) error {
  	return ioctl(fd, req, uintptr(value))
  }
- 
+
  // IoctlSetWinsize performs an ioctl on fd with a *Winsize argument.
  //
  // To change fd's window size, the req argument should be TIOCSWINSZ.
@@ -871,7 +878,7 @@ index 5384e7d..cdc21bf 100644
 -	return err
 +	return ioctlPtr(fd, req, unsafe.Pointer(value))
  }
- 
+
  // IoctlSetTermios performs an ioctl on fd with a *Termios.
  //
  // The req value is expected to be TCSETS, TCSETSW, or TCSETSF
@@ -891,7 +898,7 @@ index 5384e7d..cdc21bf 100644
 +	err := ioctlPtr(fd, req, unsafe.Pointer(&value))
  	return value, err
  }
- 
+
 -func IoctlGetWinsize(fd int, req uint) (*Winsize, error) {
 +func IoctlGetWinsize(fd int, req int) (*Winsize, error) {
  	var value Winsize
@@ -899,7 +906,7 @@ index 5384e7d..cdc21bf 100644
 +	err := ioctlPtr(fd, req, unsafe.Pointer(&value))
  	return &value, err
  }
- 
+
  // IoctlGetTermios performs an ioctl on fd with a *Termios.
  //
  // The req value is expected to be TCGETS
@@ -946,9 +953,9 @@ index 463c3ef..39dba6c 100644
 --- a/vendor/golang.org/x/sys/unix/ptrace_darwin.go
 +++ b/vendor/golang.org/x/sys/unix/ptrace_darwin.go
 @@ -7,6 +7,12 @@
- 
+
  package unix
- 
+
 +import "unsafe"
 +
  func ptrace(request int, pid int, addr uintptr, data uintptr) error {
@@ -963,9 +970,9 @@ index ed0509a..9ea6633 100644
 --- a/vendor/golang.org/x/sys/unix/ptrace_ios.go
 +++ b/vendor/golang.org/x/sys/unix/ptrace_ios.go
 @@ -7,6 +7,12 @@
- 
+
  package unix
- 
+
 +import "unsafe"
 +
  func ptrace(request int, pid int, addr uintptr, data uintptr) (err error) {
@@ -988,16 +995,16 @@ index 2db1b51..c406ae0 100644
 -		sa.Name = string(bytes)
 +		sa.Name = string(unsafe.Slice((*byte)(unsafe.Pointer(&pp.Path[0])), n))
  		return sa, nil
- 
+
  	case AF_INET:
 @@ -410,7 +408,8 @@ func (w WaitStatus) CoreDump() bool { return w&0x80 == 0x80 }
- 
+
  func (w WaitStatus) TrapCause() int { return -1 }
- 
+
 -//sys	ioctl(fd int, req uint, arg uintptr) (err error)
 +//sys	ioctl(fd int, req int, arg uintptr) (err error)
 +//sys	ioctlPtr(fd int, req int, arg unsafe.Pointer) (err error) = ioctl
- 
+
  // fcntl must never be called with cmd=F_DUP2FD because it doesn't work on AIX
  // There is no way to create a custom fcntl and to keep //sys fcntl easily,
 diff --git a/vendor/golang.org/x/sys/unix/syscall_aix_ppc.go b/vendor/golang.org/x/sys/unix/syscall_aix_ppc.go
@@ -1006,11 +1013,11 @@ index e92a0be..f2871fa 100644
 +++ b/vendor/golang.org/x/sys/unix/syscall_aix_ppc.go
 @@ -8,7 +8,6 @@
  package unix
- 
+
  //sysnb	Getrlimit(resource int, rlim *Rlimit) (err error) = getrlimit64
 -//sysnb	Setrlimit(resource int, rlim *Rlimit) (err error) = setrlimit64
  //sys	Seek(fd int, offset int64, whence int) (off int64, err error) = lseek64
- 
+
  //sys	mmap(addr uintptr, length uintptr, prot int, flags int, fd int, offset int64) (xaddr uintptr, err error)
 diff --git a/vendor/golang.org/x/sys/unix/syscall_aix_ppc64.go b/vendor/golang.org/x/sys/unix/syscall_aix_ppc64.go
 index 16eed17..75718ec 100644
@@ -1018,11 +1025,11 @@ index 16eed17..75718ec 100644
 +++ b/vendor/golang.org/x/sys/unix/syscall_aix_ppc64.go
 @@ -8,7 +8,6 @@
  package unix
- 
+
  //sysnb	Getrlimit(resource int, rlim *Rlimit) (err error)
 -//sysnb	Setrlimit(resource int, rlim *Rlimit) (err error)
  //sys	Seek(fd int, offset int64, whence int) (off int64, err error) = lseek
- 
+
  //sys	mmap(addr uintptr, length uintptr, prot int, flags int, fd int, offset int64) (xaddr uintptr, err error) = mmap64
 diff --git a/vendor/golang.org/x/sys/unix/syscall_bsd.go b/vendor/golang.org/x/sys/unix/syscall_bsd.go
 index eda4267..7705c32 100644
@@ -1036,14 +1043,14 @@ index eda4267..7705c32 100644
 -		sa.Name = string(bytes)
 +		sa.Name = string(unsafe.Slice((*byte)(unsafe.Pointer(&pp.Path[0])), n))
  		return sa, nil
- 
+
  	case AF_INET:
 diff --git a/vendor/golang.org/x/sys/unix/syscall_darwin.go b/vendor/golang.org/x/sys/unix/syscall_darwin.go
 index 1f63382..2069215 100644
 --- a/vendor/golang.org/x/sys/unix/syscall_darwin.go
 +++ b/vendor/golang.org/x/sys/unix/syscall_darwin.go
 @@ -14,7 +14,6 @@ package unix
- 
+
  import (
  	"fmt"
 -	"runtime"
@@ -1051,26 +1058,26 @@ index 1f63382..2069215 100644
  	"unsafe"
  )
 @@ -230,6 +229,7 @@ func direntNamlen(buf []byte) (uint64, bool) {
- 
+
  func PtraceAttach(pid int) (err error) { return ptrace(PT_ATTACH, pid, 0, 0) }
  func PtraceDetach(pid int) (err error) { return ptrace(PT_DETACH, pid, 0, 0) }
 +func PtraceDenyAttach() (err error)    { return ptrace(PT_DENY_ATTACH, 0, 0, 0) }
- 
+
  //sysnb	pipe(p *[2]int32) (err error)
- 
+
 @@ -375,11 +375,10 @@ func Flistxattr(fd int, dest []byte) (sz int, err error) {
  func Kill(pid int, signum syscall.Signal) (err error) { return kill(pid, int(signum), 1) }
- 
+
  //sys	ioctl(fd int, req uint, arg uintptr) (err error)
 +//sys	ioctlPtr(fd int, req uint, arg unsafe.Pointer) (err error) = SYS_IOCTL
- 
+
  func IoctlCtlInfo(fd int, ctlInfo *CtlInfo) error {
 -	err := ioctl(fd, CTLIOCGINFO, uintptr(unsafe.Pointer(ctlInfo)))
 -	runtime.KeepAlive(ctlInfo)
 -	return err
 +	return ioctlPtr(fd, CTLIOCGINFO, unsafe.Pointer(ctlInfo))
  }
- 
+
  // IfreqMTU is struct ifreq used to get or set a network device's MTU.
 @@ -393,16 +392,14 @@ type IfreqMTU struct {
  func IoctlGetIfreqMTU(fd int, ifname string) (*IfreqMTU, error) {
@@ -1080,7 +1087,7 @@ index 1f63382..2069215 100644
 +	err := ioctlPtr(fd, SIOCGIFMTU, unsafe.Pointer(&ifreq))
  	return &ifreq, err
  }
- 
+
  // IoctlSetIfreqMTU performs the SIOCSIFMTU ioctl operation on fd to set the MTU
  // of the network device specified by ifreq.Name.
  func IoctlSetIfreqMTU(fd int, ifreq *IfreqMTU) error {
@@ -1089,7 +1096,7 @@ index 1f63382..2069215 100644
 -	return err
 +	return ioctlPtr(fd, SIOCSIFMTU, unsafe.Pointer(ifreq))
  }
- 
+
  //sys	sysctl(mib []_C_int, old *byte, oldlen *uintptr, new *byte, newlen uintptr) (err error) = SYS_SYSCTL
 @@ -616,6 +613,7 @@ func SysctlKinfoProcSlice(name string, args ...int) ([]KinfoProc, error) {
  //sys	Rmdir(path string) (err error)
@@ -1143,12 +1150,12 @@ index a41111a..d4ce988 100644
 +++ b/vendor/golang.org/x/sys/unix/syscall_dragonfly.go
 @@ -172,6 +172,7 @@ func Getfsstat(buf []Statfs_t, flags int) (n int, err error) {
  }
- 
+
  //sys	ioctl(fd int, req uint, arg uintptr) (err error)
 +//sys	ioctlPtr(fd int, req uint, arg unsafe.Pointer) (err error) = SYS_IOCTL
- 
+
  //sys	sysctl(mib []_C_int, old *byte, oldlen *uintptr, new *byte, newlen uintptr) (err error) = SYS___SYSCTL
- 
+
 @@ -325,7 +326,6 @@ func Sendfile(outfd int, infd int, offset *int64, count int) (written int, err e
  //sysnb	Setreuid(ruid int, euid int) (err error)
  //sysnb	Setresgid(rgid int, egid int, sgid int) (err error)
@@ -1164,29 +1171,29 @@ index d50b9dc..afb1010 100644
 @@ -161,7 +161,8 @@ func Getfsstat(buf []Statfs_t, flags int) (n int, err error) {
  	return
  }
- 
+
 -//sys	ioctl(fd int, req uint, arg uintptr) (err error)
 +//sys	ioctl(fd int, req uint, arg uintptr) (err error) = SYS_IOCTL
 +//sys	ioctlPtr(fd int, req uint, arg unsafe.Pointer) (err error) = SYS_IOCTL
- 
+
  //sys	sysctl(mib []_C_int, old *byte, oldlen *uintptr, new *byte, newlen uintptr) (err error) = SYS___SYSCTL
- 
+
 @@ -253,6 +254,7 @@ func Sendfile(outfd int, infd int, offset *int64, count int) (written int, err e
  }
- 
+
  //sys	ptrace(request int, pid int, addr uintptr, data int) (err error)
 +//sys	ptracePtr(request int, pid int, addr unsafe.Pointer, data int) (err error) = SYS_PTRACE
- 
+
  func PtraceAttach(pid int) (err error) {
  	return ptrace(PT_ATTACH, pid, 0, 0)
 @@ -267,19 +269,36 @@ func PtraceDetach(pid int) (err error) {
  }
- 
+
  func PtraceGetFpRegs(pid int, fpregsout *FpReg) (err error) {
 -	return ptrace(PT_GETFPREGS, pid, uintptr(unsafe.Pointer(fpregsout)), 0)
 +	return ptracePtr(PT_GETFPREGS, pid, unsafe.Pointer(fpregsout), 0)
  }
- 
+
  func PtraceGetRegs(pid int, regsout *Reg) (err error) {
 -	return ptrace(PT_GETREGS, pid, uintptr(unsafe.Pointer(regsout)), 0)
 +	return ptracePtr(PT_GETREGS, pid, unsafe.Pointer(regsout), 0)
@@ -1208,30 +1215,30 @@ index d50b9dc..afb1010 100644
 +	err = ptracePtr(PT_IO, pid, unsafe.Pointer(&ioDesc), 0)
 +	return int(ioDesc.Len), err
  }
- 
+
  func PtraceLwpEvents(pid int, enable int) (err error) {
  	return ptrace(PT_LWP_EVENTS, pid, 0, enable)
  }
- 
+
 -func PtraceLwpInfo(pid int, info uintptr) (err error) {
 -	return ptrace(PT_LWPINFO, pid, info, int(unsafe.Sizeof(PtraceLwpInfoStruct{})))
 +func PtraceLwpInfo(pid int, info *PtraceLwpInfoStruct) (err error) {
 +	return ptracePtr(PT_LWPINFO, pid, unsafe.Pointer(info), int(unsafe.Sizeof(*info)))
  }
- 
+
  func PtracePeekData(pid int, addr uintptr, out []byte) (count int, err error) {
 @@ -299,13 +318,25 @@ func PtracePokeText(pid int, addr uintptr, data []byte) (count int, err error) {
  }
- 
+
  func PtraceSetRegs(pid int, regs *Reg) (err error) {
 -	return ptrace(PT_SETREGS, pid, uintptr(unsafe.Pointer(regs)), 0)
 +	return ptracePtr(PT_SETREGS, pid, unsafe.Pointer(regs), 0)
  }
- 
+
  func PtraceSingleStep(pid int) (err error) {
  	return ptrace(PT_STEP, pid, 1, 0)
  }
- 
+
 +func Dup3(oldfd, newfd, flags int) error {
 +	if oldfd == newfd || flags&^O_CLOEXEC != 0 {
 +		return EINVAL
@@ -1262,7 +1269,7 @@ index b11ede8..b8da510 100644
 @@ -42,6 +42,10 @@ func (cmsg *Cmsghdr) SetLen(length int) {
  	cmsg.Len = uint32(length)
  }
- 
+
 +func (d *PtraceIoDesc) SetLen(length int) {
 +	d.Len = uint32(length)
 +}
@@ -1272,7 +1279,7 @@ index b11ede8..b8da510 100644
  	_, _, e1 := Syscall9(SYS_SENDFILE, uintptr(infd), uintptr(outfd), uintptr(*offset), uintptr((*offset)>>32), uintptr(count), 0, uintptr(unsafe.Pointer(&writtenOut)), 0, 0)
 @@ -57,11 +61,5 @@ func sendfile(outfd int, infd int, offset *int64, count int) (written int, err e
  func Syscall9(num, a1, a2, a3, a4, a5, a6, a7, a8, a9 uintptr) (r1, r2 uintptr, err syscall.Errno)
- 
+
  func PtraceGetFsBase(pid int, fsbase *int64) (err error) {
 -	return ptrace(PT_GETFSBASE, pid, uintptr(unsafe.Pointer(fsbase)), 0)
 -}
@@ -1290,7 +1297,7 @@ index 9ed8eec..47155c4 100644
 @@ -42,6 +42,10 @@ func (cmsg *Cmsghdr) SetLen(length int) {
  	cmsg.Len = uint32(length)
  }
- 
+
 +func (d *PtraceIoDesc) SetLen(length int) {
 +	d.Len = uint64(length)
 +}
@@ -1300,7 +1307,7 @@ index 9ed8eec..47155c4 100644
  	_, _, e1 := Syscall9(SYS_SENDFILE, uintptr(infd), uintptr(outfd), uintptr(*offset), uintptr(count), 0, uintptr(unsafe.Pointer(&writtenOut)), 0, 0, 0)
 @@ -57,11 +61,5 @@ func sendfile(outfd int, infd int, offset *int64, count int) (written int, err e
  func Syscall9(num, a1, a2, a3, a4, a5, a6, a7, a8, a9 uintptr) (r1, r2 uintptr, err syscall.Errno)
- 
+
  func PtraceGetFsBase(pid int, fsbase *int64) (err error) {
 -	return ptrace(PT_GETFSBASE, pid, uintptr(unsafe.Pointer(fsbase)), 0)
 -}
@@ -1318,7 +1325,7 @@ index f8ac982..0893209 100644
 @@ -42,6 +42,10 @@ func (cmsg *Cmsghdr) SetLen(length int) {
  	cmsg.Len = uint32(length)
  }
- 
+
 +func (d *PtraceIoDesc) SetLen(length int) {
 +	d.Len = uint32(length)
 +}
@@ -1328,7 +1335,7 @@ index f8ac982..0893209 100644
  	_, _, e1 := Syscall9(SYS_SENDFILE, uintptr(infd), uintptr(outfd), uintptr(*offset), uintptr((*offset)>>32), uintptr(count), 0, uintptr(unsafe.Pointer(&writtenOut)), 0, 0)
 @@ -55,9 +59,3 @@ func sendfile(outfd int, infd int, offset *int64, count int) (written int, err e
  }
- 
+
  func Syscall9(num, a1, a2, a3, a4, a5, a6, a7, a8, a9 uintptr) (r1, r2 uintptr, err syscall.Errno)
 -
 -func PtraceIO(req int, pid int, addr uintptr, out []byte, countin int) (count int, err error) {
@@ -1343,7 +1350,7 @@ index 8e93203..d151a0d 100644
 @@ -42,6 +42,10 @@ func (cmsg *Cmsghdr) SetLen(length int) {
  	cmsg.Len = uint32(length)
  }
- 
+
 +func (d *PtraceIoDesc) SetLen(length int) {
 +	d.Len = uint64(length)
 +}
@@ -1353,7 +1360,7 @@ index 8e93203..d151a0d 100644
  	_, _, e1 := Syscall9(SYS_SENDFILE, uintptr(infd), uintptr(outfd), uintptr(*offset), uintptr(count), 0, uintptr(unsafe.Pointer(&writtenOut)), 0, 0, 0)
 @@ -55,9 +59,3 @@ func sendfile(outfd int, infd int, offset *int64, count int) (written int, err e
  }
- 
+
  func Syscall9(num, a1, a2, a3, a4, a5, a6, a7, a8, a9 uintptr) (r1, r2 uintptr, err syscall.Errno)
 -
 -func PtraceIO(req int, pid int, addr uintptr, out []byte, countin int) (count int, err error) {
@@ -1368,7 +1375,7 @@ index cbe1222..d5cd64b 100644
 @@ -42,6 +42,10 @@ func (cmsg *Cmsghdr) SetLen(length int) {
  	cmsg.Len = uint32(length)
  }
- 
+
 +func (d *PtraceIoDesc) SetLen(length int) {
 +	d.Len = uint64(length)
 +}
@@ -1378,7 +1385,7 @@ index cbe1222..d5cd64b 100644
  	_, _, e1 := Syscall9(SYS_SENDFILE, uintptr(infd), uintptr(outfd), uintptr(*offset), uintptr(count), 0, uintptr(unsafe.Pointer(&writtenOut)), 0, 0, 0)
 @@ -55,9 +59,3 @@ func sendfile(outfd int, infd int, offset *int64, count int) (written int, err e
  }
- 
+
  func Syscall9(num, a1, a2, a3, a4, a5, a6, a7, a8, a9 uintptr) (r1, r2 uintptr, err syscall.Errno)
 -
 -func PtraceIO(req int, pid int, addr uintptr, out []byte, countin int) (count int, err error) {
@@ -1414,25 +1421,25 @@ index d839962..fbaeb5f 100644
 -		sa.Name = string(bytes)
 +		sa.Name = string(unsafe.Slice((*byte)(unsafe.Pointer(&pp.Path[0])), n))
  		return sa, nil
- 
+
  	case AF_INET:
 @@ -1365,6 +1364,10 @@ func SetsockoptTCPRepairOpt(fd, level, opt int, o []TCPRepairOpt) (err error) {
  	return setsockopt(fd, level, opt, unsafe.Pointer(&o[0]), uintptr(SizeofTCPRepairOpt*len(o)))
  }
- 
+
 +func SetsockoptTCPMD5Sig(fd, level, opt int, s *TCPMD5Sig) error {
 +	return setsockopt(fd, level, opt, unsafe.Pointer(s), unsafe.Sizeof(*s))
 +}
 +
  // Keyctl Commands (http://man7.org/linux/man-pages/man2/keyctl.2.html)
- 
+
  // KeyctlInt calls keyctl commands in which each argument is an int.
 @@ -1579,6 +1582,7 @@ func BindToDevice(fd int, device string) (err error) {
  }
- 
+
  //sys	ptrace(request int, pid int, addr uintptr, data uintptr) (err error)
 +//sys	ptracePtr(request int, pid int, addr uintptr, data unsafe.Pointer) (err error) = SYS_PTRACE
- 
+
  func ptracePeek(req int, pid int, addr uintptr, out []byte) (count int, err error) {
  	// The peek requests are machine-size oriented, so we wrap it
 @@ -1596,7 +1600,7 @@ func ptracePeek(req int, pid int, addr uintptr, out []byte) (count int, err erro
@@ -1473,20 +1480,20 @@ index d839962..fbaeb5f 100644
  		}
 @@ -1696,11 +1700,11 @@ func PtracePokeUser(pid int, addr uintptr, data []byte) (count int, err error) {
  }
- 
+
  func PtraceGetRegs(pid int, regsout *PtraceRegs) (err error) {
 -	return ptrace(PTRACE_GETREGS, pid, 0, uintptr(unsafe.Pointer(regsout)))
 +	return ptracePtr(PTRACE_GETREGS, pid, 0, unsafe.Pointer(regsout))
  }
- 
+
  func PtraceSetRegs(pid int, regs *PtraceRegs) (err error) {
 -	return ptrace(PTRACE_SETREGS, pid, 0, uintptr(unsafe.Pointer(regs)))
 +	return ptracePtr(PTRACE_SETREGS, pid, 0, unsafe.Pointer(regs))
  }
- 
+
  func PtraceSetOptions(pid int, options int) (err error) {
 @@ -1709,7 +1713,7 @@ func PtraceSetOptions(pid int, options int) (err error) {
- 
+
  func PtraceGetEventMsg(pid int) (msg uint, err error) {
  	var data _C_long
 -	err = ptrace(PTRACE_GETEVENTMSG, pid, 0, uintptr(unsafe.Pointer(&data)))
@@ -1513,7 +1520,7 @@ index d839962..fbaeb5f 100644
 @@ -1882,6 +1886,15 @@ func Getpgrp() (pid int) {
  //sysnb	Settimeofday(tv *Timeval) (err error)
  //sys	Setns(fd int, nstype int) (err error)
- 
+
 +//go:linkname syscall_prlimit syscall.prlimit
 +func syscall_prlimit(pid, resource int, newlimit, old *syscall.Rlimit) error
 +
@@ -1533,12 +1540,12 @@ index d839962..fbaeb5f 100644
 -	return uintptr(offs), uintptr(uint64(offs) >> longBits)
 +	return uintptr(offs), uintptr(uint64(offs) >> (longBits - 1) >> 1) // two shifts to avoid false positive in vet
  }
- 
+
  func Readv(fd int, iovs [][]byte) (n int, err error) {
 @@ -2153,6 +2166,14 @@ func isGroupMember(gid int) bool {
  	return false
  }
- 
+
 +func isCapDacOverrideSet() bool {
 +	hdr := CapUserHeader{Version: LINUX_CAPABILITY_VERSION_3}
 +	data := [2]CapUserData{}
@@ -1549,7 +1556,7 @@ index d839962..fbaeb5f 100644
 +
  //sys	faccessat(dirfd int, path string, mode uint32) (err error)
  //sys	Faccessat2(dirfd int, path string, mode uint32, flags int) (err error)
- 
+
 @@ -2188,6 +2209,12 @@ func Faccessat(dirfd int, path string, mode uint32, flags int) (err error) {
  	var uid int
  	if flags&AT_EACCESS != 0 {
@@ -1570,7 +1577,7 @@ index ff5b589..c7d9945 100644
 @@ -97,33 +97,6 @@ func Getrlimit(resource int, rlim *Rlimit) (err error) {
  	return
  }
- 
+
 -//sysnb	setrlimit(resource int, rlim *rlimit32) (err error) = SYS_SETRLIMIT
 -
 -func Setrlimit(resource int, rlim *Rlimit) (err error) {
@@ -1612,7 +1619,7 @@ index 9b27035..5b21fcf 100644
 -//sysnb	Setrlimit(resource int, rlim *Rlimit) (err error)
  //sys	Shutdown(fd int, how int) (err error)
  //sys	Splice(rfd int, roff *int64, wfd int, woff *int64, len int, flags int) (n int64, err error)
- 
+
 diff --git a/vendor/golang.org/x/sys/unix/syscall_linux_arm.go b/vendor/golang.org/x/sys/unix/syscall_linux_arm.go
 index 856ad1d..da29864 100644
 --- a/vendor/golang.org/x/sys/unix/syscall_linux_arm.go
@@ -1620,7 +1627,7 @@ index 856ad1d..da29864 100644
 @@ -171,33 +171,6 @@ func Getrlimit(resource int, rlim *Rlimit) (err error) {
  	return
  }
- 
+
 -//sysnb	setrlimit(resource int, rlim *rlimit32) (err error) = SYS_SETRLIMIT
 -
 -func Setrlimit(resource int, rlim *Rlimit) (err error) {
@@ -1649,7 +1656,7 @@ index 856ad1d..da29864 100644
 -}
 -
  func (r *PtraceRegs) PC() uint64 { return uint64(r.Uregs[15]) }
- 
+
  func (r *PtraceRegs) SetPC(pc uint64) { r.Uregs[15] = uint32(pc) }
 diff --git a/vendor/golang.org/x/sys/unix/syscall_linux_arm64.go b/vendor/golang.org/x/sys/unix/syscall_linux_arm64.go
 index 6422704..a81f574 100644
@@ -1662,11 +1669,11 @@ index 6422704..a81f574 100644
 -//sysnb	setrlimit(resource int, rlim *Rlimit) (err error)
  //sys	Shutdown(fd int, how int) (err error)
  //sys	Splice(rfd int, roff *int64, wfd int, woff *int64, len int, flags int) (n int64, err error)
- 
+
 @@ -143,15 +142,6 @@ func Getrlimit(resource int, rlim *Rlimit) error {
  	return getrlimit(resource, rlim)
  }
- 
+
 -// Setrlimit prefers the prlimit64 system call. See issue 38604.
 -func Setrlimit(resource int, rlim *Rlimit) error {
 -	err := Prlimit(0, resource, rlim, nil)
@@ -1677,7 +1684,7 @@ index 6422704..a81f574 100644
 -}
 -
  func (r *PtraceRegs) PC() uint64 { return r.Pc }
- 
+
  func (r *PtraceRegs) SetPC(pc uint64) { r.Pc = pc }
 diff --git a/vendor/golang.org/x/sys/unix/syscall_linux_loong64.go b/vendor/golang.org/x/sys/unix/syscall_linux_loong64.go
 index 59dab51..69d2d7c 100644
@@ -1686,7 +1693,7 @@ index 59dab51..69d2d7c 100644
 @@ -126,11 +126,6 @@ func Getrlimit(resource int, rlim *Rlimit) (err error) {
  	return
  }
- 
+
 -func Setrlimit(resource int, rlim *Rlimit) (err error) {
 -	err = Prlimit(0, resource, rlim, nil)
 -	return
@@ -1714,7 +1721,7 @@ index ab30250..aae7f0f 100644
 @@ -151,33 +151,6 @@ func Getrlimit(resource int, rlim *Rlimit) (err error) {
  	return
  }
- 
+
 -//sysnb	setrlimit(resource int, rlim *rlimit32) (err error) = SYS_SETRLIMIT
 -
 -func Setrlimit(resource int, rlim *Rlimit) (err error) {
@@ -1743,7 +1750,7 @@ index ab30250..aae7f0f 100644
 -}
 -
  func (r *PtraceRegs) PC() uint64 { return r.Epc }
- 
+
  func (r *PtraceRegs) SetPC(pc uint64) { r.Epc = pc }
 diff --git a/vendor/golang.org/x/sys/unix/syscall_linux_ppc.go b/vendor/golang.org/x/sys/unix/syscall_linux_ppc.go
 index eac1cf1..66eff19 100644
@@ -1752,7 +1759,7 @@ index eac1cf1..66eff19 100644
 @@ -159,33 +159,6 @@ func Getrlimit(resource int, rlim *Rlimit) (err error) {
  	return
  }
- 
+
 -//sysnb	setrlimit(resource int, rlim *rlimit32) (err error) = SYS_SETRLIMIT
 -
 -func Setrlimit(resource int, rlim *Rlimit) (err error) {
@@ -1781,7 +1788,7 @@ index eac1cf1..66eff19 100644
 -}
 -
  func (r *PtraceRegs) PC() uint32 { return r.Nip }
- 
+
  func (r *PtraceRegs) SetPC(pc uint32) { r.Nip = pc }
 diff --git a/vendor/golang.org/x/sys/unix/syscall_linux_ppc64x.go b/vendor/golang.org/x/sys/unix/syscall_linux_ppc64x.go
 index 4df5661..806aa25 100644
@@ -1806,7 +1813,7 @@ index 5f4243d..35851ef 100644
 -//sysnb	Setrlimit(resource int, rlim *Rlimit) (err error)
  //sys	Shutdown(fd int, how int) (err error)
  //sys	Splice(rfd int, roff *int64, wfd int, woff *int64, len int, flags int) (n int64, err error)
- 
+
 diff --git a/vendor/golang.org/x/sys/unix/syscall_linux_s390x.go b/vendor/golang.org/x/sys/unix/syscall_linux_s390x.go
 index d0a7d40..2f89e8f 100644
 --- a/vendor/golang.org/x/sys/unix/syscall_linux_s390x.go
@@ -1837,7 +1844,7 @@ index 35a3ad7..018d7d4 100644
 +++ b/vendor/golang.org/x/sys/unix/syscall_netbsd.go
 @@ -13,7 +13,6 @@
  package unix
- 
+
  import (
 -	"runtime"
  	"syscall"
@@ -1845,12 +1852,12 @@ index 35a3ad7..018d7d4 100644
  )
 @@ -178,13 +177,13 @@ func sendfile(outfd int, infd int, offset *int64, count int) (written int, err e
  }
- 
+
  //sys	ioctl(fd int, req uint, arg uintptr) (err error)
 +//sys	ioctlPtr(fd int, req uint, arg unsafe.Pointer) (err error) = SYS_IOCTL
- 
+
  //sys	sysctl(mib []_C_int, old *byte, oldlen *uintptr, new *byte, newlen uintptr) (err error) = SYS___SYSCTL
- 
+
  func IoctlGetPtmget(fd int, req uint) (*Ptmget, error) {
  	var value Ptmget
 -	err := ioctl(fd, req, uintptr(unsafe.Pointer(&value)))
@@ -1858,7 +1865,7 @@ index 35a3ad7..018d7d4 100644
 +	err := ioctlPtr(fd, req, unsafe.Pointer(&value))
  	return &value, err
  }
- 
+
 @@ -341,7 +340,6 @@ func Statvfs(path string, buf *Statvfs_t) (err error) {
  //sys	Setpriority(which int, who int, prio int) (err error)
  //sysnb	Setregid(rgid int, egid int) (err error)
@@ -1881,12 +1888,12 @@ index 9b67b90..f9c7a96 100644
 +++ b/vendor/golang.org/x/sys/unix/syscall_openbsd.go
 @@ -152,6 +152,7 @@ func Getfsstat(buf []Statfs_t, flags int) (n int, err error) {
  }
- 
+
  //sys	ioctl(fd int, req uint, arg uintptr) (err error)
 +//sys	ioctlPtr(fd int, req uint, arg unsafe.Pointer) (err error) = SYS_IOCTL
- 
+
  //sys	sysctl(mib []_C_int, old *byte, oldlen *uintptr, new *byte, newlen uintptr) (err error) = SYS___SYSCTL
- 
+
 @@ -293,7 +294,6 @@ func Uname(uname *Utsname) error {
  //sysnb	Setreuid(ruid int, euid int) (err error)
  //sysnb	Setresgid(rgid int, egid int, sgid int) (err error)
@@ -1907,22 +1914,22 @@ index 07ac561..b600a28 100644
 -		sa.Name = string(bytes)
 +		sa.Name = string(unsafe.Slice((*byte)(unsafe.Pointer(&pp.Path[0])), n))
  		return sa, nil
- 
+
  	case AF_INET:
 @@ -546,22 +545,26 @@ func Minor(dev uint64) uint32 {
   * Expose the ioctl function
   */
- 
+
 -//sys	ioctlRet(fd int, req uint, arg uintptr) (ret int, err error) = libc.ioctl
 +//sys	ioctlRet(fd int, req int, arg uintptr) (ret int, err error) = libc.ioctl
 +//sys	ioctlPtrRet(fd int, req int, arg unsafe.Pointer) (ret int, err error) = libc.ioctl
- 
+
 -func ioctl(fd int, req uint, arg uintptr) (err error) {
 +func ioctl(fd int, req int, arg uintptr) (err error) {
  	_, err = ioctlRet(fd, req, arg)
  	return err
  }
- 
+
 -func IoctlSetTermio(fd int, req uint, value *Termio) error {
 -	err := ioctl(fd, req, uintptr(unsafe.Pointer(value)))
 -	runtime.KeepAlive(value)
@@ -1930,7 +1937,7 @@ index 07ac561..b600a28 100644
 +	_, err = ioctlPtrRet(fd, req, arg)
  	return err
  }
- 
+
 -func IoctlGetTermio(fd int, req uint) (*Termio, error) {
 +func IoctlSetTermio(fd int, req int, value *Termio) error {
 +	return ioctlPtr(fd, req, unsafe.Pointer(value))
@@ -1942,7 +1949,7 @@ index 07ac561..b600a28 100644
 +	err := ioctlPtr(fd, req, unsafe.Pointer(&value))
  	return &value, err
  }
- 
+
 @@ -662,7 +665,6 @@ func Sendfile(outfd int, infd int, offset *int64, count int) (written int, err e
  //sys	Setpriority(which int, who int, prio int) (err error)
  //sysnb	Setregid(rgid int, egid int) (err error)
@@ -1954,12 +1961,12 @@ index 07ac561..b600a28 100644
 @@ -1077,14 +1079,14 @@ func Getmsg(fd int, cl []byte, data []byte) (retCl []byte, retData []byte, flags
  	return retCl, retData, flags, nil
  }
- 
+
 -func IoctlSetIntRetInt(fd int, req uint, arg int) (int, error) {
 +func IoctlSetIntRetInt(fd int, req int, arg int) (int, error) {
  	return ioctlRet(fd, req, uintptr(arg))
  }
- 
+
 -func IoctlSetString(fd int, req uint, val string) error {
 +func IoctlSetString(fd int, req int, val string) error {
  	bs := make([]byte, len(val)+1)
@@ -1972,18 +1979,18 @@ index 07ac561..b600a28 100644
 @@ -1117,8 +1119,8 @@ func (l *Lifreq) GetLifruUint() uint {
  	return *(*uint)(unsafe.Pointer(&l.Lifru[0]))
  }
- 
+
 -func IoctlLifreq(fd int, req uint, l *Lifreq) error {
 -	return ioctl(fd, req, uintptr(unsafe.Pointer(l)))
 +func IoctlLifreq(fd int, req int, l *Lifreq) error {
 +	return ioctlPtr(fd, req, unsafe.Pointer(l))
  }
- 
+
  // Strioctl Helpers
 @@ -1128,6 +1130,6 @@ func (s *Strioctl) SetInt(i int) {
  	s.Dp = (*int8)(unsafe.Pointer(&i))
  }
- 
+
 -func IoctlSetStrioctlRetInt(fd int, req uint, s *Strioctl) (int, error) {
 -	return ioctlRet(fd, req, uintptr(unsafe.Pointer(s)))
 +func IoctlSetStrioctlRetInt(fd int, req int, s *Strioctl) (int, error) {
@@ -1996,7 +2003,7 @@ index a386f88..8e48c29 100644
 @@ -578,7 +578,7 @@ func Lutimes(path string, tv []Timeval) error {
  	return UtimesNanoAt(AT_FDCWD, path, ts, AT_SYMLINK_NOFOLLOW)
  }
- 
+
 -// emptyIovec reports whether there are no bytes in the slice of Iovec.
 +// emptyIovecs reports whether there are no bytes in the slice of Iovec.
  func emptyIovecs(iov []Iovec) bool {
@@ -2025,7 +2032,7 @@ index 68b2f3e..d3d49ec 100644
 -		sa.Name = string(bytes)
 +		sa.Name = string(unsafe.Slice((*byte)(unsafe.Pointer(&pp.Path[0])), n))
  		return sa, nil
- 
+
  	case AF_INET:
 @@ -213,7 +212,8 @@ func (cmsg *Cmsghdr) SetLen(length int) {
  //sys	sendmsg(s int, msg *Msghdr, flags int) (n int, err error) = SYS___SENDMSG_A
@@ -2034,7 +2041,7 @@ index 68b2f3e..d3d49ec 100644
 -//sys   ioctl(fd int, req uint, arg uintptr) (err error) = SYS_IOCTL
 +//sys   ioctl(fd int, req int, arg uintptr) (err error) = SYS_IOCTL
 +//sys   ioctlPtr(fd int, req int, arg unsafe.Pointer) (err error) = SYS_IOCTL
- 
+
  //sys   Access(path string, mode uint32) (err error) = SYS___ACCESS_A
  //sys   Chdir(path string) (err error) = SYS___CHDIR_A
 diff --git a/vendor/golang.org/x/sys/unix/timestruct.go b/vendor/golang.org/x/sys/unix/timestruct.go
@@ -2042,13 +2049,13 @@ index 3d89304..616b1b2 100644
 --- a/vendor/golang.org/x/sys/unix/timestruct.go
 +++ b/vendor/golang.org/x/sys/unix/timestruct.go
 @@ -9,7 +9,7 @@ package unix
- 
+
  import "time"
- 
+
 -// TimespecToNSec returns the time stored in ts as nanoseconds.
 +// TimespecToNsec returns the time stored in ts as nanoseconds.
  func TimespecToNsec(ts Timespec) int64 { return ts.Nano() }
- 
+
  // NsecToTimespec converts a number of nanoseconds into a Timespec.
 diff --git a/vendor/golang.org/x/sys/unix/xattr_bsd.go b/vendor/golang.org/x/sys/unix/xattr_bsd.go
 index 663b377..f5f8e9f 100644
@@ -2069,7 +2076,7 @@ index 663b377..f5f8e9f 100644
 +	}
 +	return nil
  }
- 
+
  // FreeBSD and NetBSD implement their own syscalls to handle extended attributes
 diff --git a/vendor/golang.org/x/sys/unix/zerrors_darwin_amd64.go b/vendor/golang.org/x/sys/unix/zerrors_darwin_amd64.go
 index 476a1c7..1430076 100644
@@ -2569,28 +2576,28 @@ index bd001a6..97f20ca 100644
 --- a/vendor/golang.org/x/sys/unix/zptrace_armnn_linux.go
 +++ b/vendor/golang.org/x/sys/unix/zptrace_armnn_linux.go
 @@ -15,12 +15,12 @@ type PtraceRegsArm struct {
- 
+
  // PtraceGetRegsArm fetches the registers used by arm binaries.
  func PtraceGetRegsArm(pid int, regsout *PtraceRegsArm) error {
 -	return ptrace(PTRACE_GETREGS, pid, 0, uintptr(unsafe.Pointer(regsout)))
 +	return ptracePtr(PTRACE_GETREGS, pid, 0, unsafe.Pointer(regsout))
  }
- 
+
  // PtraceSetRegsArm sets the registers used by arm binaries.
  func PtraceSetRegsArm(pid int, regs *PtraceRegsArm) error {
 -	return ptrace(PTRACE_SETREGS, pid, 0, uintptr(unsafe.Pointer(regs)))
 +	return ptracePtr(PTRACE_SETREGS, pid, 0, unsafe.Pointer(regs))
  }
- 
+
  // PtraceRegsArm64 is the registers used by arm64 binaries.
 @@ -33,10 +33,10 @@ type PtraceRegsArm64 struct {
- 
+
  // PtraceGetRegsArm64 fetches the registers used by arm64 binaries.
  func PtraceGetRegsArm64(pid int, regsout *PtraceRegsArm64) error {
 -	return ptrace(PTRACE_GETREGS, pid, 0, uintptr(unsafe.Pointer(regsout)))
 +	return ptracePtr(PTRACE_GETREGS, pid, 0, unsafe.Pointer(regsout))
  }
- 
+
  // PtraceSetRegsArm64 sets the registers used by arm64 binaries.
  func PtraceSetRegsArm64(pid int, regs *PtraceRegsArm64) error {
 -	return ptrace(PTRACE_SETREGS, pid, 0, uintptr(unsafe.Pointer(regs)))
@@ -2607,7 +2614,7 @@ index 6cb6d68..834d285 100644
 -	return ptrace(PTRACE_GETREGSET, pid, uintptr(addr), uintptr(unsafe.Pointer(&iovec)))
 +	return ptracePtr(PTRACE_GETREGSET, pid, uintptr(addr), unsafe.Pointer(&iovec))
  }
- 
+
  // PtraceSetRegSetArm64 sets the registers used by arm64 binaries.
  func PtraceSetRegSetArm64(pid, addr int, regs *PtraceRegsArm64) error {
  	iovec := Iovec{(*byte)(unsafe.Pointer(regs)), uint64(unsafe.Sizeof(*regs))}
@@ -2619,28 +2626,28 @@ index c34d063..0b5f794 100644
 --- a/vendor/golang.org/x/sys/unix/zptrace_mipsnn_linux.go
 +++ b/vendor/golang.org/x/sys/unix/zptrace_mipsnn_linux.go
 @@ -21,12 +21,12 @@ type PtraceRegsMips struct {
- 
+
  // PtraceGetRegsMips fetches the registers used by mips binaries.
  func PtraceGetRegsMips(pid int, regsout *PtraceRegsMips) error {
 -	return ptrace(PTRACE_GETREGS, pid, 0, uintptr(unsafe.Pointer(regsout)))
 +	return ptracePtr(PTRACE_GETREGS, pid, 0, unsafe.Pointer(regsout))
  }
- 
+
  // PtraceSetRegsMips sets the registers used by mips binaries.
  func PtraceSetRegsMips(pid int, regs *PtraceRegsMips) error {
 -	return ptrace(PTRACE_SETREGS, pid, 0, uintptr(unsafe.Pointer(regs)))
 +	return ptracePtr(PTRACE_SETREGS, pid, 0, unsafe.Pointer(regs))
  }
- 
+
  // PtraceRegsMips64 is the registers used by mips64 binaries.
 @@ -42,10 +42,10 @@ type PtraceRegsMips64 struct {
- 
+
  // PtraceGetRegsMips64 fetches the registers used by mips64 binaries.
  func PtraceGetRegsMips64(pid int, regsout *PtraceRegsMips64) error {
 -	return ptrace(PTRACE_GETREGS, pid, 0, uintptr(unsafe.Pointer(regsout)))
 +	return ptracePtr(PTRACE_GETREGS, pid, 0, unsafe.Pointer(regsout))
  }
- 
+
  // PtraceSetRegsMips64 sets the registers used by mips64 binaries.
  func PtraceSetRegsMips64(pid int, regs *PtraceRegsMips64) error {
 -	return ptrace(PTRACE_SETREGS, pid, 0, uintptr(unsafe.Pointer(regs)))
@@ -2651,28 +2658,28 @@ index 3ccf0c0..2807f7e 100644
 --- a/vendor/golang.org/x/sys/unix/zptrace_mipsnnle_linux.go
 +++ b/vendor/golang.org/x/sys/unix/zptrace_mipsnnle_linux.go
 @@ -21,12 +21,12 @@ type PtraceRegsMipsle struct {
- 
+
  // PtraceGetRegsMipsle fetches the registers used by mipsle binaries.
  func PtraceGetRegsMipsle(pid int, regsout *PtraceRegsMipsle) error {
 -	return ptrace(PTRACE_GETREGS, pid, 0, uintptr(unsafe.Pointer(regsout)))
 +	return ptracePtr(PTRACE_GETREGS, pid, 0, unsafe.Pointer(regsout))
  }
- 
+
  // PtraceSetRegsMipsle sets the registers used by mipsle binaries.
  func PtraceSetRegsMipsle(pid int, regs *PtraceRegsMipsle) error {
 -	return ptrace(PTRACE_SETREGS, pid, 0, uintptr(unsafe.Pointer(regs)))
 +	return ptracePtr(PTRACE_SETREGS, pid, 0, unsafe.Pointer(regs))
  }
- 
+
  // PtraceRegsMips64le is the registers used by mips64le binaries.
 @@ -42,10 +42,10 @@ type PtraceRegsMips64le struct {
- 
+
  // PtraceGetRegsMips64le fetches the registers used by mips64le binaries.
  func PtraceGetRegsMips64le(pid int, regsout *PtraceRegsMips64le) error {
 -	return ptrace(PTRACE_GETREGS, pid, 0, uintptr(unsafe.Pointer(regsout)))
 +	return ptracePtr(PTRACE_GETREGS, pid, 0, unsafe.Pointer(regsout))
  }
- 
+
  // PtraceSetRegsMips64le sets the registers used by mips64le binaries.
  func PtraceSetRegsMips64le(pid int, regs *PtraceRegsMips64le) error {
 -	return ptrace(PTRACE_SETREGS, pid, 0, uintptr(unsafe.Pointer(regs)))
@@ -2683,28 +2690,28 @@ index 7d65857..281ea64 100644
 --- a/vendor/golang.org/x/sys/unix/zptrace_x86_linux.go
 +++ b/vendor/golang.org/x/sys/unix/zptrace_x86_linux.go
 @@ -31,12 +31,12 @@ type PtraceRegs386 struct {
- 
+
  // PtraceGetRegs386 fetches the registers used by 386 binaries.
  func PtraceGetRegs386(pid int, regsout *PtraceRegs386) error {
 -	return ptrace(PTRACE_GETREGS, pid, 0, uintptr(unsafe.Pointer(regsout)))
 +	return ptracePtr(PTRACE_GETREGS, pid, 0, unsafe.Pointer(regsout))
  }
- 
+
  // PtraceSetRegs386 sets the registers used by 386 binaries.
  func PtraceSetRegs386(pid int, regs *PtraceRegs386) error {
 -	return ptrace(PTRACE_SETREGS, pid, 0, uintptr(unsafe.Pointer(regs)))
 +	return ptracePtr(PTRACE_SETREGS, pid, 0, unsafe.Pointer(regs))
  }
- 
+
  // PtraceRegsAmd64 is the registers used by amd64 binaries.
 @@ -72,10 +72,10 @@ type PtraceRegsAmd64 struct {
- 
+
  // PtraceGetRegsAmd64 fetches the registers used by amd64 binaries.
  func PtraceGetRegsAmd64(pid int, regsout *PtraceRegsAmd64) error {
 -	return ptrace(PTRACE_GETREGS, pid, 0, uintptr(unsafe.Pointer(regsout)))
 +	return ptracePtr(PTRACE_GETREGS, pid, 0, unsafe.Pointer(regsout))
  }
- 
+
  // PtraceSetRegsAmd64 sets the registers used by amd64 binaries.
  func PtraceSetRegsAmd64(pid int, regs *PtraceRegsAmd64) error {
 -	return ptrace(PTRACE_SETREGS, pid, 0, uintptr(unsafe.Pointer(regs)))
@@ -2721,20 +2728,20 @@ index 870215d..9a25721 100644
 -int setrlimit64(int, uintptr_t);
  long long lseek64(int, long long, int);
  uintptr_t mmap(uintptr_t, uintptr_t, int, int, int, long long);
- 
+
 @@ -213,7 +212,7 @@ func wait4(pid Pid_t, status *_C_int, options int, rusage *Rusage) (wpid Pid_t,
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func ioctl(fd int, req uint, arg uintptr) (err error) {
 +func ioctl(fd int, req int, arg uintptr) (err error) {
  	r0, er := C.ioctl(C.int(fd), C.int(req), C.uintptr_t(arg))
  	if r0 == -1 && er != nil {
  		err = er
 @@ -223,6 +222,16 @@ func ioctl(fd int, req uint, arg uintptr) (err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 +func ioctlPtr(fd int, req int, arg unsafe.Pointer) (err error) {
 +	r0, er := C.ioctl(C.int(fd), C.int(req), C.uintptr_t(uintptr(arg)))
 +	if r0 == -1 && er != nil {
@@ -2749,9 +2756,9 @@ index 870215d..9a25721 100644
  	r0, er := C.fcntl(C.uintptr_t(fd), C.int(cmd), C.uintptr_t(arg))
  	r = int(r0)
 @@ -1454,16 +1463,6 @@ func Getrlimit(resource int, rlim *Rlimit) (err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func Setrlimit(resource int, rlim *Rlimit) (err error) {
 -	r0, er := C.setrlimit64(C.int(resource), C.uintptr_t(uintptr(unsafe.Pointer(rlim))))
 -	if r0 == -1 && er != nil {
@@ -2770,9 +2777,9 @@ index a89b0bf..6de80c2 100644
 --- a/vendor/golang.org/x/sys/unix/zsyscall_aix_ppc64.go
 +++ b/vendor/golang.org/x/sys/unix/zsyscall_aix_ppc64.go
 @@ -93,8 +93,18 @@ func wait4(pid Pid_t, status *_C_int, options int, rusage *Rusage) (wpid Pid_t,
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func ioctl(fd int, req uint, arg uintptr) (err error) {
 -	_, e1 := callioctl(fd, int(req), arg)
 +func ioctl(fd int, req int, arg uintptr) (err error) {
@@ -2791,9 +2798,9 @@ index a89b0bf..6de80c2 100644
  		err = errnoErr(e1)
  	}
 @@ -1412,16 +1422,6 @@ func Getrlimit(resource int, rlim *Rlimit) (err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func Setrlimit(resource int, rlim *Rlimit) (err error) {
 -	_, e1 := callsetrlimit(resource, uintptr(unsafe.Pointer(rlim)))
 -	if e1 != 0 {
@@ -2818,7 +2825,7 @@ index 2caa5ad..c4d50ae 100644
 -//go:cgo_import_dynamic libc_setrlimit setrlimit "libc.a/shr_64.o"
  //go:cgo_import_dynamic libc_lseek lseek "libc.a/shr_64.o"
  //go:cgo_import_dynamic libc_mmap64 mmap64 "libc.a/shr_64.o"
- 
+
 @@ -242,7 +241,6 @@ import (
  //go:linkname libc_getsystemcfg libc_getsystemcfg
  //go:linkname libc_umount libc_umount
@@ -2826,7 +2833,7 @@ index 2caa5ad..c4d50ae 100644
 -//go:linkname libc_setrlimit libc_setrlimit
  //go:linkname libc_lseek libc_lseek
  //go:linkname libc_mmap64 libc_mmap64
- 
+
 @@ -363,7 +361,6 @@ var (
  	libc_getsystemcfg,
  	libc_umount,
@@ -2836,9 +2843,9 @@ index 2caa5ad..c4d50ae 100644
  	libc_mmap64 syscallFunc
  )
 @@ -423,6 +420,13 @@ func callioctl(fd int, req int, arg uintptr) (r1 uintptr, e1 Errno) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 +func callioctl_ptr(fd int, req int, arg unsafe.Pointer) (r1 uintptr, e1 Errno) {
 +	r1, _, e1 = syscall6(uintptr(unsafe.Pointer(&libc_ioctl)), 3, uintptr(fd), uintptr(req), uintptr(arg), 0, 0, 0)
 +	return
@@ -2850,9 +2857,9 @@ index 2caa5ad..c4d50ae 100644
  	r1, _, e1 = syscall6(uintptr(unsafe.Pointer(&libc_fcntl)), 3, fd, uintptr(cmd), arg, 0, 0, 0)
  	return
 @@ -1172,13 +1176,6 @@ func callgetrlimit(resource int, rlim uintptr) (r1 uintptr, e1 Errno) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func callsetrlimit(resource int, rlim uintptr) (r1 uintptr, e1 Errno) {
 -	r1, _, e1 = rawSyscall6(uintptr(unsafe.Pointer(&libc_setrlimit)), 2, uintptr(resource), rlim, 0, 0, 0, 0)
 -	return
@@ -2874,19 +2881,19 @@ index 944a714..6903d3b 100644
 -int setrlimit(int, uintptr_t);
  long long lseek(int, long long, int);
  uintptr_t mmap64(uintptr_t, uintptr_t, int, int, int, long long);
- 
+
 @@ -131,6 +130,7 @@ uintptr_t mmap64(uintptr_t, uintptr_t, int, int, int, long long);
  import "C"
  import (
  	"syscall"
 +	"unsafe"
  )
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
 @@ -191,6 +191,14 @@ func callioctl(fd int, req int, arg uintptr) (r1 uintptr, e1 Errno) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 +func callioctl_ptr(fd int, req int, arg unsafe.Pointer) (r1 uintptr, e1 Errno) {
 +	r1 = uintptr(C.ioctl(C.int(fd), C.int(req), C.uintptr_t(uintptr(arg))))
 +	e1 = syscall.GetErrno()
@@ -2899,9 +2906,9 @@ index 944a714..6903d3b 100644
  	r1 = uintptr(C.fcntl(C.uintptr_t(fd), C.int(cmd), C.uintptr_t(arg)))
  	e1 = syscall.GetErrno()
 @@ -1047,14 +1055,6 @@ func callgetrlimit(resource int, rlim uintptr) (r1 uintptr, e1 Errno) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func callsetrlimit(resource int, rlim uintptr) (r1 uintptr, e1 Errno) {
 -	r1 = uintptr(C.setrlimit(C.int(resource), C.uintptr_t(rlim)))
 -	e1 = syscall.GetErrno()
@@ -2920,7 +2927,7 @@ index c2461c4..4037ccf 100644
 @@ -725,6 +725,14 @@ func ioctl(fd int, req uint, arg uintptr) (err error) {
  	return
  }
- 
+
 +func ioctlPtr(fd int, req uint, arg unsafe.Pointer) (err error) {
 +	_, _, e1 := syscall_syscall(libc_ioctl_trampoline_addr, uintptr(fd), uintptr(req), uintptr(arg))
 +	if e1 != 0 {
@@ -2930,12 +2937,12 @@ index c2461c4..4037ccf 100644
 +}
 +
  var libc_ioctl_trampoline_addr uintptr
- 
+
  //go:cgo_import_dynamic libc_ioctl ioctl "/usr/lib/libSystem.B.dylib"
 @@ -1984,6 +1992,31 @@ var libc_select_trampoline_addr uintptr
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 +func Setattrlist(path string, attrlist *Attrlist, attrBuf []byte, options int) (err error) {
 +	var _p0 *byte
 +	_p0, err = BytePtrFromString(path)
@@ -2965,9 +2972,9 @@ index c2461c4..4037ccf 100644
  	_, _, e1 := syscall_syscall(libc_setegid_trampoline_addr, uintptr(egid), 0, 0)
  	if e1 != 0 {
 @@ -2115,20 +2148,6 @@ var libc_setreuid_trampoline_addr uintptr
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func Setrlimit(which int, lim *Rlimit) (err error) {
 -	_, _, e1 := syscall_rawSyscall(libc_setrlimit_trampoline_addr, uintptr(which), uintptr(unsafe.Pointer(lim)), 0)
 -	if e1 != 0 {
@@ -2988,7 +2995,7 @@ index c2461c4..4037ccf 100644
 @@ -2502,6 +2521,14 @@ func ptrace1(request int, pid int, addr uintptr, data uintptr) (err error) {
  	return
  }
- 
+
 +func ptrace1Ptr(request int, pid int, addr uintptr, data unsafe.Pointer) (err error) {
 +	_, _, e1 := syscall_syscall6(libc_ptrace_trampoline_addr, uintptr(request), uintptr(pid), addr, uintptr(data), 0, 0)
 +	if e1 != 0 {
@@ -2998,7 +3005,7 @@ index c2461c4..4037ccf 100644
 +}
 +
  var libc_ptrace_trampoline_addr uintptr
- 
+
  //go:cgo_import_dynamic libc_ptrace ptrace "/usr/lib/libSystem.B.dylib"
 diff --git a/vendor/golang.org/x/sys/unix/zsyscall_darwin_amd64.s b/vendor/golang.org/x/sys/unix/zsyscall_darwin_amd64.s
 index 95fe4c0..4baaed0 100644
@@ -3007,7 +3014,7 @@ index 95fe4c0..4baaed0 100644
 @@ -705,6 +705,11 @@ TEXT libc_select_trampoline<>(SB),NOSPLIT,$0-0
  GLOBL	·libc_select_trampoline_addr(SB), RODATA, $8
  DATA	·libc_select_trampoline_addr(SB)/8, $libc_select_trampoline<>(SB)
- 
+
 +TEXT libc_setattrlist_trampoline<>(SB),NOSPLIT,$0-0
 +	JMP	libc_setattrlist(SB)
 +GLOBL	·libc_setattrlist_trampoline_addr(SB), RODATA, $8
@@ -3015,11 +3022,11 @@ index 95fe4c0..4baaed0 100644
 +
  TEXT libc_setegid_trampoline<>(SB),NOSPLIT,$0-0
  	JMP	libc_setegid(SB)
- 
+
 @@ -759,12 +764,6 @@ TEXT libc_setreuid_trampoline<>(SB),NOSPLIT,$0-0
  GLOBL	·libc_setreuid_trampoline_addr(SB), RODATA, $8
  DATA	·libc_setreuid_trampoline_addr(SB)/8, $libc_setreuid_trampoline<>(SB)
- 
+
 -TEXT libc_setrlimit_trampoline<>(SB),NOSPLIT,$0-0
 -	JMP	libc_setrlimit(SB)
 -
@@ -3028,7 +3035,7 @@ index 95fe4c0..4baaed0 100644
 -
  TEXT libc_setsid_trampoline<>(SB),NOSPLIT,$0-0
  	JMP	libc_setsid(SB)
- 
+
 diff --git a/vendor/golang.org/x/sys/unix/zsyscall_darwin_arm64.go b/vendor/golang.org/x/sys/unix/zsyscall_darwin_arm64.go
 index 26a0fdc..51d6f3f 100644
 --- a/vendor/golang.org/x/sys/unix/zsyscall_darwin_arm64.go
@@ -3036,7 +3043,7 @@ index 26a0fdc..51d6f3f 100644
 @@ -725,6 +725,14 @@ func ioctl(fd int, req uint, arg uintptr) (err error) {
  	return
  }
- 
+
 +func ioctlPtr(fd int, req uint, arg unsafe.Pointer) (err error) {
 +	_, _, e1 := syscall_syscall(libc_ioctl_trampoline_addr, uintptr(fd), uintptr(req), uintptr(arg))
 +	if e1 != 0 {
@@ -3046,12 +3053,12 @@ index 26a0fdc..51d6f3f 100644
 +}
 +
  var libc_ioctl_trampoline_addr uintptr
- 
+
  //go:cgo_import_dynamic libc_ioctl ioctl "/usr/lib/libSystem.B.dylib"
 @@ -1984,6 +1992,31 @@ var libc_select_trampoline_addr uintptr
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 +func Setattrlist(path string, attrlist *Attrlist, attrBuf []byte, options int) (err error) {
 +	var _p0 *byte
 +	_p0, err = BytePtrFromString(path)
@@ -3081,9 +3088,9 @@ index 26a0fdc..51d6f3f 100644
  	_, _, e1 := syscall_syscall(libc_setegid_trampoline_addr, uintptr(egid), 0, 0)
  	if e1 != 0 {
 @@ -2115,20 +2148,6 @@ var libc_setreuid_trampoline_addr uintptr
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func Setrlimit(which int, lim *Rlimit) (err error) {
 -	_, _, e1 := syscall_rawSyscall(libc_setrlimit_trampoline_addr, uintptr(which), uintptr(unsafe.Pointer(lim)), 0)
 -	if e1 != 0 {
@@ -3104,7 +3111,7 @@ index 26a0fdc..51d6f3f 100644
 @@ -2502,6 +2521,14 @@ func ptrace1(request int, pid int, addr uintptr, data uintptr) (err error) {
  	return
  }
- 
+
 +func ptrace1Ptr(request int, pid int, addr uintptr, data unsafe.Pointer) (err error) {
 +	_, _, e1 := syscall_syscall6(libc_ptrace_trampoline_addr, uintptr(request), uintptr(pid), addr, uintptr(data), 0, 0)
 +	if e1 != 0 {
@@ -3114,7 +3121,7 @@ index 26a0fdc..51d6f3f 100644
 +}
 +
  var libc_ptrace_trampoline_addr uintptr
- 
+
  //go:cgo_import_dynamic libc_ptrace ptrace "/usr/lib/libSystem.B.dylib"
 diff --git a/vendor/golang.org/x/sys/unix/zsyscall_darwin_arm64.s b/vendor/golang.org/x/sys/unix/zsyscall_darwin_arm64.s
 index efa5b4c..c3b82c0 100644
@@ -3123,7 +3130,7 @@ index efa5b4c..c3b82c0 100644
 @@ -705,6 +705,11 @@ TEXT libc_select_trampoline<>(SB),NOSPLIT,$0-0
  GLOBL	·libc_select_trampoline_addr(SB), RODATA, $8
  DATA	·libc_select_trampoline_addr(SB)/8, $libc_select_trampoline<>(SB)
- 
+
 +TEXT libc_setattrlist_trampoline<>(SB),NOSPLIT,$0-0
 +	JMP	libc_setattrlist(SB)
 +GLOBL	·libc_setattrlist_trampoline_addr(SB), RODATA, $8
@@ -3131,11 +3138,11 @@ index efa5b4c..c3b82c0 100644
 +
  TEXT libc_setegid_trampoline<>(SB),NOSPLIT,$0-0
  	JMP	libc_setegid(SB)
- 
+
 @@ -759,12 +764,6 @@ TEXT libc_setreuid_trampoline<>(SB),NOSPLIT,$0-0
  GLOBL	·libc_setreuid_trampoline_addr(SB), RODATA, $8
  DATA	·libc_setreuid_trampoline_addr(SB)/8, $libc_setreuid_trampoline<>(SB)
- 
+
 -TEXT libc_setrlimit_trampoline<>(SB),NOSPLIT,$0-0
 -	JMP	libc_setrlimit(SB)
 -
@@ -3144,15 +3151,15 @@ index efa5b4c..c3b82c0 100644
 -
  TEXT libc_setsid_trampoline<>(SB),NOSPLIT,$0-0
  	JMP	libc_setsid(SB)
- 
+
 diff --git a/vendor/golang.org/x/sys/unix/zsyscall_dragonfly_amd64.go b/vendor/golang.org/x/sys/unix/zsyscall_dragonfly_amd64.go
 index 54749f9..0eabac7 100644
 --- a/vendor/golang.org/x/sys/unix/zsyscall_dragonfly_amd64.go
 +++ b/vendor/golang.org/x/sys/unix/zsyscall_dragonfly_amd64.go
 @@ -436,6 +436,16 @@ func ioctl(fd int, req uint, arg uintptr) (err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 +func ioctlPtr(fd int, req uint, arg unsafe.Pointer) (err error) {
 +	_, _, e1 := Syscall(SYS_IOCTL, uintptr(fd), uintptr(req), uintptr(arg))
 +	if e1 != 0 {
@@ -3167,9 +3174,9 @@ index 54749f9..0eabac7 100644
  	var _p0 unsafe.Pointer
  	if len(mib) > 0 {
 @@ -1400,16 +1410,6 @@ func Setresuid(ruid int, euid int, suid int) (err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func Setrlimit(which int, lim *Rlimit) (err error) {
 -	_, _, e1 := RawSyscall(SYS_SETRLIMIT, uintptr(which), uintptr(unsafe.Pointer(lim)), 0)
 -	if e1 != 0 {
@@ -3188,9 +3195,9 @@ index 77479d4..ee313eb 100644
 --- a/vendor/golang.org/x/sys/unix/zsyscall_freebsd_386.go
 +++ b/vendor/golang.org/x/sys/unix/zsyscall_freebsd_386.go
 @@ -388,6 +388,16 @@ func ioctl(fd int, req uint, arg uintptr) (err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 +func ioctlPtr(fd int, req uint, arg unsafe.Pointer) (err error) {
 +	_, _, e1 := Syscall(SYS_IOCTL, uintptr(fd), uintptr(req), uintptr(arg))
 +	if e1 != 0 {
@@ -3205,9 +3212,9 @@ index 77479d4..ee313eb 100644
  	var _p0 unsafe.Pointer
  	if len(mib) > 0 {
 @@ -414,6 +424,16 @@ func ptrace(request int, pid int, addr uintptr, data int) (err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 +func ptracePtr(request int, pid int, addr unsafe.Pointer, data int) (err error) {
 +	_, _, e1 := Syscall6(SYS_PTRACE, uintptr(request), uintptr(pid), uintptr(addr), uintptr(data), 0, 0)
 +	if e1 != 0 {
@@ -3222,9 +3229,9 @@ index 77479d4..ee313eb 100644
  	var _p0 *byte
  	_p0, err = BytePtrFromString(path)
 @@ -1625,16 +1645,6 @@ func Setresuid(ruid int, euid int, suid int) (err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func Setrlimit(which int, lim *Rlimit) (err error) {
 -	_, _, e1 := RawSyscall(SYS_SETRLIMIT, uintptr(which), uintptr(unsafe.Pointer(lim)), 0)
 -	if e1 != 0 {
@@ -3243,9 +3250,9 @@ index 2e966d4..4c986e4 100644
 --- a/vendor/golang.org/x/sys/unix/zsyscall_freebsd_amd64.go
 +++ b/vendor/golang.org/x/sys/unix/zsyscall_freebsd_amd64.go
 @@ -388,6 +388,16 @@ func ioctl(fd int, req uint, arg uintptr) (err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 +func ioctlPtr(fd int, req uint, arg unsafe.Pointer) (err error) {
 +	_, _, e1 := Syscall(SYS_IOCTL, uintptr(fd), uintptr(req), uintptr(arg))
 +	if e1 != 0 {
@@ -3260,9 +3267,9 @@ index 2e966d4..4c986e4 100644
  	var _p0 unsafe.Pointer
  	if len(mib) > 0 {
 @@ -414,6 +424,16 @@ func ptrace(request int, pid int, addr uintptr, data int) (err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 +func ptracePtr(request int, pid int, addr unsafe.Pointer, data int) (err error) {
 +	_, _, e1 := Syscall6(SYS_PTRACE, uintptr(request), uintptr(pid), uintptr(addr), uintptr(data), 0, 0)
 +	if e1 != 0 {
@@ -3277,9 +3284,9 @@ index 2e966d4..4c986e4 100644
  	var _p0 *byte
  	_p0, err = BytePtrFromString(path)
 @@ -1625,16 +1645,6 @@ func Setresuid(ruid int, euid int, suid int) (err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func Setrlimit(which int, lim *Rlimit) (err error) {
 -	_, _, e1 := RawSyscall(SYS_SETRLIMIT, uintptr(which), uintptr(unsafe.Pointer(lim)), 0)
 -	if e1 != 0 {
@@ -3298,9 +3305,9 @@ index d65a7c0..5552169 100644
 --- a/vendor/golang.org/x/sys/unix/zsyscall_freebsd_arm.go
 +++ b/vendor/golang.org/x/sys/unix/zsyscall_freebsd_arm.go
 @@ -388,6 +388,16 @@ func ioctl(fd int, req uint, arg uintptr) (err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 +func ioctlPtr(fd int, req uint, arg unsafe.Pointer) (err error) {
 +	_, _, e1 := Syscall(SYS_IOCTL, uintptr(fd), uintptr(req), uintptr(arg))
 +	if e1 != 0 {
@@ -3315,9 +3322,9 @@ index d65a7c0..5552169 100644
  	var _p0 unsafe.Pointer
  	if len(mib) > 0 {
 @@ -414,6 +424,16 @@ func ptrace(request int, pid int, addr uintptr, data int) (err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 +func ptracePtr(request int, pid int, addr unsafe.Pointer, data int) (err error) {
 +	_, _, e1 := Syscall6(SYS_PTRACE, uintptr(request), uintptr(pid), uintptr(addr), uintptr(data), 0, 0)
 +	if e1 != 0 {
@@ -3332,9 +3339,9 @@ index d65a7c0..5552169 100644
  	var _p0 *byte
  	_p0, err = BytePtrFromString(path)
 @@ -1625,16 +1645,6 @@ func Setresuid(ruid int, euid int, suid int) (err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func Setrlimit(which int, lim *Rlimit) (err error) {
 -	_, _, e1 := RawSyscall(SYS_SETRLIMIT, uintptr(which), uintptr(unsafe.Pointer(lim)), 0)
 -	if e1 != 0 {
@@ -3353,9 +3360,9 @@ index 6f0b97c..67a226f 100644
 --- a/vendor/golang.org/x/sys/unix/zsyscall_freebsd_arm64.go
 +++ b/vendor/golang.org/x/sys/unix/zsyscall_freebsd_arm64.go
 @@ -388,6 +388,16 @@ func ioctl(fd int, req uint, arg uintptr) (err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 +func ioctlPtr(fd int, req uint, arg unsafe.Pointer) (err error) {
 +	_, _, e1 := Syscall(SYS_IOCTL, uintptr(fd), uintptr(req), uintptr(arg))
 +	if e1 != 0 {
@@ -3370,9 +3377,9 @@ index 6f0b97c..67a226f 100644
  	var _p0 unsafe.Pointer
  	if len(mib) > 0 {
 @@ -414,6 +424,16 @@ func ptrace(request int, pid int, addr uintptr, data int) (err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 +func ptracePtr(request int, pid int, addr unsafe.Pointer, data int) (err error) {
 +	_, _, e1 := Syscall6(SYS_PTRACE, uintptr(request), uintptr(pid), uintptr(addr), uintptr(data), 0, 0)
 +	if e1 != 0 {
@@ -3387,9 +3394,9 @@ index 6f0b97c..67a226f 100644
  	var _p0 *byte
  	_p0, err = BytePtrFromString(path)
 @@ -1625,16 +1645,6 @@ func Setresuid(ruid int, euid int, suid int) (err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func Setrlimit(which int, lim *Rlimit) (err error) {
 -	_, _, e1 := RawSyscall(SYS_SETRLIMIT, uintptr(which), uintptr(unsafe.Pointer(lim)), 0)
 -	if e1 != 0 {
@@ -3408,9 +3415,9 @@ index e1c23b5..f0b9dda 100644
 --- a/vendor/golang.org/x/sys/unix/zsyscall_freebsd_riscv64.go
 +++ b/vendor/golang.org/x/sys/unix/zsyscall_freebsd_riscv64.go
 @@ -388,6 +388,16 @@ func ioctl(fd int, req uint, arg uintptr) (err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 +func ioctlPtr(fd int, req uint, arg unsafe.Pointer) (err error) {
 +	_, _, e1 := Syscall(SYS_IOCTL, uintptr(fd), uintptr(req), uintptr(arg))
 +	if e1 != 0 {
@@ -3425,9 +3432,9 @@ index e1c23b5..f0b9dda 100644
  	var _p0 unsafe.Pointer
  	if len(mib) > 0 {
 @@ -414,6 +424,16 @@ func ptrace(request int, pid int, addr uintptr, data int) (err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 +func ptracePtr(request int, pid int, addr unsafe.Pointer, data int) (err error) {
 +	_, _, e1 := Syscall6(SYS_PTRACE, uintptr(request), uintptr(pid), uintptr(addr), uintptr(data), 0, 0)
 +	if e1 != 0 {
@@ -3442,9 +3449,9 @@ index e1c23b5..f0b9dda 100644
  	var _p0 *byte
  	_p0, err = BytePtrFromString(path)
 @@ -1625,16 +1645,6 @@ func Setresuid(ruid int, euid int, suid int) (err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func Setrlimit(which int, lim *Rlimit) (err error) {
 -	_, _, e1 := RawSyscall(SYS_SETRLIMIT, uintptr(which), uintptr(unsafe.Pointer(lim)), 0)
 -	if e1 != 0 {
@@ -3463,9 +3470,9 @@ index 293cf36..da63d9d 100644
 --- a/vendor/golang.org/x/sys/unix/zsyscall_linux.go
 +++ b/vendor/golang.org/x/sys/unix/zsyscall_linux.go
 @@ -379,6 +379,16 @@ func ptrace(request int, pid int, addr uintptr, data uintptr) (err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 +func ptracePtr(request int, pid int, addr uintptr, data unsafe.Pointer) (err error) {
 +	_, _, e1 := Syscall6(SYS_PTRACE, uintptr(request), uintptr(pid), uintptr(addr), uintptr(data), 0, 0)
 +	if e1 != 0 {
@@ -3480,9 +3487,9 @@ index 293cf36..da63d9d 100644
  	var _p0 *byte
  	_p0, err = BytePtrFromString(arg)
 @@ -537,6 +547,17 @@ func Chroot(path string) (err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 +func ClockAdjtime(clockid int32, buf *Timex) (state int, err error) {
 +	r0, _, e1 := Syscall(SYS_CLOCK_ADJTIME, uintptr(clockid), uintptr(unsafe.Pointer(buf)), 0)
 +	state = int(r0)
@@ -3498,9 +3505,9 @@ index 293cf36..da63d9d 100644
  	_, _, e1 := Syscall(SYS_CLOCK_GETRES, uintptr(clockid), uintptr(unsafe.Pointer(res)), 0)
  	if e1 != 0 {
 @@ -1325,16 +1346,6 @@ func PivotRoot(newroot string, putold string) (err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func Prlimit(pid int, resource int, newlimit *Rlimit, old *Rlimit) (err error) {
 -	_, _, e1 := RawSyscall6(SYS_PRLIMIT64, uintptr(pid), uintptr(resource), uintptr(unsafe.Pointer(newlimit)), uintptr(unsafe.Pointer(old)), 0, 0)
 -	if e1 != 0 {
@@ -3519,9 +3526,9 @@ index c81b0ad..07b549c 100644
 --- a/vendor/golang.org/x/sys/unix/zsyscall_linux_386.go
 +++ b/vendor/golang.org/x/sys/unix/zsyscall_linux_386.go
 @@ -411,16 +411,6 @@ func getrlimit(resource int, rlim *rlimit32) (err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func setrlimit(resource int, rlim *rlimit32) (err error) {
 -	_, _, e1 := RawSyscall(SYS_SETRLIMIT, uintptr(resource), uintptr(unsafe.Pointer(rlim)), 0)
 -	if e1 != 0 {
@@ -3540,9 +3547,9 @@ index 2206bce..5f481bf 100644
 --- a/vendor/golang.org/x/sys/unix/zsyscall_linux_amd64.go
 +++ b/vendor/golang.org/x/sys/unix/zsyscall_linux_amd64.go
 @@ -334,16 +334,6 @@ func setfsuid(uid int) (prev int, err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func Setrlimit(resource int, rlim *Rlimit) (err error) {
 -	_, _, e1 := RawSyscall(SYS_SETRLIMIT, uintptr(resource), uintptr(unsafe.Pointer(rlim)), 0)
 -	if e1 != 0 {
@@ -3561,9 +3568,9 @@ index edf6b39..824cd52 100644
 --- a/vendor/golang.org/x/sys/unix/zsyscall_linux_arm.go
 +++ b/vendor/golang.org/x/sys/unix/zsyscall_linux_arm.go
 @@ -578,16 +578,6 @@ func getrlimit(resource int, rlim *rlimit32) (err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func setrlimit(resource int, rlim *rlimit32) (err error) {
 -	_, _, e1 := RawSyscall(SYS_SETRLIMIT, uintptr(resource), uintptr(unsafe.Pointer(rlim)), 0)
 -	if e1 != 0 {
@@ -3582,9 +3589,9 @@ index 190609f..e77aecf 100644
 --- a/vendor/golang.org/x/sys/unix/zsyscall_linux_arm64.go
 +++ b/vendor/golang.org/x/sys/unix/zsyscall_linux_arm64.go
 @@ -289,16 +289,6 @@ func setfsuid(uid int) (prev int, err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func setrlimit(resource int, rlim *Rlimit) (err error) {
 -	_, _, e1 := RawSyscall(SYS_SETRLIMIT, uintptr(resource), uintptr(unsafe.Pointer(rlim)), 0)
 -	if e1 != 0 {
@@ -3603,9 +3610,9 @@ index 5f984cb..961a3af 100644
 --- a/vendor/golang.org/x/sys/unix/zsyscall_linux_mips.go
 +++ b/vendor/golang.org/x/sys/unix/zsyscall_linux_mips.go
 @@ -644,16 +644,6 @@ func getrlimit(resource int, rlim *rlimit32) (err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func setrlimit(resource int, rlim *rlimit32) (err error) {
 -	_, _, e1 := RawSyscall(SYS_SETRLIMIT, uintptr(resource), uintptr(unsafe.Pointer(rlim)), 0)
 -	if e1 != 0 {
@@ -3624,9 +3631,9 @@ index 46fc380..ed05005 100644
 --- a/vendor/golang.org/x/sys/unix/zsyscall_linux_mips64.go
 +++ b/vendor/golang.org/x/sys/unix/zsyscall_linux_mips64.go
 @@ -278,16 +278,6 @@ func setfsuid(uid int) (prev int, err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func Setrlimit(resource int, rlim *Rlimit) (err error) {
 -	_, _, e1 := RawSyscall(SYS_SETRLIMIT, uintptr(resource), uintptr(unsafe.Pointer(rlim)), 0)
 -	if e1 != 0 {
@@ -3645,9 +3652,9 @@ index cbd0d4d..d365b71 100644
 --- a/vendor/golang.org/x/sys/unix/zsyscall_linux_mips64le.go
 +++ b/vendor/golang.org/x/sys/unix/zsyscall_linux_mips64le.go
 @@ -278,16 +278,6 @@ func setfsuid(uid int) (prev int, err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func Setrlimit(resource int, rlim *Rlimit) (err error) {
 -	_, _, e1 := RawSyscall(SYS_SETRLIMIT, uintptr(resource), uintptr(unsafe.Pointer(rlim)), 0)
 -	if e1 != 0 {
@@ -3666,9 +3673,9 @@ index 0c13d15..c3f1b8b 100644
 --- a/vendor/golang.org/x/sys/unix/zsyscall_linux_mipsle.go
 +++ b/vendor/golang.org/x/sys/unix/zsyscall_linux_mipsle.go
 @@ -644,16 +644,6 @@ func getrlimit(resource int, rlim *rlimit32) (err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func setrlimit(resource int, rlim *rlimit32) (err error) {
 -	_, _, e1 := RawSyscall(SYS_SETRLIMIT, uintptr(resource), uintptr(unsafe.Pointer(rlim)), 0)
 -	if e1 != 0 {
@@ -3687,9 +3694,9 @@ index e01432a..a6574cf 100644
 --- a/vendor/golang.org/x/sys/unix/zsyscall_linux_ppc.go
 +++ b/vendor/golang.org/x/sys/unix/zsyscall_linux_ppc.go
 @@ -624,16 +624,6 @@ func getrlimit(resource int, rlim *rlimit32) (err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func setrlimit(resource int, rlim *rlimit32) (err error) {
 -	_, _, e1 := RawSyscall(SYS_SETRLIMIT, uintptr(resource), uintptr(unsafe.Pointer(rlim)), 0)
 -	if e1 != 0 {
@@ -3708,9 +3715,9 @@ index 13c7ee7..f409902 100644
 --- a/vendor/golang.org/x/sys/unix/zsyscall_linux_ppc64.go
 +++ b/vendor/golang.org/x/sys/unix/zsyscall_linux_ppc64.go
 @@ -349,16 +349,6 @@ func setfsuid(uid int) (prev int, err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func Setrlimit(resource int, rlim *Rlimit) (err error) {
 -	_, _, e1 := RawSyscall(SYS_SETRLIMIT, uintptr(resource), uintptr(unsafe.Pointer(rlim)), 0)
 -	if e1 != 0 {
@@ -3729,9 +3736,9 @@ index 02d0c0f..9dfcc29 100644
 --- a/vendor/golang.org/x/sys/unix/zsyscall_linux_ppc64le.go
 +++ b/vendor/golang.org/x/sys/unix/zsyscall_linux_ppc64le.go
 @@ -349,16 +349,6 @@ func setfsuid(uid int) (prev int, err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func Setrlimit(resource int, rlim *Rlimit) (err error) {
 -	_, _, e1 := RawSyscall(SYS_SETRLIMIT, uintptr(resource), uintptr(unsafe.Pointer(rlim)), 0)
 -	if e1 != 0 {
@@ -3750,9 +3757,9 @@ index 9fee3b1..0b29239 100644
 --- a/vendor/golang.org/x/sys/unix/zsyscall_linux_riscv64.go
 +++ b/vendor/golang.org/x/sys/unix/zsyscall_linux_riscv64.go
 @@ -269,16 +269,6 @@ func setfsuid(uid int) (prev int, err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func Setrlimit(resource int, rlim *Rlimit) (err error) {
 -	_, _, e1 := RawSyscall(SYS_SETRLIMIT, uintptr(resource), uintptr(unsafe.Pointer(rlim)), 0)
 -	if e1 != 0 {
@@ -3771,9 +3778,9 @@ index 647bbfe..6cde322 100644
 --- a/vendor/golang.org/x/sys/unix/zsyscall_linux_s390x.go
 +++ b/vendor/golang.org/x/sys/unix/zsyscall_linux_s390x.go
 @@ -319,16 +319,6 @@ func setfsuid(uid int) (prev int, err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func Setrlimit(resource int, rlim *Rlimit) (err error) {
 -	_, _, e1 := RawSyscall(SYS_SETRLIMIT, uintptr(resource), uintptr(unsafe.Pointer(rlim)), 0)
 -	if e1 != 0 {
@@ -3792,9 +3799,9 @@ index ada057f..5253d65 100644
 --- a/vendor/golang.org/x/sys/unix/zsyscall_linux_sparc64.go
 +++ b/vendor/golang.org/x/sys/unix/zsyscall_linux_sparc64.go
 @@ -329,16 +329,6 @@ func setfsuid(uid int) (prev int, err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func Setrlimit(resource int, rlim *Rlimit) (err error) {
 -	_, _, e1 := RawSyscall(SYS_SETRLIMIT, uintptr(resource), uintptr(unsafe.Pointer(rlim)), 0)
 -	if e1 != 0 {
@@ -3813,9 +3820,9 @@ index 79f7389..cdb2af5 100644
 --- a/vendor/golang.org/x/sys/unix/zsyscall_netbsd_386.go
 +++ b/vendor/golang.org/x/sys/unix/zsyscall_netbsd_386.go
 @@ -405,6 +405,16 @@ func ioctl(fd int, req uint, arg uintptr) (err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 +func ioctlPtr(fd int, req uint, arg unsafe.Pointer) (err error) {
 +	_, _, e1 := Syscall(SYS_IOCTL, uintptr(fd), uintptr(req), uintptr(arg))
 +	if e1 != 0 {
@@ -3830,9 +3837,9 @@ index 79f7389..cdb2af5 100644
  	var _p0 unsafe.Pointer
  	if len(mib) > 0 {
 @@ -1597,16 +1607,6 @@ func Setreuid(ruid int, euid int) (err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func Setrlimit(which int, lim *Rlimit) (err error) {
 -	_, _, e1 := RawSyscall(SYS_SETRLIMIT, uintptr(which), uintptr(unsafe.Pointer(lim)), 0)
 -	if e1 != 0 {
@@ -3851,9 +3858,9 @@ index fb161f3..9d25f76 100644
 --- a/vendor/golang.org/x/sys/unix/zsyscall_netbsd_amd64.go
 +++ b/vendor/golang.org/x/sys/unix/zsyscall_netbsd_amd64.go
 @@ -405,6 +405,16 @@ func ioctl(fd int, req uint, arg uintptr) (err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 +func ioctlPtr(fd int, req uint, arg unsafe.Pointer) (err error) {
 +	_, _, e1 := Syscall(SYS_IOCTL, uintptr(fd), uintptr(req), uintptr(arg))
 +	if e1 != 0 {
@@ -3868,9 +3875,9 @@ index fb161f3..9d25f76 100644
  	var _p0 unsafe.Pointer
  	if len(mib) > 0 {
 @@ -1597,16 +1607,6 @@ func Setreuid(ruid int, euid int) (err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func Setrlimit(which int, lim *Rlimit) (err error) {
 -	_, _, e1 := RawSyscall(SYS_SETRLIMIT, uintptr(which), uintptr(unsafe.Pointer(lim)), 0)
 -	if e1 != 0 {
@@ -3889,9 +3896,9 @@ index 4c8ac99..d3f8035 100644
 --- a/vendor/golang.org/x/sys/unix/zsyscall_netbsd_arm.go
 +++ b/vendor/golang.org/x/sys/unix/zsyscall_netbsd_arm.go
 @@ -405,6 +405,16 @@ func ioctl(fd int, req uint, arg uintptr) (err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 +func ioctlPtr(fd int, req uint, arg unsafe.Pointer) (err error) {
 +	_, _, e1 := Syscall(SYS_IOCTL, uintptr(fd), uintptr(req), uintptr(arg))
 +	if e1 != 0 {
@@ -3906,9 +3913,9 @@ index 4c8ac99..d3f8035 100644
  	var _p0 unsafe.Pointer
  	if len(mib) > 0 {
 @@ -1597,16 +1607,6 @@ func Setreuid(ruid int, euid int) (err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func Setrlimit(which int, lim *Rlimit) (err error) {
 -	_, _, e1 := RawSyscall(SYS_SETRLIMIT, uintptr(which), uintptr(unsafe.Pointer(lim)), 0)
 -	if e1 != 0 {
@@ -3927,9 +3934,9 @@ index 76dd8ec..887188a 100644
 --- a/vendor/golang.org/x/sys/unix/zsyscall_netbsd_arm64.go
 +++ b/vendor/golang.org/x/sys/unix/zsyscall_netbsd_arm64.go
 @@ -405,6 +405,16 @@ func ioctl(fd int, req uint, arg uintptr) (err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 +func ioctlPtr(fd int, req uint, arg unsafe.Pointer) (err error) {
 +	_, _, e1 := Syscall(SYS_IOCTL, uintptr(fd), uintptr(req), uintptr(arg))
 +	if e1 != 0 {
@@ -3944,9 +3951,9 @@ index 76dd8ec..887188a 100644
  	var _p0 unsafe.Pointer
  	if len(mib) > 0 {
 @@ -1597,16 +1607,6 @@ func Setreuid(ruid int, euid int) (err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func Setrlimit(which int, lim *Rlimit) (err error) {
 -	_, _, e1 := RawSyscall(SYS_SETRLIMIT, uintptr(which), uintptr(unsafe.Pointer(lim)), 0)
 -	if e1 != 0 {
@@ -3967,7 +3974,7 @@ index caeb807..6699a78 100644
 @@ -527,6 +527,14 @@ func ioctl(fd int, req uint, arg uintptr) (err error) {
  	return
  }
- 
+
 +func ioctlPtr(fd int, req uint, arg unsafe.Pointer) (err error) {
 +	_, _, e1 := syscall_syscall(libc_ioctl_trampoline_addr, uintptr(fd), uintptr(req), uintptr(arg))
 +	if e1 != 0 {
@@ -3977,12 +3984,12 @@ index caeb807..6699a78 100644
 +}
 +
  var libc_ioctl_trampoline_addr uintptr
- 
+
  //go:cgo_import_dynamic libc_ioctl ioctl "libc.so"
 @@ -1886,20 +1894,6 @@ var libc_setresuid_trampoline_addr uintptr
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func Setrlimit(which int, lim *Rlimit) (err error) {
 -	_, _, e1 := syscall_rawSyscall(libc_setrlimit_trampoline_addr, uintptr(which), uintptr(unsafe.Pointer(lim)), 0)
 -	if e1 != 0 {
@@ -4007,7 +4014,7 @@ index 0874442..04f0de3 100644
 @@ -573,11 +573,6 @@ TEXT libc_setresuid_trampoline<>(SB),NOSPLIT,$0-0
  GLOBL	·libc_setresuid_trampoline_addr(SB), RODATA, $4
  DATA	·libc_setresuid_trampoline_addr(SB)/4, $libc_setresuid_trampoline<>(SB)
- 
+
 -TEXT libc_setrlimit_trampoline<>(SB),NOSPLIT,$0-0
 -	JMP	libc_setrlimit(SB)
 -GLOBL	·libc_setrlimit_trampoline_addr(SB), RODATA, $4
@@ -4023,7 +4030,7 @@ index a05e5f4..1e775fe 100644
 @@ -527,6 +527,14 @@ func ioctl(fd int, req uint, arg uintptr) (err error) {
  	return
  }
- 
+
 +func ioctlPtr(fd int, req uint, arg unsafe.Pointer) (err error) {
 +	_, _, e1 := syscall_syscall(libc_ioctl_trampoline_addr, uintptr(fd), uintptr(req), uintptr(arg))
 +	if e1 != 0 {
@@ -4033,12 +4040,12 @@ index a05e5f4..1e775fe 100644
 +}
 +
  var libc_ioctl_trampoline_addr uintptr
- 
+
  //go:cgo_import_dynamic libc_ioctl ioctl "libc.so"
 @@ -1886,20 +1894,6 @@ var libc_setresuid_trampoline_addr uintptr
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func Setrlimit(which int, lim *Rlimit) (err error) {
 -	_, _, e1 := syscall_rawSyscall(libc_setrlimit_trampoline_addr, uintptr(which), uintptr(unsafe.Pointer(lim)), 0)
 -	if e1 != 0 {
@@ -4063,7 +4070,7 @@ index 5782cd1..27b6f4d 100644
 @@ -573,11 +573,6 @@ TEXT libc_setresuid_trampoline<>(SB),NOSPLIT,$0-0
  GLOBL	·libc_setresuid_trampoline_addr(SB), RODATA, $8
  DATA	·libc_setresuid_trampoline_addr(SB)/8, $libc_setresuid_trampoline<>(SB)
- 
+
 -TEXT libc_setrlimit_trampoline<>(SB),NOSPLIT,$0-0
 -	JMP	libc_setrlimit(SB)
 -GLOBL	·libc_setrlimit_trampoline_addr(SB), RODATA, $8
@@ -4079,7 +4086,7 @@ index b2da8e5..7f64278 100644
 @@ -527,6 +527,14 @@ func ioctl(fd int, req uint, arg uintptr) (err error) {
  	return
  }
- 
+
 +func ioctlPtr(fd int, req uint, arg unsafe.Pointer) (err error) {
 +	_, _, e1 := syscall_syscall(libc_ioctl_trampoline_addr, uintptr(fd), uintptr(req), uintptr(arg))
 +	if e1 != 0 {
@@ -4089,12 +4096,12 @@ index b2da8e5..7f64278 100644
 +}
 +
  var libc_ioctl_trampoline_addr uintptr
- 
+
  //go:cgo_import_dynamic libc_ioctl ioctl "libc.so"
 @@ -1886,20 +1894,6 @@ var libc_setresuid_trampoline_addr uintptr
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func Setrlimit(which int, lim *Rlimit) (err error) {
 -	_, _, e1 := syscall_rawSyscall(libc_setrlimit_trampoline_addr, uintptr(which), uintptr(unsafe.Pointer(lim)), 0)
 -	if e1 != 0 {
@@ -4119,7 +4126,7 @@ index cf31042..b797045 100644
 @@ -573,11 +573,6 @@ TEXT libc_setresuid_trampoline<>(SB),NOSPLIT,$0-0
  GLOBL	·libc_setresuid_trampoline_addr(SB), RODATA, $4
  DATA	·libc_setresuid_trampoline_addr(SB)/4, $libc_setresuid_trampoline<>(SB)
- 
+
 -TEXT libc_setrlimit_trampoline<>(SB),NOSPLIT,$0-0
 -	JMP	libc_setrlimit(SB)
 -GLOBL	·libc_setrlimit_trampoline_addr(SB), RODATA, $4
@@ -4135,7 +4142,7 @@ index 048b265..756ef7b 100644
 @@ -527,6 +527,14 @@ func ioctl(fd int, req uint, arg uintptr) (err error) {
  	return
  }
- 
+
 +func ioctlPtr(fd int, req uint, arg unsafe.Pointer) (err error) {
 +	_, _, e1 := syscall_syscall(libc_ioctl_trampoline_addr, uintptr(fd), uintptr(req), uintptr(arg))
 +	if e1 != 0 {
@@ -4145,12 +4152,12 @@ index 048b265..756ef7b 100644
 +}
 +
  var libc_ioctl_trampoline_addr uintptr
- 
+
  //go:cgo_import_dynamic libc_ioctl ioctl "libc.so"
 @@ -1886,20 +1894,6 @@ var libc_setresuid_trampoline_addr uintptr
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func Setrlimit(which int, lim *Rlimit) (err error) {
 -	_, _, e1 := syscall_rawSyscall(libc_setrlimit_trampoline_addr, uintptr(which), uintptr(unsafe.Pointer(lim)), 0)
 -	if e1 != 0 {
@@ -4175,7 +4182,7 @@ index 484bb42..a871266 100644
 @@ -573,11 +573,6 @@ TEXT libc_setresuid_trampoline<>(SB),NOSPLIT,$0-0
  GLOBL	·libc_setresuid_trampoline_addr(SB), RODATA, $8
  DATA	·libc_setresuid_trampoline_addr(SB)/8, $libc_setresuid_trampoline<>(SB)
- 
+
 -TEXT libc_setrlimit_trampoline<>(SB),NOSPLIT,$0-0
 -	JMP	libc_setrlimit(SB)
 -GLOBL	·libc_setrlimit_trampoline_addr(SB), RODATA, $8
@@ -4191,7 +4198,7 @@ index 6f33e37..7bc2e24 100644
 @@ -527,6 +527,14 @@ func ioctl(fd int, req uint, arg uintptr) (err error) {
  	return
  }
- 
+
 +func ioctlPtr(fd int, req uint, arg unsafe.Pointer) (err error) {
 +	_, _, e1 := syscall_syscall(libc_ioctl_trampoline_addr, uintptr(fd), uintptr(req), uintptr(arg))
 +	if e1 != 0 {
@@ -4201,12 +4208,12 @@ index 6f33e37..7bc2e24 100644
 +}
 +
  var libc_ioctl_trampoline_addr uintptr
- 
+
  //go:cgo_import_dynamic libc_ioctl ioctl "libc.so"
 @@ -1886,20 +1894,6 @@ var libc_setresuid_trampoline_addr uintptr
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func Setrlimit(which int, lim *Rlimit) (err error) {
 -	_, _, e1 := syscall_rawSyscall(libc_setrlimit_trampoline_addr, uintptr(which), uintptr(unsafe.Pointer(lim)), 0)
 -	if e1 != 0 {
@@ -4231,7 +4238,7 @@ index 55af272..05d4bff 100644
 @@ -573,11 +573,6 @@ TEXT libc_setresuid_trampoline<>(SB),NOSPLIT,$0-0
  GLOBL	·libc_setresuid_trampoline_addr(SB), RODATA, $8
  DATA	·libc_setresuid_trampoline_addr(SB)/8, $libc_setresuid_trampoline<>(SB)
- 
+
 -TEXT libc_setrlimit_trampoline<>(SB),NOSPLIT,$0-0
 -	JMP	libc_setrlimit(SB)
 -GLOBL	·libc_setrlimit_trampoline_addr(SB), RODATA, $8
@@ -4247,7 +4254,7 @@ index 330cf7f..739be62 100644
 @@ -527,6 +527,14 @@ func ioctl(fd int, req uint, arg uintptr) (err error) {
  	return
  }
- 
+
 +func ioctlPtr(fd int, req uint, arg unsafe.Pointer) (err error) {
 +	_, _, e1 := syscall_syscall(libc_ioctl_trampoline_addr, uintptr(fd), uintptr(req), uintptr(arg))
 +	if e1 != 0 {
@@ -4257,12 +4264,12 @@ index 330cf7f..739be62 100644
 +}
 +
  var libc_ioctl_trampoline_addr uintptr
- 
+
  //go:cgo_import_dynamic libc_ioctl ioctl "libc.so"
 @@ -1886,20 +1894,6 @@ var libc_setresuid_trampoline_addr uintptr
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func Setrlimit(which int, lim *Rlimit) (err error) {
 -	_, _, e1 := syscall_rawSyscall(libc_setrlimit_trampoline_addr, uintptr(which), uintptr(unsafe.Pointer(lim)), 0)
 -	if e1 != 0 {
@@ -4287,7 +4294,7 @@ index 4028255..74a25f8 100644
 @@ -687,12 +687,6 @@ TEXT libc_setresuid_trampoline<>(SB),NOSPLIT,$0-0
  GLOBL	·libc_setresuid_trampoline_addr(SB), RODATA, $8
  DATA	·libc_setresuid_trampoline_addr(SB)/8, $libc_setresuid_trampoline<>(SB)
- 
+
 -TEXT libc_setrlimit_trampoline<>(SB),NOSPLIT,$0-0
 -	CALL	libc_setrlimit(SB)
 -	RET
@@ -4304,7 +4311,7 @@ index 5f24de0..7d95a19 100644
 @@ -527,6 +527,14 @@ func ioctl(fd int, req uint, arg uintptr) (err error) {
  	return
  }
- 
+
 +func ioctlPtr(fd int, req uint, arg unsafe.Pointer) (err error) {
 +	_, _, e1 := syscall_syscall(libc_ioctl_trampoline_addr, uintptr(fd), uintptr(req), uintptr(arg))
 +	if e1 != 0 {
@@ -4314,12 +4321,12 @@ index 5f24de0..7d95a19 100644
 +}
 +
  var libc_ioctl_trampoline_addr uintptr
- 
+
  //go:cgo_import_dynamic libc_ioctl ioctl "libc.so"
 @@ -1886,20 +1894,6 @@ var libc_setresuid_trampoline_addr uintptr
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func Setrlimit(which int, lim *Rlimit) (err error) {
 -	_, _, e1 := syscall_rawSyscall(libc_setrlimit_trampoline_addr, uintptr(which), uintptr(unsafe.Pointer(lim)), 0)
 -	if e1 != 0 {
@@ -4344,7 +4351,7 @@ index e1fbd4d..990be24 100644
 @@ -573,11 +573,6 @@ TEXT libc_setresuid_trampoline<>(SB),NOSPLIT,$0-0
  GLOBL	·libc_setresuid_trampoline_addr(SB), RODATA, $8
  DATA	·libc_setresuid_trampoline_addr(SB)/8, $libc_setresuid_trampoline<>(SB)
- 
+
 -TEXT libc_setrlimit_trampoline<>(SB),NOSPLIT,$0-0
 -	JMP	libc_setrlimit(SB)
 -GLOBL	·libc_setrlimit_trampoline_addr(SB), RODATA, $8
@@ -4382,9 +4389,9 @@ index 78d4a42..609d1c5 100644
  	procSetuid,
  	procshutdown,
 @@ -646,7 +643,18 @@ func __minor(version int, dev uint64) (val uint) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func ioctlRet(fd int, req uint, arg uintptr) (ret int, err error) {
 +func ioctlRet(fd int, req int, arg uintptr) (ret int, err error) {
 +	r0, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procioctl)), 3, uintptr(fd), uintptr(req), uintptr(arg), 0, 0, 0)
@@ -4402,9 +4409,9 @@ index 78d4a42..609d1c5 100644
  	ret = int(r0)
  	if e1 != 0 {
 @@ -1639,16 +1647,6 @@ func Setreuid(ruid int, euid int) (err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func Setrlimit(which int, lim *Rlimit) (err error) {
 -	_, _, e1 := rawSysvicall6(uintptr(unsafe.Pointer(&procSetrlimit)), 2, uintptr(which), uintptr(unsafe.Pointer(lim)), 0, 0, 0, 0)
 -	if e1 != 0 {
@@ -4423,9 +4430,9 @@ index f207945..c316817 100644
 --- a/vendor/golang.org/x/sys/unix/zsyscall_zos_s390x.go
 +++ b/vendor/golang.org/x/sys/unix/zsyscall_zos_s390x.go
 @@ -257,7 +257,17 @@ func munmap(addr uintptr, length uintptr) (err error) {
- 
+
  // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
- 
+
 -func ioctl(fd int, req uint, arg uintptr) (err error) {
 +func ioctl(fd int, req int, arg uintptr) (err error) {
 +	_, _, e1 := syscall_syscall(SYS_IOCTL, uintptr(fd), uintptr(req), uintptr(arg))
@@ -4448,7 +4455,7 @@ index e2a64f0..690cefc 100644
 @@ -151,6 +151,16 @@ type Dirent struct {
  	_       [3]byte
  }
- 
+
 +type Attrlist struct {
 +	Bitmapcount uint16
 +	Reserved    uint16
@@ -4468,7 +4475,7 @@ index e2a64f0..690cefc 100644
  	AT_SYMLINK_NOFOLLOW = 0x20
 +	AT_EACCESS          = 0x10
  )
- 
+
  type PollFd struct {
 diff --git a/vendor/golang.org/x/sys/unix/ztypes_darwin_arm64.go b/vendor/golang.org/x/sys/unix/ztypes_darwin_arm64.go
 index 34aa775..5bffc10 100644
@@ -4477,7 +4484,7 @@ index 34aa775..5bffc10 100644
 @@ -151,6 +151,16 @@ type Dirent struct {
  	_       [3]byte
  }
- 
+
 +type Attrlist struct {
 +	Bitmapcount uint16
 +	Reserved    uint16
@@ -4497,7 +4504,7 @@ index 34aa775..5bffc10 100644
  	AT_SYMLINK_NOFOLLOW = 0x20
 +	AT_EACCESS          = 0x10
  )
- 
+
  type PollFd struct {
 diff --git a/vendor/golang.org/x/sys/unix/ztypes_freebsd_386.go b/vendor/golang.org/x/sys/unix/ztypes_freebsd_386.go
 index d9c78cd..29dc483 100644
@@ -4511,7 +4518,7 @@ index d9c78cd..29dc483 100644
 +	Addr *byte
  	Len  uint32
  }
- 
+
 diff --git a/vendor/golang.org/x/sys/unix/ztypes_freebsd_amd64.go b/vendor/golang.org/x/sys/unix/ztypes_freebsd_amd64.go
 index 26991b1..0a89b28 100644
 --- a/vendor/golang.org/x/sys/unix/ztypes_freebsd_amd64.go
@@ -4524,7 +4531,7 @@ index 26991b1..0a89b28 100644
 +	Addr *byte
  	Len  uint64
  }
- 
+
 diff --git a/vendor/golang.org/x/sys/unix/ztypes_freebsd_arm.go b/vendor/golang.org/x/sys/unix/ztypes_freebsd_arm.go
 index f8324e7..c8666bb 100644
 --- a/vendor/golang.org/x/sys/unix/ztypes_freebsd_arm.go
@@ -4537,7 +4544,7 @@ index f8324e7..c8666bb 100644
 +	Addr *byte
  	Len  uint32
  }
- 
+
 diff --git a/vendor/golang.org/x/sys/unix/ztypes_freebsd_arm64.go b/vendor/golang.org/x/sys/unix/ztypes_freebsd_arm64.go
 index 4220411..88fb48a 100644
 --- a/vendor/golang.org/x/sys/unix/ztypes_freebsd_arm64.go
@@ -4550,7 +4557,7 @@ index 4220411..88fb48a 100644
 +	Addr *byte
  	Len  uint64
  }
- 
+
 diff --git a/vendor/golang.org/x/sys/unix/ztypes_freebsd_riscv64.go b/vendor/golang.org/x/sys/unix/ztypes_freebsd_riscv64.go
 index 0660fd4..698dc97 100644
 --- a/vendor/golang.org/x/sys/unix/ztypes_freebsd_riscv64.go
@@ -4563,7 +4570,7 @@ index 0660fd4..698dc97 100644
 +	Addr *byte
  	Len  uint64
  }
- 
+
 diff --git a/vendor/golang.org/x/sys/unix/ztypes_linux.go b/vendor/golang.org/x/sys/unix/ztypes_linux.go
 index ff68811..ca84727 100644
 --- a/vendor/golang.org/x/sys/unix/ztypes_linux.go
@@ -4571,7 +4578,7 @@ index ff68811..ca84727 100644
 @@ -29,6 +29,41 @@ type Itimerval struct {
  	Value    Timeval
  }
- 
+
 +const (
 +	ADJ_OFFSET            = 0x1
 +	ADJ_FREQUENCY         = 0x2
@@ -4612,7 +4619,7 @@ index ff68811..ca84727 100644
  	TIME_INS   = 0x1
 @@ -53,29 +88,30 @@ type StatxTimestamp struct {
  }
- 
+
  type Statx_t struct {
 -	Mask            uint32
 -	Blksize         uint32
@@ -4662,11 +4669,11 @@ index ff68811..ca84727 100644
 +	Dio_offset_align uint32
 +	_                [12]uint64
  }
- 
+
  type Fsid struct {
 @@ -420,36 +456,60 @@ type Ucred struct {
  }
- 
+
  type TCPInfo struct {
 -	State          uint8
 -	Ca_state       uint8
@@ -4753,7 +4760,7 @@ index ff68811..ca84727 100644
 +	Rcv_wnd         uint32
 +	Rehash          uint32
  }
- 
+
  type CanFilter struct {
 @@ -492,7 +552,7 @@ const (
  	SizeofIPv6MTUInfo       = 0x20
@@ -4770,7 +4777,7 @@ index ff68811..ca84727 100644
  	PerfBitContextSwitch                 = CBitFieldMaskBit26
 +	PerfBitWriteBackward                 = CBitFieldMaskBit27
  )
- 
+
  const (
 @@ -1099,7 +1160,8 @@ const (
  	PERF_SAMPLE_BRANCH_NO_CYCLES_SHIFT    = 0xf
@@ -4822,7 +4829,7 @@ index ff68811..ca84727 100644
 +	Ifindex   int32
  	Key       [80]uint8
  }
- 
+
 @@ -1897,7 +1964,11 @@ const (
  	NFT_MSG_GETOBJ                    = 0x13
  	NFT_MSG_DELOBJ                    = 0x14
@@ -4842,12 +4849,12 @@ index ff68811..ca84727 100644
  	SOF_TIMESTAMPING_OPT_TX_SWHW  = 0x4000
 +	SOF_TIMESTAMPING_BIND_PHC     = 0x8000
 +	SOF_TIMESTAMPING_OPT_ID_TCP   = 0x10000
- 
+
 -	SOF_TIMESTAMPING_LAST = 0x8000
 -	SOF_TIMESTAMPING_MASK = 0xffff
 +	SOF_TIMESTAMPING_LAST = 0x10000
 +	SOF_TIMESTAMPING_MASK = 0x1ffff
- 
+
  	SCM_TSTAMP_SND   = 0x0
  	SCM_TSTAMP_SCHED = 0x1
 @@ -2979,7 +3052,16 @@ const (
@@ -4891,7 +4898,7 @@ index ff68811..ca84727 100644
 +	DEVLINK_PORT_FN_ATTR_CAPS                          = 0x4
 +	DEVLINK_PORT_FUNCTION_ATTR_MAX                     = 0x4
  )
- 
+
  type FsverityDigest struct {
 @@ -3317,7 +3406,8 @@ const (
  	LWTUNNEL_ENCAP_SEG6_LOCAL = 0x7
@@ -4900,7 +4907,7 @@ index ff68811..ca84727 100644
 -	LWTUNNEL_ENCAP_MAX        = 0x9
 +	LWTUNNEL_ENCAP_XFRM       = 0xa
 +	LWTUNNEL_ENCAP_MAX        = 0xa
- 
+
  	MPLS_IPTUNNEL_UNSPEC = 0x0
  	MPLS_IPTUNNEL_DST    = 0x1
 @@ -3512,7 +3602,10 @@ const (
@@ -5306,196 +5313,196 @@ index 89c516a..4ecc149 100644
 --- a/vendor/golang.org/x/sys/unix/ztypes_linux_386.go
 +++ b/vendor/golang.org/x/sys/unix/ztypes_linux_386.go
 @@ -414,7 +414,7 @@ const (
- 
+
  type SockaddrStorage struct {
  	Family uint16
 -	_      [122]int8
 +	Data   [122]byte
  	_      uint32
  }
- 
+
 diff --git a/vendor/golang.org/x/sys/unix/ztypes_linux_amd64.go b/vendor/golang.org/x/sys/unix/ztypes_linux_amd64.go
 index 62b4fb2..34fddff 100644
 --- a/vendor/golang.org/x/sys/unix/ztypes_linux_amd64.go
 +++ b/vendor/golang.org/x/sys/unix/ztypes_linux_amd64.go
 @@ -427,7 +427,7 @@ const (
- 
+
  type SockaddrStorage struct {
  	Family uint16
 -	_      [118]int8
 +	Data   [118]byte
  	_      uint64
  }
- 
+
 diff --git a/vendor/golang.org/x/sys/unix/ztypes_linux_arm.go b/vendor/golang.org/x/sys/unix/ztypes_linux_arm.go
 index e86b358..3b14a60 100644
 --- a/vendor/golang.org/x/sys/unix/ztypes_linux_arm.go
 +++ b/vendor/golang.org/x/sys/unix/ztypes_linux_arm.go
 @@ -405,7 +405,7 @@ const (
- 
+
  type SockaddrStorage struct {
  	Family uint16
 -	_      [122]uint8
 +	Data   [122]byte
  	_      uint32
  }
- 
+
 diff --git a/vendor/golang.org/x/sys/unix/ztypes_linux_arm64.go b/vendor/golang.org/x/sys/unix/ztypes_linux_arm64.go
 index 6c6be4c..0517651 100644
 --- a/vendor/golang.org/x/sys/unix/ztypes_linux_arm64.go
 +++ b/vendor/golang.org/x/sys/unix/ztypes_linux_arm64.go
 @@ -406,7 +406,7 @@ const (
- 
+
  type SockaddrStorage struct {
  	Family uint16
 -	_      [118]int8
 +	Data   [118]byte
  	_      uint64
  }
- 
+
 diff --git a/vendor/golang.org/x/sys/unix/ztypes_linux_loong64.go b/vendor/golang.org/x/sys/unix/ztypes_linux_loong64.go
 index 4982ea3..3b0c518 100644
 --- a/vendor/golang.org/x/sys/unix/ztypes_linux_loong64.go
 +++ b/vendor/golang.org/x/sys/unix/ztypes_linux_loong64.go
 @@ -407,7 +407,7 @@ const (
- 
+
  type SockaddrStorage struct {
  	Family uint16
 -	_      [118]int8
 +	Data   [118]byte
  	_      uint64
  }
- 
+
 diff --git a/vendor/golang.org/x/sys/unix/ztypes_linux_mips.go b/vendor/golang.org/x/sys/unix/ztypes_linux_mips.go
 index 173141a..fccdf4d 100644
 --- a/vendor/golang.org/x/sys/unix/ztypes_linux_mips.go
 +++ b/vendor/golang.org/x/sys/unix/ztypes_linux_mips.go
 @@ -410,7 +410,7 @@ const (
- 
+
  type SockaddrStorage struct {
  	Family uint16
 -	_      [122]int8
 +	Data   [122]byte
  	_      uint32
  }
- 
+
 diff --git a/vendor/golang.org/x/sys/unix/ztypes_linux_mips64.go b/vendor/golang.org/x/sys/unix/ztypes_linux_mips64.go
 index 93ae4c5..500de8f 100644
 --- a/vendor/golang.org/x/sys/unix/ztypes_linux_mips64.go
 +++ b/vendor/golang.org/x/sys/unix/ztypes_linux_mips64.go
 @@ -409,7 +409,7 @@ const (
- 
+
  type SockaddrStorage struct {
  	Family uint16
 -	_      [118]int8
 +	Data   [118]byte
  	_      uint64
  }
- 
+
 diff --git a/vendor/golang.org/x/sys/unix/ztypes_linux_mips64le.go b/vendor/golang.org/x/sys/unix/ztypes_linux_mips64le.go
 index 4e4e510..d0434cd 100644
 --- a/vendor/golang.org/x/sys/unix/ztypes_linux_mips64le.go
 +++ b/vendor/golang.org/x/sys/unix/ztypes_linux_mips64le.go
 @@ -409,7 +409,7 @@ const (
- 
+
  type SockaddrStorage struct {
  	Family uint16
 -	_      [118]int8
 +	Data   [118]byte
  	_      uint64
  }
- 
+
 diff --git a/vendor/golang.org/x/sys/unix/ztypes_linux_mipsle.go b/vendor/golang.org/x/sys/unix/ztypes_linux_mipsle.go
 index 3f5ba01..84206ba 100644
 --- a/vendor/golang.org/x/sys/unix/ztypes_linux_mipsle.go
 +++ b/vendor/golang.org/x/sys/unix/ztypes_linux_mipsle.go
 @@ -410,7 +410,7 @@ const (
- 
+
  type SockaddrStorage struct {
  	Family uint16
 -	_      [122]int8
 +	Data   [122]byte
  	_      uint32
  }
- 
+
 diff --git a/vendor/golang.org/x/sys/unix/ztypes_linux_ppc.go b/vendor/golang.org/x/sys/unix/ztypes_linux_ppc.go
 index 71dfe7c..ab078cf 100644
 --- a/vendor/golang.org/x/sys/unix/ztypes_linux_ppc.go
 +++ b/vendor/golang.org/x/sys/unix/ztypes_linux_ppc.go
 @@ -417,7 +417,7 @@ const (
- 
+
  type SockaddrStorage struct {
  	Family uint16
 -	_      [122]uint8
 +	Data   [122]byte
  	_      uint32
  }
- 
+
 diff --git a/vendor/golang.org/x/sys/unix/ztypes_linux_ppc64.go b/vendor/golang.org/x/sys/unix/ztypes_linux_ppc64.go
 index 3a2b7f0..42eb2c4 100644
 --- a/vendor/golang.org/x/sys/unix/ztypes_linux_ppc64.go
 +++ b/vendor/golang.org/x/sys/unix/ztypes_linux_ppc64.go
 @@ -416,7 +416,7 @@ const (
- 
+
  type SockaddrStorage struct {
  	Family uint16
 -	_      [118]uint8
 +	Data   [118]byte
  	_      uint64
  }
- 
+
 diff --git a/vendor/golang.org/x/sys/unix/ztypes_linux_ppc64le.go b/vendor/golang.org/x/sys/unix/ztypes_linux_ppc64le.go
 index a52d627..31304a4 100644
 --- a/vendor/golang.org/x/sys/unix/ztypes_linux_ppc64le.go
 +++ b/vendor/golang.org/x/sys/unix/ztypes_linux_ppc64le.go
 @@ -416,7 +416,7 @@ const (
- 
+
  type SockaddrStorage struct {
  	Family uint16
 -	_      [118]uint8
 +	Data   [118]byte
  	_      uint64
  }
- 
+
 diff --git a/vendor/golang.org/x/sys/unix/ztypes_linux_riscv64.go b/vendor/golang.org/x/sys/unix/ztypes_linux_riscv64.go
 index dfc007d..c311f96 100644
 --- a/vendor/golang.org/x/sys/unix/ztypes_linux_riscv64.go
 +++ b/vendor/golang.org/x/sys/unix/ztypes_linux_riscv64.go
 @@ -434,7 +434,7 @@ const (
- 
+
  type SockaddrStorage struct {
  	Family uint16
 -	_      [118]uint8
 +	Data   [118]byte
  	_      uint64
  }
- 
+
 diff --git a/vendor/golang.org/x/sys/unix/ztypes_linux_s390x.go b/vendor/golang.org/x/sys/unix/ztypes_linux_s390x.go
 index b53cb91..bba3cef 100644
 --- a/vendor/golang.org/x/sys/unix/ztypes_linux_s390x.go
 +++ b/vendor/golang.org/x/sys/unix/ztypes_linux_s390x.go
 @@ -429,7 +429,7 @@ const (
- 
+
  type SockaddrStorage struct {
  	Family uint16
 -	_      [118]int8
 +	Data   [118]byte
  	_      uint64
  }
- 
+
 diff --git a/vendor/golang.org/x/sys/unix/ztypes_linux_sparc64.go b/vendor/golang.org/x/sys/unix/ztypes_linux_sparc64.go
 index fe0aa35..ad8a013 100644
 --- a/vendor/golang.org/x/sys/unix/ztypes_linux_sparc64.go
 +++ b/vendor/golang.org/x/sys/unix/ztypes_linux_sparc64.go
 @@ -411,7 +411,7 @@ const (
- 
+
  type SockaddrStorage struct {
  	Family uint16
 -	_      [118]int8
 +	Data   [118]byte
  	_      uint64
  }
- 
+
 diff --git a/vendor/golang.org/x/sys/windows/env_windows.go b/vendor/golang.org/x/sys/windows/env_windows.go
 index 92ac05f..b8ad192 100644
 --- a/vendor/golang.org/x/sys/windows/env_windows.go
@@ -5548,7 +5555,7 @@ index f8deca8..c964b68 100644
 @@ -141,6 +141,12 @@ const (
  	SERVICE_DYNAMIC_INFORMATION_LEVEL_START_REASON = 1
  )
- 
+
 +type ENUM_SERVICE_STATUS struct {
 +	ServiceName   *uint16
 +	DisplayName   *uint16
@@ -5585,7 +5592,7 @@ index a49853e..3723b2c 100644
 -	return utf16.Encode([]rune(s + "\x00")), nil
 +	return syscall.UTF16FromString(s)
  }
- 
+
  // UTF16ToString returns the UTF-8 encoding of the UTF-16 sequence s,
  // with a terminating NUL and any bytes after the NUL removed.
  func UTF16ToString(s []uint16) string {
@@ -5598,7 +5605,7 @@ index a49853e..3723b2c 100644
 -	return string(utf16.Decode(s))
 +	return syscall.UTF16ToString(s)
  }
- 
+
  // StringToUTF16Ptr is deprecated. Use UTF16PtrFromString instead.
 @@ -834,6 +824,9 @@ const socket_error = uintptr(^uint32(0))
  //sys	WSAStartup(verreq uint32, data *WSAData) (sockerr error) = ws2_32.WSAStartup
@@ -5618,7 +5625,7 @@ index a49853e..3723b2c 100644
 -		sa.Name = string(bytes)
 +		sa.Name = string(unsafe.Slice((*byte)(unsafe.Pointer(&pp.Path[0])), n))
  		return sa, nil
- 
+
  	case AF_INET:
 diff --git a/vendor/golang.org/x/sys/windows/types_windows.go b/vendor/golang.org/x/sys/windows/types_windows.go
 index 0c4add9..88e62a6 100644
@@ -5627,7 +5634,7 @@ index 0c4add9..88e62a6 100644
 @@ -1243,6 +1243,51 @@ const (
  	DnsSectionAdditional = 0x0003
  )
- 
+
 +const (
 +	// flags of WSALookupService
 +	LUP_DEEP                = 0x0001
@@ -5678,7 +5685,7 @@ index 0c4add9..88e62a6 100644
  	Priority uint16
 @@ -2175,19 +2220,23 @@ type JOBOBJECT_BASIC_UI_RESTRICTIONS struct {
  }
- 
+
  const (
 -	// JobObjectInformationClass
 +	// JobObjectInformationClass for QueryInformationJobObject and SetInformationJobObject
@@ -5702,7 +5709,7 @@ index 0c4add9..88e62a6 100644
 +	JobObjectNotificationLimitInformation2      = 33
  	JobObjectSecurityLimitInformation           = 5
  )
- 
+
 @@ -3258,3 +3307,43 @@ const (
  	DWMWA_TEXT_COLOR                     = 36
  	DWMWA_VISIBLE_FRAME_BORDER_THICKNESS = 37
@@ -5772,7 +5779,7 @@ index ac60052..a81ea2c 100644
 @@ -731,6 +735,14 @@ func DuplicateTokenEx(existingToken Token, desiredAccess uint32, tokenAttributes
  	return
  }
- 
+
 +func EnumDependentServices(service Handle, activityState uint32, services *ENUM_SERVICE_STATUS, buffSize uint32, bytesNeeded *uint32, servicesReturned *uint32) (err error) {
 +	r1, _, e1 := syscall.Syscall6(procEnumDependentServicesW.Addr(), 6, uintptr(service), uintptr(activityState), uintptr(unsafe.Pointer(services)), uintptr(buffSize), uintptr(unsafe.Pointer(bytesNeeded)), uintptr(unsafe.Pointer(servicesReturned)))
 +	if r1 == 0 {
@@ -5787,7 +5794,7 @@ index ac60052..a81ea2c 100644
 @@ -4067,6 +4079,30 @@ func WSAIoctl(s Handle, iocc uint32, inbuf *byte, cbif uint32, outbuf *byte, cbo
  	return
  }
- 
+
 +func WSALookupServiceBegin(querySet *WSAQUERYSET, flags uint32, handle *Handle) (err error) {
 +	r1, _, e1 := syscall.Syscall(procWSALookupServiceBeginW.Addr(), 3, uintptr(unsafe.Pointer(querySet)), uintptr(flags), uintptr(unsafe.Pointer(handle)))
 +	if r1 == socket_error {
@@ -5822,7 +5829,7 @@ index 83816a7..8c1b666 100644
 @@ -118,7 +118,7 @@ func (t Tag) Parent() Tag {
  	return Tag{language: lang, locale: lang}
  }
- 
+
 -// returns token t and the rest of the string.
 +// nextToken returns token t and the rest of the string.
  func nextToken(s string) (t, tail string) {
@@ -5835,7 +5842,7 @@ index 6105bc7..09d41c7 100644
 @@ -409,7 +409,7 @@ func (t Tag) SetTypeForKey(key, value string) (Tag, error) {
  	return t, nil
  }
- 
+
 -// findKeyAndType returns the start and end position for the type corresponding
 +// findTypeForKey returns the start and end position for the type corresponding
  // to key or the point at which to insert the key-value pair if the type
@@ -5848,7 +5855,7 @@ index 289b3a3..4d9c661 100644
 @@ -344,7 +344,7 @@ func (t Tag) Parent() Tag {
  	return Tag(compact.Tag(t).Parent())
  }
- 
+
 -// returns token t and the rest of the string.
 +// nextToken returns token t and the rest of the string.
  func nextToken(s string) (t, tail string) {
@@ -5897,6 +5904,6 @@ index 679b97c..e86b63f 100644
  ## explicit
  gopkg.in/yaml.v3
 +# golang.org/x/net => golang.org/x/net v0.7.0
--- 
+--
 2.40.1
 
