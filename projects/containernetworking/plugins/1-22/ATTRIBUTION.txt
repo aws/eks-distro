@@ -1,23 +1,26 @@
 
-** github.com/containernetworking/cni/pkg; version v0.8.1 --
+** github.com/containernetworking/cni/pkg; version v1.1.2 --
 https://github.com/containernetworking/cni
 
-** github.com/containernetworking/plugins; version v0.9.0 --
+** github.com/containernetworking/plugins; version v1.2.0 --
 https://github.com/containernetworking/plugins
 
-** github.com/coreos/go-iptables/iptables; version v0.4.5 --
+** github.com/coreos/go-iptables/iptables; version v0.6.0 --
 https://github.com/coreos/go-iptables
 
-** github.com/coreos/go-systemd/activation; version v0.0.0-20180511133405-39ca1b05acc7 --
-https://github.com/coreos/go-systemd
+** github.com/coreos/go-systemd/v22/activation; version v22.5.0 --
+https://github.com/coreos/go-systemd/v22
 
-** github.com/safchain/ethtool; version v0.0.0-20190326074333-42ed695e3de8 --
+** github.com/networkplumbing/go-nft/nft; version v0.2.0 --
+https://github.com/networkplumbing/go-nft
+
+** github.com/safchain/ethtool; version v0.3.0 --
 https://github.com/safchain/ethtool
 
-** github.com/vishvananda/netlink; version v1.1.1-0.20201029203352-d40f9887b852 --
+** github.com/vishvananda/netlink; version v1.2.1-beta.2 --
 https://github.com/vishvananda/netlink
 
-** github.com/vishvananda/netns; version v0.0.0-20200728191858-db3c7e526aae --
+** github.com/vishvananda/netns; version v0.0.0-20210104183010-2eb08e3e575f --
 https://github.com/vishvananda/netns
 
 
@@ -232,7 +235,7 @@ This product includes software developed at CoreOS, Inc.
 (http://www.coreos.com/).
 
 
-* For github.com/coreos/go-systemd/activation see also this required NOTICE:
+* For github.com/coreos/go-systemd/v22/activation see also this required NOTICE:
 CoreOS Project
 Copyright 2018 CoreOS, Inc
 
@@ -241,8 +244,8 @@ This product includes software developed at CoreOS, Inc.
 
 ------
 
-** github.com/godbus/dbus; version v0.0.0-20180201030542-885f9cc04c9c --
-https://github.com/godbus/dbus
+** github.com/godbus/dbus/v5; version v5.1.0 --
+https://github.com/godbus/dbus/v5
 
 Copyright (c) 2013, Georg Reinke (<guelfey at gmail dot com>), Google
 All rights reserved.
@@ -304,10 +307,10 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ------
 
-** golang.org/go; version go1.15.15 --
+** golang.org/go; version go1.18.10 --
 https://github.com/golang/go
 
-** golang.org/x/sys; version v0.0.0-20201117170446-d9b008d0a637 --
+** golang.org/x/sys/unix; version v0.8.0 --
 https://golang.org/x/sys
 
 Copyright (c) 2009 The Go Authors. All rights reserved.
@@ -340,15 +343,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/alexflint/go-filemutex; version v0.0.0-20171022225611-72bdc8eae2ae --
+** github.com/alexflint/go-filemutex; version v1.2.0 --
 https://github.com/alexflint/go-filemutex
 Copyright (c) 2010-2017 Alex Flint.
 
-** github.com/j-keck/arping; version v0.0.0-20160618110441-2cf9dc699c56 --
-https://github.com/j-keck/arping
-Copyright (c) 2014-2016 j-keck [jhyphenkeck@gmail.com]
-
-** github.com/mattn/go-shellwords; version v1.0.3 --
+** github.com/mattn/go-shellwords; version v1.0.12 --
 https://github.com/mattn/go-shellwords
 Copyright (c) 2017 Yasuhiro Matsumoto
 
