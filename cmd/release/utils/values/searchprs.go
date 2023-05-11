@@ -28,12 +28,17 @@ func GetChangelogPRs(releaseVersion string, overrideNumber int) (string, error) 
 	prevDocRelease := githubTimeFormat
 	if len(prs.Issues) > 0 {
 		//Select the most recent pr from the above query and format the date expected for the go-github client
-		lastDocRelease = prs.Issues[0].ClosedAt.Format("2006-01-02T15:04:05+00:00")
+		releasePRs, _, err := githubClient.Search.Issues(ctx, "is:pr is:merged label:PROD-release label:"+releaseVersion, opts)
+		if err != nil {
+			return "", fmt.Errorf("get release PRs from %v: %w", githubClient, err)
+		}
+		lastDocRelease = releasePRs.Issues[0].ClosedAt.Format(githubTimeFormat)
+		prevDocRelease = prs.Issues[0].ClosedAt.Format(githubTimeFormat)
 	} else {
 		//With no document releases we need to be a little bit clever to generate unannounced changelogs.
 		//This finds the
 		opts = &github.SearchOptions{Sort: "updated", Order: "asc"}
-		prs, _, err := githubClient.Search.Issues(ctx, "is:pr is:merged 'Bumped Production release number' in:title label:release label:"+releaseVersion, opts)
+		prs, _, err := githubClient.Search.Issues(ctx, "is:pr is:merged label:PROD-release label:"+releaseVersion, opts)
 		if err != nil {
 			return "", fmt.Errorf("get PRs from %v: %w", githubClient, err)
 		}
@@ -53,7 +58,7 @@ func GetChangelogPRs(releaseVersion string, overrideNumber int) (string, error) 
 	}
 
 	baseImgPRs, _, err := githubClient.Search.Issues(ctx,
-		fmt.Sprintf("%v merged:%v..%v label:base-img-pkg-update label:%v", baseQuery, prevDocRelease, lastDocRelease, releaseVersion), opts)
+		fmt.Sprintf("%v merged:%v..%v label:base-img-pkg-update", baseQuery, prevDocRelease, lastDocRelease), opts)
 	if err != nil {
 		return "", fmt.Errorf("getting base image prs: %w", err)
 	}
