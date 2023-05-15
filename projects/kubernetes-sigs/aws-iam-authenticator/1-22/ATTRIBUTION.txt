@@ -809,7 +809,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ------
 
 ** google.golang.org/protobuf; version v1.28.1 --
-https://go.googlesource.com/protobuf
+https://google.golang.org/protobuf
 
 Copyright (c) 2018 The Go Authors. All rights reserved.
 
