@@ -108,10 +108,10 @@ https://github.com/open-telemetry/opentelemetry-go
 https://github.com/open-telemetry/opentelemetry-proto-go
 
 ** google.golang.org/genproto; version v0.0.0-20220107163113-42d7afdf6368 --
-https://google.golang.org/genproto
+https://github.com/googleapis/go-genproto
 
 ** google.golang.org/grpc; version v1.40.0 --
-https://google.golang.org/grpc
+https://github.com/grpc/grpc-go
 
 ** gopkg.in/yaml.v2; version v2.4.0 --
 https://gopkg.in/yaml.v2
@@ -1025,7 +1025,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ------
 
 ** google.golang.org/protobuf; version v1.27.1 --
-https://google.golang.org/protobuf
+https://go.googlesource.com/protobuf
 
 Copyright (c) 2018 The Go Authors. All rights reserved.
 

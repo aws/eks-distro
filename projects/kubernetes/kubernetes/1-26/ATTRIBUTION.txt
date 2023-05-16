@@ -243,10 +243,10 @@ https://github.com/open-telemetry/opentelemetry-go
 https://github.com/open-telemetry/opentelemetry-proto-go
 
 ** google.golang.org/genproto; version v0.0.0-20220502173005-c8bf987b8c21 --
-https://google.golang.org/genproto
+https://github.com/googleapis/go-genproto
 
 ** google.golang.org/grpc; version v1.49.0 --
-https://google.golang.org/grpc
+https://github.com/grpc/grpc-go
 
 ** gopkg.in/square/go-jose.v2; version v2.2.2 --
 https://gopkg.in/square/go-jose.v2
@@ -1638,7 +1638,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ------
 
 ** google.golang.org/api; version v0.60.0 --
-https://google.golang.org/api
+https://github.com/googleapis/google-api-go-client
 
 Copyright (c) 2011 Google Inc. All rights reserved.
 
@@ -1671,7 +1671,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ------
 
 ** google.golang.org/api/internal/third_party/uritemplates; version v0.60.0 --
-https://google.golang.org/api
+https://github.com/googleapis/google-api-go-client
 
 Copyright (c) 2013 Joshua Tacoma. All rights reserved.
 
@@ -1704,7 +1704,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ------
 
 ** google.golang.org/protobuf; version v1.28.1 --
-https://google.golang.org/protobuf
+https://go.googlesource.com/protobuf
 
 Copyright (c) 2018 The Go Authors. All rights reserved.
 
