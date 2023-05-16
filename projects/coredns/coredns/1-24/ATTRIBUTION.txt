@@ -138,10 +138,10 @@ https://github.com/etcd-io/etcd
 https://github.com/census-instrumentation/opencensus-go
 
 ** google.golang.org/genproto/googleapis; version v0.0.0-20220519153652-3a47de7e79bd --
-https://google.golang.org/genproto
+https://github.com/googleapis/go-genproto
 
 ** google.golang.org/grpc; version v1.46.2 --
-https://google.golang.org/grpc
+https://github.com/grpc/grpc-go
 
 ** gopkg.in/DataDog/dd-trace-go.v1; version v1.38.1 --
 https://gopkg.in/DataDog/dd-trace-go.v1
@@ -1047,7 +1047,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ------
 
 ** google.golang.org/api; version v0.81.0 --
-https://google.golang.org/api
+https://github.com/googleapis/google-api-go-client
 
 Copyright (c) 2011 Google Inc. All rights reserved.
 
@@ -1080,7 +1080,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ------
 
 ** google.golang.org/api/internal/third_party/uritemplates; version v0.81.0 --
-https://google.golang.org/api
+https://github.com/googleapis/google-api-go-client
 
 Copyright (c) 2013 Joshua Tacoma. All rights reserved.
 
@@ -1113,7 +1113,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ------
 
 ** google.golang.org/protobuf; version v1.28.0 --
-https://google.golang.org/protobuf
+https://go.googlesource.com/protobuf
 
 Copyright (c) 2018 The Go Authors. All rights reserved.
 

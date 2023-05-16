@@ -51,10 +51,10 @@ https://github.com/prometheus/common
 https://github.com/prometheus/procfs
 
 ** google.golang.org/genproto/googleapis/rpc/status; version v0.0.0-20230110181048-76db0878b65f --
-https://google.golang.org/genproto
+https://github.com/googleapis/go-genproto
 
 ** google.golang.org/grpc; version v1.54.0 --
-https://google.golang.org/grpc
+https://github.com/grpc/grpc-go
 
 ** gopkg.in/yaml.v2; version v2.4.0 --
 https://gopkg.in/yaml.v2
@@ -766,7 +766,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ------
 
 ** google.golang.org/protobuf; version v1.28.1 --
-https://google.golang.org/protobuf
+https://go.googlesource.com/protobuf
 
 Copyright (c) 2018 The Go Authors. All rights reserved.
 
