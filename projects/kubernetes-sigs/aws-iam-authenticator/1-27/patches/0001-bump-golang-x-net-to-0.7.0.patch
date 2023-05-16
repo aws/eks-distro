@@ -3,6 +3,10 @@ From: Sajia Zafreen <szafreen@amazon.com>
 Date: Thu, 11 May 2023 20:01:41 +0000
 Subject: [PATCH] bump golang/x/net to 0.7.0
 
+Fixes [ CVE 41723 ] (https://github.com/advisories/GHSA-vvpx-j8f3-3w6h) . Upstream merged this change in 
+[ this commit ] (https://github.com/kubernetes-sigs/aws-iam-authenticator/pull/596) and until upstream includes 
+this commit in next the release we are patching this.
+
 ---
  go.mod |  8 +++++---
  go.sum | 16 ++++++++--------
