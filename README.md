@@ -36,6 +36,12 @@ To receive notifications about new EKS-D releases, subscribe to the EKS-D update
 Source: https://github.com/cncf/artwork/tree/master/projects/kubernetes/certified-kubernetes
 -->
 
+### Kubernetes 1-27
+
+| Release | Manifest | Kubernetes Version |
+| -- | --- | --- |
+| 9 | [v1-26-eks-9](https://distro.eks.amazonaws.com/kubernetes-1-26/kubernetes-1-26-eks-9.yaml) | [v1.26.4](https://github.com/kubernetes/kubernetes/release/tag/v1.26.4) |
+
 ### Kubernetes 1-26
 
 | Release | Manifest | Kubernetes Version |
