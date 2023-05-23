@@ -6,8 +6,9 @@ import (
 )
 
 var (
-	IndexPath  = getAbsolutePath("docs", "contents", IndexFileName)
-	ReadmePath = getAbsolutePath("README.md")
+	IndexPath     = getAbsolutePath("docs", "contents", IndexFileName)
+	ReadmePath    = getAbsolutePath("README.md")
+	docsLocalPath = filepath.Join("docs", "contents", "releases")
 )
 
 type PathValues interface {
@@ -15,11 +16,19 @@ type PathValues interface {
 	Number() string
 }
 
-// GetReleaseDocsDirectory returns the expected and absolute filepath for the doc directory for the provided PathValues.
-// There is no guarantee this directory actually exists. The filepath is simply where it should exist.
+// GetReleaseBranchDocsDirectory returns the expected and absolute filepath for the release branch directory for the
+// provided PathValues. There is no guarantee this directory actually exists. The filepath is simply where it should
+// exist.
+// Example: ~/go/eks-distro/docs/contents/releases/1-24
+func GetReleaseBranchDocsDirectory(pv PathValues) AbsolutePath {
+	return getAbsolutePath(docsLocalPath, pv.Branch())
+}
+
+// GetReleaseDocsDirectory returns the expected and absolute filepath for the release doc directory for the provided
+// PathValues. There is no guarantee this directory actually exists. The filepath is simply where it should exist.
 // Example: ~/go/eks-distro/docs/contents/releases/1-24/1
 func GetReleaseDocsDirectory(pv PathValues) AbsolutePath {
-	return getAbsolutePath("docs", "contents", "releases", pv.Branch(), pv.Number())
+	return getAbsolutePath(docsLocalPath, pv.Branch(), pv.Number())
 }
 
 func getGitTagPath(projectOrg, projectName, releaseBranch string) AbsolutePath {

@@ -237,6 +237,7 @@ release-docs:
 	go run ./cmd/release/docs/main.go \
 		--branch=$(RELEASE_BRANCH)
 
+# See important note about minor releases in the Go function called.
 .PHONY: release-docs-limited
 release-docs-limited:
 	go vet ./cmd/release/docs
