@@ -112,7 +112,7 @@ func main() {
 	}
 	log.Println("Finished creating new docs\n--------------------------")
 
-	// //////////	Update existing docs	////////////////////////////////////
+	////////////	Update existing docs	////////////////////////////////////
 
 	log.Println("Starting to update existing new docs")
 
@@ -139,7 +139,7 @@ func main() {
 	}
 	log.Println("Finished updating existing docs\n--------------------------")
 
-	// //////////	Open PR		////////////////////////////////////
+	////////////	Open PR		////////////////////////////////////
 
 	if *hasManageGitAndPR {
 		if err = gm.OpenPR(); err != nil {
