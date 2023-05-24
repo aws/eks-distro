@@ -21,21 +21,22 @@ const (
 // Generates docs for release. The release MUST already be out, and all upstream changes MUST be pulled down locally.
 // Value for 'branch' flag must be provided.
 //
-// IMPORTANT NOTE IF GENERATING DOCS FOR A NEW MINOR RELEASE:
-//   - All releases for the new minor version must be tagged before running this. The prod release commits are the ones
-//     that should be tagged for each.
-//   - This should be run for each release from 1 until whatever the prod number currently is. For example, if the prod
-//     release number is 3, it should be run 3 times and the overrideNumber should be used to set the release number to 1,
-//     then 2, then 3. (Technically the override for 3 isn't required if that's what the current release number is.)
-//   - When the release number is 1 (i.e. this is the first time docs will be added for this minor release), you MUST
-//     manually add the following BEFORE running it:
-//   - In the root README.md and under the ## Releases section, look for the previous release's section. It should
-//     start with ### Kubernetes 1-XX, have an empty line, and then have a three row table. Copy all five lines. Paste
-//     them just above the lines you copied. ONLY change the minor version in the first line to be for the new one. Do
-//     not change any other lines, even if they are for the previous minor version. This program will handle this.
-//   - In docs/contents/index.md, look for the section ### Release Version Dependencies. Copy ONLY the previous
-//     releases header section (i.e. #### EKS-D 1.XX Version Dependencies), paste it above the copied line, and change
-//     the minor release number to be the new one. Do not add anything other than this line.
+// !!! IMPORTANT INFO IF GENERATING DOCS FOR A NEW MINOR RELEASE !!!
+//
+//	All releases for the new minor version must be tagged before running. Since there are no docs commits that are
+//	associated with them, the prod release commit for each should be tagged. This program assumes this is the case and
+//	the changelog generation will not work correctly if this is not true.
+//
+//	When the release number is 1 (i.e. this is the first time docs will be added for this minor release), you MUST
+//	manually add the following BEFORE running it:
+//	 - In the root README.md and under the ## Releases section, look for the previous release's section. It
+//	   should start with ### Kubernetes 1-XX, have an empty line, and then have a three row table. Copy all five
+//	   lines. Paste them just above the lines you copied. ONLY change the minor version in the first line to be
+//	   for the new one. Do not change any other lines, even if they are for the previous minor version. This
+//	   program will handle this.
+//	 - In docs/contents/index.md, look for the section ### Release Version Dependencies. Copy ONLY the previous
+//	   releases header section (i.e. #### EKS-D 1.XX Version Dependencies), paste it above the copied line, and
+//	   change the minor release number to be the new one. Do not add anything other than this line.
 //
 // TODO: fix the hacky code related to opening PRs and git commands. It is bad, and I am sorry.
 func main() {
@@ -91,8 +92,6 @@ func main() {
 		log.Fatalf("creating new docs input: %v", err)
 	}
 
-	println(values.GetReleaseDocsDirectory(r))
-
 	newDocsDir, err := values.MakeNewDirectory(values.GetReleaseDocsDirectory(r))
 	if err != nil {
 		abandon()
@@ -113,7 +112,7 @@ func main() {
 	}
 	log.Println("Finished creating new docs\n--------------------------")
 
-	////////////	Update existing docs	////////////////////////////////////
+	// //////////	Update existing docs	////////////////////////////////////
 
 	log.Println("Starting to update existing new docs")
 
@@ -140,7 +139,7 @@ func main() {
 	}
 	log.Println("Finished updating existing docs\n--------------------------")
 
-	////////////	Open PR		////////////////////////////////////
+	// //////////	Open PR		////////////////////////////////////
 
 	if *hasManageGitAndPR {
 		if err = gm.OpenPR(); err != nil {
