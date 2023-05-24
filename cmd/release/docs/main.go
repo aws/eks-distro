@@ -28,7 +28,7 @@ const (
 //	the changelog generation will not work correctly if this is not true.
 //
 //	When the release number is 1 (i.e. this is the first time docs will be added for this minor release), you MUST
-//	manually add the following BEFORE running it:
+//	manually do the below changes BEFORE running it. See example https://github.com/aws/eks-distro/pull/2070
 //	 - In the root README.md and under the ## Releases section, look for the previous release's section. It
 //	   should start with ### Kubernetes 1-XX, have an empty line, and then have a three row table. Copy all five
 //	   lines. Paste them just above the lines you copied. ONLY change the minor version in the first line to be
