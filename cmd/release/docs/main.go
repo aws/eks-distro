@@ -13,11 +13,31 @@ import (
 	"github.com/aws/eks-distro/cmd/release/utils/values"
 )
 
-const changeType = changetype.Docs
+const (
+	changeType              = changetype.Docs
+	firstMinorReleaseNumber = "1"
+)
 
 // Generates docs for release. The release MUST already be out, and all upstream changes MUST be pulled down locally.
-// Value for 'branch' flag must be provided. Value for 'hasChangelogChanges' flag should be 'false' if auto-
-// generating the changes in the changelog will cause an error.
+// Value for 'branch' flag must be provided.
+//
+// !!! IMPORTANT INFO IF GENERATING DOCS FOR A NEW MINOR RELEASE !!!
+//
+//	All releases for the new minor version must be tagged before running. Since there are no docs commits that are
+//	associated with them, the prod release commit for each should be tagged. This program assumes this is the case and
+//	the changelog generation will not work correctly if this is not true.
+//
+//	When the release number is 1 (i.e. this is the first time docs will be added for this minor release), you MUST
+//	manually do the below changes BEFORE running it. See example https://github.com/aws/eks-distro/pull/2070
+//	 - In the root README.md and under the ## Releases section, look for the previous release's section. It
+//	   should start with ### Kubernetes 1-XX, have an empty line, and then have a three row table. Copy all five
+//	   lines. Paste them just above the lines you copied. ONLY change the minor version in the first line to be
+//	   for the new one. Do not change any other lines, even if they are for the previous minor version. This
+//	   program will handle this.
+//	 - In docs/contents/index.md, look for the section ### Release Version Dependencies. Copy ONLY the previous
+//	   releases header section (i.e. #### EKS-D 1.XX Version Dependencies), paste it above the copied line, and
+//	   change the minor release number to be the new one. Do not add anything other than this line.
+//
 // TODO: fix the hacky code related to opening PRs and git commands. It is bad, and I am sorry.
 func main() {
 	branch := flag.String("branch", "", "Release branch, e.g. 1-23")
@@ -38,6 +58,9 @@ func main() {
 			return release.NewRelease(*branch, changeType)
 		}
 	}(*overrideNumber, branch)
+	if err != nil {
+		log.Fatalf("creating release info for docs: %v", err)
+	}
 
 	////////////	Create Git Manager	////////////////////////////////////
 
@@ -54,6 +77,13 @@ func main() {
 	log.Println("Starting to create new docs")
 
 	abandon := abandonFunc(gm)
+
+	if r.Number() == firstMinorReleaseNumber {
+		log.Println("Creating new directory for new minor release")
+		if _, err := values.MakeNewDirectory(values.GetReleaseBranchDocsDirectory(r)); err != nil {
+			log.Fatalf("creating new minor release docs directory: %v", err)
+		}
+	}
 
 	docs, err := newdocs.CreateNewDocsInput(r, *hasReleaseAnnouncement)
 
@@ -125,7 +155,7 @@ func abandonFunc(gm *git.Manager) func() {
 	}
 	return func() {
 		if abandonErr := gm.Abandon(); abandonErr != nil {
-			log.Printf("encountered error while attemptng to abandon branch due to earlier error: %v", abandonErr)
+			log.Printf("encountered error while attempting to abandon branch due to earlier error: %v", abandonErr)
 		}
 	}
 }

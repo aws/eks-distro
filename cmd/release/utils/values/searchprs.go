@@ -37,7 +37,7 @@ func GetChangelogPRs(releaseVersion string, overrideNumber int) (string, error) 
 	} else {
 		//With no document releases we need to be a little bit clever to generate unannounced changelogs.
 		//This finds the
-		opts = &github.SearchOptions{Sort: "updated", Order: "asc"}
+		opts = &github.SearchOptions{Sort: "created", Order: "asc"}
 		prs, _, err := githubClient.Search.Issues(ctx, "is:pr is:merged label:PROD-release label:"+releaseVersion, opts)
 		if err != nil {
 			return "", fmt.Errorf("get PRs from %v: %w", githubClient, err)

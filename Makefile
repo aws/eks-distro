@@ -5,6 +5,7 @@ RELEASE_ENVIRONMENT?=development
 RELEASE?=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/$(RELEASE_ENVIRONMENT)/RELEASE)
 PROD_RELEASE=$(shell cat $(BASE_DIRECTORY)/release/$(RELEASE_BRANCH)/production/RELEASE)
 OVERRIDE_NUMBER?=-1
+WITH_GIT_AND_PR=true
 ARTIFACT_BUCKET?=my-s3-bucket
 
 AWS_ACCOUNT_ID?=$(shell aws sts get-caller-identity --query Account --output text)
@@ -231,12 +232,23 @@ update-release-numbers: update-dev-release-number update-prod-release-number
 update-all-release-numbers:
 	for r_b in $(SUPPORTED_RELEASE_BRANCHES); do RELEASE_BRANCH=$$r_b $(MAKE) update-release-numbers; done
 
+# See important note about minor releases in the Go function called.
+# release-docs is intended to be used to generate release docs for the latest release branch. If this command is used in
+# conjunction with release-docs-limited to make all the release docs for a new minor release, WITH_GIT_AND_PR should be
+# set to false, as presumably there are additional changes that have been made by multiple run of release-docs-limited.
 .PHONY: release-docs
 release-docs:
 	go vet ./cmd/release/docs
 	go run ./cmd/release/docs/main.go \
-		--branch=$(RELEASE_BRANCH)
+		--branch=$(RELEASE_BRANCH) \
+		--manageGitAndOpenPR=$(WITH_GIT_AND_PR)
 
+# See important note about minor releases in the Go function called.
+# release-docs-limited is intended to be used to generate docs for multiple release for new minor releases. This make
+# command should be run for all releases from 1 until *** one less than *** the latest prod number. For example, if the
+# prod release number is 4, it should be run 3 times and the overrideNumber flag should be used to set the release
+# number to 1, then 2, then 3. For the latest release (which is 4 in the example), make release-docs should be used
+# instead of release-docs-limited. See that make command's comment for additional information
 .PHONY: release-docs-limited
 release-docs-limited:
 	go vet ./cmd/release/docs
