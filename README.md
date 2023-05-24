@@ -36,7 +36,7 @@ To receive notifications about new EKS-D releases, subscribe to the EKS-D update
 Source: https://github.com/cncf/artwork/tree/master/projects/kubernetes/certified-kubernetes
 -->
 
-### Kubernetes 1-26
+### Kubernetes 1-27
 
 | Release | Manifest | Kubernetes Version |
 | -- | --- | --- |
