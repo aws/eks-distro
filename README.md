@@ -1,9 +1,8 @@
 ## EKS Distro Repository
-
+---
 
 | Release | Development Build Status |
 |------| --- |
-| 1-22 | [![1-22](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-22-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-22-postsubmit) |
 | 1-23 | [![1-23](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-23-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-23-postsubmit) |
 | 1-24 | [![1-24](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-24-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-24-postsubmit) |
 | 1-25 | [![1-25](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-25-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-25-postsubmit) |
@@ -69,33 +68,16 @@ Source: https://github.com/cncf/artwork/tree/master/projects/kubernetes/certifie
 | --- | --- | --- |
 | 23 | [v1-23-eks-23](https://distro.eks.amazonaws.com/kubernetes-1-23/kubernetes-1-23-eks-23.yaml) | [v1.23.17](https://github.com/kubernetes/kubernetes/release/tag/v1.23.17) |
 
-### Kubernetes 1-22
 
-| Release | Manifest | Kubernetes Version |
-| --- | --- | --- |
-| 28 | [v1-22-eks-28](https://distro.eks.amazonaws.com/kubernetes-1-22/kubernetes-1-22-eks-28.yaml) | [v1.22.17](https://github.com/kubernetes/kubernetes/release/tag/v1.22.17) |
-
-
-**🚨🚨🚨 IMPORTANT INFORMATION ABOUT v1.22 SUPPORT 🚨🚨🚨**
+### Kubernetes 1.18, 1.19, 1.20, 1.21 and 1.22: DEPRECATED
 
 In alignment with the [Amazon EKS release calendar](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html#kubernetes-release-calendar),
-EKS Distro will be discontinuing support of Kubernetes v1.22 soon.
-
-While there are no plans to remove EKS-D v1.22 images from the 
-[ECR](https://gallery.ecr.aws/eks-distro), there will be no more updates, 
-including critical vulnerability fixes, to EKS-D v1.22 once support ends. 
-**Due to the increased security risk this poses, it is HIGHLY recommended that 
-users of v1.22 update to a supported version (v1.23+) as soon as possible.**
-
-### Kubernetes 1.18, 1.19, 1.20, and 1.21: DEPRECATED
-
-In alignment with the [Amazon EKS release calendar](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html#kubernetes-release-calendar),
-EKS Distro has discontinued support of Kubernetes v1.18 - v1.21. While there are
+EKS Distro has discontinued support of Kubernetes v1.18 - v1.22. While there are
 no plans to remove these versions' images from EKS Distro ECR, there will be no
 more updates, including security fixes, for them.
 
 **Due to the increased security risk this poses, it is HIGHLY recommended that
-users of v1.18 - v1.21 update to a supported version (v1.22+) as soon as
+users of v1.18 - v1.22 update to a supported version (v1.23+) as soon as
 possible.**
 
 ## Development
