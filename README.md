@@ -1,9 +1,4 @@
 ## EKS Distro Repository
-
-### 🚨🚨🚨 IMPORTANT INFORMATION ABOUT 1.22 SUPPORT 🚨🚨🚨
-
-EKS-D has discontinued support of Kubernetes 1.22. While there are no plans to remove EKS-D 1.22 images from the ECR, there will be no more updates to 1.22 from now on. **Due to the increased security risk this poses, it is HIGHLY recommended that users of 1.22 update to a supported version (1.23 - 1.27) as soon as possible.**
-
 ---
 
 | Release | Development Build Status |
