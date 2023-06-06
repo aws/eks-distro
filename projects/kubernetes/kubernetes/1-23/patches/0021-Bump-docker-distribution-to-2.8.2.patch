@@ -3,10 +3,29 @@ From: Stephen Kitt <skitt@redhat.com>
 Date: Tue, 16 May 2023 09:17:51 +0200
 Subject: [PATCH] Bump docker/distribution to 2.8.2
 
+Description:
 k/k doesn't use much code from docker/distribution so this doesn't
 change anything that's actually relevant, but 2.8.1 is identified as
-affected by CVE-2022-28391 and CVE-2023-2253; bumping to 2.8.2 avoids
+affected by CVE-2023-2253; bumping docker/distribution to 2.8.2 avoids
 k/k triggering scanners on those CVEs.
+
+Upstream PR, Issue, KEP, etc. links:
+* https://github.com/kubernetes/kubernetes/pull/118036/commits/3680a5230c386602ebc82700fe3031960d0479fd
+
+If this patch is based on an upstream commit, how (if at all) do this patch and the upstream source differ?
+* No difference
+
+If this patch's changes have not been added by upstream, why not?
+* N/A
+
+Other patches related to this patch:
+* None
+
+Changes made to this patch after its initial creation and reasons for these changes:
+* None
+
+Kubernetes version this patch can be dropped:
+* N/A
 
 Signed-off-by: Stephen Kitt <skitt@redhat.com>
 ---
