@@ -66,7 +66,7 @@ index 46d053734d1..d7f48672394 100644
  API rule violation: names_match,k8s.io/cloud-provider/config/v1alpha1,CloudControllerManagerConfiguration,ServiceController
  API rule violation: names_match,k8s.io/cloud-provider/config/v1alpha1,CloudProviderConfiguration,CloudConfigFile
 diff --git a/pkg/generated/openapi/zz_generated.openapi.go b/pkg/generated/openapi/zz_generated.openapi.go
-index b14eabc207f..787bf67da0a 100644
+index 2f95dd08064..869f5f6c04f 100644
 --- a/pkg/generated/openapi/zz_generated.openapi.go
 +++ b/pkg/generated/openapi/zz_generated.openapi.go
 @@ -51107,6 +51107,13 @@ func schema_k8sio_cloud_provider_config_v1alpha1_CloudControllerManagerConfigura
@@ -811,10 +811,10 @@ index 194f455380b..b7d10ca5d2c 100644
  			ServiceControllerConfiguration: &serviceconfig.ServiceControllerConfiguration{
  				ConcurrentServiceSyncs: 1,
 diff --git a/vendor/modules.txt b/vendor/modules.txt
-index e6c552c6c46..b9b4b795c0b 100644
+index 9fda1ff834b..b3916a3b122 100644
 --- a/vendor/modules.txt
 +++ b/vendor/modules.txt
-@@ -1948,6 +1948,8 @@ k8s.io/cloud-provider/config
+@@ -1949,6 +1949,8 @@ k8s.io/cloud-provider/config
  k8s.io/cloud-provider/config/install
  k8s.io/cloud-provider/config/v1alpha1
  k8s.io/cloud-provider/controllers/node
