@@ -27,7 +27,6 @@ Changes made to this patch after its initial creation and reasons for these chan
 
 Kubernetes version this patch can be dropped:
   TBD after change is merged by upstream
-
 ---
  .../pkg/endpoints/filters/authentication.go   |   6 +-
  .../pkg/endpoints/filters/authorization.go    |  18 ++-
