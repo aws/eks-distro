@@ -167,7 +167,7 @@ https://github.com/nytimes/gziphandler
 ** github.com/opencontainers/go-digest; version v1.0.0 --
 https://github.com/opencontainers/go-digest
 
-** github.com/opencontainers/runc; version v1.1.1 --
+** github.com/opencontainers/runc; version v1.1.6 --
 https://github.com/opencontainers/runc
 
 ** github.com/opencontainers/runtime-spec/specs-go; version v1.0.3-0.20210326190908-1c3f411f0417 --
@@ -338,7 +338,7 @@ https://github.com/kubernetes/kubectl
 ** k8s.io/kubelet; version v0.0.0 --
 https://github.com/kubernetes/kubelet
 
-** k8s.io/kubernetes; version v1.24.13 --
+** k8s.io/kubernetes; version v1.24.14 --
 https://github.com/kubernetes/kubernetes
 
 ** k8s.io/legacy-cloud-providers; version v0.0.0 --
@@ -359,7 +359,7 @@ https://github.com/kubernetes/system-validators
 ** k8s.io/utils; version v0.0.0-20220210201930-3a6ce19ff2f9 --
 https://github.com/kubernetes/utils
 
-** sigs.k8s.io/apiserver-network-proxy/konnectivity-client; version v0.0.36 --
+** sigs.k8s.io/apiserver-network-proxy/konnectivity-client; version v0.0.37 --
 https://github.com/kubernetes-sigs/apiserver-network-proxy
 
 ** sigs.k8s.io/json; version v0.0.0-20211208200746-9f7c6b3444d2 --
@@ -955,28 +955,28 @@ https://github.com/golang/go
 ** golang.org/x/crypto; version v0.0.0-20220214200702-86341886e292 --
 https://golang.org/x/crypto
 
-** golang.org/x/net; version v0.7.0 --
+** golang.org/x/net; version v0.8.0 --
 https://golang.org/x/net
 
 ** golang.org/x/oauth2; version v0.0.0-20211104180415-d3ed0bb246c8 --
 https://golang.org/x/oauth2
 
-** golang.org/x/sync/singleflight; version v0.0.0-20220722155255-886fb9371eb4 --
+** golang.org/x/sync/singleflight; version v0.1.0 --
 https://golang.org/x/sync
 
-** golang.org/x/sys/unix; version v0.5.0 --
+** golang.org/x/sys/unix; version v0.6.0 --
 https://golang.org/x/sys
 
-** golang.org/x/term; version v0.5.0 --
+** golang.org/x/term; version v0.6.0 --
 https://golang.org/x/term
 
-** golang.org/x/text; version v0.7.0 --
+** golang.org/x/text; version v0.8.0 --
 https://golang.org/x/text
 
 ** golang.org/x/time/rate; version v0.0.0-20220210224613-90d013bbcef8 --
 https://golang.org/x/time
 
-** golang.org/x/tools/container/intsets; version v0.1.12 --
+** golang.org/x/tools/container/intsets; version v0.6.0 --
 https://golang.org/x/tools
 
 ** k8s.io/apimachinery/third_party/forked/golang; version v0.0.0 --
@@ -985,7 +985,7 @@ https://github.com/kubernetes/apimachinery
 ** k8s.io/client-go/third_party/forked/golang/template; version v0.0.0 --
 https://github.com/kubernetes/client-go
 
-** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.24.13 --
+** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.24.14 --
 https://github.com/kubernetes/kubernetes
 
 ** k8s.io/utils/inotify; version v0.0.0-20220210201930-3a6ce19ff2f9 --
@@ -1862,7 +1862,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.24.13 --
+** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.24.14 --
 https://github.com/kubernetes/kubernetes
 
 Copyright ©2013 The gonum Authors. All rights reserved.

@@ -152,7 +152,7 @@ https://github.com/nytimes/gziphandler
 ** github.com/opencontainers/go-digest; version v1.0.0 --
 https://github.com/opencontainers/go-digest
 
-** github.com/opencontainers/runc; version v1.1.4 --
+** github.com/opencontainers/runc; version v1.1.6 --
 https://github.com/opencontainers/runc
 
 ** github.com/opencontainers/runtime-spec/specs-go; version v1.0.3-0.20220909204839-494a5a6aca78 --
@@ -299,19 +299,19 @@ https://github.com/kubernetes/kube-aggregator
 ** k8s.io/kube-controller-manager/config/v1alpha1; version v0.0.0 --
 https://github.com/kubernetes/kube-controller-manager
 
-** k8s.io/kube-openapi/pkg; version v0.0.0-20230308215209-15aac26d736a --
+** k8s.io/kube-openapi/pkg; version v0.0.0-20230501164219-8b0f38b5fd1f --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kube-openapi/pkg/validation/errors; version v0.0.0-20230308215209-15aac26d736a --
+** k8s.io/kube-openapi/pkg/validation/errors; version v0.0.0-20230501164219-8b0f38b5fd1f --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kube-openapi/pkg/validation/spec; version v0.0.0-20230308215209-15aac26d736a --
+** k8s.io/kube-openapi/pkg/validation/spec; version v0.0.0-20230501164219-8b0f38b5fd1f --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kube-openapi/pkg/validation/strfmt; version v0.0.0-20230308215209-15aac26d736a --
+** k8s.io/kube-openapi/pkg/validation/strfmt; version v0.0.0-20230501164219-8b0f38b5fd1f --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kube-openapi/pkg/validation/validate; version v0.0.0-20230308215209-15aac26d736a --
+** k8s.io/kube-openapi/pkg/validation/validate; version v0.0.0-20230501164219-8b0f38b5fd1f --
 https://github.com/kubernetes/kube-openapi
 
 ** k8s.io/kube-proxy/config/v1alpha1; version v0.0.0 --
@@ -326,7 +326,7 @@ https://github.com/kubernetes/kubectl
 ** k8s.io/kubelet; version v0.0.0 --
 https://github.com/kubernetes/kubelet
 
-** k8s.io/kubernetes; version v1.27.1 --
+** k8s.io/kubernetes; version v1.27.2 --
 https://github.com/kubernetes/kubernetes
 
 ** k8s.io/legacy-cloud-providers; version v0.0.0 --
@@ -347,7 +347,7 @@ https://github.com/kubernetes/system-validators
 ** k8s.io/utils; version v0.0.0-20230209194617-a36077c30491 --
 https://github.com/kubernetes/utils
 
-** sigs.k8s.io/apiserver-network-proxy/konnectivity-client; version v0.1.1 --
+** sigs.k8s.io/apiserver-network-proxy/konnectivity-client; version v0.1.2 --
 https://github.com/kubernetes-sigs/apiserver-network-proxy
 
 ** sigs.k8s.io/json; version v0.0.0-20221116044647-bc3834ca7abd --
@@ -1343,7 +1343,7 @@ https://github.com/kubernetes/apimachinery
 ** k8s.io/client-go/third_party/forked/golang/template; version v0.0.0 --
 https://github.com/kubernetes/client-go
 
-** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.27.1 --
+** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.27.2 --
 https://github.com/kubernetes/kubernetes
 
 ** k8s.io/utils/inotify; version v0.0.0-20230209194617-a36077c30491 --
@@ -1761,7 +1761,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** k8s.io/kube-openapi/pkg/internal/third_party/go-json-experiment/json; version v0.0.0-20230308215209-15aac26d736a --
+** k8s.io/kube-openapi/pkg/internal/third_party/go-json-experiment/json; version v0.0.0-20230501164219-8b0f38b5fd1f --
 https://github.com/kubernetes/kube-openapi
 
 Copyright (c) 2020 The Go Authors. All rights reserved.
@@ -1794,7 +1794,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.27.1 --
+** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.27.2 --
 https://github.com/kubernetes/kubernetes
 
 Copyright ©2013 The gonum Authors. All rights reserved.
