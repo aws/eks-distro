@@ -2,7 +2,7 @@
 ** github.com/containernetworking/cni/pkg; version v1.1.2 --
 https://github.com/containernetworking/cni
 
-** github.com/containernetworking/plugins; version v1.2.0 --
+** github.com/containernetworking/plugins; version v1.3.0 --
 https://github.com/containernetworking/plugins
 
 ** github.com/coreos/go-iptables/iptables; version v0.6.0 --
@@ -11,8 +11,11 @@ https://github.com/coreos/go-iptables
 ** github.com/coreos/go-systemd/v22/activation; version v22.5.0 --
 https://github.com/coreos/go-systemd/v22
 
-** github.com/networkplumbing/go-nft/nft; version v0.2.0 --
+** github.com/networkplumbing/go-nft/nft; version v0.3.0 --
 https://github.com/networkplumbing/go-nft
+
+** github.com/opencontainers/selinux; version v1.11.0 --
+https://github.com/opencontainers/selinux
 
 ** github.com/safchain/ethtool; version v0.3.0 --
 https://github.com/safchain/ethtool
@@ -20,7 +23,7 @@ https://github.com/safchain/ethtool
 ** github.com/vishvananda/netlink; version v1.2.1-beta.2 --
 https://github.com/vishvananda/netlink
 
-** github.com/vishvananda/netns; version v0.0.0-20210104183010-2eb08e3e575f --
+** github.com/vishvananda/netns; version v0.0.4 --
 https://github.com/vishvananda/netns
 
 
@@ -307,10 +310,10 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ------
 
-** golang.org/go; version go1.18.10 --
+** golang.org/go; version go1.20.4 --
 https://github.com/golang/go
 
-** golang.org/x/sys/unix; version v0.8.0 --
+** golang.org/x/sys/unix; version v0.7.0 --
 https://golang.org/x/sys
 
 Copyright (c) 2009 The Go Authors. All rights reserved.
