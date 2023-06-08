@@ -9,10 +9,9 @@
 ##@ GIT/Repo Targets
 clone-repo:  ## Clone upstream `plugins`
 checkout-repo: ## Checkout upstream tag based on value in GIT_TAG file
-patch-repo: ## Patch upstream repo with patches in patches directory
 
 ##@ Binary Targets
-binaries: ## Build all binaries: `bandwidth firewall portmap sbr tuning vrf bridge dummy host-device ipvlan loopback macvlan ptp vlan dhcp host-local static ` for `linux/amd64 linux/arm64`
+binaries: ## Build all binaries: `bandwidth firewall portmap sbr tuning vrf bridge dummy host-device ipvlan loopback macvlan ptp tap vlan dhcp host-local static ` for `linux/amd64 linux/arm64`
 _output/1-26/bin/plugins/linux-amd64/bandwidth: ## Build `_output/1-26/bin/plugins/linux-amd64/bandwidth`
 _output/1-26/bin/plugins/linux-amd64/firewall: ## Build `_output/1-26/bin/plugins/linux-amd64/firewall`
 _output/1-26/bin/plugins/linux-amd64/portmap: ## Build `_output/1-26/bin/plugins/linux-amd64/portmap`
@@ -26,6 +25,7 @@ _output/1-26/bin/plugins/linux-amd64/ipvlan: ## Build `_output/1-26/bin/plugins/
 _output/1-26/bin/plugins/linux-amd64/loopback: ## Build `_output/1-26/bin/plugins/linux-amd64/loopback`
 _output/1-26/bin/plugins/linux-amd64/macvlan: ## Build `_output/1-26/bin/plugins/linux-amd64/macvlan`
 _output/1-26/bin/plugins/linux-amd64/ptp: ## Build `_output/1-26/bin/plugins/linux-amd64/ptp`
+_output/1-26/bin/plugins/linux-amd64/tap: ## Build `_output/1-26/bin/plugins/linux-amd64/tap`
 _output/1-26/bin/plugins/linux-amd64/vlan: ## Build `_output/1-26/bin/plugins/linux-amd64/vlan`
 _output/1-26/bin/plugins/linux-amd64/dhcp: ## Build `_output/1-26/bin/plugins/linux-amd64/dhcp`
 _output/1-26/bin/plugins/linux-amd64/host-local: ## Build `_output/1-26/bin/plugins/linux-amd64/host-local`
@@ -43,6 +43,7 @@ _output/1-26/bin/plugins/linux-arm64/ipvlan: ## Build `_output/1-26/bin/plugins/
 _output/1-26/bin/plugins/linux-arm64/loopback: ## Build `_output/1-26/bin/plugins/linux-arm64/loopback`
 _output/1-26/bin/plugins/linux-arm64/macvlan: ## Build `_output/1-26/bin/plugins/linux-arm64/macvlan`
 _output/1-26/bin/plugins/linux-arm64/ptp: ## Build `_output/1-26/bin/plugins/linux-arm64/ptp`
+_output/1-26/bin/plugins/linux-arm64/tap: ## Build `_output/1-26/bin/plugins/linux-arm64/tap`
 _output/1-26/bin/plugins/linux-arm64/vlan: ## Build `_output/1-26/bin/plugins/linux-arm64/vlan`
 _output/1-26/bin/plugins/linux-arm64/dhcp: ## Build `_output/1-26/bin/plugins/linux-arm64/dhcp`
 _output/1-26/bin/plugins/linux-arm64/host-local: ## Build `_output/1-26/bin/plugins/linux-arm64/host-local`
