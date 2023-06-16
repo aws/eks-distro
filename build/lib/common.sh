@@ -215,6 +215,11 @@ function build::common::get_go_path() {
 function build::common::use_go_version() {
   local -r version=$1
 
+  if (( "${version#*.}" < 16 )); then
+    echo "Building with GO version $version is no longer supported!  Please update the build to use a newer version."
+    exit 1
+  fi
+
   local -r gobinarypath=$(build::common::get_go_path $version)
   echo "Adding $gobinarypath to PATH"
   # Adding to the beginning of PATH to allow for builds on specific version if it exists

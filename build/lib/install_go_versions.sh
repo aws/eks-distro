@@ -37,6 +37,7 @@ setupgo() {
 setupgo "${GOLANG117_VERSION:-1.17.13}"
 setupgo "${GOLANG118_VERSION:-1.18.10}"
 setupgo "${GOLANG119_VERSION:-1.19.9}"
+setupgo "${GOLANG120_VERSION:-1.20.4}"
 
 # use 1.17 when installing and running go-licenses
 # go-licenses needs to be installed by the same version of go that is being used
@@ -50,5 +51,8 @@ GOBIN=${GOPATH}/go1.18/bin go install github.com/google/go-licenses@v1.2.1
 build::common::use_go_version "1.19"
 GOBIN=${GOPATH}/go1.19/bin go install github.com/google/go-licenses@v1.2.1
 
-# 1.16 is the default so symlink it to /go/bin
-ln -sf ${GOPATH}/go1.16/bin/go-licenses ${GOPATH}/bin
+build::common::use_go_version "1.20"
+GOBIN=${GOPATH}/go1.20/bin go install github.com/google/go-licenses@v1.2.1
+
+# 1.17 is the default so symlink it to /go/bin
+ln -sf ${GOPATH}/go1.17/bin/go-licenses ${GOPATH}/bin
