@@ -86,19 +86,8 @@ function build::gather_licenses() {
   export GOOS=linux 
   export GOARCH=amd64 
 
-  # the version of go used here must be the version go-licenses was installed with
-  # by default we use 1.16, but due to changes in 1.17, there are some changes that require using 1.17
-  if [ "$golang_version" == "1.20" ]; then
-    build::common::use_go_version 1.20
-  elif [ "$golang_version" == "1.19" ]; then
-    build::common::use_go_version 1.19
-  elif [ "$golang_version" == "1.18" ]; then
-    build::common::use_go_version 1.18
-  elif [ "$golang_version" == "1.17" ]; then
-    build::common::use_go_version 1.17
-  else
-    build::common::use_go_version 1.16
-  fi
+  # the version of go used here must be the version go-licenses was installed with corresponding go versions
+  build::common::use_go_version $golang_version
 
   if ! command -v go-licenses &> /dev/null
   then
@@ -225,6 +214,11 @@ function build::common::get_go_path() {
 
 function build::common::use_go_version() {
   local -r version=$1
+
+  if (( "${version#*.}" < 16 )); then
+    echo "Building with GO version $version is no longer supported!  Please update the build to use a newer version."
+    exit 1
+  fi
 
   local -r gobinarypath=$(build::common::get_go_path $version)
   echo "Adding $gobinarypath to PATH"
