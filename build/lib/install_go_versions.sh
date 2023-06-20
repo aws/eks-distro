@@ -36,8 +36,8 @@ setupgo() {
 
 setupgo "${GOLANG117_VERSION:-1.17.13}"
 setupgo "${GOLANG118_VERSION:-1.18.10}"
-setupgo "${GOLANG119_VERSION:-1.19.9}"
-setupgo "${GOLANG120_VERSION:-1.20.4}"
+setupgo "${GOLANG119_VERSION:-1.19.10}"
+setupgo "${GOLANG120_VERSION:-1.20.5}"
 
 # use 1.17 when installing and running go-licenses
 # go-licenses needs to be installed by the same version of go that is being used
