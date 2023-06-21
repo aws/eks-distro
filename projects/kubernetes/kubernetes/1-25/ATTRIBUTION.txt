@@ -197,7 +197,7 @@ https://github.com/vishvananda/netlink
 ** github.com/vishvananda/netns; version v0.0.0-20200728191858-db3c7e526aae --
 https://github.com/vishvananda/netns
 
-** github.com/vmware/govmomi; version v0.20.3 --
+** github.com/vmware/govmomi; version v0.30.0 --
 https://github.com/vmware/govmomi
 
 ** go.etcd.io/etcd/api/v3; version v3.5.4 --
@@ -338,7 +338,7 @@ https://github.com/kubernetes/kubectl
 ** k8s.io/kubelet; version v0.0.0 --
 https://github.com/kubernetes/kubelet
 
-** k8s.io/kubernetes; version v1.25.10 --
+** k8s.io/kubernetes; version v1.25.11 --
 https://github.com/kubernetes/kubernetes
 
 ** k8s.io/legacy-cloud-providers; version v0.0.0 --
@@ -949,7 +949,10 @@ https://github.com/aws/aws-sdk-go
 ** github.com/liggitt/tabwriter; version v0.0.0-20181228230101-89fcab3d43de --
 https://github.com/liggitt/tabwriter
 
-** golang.org/go; version go1.19.9 --
+** github.com/vmware/govmomi/vim25/xml; version v0.30.0 --
+https://github.com/vmware/govmomi
+
+** golang.org/go; version go1.19.10 --
 https://github.com/golang/go
 
 ** golang.org/x/crypto; version v0.0.0-20220315160706-3147a52a75dd --
@@ -985,7 +988,7 @@ https://github.com/kubernetes/apimachinery
 ** k8s.io/client-go/third_party/forked/golang/template; version v0.0.0 --
 https://github.com/kubernetes/client-go
 
-** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.25.10 --
+** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.25.11 --
 https://github.com/kubernetes/kubernetes
 
 ** k8s.io/utils/inotify; version v0.0.0-20220728103510-ee6ede2d64ed --
@@ -1261,7 +1264,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/google/uuid; version v1.1.2 --
+** github.com/google/uuid; version v1.3.0 --
 https://github.com/google/uuid
 
 Copyright (c) 2009,2014 Google Inc. All rights reserved.
@@ -1556,9 +1559,6 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 ** github.com/PuerkitoBio/urlesc; version v0.0.0-20170810143723-de5bf2ad4578 --
 https://github.com/PuerkitoBio/urlesc
 
-** github.com/vmware/govmomi/vim25/xml; version v0.20.3 --
-https://github.com/vmware/govmomi
-
 ** gopkg.in/square/go-jose.v2/json; version v2.2.2 --
 https://gopkg.in/square/go-jose.v2
 
@@ -1828,7 +1828,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.25.10 --
+** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.25.11 --
 https://github.com/kubernetes/kubernetes
 
 Copyright ©2013 The gonum Authors. All rights reserved.
