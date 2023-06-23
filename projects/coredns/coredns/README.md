@@ -6,7 +6,7 @@
 | 1-24    | ![Version](https://img.shields.io/badge/version-v1.9.3-blue) |
 | 1-25    | ![Version](https://img.shields.io/badge/version-v1.9.3-blue) |
 | 1-26    | ![Version](https://img.shields.io/badge/version-v1.9.3-blue) |
-| 1-27    | ![Version](https://img.shields.io/badge/version-v1.10.1-blue) |
+| 1-27    | ![Version](https://img.shields.io/badge/version-v1.10.1-blue)|
 
 ### Updating
 
@@ -37,3 +37,8 @@
    `make run-attribution-checksums-in-docker RELEASE_BRANCH=<release_branch>`
    from the root of the EKS-Distro repo.
 6. Update the version at the top of this README.
+
+
+### Golang Version
+
+EKS-Distro has decided to build projects with EKS-Go 1.18+ to maintain and backport the applicable security updates of upstream Golang.
