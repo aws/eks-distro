@@ -1,6 +1,6 @@
-From f123df0519598d61b46ec3e2d91b73930105bd12 Mon Sep 17 00:00:00 2001
+From 784a5b7501115992f95536df852b92cafa893c8b Mon Sep 17 00:00:00 2001
 From: Sajia Zafreen <sajiazafreen@u.boisestate.edu>
-Date: Thu, 29 Jun 2023 16:25:28 -0700
+Date: Tue, 11 Jul 2023 10:11:55 -0700
 Subject: [PATCH] --EKS-PATCH-- Bump 1.23 runc version to 1.1.6
 
 Description:
@@ -70,7 +70,7 @@ Signed-off-by: Sajia Zafreen <sajiazafreen@u.boisestate.edu>
  staging/src/k8s.io/kubelet/go.mod             |   6 +-
  staging/src/k8s.io/kubelet/go.sum             |  28 +-
  .../src/k8s.io/legacy-cloud-providers/go.mod  |   6 +-
- .../src/k8s.io/legacy-cloud-providers/go.sum  |  96 +----
+ .../src/k8s.io/legacy-cloud-providers/go.sum  |  99 -----
  staging/src/k8s.io/metrics/go.mod             |   6 +-
  staging/src/k8s.io/metrics/go.sum             |  64 +--
  .../src/k8s.io/pod-security-admission/go.mod  |   6 +-
@@ -81,6 +81,8 @@ Signed-off-by: Sajia Zafreen <sajiazafreen@u.boisestate.edu>
  staging/src/k8s.io/sample-cli-plugin/go.sum   |  92 +----
  staging/src/k8s.io/sample-controller/go.mod   |   6 +-
  staging/src/k8s.io/sample-controller/go.sum   |  64 +--
+ .../container/libcontainer/helpers.go         |   4 +-
+ .../google/cadvisor/resctrl/utils.go          |   2 +-
  .../runc/libcontainer/README.md               |  18 +-
  .../libcontainer/apparmor/apparmor_linux.go   |   5 +-
  .../apparmor/apparmor_unsupported.go          |   1 +
@@ -148,7 +150,7 @@ Signed-off-by: Sajia Zafreen <sajiazafreen@u.boisestate.edu>
  .../configs/validate/validator.go             |  60 ++-
  .../runc/libcontainer/console_linux.go        |   2 +-
  .../runc/libcontainer/container.go            |  43 ---
- .../runc/libcontainer/container_linux.go      | 345 +++++++++++------
+ .../runc/libcontainer/container_linux.go      | 346 +++++++++++------
  .../runc/libcontainer/criu_opts_linux.go      |   1 +
  .../runc/libcontainer/devices/device_unix.go  |  12 +-
  .../runc/libcontainer/eaccess_go119.go        |  17 +
@@ -199,7 +201,7 @@ Signed-off-by: Sajia Zafreen <sajiazafreen@u.boisestate.edu>
  .../runc/libcontainer/utils/utils.go          |  14 +-
  .../runc/libcontainer/utils/utils_unix.go     |   5 +-
  vendor/modules.txt                            |  28 +-
- 173 files changed, 3210 insertions(+), 3955 deletions(-)
+ 175 files changed, 3208 insertions(+), 3967 deletions(-)
  delete mode 100644 vendor/github.com/opencontainers/runc/libcontainer/cgroups/cgroups_unsupported.go
  create mode 100644 vendor/github.com/opencontainers/runc/libcontainer/cgroups/fs/error.go
  create mode 100644 vendor/github.com/opencontainers/runc/libcontainer/cgroups/fs/paths.go
@@ -221,7 +223,7 @@ Signed-off-by: Sajia Zafreen <sajiazafreen@u.boisestate.edu>
  delete mode 100644 vendor/github.com/opencontainers/runc/libcontainer/system/xattrs_linux.go
 
 diff --git a/go.mod b/go.mod
-index 8b9a2be09de..237a24562aa 100644
+index af81bb243b1..03d788c2717 100644
 --- a/go.mod
 +++ b/go.mod
 @@ -37,7 +37,7 @@ require (
@@ -305,7 +307,7 @@ index 8b9a2be09de..237a24562aa 100644
  	github.com/opencontainers/selinux => github.com/opencontainers/selinux v1.8.2
  	github.com/opentracing/opentracing-go => github.com/opentracing/opentracing-go v1.1.0
 diff --git a/go.sum b/go.sum
-index 8f1f6229c3d..61202343003 100644
+index 255d217f20a..f6df5f2d419 100644
 --- a/go.sum
 +++ b/go.sum
 @@ -374,8 +374,8 @@ github.com/opencontainers/go-digest v1.0.0 h1:apOUWs51W5PlhuyGyz9FCeeBIOUDA/6nW8
@@ -2882,7 +2884,7 @@ index dbf84e96e95..ef64008a9b0 100644
  golang.org/x/xerrors v0.0.0-20191011141410-1b5146add898/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
  golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/go.mod b/staging/src/k8s.io/legacy-cloud-providers/go.mod
-index 0bb2ab6bb57..9594e5c899d 100644
+index 77c0ae2e086..bc58e1a1694 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/go.mod
 +++ b/staging/src/k8s.io/legacy-cloud-providers/go.mod
 @@ -74,8 +74,8 @@ require (
@@ -2906,18 +2908,10 @@ index 0bb2ab6bb57..9594e5c899d 100644
  	k8s.io/apimachinery => ../apimachinery
  	k8s.io/apiserver => ../apiserver
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/go.sum b/staging/src/k8s.io/legacy-cloud-providers/go.sum
-index 31cab61952d..b3314b9243d 100644
+index a63dc8a360b..40f834e2a18 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/go.sum
 +++ b/staging/src/k8s.io/legacy-cloud-providers/go.sum
-@@ -326,6 +326,7 @@ github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9de
- github.com/yuin/goldmark v1.1.32/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
- github.com/yuin/goldmark v1.2.1/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
- github.com/yuin/goldmark v1.3.5/go.mod h1:mwnBkeHKe2W/ZEtQ+71ViKU8L12m81fl3OWwC1Zlc8k=
-+github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
- go.opencensus.io v0.21.0/go.mod h1:mSImk1erAIZhrmZN+AvHh14ztQfjbGwt4TtuofqLduU=
- go.opencensus.io v0.22.0/go.mod h1:+kGneAE2xo2IficOXnaByMWTGM9T73dGwxeWcUqIpI8=
- go.opencensus.io v0.22.2/go.mod h1:yxeiOL68Rb0Xd1ddK5vPZ/oVn4vY4Ynel7k9FzqtOIw=
-@@ -337,12 +338,11 @@ go.opencensus.io v0.23.0/go.mod h1:XItmlyltB5F7CS4xOC1DcqMoFqwtC6OG2xF7mCv7P7E=
+@@ -338,11 +338,9 @@ go.opencensus.io v0.23.0/go.mod h1:XItmlyltB5F7CS4xOC1DcqMoFqwtC6OG2xF7mCv7P7E=
  go.opentelemetry.io/proto/otlp v0.7.0/go.mod h1:PqfVotwruBrMGOCsRd/89rSnXhoiJIqeYNgFYFoEGnI=
  golang.org/x/crypto v0.0.0-20180904163835-0709b304e793/go.mod h1:6SG95UA2DQfeDnfUPMdvaQW0Q7yPrPDi9nlGo2tz2b4=
  golang.org/x/crypto v0.0.0-20190211182817-74369b46fc67/go.mod h1:6SG95UA2DQfeDnfUPMdvaQW0Q7yPrPDi9nlGo2tz2b4=
@@ -2927,14 +2921,12 @@ index 31cab61952d..b3314b9243d 100644
  golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
 -golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
  golang.org/x/crypto v0.0.0-20201002170205-7f63de1d35b0/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
-+golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
+ golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
  golang.org/x/crypto v0.0.0-20220214200702-86341886e292 h1:f+lwQ+GtmgoY+A2YaQxlSOnDjXcQ7ZRLWOHbC6HtRqE=
- golang.org/x/crypto v0.0.0-20220214200702-86341886e292/go.mod h1:IxCIyHEi3zRg3s0A5j5BB6A9Jmi73HwBIUl50j+osU4=
- golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
-@@ -380,45 +380,7 @@ golang.org/x/mod v0.3.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
- golang.org/x/mod v0.4.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
+@@ -383,47 +381,6 @@ golang.org/x/mod v0.4.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
  golang.org/x/mod v0.4.1/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
  golang.org/x/mod v0.4.2/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
+ golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4/go.mod h1:jJ57K6gSWd91VN4djpZkiMVwK6gcyfeH4XE8wZrZaV4=
 -golang.org/x/net v0.0.0-20180724234803-3673e40ba225/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
 -golang.org/x/net v0.0.0-20180826012351-8a410e7b638d/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
 -golang.org/x/net v0.0.0-20181114220301-adae6a3d119a/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
@@ -2974,14 +2966,15 @@ index 31cab61952d..b3314b9243d 100644
 -golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4/go.mod h1:p54w0d4576C0XHj96bSt6lcn1PtDYWL6XObtHCRCNQM=
 -golang.org/x/net v0.0.0-20210503060351-7fd8e65b6420/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
 -golang.org/x/net v0.0.0-20210525063256-abc453219eb5/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
-+golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4/go.mod h1:jJ57K6gSWd91VN4djpZkiMVwK6gcyfeH4XE8wZrZaV4=
+-golang.org/x/net v0.0.0-20220722155237-a158d28d115b/go.mod h1:XRhObCWvk6IyKnWLug+ECip1KBveYUHfp+8e9klMJ9c=
+-golang.org/x/net v0.1.0/go.mod h1:Cx3nUiGt4eDBEyega/BKRp+/AlGL8hYe7U9odMt2Cco=
  golang.org/x/net v0.7.0 h1:rJrUqqhjsgNp7KqAIc25s9pZnjU7TUcSY7HcVZjdn1g=
  golang.org/x/net v0.7.0/go.mod h1:2Tu9+aMcznHK/AK1HMvgo6xiTLG5rD5rZLDS+rp2Bjs=
  golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
-@@ -447,54 +409,7 @@ golang.org/x/sync v0.0.0-20200625203802-6e8e738ad208/go.mod h1:RxMgew5VJxzue5/jJ
- golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+@@ -453,63 +410,9 @@ golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJ
  golang.org/x/sync v0.0.0-20201207232520-09787c993a3a/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
  golang.org/x/sync v0.0.0-20210220032951-036812b2e83c/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
 -golang.org/x/sys v0.0.0-20180830151530-49385e6e1522/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
 -golang.org/x/sys v0.0.0-20180905080454-ebe1bf3edb33/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
 -golang.org/x/sys v0.0.0-20181116152217-5ac8a444bdc5/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
@@ -3030,27 +3023,28 @@ index 31cab61952d..b3314b9243d 100644
 -golang.org/x/sys v0.0.0-20210503080704-8803ae5d1324/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 -golang.org/x/sys v0.0.0-20210510120138-977fb7262007/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 -golang.org/x/sys v0.0.0-20210603081109-ebe580a85c40/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
-+golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+-golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+-golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+-golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+-golang.org/x/sys v0.1.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
  golang.org/x/sys v0.5.0 h1:MUK/U/4lj1t1oPg0HfuXDN/Z1wv31ZJ/YcPiGccS4DU=
  golang.org/x/sys v0.5.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
  golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
-@@ -507,7 +422,7 @@ golang.org/x/text v0.3.2/go.mod h1:bEr9sfX3Q8Zfm5fL9x+3itogRgK3+ptLWKqgva+5dAk=
+-golang.org/x/term v0.0.0-20210927222741-03fcf44c2211/go.mod h1:jbD1KX2456YbFQfuXm/mYQcufACuNUgVhRMnK/tPxf8=
+-golang.org/x/term v0.1.0/go.mod h1:jbD1KX2456YbFQfuXm/mYQcufACuNUgVhRMnK/tPxf8=
+ golang.org/x/term v0.5.0 h1:n2a8QNdAb0sZNpU9R1ALUXBbY+w51fCQDN+7EdxNBsY=
+ golang.org/x/term v0.5.0/go.mod h1:jMB1sMXY+tzblOD4FWmEbocvup2/aLOaQEp7JmGp78k=
+ golang.org/x/text v0.0.0-20170915032832-14c0d48ead0c/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
+@@ -519,9 +422,7 @@ golang.org/x/text v0.3.2/go.mod h1:bEr9sfX3Q8Zfm5fL9x+3itogRgK3+ptLWKqgva+5dAk=
  golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
  golang.org/x/text v0.3.4/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
  golang.org/x/text v0.3.5/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
 -golang.org/x/text v0.3.6/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
-+golang.org/x/text v0.3.7/go.mod h1:u+2+/6zg+i71rQMx5EYifcz6MCKuco9NR6JIITiCfzQ=
+ golang.org/x/text v0.3.7/go.mod h1:u+2+/6zg+i71rQMx5EYifcz6MCKuco9NR6JIITiCfzQ=
+-golang.org/x/text v0.4.0/go.mod h1:mrYo+phRRbMaCq/xk9113O4dZlRixOauAjOtrjsXDZ8=
  golang.org/x/text v0.7.0 h1:4BRB4x83lYWy72KwLD/qYDuTu7q9PjSagHvijDw7cLo=
  golang.org/x/text v0.7.0/go.mod h1:mrYo+phRRbMaCq/xk9113O4dZlRixOauAjOtrjsXDZ8=
  golang.org/x/time v0.0.0-20181108054448-85acf8d2951c/go.mod h1:tRJNPiyCQ0inRvYxbN9jk5I+vvW/OXSQhTDSoE431IQ=
-@@ -565,6 +480,7 @@ golang.org/x/tools v0.0.0-20210105154028-b0ab187a4818/go.mod h1:emZCQorbCU4vsT4f
- golang.org/x/tools v0.0.0-20210106214847-113979e3529a/go.mod h1:emZCQorbCU4vsT4fOWvOPXz4eW1wZW4PmDk9uLelYpA=
- golang.org/x/tools v0.1.0/go.mod h1:xkSsbof2nBLbhDlRMhhhyNLN/zl3eTqcnHD5viDpcZ0=
- golang.org/x/tools v0.1.5/go.mod h1:o0xws9oXOQQZyjljx8fwUC0k7L1pTE6eaCbjGeHmOkk=
-+golang.org/x/tools v0.1.12/go.mod h1:hNGJHUnrk76NpqgfD5Aqm5Crs+Hm0VOH/i9J2+nxYbc=
- golang.org/x/xerrors v0.0.0-20190717185122-a985d3407aa7/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
- golang.org/x/xerrors v0.0.0-20191011141410-1b5146add898/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
- golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
 diff --git a/staging/src/k8s.io/metrics/go.mod b/staging/src/k8s.io/metrics/go.mod
 index 1ae526e1d42..d21b9c0feab 100644
 --- a/staging/src/k8s.io/metrics/go.mod
@@ -3816,6 +3810,37 @@ index b5403971a32..f7d1052cb2c 100644
  golang.org/x/text v0.7.0 h1:4BRB4x83lYWy72KwLD/qYDuTu7q9PjSagHvijDw7cLo=
  golang.org/x/text v0.7.0/go.mod h1:mrYo+phRRbMaCq/xk9113O4dZlRixOauAjOtrjsXDZ8=
  golang.org/x/time v0.0.0-20181108054448-85acf8d2951c/go.mod h1:tRJNPiyCQ0inRvYxbN9jk5I+vvW/OXSQhTDSoE431IQ=
+diff --git a/vendor/github.com/google/cadvisor/container/libcontainer/helpers.go b/vendor/github.com/google/cadvisor/container/libcontainer/helpers.go
+index e0d7718c876..63041e51dad 100644
+--- a/vendor/github.com/google/cadvisor/container/libcontainer/helpers.go
++++ b/vendor/github.com/google/cadvisor/container/libcontainer/helpers.go
+@@ -159,11 +159,11 @@ func diskStatsCopy(blkioStats []cgroups.BlkioStatEntry) (stat []info.PerDiskStat
+ func NewCgroupManager(name string, paths map[string]string) (cgroups.Manager, error) {
+ 	if cgroups.IsCgroup2UnifiedMode() {
+ 		path := paths[""]
+-		return fs2.NewManager(nil, path, false)
++		return fs2.NewManager(nil, path)
+ 	}
+ 
+ 	config := configs.Cgroup{
+ 		Name: name,
+ 	}
+-	return fs.NewManager(&config, paths, false), nil
++	return fs.NewManager(&config, paths)
+ }
+diff --git a/vendor/github.com/google/cadvisor/resctrl/utils.go b/vendor/github.com/google/cadvisor/resctrl/utils.go
+index f7931d22ebf..e2821674075 100644
+--- a/vendor/github.com/google/cadvisor/resctrl/utils.go
++++ b/vendor/github.com/google/cadvisor/resctrl/utils.go
+@@ -77,7 +77,7 @@ var (
+ 
+ func Setup() error {
+ 	var err error
+-	rootResctrl, err = intelrdt.GetIntelRdtPath(rootContainer)
++	rootResctrl, err = intelrdt.Root()
+ 	if err != nil {
+ 		return fmt.Errorf("unable to initialize resctrl: %v", err)
+ 	}
 diff --git a/vendor/github.com/opencontainers/runc/libcontainer/README.md b/vendor/github.com/opencontainers/runc/libcontainer/README.md
 index 13eee49d4b9..211c8c91e05 100644
 --- a/vendor/github.com/opencontainers/runc/libcontainer/README.md
@@ -8776,7 +8801,7 @@ index ba7541c5fd6..300c9526cf9 100644
  	Exec() error
  }
 diff --git a/vendor/github.com/opencontainers/runc/libcontainer/container_linux.go b/vendor/github.com/opencontainers/runc/libcontainer/container_linux.go
-index 6ce1854f687..dd61dfd3c90 100644
+index 6ce1854f687..f9ac26f7a2d 100644
 --- a/vendor/github.com/opencontainers/runc/libcontainer/container_linux.go
 +++ b/vendor/github.com/opencontainers/runc/libcontainer/container_linux.go
 @@ -1,5 +1,3 @@
@@ -9350,16 +9375,17 @@ index 6ce1854f687..dd61dfd3c90 100644
  			EvasiveDevices:  proto.Bool(true),
  			LogLevel:        proto.Int32(4),
  			LogFile:         proto.String("restore.log"),
-@@ -1383,7 +1445,26 @@ func (c *linuxContainer) Restore(process *Process, criuOpts *CriuOpts) error {
+@@ -1383,7 +1445,27 @@ func (c *linuxContainer) Restore(process *Process, criuOpts *CriuOpts) error {
  		}
  		req.Opts.LsmProfile = proto.String(criuOpts.LsmProfile)
  	}
++	/**
 +	if criuOpts.LsmMountContext != "" {
 +		if err := c.checkCriuVersion(31600); err != nil {
 +			return errors.New("--lsm-mount-context requires at least CRIU 3.16")
 +		}
 +		req.Opts.LsmMountContext = proto.String(criuOpts.LsmMountContext)
-+	}
++	}**/
  
 +	if criuOpts.WorkDirectory != "" {
 +		// Since a container can be C/R'ed multiple times,
@@ -9377,7 +9403,7 @@ index 6ce1854f687..dd61dfd3c90 100644
  	c.handleCriuConfigurationFile(req.Opts)
  
  	if err := c.handleRestoringNamespaces(req.Opts, &extraFiles); err != nil {
-@@ -1432,7 +1513,7 @@ func (c *linuxContainer) Restore(process *Process, criuOpts *CriuOpts) error {
+@@ -1432,7 +1514,7 @@ func (c *linuxContainer) Restore(process *Process, criuOpts *CriuOpts) error {
  
  	// append optional manage cgroups mode
  	if criuOpts.ManageCgroupsMode != 0 {
@@ -9386,7 +9412,7 @@ index 6ce1854f687..dd61dfd3c90 100644
  		req.Opts.ManageCgroupsMode = &mode
  	}
  
-@@ -1440,7 +1521,7 @@ func (c *linuxContainer) Restore(process *Process, criuOpts *CriuOpts) error {
+@@ -1440,7 +1522,7 @@ func (c *linuxContainer) Restore(process *Process, criuOpts *CriuOpts) error {
  		fds    []string
  		fdJSON []byte
  	)
@@ -9395,7 +9421,7 @@ index 6ce1854f687..dd61dfd3c90 100644
  		return err
  	}
  
-@@ -1477,7 +1558,7 @@ func (c *linuxContainer) criuApplyCgroups(pid int, req *criurpc.CriuReq) error {
+@@ -1477,7 +1559,7 @@ func (c *linuxContainer) criuApplyCgroups(pid int, req *criurpc.CriuReq) error {
  	}
  
  	if err := c.cgroupManager.Set(c.config.Cgroups.Resources); err != nil {
@@ -9404,7 +9430,7 @@ index 6ce1854f687..dd61dfd3c90 100644
  	}
  
  	if cgroups.IsCgroup2UnifiedMode() {
-@@ -1835,7 +1916,7 @@ func (c *linuxContainer) updateState(process parentProcess) (*State, error) {
+@@ -1835,7 +1917,7 @@ func (c *linuxContainer) updateState(process parentProcess) (*State, error) {
  }
  
  func (c *linuxContainer) saveState(s *State) (retErr error) {
@@ -9413,7 +9439,7 @@ index 6ce1854f687..dd61dfd3c90 100644
  	if err != nil {
  		return err
  	}
-@@ -1928,9 +2009,10 @@ func (c *linuxContainer) currentState() (*State, error) {
+@@ -1928,9 +2010,10 @@ func (c *linuxContainer) currentState() (*State, error) {
  		startTime, _ = c.initProcess.startTime()
  		externalDescriptors = c.initProcess.externalDescriptors()
  	}
@@ -9427,7 +9453,7 @@ index 6ce1854f687..dd61dfd3c90 100644
  	}
  	state := &State{
  		BaseState: BaseState{
-@@ -1998,16 +2080,16 @@ func (c *linuxContainer) orderNamespacePaths(namespaces map[configs.NamespaceTyp
+@@ -1998,16 +2081,16 @@ func (c *linuxContainer) orderNamespacePaths(namespaces map[configs.NamespaceTyp
  		if p, ok := namespaces[ns]; ok && p != "" {
  			// check if the requested namespace is supported
  			if !configs.IsNamespaceSupported(ns) {
@@ -9447,7 +9473,7 @@ index 6ce1854f687..dd61dfd3c90 100644
  			}
  			paths = append(paths, fmt.Sprintf("%s:%s", configs.NsName(ns), p))
  		}
-@@ -2028,16 +2110,34 @@ func encodeIDMapping(idMap []configs.IDMap) ([]byte, error) {
+@@ -2028,16 +2111,34 @@ func encodeIDMapping(idMap []configs.IDMap) ([]byte, error) {
  	return data.Bytes(), nil
  }
  
@@ -9483,7 +9509,7 @@ index 6ce1854f687..dd61dfd3c90 100644
  	// write cloneFlags
  	r.AddData(&Int32msg{
  		Type:  CloneFlagsAttr,
-@@ -2116,6 +2216,25 @@ func (c *linuxContainer) bootstrapData(cloneFlags uintptr, nsMaps map[configs.Na
+@@ -2116,6 +2217,25 @@ func (c *linuxContainer) bootstrapData(cloneFlags uintptr, nsMaps map[configs.Na
  		Value: c.config.RootlessEUID,
  	})
  
@@ -9509,7 +9535,7 @@ index 6ce1854f687..dd61dfd3c90 100644
  	return bytes.NewReader(r.Serialize()), nil
  }
  
-@@ -2126,7 +2245,7 @@ func ignoreTerminateErrors(err error) error {
+@@ -2126,7 +2246,7 @@ func ignoreTerminateErrors(err error) error {
  	if err == nil {
  		return nil
  	}
@@ -9518,7 +9544,7 @@ index 6ce1854f687..dd61dfd3c90 100644
  	// The (*Cmd).Wait documentation says: "If the command fails to run
  	// or doesn't complete successfully, the error is of type *ExitError".
  	// Filter out such errors (like "exit status 1" or "signal: killed").
-@@ -2134,13 +2253,11 @@ func ignoreTerminateErrors(err error) error {
+@@ -2134,13 +2254,11 @@ func ignoreTerminateErrors(err error) error {
  	if errors.As(err, &exitErr) {
  		return nil
  	}
@@ -9537,14 +9563,14 @@ index 6ce1854f687..dd61dfd3c90 100644
  	}
  	return err
 diff --git a/vendor/github.com/opencontainers/runc/libcontainer/criu_opts_linux.go b/vendor/github.com/opencontainers/runc/libcontainer/criu_opts_linux.go
-index 0db43e74e8a..b39476ef352 100644
+index 0db43e74e8a..c3fbbf0e6fa 100644
 --- a/vendor/github.com/opencontainers/runc/libcontainer/criu_opts_linux.go
 +++ b/vendor/github.com/opencontainers/runc/libcontainer/criu_opts_linux.go
 @@ -30,4 +30,5 @@ type CriuOpts struct {
  	LazyPages               bool               // restore memory pages lazily using userfaultfd
  	StatusFd                int                // fd for feedback when lazy server is ready
  	LsmProfile              string             // LSM profile used to restore the container
-+	LsmMountContext         string             // LSM mount context value to use during restore
++	//LsmMountContext         string             // LSM mount context value to use during restore
  }
 diff --git a/vendor/github.com/opencontainers/runc/libcontainer/devices/device_unix.go b/vendor/github.com/opencontainers/runc/libcontainer/devices/device_unix.go
 index 6d5b3d09df3..7d8e9fc3104 100644
@@ -14821,7 +14847,7 @@ index 1576f2d4ab6..220d0b43937 100644
  	}
  	return nil
 diff --git a/vendor/modules.txt b/vendor/modules.txt
-index 7995b8bfdcd..a3577759c73 100644
+index 9d48da39861..79f7c0a7366 100644
 --- a/vendor/modules.txt
 +++ b/vendor/modules.txt
 @@ -179,11 +179,11 @@ github.com/chai2010/gettext-go/gettext
@@ -14937,7 +14963,7 @@ index 7995b8bfdcd..a3577759c73 100644
  ## explicit; go 1.17
  golang.org/x/sys/cpu
  golang.org/x/sys/execabs
-@@ -2818,7 +2818,7 @@ sigs.k8s.io/yaml
+@@ -2819,7 +2819,7 @@ sigs.k8s.io/yaml
  # github.com/onsi/gomega => github.com/onsi/gomega v1.10.1
  # github.com/opencontainers/go-digest => github.com/opencontainers/go-digest v1.0.0
  # github.com/opencontainers/image-spec => github.com/opencontainers/image-spec v1.0.1
