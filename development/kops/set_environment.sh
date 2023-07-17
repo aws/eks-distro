@@ -24,7 +24,7 @@ export NODE_INSTANCE_TYPE=${NODE_INSTANCE_TYPE:-t3.medium}
 export NODE_ARCHITECTURE=${NODE_ARCHITECTURE:-amd64}
 export UBUNTU_RELEASE=${UBUNTU_RELEASE:-focal-20.04}
 export IPV6=${IPV6:-false}
-export KOPS_VERSION="1.26.3"
+export KOPS_VERSION="1.27.0"
 
 if [ -n "$ARTIFACT_BUCKET" ]; then
     export ARTIFACT_BASE_URL="https://$ARTIFACT_BUCKET.s3.amazonaws.com"
