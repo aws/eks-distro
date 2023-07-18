@@ -949,7 +949,7 @@ https://github.com/liggitt/tabwriter
 ** github.com/vmware/govmomi/vim25/xml; version v0.30.0 --
 https://github.com/vmware/govmomi
 
-** golang.org/go; version go1.19.10 --
+** golang.org/go; version go1.19.11 --
 https://github.com/golang/go
 
 ** golang.org/x/crypto; version v0.1.0 --
