@@ -1,7 +1,7 @@
-From ead530919470c3500b405ace55dc2e9e7e7c50ed Mon Sep 17 00:00:00 2001
+From 726a2221cb4f6d28548fd2a12de59b4356995f53 Mon Sep 17 00:00:00 2001
 From: Kirsten Schumy <ksschumy@amazon.com>
-Date: Mon, 17 Jul 2023 21:13:02 -0700
-Subject: [PATCH] Updated runc to 1.1.7
+Date: Mon, 17 Jul 2023 17:40:26 -0700
+Subject: [PATCH] Updated runc to 1.1.6
 
 ---
  go.mod                                        |  24 +-
@@ -103,13 +103,13 @@ Subject: [PATCH] Updated runc to 1.1.7
  .../runc/libcontainer/cgroups/getallpids.go   |  27 ++
  .../runc/libcontainer/cgroups/manager/new.go  |  78 ++++
  .../runc/libcontainer/cgroups/stats.go        |  16 +-
- .../libcontainer/cgroups/systemd/common.go    | 104 +++--
+ .../libcontainer/cgroups/systemd/common.go    | 102 +++--
  .../libcontainer/cgroups/systemd/cpuset.go    |  31 +-
  .../runc/libcontainer/cgroups/systemd/dbus.go |  16 +-
  .../cgroups/systemd/unsupported.go            |  71 ----
  .../runc/libcontainer/cgroups/systemd/user.go |  18 +-
- .../runc/libcontainer/cgroups/systemd/v1.go   | 151 ++++----
- .../runc/libcontainer/cgroups/systemd/v2.go   | 172 +++++----
+ .../runc/libcontainer/cgroups/systemd/v1.go   | 149 ++++---
+ .../runc/libcontainer/cgroups/systemd/v2.go   | 170 ++++----
  .../runc/libcontainer/cgroups/utils.go        | 121 +++---
  .../runc/libcontainer/cgroups/v1_utils.go     |  19 +-
  .../runc/libcontainer/configs/cgroup_linux.go |  20 +-
@@ -177,7 +177,7 @@ Subject: [PATCH] Updated runc to 1.1.7
  .../runc/libcontainer/utils/utils.go          |  14 +-
  .../runc/libcontainer/utils/utils_unix.go     |   5 +-
  vendor/modules.txt                            |  28 +-
- 173 files changed, 3204 insertions(+), 3970 deletions(-)
+ 173 files changed, 3204 insertions(+), 3964 deletions(-)
  delete mode 100644 vendor/github.com/opencontainers/runc/libcontainer/cgroups/cgroups_unsupported.go
  create mode 100644 vendor/github.com/opencontainers/runc/libcontainer/cgroups/fs/error.go
  create mode 100644 vendor/github.com/opencontainers/runc/libcontainer/cgroups/fs/paths.go
@@ -199,7 +199,7 @@ Subject: [PATCH] Updated runc to 1.1.7
  delete mode 100644 vendor/github.com/opencontainers/runc/libcontainer/system/xattrs_linux.go
 
 diff --git a/go.mod b/go.mod
-index af81bb243b1..2bc1a293bc7 100644
+index af81bb243b1..03d788c2717 100644
 --- a/go.mod
 +++ b/go.mod
 @@ -37,7 +37,7 @@ require (
@@ -217,7 +217,7 @@ index af81bb243b1..2bc1a293bc7 100644
  	github.com/opencontainers/go-digest v1.0.0
 -	github.com/opencontainers/runc v1.0.2
 -	github.com/opencontainers/selinux v1.8.2
-+	github.com/opencontainers/runc v1.1.7
++	github.com/opencontainers/runc v1.1.6
 +	github.com/opencontainers/selinux v1.10.0
  	github.com/pkg/errors v0.9.1
  	github.com/pmezard/go-difflib v1.0.0
@@ -278,12 +278,12 @@ index af81bb243b1..2bc1a293bc7 100644
  	github.com/opencontainers/go-digest => github.com/opencontainers/go-digest v1.0.0
  	github.com/opencontainers/image-spec => github.com/opencontainers/image-spec v1.0.1
 -	github.com/opencontainers/runc => github.com/opencontainers/runc v1.0.2
-+	github.com/opencontainers/runc => github.com/opencontainers/runc v1.1.7
++	github.com/opencontainers/runc => github.com/opencontainers/runc v1.1.6
  	github.com/opencontainers/runtime-spec => github.com/opencontainers/runtime-spec v1.0.3-0.20210326190908-1c3f411f0417
  	github.com/opencontainers/selinux => github.com/opencontainers/selinux v1.8.2
  	github.com/opentracing/opentracing-go => github.com/opentracing/opentracing-go v1.1.0
 diff --git a/go.sum b/go.sum
-index 255d217f20a..857935ae150 100644
+index 255d217f20a..f6df5f2d419 100644
 --- a/go.sum
 +++ b/go.sum
 @@ -374,8 +374,8 @@ github.com/opencontainers/go-digest v1.0.0 h1:apOUWs51W5PlhuyGyz9FCeeBIOUDA/6nW8
@@ -292,8 +292,8 @@ index 255d217f20a..857935ae150 100644
  github.com/opencontainers/image-spec v1.0.1/go.mod h1:BtxoFyWECRxE4U/7sNtV5W15zMzWCbyJoFRP3s7yZA0=
 -github.com/opencontainers/runc v1.0.2 h1:opHZMaswlyxz1OuGpBE53Dwe4/xF7EZTY0A2L/FpCOg=
 -github.com/opencontainers/runc v1.0.2/go.mod h1:aTaHFFwQXuA71CiyxOdFFIorAoemI04suvGRQFzWTD0=
-+github.com/opencontainers/runc v1.1.7 h1:y2EZDS8sNng4Ksf0GUYNhKbTShZJPJg1FiXJNH/uoCk=
-+github.com/opencontainers/runc v1.1.7/go.mod h1:CbUumNnWCuTGFukNXahoo/RFBZvDAgRh/smNYNOhA50=
++github.com/opencontainers/runc v1.1.6 h1:XbhB8IfG/EsnhNvZtNdLB0GBw92GYEFvKlhaJk9jUgA=
++github.com/opencontainers/runc v1.1.6/go.mod h1:CbUumNnWCuTGFukNXahoo/RFBZvDAgRh/smNYNOhA50=
  github.com/opencontainers/runtime-spec v1.0.3-0.20210326190908-1c3f411f0417 h1:3snG66yBm59tKhhSPQrQ/0bCrv1LQbKt40LnUPiUxdc=
  github.com/opencontainers/runtime-spec v1.0.3-0.20210326190908-1c3f411f0417/go.mod h1:jwyrGlmzljRJv/Fgzds9SsS/C5hL+LL3ko9hs6T5lQ0=
  github.com/opencontainers/selinux v1.8.2 h1:c4ca10UMgRcvZ6h0K4HtS15UaVSBEaE+iln2LVpAuGc=
@@ -6894,7 +6894,7 @@ index e7f9c462635..40a81dd5a86 100644
  
  func NewStats() *Stats {
 diff --git a/vendor/github.com/opencontainers/runc/libcontainer/cgroups/systemd/common.go b/vendor/github.com/opencontainers/runc/libcontainer/cgroups/systemd/common.go
-index 06c6c2e95a6..5d561facebc 100644
+index 06c6c2e95a6..50746ae0c56 100644
 --- a/vendor/github.com/opencontainers/runc/libcontainer/cgroups/systemd/common.go
 +++ b/vendor/github.com/opencontainers/runc/libcontainer/cgroups/systemd/common.go
 @@ -3,6 +3,7 @@ package systemd
@@ -6949,15 +6949,6 @@ index 06c6c2e95a6..5d561facebc 100644
  	}
  	// Couldn't find the device group.
  	return "", nil
-@@ -176,7 +177,7 @@ func allowAllDevices() []systemdDbus.Property {
- 
- // generateDeviceProperties takes the configured device rules and generates a
- // corresponding set of systemd properties to configure the devices correctly.
--func generateDeviceProperties(r *configs.Resources) ([]systemdDbus.Property, error) {
-+func generateDeviceProperties(r *configs.Resources, sdVer int) ([]systemdDbus.Property, error) {
- 	if r.SkipDevices {
- 		return nil, nil
- 	}
 @@ -192,12 +193,12 @@ func generateDeviceProperties(r *configs.Resources) ([]systemdDbus.Property, err
  	configEmu := &cgroupdevices.Emulator{}
  	for _, rule := range r.Devices {
@@ -6996,21 +6987,7 @@ index 06c6c2e95a6..5d561facebc 100644
  		}
  
  		entry := deviceAllowEntry{
-@@ -237,9 +238,10 @@ func generateDeviceProperties(r *configs.Resources) ([]systemdDbus.Property, err
- 		// trickery to convert things:
- 		//
- 		//  * Concrete rules with non-wildcard major/minor numbers have to use
--		//    /dev/{block,char} paths. This is slightly odd because it means
--		//    that we cannot add whitelist rules for devices that don't exist,
--		//    but there's not too much we can do about that.
-+		//    /dev/{block,char}/MAJOR:minor paths. Before v240, systemd uses
-+		//    stat(2) on such paths to look up device properties, meaning we
-+		//    cannot add whitelist rules for devices that don't exist. Since v240,
-+		//    device properties are parsed from the path string.
- 		//
- 		//    However, path globbing is not support for path-based rules so we
- 		//    need to handle wildcards in some other manner.
-@@ -271,7 +273,7 @@ func generateDeviceProperties(r *configs.Resources) ([]systemdDbus.Property, err
+@@ -271,7 +272,7 @@ func generateDeviceProperties(r *configs.Resources) ([]systemdDbus.Property, err
  			// "_ n:* _" rules require a device group from /proc/devices.
  			group, err := findDeviceGroup(rule.Type, rule.Major)
  			if err != nil {
@@ -7019,25 +6996,32 @@ index 06c6c2e95a6..5d561facebc 100644
  			}
  			if group == "" {
  				// Couldn't find a group.
-@@ -287,6 +289,17 @@ func generateDeviceProperties(r *configs.Resources) ([]systemdDbus.Property, err
+@@ -287,6 +288,24 @@ func generateDeviceProperties(r *configs.Resources) ([]systemdDbus.Property, err
  			case devices.CharDevice:
  				entry.Path = fmt.Sprintf("/dev/char/%d:%d", rule.Major, rule.Minor)
  			}
-+			if sdVer < 240 {
-+				// Old systemd versions use stat(2) on path to find out device major:minor
-+				// numbers and type. If the path doesn't exist, it will not add the rule,
-+				// emitting a warning instead.
-+				// Since all of this logic is best-effort anyway (we manually set these
-+				// rules separately to systemd) we can safely skip entries that don't
-+				// have a corresponding path.
-+				if _, err := os.Stat(entry.Path); err != nil {
++			// systemd will issue a warning if the path we give here doesn't exist.
++			// Since all of this logic is best-effort anyway (we manually set these
++			// rules separately to systemd) we can safely skip entries that don't
++			// have a corresponding path.
++			if _, err := os.Stat(entry.Path); err != nil {
++				// Also check /sys/dev so that we don't depend on /dev/{block,char}
++				// being populated. (/dev/{block,char} is populated by udev, which
++				// isn't strictly required for systemd). Ironically, this happens most
++				// easily when starting containerd within a runc created container
++				// itself.
++
++				// We don't bother with securejoin here because we create entry.Path
++				// right above here, so we know it's safe.
++				if _, err := os.Stat("/sys" + entry.Path); err != nil {
++					logrus.Warnf("skipping device %s for systemd: %s", entry.Path, err)
 +					continue
 +				}
 +			}
  		}
  		deviceAllowList = append(deviceAllowList, entry)
  	}
-@@ -334,32 +347,52 @@ func isUnitExists(err error) bool {
+@@ -334,32 +353,52 @@ func isUnitExists(err error) bool {
  	return isDbusError(err, "org.freedesktop.systemd1.UnitExists")
  }
  
@@ -7106,7 +7090,7 @@ index 06c6c2e95a6..5d561facebc 100644
  	return nil
  }
  
-@@ -449,10 +482,13 @@ func systemdVersionAtoi(verStr string) (int, error) {
+@@ -449,10 +488,13 @@ func systemdVersionAtoi(verStr string) (int, error) {
  	re := regexp.MustCompile(`v?([0-9]+)`)
  	matches := re.FindStringSubmatch(verStr)
  	if len(matches) < 2 {
@@ -7394,7 +7378,7 @@ index ddeaf664263..0f50f76eee4 100644
  	scanner := bufio.NewScanner(bytes.NewReader(b))
  	for scanner.Scan() {
 diff --git a/vendor/github.com/opencontainers/runc/libcontainer/cgroups/systemd/v1.go b/vendor/github.com/opencontainers/runc/libcontainer/cgroups/systemd/v1.go
-index cd4720c5d44..fe036b3bda5 100644
+index cd4720c5d44..046c3056fba 100644
 --- a/vendor/github.com/opencontainers/runc/libcontainer/cgroups/systemd/v1.go
 +++ b/vendor/github.com/opencontainers/runc/libcontainer/cgroups/systemd/v1.go
 @@ -1,5 +1,3 @@
@@ -7431,7 +7415,7 @@ index cd4720c5d44..fe036b3bda5 100644
  }
  
  type subsystem interface {
-@@ -59,12 +70,14 @@ var legacySubsystems = []subsystem{
+@@ -59,6 +70,8 @@ var legacySubsystems = []subsystem{
  	&fs.NetPrioGroup{},
  	&fs.NetClsGroup{},
  	&fs.NameGroup{GroupName: "name=systemd"},
@@ -7440,13 +7424,6 @@ index cd4720c5d44..fe036b3bda5 100644
  }
  
  func genV1ResourcesProperties(r *configs.Resources, cm *dbusConnManager) ([]systemdDbus.Property, error) {
- 	var properties []systemdDbus.Property
- 
--	deviceProperties, err := generateDeviceProperties(r)
-+	deviceProperties, err := generateDeviceProperties(r, systemdVersion(cm))
- 	if err != nil {
- 		return nil, err
- 	}
 @@ -100,6 +113,53 @@ func genV1ResourcesProperties(r *configs.Resources, cm *dbusConnManager) ([]syst
  	return properties, nil
  }
@@ -7646,7 +7623,7 @@ index cd4720c5d44..fe036b3bda5 100644
  	}
  	if r.Unified != nil {
 diff --git a/vendor/github.com/opencontainers/runc/libcontainer/cgroups/systemd/v2.go b/vendor/github.com/opencontainers/runc/libcontainer/cgroups/systemd/v2.go
-index 8176ce5b2eb..919e5632f34 100644
+index 8176ce5b2eb..94d24ee4502 100644
 --- a/vendor/github.com/opencontainers/runc/libcontainer/cgroups/systemd/v2.go
 +++ b/vendor/github.com/opencontainers/runc/libcontainer/cgroups/systemd/v2.go
 @@ -1,8 +1,8 @@
@@ -7711,15 +7688,6 @@ index 8176ce5b2eb..919e5632f34 100644
  }
  
  // unifiedResToSystemdProps tries to convert from Cgroup.Resources.Unified
-@@ -172,7 +182,7 @@ func genV2ResourcesProperties(r *configs.Resources, cm *dbusConnManager) ([]syst
- 	//       aren't the end of the world, but it is a bit concerning. However
- 	//       it's unclear if systemd removes all eBPF programs attached when
- 	//       doing SetUnitProperties...
--	deviceProperties, err := generateDeviceProperties(r)
-+	deviceProperties, err := generateDeviceProperties(r, systemdVersion(cm))
- 	if err != nil {
- 		return nil, err
- 	}
 @@ -234,12 +244,8 @@ func (m *unifiedManager) Apply(pid int) error {
  		properties []systemdDbus.Property
  	)
@@ -14823,7 +14791,7 @@ index 1576f2d4ab6..220d0b43937 100644
  	}
  	return nil
 diff --git a/vendor/modules.txt b/vendor/modules.txt
-index 9d48da39861..8096e53d9d9 100644
+index 9d48da39861..79f7c0a7366 100644
 --- a/vendor/modules.txt
 +++ b/vendor/modules.txt
 @@ -179,11 +179,11 @@ github.com/chai2010/gettext-go/gettext
@@ -14882,7 +14850,7 @@ index 9d48da39861..8096e53d9d9 100644
  github.com/opencontainers/image-spec/specs-go/v1
 -# github.com/opencontainers/runc v1.0.2 => github.com/opencontainers/runc v1.0.2
 -## explicit; go 1.13
-+# github.com/opencontainers/runc v1.1.7 => github.com/opencontainers/runc v1.1.7
++# github.com/opencontainers/runc v1.1.6 => github.com/opencontainers/runc v1.1.6
 +## explicit; go 1.17
  github.com/opencontainers/runc/libcontainer
  github.com/opencontainers/runc/libcontainer/apparmor
@@ -14944,7 +14912,7 @@ index 9d48da39861..8096e53d9d9 100644
  # github.com/opencontainers/go-digest => github.com/opencontainers/go-digest v1.0.0
  # github.com/opencontainers/image-spec => github.com/opencontainers/image-spec v1.0.1
 -# github.com/opencontainers/runc => github.com/opencontainers/runc v1.0.2
-+# github.com/opencontainers/runc => github.com/opencontainers/runc v1.1.7
++# github.com/opencontainers/runc => github.com/opencontainers/runc v1.1.6
  # github.com/opencontainers/runtime-spec => github.com/opencontainers/runtime-spec v1.0.3-0.20210326190908-1c3f411f0417
  # github.com/opencontainers/selinux => github.com/opencontainers/selinux v1.8.2
  # github.com/opentracing/opentracing-go => github.com/opentracing/opentracing-go v1.1.0
