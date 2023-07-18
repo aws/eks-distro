@@ -1,59 +1,59 @@
-From 1a14274c1b16a71cea22bb6cc5134ee152d51b53 Mon Sep 17 00:00:00 2001
+From a3a27e2d029d233e8ef27202c99c91a0dc2ea2bf Mon Sep 17 00:00:00 2001
 From: Kirsten Schumy <ksschumy@amazon.com>
-Date: Tue, 18 Jul 2023 11:20:43 -0700
-Subject: [PATCH] Updated runc to 1.1.6 and replace dep
+Date: Tue, 18 Jul 2023 11:45:21 -0700
+Subject: [PATCH] Updated runc to 1.1.6 and replace deps
 
 ---
- go.mod                                        |  26 +-
- go.sum                                        |   8 +-
+ go.mod                                        |  40 +-
+ go.sum                                        |  12 +-
  staging/src/k8s.io/api/go.mod                 |   4 +-
  staging/src/k8s.io/api/go.sum                 |  18 +-
- .../src/k8s.io/apiextensions-apiserver/go.mod |   6 +-
+ .../src/k8s.io/apiextensions-apiserver/go.mod |   7 +-
  .../src/k8s.io/apiextensions-apiserver/go.sum | 101 +----
  staging/src/k8s.io/apimachinery/go.mod        |   9 +-
  staging/src/k8s.io/apimachinery/go.sum        |  35 +-
- staging/src/k8s.io/apiserver/go.mod           |   6 +-
+ staging/src/k8s.io/apiserver/go.mod           |   7 +-
  staging/src/k8s.io/apiserver/go.sum           | 102 +----
  staging/src/k8s.io/cli-runtime/go.mod         |   6 +-
  staging/src/k8s.io/cli-runtime/go.sum         |  92 +----
  staging/src/k8s.io/client-go/go.mod           |   6 +-
  staging/src/k8s.io/client-go/go.sum           |  82 +---
- staging/src/k8s.io/cloud-provider/go.mod      |   6 +-
+ staging/src/k8s.io/cloud-provider/go.mod      |   9 +-
  staging/src/k8s.io/cloud-provider/go.sum      |  99 +----
  staging/src/k8s.io/cluster-bootstrap/go.mod   |   4 +-
  staging/src/k8s.io/cluster-bootstrap/go.sum   |  18 +-
  .../src/k8s.io/code-generator/examples/go.sum |  17 +-
  staging/src/k8s.io/code-generator/go.mod      |  10 +-
  staging/src/k8s.io/code-generator/go.sum      |  32 +-
- staging/src/k8s.io/component-base/go.mod      |   6 +-
+ staging/src/k8s.io/component-base/go.mod      |   9 +-
  staging/src/k8s.io/component-base/go.sum      | 100 +----
  staging/src/k8s.io/component-helpers/go.mod   |   6 +-
  staging/src/k8s.io/component-helpers/go.sum   |  66 +---
- staging/src/k8s.io/controller-manager/go.mod  |   6 +-
+ staging/src/k8s.io/controller-manager/go.mod  |   7 +-
  staging/src/k8s.io/controller-manager/go.sum  |  97 +----
  staging/src/k8s.io/cri-api/go.mod             |  10 +-
  staging/src/k8s.io/cri-api/go.sum             |  28 +-
  staging/src/k8s.io/csi-translation-lib/go.mod |   4 +-
  staging/src/k8s.io/csi-translation-lib/go.sum |  18 +-
- staging/src/k8s.io/kube-aggregator/go.mod     |   6 +-
+ staging/src/k8s.io/kube-aggregator/go.mod     |   7 +-
  staging/src/k8s.io/kube-aggregator/go.sum     |  95 +----
- .../src/k8s.io/kube-controller-manager/go.mod |   4 +-
+ .../src/k8s.io/kube-controller-manager/go.mod |   5 +-
  .../src/k8s.io/kube-controller-manager/go.sum |  18 +-
- staging/src/k8s.io/kube-proxy/go.mod          |   4 +-
+ staging/src/k8s.io/kube-proxy/go.mod          |   5 +-
  staging/src/k8s.io/kube-proxy/go.sum          |  18 +-
- staging/src/k8s.io/kube-scheduler/go.mod      |   4 +-
+ staging/src/k8s.io/kube-scheduler/go.mod      |   5 +-
  staging/src/k8s.io/kube-scheduler/go.sum      |  18 +-
- staging/src/k8s.io/kubectl/go.mod             |   6 +-
+ staging/src/k8s.io/kubectl/go.mod             |  12 +-
  staging/src/k8s.io/kubectl/go.sum             | 100 +----
- staging/src/k8s.io/kubelet/go.mod             |   6 +-
+ staging/src/k8s.io/kubelet/go.mod             |   7 +-
  staging/src/k8s.io/kubelet/go.sum             |  28 +-
- .../src/k8s.io/legacy-cloud-providers/go.mod  |   6 +-
+ .../src/k8s.io/legacy-cloud-providers/go.mod  |   7 +-
  .../src/k8s.io/legacy-cloud-providers/go.sum  |  99 -----
  staging/src/k8s.io/metrics/go.mod             |   6 +-
  staging/src/k8s.io/metrics/go.sum             |  64 +--
- .../src/k8s.io/pod-security-admission/go.mod  |   6 +-
+ .../src/k8s.io/pod-security-admission/go.mod  |   7 +-
  .../src/k8s.io/pod-security-admission/go.sum  |  97 +----
- staging/src/k8s.io/sample-apiserver/go.mod    |   6 +-
+ staging/src/k8s.io/sample-apiserver/go.mod    |   7 +-
  staging/src/k8s.io/sample-apiserver/go.sum    |  95 +----
  staging/src/k8s.io/sample-cli-plugin/go.mod   |   6 +-
  staging/src/k8s.io/sample-cli-plugin/go.sum   |  92 +----
@@ -66,6 +66,14 @@ Subject: [PATCH] Updated runc to 1.1.6 and replace dep
  .../checkpoint-restore/go-criu/v5/main.go     |  14 +-
  .../go-criu/v5/rpc/rpc.pb.go                  | 221 ++++++-----
  .../go-criu/v5/rpc/rpc.proto                  | 239 ++++++++++++
+ .../cadvisor/container/common/helpers.go      |  10 +-
+ .../container/libcontainer/handler.go         |   4 +-
+ .../container/libcontainer/helpers.go         |  11 +-
+ vendor/github.com/google/cadvisor/fs/fs.go    |   4 -
+ vendor/github.com/google/cadvisor/fs/types.go |   9 +-
+ .../google/cadvisor/manager/container.go      |   3 +-
+ .../google/cadvisor/manager/manager.go        |   2 +-
+ .../google/cadvisor/resctrl/utils.go          |   2 +-
  .../runc/libcontainer/README.md               |  18 +-
  .../libcontainer/apparmor/apparmor_linux.go   |   5 +-
  .../apparmor/apparmor_unsupported.go          |   1 +
@@ -183,8 +191,8 @@ Subject: [PATCH] Updated runc to 1.1.6 and replace dep
  .../runc/libcontainer/utils/cmsg.go           |  11 +-
  .../runc/libcontainer/utils/utils.go          |  14 +-
  .../runc/libcontainer/utils/utils_unix.go     |   5 +-
- vendor/modules.txt                            |  30 +-
- 180 files changed, 3690 insertions(+), 4082 deletions(-)
+ vendor/modules.txt                            |  46 +--
+ 188 files changed, 3749 insertions(+), 4125 deletions(-)
  create mode 100644 vendor/github.com/checkpoint-restore/go-criu/v5/features.go
  create mode 100644 vendor/github.com/checkpoint-restore/go-criu/v5/rpc/rpc.proto
  delete mode 100644 vendor/github.com/opencontainers/runc/libcontainer/cgroups/cgroups_unsupported.go
@@ -208,10 +216,20 @@ Subject: [PATCH] Updated runc to 1.1.6 and replace dep
  delete mode 100644 vendor/github.com/opencontainers/runc/libcontainer/system/xattrs_linux.go
 
 diff --git a/go.mod b/go.mod
-index af81bb243b1..1fde345f390 100644
+index af81bb243b1..1c082e03c10 100644
 --- a/go.mod
 +++ b/go.mod
-@@ -37,7 +37,7 @@ require (
+@@ -29,20 +29,20 @@ require (
+ 	github.com/coreos/go-systemd/v22 v22.3.2
+ 	github.com/cpuguy83/go-md2man/v2 v2.0.0
+ 	github.com/davecgh/go-spew v1.1.1
+-	github.com/docker/distribution v2.7.1+incompatible
+-	github.com/docker/docker v20.10.7+incompatible
++	github.com/docker/distribution v2.8.0+incompatible
++	github.com/docker/docker v20.10.12+incompatible
+ 	github.com/docker/go-connections v0.4.0
+ 	github.com/docker/go-units v0.4.0
+ 	github.com/elazarl/goproxy v0.0.0-20180725130230-947c36da3153
  	github.com/emicklei/go-restful v2.9.5+incompatible
  	github.com/evanphx/json-patch v4.12.0+incompatible
  	github.com/fsnotify/fsnotify v1.4.9
@@ -220,6 +238,12 @@ index af81bb243b1..1fde345f390 100644
  	github.com/gogo/protobuf v1.3.2
  	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da
  	github.com/golang/mock v1.5.0
+ 	github.com/golang/protobuf v1.5.2
+-	github.com/google/cadvisor v0.43.1
++	github.com/google/cadvisor v0.44.1
+ 	github.com/google/go-cmp v0.5.5
+ 	github.com/google/gofuzz v1.1.0
+ 	github.com/google/uuid v1.1.2
 @@ -58,8 +58,8 @@ require (
  	github.com/onsi/ginkgo v1.14.0
  	github.com/onsi/gomega v1.10.1
@@ -254,8 +278,9 @@ index af81bb243b1..1fde345f390 100644
 +	github.com/cilium/ebpf v0.7.0 // indirect
  	github.com/containerd/cgroups v1.0.1 // indirect
 -	github.com/containerd/console v1.0.2 // indirect
+-	github.com/containerd/containerd v1.4.11 // indirect
 +	github.com/containerd/console v1.0.3 // indirect
- 	github.com/containerd/containerd v1.4.11 // indirect
++	github.com/containerd/containerd v1.4.12 // indirect
  	github.com/containerd/ttrpc v1.0.2 // indirect
  	github.com/coredns/caddy v1.1.0 // indirect
  	github.com/coreos/go-semver v0.3.0 // indirect
@@ -264,15 +289,26 @@ index af81bb243b1..1fde345f390 100644
  	github.com/daviddengcn/go-colortext v0.0.0-20160507010035-511bcaf42ccd // indirect
  	github.com/dustin/go-humanize v1.0.0 // indirect
  	github.com/euank/go-kmsg-parser v2.0.0+incompatible // indirect
-@@ -202,7 +202,7 @@ require (
+@@ -202,8 +202,8 @@ require (
  	github.com/mitchellh/go-wordwrap v1.0.0 // indirect
  	github.com/mitchellh/mapstructure v1.4.1 // indirect
  	github.com/moby/spdystream v0.2.0 // indirect
 -	github.com/moby/sys/mountinfo v0.4.1 // indirect
+-	github.com/moby/term v0.0.0-20210610120745-9d4ed1856297 // indirect
 +	github.com/moby/sys/mountinfo v0.5.0 // indirect
- 	github.com/moby/term v0.0.0-20210610120745-9d4ed1856297 // indirect
++	github.com/moby/term v0.0.0-20210619224110-3f7ff695adc6 // indirect
  	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
  	github.com/modern-go/reflect2 v1.0.2 // indirect
+ 	github.com/mohae/deepcopy v0.0.0-20170603005431-491d3605edfb // indirect
+@@ -211,7 +211,7 @@ require (
+ 	github.com/morikuni/aec v1.0.0 // indirect
+ 	github.com/mxk/go-flowrate v0.0.0-20140419014527-cca7078d478f // indirect
+ 	github.com/nxadm/tail v1.4.4 // indirect
+-	github.com/opencontainers/image-spec v1.0.1 // indirect
++	github.com/opencontainers/image-spec v1.0.2 // indirect
+ 	github.com/opencontainers/runtime-spec v1.0.3-0.20210326190908-1c3f411f0417 // indirect
+ 	github.com/peterbourgon/diskv v2.0.1+incompatible // indirect
+ 	github.com/pquerna/cachecontrol v0.0.0-20171018203845-0dec1b30a021 // indirect
 @@ -219,7 +219,7 @@ require (
  	github.com/rubiojr/go-vhd v0.0.0-20200706105327-02e210299021 // indirect
  	github.com/russross/blackfriday v1.5.2 // indirect
@@ -291,6 +327,15 @@ index af81bb243b1..1fde345f390 100644
  	github.com/chzyer/logex => github.com/chzyer/logex v1.1.10
  	github.com/chzyer/readline => github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e
  	github.com/chzyer/test => github.com/chzyer/test v0.0.0-20180213035817-a1ea475d72b1
+@@ -397,7 +397,7 @@ replace (
+ 	github.com/golang/protobuf => github.com/golang/protobuf v1.5.2
+ 	github.com/golangplus/testing => github.com/golangplus/testing v0.0.0-20180327235837-af21d9c3145e
+ 	github.com/google/btree => github.com/google/btree v1.0.1
+-	github.com/google/cadvisor => github.com/google/cadvisor v0.43.1
++	github.com/google/cadvisor => github.com/google/cadvisor v0.44.1
+ 	github.com/google/cel-go => github.com/google/cel-go v0.9.0
+ 	github.com/google/cel-spec => github.com/google/cel-spec v0.6.0
+ 	github.com/google/go-cmp => github.com/google/go-cmp v0.5.5
 @@ -498,7 +498,7 @@ replace (
  	github.com/onsi/gomega => github.com/onsi/gomega v1.10.1
  	github.com/opencontainers/go-digest => github.com/opencontainers/go-digest v1.0.0
@@ -301,7 +346,7 @@ index af81bb243b1..1fde345f390 100644
  	github.com/opencontainers/selinux => github.com/opencontainers/selinux v1.8.2
  	github.com/opentracing/opentracing-go => github.com/opentracing/opentracing-go v1.1.0
 diff --git a/go.sum b/go.sum
-index 255d217f20a..3a37fcec2c0 100644
+index 255d217f20a..4761bde835e 100644
 --- a/go.sum
 +++ b/go.sum
 @@ -83,8 +83,8 @@ github.com/cespare/xxhash/v2 v2.1.1 h1:6MnRN8NT7+YBpUIWxHtefFZOKTAPgGjpQSxqLNn0+
@@ -315,6 +360,17 @@ index 255d217f20a..3a37fcec2c0 100644
  github.com/chzyer/logex v1.1.10/go.mod h1:+Ywpsq7O8HXn0nuIou7OrIPyXbp3wmkHB+jjWRnGsAI=
  github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e/go.mod h1:nSuG5e5PlCu98SY8svDHJxuZscDgtXS6KTTbou5AhLI=
  github.com/chzyer/test v0.0.0-20180213035817-a1ea475d72b1/go.mod h1:Q3SI9o4m/ZMnBNeIyt5eFwwo7qiLfzFZmjNmxjkiQlU=
+@@ -216,8 +216,8 @@ github.com/golang/protobuf v1.5.2/go.mod h1:XVQd3VNwM+JqD3oG2Ue2ip4fOMUkwXdXDdiu
+ github.com/golangplus/testing v0.0.0-20180327235837-af21d9c3145e h1:KhcknUwkWHKZPbFy2P7jH5LKJ3La+0ZeknkkmrSgqb0=
+ github.com/google/btree v1.0.1 h1:gK4Kx5IaGY9CD5sPJ36FHiBJ6ZXl0kilRiiCj+jdYp4=
+ github.com/google/btree v1.0.1/go.mod h1:xXMiIv4Fb/0kKde4SpL7qlzvu5cMJDRkFDxJfI9uaxA=
+-github.com/google/cadvisor v0.43.1 h1:VB4/hybCQlUZJWNhZJC9yQIapz9N6E29R8bKCu99pZM=
+-github.com/google/cadvisor v0.43.1/go.mod h1:+RdMSbc3FVr5NYCD2dOEJy/LI0jYJ/0xJXkzWXEyiFQ=
++github.com/google/cadvisor v0.44.1 h1:hsAxDZOY+5xSCXH12d/G9cxYTfP+32cMT3J7aatrgDY=
++github.com/google/cadvisor v0.44.1/go.mod h1:GQ9KQfz0iNHQk3D6ftzJWK4TXabfIgM10Oy3FkR+Gzg=
+ github.com/google/cel-go v0.9.0 h1:u1hg7lcZ/XWw2d3aV1jFS30ijQQ6q0/h1C2ZBeBD1gY=
+ github.com/google/cel-go v0.9.0/go.mod h1:U7ayypeSkw23szu4GaQTPJGx66c20mx8JklMSxrmI1w=
+ github.com/google/cel-spec v0.6.0/go.mod h1:Nwjgxy5CbjlPrtCWjeDjUyKMl8w41YBYGjsyDdqk0xA=
 @@ -374,8 +374,8 @@ github.com/opencontainers/go-digest v1.0.0 h1:apOUWs51W5PlhuyGyz9FCeeBIOUDA/6nW8
  github.com/opencontainers/go-digest v1.0.0/go.mod h1:0JzlMkj0TRzQZfJkVvzbP0HBR3IKzErnv2BNG4W4MAM=
  github.com/opencontainers/image-spec v1.0.1 h1:JMemWkRwHx4Zj+fVxWoMCFm/8sYGGrUVojFA6h/TRcI=
@@ -394,7 +450,7 @@ index d1dd4785640..a062608a473 100644
  golang.org/x/xerrors v0.0.0-20191011141410-1b5146add898/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
  golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
 diff --git a/staging/src/k8s.io/apiextensions-apiserver/go.mod b/staging/src/k8s.io/apiextensions-apiserver/go.mod
-index 061335a323e..396bb4d004c 100644
+index 061335a323e..cb536646377 100644
 --- a/staging/src/k8s.io/apiextensions-apiserver/go.mod
 +++ b/staging/src/k8s.io/apiextensions-apiserver/go.mod
 @@ -107,10 +107,10 @@ require (
@@ -410,10 +466,11 @@ index 061335a323e..396bb4d004c 100644
  	golang.org/x/term v0.5.0 // indirect
  	golang.org/x/text v0.7.0 // indirect
  	golang.org/x/time v0.0.0-20220210224613-90d013bbcef8 // indirect
-@@ -124,6 +124,8 @@ require (
+@@ -124,6 +124,9 @@ require (
  )
  
  replace (
++	github.com/moby/term => github.com/moby/term v0.0.0-20210610120745-9d4ed1856297
 +	golang.org/x/net => golang.org/x/net v0.7.0
 +	golang.org/x/sys => golang.org/x/sys v0.5.0
  	k8s.io/api => ../api
@@ -671,7 +728,7 @@ index 7a4f4a01468..ba7c33a0501 100644
  golang.org/x/xerrors v0.0.0-20191011141410-1b5146add898/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
  golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
 diff --git a/staging/src/k8s.io/apiserver/go.mod b/staging/src/k8s.io/apiserver/go.mod
-index b74106ff819..e506340db1f 100644
+index b74106ff819..90fc85b2ec8 100644
 --- a/staging/src/k8s.io/apiserver/go.mod
 +++ b/staging/src/k8s.io/apiserver/go.mod
 @@ -32,9 +32,9 @@ require (
@@ -686,10 +743,11 @@ index b74106ff819..e506340db1f 100644
  	google.golang.org/grpc v1.40.0
  	gopkg.in/natefinch/lumberjack.v2 v2.0.0
  	gopkg.in/square/go-jose.v2 v2.2.2
-@@ -117,6 +117,8 @@ require (
+@@ -117,6 +117,9 @@ require (
  )
  
  replace (
++	github.com/moby/term => github.com/moby/term v0.0.0-20210610120745-9d4ed1856297
 +	golang.org/x/net => golang.org/x/net v0.7.0
 +	golang.org/x/sys => golang.org/x/sys v0.5.0
  	k8s.io/api => ../api
@@ -1181,9 +1239,18 @@ index d9f03ac14b1..6fec548c242 100644
  golang.org/x/xerrors v0.0.0-20191011141410-1b5146add898/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
  golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
 diff --git a/staging/src/k8s.io/cloud-provider/go.mod b/staging/src/k8s.io/cloud-provider/go.mod
-index 57c3881b5ca..c7ca018e9e7 100644
+index 57c3881b5ca..40280805f12 100644
 --- a/staging/src/k8s.io/cloud-provider/go.mod
 +++ b/staging/src/k8s.io/cloud-provider/go.mod
+@@ -53,7 +53,7 @@ require (
+ 	github.com/json-iterator/go v1.1.12 // indirect
+ 	github.com/mailru/easyjson v0.7.6 // indirect
+ 	github.com/matttproud/golang_protobuf_extensions v1.0.2-0.20181231171920-c182affec369 // indirect
+-	github.com/moby/term v0.0.0-20210610120745-9d4ed1856297 // indirect
++	github.com/moby/term v0.0.0-20210619224110-3f7ff695adc6 // indirect
+ 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
+ 	github.com/modern-go/reflect2 v1.0.2 // indirect
+ 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 @@ -81,10 +81,10 @@ require (
  	go.uber.org/multierr v1.6.0 // indirect
  	go.uber.org/zap v1.19.0 // indirect
@@ -1197,10 +1264,11 @@ index 57c3881b5ca..c7ca018e9e7 100644
  	golang.org/x/term v0.5.0 // indirect
  	golang.org/x/text v0.7.0 // indirect
  	golang.org/x/time v0.0.0-20220210224613-90d013bbcef8 // indirect
-@@ -104,6 +104,8 @@ require (
+@@ -104,6 +104,9 @@ require (
  )
  
  replace (
++	github.com/moby/term => github.com/moby/term v0.0.0-20210610120745-9d4ed1856297
 +	golang.org/x/net => golang.org/x/net v0.7.0
 +	golang.org/x/sys => golang.org/x/sys v0.5.0
  	k8s.io/api => ../api
@@ -1584,9 +1652,18 @@ index 76655b0be40..256b698ec4a 100644
  golang.org/x/text v0.7.0/go.mod h1:mrYo+phRRbMaCq/xk9113O4dZlRixOauAjOtrjsXDZ8=
  golang.org/x/tools v0.0.0-20180917221912-90fa682c2a6e/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
 diff --git a/staging/src/k8s.io/component-base/go.mod b/staging/src/k8s.io/component-base/go.mod
-index 66205fa1135..a2162af80ea 100644
+index 66205fa1135..0ea33b18d03 100644
 --- a/staging/src/k8s.io/component-base/go.mod
 +++ b/staging/src/k8s.io/component-base/go.mod
+@@ -9,7 +9,7 @@ require (
+ 	github.com/go-logr/logr v1.2.0
+ 	github.com/go-logr/zapr v1.2.0
+ 	github.com/google/go-cmp v0.5.5
+-	github.com/moby/term v0.0.0-20210610120745-9d4ed1856297
++	github.com/moby/term v0.0.0-20210619224110-3f7ff695adc6
+ 	github.com/prometheus/client_golang v1.11.0
+ 	github.com/prometheus/client_model v0.2.0
+ 	github.com/prometheus/common v0.28.0
 @@ -23,7 +23,7 @@ require (
  	go.opentelemetry.io/otel/sdk v0.20.0
  	go.opentelemetry.io/otel/trace v0.20.0
@@ -1605,10 +1682,11 @@ index 66205fa1135..a2162af80ea 100644
  	golang.org/x/oauth2 v0.0.0-20211104180415-d3ed0bb246c8 // indirect
  	golang.org/x/term v0.5.0 // indirect
  	golang.org/x/text v0.7.0 // indirect
-@@ -77,6 +77,8 @@ require (
+@@ -77,6 +77,9 @@ require (
  )
  
  replace (
++	github.com/moby/term => github.com/moby/term v0.0.0-20210610120745-9d4ed1856297
 +	golang.org/x/net => golang.org/x/net v0.7.0
 +	golang.org/x/sys => golang.org/x/sys v0.5.0
  	k8s.io/api => ../api
@@ -1904,7 +1982,7 @@ index 1abc7e962c4..c58b8971ff6 100644
  golang.org/x/xerrors v0.0.0-20191011141410-1b5146add898/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
  golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
 diff --git a/staging/src/k8s.io/controller-manager/go.mod b/staging/src/k8s.io/controller-manager/go.mod
-index 7d67eb23cab..068baa55807 100644
+index 7d67eb23cab..818d39d0df2 100644
 --- a/staging/src/k8s.io/controller-manager/go.mod
 +++ b/staging/src/k8s.io/controller-manager/go.mod
 @@ -77,9 +77,9 @@ require (
@@ -1919,10 +1997,11 @@ index 7d67eb23cab..068baa55807 100644
  	golang.org/x/term v0.5.0 // indirect
  	golang.org/x/text v0.7.0 // indirect
  	golang.org/x/time v0.0.0-20220210224613-90d013bbcef8 // indirect
-@@ -98,6 +98,8 @@ require (
+@@ -98,6 +98,9 @@ require (
  )
  
  replace (
++	github.com/moby/term => github.com/moby/term v0.0.0-20210610120745-9d4ed1856297
 +	golang.org/x/net => golang.org/x/net v0.7.0
 +	golang.org/x/sys => golang.org/x/sys v0.5.0
  	k8s.io/api => ../api
@@ -2237,7 +2316,7 @@ index 07acb0e67bb..d297274cead 100644
  golang.org/x/xerrors v0.0.0-20191011141410-1b5146add898/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
  golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
 diff --git a/staging/src/k8s.io/kube-aggregator/go.mod b/staging/src/k8s.io/kube-aggregator/go.mod
-index c1824c58f15..8075086c4dd 100644
+index c1824c58f15..05b1e8b6d51 100644
 --- a/staging/src/k8s.io/kube-aggregator/go.mod
 +++ b/staging/src/k8s.io/kube-aggregator/go.mod
 @@ -11,7 +11,7 @@ require (
@@ -2258,10 +2337,11 @@ index c1824c58f15..8075086c4dd 100644
  	golang.org/x/term v0.5.0 // indirect
  	golang.org/x/text v0.7.0 // indirect
  	golang.org/x/time v0.0.0-20220210224613-90d013bbcef8 // indirect
-@@ -105,6 +105,8 @@ require (
+@@ -105,6 +105,9 @@ require (
  )
  
  replace (
++	github.com/moby/term => github.com/moby/term v0.0.0-20210610120745-9d4ed1856297
 +	golang.org/x/net => golang.org/x/net v0.7.0
 +	golang.org/x/sys => golang.org/x/sys v0.5.0
  	k8s.io/api => ../api
@@ -2407,7 +2487,7 @@ index ec524f67968..690a46f72a7 100644
  golang.org/x/text v0.7.0/go.mod h1:mrYo+phRRbMaCq/xk9113O4dZlRixOauAjOtrjsXDZ8=
  golang.org/x/time v0.0.0-20181108054448-85acf8d2951c/go.mod h1:tRJNPiyCQ0inRvYxbN9jk5I+vvW/OXSQhTDSoE431IQ=
 diff --git a/staging/src/k8s.io/kube-controller-manager/go.mod b/staging/src/k8s.io/kube-controller-manager/go.mod
-index bec6fc84a6c..bd14d67dbd0 100644
+index bec6fc84a6c..0c80929af1b 100644
 --- a/staging/src/k8s.io/kube-controller-manager/go.mod
 +++ b/staging/src/k8s.io/kube-controller-manager/go.mod
 @@ -19,7 +19,7 @@ require (
@@ -2419,10 +2499,11 @@ index bec6fc84a6c..bd14d67dbd0 100644
  	golang.org/x/text v0.7.0 // indirect
  	gopkg.in/inf.v0 v0.9.1 // indirect
  	gopkg.in/yaml.v2 v2.4.0 // indirect
-@@ -31,6 +31,8 @@ require (
+@@ -31,6 +31,9 @@ require (
  )
  
  replace (
++	github.com/moby/term => github.com/moby/term v0.0.0-20210610120745-9d4ed1856297
 +	golang.org/x/net => golang.org/x/net v0.7.0
 +	golang.org/x/sys => golang.org/x/sys v0.5.0
  	k8s.io/api => ../api
@@ -2474,7 +2555,7 @@ index 366d2931761..81d775f5117 100644
  golang.org/x/xerrors v0.0.0-20191011141410-1b5146add898/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
  golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
 diff --git a/staging/src/k8s.io/kube-proxy/go.mod b/staging/src/k8s.io/kube-proxy/go.mod
-index 41a063bf403..98c80b73f49 100644
+index 41a063bf403..9fd9208957f 100644
 --- a/staging/src/k8s.io/kube-proxy/go.mod
 +++ b/staging/src/k8s.io/kube-proxy/go.mod
 @@ -18,7 +18,7 @@ require (
@@ -2486,10 +2567,11 @@ index 41a063bf403..98c80b73f49 100644
  	golang.org/x/text v0.7.0 // indirect
  	gopkg.in/inf.v0 v0.9.1 // indirect
  	gopkg.in/yaml.v2 v2.4.0 // indirect
-@@ -30,6 +30,8 @@ require (
+@@ -30,6 +30,9 @@ require (
  )
  
  replace (
++	github.com/moby/term => github.com/moby/term v0.0.0-20210610120745-9d4ed1856297
 +	golang.org/x/net => golang.org/x/net v0.7.0
 +	golang.org/x/sys => golang.org/x/sys v0.5.0
  	k8s.io/api => ../api
@@ -2541,7 +2623,7 @@ index 13000ae8f98..55238eccafa 100644
  golang.org/x/xerrors v0.0.0-20191011141410-1b5146add898/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
  golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
 diff --git a/staging/src/k8s.io/kube-scheduler/go.mod b/staging/src/k8s.io/kube-scheduler/go.mod
-index ff3a7f27ed0..0ef3a90b4ea 100644
+index ff3a7f27ed0..d97eb4417e2 100644
 --- a/staging/src/k8s.io/kube-scheduler/go.mod
 +++ b/staging/src/k8s.io/kube-scheduler/go.mod
 @@ -20,7 +20,7 @@ require (
@@ -2553,10 +2635,11 @@ index ff3a7f27ed0..0ef3a90b4ea 100644
  	golang.org/x/text v0.7.0 // indirect
  	gopkg.in/inf.v0 v0.9.1 // indirect
  	gopkg.in/yaml.v2 v2.4.0 // indirect
-@@ -31,6 +31,8 @@ require (
+@@ -31,6 +31,9 @@ require (
  )
  
  replace (
++	github.com/moby/term => github.com/moby/term v0.0.0-20210610120745-9d4ed1856297
 +	golang.org/x/net => golang.org/x/net v0.7.0
 +	golang.org/x/sys => golang.org/x/sys v0.5.0
  	k8s.io/api => ../api
@@ -2608,10 +2691,27 @@ index 13000ae8f98..55238eccafa 100644
  golang.org/x/xerrors v0.0.0-20191011141410-1b5146add898/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
  golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
 diff --git a/staging/src/k8s.io/kubectl/go.mod b/staging/src/k8s.io/kubectl/go.mod
-index fbc7236af3a..6d8727aa6f4 100644
+index fbc7236af3a..78f50e6c67b 100644
 --- a/staging/src/k8s.io/kubectl/go.mod
 +++ b/staging/src/k8s.io/kubectl/go.mod
-@@ -27,7 +27,7 @@ require (
+@@ -9,7 +9,7 @@ require (
+ 	github.com/chai2010/gettext-go v0.0.0-20160711120539-c6fed771bfd5
+ 	github.com/davecgh/go-spew v1.1.1
+ 	github.com/daviddengcn/go-colortext v0.0.0-20160507010035-511bcaf42ccd
+-	github.com/docker/distribution v2.7.1+incompatible
++	github.com/docker/distribution v2.8.0+incompatible
+ 	github.com/evanphx/json-patch v4.12.0+incompatible
+ 	github.com/exponent-io/jsonpath v0.0.0-20151013193312-d6023ce2651d
+ 	github.com/fatih/camelcase v1.0.0
+@@ -20,14 +20,14 @@ require (
+ 	github.com/liggitt/tabwriter v0.0.0-20181228230101-89fcab3d43de
+ 	github.com/lithammer/dedent v1.1.0
+ 	github.com/mitchellh/go-wordwrap v1.0.0
+-	github.com/moby/term v0.0.0-20210610120745-9d4ed1856297
++	github.com/moby/term v0.0.0-20210619224110-3f7ff695adc6
+ 	github.com/onsi/ginkgo v1.14.0
+ 	github.com/onsi/gomega v1.10.1
+ 	github.com/russross/blackfriday v1.5.2
  	github.com/spf13/cobra v1.2.1
  	github.com/spf13/pflag v1.0.5
  	github.com/stretchr/testify v1.8.0
@@ -2629,10 +2729,12 @@ index fbc7236af3a..6d8727aa6f4 100644
  	golang.org/x/oauth2 v0.0.0-20211104180415-d3ed0bb246c8 // indirect
  	golang.org/x/term v0.5.0 // indirect
  	golang.org/x/text v0.7.0 // indirect
-@@ -96,6 +96,8 @@ require (
+@@ -96,6 +96,10 @@ require (
  )
  
  replace (
++	github.com/docker/distribution => github.com/docker/distribution v2.7.1+incompatible
++	github.com/moby/term => github.com/moby/term v0.0.0-20210610120745-9d4ed1856297
 +	golang.org/x/net => golang.org/x/net v0.7.0
 +	golang.org/x/sys => golang.org/x/sys v0.5.0
  	k8s.io/api => ../api
@@ -2790,7 +2892,7 @@ index 5492f8a9c46..931deb655c4 100644
  golang.org/x/xerrors v0.0.0-20191011141410-1b5146add898/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
  golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
 diff --git a/staging/src/k8s.io/kubelet/go.mod b/staging/src/k8s.io/kubelet/go.mod
-index 505845e57c3..99158361dc8 100644
+index 505845e57c3..cf347c0aa2c 100644
 --- a/staging/src/k8s.io/kubelet/go.mod
 +++ b/staging/src/k8s.io/kubelet/go.mod
 @@ -6,7 +6,7 @@ go 1.19
@@ -2811,10 +2913,11 @@ index 505845e57c3..99158361dc8 100644
  	golang.org/x/text v0.7.0 // indirect
  	google.golang.org/genproto v0.0.0-20210831024726-fe130286e0e2 // indirect
  	google.golang.org/protobuf v1.27.1 // indirect
-@@ -36,6 +36,8 @@ require (
+@@ -36,6 +36,9 @@ require (
  )
  
  replace (
++	github.com/moby/term => github.com/moby/term v0.0.0-20210610120745-9d4ed1856297
 +	golang.org/x/net => golang.org/x/net v0.7.0
 +	golang.org/x/sys => golang.org/x/sys v0.5.0
  	k8s.io/api => ../api
@@ -2889,7 +2992,7 @@ index dbf84e96e95..ef64008a9b0 100644
  golang.org/x/xerrors v0.0.0-20191011141410-1b5146add898/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
  golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
 diff --git a/staging/src/k8s.io/legacy-cloud-providers/go.mod b/staging/src/k8s.io/legacy-cloud-providers/go.mod
-index 77c0ae2e086..bc58e1a1694 100644
+index 77c0ae2e086..a5fa1a774ab 100644
 --- a/staging/src/k8s.io/legacy-cloud-providers/go.mod
 +++ b/staging/src/k8s.io/legacy-cloud-providers/go.mod
 @@ -74,8 +74,8 @@ require (
@@ -2903,10 +3006,11 @@ index 77c0ae2e086..bc58e1a1694 100644
  	golang.org/x/term v0.5.0 // indirect
  	golang.org/x/text v0.7.0 // indirect
  	golang.org/x/time v0.0.0-20220210224613-90d013bbcef8 // indirect
-@@ -93,6 +93,8 @@ require (
+@@ -93,6 +93,9 @@ require (
  )
  
  replace (
++	github.com/moby/term => github.com/moby/term v0.0.0-20210610120745-9d4ed1856297
 +	golang.org/x/net => golang.org/x/net v0.7.0
 +	golang.org/x/sys => golang.org/x/sys v0.5.0
  	k8s.io/api => ../api
@@ -3180,7 +3284,7 @@ index 20c23464ee7..a81b34702b9 100644
  golang.org/x/text v0.7.0/go.mod h1:mrYo+phRRbMaCq/xk9113O4dZlRixOauAjOtrjsXDZ8=
  golang.org/x/time v0.0.0-20181108054448-85acf8d2951c/go.mod h1:tRJNPiyCQ0inRvYxbN9jk5I+vvW/OXSQhTDSoE431IQ=
 diff --git a/staging/src/k8s.io/pod-security-admission/go.mod b/staging/src/k8s.io/pod-security-admission/go.mod
-index 9e71b947572..e0833be7a28 100644
+index 9e71b947572..20b645ddd3d 100644
 --- a/staging/src/k8s.io/pod-security-admission/go.mod
 +++ b/staging/src/k8s.io/pod-security-admission/go.mod
 @@ -79,10 +79,10 @@ require (
@@ -3196,10 +3300,11 @@ index 9e71b947572..e0833be7a28 100644
  	golang.org/x/term v0.5.0 // indirect
  	golang.org/x/text v0.7.0 // indirect
  	golang.org/x/time v0.0.0-20220210224613-90d013bbcef8 // indirect
-@@ -101,6 +101,8 @@ require (
+@@ -101,6 +101,9 @@ require (
  )
  
  replace (
++	github.com/moby/term => github.com/moby/term v0.0.0-20210610120745-9d4ed1856297
 +	golang.org/x/net => golang.org/x/net v0.7.0
 +	golang.org/x/sys => golang.org/x/sys v0.5.0
  	k8s.io/api => ../api
@@ -3354,7 +3459,7 @@ index f7969a71fbb..8afbb3d929e 100644
  golang.org/x/xerrors v0.0.0-20191011141410-1b5146add898/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
  golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
 diff --git a/staging/src/k8s.io/sample-apiserver/go.mod b/staging/src/k8s.io/sample-apiserver/go.mod
-index 5c7faf17aed..c4379582358 100644
+index 5c7faf17aed..72289001e91 100644
 --- a/staging/src/k8s.io/sample-apiserver/go.mod
 +++ b/staging/src/k8s.io/sample-apiserver/go.mod
 @@ -76,10 +76,10 @@ require (
@@ -3370,10 +3475,11 @@ index 5c7faf17aed..c4379582358 100644
  	golang.org/x/term v0.5.0 // indirect
  	golang.org/x/text v0.7.0 // indirect
  	golang.org/x/time v0.0.0-20220210224613-90d013bbcef8 // indirect
-@@ -102,6 +102,8 @@ require (
+@@ -102,6 +102,9 @@ require (
  )
  
  replace (
++	github.com/moby/term => github.com/moby/term v0.0.0-20210610120745-9d4ed1856297
 +	golang.org/x/net => golang.org/x/net v0.7.0
 +	golang.org/x/sys => golang.org/x/sys v0.5.0
  	k8s.io/api => ../api
@@ -4600,6 +4706,190 @@ index 00000000000..61e1b24f4a4
 +	optional int32			extra		= 5;
 +	optional string			name		= 6;
 +}
+diff --git a/vendor/github.com/google/cadvisor/container/common/helpers.go b/vendor/github.com/google/cadvisor/container/common/helpers.go
+index 03d055f93b9..2b232f6ac55 100644
+--- a/vendor/github.com/google/cadvisor/container/common/helpers.go
++++ b/vendor/github.com/google/cadvisor/container/common/helpers.go
+@@ -105,7 +105,7 @@ func getSpecInternal(cgroupPaths map[string]string, machineInfoFactory info.Mach
+ 	}
+ 
+ 	// CPU.
+-	cpuRoot, ok := getControllerPath(cgroupPaths, "cpu", cgroup2UnifiedMode)
++	cpuRoot, ok := GetControllerPath(cgroupPaths, "cpu", cgroup2UnifiedMode)
+ 	if ok {
+ 		if utils.FileExists(cpuRoot) {
+ 			if cgroup2UnifiedMode {
+@@ -152,7 +152,7 @@ func getSpecInternal(cgroupPaths map[string]string, machineInfoFactory info.Mach
+ 
+ 	// Cpu Mask.
+ 	// This will fail for non-unified hierarchies. We'll return the whole machine mask in that case.
+-	cpusetRoot, ok := getControllerPath(cgroupPaths, "cpuset", cgroup2UnifiedMode)
++	cpusetRoot, ok := GetControllerPath(cgroupPaths, "cpuset", cgroup2UnifiedMode)
+ 	if ok {
+ 		if utils.FileExists(cpusetRoot) {
+ 			spec.HasCpu = true
+@@ -167,7 +167,7 @@ func getSpecInternal(cgroupPaths map[string]string, machineInfoFactory info.Mach
+ 	}
+ 
+ 	// Memory
+-	memoryRoot, ok := getControllerPath(cgroupPaths, "memory", cgroup2UnifiedMode)
++	memoryRoot, ok := GetControllerPath(cgroupPaths, "memory", cgroup2UnifiedMode)
+ 	if ok {
+ 		if cgroup2UnifiedMode {
+ 			if utils.FileExists(path.Join(memoryRoot, "memory.max")) {
+@@ -195,7 +195,7 @@ func getSpecInternal(cgroupPaths map[string]string, machineInfoFactory info.Mach
+ 	}
+ 
+ 	// Processes, read it's value from pids path directly
+-	pidsRoot, ok := getControllerPath(cgroupPaths, "pids", cgroup2UnifiedMode)
++	pidsRoot, ok := GetControllerPath(cgroupPaths, "pids", cgroup2UnifiedMode)
+ 	if ok {
+ 		if utils.FileExists(pidsRoot) {
+ 			spec.HasProcesses = true
+@@ -217,7 +217,7 @@ func getSpecInternal(cgroupPaths map[string]string, machineInfoFactory info.Mach
+ 	return spec, nil
+ }
+ 
+-func getControllerPath(cgroupPaths map[string]string, controllerName string, cgroup2UnifiedMode bool) (string, bool) {
++func GetControllerPath(cgroupPaths map[string]string, controllerName string, cgroup2UnifiedMode bool) (string, bool) {
+ 
+ 	ok := false
+ 	path := ""
+diff --git a/vendor/github.com/google/cadvisor/container/libcontainer/handler.go b/vendor/github.com/google/cadvisor/container/libcontainer/handler.go
+index e599029386d..ed4c1ae8535 100644
+--- a/vendor/github.com/google/cadvisor/container/libcontainer/handler.go
++++ b/vendor/github.com/google/cadvisor/container/libcontainer/handler.go
+@@ -35,6 +35,7 @@ import (
+ 	"k8s.io/klog/v2"
+ 
+ 	"github.com/google/cadvisor/container"
++	"github.com/google/cadvisor/container/common"
+ 	info "github.com/google/cadvisor/info/v1"
+ )
+ 
+@@ -169,8 +170,7 @@ func (h *Handler) GetStats() (*info.ContainerStats, error) {
+ 	// file descriptors etc.) and not required a proper container's
+ 	// root PID (systemd services don't have the root PID atm)
+ 	if h.includedMetrics.Has(container.ProcessMetrics) {
+-		paths := h.cgroupManager.GetPaths()
+-		path, ok := paths["cpu"]
++		path, ok := common.GetControllerPath(h.cgroupManager.GetPaths(), "cpu", cgroups.IsCgroup2UnifiedMode())
+ 		if !ok {
+ 			klog.V(4).Infof("Could not find cgroups CPU for container %d", h.pid)
+ 		} else {
+diff --git a/vendor/github.com/google/cadvisor/container/libcontainer/helpers.go b/vendor/github.com/google/cadvisor/container/libcontainer/helpers.go
+index e0d7718c876..e535ad64c46 100644
+--- a/vendor/github.com/google/cadvisor/container/libcontainer/helpers.go
++++ b/vendor/github.com/google/cadvisor/container/libcontainer/helpers.go
+@@ -157,13 +157,14 @@ func diskStatsCopy(blkioStats []cgroups.BlkioStatEntry) (stat []info.PerDiskStat
+ }
+ 
+ func NewCgroupManager(name string, paths map[string]string) (cgroups.Manager, error) {
++	config := &configs.Cgroup{
++		Name:      name,
++		Resources: &configs.Resources{},
++	}
+ 	if cgroups.IsCgroup2UnifiedMode() {
+ 		path := paths[""]
+-		return fs2.NewManager(nil, path, false)
++		return fs2.NewManager(config, path)
+ 	}
+ 
+-	config := configs.Cgroup{
+-		Name: name,
+-	}
+-	return fs.NewManager(&config, paths, false), nil
++	return fs.NewManager(config, paths)
+ }
+diff --git a/vendor/github.com/google/cadvisor/fs/fs.go b/vendor/github.com/google/cadvisor/fs/fs.go
+index f5d4e49ada9..e1a1bc41e27 100644
+--- a/vendor/github.com/google/cadvisor/fs/fs.go
++++ b/vendor/github.com/google/cadvisor/fs/fs.go
+@@ -20,7 +20,6 @@ package fs
+ 
+ import (
+ 	"bufio"
+-	"errors"
+ 	"fmt"
+ 	"io/ioutil"
+ 	"os"
+@@ -59,9 +58,6 @@ const (
+ // A pool for restricting the number of consecutive `du` and `find` tasks running.
+ var pool = make(chan struct{}, maxConcurrentOps)
+ 
+-// ErrDeviceNotInPartitionsMap is the error resulting if a device could not be found in the partitions map.
+-var ErrDeviceNotInPartitionsMap = errors.New("could not find device in cached partitions map")
+-
+ func init() {
+ 	for i := 0; i < maxConcurrentOps; i++ {
+ 		releaseToken()
+diff --git a/vendor/github.com/google/cadvisor/fs/types.go b/vendor/github.com/google/cadvisor/fs/types.go
+index 0445a17adbe..35268ace984 100644
+--- a/vendor/github.com/google/cadvisor/fs/types.go
++++ b/vendor/github.com/google/cadvisor/fs/types.go
+@@ -86,8 +86,13 @@ type UsageInfo struct {
+ 	Inodes uint64
+ }
+ 
+-// ErrNoSuchDevice is the error indicating the requested device does not exist.
+-var ErrNoSuchDevice = errors.New("cadvisor: no such device")
++var (
++	// ErrNoSuchDevice is the error indicating the requested device does not exist.
++	ErrNoSuchDevice = errors.New("cadvisor: no such device")
++
++	// ErrDeviceNotInPartitionsMap is the error resulting if a device could not be found in the partitions map.
++	ErrDeviceNotInPartitionsMap = errors.New("could not find device in cached partitions map")
++)
+ 
+ type FsInfo interface {
+ 	// Returns capacity and free space, in bytes, of all the ext2, ext3, ext4 filesystems on the host.
+diff --git a/vendor/github.com/google/cadvisor/manager/container.go b/vendor/github.com/google/cadvisor/manager/container.go
+index db2e2b113b1..a5f2040a6fa 100644
+--- a/vendor/github.com/google/cadvisor/manager/container.go
++++ b/vendor/github.com/google/cadvisor/manager/container.go
+@@ -64,6 +64,7 @@ type containerInfo struct {
+ }
+ 
+ type containerData struct {
++	oomEvents                uint64
+ 	handler                  container.ContainerHandler
+ 	info                     containerInfo
+ 	memoryCache              *memory.InMemoryCache
+@@ -103,8 +104,6 @@ type containerData struct {
+ 
+ 	// resctrlCollector updates stats for resctrl controller.
+ 	resctrlCollector stats.Collector
+-
+-	oomEvents uint64
+ }
+ 
+ // jitter returns a time.Duration between duration and duration + maxFactor * duration,
+diff --git a/vendor/github.com/google/cadvisor/manager/manager.go b/vendor/github.com/google/cadvisor/manager/manager.go
+index ca55537c5be..5ef1dff8fea 100644
+--- a/vendor/github.com/google/cadvisor/manager/manager.go
++++ b/vendor/github.com/google/cadvisor/manager/manager.go
+@@ -158,7 +158,7 @@ func New(memoryCache *memory.InMemoryCache, sysfs sysfs.SysFs, houskeepingConfig
+ 	if cgroups.IsCgroup2UnifiedMode() {
+ 		klog.Warningf("Cannot detect current cgroup on cgroup v2")
+ 	} else {
+-		selfContainer, err := cgroups.GetOwnCgroupPath("cpu")
++		selfContainer, err = cgroups.GetOwnCgroup("cpu")
+ 		if err != nil {
+ 			return nil, err
+ 		}
+diff --git a/vendor/github.com/google/cadvisor/resctrl/utils.go b/vendor/github.com/google/cadvisor/resctrl/utils.go
+index f7931d22ebf..e2821674075 100644
+--- a/vendor/github.com/google/cadvisor/resctrl/utils.go
++++ b/vendor/github.com/google/cadvisor/resctrl/utils.go
+@@ -77,7 +77,7 @@ var (
+ 
+ func Setup() error {
+ 	var err error
+-	rootResctrl, err = intelrdt.GetIntelRdtPath(rootContainer)
++	rootResctrl, err = intelrdt.Root()
+ 	if err != nil {
+ 		return fmt.Errorf("unable to initialize resctrl: %v", err)
+ 	}
 diff --git a/vendor/github.com/opencontainers/runc/libcontainer/README.md b/vendor/github.com/opencontainers/runc/libcontainer/README.md
 index 13eee49d4b9..211c8c91e05 100644
 --- a/vendor/github.com/opencontainers/runc/libcontainer/README.md
@@ -15605,7 +15895,7 @@ index 1576f2d4ab6..220d0b43937 100644
  	}
  	return nil
 diff --git a/vendor/modules.txt b/vendor/modules.txt
-index 9d48da39861..6c4236e6596 100644
+index 9d48da39861..48f16179107 100644
 --- a/vendor/modules.txt
 +++ b/vendor/modules.txt
 @@ -179,11 +179,11 @@ github.com/chai2010/gettext-go/gettext
@@ -15622,7 +15912,7 @@ index 9d48da39861..6c4236e6596 100644
  ## explicit; go 1.15
  github.com/cilium/ebpf
  github.com/cilium/ebpf/asm
-@@ -200,7 +200,7 @@ github.com/container-storage-interface/spec/lib/go/csi
+@@ -200,10 +200,10 @@ github.com/container-storage-interface/spec/lib/go/csi
  # github.com/containerd/cgroups v1.0.1 => github.com/containerd/cgroups v1.0.1
  ## explicit; go 1.13
  github.com/containerd/cgroups/stats/v1
@@ -15630,7 +15920,11 @@ index 9d48da39861..6c4236e6596 100644
 +# github.com/containerd/console v1.0.3 => github.com/containerd/console v1.0.2
  ## explicit; go 1.13
  github.com/containerd/console
- # github.com/containerd/containerd v1.4.11 => github.com/containerd/containerd v1.4.11
+-# github.com/containerd/containerd v1.4.11 => github.com/containerd/containerd v1.4.11
++# github.com/containerd/containerd v1.4.12 => github.com/containerd/containerd v1.4.11
+ ## explicit
+ github.com/containerd/containerd/api/services/containers/v1
+ github.com/containerd/containerd/api/services/tasks/v1
 @@ -248,7 +248,7 @@ github.com/coreos/go-systemd/v22/util
  # github.com/cpuguy83/go-md2man/v2 v2.0.0 => github.com/cpuguy83/go-md2man/v2 v2.0.0
  ## explicit; go 1.12
@@ -15640,6 +15934,21 @@ index 9d48da39861..6c4236e6596 100644
  ## explicit
  github.com/cyphar/filepath-securejoin
  # github.com/davecgh/go-spew v1.1.1 => github.com/davecgh/go-spew v1.1.1
+@@ -257,12 +257,12 @@ github.com/davecgh/go-spew/spew
+ # github.com/daviddengcn/go-colortext v0.0.0-20160507010035-511bcaf42ccd => github.com/daviddengcn/go-colortext v0.0.0-20160507010035-511bcaf42ccd
+ ## explicit
+ github.com/daviddengcn/go-colortext
+-# github.com/docker/distribution v2.7.1+incompatible => github.com/docker/distribution v2.7.1+incompatible
++# github.com/docker/distribution v2.8.0+incompatible => github.com/docker/distribution v2.7.1+incompatible
+ ## explicit
+ github.com/docker/distribution/digestset
+ github.com/docker/distribution/reference
+ github.com/docker/distribution/registry/api/errcode
+-# github.com/docker/docker v20.10.7+incompatible => github.com/docker/docker v20.10.7+incompatible
++# github.com/docker/docker v20.10.12+incompatible => github.com/docker/docker v20.10.7+incompatible
+ ## explicit
+ github.com/docker/docker/api
+ github.com/docker/docker/api/types
 @@ -348,7 +348,7 @@ github.com/go-openapi/swag
  ## explicit
  github.com/go-ozzo/ozzo-validation
@@ -15649,7 +15958,18 @@ index 9d48da39861..6c4236e6596 100644
  ## explicit; go 1.12
  github.com/godbus/dbus/v5
  # github.com/gofrs/uuid v4.0.0+incompatible => github.com/gofrs/uuid v4.0.0+incompatible
-@@ -627,7 +627,7 @@ github.com/moby/ipvs
+@@ -403,8 +403,8 @@ github.com/golang/protobuf/ptypes/wrappers
+ # github.com/google/btree v1.0.1 => github.com/google/btree v1.0.1
+ ## explicit; go 1.12
+ github.com/google/btree
+-# github.com/google/cadvisor v0.43.1 => github.com/google/cadvisor v0.43.1
+-## explicit; go 1.13
++# github.com/google/cadvisor v0.44.1 => github.com/google/cadvisor v0.44.1
++## explicit; go 1.16
+ github.com/google/cadvisor/accelerators
+ github.com/google/cadvisor/cache/memory
+ github.com/google/cadvisor/client/v2
+@@ -627,10 +627,10 @@ github.com/moby/ipvs
  ## explicit; go 1.13
  github.com/moby/spdystream
  github.com/moby/spdystream/spdy
@@ -15657,8 +15977,17 @@ index 9d48da39861..6c4236e6596 100644
 +# github.com/moby/sys/mountinfo v0.5.0 => github.com/moby/sys/mountinfo v0.4.1
  ## explicit; go 1.14
  github.com/moby/sys/mountinfo
- # github.com/moby/term v0.0.0-20210610120745-9d4ed1856297 => github.com/moby/term v0.0.0-20210610120745-9d4ed1856297
-@@ -719,8 +719,8 @@ github.com/opencontainers/go-digest
+-# github.com/moby/term v0.0.0-20210610120745-9d4ed1856297 => github.com/moby/term v0.0.0-20210610120745-9d4ed1856297
++# github.com/moby/term v0.0.0-20210619224110-3f7ff695adc6 => github.com/moby/term v0.0.0-20210610120745-9d4ed1856297
+ ## explicit; go 1.13
+ github.com/moby/term
+ github.com/moby/term/windows
+@@ -715,12 +715,12 @@ github.com/onsi/gomega/types
+ # github.com/opencontainers/go-digest v1.0.0 => github.com/opencontainers/go-digest v1.0.0
+ ## explicit; go 1.13
+ github.com/opencontainers/go-digest
+-# github.com/opencontainers/image-spec v1.0.1 => github.com/opencontainers/image-spec v1.0.1
++# github.com/opencontainers/image-spec v1.0.2 => github.com/opencontainers/image-spec v1.0.1
  ## explicit
  github.com/opencontainers/image-spec/specs-go
  github.com/opencontainers/image-spec/specs-go/v1
@@ -15730,6 +16059,15 @@ index 9d48da39861..6c4236e6596 100644
  # github.com/chzyer/logex => github.com/chzyer/logex v1.1.10
  # github.com/chzyer/readline => github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e
  # github.com/chzyer/test => github.com/chzyer/test v0.0.0-20180213035817-a1ea475d72b1
+@@ -2718,7 +2718,7 @@ sigs.k8s.io/yaml
+ # github.com/golang/protobuf => github.com/golang/protobuf v1.5.2
+ # github.com/golangplus/testing => github.com/golangplus/testing v0.0.0-20180327235837-af21d9c3145e
+ # github.com/google/btree => github.com/google/btree v1.0.1
+-# github.com/google/cadvisor => github.com/google/cadvisor v0.43.1
++# github.com/google/cadvisor => github.com/google/cadvisor v0.44.1
+ # github.com/google/cel-go => github.com/google/cel-go v0.9.0
+ # github.com/google/cel-spec => github.com/google/cel-spec v0.6.0
+ # github.com/google/go-cmp => github.com/google/go-cmp v0.5.5
 @@ -2819,7 +2819,7 @@ sigs.k8s.io/yaml
  # github.com/onsi/gomega => github.com/onsi/gomega v1.10.1
  # github.com/opencontainers/go-digest => github.com/opencontainers/go-digest v1.0.0
