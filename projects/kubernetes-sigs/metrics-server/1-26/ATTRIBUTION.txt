@@ -966,7 +966,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/go; version go1.19.10 --
+** golang.org/go; version go1.19.11 --
 https://github.com/golang/go
 
 ** golang.org/x/crypto; version v0.6.0 --
