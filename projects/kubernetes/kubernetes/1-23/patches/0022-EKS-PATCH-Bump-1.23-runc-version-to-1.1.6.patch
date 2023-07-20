@@ -1,4 +1,4 @@
-From 5fdd8fb6706915f8e23877dcdd281b017f52f617 Mon Sep 17 00:00:00 2001
+From aa7df1963b47c2eaa2b31f9cd7ba99fd0105d1dd Mon Sep 17 00:00:00 2001
 From: Kir Kolyshkin <kolyshkin@gmail.com>
 Date: Wed, 22 Dec 2021 17:26:08 -0800
 Subject: [PATCH] --EKS-PATCH-- Bump 1.23 runc version to 1.1.6
@@ -1188,7 +1188,7 @@ index 255d217f20a..d53277017f3 100644
  golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
  gonum.org/v1/gonum v0.6.2 h1:4r+yNT0+8SWcOkXP+63H2zQbN+USnC73cjGUxnDF94Q=
 diff --git a/pkg/kubelet/cm/cgroup_manager_linux.go b/pkg/kubelet/cm/cgroup_manager_linux.go
-index 230173690d5..0f1b7cb842b 100644
+index 230173690d5..da326d9fd87 100644
 --- a/pkg/kubelet/cm/cgroup_manager_linux.go
 +++ b/pkg/kubelet/cm/cgroup_manager_linux.go
 @@ -28,9 +28,8 @@ import (
@@ -1529,7 +1529,7 @@ index 230173690d5..0f1b7cb842b 100644
  	// it may confuse why we call set after we do apply, but the issue is that runc
  	// follows a similar pattern.  it's needed to ensure cpu quota is set properly.
 -	if err := m.Update(cgroupConfig); err != nil {
-+	if err := manager.Set(resources); err != nil {
++	if err := manager.Set(libcontainerCgroupConfig.Resources); err != nil {
  		utilruntime.HandleError(fmt.Errorf("cgroup update failed %v", err))
  	}
  
