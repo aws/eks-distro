@@ -11,5 +11,5 @@ This changelog highlights the changes for [v1-23-eks-27](https://github.com/aws/
 No changes since last release
 
 ### Base Image
-No changes since last release
+* Update base image in tag file(s) ([2183](https://github.com/aws/eks-distro/pull/2183))
 
