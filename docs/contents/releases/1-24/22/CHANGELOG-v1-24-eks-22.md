@@ -11,5 +11,5 @@ No changes since last release
 No changes since last release
 
 ### Base Image
-No changes since last release
+* Update base image in tag file(s) ([2183](https://github.com/aws/eks-distro/pull/2183))
 
