@@ -1,4 +1,4 @@
-From aa7df1963b47c2eaa2b31f9cd7ba99fd0105d1dd Mon Sep 17 00:00:00 2001
+From d1c38943b25806cf82d7a6788d9f709268d150a8 Mon Sep 17 00:00:00 2001
 From: Kir Kolyshkin <kolyshkin@gmail.com>
 Date: Wed, 22 Dec 2021 17:26:08 -0800
 Subject: [PATCH] --EKS-PATCH-- Bump 1.23 runc version to 1.1.6
@@ -37,6 +37,7 @@ Signed-off-by: Sajia Zafreen <szafreen@amazon.com>
  .../cm/node_container_manager_linux.go        |    6 +-
  .../cm/pod_container_manager_linux_test.go    |   12 +-
  pkg/kubelet/cm/qos_container_manager_linux.go |    5 +-
+ .../dockershim/cm/container_manager_linux.go  |    2 +-
  .../kuberuntime_container_linux.go            |    3 +-
  .../kuberuntime_container_linux_test.go       |    6 +-
  staging/src/k8s.io/api/go.mod                 |    4 +-
@@ -541,7 +542,7 @@ Signed-off-by: Sajia Zafreen <szafreen@amazon.com>
  .../tools/internal/typesinternal/errorcode.go |   38 +-
  .../typesinternal/errorcode_string.go         |   26 +-
  vendor/modules.txt                            |  119 +-
- 515 files changed, 16903 insertions(+), 9525 deletions(-)
+ 516 files changed, 16904 insertions(+), 9526 deletions(-)
  delete mode 100644 LICENSES/vendor/github.com/bits-and-blooms/bitset/LICENSE
  delete mode 100644 LICENSES/vendor/github.com/shurcooL/sanitized_anchor_name/LICENSE
  delete mode 100644 vendor/github.com/bits-and-blooms/bitset/.gitignore
@@ -1662,6 +1663,19 @@ index bb79109b141..0ddd44ac234 100644
  		pageSizeBytes, err := units.RAMInBytes(pageSize)
  		if err != nil {
  			return err
+diff --git a/pkg/kubelet/dockershim/cm/container_manager_linux.go b/pkg/kubelet/dockershim/cm/container_manager_linux.go
+index 759e27f26c5..93d6c51ac00 100644
+--- a/pkg/kubelet/dockershim/cm/container_manager_linux.go
++++ b/pkg/kubelet/dockershim/cm/container_manager_linux.go
+@@ -129,7 +129,7 @@ func createCgroupManager(name string) (cgroups.Manager, error) {
+ 			SkipDevices: true,
+ 		},
+ 	}
+-	return cgroupfs.NewManager(cg, nil, false), nil
++	return cgroupfs.NewManager(cg, nil)
+ }
+ 
+ // getMemoryCapacity returns the memory capacity on the machine in bytes.
 diff --git a/pkg/kubelet/kuberuntime/kuberuntime_container_linux.go b/pkg/kubelet/kuberuntime/kuberuntime_container_linux.go
 index 54670673bcd..bff79d4bc6e 100644
 --- a/pkg/kubelet/kuberuntime/kuberuntime_container_linux.go
