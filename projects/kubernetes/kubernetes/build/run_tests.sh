@@ -35,7 +35,7 @@ build::common::use_go_version $GOLANG_VERSION
 # Beginning with Go 1.17, using `go get` to install executables was deprecated
 # in favor of `go install`. See https://go.dev/doc/go-get-install-deprecation
 awk -v short_golang_version="${GOLANG_VERSION:0:4}" \
-    -v go_install_min_version="1.17" \
+    -v go_install_min_version="1.19" \
   'BEGIN {
     if (short_golang_version<go_install_min_version)
       system("go get gotest.tools/gotestsum")
