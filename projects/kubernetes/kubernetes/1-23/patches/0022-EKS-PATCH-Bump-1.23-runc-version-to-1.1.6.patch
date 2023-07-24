@@ -4,16 +4,23 @@ Date: Wed, 22 Dec 2021 17:26:08 -0800
 Subject: [PATCH] --EKS-PATCH-- Bump 1.23 runc version to 1.1.6
 
 Description:
-  Fixes CVE CVE-2023-27561 and CVE-2023-28642
+  * Fixes CVE-2023-27561 and CVE-2023-28642. 
 
 Upstream PR, Issue, KEP, etc. links:
-  Followed upstream PR instruction https://github.com/kubernetes/kubernetes/pull/117892
+  Cherry-pick was done in the following order from the following PRs: 
+  * https://github.com/kubernetes/kubernetes/pull/108597
+  * https://github.com/kubernetes/kubernetes/pull/109029
+  * https://github.com/kubernetes/kubernetes/pull/117892
 
 If this patch is based on an upstream commit, how (if at all) do this patch and the upstream source differ?
-  None
+  * Due to checksum mismatch issue with dockerdistribution/reference , the version was bunped to v2.8.1+incompatible. 
+  * In `kubelet/cm/cgroup_manager_linux.go` used instances of `libcontainerCgroupConfig.Resources` to ensure cpu quota 
+  is set. In dockershim/cm/container_manager_linux.go the new `cgroupfs.NewManager` were refactored.
+  * Due to cherry-pick the version of `/apiserver/schema/cel` was bumped to v0.10.0 which led to Junit test failures. As
+	the change is not related to runc version bump, the change was reverted to `/apiserver/schema/cel` version v0.9.0
 
 If this patch's changes have not been added by upstream, why not?
-  Upstream bumped the runc version for supported versions of k8 1.24-1.28
+  N/A
 
 Other patches related to this patch:
   None
