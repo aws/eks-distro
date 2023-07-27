@@ -29,7 +29,7 @@ https://github.com/Azure/go-autorest/logger
 ** github.com/Azure/go-autorest/tracing; version v0.6.0 --
 https://github.com/Azure/go-autorest/tracing
 
-** github.com/checkpoint-restore/go-criu/v5; version v5.0.0 --
+** github.com/checkpoint-restore/go-criu/v5; version v5.3.0 --
 https://github.com/checkpoint-restore/go-criu/v5
 
 ** github.com/clusterhq/flocker-go; version v0.0.0-20160920122132-2b8b7259d313 --
@@ -38,10 +38,10 @@ https://github.com/ClusterHQ/flocker-go
 ** github.com/container-storage-interface/spec/lib/go/csi; version v1.5.0 --
 https://github.com/container-storage-interface/spec
 
-** github.com/containerd/console; version v1.0.2 --
+** github.com/containerd/console; version v1.0.3 --
 https://github.com/containerd/console
 
-** github.com/containerd/containerd; version v1.4.11 --
+** github.com/containerd/containerd; version v1.4.12 --
 https://github.com/containerd/containerd
 
 ** github.com/containerd/ttrpc; version v1.0.2 --
@@ -65,10 +65,10 @@ https://github.com/coreos/go-semver
 ** github.com/coreos/go-systemd/v22; version v22.3.2 --
 https://github.com/coreos/go-systemd/v22
 
-** github.com/docker/distribution; version v2.7.1+incompatible --
+** github.com/docker/distribution; version v2.8.1+incompatible --
 https://github.com/distribution/distribution
 
-** github.com/docker/docker; version v20.10.7+incompatible --
+** github.com/docker/docker; version v20.10.12+incompatible --
 https://github.com/moby/moby
 
 ** github.com/docker/go-connections; version v0.4.0 --
@@ -104,7 +104,7 @@ https://github.com/golang/mock
 ** github.com/google/btree; version v1.0.1 --
 https://github.com/google/btree
 
-** github.com/google/cadvisor; version v0.43.1 --
+** github.com/google/cadvisor; version v0.44.0 --
 https://github.com/google/cadvisor
 
 ** github.com/google/cel-go; version v0.9.0 --
@@ -176,16 +176,16 @@ https://github.com/nytimes/gziphandler
 ** github.com/opencontainers/go-digest; version v1.0.0 --
 https://github.com/opencontainers/go-digest
 
-** github.com/opencontainers/image-spec/specs-go; version v1.0.1 --
+** github.com/opencontainers/image-spec/specs-go; version v1.0.2 --
 https://github.com/opencontainers/image-spec
 
-** github.com/opencontainers/runc; version v1.0.2 --
+** github.com/opencontainers/runc; version v1.1.6 --
 https://github.com/opencontainers/runc
 
 ** github.com/opencontainers/runtime-spec/specs-go; version v1.0.3-0.20210326190908-1c3f411f0417 --
 https://github.com/opencontainers/runtime-spec
 
-** github.com/opencontainers/selinux; version v1.8.2 --
+** github.com/opencontainers/selinux; version v1.10.0 --
 https://github.com/opencontainers/selinux
 
 ** github.com/pquerna/cachecontrol; version v0.0.0-20171018203845-0dec1b30a021 --
@@ -759,7 +759,7 @@ limitations under the License.
 
 ------
 
-** github.com/godbus/dbus/v5; version v5.0.4 --
+** github.com/godbus/dbus/v5; version v5.0.6 --
 https://github.com/godbus/dbus/v5
 
 Copyright (c) 2013, Georg Reinke (<guelfey at gmail dot com>), Google
@@ -989,28 +989,28 @@ https://github.com/golang/go
 ** golang.org/x/crypto; version v0.0.0-20220214200702-86341886e292 --
 https://golang.org/x/crypto
 
-** golang.org/x/net; version v0.7.0 --
+** golang.org/x/net; version v0.8.0 --
 https://golang.org/x/net
 
 ** golang.org/x/oauth2; version v0.0.0-20211104180415-d3ed0bb246c8 --
 https://golang.org/x/oauth2
 
-** golang.org/x/sync/singleflight; version v0.0.0-20220722155255-886fb9371eb4 --
+** golang.org/x/sync/singleflight; version v0.1.0 --
 https://golang.org/x/sync
 
-** golang.org/x/sys/unix; version v0.5.0 --
+** golang.org/x/sys/unix; version v0.6.0 --
 https://golang.org/x/sys
 
-** golang.org/x/term; version v0.5.0 --
+** golang.org/x/term; version v0.6.0 --
 https://golang.org/x/term
 
-** golang.org/x/text; version v0.7.0 --
+** golang.org/x/text; version v0.8.0 --
 https://golang.org/x/text
 
 ** golang.org/x/time/rate; version v0.0.0-20220210224613-90d013bbcef8 --
 https://golang.org/x/time
 
-** golang.org/x/tools/container/intsets; version v0.1.12 --
+** golang.org/x/tools/container/intsets; version v0.6.0 --
 https://golang.org/x/tools
 
 ** k8s.io/apimachinery/third_party/forked/golang; version v0.0.0 --
@@ -1026,39 +1026,6 @@ https://github.com/kubernetes/kubernetes
 https://github.com/kubernetes/utils
 
 Copyright (c) 2009 The Go Authors. All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are
-met:
-
-   * Redistributions of source code must retain the above copyright
-notice, this list of conditions and the following disclaimer.
-   * Redistributions in binary form must reproduce the above
-copyright notice, this list of conditions and the following disclaimer
-in the documentation and/or other materials provided with the
-distribution.
-   * Neither the name of Google Inc. nor the names of its
-contributors may be used to endorse or promote products derived from
-this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-------
-
-** github.com/bits-and-blooms/bitset; version v1.2.0 --
-https://github.com/bits-and-blooms/bitset
-
-Copyright (c) 2014 Will Fitzgerald. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
@@ -1121,7 +1088,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/cyphar/filepath-securejoin; version v0.2.2 --
+** github.com/cyphar/filepath-securejoin; version v0.2.3 --
 https://github.com/cyphar/filepath-securejoin
 
 Copyright (C) 2014-2015 Docker Inc & Go Authors. All rights reserved.
@@ -2002,7 +1969,7 @@ Copyright (c) 2014 Benedikt Lang <github at benediktlang.de>
 https://github.com/cespare/xxhash/v2
 Copyright (c) 2016 Caleb Spare
 
-** github.com/cilium/ebpf; version v0.6.2 --
+** github.com/cilium/ebpf; version v0.7.0 --
 https://github.com/cilium/ebpf
 Copyright (c) 2017 Nathan Sweet
 Copyright (c) 2018, 2019 Cloudflare
