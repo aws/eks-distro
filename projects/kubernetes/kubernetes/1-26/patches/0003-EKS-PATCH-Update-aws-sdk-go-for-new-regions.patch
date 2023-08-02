@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Ernest Wong <ernwong@amazon.com>
-Date: Thu, 15 Jun 2023 18:38:34 +0000
+Date: Wed, 19 Jul 2023 20:55:10 +0000
 Subject: [PATCH] --EKS-PATCH-- Update aws-sdk-go for new regions
 
 Description:
@@ -29,8 +29,6 @@ Changes made to this patch after its initial creation and reasons for these chan
 
 Kubernetes version this patch can be dropped:
 * Likely 1.27 -- https://github.com/kubernetes/kubernetes/pull/116329
-
-Signed-off-by: Davanum Srinivas <davanum@gmail.com>
 ---
  go.mod                                        |     2 +-
  go.sum                                        |    13 +-
@@ -66,7 +64,7 @@ Signed-off-by: Davanum Srinivas <davanum@gmail.com>
  create mode 100644 vendor/github.com/aws/aws-sdk-go/internal/shareddefaults/shared_config_resolve_home_go1.12.go
 
 diff --git a/go.mod b/go.mod
-index 8f8d161c27c..e15523d852d 100644
+index 48e44aa4c7b..43c6d8f447d 100644
 --- a/go.mod
 +++ b/go.mod
 @@ -20,7 +20,7 @@ require (
@@ -79,7 +77,7 @@ index 8f8d161c27c..e15523d852d 100644
  	github.com/container-storage-interface/spec v1.7.0
  	github.com/coredns/corefile-migration v1.0.17
 diff --git a/go.sum b/go.sum
-index 03f809750aa..ec2af7c095a 100644
+index 4bfdd7614ca..fdcf7f3f7d4 100644
 --- a/go.sum
 +++ b/go.sum
 @@ -110,8 +110,8 @@ github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5/go.mod h1:wHh0iHkY
@@ -98,8 +96,8 @@ index 03f809750aa..ec2af7c095a 100644
  golang.org/x/mod v0.4.1/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
  golang.org/x/mod v0.4.2/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
 +golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4/go.mod h1:jJ57K6gSWd91VN4djpZkiMVwK6gcyfeH4XE8wZrZaV4=
- golang.org/x/mod v0.8.0 h1:LUYupSeNrTNCGzR/hVBk2NHZO4hXcVaW1k4Qx7rjPx8=
- golang.org/x/mod v0.8.0/go.mod h1:iBbtSCu2XBx23ZKBPSOrRkjjQPZFPuis4dIYUhu/chs=
+ golang.org/x/mod v0.9.0 h1:KENHtAZL2y3NLMYZeHY9DW8HW8V+kQyJsY/V9JlKvCs=
+ golang.org/x/mod v0.9.0/go.mod h1:iBbtSCu2XBx23ZKBPSOrRkjjQPZFPuis4dIYUhu/chs=
  golang.org/x/net v0.0.0-20180724234803-3673e40ba225/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
 @@ -889,6 +890,8 @@ golang.org/x/net v0.0.0-20210525063256-abc453219eb5/go.mod h1:9nx3DQGgdP8bBQD5qx
  golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
@@ -37643,7 +37641,7 @@ index 2b7e675ab86..63729d0a78b 100644
  	// You can pass a session tag with the same key as a tag that is already attached
  	// to the user you are federating. When you do, session tags override a user
 diff --git a/vendor/modules.txt b/vendor/modules.txt
-index 790725c136c..50be3bdc5bc 100644
+index deac9717f2b..f42094ddf77 100644
 --- a/vendor/modules.txt
 +++ b/vendor/modules.txt
 @@ -105,7 +105,7 @@ github.com/armon/go-socks5
