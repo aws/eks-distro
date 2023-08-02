@@ -50,6 +50,6 @@ if [ "$SNS_MESSAGE_ID" ]; then
   echo -e "\nRelease notification published with SNS MessageId $SNS_MESSAGE_ID"
 else
   echo "Received unexpected response while publishing to release SNS topic. An error may have occurred, and the \
-notification may not have not have been published"
+notification may not have been published"
   exit 1
 fi
