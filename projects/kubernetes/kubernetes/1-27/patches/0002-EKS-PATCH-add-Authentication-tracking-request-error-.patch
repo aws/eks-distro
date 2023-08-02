@@ -4,29 +4,6 @@ Date: Tue, 11 Apr 2023 22:35:14 +0800
 Subject: [PATCH] --EKS-PATCH-- add Authentication tracking request/error
  counts and latency metrics
 
-Description:
-  "Apiserver adds two new metrics `authorization_attempts_total` and `authorization_duration_seconds` that allow users
-  to monitor requests to authorization webhooks, split by result." (PR description)
-
-Upstream PR, Issue, KEP, etc. links:
-  * Take from upstream Kubernetes PR #117211 (https://github.com/kubernetes/kubernetes/pull/117211), which, at the time
-  this patch was added, had not been merged yet.
-  * Partially fixes Kubernetes Issue #117167 (https://github.com/kubernetes/kubernetes/issues/117167)
-
-If this patch is based on an upstream commit, how (if at all) do this patch and the upstream source differ?
-  TBD after change is merged by upstream
-
-If this patch's changes have not been added by upstream, why not?
-  Change is proposed to upstream
-
-Other patches related to this patch:
-  None
-
-Changes made to this patch after its initial creation and reasons for these changes:
-  None
-
-Kubernetes version this patch can be dropped:
-  TBD after change is merged by upstream
 ---
  .../pkg/endpoints/filters/authentication.go   |   6 +-
  .../pkg/endpoints/filters/authorization.go    |  18 ++-
