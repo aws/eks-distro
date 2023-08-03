@@ -20,23 +20,6 @@ BASEDIR=$(dirname "$0")
 source ${BASEDIR}/set_environment.sh
 # Ignoring preflight check failures since we only need the env vars set
 
-
-if [ "$(uname)" == "Darwin" ]
-then
-    OS="darwin"
-    ARCH="amd64"
-else
-    OS="linux"
-    ARCH="amd64"
-fi
-
-# Set customer user-agent for curl to ensure we can track requests against the CloudFront distribution
-UA_SYSTEM_INFO="${OS}/${ARCH};"
-if [[ -z "prowJobId:${PROW_JOB_ID}" ]]; then
-  UA_SYSTEM_INFO+=" prowJobId:${PROW_JOB_ID}"
-fi
-USERAGENT="EksDistro-${BASENAME}/${RELEASE_BRANCH} ($UA_SYSTEM_INFO)"
-
 mkdir -p ${BASEDIR}/bin
 
 if [ ! -x ${KOPS} ]
