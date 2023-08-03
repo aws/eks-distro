@@ -15,9 +15,11 @@
 
 set -eo pipefail
 
+BASENAME=$(basename "$0")
 BASEDIR=$(dirname "$0")
 source ${BASEDIR}/set_environment.sh
 # Ignoring preflight check failures since we only need the env vars set
+
 
 if [ "$(uname)" == "Darwin" ]
 then
@@ -28,6 +30,13 @@ else
     ARCH="amd64"
 fi
 
+# Set customer user-agent for curl to ensure we can track requests against the CloudFront distribution
+UA_SYSTEM_INFO="${OS}/${ARCH};"
+if [[ -z "prowJobId:${PROW_JOB_ID}" ]]; then
+  UA_SYSTEM_INFO+=" prowJobId:${PROW_JOB_ID}"
+fi
+USERAGENT="EksDistro-${BASENAME}/${RELEASE_BRANCH} ($UA_SYSTEM_INFO)"
+
 mkdir -p ${BASEDIR}/bin
 
 if [ ! -x ${KOPS} ]
@@ -36,7 +45,7 @@ then
     echo "Download kops"
     KOPS_URL="https://eks-d-postsubmit-artifacts.s3.us-west-2.amazonaws.com/kops/${KOPS_VERSION}/${OS}/${ARCH}/kops"
     set -x
-    curl -L -o ${KOPS} "${KOPS_URL}"
+    curl -A "${USERAGENT}" -L -o ${KOPS} "${KOPS_URL}"
     chmod 755 ${KOPS}
     set +x
 fi
@@ -56,7 +65,7 @@ then
             exit 1
         fi
         set -x
-        curl -sSL "${ARTIFACT_URL}/kubernetes/${KUBECTL_VERSION}/bin/${OS}/${ARCH}/kubectl" -o ${KUBECTL_PATH}
+        curl -A "${USERAGENT}" -sSL "${ARTIFACT_URL}/kubernetes/${KUBECTL_VERSION}/bin/${OS}/${ARCH}/kubectl" -o ${KUBECTL_PATH}
         chmod +x ${KUBECTL_PATH}
         set +x
     done
@@ -64,7 +73,7 @@ fi
 
 if ! command -v helm &> /dev/null
 then
-    curl -s https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | HELM_INSTALL_DIR=${BASEDIR}/bin bash
+    curl -A "${USERAGENT}" -s https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | HELM_INSTALL_DIR=${BASEDIR}/bin bash
 fi
 
 if ! command -v sonobuoy &> /dev/null
