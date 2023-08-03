@@ -99,8 +99,8 @@ else
 fi
 
 # Set customer user-agent for curl to ensure we can track requests against the CloudFront distribution
-UA_SYSTEM_INFO="${OS}/${ARCH};"
-if [[ -z "prowJobId:${PROW_JOB_ID}" ]]; then
+UA_SYSTEM_INFO="${OS}/${ARCH}; "
+if [[ -z "${PROW_JOB_ID}" ]]; then
   UA_SYSTEM_INFO+="prowJobId:${PROW_JOB_ID}; "
 fi
 export USERAGENT="EksDistro-${BASENAME}/${RELEASE_BRANCH} ($UA_SYSTEM_INFO)"
