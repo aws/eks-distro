@@ -149,7 +149,7 @@ https://github.com/kubernetes-sigs/apiserver-network-proxy
 ** sigs.k8s.io/json; version v0.0.0-20211020170558-c049b76a60c6 --
 https://github.com/kubernetes-sigs/json
 
-** sigs.k8s.io/metrics-server; version v0.6.3 --
+** sigs.k8s.io/metrics-server; version v0.6.4 --
 https://github.com/kubernetes-sigs/metrics-server
 
 ** sigs.k8s.io/structured-merge-diff/v4; version v4.2.3 --
