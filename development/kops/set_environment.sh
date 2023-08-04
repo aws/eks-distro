@@ -87,3 +87,20 @@ export KOPS_BASE_URL=https://eks-d-postsubmit-artifacts.s3.amazonaws.com/kops/$K
 export KOPS=bin/kops
 mkdir -p bin
 export PATH=`pwd`/bin:${PATH}
+
+# Set OS and ARCH env vars
+if [ "$(uname)" == "Darwin" ]
+then
+    export OS="darwin"
+    export ARCH="amd64"
+else
+    export OS="linux"
+    export ARCH="amd64"
+fi
+
+# Set customer user-agent for curl to ensure we can track requests against the CloudFront distribution
+UA_SYSTEM_INFO="${OS}/${ARCH};"
+if [[ -n "${PROW_JOB_ID}" ]]; then
+  UA_SYSTEM_INFO+=" prowJobId:${PROW_JOB_ID};"
+fi
+export USERAGENT="EksDistro-${BASENAME}/${RELEASE_BRANCH} ($UA_SYSTEM_INFO)"
