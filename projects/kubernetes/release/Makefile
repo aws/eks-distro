@@ -16,8 +16,6 @@ IMAGE_NAMES=go-runner kube-proxy-base
 # Name of base image to be used when building the kube-proxy-base image
 KUBE_PROXY_BASE_BASE_IMAGE_NAME=eks-distro-minimal-base-iptables
 
-IPTABLES_WRAPPER=$(OUTPUT_DIR)/iptables-wrapper
-
 BINARY_TARGET_FILES=go-runner
 GO_MOD_PATHS=images/build/go-runner
 # create default attribution name and save licenses in default _output/attribution folder instead
@@ -43,14 +41,10 @@ $(GATHER_LICENSES_TARGETS): | $(FIX_LICENSES_GO_RUNNER_TARGET)
 # if we start seeing this elsewhere we should dig in more and try to fix go-licenses
 _output/1-24/attribution/go-license.csv: GOLANG_VERSION=1.17
 
-$(call IMAGE_TARGETS_FOR_NAME, kube-proxy-base): $(IPTABLES_WRAPPER)
 $(call IMAGE_TARGETS_FOR_NAME, kube-proxy-base): BASE_IMAGE_NAME=$(KUBE_PROXY_BASE_BASE_IMAGE_NAME)
 
 $(ATTRIBUTION_TARGETS): fix-licenses
 
-$(IPTABLES_WRAPPER): $(GIT_CHECKOUT_TARGET)
-	@mkdir -p $(@D)
-	cp $(REPO)/images/build/debian-iptables/buster/iptables-wrapper $@
 
 .PHONY: fix-licenses
 fix-licenses: $(GATHER_LICENSES_TARGETS)
