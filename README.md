@@ -69,6 +69,17 @@ Source: https://github.com/cncf/artwork/tree/master/projects/kubernetes/certifie
 | 28 | [v1-23-eks-28](https://distro.eks.amazonaws.com/kubernetes-1-23/kubernetes-1-23-eks-28.yaml) | [v1.23.17](https://github.com/kubernetes/kubernetes/release/tag/v1.23.17) |
 
 
+**🚨🚨🚨 IMPORTANT INFORMATION ABOUT v1.23 SUPPORT 🚨🚨🚨**
+
+In alignment with the [Amazon EKS release calendar](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html#kubernetes-release-calendar),
+EKS Distro will be discontinuing support of Kubernetes v1.23 soon.
+
+While there are no plans to remove EKS-D v1.23 images from the
+[ECR](https://gallery.ecr.aws/eks-distro), there will be no more updates,
+including critical vulnerability fixes, to EKS-D v1.23 once support ends.
+**Due to the increased security risk this poses, it is HIGHLY recommended that
+users of v1.23 update to a supported version (v1.24+) as soon as possible.**
+
 ### Kubernetes 1.18, 1.19, 1.20, 1.21 and 1.22: DEPRECATED
 
 In alignment with the [Amazon EKS release calendar](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html#kubernetes-release-calendar),
