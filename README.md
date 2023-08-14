@@ -64,6 +64,7 @@ Source: https://github.com/cncf/artwork/tree/master/projects/kubernetes/certifie
 
 ### Kubernetes 1.18, 1.19, 1.20, 1.21, 1.22 and 1.23: DEPRECATED
 
+
 In alignment with the [Amazon EKS release calendar](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html#kubernetes-release-calendar),
 EKS Distro has discontinued support of Kubernetes v1.18 - v1.23. While there are
 no plans to remove these versions' images from EKS Distro ECR, there will be no
