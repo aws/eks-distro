@@ -3,6 +3,7 @@
 
 | Release | Development Build Status |
 |------| --- |
+| 1-23 | [![1-23](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-23-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-23-postsubmit) |
 | 1-24 | [![1-24](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-24-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-24-postsubmit) |
 | 1-25 | [![1-25](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-25-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-25-postsubmit) |
 | 1-26 | [![1-26](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-26-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-26-postsubmit) |
@@ -61,17 +62,22 @@ Source: https://github.com/cncf/artwork/tree/master/projects/kubernetes/certifie
 | --- | --- | --- |
 | 23 | [v1-24-eks-23](https://distro.eks.amazonaws.com/kubernetes-1-24/kubernetes-1-24-eks-23.yaml) | [v1.24.16](https://github.com/kubernetes/kubernetes/release/tag/v1.24.16) |
 
+### Kubernetes 1-23
 
-### Kubernetes 1.18, 1.19, 1.20, 1.21, 1.22 and 1.23: DEPRECATED
+| Release | Manifest | Kubernetes Version |
+| --- | --- | --- |
+| 28 | [v1-23-eks-28](https://distro.eks.amazonaws.com/kubernetes-1-23/kubernetes-1-23-eks-28.yaml) | [v1.23.17](https://github.com/kubernetes/kubernetes/release/tag/v1.23.17) |
 
+
+### Kubernetes 1.18, 1.19, 1.20, 1.21 and 1.22: DEPRECATED
 
 In alignment with the [Amazon EKS release calendar](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html#kubernetes-release-calendar),
-EKS Distro has discontinued support of Kubernetes v1.18 - v1.23. While there are
+EKS Distro has discontinued support of Kubernetes v1.18 - v1.22. While there are
 no plans to remove these versions' images from EKS Distro ECR, there will be no
 more updates, including security fixes, for them.
 
 **Due to the increased security risk this poses, it is HIGHLY recommended that
-users of v1.18 - v1.23 update to a supported version (v1.24+) as soon as
+users of v1.18 - v1.22 update to a supported version (v1.23+) as soon as
 possible.**
 
 ## Development
