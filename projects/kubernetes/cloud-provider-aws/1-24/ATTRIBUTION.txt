@@ -116,34 +116,34 @@ https://github.com/grpc/grpc-go
 ** gopkg.in/yaml.v2; version v2.4.0 --
 https://gopkg.in/yaml.v2
 
-** k8s.io/api; version v0.24.9 --
+** k8s.io/api; version v0.24.15 --
 https://github.com/kubernetes/api
 
-** k8s.io/apimachinery/pkg; version v0.24.9 --
+** k8s.io/apimachinery/pkg; version v0.24.15 --
 https://github.com/kubernetes/apimachinery
 
-** k8s.io/apiserver; version v0.24.9 --
+** k8s.io/apiserver; version v0.24.15 --
 https://github.com/kubernetes/apiserver
 
-** k8s.io/client-go; version v0.24.9 --
+** k8s.io/client-go; version v0.24.15 --
 https://github.com/kubernetes/client-go
 
-** k8s.io/cloud-provider; version v0.24.9 --
+** k8s.io/cloud-provider; version v0.24.15 --
 https://github.com/kubernetes/cloud-provider
 
-** k8s.io/cloud-provider-aws; version v1.24.4 --
+** k8s.io/cloud-provider-aws; version v1.24.15 --
 https://github.com/kubernetes/cloud-provider-aws
 
-** k8s.io/component-base; version v0.24.9 --
+** k8s.io/component-base; version v0.24.15 --
 https://github.com/kubernetes/component-base
 
-** k8s.io/component-helpers/node/util; version v0.24.9 --
+** k8s.io/component-helpers/node/util; version v0.24.15 --
 https://github.com/kubernetes/component-helpers
 
-** k8s.io/controller-manager; version v0.24.9 --
+** k8s.io/controller-manager; version v0.24.15 --
 https://github.com/kubernetes/controller-manager
 
-** k8s.io/csi-translation-lib/plugins; version v0.24.9 --
+** k8s.io/csi-translation-lib/plugins; version v0.24.15 --
 https://github.com/kubernetes/csi-translation-lib
 
 ** k8s.io/klog/v2; version v2.70.1 --
@@ -155,19 +155,19 @@ https://github.com/kubernetes/kube-openapi
 ** k8s.io/kube-openapi/pkg/validation/spec; version v0.0.0-20220328201542-3ee0da9b0b42 --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kubelet/pkg/apis/credentialprovider; version v0.24.9 --
+** k8s.io/kubelet/pkg/apis/credentialprovider; version v0.24.15 --
 https://github.com/kubernetes/kubelet
 
 ** k8s.io/utils; version v0.0.0-20220728103510-ee6ede2d64ed --
 https://github.com/kubernetes/utils
 
-** sigs.k8s.io/apiserver-network-proxy/konnectivity-client; version v0.0.33 --
+** sigs.k8s.io/apiserver-network-proxy/konnectivity-client; version v0.0.37 --
 https://github.com/kubernetes-sigs/apiserver-network-proxy
 
 ** sigs.k8s.io/json; version v0.0.0-20211208200746-9f7c6b3444d2 --
 https://github.com/kubernetes-sigs/json
 
-** sigs.k8s.io/structured-merge-diff/v4; version v4.2.1 --
+** sigs.k8s.io/structured-merge-diff/v4; version v4.2.3 --
 https://github.com/kubernetes-sigs/structured-merge-diff
 
 
@@ -536,28 +536,28 @@ https://github.com/golang/go
 ** golang.org/x/crypto; version v0.0.0-20220214200702-86341886e292 --
 https://golang.org/x/crypto
 
-** golang.org/x/net; version v0.3.1-0.20221206200815-1e63c2f08a10 --
+** golang.org/x/net; version v0.8.0 --
 https://golang.org/x/net
 
 ** golang.org/x/oauth2; version v0.0.0-20211104180415-d3ed0bb246c8 --
 https://golang.org/x/oauth2
 
-** golang.org/x/sync/singleflight; version v0.0.0-20220722155255-886fb9371eb4 --
+** golang.org/x/sync/singleflight; version v0.1.0 --
 https://golang.org/x/sync
 
-** golang.org/x/sys/unix; version v0.3.0 --
+** golang.org/x/sys/unix; version v0.6.0 --
 https://golang.org/x/sys
 
-** golang.org/x/term; version v0.3.0 --
+** golang.org/x/term; version v0.6.0 --
 https://golang.org/x/term
 
-** golang.org/x/text; version v0.5.0 --
+** golang.org/x/text; version v0.8.0 --
 https://golang.org/x/text
 
 ** golang.org/x/time/rate; version v0.0.0-20220210224613-90d013bbcef8 --
 https://golang.org/x/time
 
-** k8s.io/apimachinery/third_party/forked/golang; version v0.24.9 --
+** k8s.io/apimachinery/third_party/forked/golang; version v0.24.15 --
 https://github.com/kubernetes/apimachinery
 
 Copyright (c) 2009 The Go Authors. All rights reserved.
@@ -763,7 +763,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/google/uuid; version v1.1.2 --
+** github.com/google/uuid; version v1.3.0 --
 https://github.com/google/uuid
 
 Copyright (c) 2009,2014 Google Inc. All rights reserved.
