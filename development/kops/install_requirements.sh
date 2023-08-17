@@ -69,7 +69,7 @@ then
 fi
 
 echo "$(which kops): $(kops version)"
-echo "$(which kubectl): $(kubectl version --client=true --short)"
+echo "$(which kubectl): $(kubectl version --client=true)"
 echo "$(which helm): $(helm version --short)"
 echo "$(which sonobuoy): $(sonobuoy version --short)"
 
