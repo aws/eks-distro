@@ -1,7 +1,7 @@
 From e9cb455bd7ce897aca8972dde4964ee44695fa0e Mon Sep 17 00:00:00 2001
 From: Sajia Zafreen <sajiazafreen@u.boisestate.edu>
 Date: Mon, 28 Aug 2023 15:51:43 -0700
-Subject: [PATCH] Bump Kubernetes Verion to 1.26.6
+Subject: [PATCH] Bump Kubernetes Verion to 1.26.8
 
 Signed-off-by: Sajia Zafreen <sajiazafreen@u.boisestate.edu>
 ---
