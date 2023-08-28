@@ -563,8 +563,8 @@ binaries: $(BINARY_TARGETS)
 .PHONY: run-govulncheck
 run-govulncheck: $(BINARY_TARGETS)
 	go install golang.org/x/vuln/cmd/govulncheck@latest
-	govulncheck -mode=binary $(word 1,$(BINARY_TARGETS)) || true
-	source $(BUILD_LIB)/common.sh && build::common::use_go_version $(GOLANG_VERSION) && govulncheck -C $(REPO) ./... || true
+	$(GOPATH)/bin/govulncheck -mode=binary $(word 1,$(BINARY_TARGETS)) || true
+	source $(BUILD_LIB)/common.sh && build::common::use_go_version $(GOLANG_VERSION) && $(GOPATH)/bin/govulncheck -C $(REPO) ./... || true
 
 $(KUSTOMIZE_TARGET):
 	@mkdir -p $(OUTPUT_DIR)
