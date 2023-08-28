@@ -432,7 +432,7 @@ TARGET_END_LOG?="------------------- `$(DATE_CMD) +'%Y-%m-%dT%H:%M:%S.$(DATE_NAN
 ####################################################
 
 #################### TARGETS FOR OVERRIDING ########
-BUILD_TARGETS?=validate-checksums attribution $(if $(IMAGE_NAMES),local-images,) $(if $(filter true,$(HAS_HELM_CHART)),helm/build,) $(if $(filter true,$(HAS_S3_ARTIFACTS)),upload-artifacts,) attribution-pr
+BUILD_TARGETS?=validate-checksums run-govulncheck attribution $(if $(IMAGE_NAMES),local-images,) $(if $(filter true,$(HAS_HELM_CHART)),helm/build,) $(if $(filter true,$(HAS_S3_ARTIFACTS)),upload-artifacts,) attribution-pr
 RELEASE_TARGETS?=validate-checksums $(if $(IMAGE_NAMES),images,) $(if $(filter true,$(HAS_HELM_CHART)),helm/push,) $(if $(filter true,$(HAS_S3_ARTIFACTS)),upload-artifacts,)
 ####################################################
 
@@ -559,6 +559,12 @@ endif
 
 .PHONY: binaries
 binaries: $(BINARY_TARGETS)
+
+.PHONY: run-govulncheck
+run-govulncheck: $(BINARY_TARGETS)
+	go install golang.org/x/vuln/cmd/govulncheck@latest
+	govulncheck -mode=binary $(word 1,$(BINARY_TARGETS)) || true
+	source $(BUILD_LIB)/common.sh && build::common::use_go_version $(GOLANG_VERSION) && govulncheck -C $(REPO) ./... || true
 
 $(KUSTOMIZE_TARGET):
 	@mkdir -p $(OUTPUT_DIR)
