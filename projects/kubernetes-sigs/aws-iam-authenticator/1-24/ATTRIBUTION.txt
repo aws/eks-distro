@@ -86,7 +86,7 @@ https://github.com/kubernetes/sample-controller
 ** k8s.io/utils; version v0.0.0-20221107191617-1a15be271d1d --
 https://github.com/kubernetes/utils
 
-** sigs.k8s.io/aws-iam-authenticator; version v0.6.10 --
+** sigs.k8s.io/aws-iam-authenticator; version v0.5.19 --
 https://github.com/kubernetes-sigs/aws-iam-authenticator
 
 ** sigs.k8s.io/json; version v0.0.0-20220713155537-f223a00ba0e2 --
@@ -406,7 +406,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ** github.com/aws/aws-sdk-go/internal/sync/singleflight; version v1.44.213 --
 https://github.com/aws/aws-sdk-go
 
-** golang.org/go; version go1.19.11 --
+** golang.org/go; version go1.19.12 --
 https://github.com/golang/go
 
 ** golang.org/x/net; version v0.7.0 --
