@@ -207,7 +207,7 @@ https://github.com/kubernetes/release
 
 ------
 
-** golang.org/go; version go1.20.6 --
+** golang.org/go; version go1.20.7 --
 https://github.com/golang/go
 
 Copyright (c) 2009 The Go Authors. All rights reserved.

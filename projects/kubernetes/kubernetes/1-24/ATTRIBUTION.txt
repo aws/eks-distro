@@ -952,7 +952,7 @@ https://github.com/liggitt/tabwriter
 ** github.com/vmware/govmomi/vim25/xml; version v0.30.0 --
 https://github.com/vmware/govmomi
 
-** golang.org/go; version go1.19.11 --
+** golang.org/go; version go1.19.12 --
 https://github.com/golang/go
 
 ** golang.org/x/crypto; version v0.0.0-20220214200702-86341886e292 --
@@ -1364,7 +1364,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ------
 
 ** github.com/imdario/mergo; version v0.3.5 --
-https://github.com/imdario/mergo
+https://github.com/darccio/mergo
 
 Copyright (c) 2013 Dario Castañé. All rights reserved.
 Copyright (c) 2012 The Go Authors. All rights reserved.

@@ -515,7 +515,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ------
 
 ** github.com/imdario/mergo; version v0.3.13 --
-https://github.com/imdario/mergo
+https://github.com/darccio/mergo
 
 Copyright (c) 2013 Dario Castañé. All rights reserved.
 Copyright (c) 2012 The Go Authors. All rights reserved.
@@ -655,7 +655,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/go; version go1.19.11 --
+** golang.org/go; version go1.19.12 --
 https://github.com/golang/go
 
 ** golang.org/x/net; version v0.8.0 --
