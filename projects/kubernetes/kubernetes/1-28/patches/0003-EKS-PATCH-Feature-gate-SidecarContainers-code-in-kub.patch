@@ -1,0 +1,711 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Gunju Kim <gjkim042@gmail.com>
+Date: Thu, 31 Aug 2023 00:48:23 +0900
+Subject: [PATCH] --EKS-PATCH-- Feature-gate SidecarContainers code in kubelet
+
+Feature-gate SidecarContainers code in pkg/kubelet/kuberuntime .This adds an e2e test to ensure that a pod should restart its containers
+in right order after the pod sandbox is changed.
+---
+ .../kuberuntime/kuberuntime_container.go      |  61 +++++++
+ .../kuberuntime/kuberuntime_manager.go        | 114 ++++++++++---
+ .../kuberuntime/kuberuntime_manager_test.go   | 158 ++++++++++++------
+ .../container_lifecycle_pod_construction.go   |  17 ++
+ test/e2e_node/container_lifecycle_test.go     | 142 ++++++++++++++++
+ 5 files changed, 410 insertions(+), 82 deletions(-)
+
+diff --git a/pkg/kubelet/kuberuntime/kuberuntime_container.go b/pkg/kubelet/kuberuntime/kuberuntime_container.go
+index eb25241cc11..97abc229335 100644
+--- a/pkg/kubelet/kuberuntime/kuberuntime_container.go
++++ b/pkg/kubelet/kuberuntime/kuberuntime_container.go
+@@ -849,6 +849,63 @@ func (m *kubeGenericRuntimeManager) purgeInitContainers(ctx context.Context, pod
+ 	}
+ }
+ 
++// findNextInitContainerToRun returns the status of the last failed container, the
++// index of next init container to start, or done if there are no further init containers.
++// Status is only returned if an init container is failed, in which case next will
++// point to the current container.
++func findNextInitContainerToRun(pod *v1.Pod, podStatus *kubecontainer.PodStatus) (status *kubecontainer.Status, next *v1.Container, done bool) {
++	if len(pod.Spec.InitContainers) == 0 {
++		return nil, nil, true
++	}
++
++	// If any of the main containers have status and are Running, then all init containers must
++	// have been executed at some point in the past.  However, they could have been removed
++	// from the container runtime now, and if we proceed, it would appear as if they
++	// never ran and will re-execute improperly.
++	for i := range pod.Spec.Containers {
++		container := &pod.Spec.Containers[i]
++		status := podStatus.FindContainerStatusByName(container.Name)
++		if status != nil && status.State == kubecontainer.ContainerStateRunning {
++			return nil, nil, true
++		}
++	}
++
++	// If there are failed containers, return the status of the last failed one.
++	for i := len(pod.Spec.InitContainers) - 1; i >= 0; i-- {
++		container := &pod.Spec.InitContainers[i]
++		status := podStatus.FindContainerStatusByName(container.Name)
++		if status != nil && isInitContainerFailed(status) {
++			return status, container, false
++		}
++	}
++
++	// There are no failed containers now.
++	for i := len(pod.Spec.InitContainers) - 1; i >= 0; i-- {
++		container := &pod.Spec.InitContainers[i]
++		status := podStatus.FindContainerStatusByName(container.Name)
++		if status == nil {
++			continue
++		}
++
++		// container is still running, return not done.
++		if status.State == kubecontainer.ContainerStateRunning {
++			return nil, nil, false
++		}
++
++		if status.State == kubecontainer.ContainerStateExited {
++			// all init containers successful
++			if i == (len(pod.Spec.InitContainers) - 1) {
++				return nil, nil, true
++			}
++
++			// all containers up to i successful, go to i+1
++			return nil, &pod.Spec.InitContainers[i+1], false
++		}
++	}
++
++	return nil, &pod.Spec.InitContainers[0], false
++}
++
+ // hasAnyRegularContainerCreated returns true if any regular container has been
+ // created, which indicates all init containers have been initialized.
+ func hasAnyRegularContainerCreated(pod *v1.Pod, podStatus *kubecontainer.PodStatus) bool {
+@@ -878,6 +935,10 @@ func hasAnyRegularContainerCreated(pod *v1.Pod, podStatus *kubecontainer.PodStat
+ // - Start the first init container that has not been started.
+ // - Restart all restartable init containers that have started but are not running.
+ // - Kill the restartable init containers that are not alive or started.
++//
++// Note that this is a function for the SidecarContainers feature.
++// Please sync with the findNextInitContainerToRun function if any changes are
++// made, as either this or that function will be called.
+ func (m *kubeGenericRuntimeManager) computeInitContainerActions(pod *v1.Pod, podStatus *kubecontainer.PodStatus, changes *podActions) bool {
+ 	if len(pod.Spec.InitContainers) == 0 {
+ 		return true
+diff --git a/pkg/kubelet/kuberuntime/kuberuntime_manager.go b/pkg/kubelet/kuberuntime/kuberuntime_manager.go
+index c8e76d41f28..49add764798 100644
+--- a/pkg/kubelet/kuberuntime/kuberuntime_manager.go
++++ b/pkg/kubelet/kuberuntime/kuberuntime_manager.go
+@@ -492,9 +492,13 @@ type podActions struct {
+ 	// The attempt number of creating sandboxes for the pod.
+ 	Attempt uint32
+ 
++	// The next init container to start.
++	NextInitContainerToStart *v1.Container
+ 	// InitContainersToStart keeps a list of indexes for the init containers to
+ 	// start, where the index is the index of the specific init container in the
+ 	// pod spec (pod.Spec.InitContainers).
++	// NOTE: This is a field for SidecarContainers feature. Either this or
++	// NextInitContainerToStart will be set.
+ 	InitContainersToStart []int
+ 	// ContainersToStart keeps a list of indexes for the containers to start,
+ 	// where the index is the index of the specific container in the pod spec (
+@@ -849,21 +853,34 @@ func (m *kubeGenericRuntimeManager) computePodActions(ctx context.Context, pod *
+ 			containersToStart = append(containersToStart, idx)
+ 		}
+ 
+-		// If there is any regular container, it means all init containers have
+-		// been initialized.
+-		hasInitialized := hasAnyRegularContainerCreated(pod, podStatus)
+ 		// We should not create a sandbox, and just kill the pod if initialization
+ 		// is done and there is no container to start.
+-		if hasInitialized && len(containersToStart) == 0 {
+-			changes.CreateSandbox = false
+-			return changes
++		if len(containersToStart) == 0 {
++			hasInitialized := false
++			if !utilfeature.DefaultFeatureGate.Enabled(features.SidecarContainers) {
++				_, _, hasInitialized = findNextInitContainerToRun(pod, podStatus)
++			} else {
++				// If there is any regular container, it means all init containers have
++				// been initialized.
++				hasInitialized = hasAnyRegularContainerCreated(pod, podStatus)
++			}
++
++			if hasInitialized {
++				changes.CreateSandbox = false
++				return changes
++			}
+ 		}
+ 
+ 		// If we are creating a pod sandbox, we should restart from the initial
+ 		// state.
+ 		if len(pod.Spec.InitContainers) != 0 {
+ 			// Pod has init containers, return the first one.
+-			changes.InitContainersToStart = []int{0}
++			if !utilfeature.DefaultFeatureGate.Enabled(features.SidecarContainers) {
++				changes.NextInitContainerToStart = &pod.Spec.InitContainers[0]
++			} else {
++				changes.InitContainersToStart = []int{0}
++			}
++
+ 			return changes
+ 		}
+ 		changes.ContainersToStart = containersToStart
+@@ -880,11 +897,39 @@ func (m *kubeGenericRuntimeManager) computePodActions(ctx context.Context, pod *
+ 		}
+ 	}
+ 
+-	hasInitialized := m.computeInitContainerActions(pod, podStatus, &changes)
+-	if changes.KillPod || !hasInitialized {
+-		// Initialization failed or still in progress. Skip inspecting non-init
+-		// containers.
+-		return changes
++	// Check initialization progress.
++	if !utilfeature.DefaultFeatureGate.Enabled(features.SidecarContainers) {
++		initLastStatus, next, done := findNextInitContainerToRun(pod, podStatus)
++		if !done {
++			if next != nil {
++				initFailed := initLastStatus != nil && isInitContainerFailed(initLastStatus)
++				if initFailed && !shouldRestartOnFailure(pod) {
++					changes.KillPod = true
++				} else {
++					// Always try to stop containers in unknown state first.
++					if initLastStatus != nil && initLastStatus.State == kubecontainer.ContainerStateUnknown {
++						changes.ContainersToKill[initLastStatus.ID] = containerToKillInfo{
++							name:      next.Name,
++							container: next,
++							message: fmt.Sprintf("Init container is in %q state, try killing it before restart",
++								initLastStatus.State),
++							reason: reasonUnknown,
++						}
++					}
++					changes.NextInitContainerToStart = next
++				}
++			}
++			// Initialization failed or still in progress. Skip inspecting non-init
++			// containers.
++			return changes
++		}
++	} else {
++		hasInitialized := m.computeInitContainerActions(pod, podStatus, &changes)
++		if changes.KillPod || !hasInitialized {
++			// Initialization failed or still in progress. Skip inspecting non-init
++			// containers.
++			return changes
++		}
+ 	}
+ 
+ 	if isInPlacePodVerticalScalingAllowed(pod) {
+@@ -980,9 +1025,11 @@ func (m *kubeGenericRuntimeManager) computePodActions(ctx context.Context, pod *
+ 
+ 	if keepCount == 0 && len(changes.ContainersToStart) == 0 {
+ 		changes.KillPod = true
+-		// To prevent the restartable init containers to keep pod alive, we should
+-		// not restart them.
+-		changes.InitContainersToStart = nil
++		if utilfeature.DefaultFeatureGate.Enabled(features.SidecarContainers) {
++			// To prevent the restartable init containers to keep pod alive, we should
++			// not restart them.
++			changes.InitContainersToStart = nil
++		}
+ 	}
+ 
+ 	return changes
+@@ -1222,21 +1269,34 @@ func (m *kubeGenericRuntimeManager) SyncPod(ctx context.Context, pod *v1.Pod, po
+ 		start(ctx, "ephemeral container", metrics.EphemeralContainer, ephemeralContainerStartSpec(&pod.Spec.EphemeralContainers[idx]))
+ 	}
+ 
+-	// Step 6: start init containers.
+-	for _, idx := range podContainerChanges.InitContainersToStart {
+-		container := &pod.Spec.InitContainers[idx]
+-		// Start the next init container.
+-		if err := start(ctx, "init container", metrics.InitContainer, containerStartSpec(container)); err != nil {
+-			if types.IsRestartableInitContainer(container) {
+-				klog.V(4).InfoS("Failed to start the restartable init container for the pod, skipping", "initContainerName", container.Name, "pod", klog.KObj(pod))
+-				continue
++	if !utilfeature.DefaultFeatureGate.Enabled(features.SidecarContainers) {
++		// Step 6: start the init container.
++		if container := podContainerChanges.NextInitContainerToStart; container != nil {
++			// Start the next init container.
++			if err := start(ctx, "init container", metrics.InitContainer, containerStartSpec(container)); err != nil {
++				return
+ 			}
+-			klog.V(4).InfoS("Failed to initialize the pod, as the init container failed to start, aborting", "initContainerName", container.Name, "pod", klog.KObj(pod))
+-			return
++
++			// Successfully started the container; clear the entry in the failure
++			klog.V(4).InfoS("Completed init container for pod", "containerName", container.Name, "pod", klog.KObj(pod))
+ 		}
++	} else {
++		// Step 6: start init containers.
++		for _, idx := range podContainerChanges.InitContainersToStart {
++			container := &pod.Spec.InitContainers[idx]
++			// Start the next init container.
++			if err := start(ctx, "init container", metrics.InitContainer, containerStartSpec(container)); err != nil {
++				if types.IsRestartableInitContainer(container) {
++					klog.V(4).InfoS("Failed to start the restartable init container for the pod, skipping", "initContainerName", container.Name, "pod", klog.KObj(pod))
++					continue
++				}
++				klog.V(4).InfoS("Failed to initialize the pod, as the init container failed to start, aborting", "initContainerName", container.Name, "pod", klog.KObj(pod))
++				return
++			}
+ 
+-		// Successfully started the container; clear the entry in the failure
+-		klog.V(4).InfoS("Completed init container for pod", "containerName", container.Name, "pod", klog.KObj(pod))
++			// Successfully started the container; clear the entry in the failure
++			klog.V(4).InfoS("Completed init container for pod", "containerName", container.Name, "pod", klog.KObj(pod))
++		}
+ 	}
+ 
+ 	// Step 7: For containers in podContainerChanges.ContainersToUpdate[CPU,Memory] list, invoke UpdateContainerResources
+diff --git a/pkg/kubelet/kuberuntime/kuberuntime_manager_test.go b/pkg/kubelet/kuberuntime/kuberuntime_manager_test.go
+index 83df1ec0271..42776e6e09c 100644
+--- a/pkg/kubelet/kuberuntime/kuberuntime_manager_test.go
++++ b/pkg/kubelet/kuberuntime/kuberuntime_manager_test.go
+@@ -1221,6 +1221,16 @@ func verifyActions(t *testing.T, expected, actual *podActions, desc string) {
+ }
+ 
+ func TestComputePodActionsWithInitContainers(t *testing.T) {
++	t.Run("sidecar containers disabled", func(t *testing.T) {
++		testComputePodActionsWithInitContainers(t, false)
++	})
++	t.Run("sidecar containers enabled", func(t *testing.T) {
++		testComputePodActionsWithInitContainers(t, true)
++	})
++}
++
++func testComputePodActionsWithInitContainers(t *testing.T, sidecarContainersEnabled bool) {
++	defer featuregatetesting.SetFeatureGateDuringTest(t, utilfeature.DefaultFeatureGate, features.SidecarContainers, sidecarContainersEnabled)()
+ 	_, _, m, err := createTestRuntimeManager()
+ 	require.NoError(t, err)
+ 
+@@ -1250,10 +1260,11 @@ func TestComputePodActionsWithInitContainers(t *testing.T) {
+ 				status.ContainerStatuses = nil
+ 			},
+ 			actions: podActions{
+-				SandboxID:             baseStatus.SandboxStatuses[0].Id,
+-				InitContainersToStart: []int{0},
+-				ContainersToStart:     []int{},
+-				ContainersToKill:      getKillMapWithInitContainers(basePod, baseStatus, []int{}),
++				SandboxID:                baseStatus.SandboxStatuses[0].Id,
++				NextInitContainerToStart: &basePod.Spec.InitContainers[0],
++				InitContainersToStart:    []int{0},
++				ContainersToStart:        []int{},
++				ContainersToKill:         getKillMapWithInitContainers(basePod, baseStatus, []int{}),
+ 			},
+ 		},
+ 		"initialization in progress; do nothing": {
+@@ -1269,13 +1280,14 @@ func TestComputePodActionsWithInitContainers(t *testing.T) {
+ 				status.SandboxStatuses[0].State = runtimeapi.PodSandboxState_SANDBOX_NOTREADY
+ 			},
+ 			actions: podActions{
+-				KillPod:               true,
+-				CreateSandbox:         true,
+-				SandboxID:             baseStatus.SandboxStatuses[0].Id,
+-				Attempt:               uint32(1),
+-				InitContainersToStart: []int{0},
+-				ContainersToStart:     []int{},
+-				ContainersToKill:      getKillMapWithInitContainers(basePod, baseStatus, []int{}),
++				KillPod:                  true,
++				CreateSandbox:            true,
++				SandboxID:                baseStatus.SandboxStatuses[0].Id,
++				Attempt:                  uint32(1),
++				NextInitContainerToStart: &basePod.Spec.InitContainers[0],
++				InitContainersToStart:    []int{0},
++				ContainersToStart:        []int{},
++				ContainersToKill:         getKillMapWithInitContainers(basePod, baseStatus, []int{}),
+ 			},
+ 		},
+ 		"initialization failed; restart the last init container if RestartPolicy == Always": {
+@@ -1284,10 +1296,11 @@ func TestComputePodActionsWithInitContainers(t *testing.T) {
+ 				status.ContainerStatuses[2].ExitCode = 137
+ 			},
+ 			actions: podActions{
+-				SandboxID:             baseStatus.SandboxStatuses[0].Id,
+-				InitContainersToStart: []int{2},
+-				ContainersToStart:     []int{},
+-				ContainersToKill:      getKillMapWithInitContainers(basePod, baseStatus, []int{}),
++				SandboxID:                baseStatus.SandboxStatuses[0].Id,
++				NextInitContainerToStart: &basePod.Spec.InitContainers[2],
++				InitContainersToStart:    []int{2},
++				ContainersToStart:        []int{},
++				ContainersToKill:         getKillMapWithInitContainers(basePod, baseStatus, []int{}),
+ 			},
+ 		},
+ 		"initialization failed; restart the last init container if RestartPolicy == OnFailure": {
+@@ -1296,10 +1309,11 @@ func TestComputePodActionsWithInitContainers(t *testing.T) {
+ 				status.ContainerStatuses[2].ExitCode = 137
+ 			},
+ 			actions: podActions{
+-				SandboxID:             baseStatus.SandboxStatuses[0].Id,
+-				InitContainersToStart: []int{2},
+-				ContainersToStart:     []int{},
+-				ContainersToKill:      getKillMapWithInitContainers(basePod, baseStatus, []int{}),
++				SandboxID:                baseStatus.SandboxStatuses[0].Id,
++				NextInitContainerToStart: &basePod.Spec.InitContainers[2],
++				InitContainersToStart:    []int{2},
++				ContainersToStart:        []int{},
++				ContainersToKill:         getKillMapWithInitContainers(basePod, baseStatus, []int{}),
+ 			},
+ 		},
+ 		"initialization failed; kill pod if RestartPolicy == Never": {
+@@ -1320,10 +1334,11 @@ func TestComputePodActionsWithInitContainers(t *testing.T) {
+ 				status.ContainerStatuses[2].State = kubecontainer.ContainerStateUnknown
+ 			},
+ 			actions: podActions{
+-				SandboxID:             baseStatus.SandboxStatuses[0].Id,
+-				InitContainersToStart: []int{2},
+-				ContainersToStart:     []int{},
+-				ContainersToKill:      getKillMapWithInitContainers(basePod, baseStatus, []int{2}),
++				SandboxID:                baseStatus.SandboxStatuses[0].Id,
++				NextInitContainerToStart: &basePod.Spec.InitContainers[2],
++				InitContainersToStart:    []int{2},
++				ContainersToStart:        []int{},
++				ContainersToKill:         getKillMapWithInitContainers(basePod, baseStatus, []int{2}),
+ 			},
+ 		},
+ 		"init container state unknown; kill and recreate the last init container if RestartPolicy == OnFailure": {
+@@ -1332,10 +1347,11 @@ func TestComputePodActionsWithInitContainers(t *testing.T) {
+ 				status.ContainerStatuses[2].State = kubecontainer.ContainerStateUnknown
+ 			},
+ 			actions: podActions{
+-				SandboxID:             baseStatus.SandboxStatuses[0].Id,
+-				InitContainersToStart: []int{2},
+-				ContainersToStart:     []int{},
+-				ContainersToKill:      getKillMapWithInitContainers(basePod, baseStatus, []int{2}),
++				SandboxID:                baseStatus.SandboxStatuses[0].Id,
++				NextInitContainerToStart: &basePod.Spec.InitContainers[2],
++				InitContainersToStart:    []int{2},
++				ContainersToStart:        []int{},
++				ContainersToKill:         getKillMapWithInitContainers(basePod, baseStatus, []int{2}),
+ 			},
+ 		},
+ 		"init container state unknown; kill pod if RestartPolicy == Never": {
+@@ -1371,13 +1387,14 @@ func TestComputePodActionsWithInitContainers(t *testing.T) {
+ 				status.ContainerStatuses = []*kubecontainer.Status{}
+ 			},
+ 			actions: podActions{
+-				KillPod:               true,
+-				CreateSandbox:         true,
+-				SandboxID:             baseStatus.SandboxStatuses[0].Id,
+-				Attempt:               uint32(1),
+-				InitContainersToStart: []int{0},
+-				ContainersToStart:     []int{},
+-				ContainersToKill:      getKillMapWithInitContainers(basePod, baseStatus, []int{}),
++				KillPod:                  true,
++				CreateSandbox:            true,
++				SandboxID:                baseStatus.SandboxStatuses[0].Id,
++				Attempt:                  uint32(1),
++				NextInitContainerToStart: &basePod.Spec.InitContainers[0],
++				InitContainersToStart:    []int{0},
++				ContainersToStart:        []int{},
++				ContainersToKill:         getKillMapWithInitContainers(basePod, baseStatus, []int{}),
+ 			},
+ 		},
+ 		"Pod sandbox not ready, init container failed, and RestartPolicy == OnFailure; create a new pod sandbox": {
+@@ -1387,13 +1404,14 @@ func TestComputePodActionsWithInitContainers(t *testing.T) {
+ 				status.ContainerStatuses[2].ExitCode = 137
+ 			},
+ 			actions: podActions{
+-				KillPod:               true,
+-				CreateSandbox:         true,
+-				SandboxID:             baseStatus.SandboxStatuses[0].Id,
+-				Attempt:               uint32(1),
+-				InitContainersToStart: []int{0},
+-				ContainersToStart:     []int{},
+-				ContainersToKill:      getKillMapWithInitContainers(basePod, baseStatus, []int{}),
++				KillPod:                  true,
++				CreateSandbox:            true,
++				SandboxID:                baseStatus.SandboxStatuses[0].Id,
++				Attempt:                  uint32(1),
++				NextInitContainerToStart: &basePod.Spec.InitContainers[0],
++				InitContainersToStart:    []int{0},
++				ContainersToStart:        []int{},
++				ContainersToKill:         getKillMapWithInitContainers(basePod, baseStatus, []int{}),
+ 			},
+ 		},
+ 		"some of the init container statuses are missing but the last init container is running, don't restart preceding ones": {
+@@ -1419,6 +1437,15 @@ func TestComputePodActionsWithInitContainers(t *testing.T) {
+ 		}
+ 		ctx := context.Background()
+ 		actions := m.computePodActions(ctx, pod, status)
++		if !sidecarContainersEnabled {
++			// If sidecar containers are disabled, we should not see any
++			// InitContainersToStart in the actions.
++			test.actions.InitContainersToStart = nil
++		} else {
++			// If sidecar containers are enabled, we should not see any
++			// NextInitContainerToStart in the actions.
++			test.actions.NextInitContainerToStart = nil
++		}
+ 		verifyActions(t, &test.actions, &actions, desc)
+ 	}
+ }
+@@ -1865,6 +1892,16 @@ func TestComputePodActionsWithInitAndEphemeralContainers(t *testing.T) {
+ 	TestComputePodActions(t)
+ 	TestComputePodActionsWithInitContainers(t)
+ 
++	t.Run("sidecar containers disabled", func(t *testing.T) {
++		testComputePodActionsWithInitAndEphemeralContainers(t, false)
++	})
++	t.Run("sidecar containers enabled", func(t *testing.T) {
++		testComputePodActionsWithInitAndEphemeralContainers(t, true)
++	})
++}
++
++func testComputePodActionsWithInitAndEphemeralContainers(t *testing.T, sidecarContainersEnabled bool) {
++	defer featuregatetesting.SetFeatureGateDuringTest(t, utilfeature.DefaultFeatureGate, features.SidecarContainers, sidecarContainersEnabled)()
+ 	_, _, m, err := createTestRuntimeManager()
+ 	require.NoError(t, err)
+ 
+@@ -1941,13 +1978,14 @@ func TestComputePodActionsWithInitAndEphemeralContainers(t *testing.T) {
+ 				status.ContainerStatuses[0].ExitCode = 137
+ 			},
+ 			actions: podActions{
+-				KillPod:               true,
+-				CreateSandbox:         true,
+-				SandboxID:             baseStatus.SandboxStatuses[0].Id,
+-				Attempt:               uint32(1),
+-				InitContainersToStart: []int{0},
+-				ContainersToStart:     []int{},
+-				ContainersToKill:      getKillMapWithInitContainers(basePod, baseStatus, []int{}),
++				KillPod:                  true,
++				CreateSandbox:            true,
++				SandboxID:                baseStatus.SandboxStatuses[0].Id,
++				Attempt:                  uint32(1),
++				NextInitContainerToStart: &basePod.Spec.InitContainers[0],
++				InitContainersToStart:    []int{0},
++				ContainersToStart:        []int{},
++				ContainersToKill:         getKillMapWithInitContainers(basePod, baseStatus, []int{}),
+ 			},
+ 		},
+ 		"Kill pod and do not restart ephemeral container if the pod sandbox is dead": {
+@@ -1956,13 +1994,14 @@ func TestComputePodActionsWithInitAndEphemeralContainers(t *testing.T) {
+ 				status.SandboxStatuses[0].State = runtimeapi.PodSandboxState_SANDBOX_NOTREADY
+ 			},
+ 			actions: podActions{
+-				KillPod:               true,
+-				CreateSandbox:         true,
+-				SandboxID:             baseStatus.SandboxStatuses[0].Id,
+-				Attempt:               uint32(1),
+-				InitContainersToStart: []int{0},
+-				ContainersToStart:     []int{},
+-				ContainersToKill:      getKillMapWithInitContainers(basePod, baseStatus, []int{}),
++				KillPod:                  true,
++				CreateSandbox:            true,
++				SandboxID:                baseStatus.SandboxStatuses[0].Id,
++				Attempt:                  uint32(1),
++				NextInitContainerToStart: &basePod.Spec.InitContainers[0],
++				InitContainersToStart:    []int{0},
++				ContainersToStart:        []int{},
++				ContainersToKill:         getKillMapWithInitContainers(basePod, baseStatus, []int{}),
+ 			},
+ 		},
+ 		"Kill pod if all containers exited except ephemeral container": {
+@@ -2001,6 +2040,15 @@ func TestComputePodActionsWithInitAndEphemeralContainers(t *testing.T) {
+ 		}
+ 		ctx := context.Background()
+ 		actions := m.computePodActions(ctx, pod, status)
++		if !sidecarContainersEnabled {
++			// If sidecar containers are disabled, we should not see any
++			// InitContainersToStart in the actions.
++			test.actions.InitContainersToStart = nil
++		} else {
++			// If sidecar containers are enabled, we should not see any
++			// NextInitContainerToStart in the actions.
++			test.actions.NextInitContainerToStart = nil
++		}
+ 		verifyActions(t, &test.actions, &actions, desc)
+ 	}
+ }
+diff --git a/test/e2e_node/container_lifecycle_pod_construction.go b/test/e2e_node/container_lifecycle_pod_construction.go
+index 4b94eec77c7..6c5a002e4ab 100644
+--- a/test/e2e_node/container_lifecycle_pod_construction.go
++++ b/test/e2e_node/container_lifecycle_pod_construction.go
+@@ -236,6 +236,23 @@ func (o containerOutputList) HasNotRestarted(name string) error {
+ 	return nil
+ }
+ 
++type containerOutputIndex int
++
++func (i containerOutputIndex) IsBefore(other containerOutputIndex) error {
++	if i >= other {
++		return fmt.Errorf("%d should be before %d", i, other)
++	}
++	return nil
++}
++
++func (o containerOutputList) FindIndex(name string, command string, startIdx containerOutputIndex) (containerOutputIndex, error) {
++	idx := o.findIndex(name, command, int(startIdx))
++	if idx == -1 {
++		return -1, fmt.Errorf("couldn't find %s %s, got\n%v", name, command, o)
++	}
++	return containerOutputIndex(idx), nil
++}
++
+ func (o containerOutputList) findIndex(name string, command string, startIdx int) int {
+ 	for i, v := range o {
+ 		if i < startIdx {
+diff --git a/test/e2e_node/container_lifecycle_test.go b/test/e2e_node/container_lifecycle_test.go
+index 29512c33947..473b77824a7 100644
+--- a/test/e2e_node/container_lifecycle_test.go
++++ b/test/e2e_node/container_lifecycle_test.go
+@@ -22,8 +22,10 @@ import (
+ 	"time"
+ 
+ 	"github.com/onsi/ginkgo/v2"
++	"github.com/onsi/gomega"
+ 	v1 "k8s.io/api/core/v1"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	runtimeapi "k8s.io/cri-api/pkg/apis/runtime/v1"
+ 	admissionapi "k8s.io/pod-security-admission/api"
+ 
+ 	"k8s.io/kubernetes/test/e2e/framework"
+@@ -731,6 +733,146 @@ var _ = SIGDescribe("[NodeConformance] Containers Lifecycle ", func() {
+ 	})
+ })
+ 
++var _ = SIGDescribe("[Serial] Containers Lifecycle ", func() {
++	f := framework.NewDefaultFramework("containers-lifecycle-test-serial")
++	f.NamespacePodSecurityEnforceLevel = admissionapi.LevelPrivileged
++
++	ginkgo.It("should restart the containers in right order after the node reboot", func(ctx context.Context) {
++		init1 := "init-1"
++		init2 := "init-2"
++		init3 := "init-3"
++		regular1 := "regular-1"
++
++		podLabels := map[string]string{
++			"test":      "containers-lifecycle-test-serial",
++			"namespace": f.Namespace.Name,
++		}
++		pod := &v1.Pod{
++			ObjectMeta: metav1.ObjectMeta{
++				Name:   "initialized-pod",
++				Labels: podLabels,
++			},
++			Spec: v1.PodSpec{
++				RestartPolicy: v1.RestartPolicyAlways,
++				InitContainers: []v1.Container{
++					{
++						Name:  init1,
++						Image: busyboxImage,
++						Command: ExecCommand(init1, execCommand{
++							Delay:    5,
++							ExitCode: 0,
++						}),
++					},
++					{
++						Name:  init2,
++						Image: busyboxImage,
++						Command: ExecCommand(init2, execCommand{
++							Delay:    5,
++							ExitCode: 0,
++						}),
++					},
++					{
++						Name:  init3,
++						Image: busyboxImage,
++						Command: ExecCommand(init3, execCommand{
++							Delay:    5,
++							ExitCode: 0,
++						}),
++					},
++				},
++				Containers: []v1.Container{
++					{
++						Name:  regular1,
++						Image: busyboxImage,
++						Command: ExecCommand(regular1, execCommand{
++							Delay:    30,
++							ExitCode: 0,
++						}),
++					},
++				},
++			},
++		}
++		preparePod(pod)
++
++		client := e2epod.NewPodClient(f)
++		pod = client.Create(ctx, pod)
++		ginkgo.By("Waiting for the pod to be initialized and run")
++		err := e2epod.WaitForPodRunningInNamespace(ctx, f.ClientSet, pod)
++		framework.ExpectNoError(err)
++
++		ginkgo.By("Getting the current pod sandbox ID")
++		rs, _, err := getCRIClient()
++		framework.ExpectNoError(err)
++
++		sandboxes, err := rs.ListPodSandbox(ctx, &runtimeapi.PodSandboxFilter{
++			LabelSelector: podLabels,
++		})
++		framework.ExpectNoError(err)
++		gomega.Expect(sandboxes).To(gomega.HaveLen(1))
++		podSandboxID := sandboxes[0].Id
++
++		ginkgo.By("Stopping the kubelet")
++		restartKubelet := stopKubelet()
++		gomega.Eventually(ctx, func() bool {
++			return kubeletHealthCheck(kubeletHealthCheckURL)
++		}, f.Timeouts.PodStart, f.Timeouts.Poll).Should(gomega.BeFalse())
++
++		ginkgo.By("Stopping the pod sandbox to simulate the node reboot")
++		err = rs.StopPodSandbox(ctx, podSandboxID)
++		framework.ExpectNoError(err)
++
++		ginkgo.By("Restarting the kubelet")
++		restartKubelet()
++		gomega.Eventually(ctx, func() bool {
++			return kubeletHealthCheck(kubeletHealthCheckURL)
++		}, f.Timeouts.PodStart, f.Timeouts.Poll).Should(gomega.BeTrue())
++
++		ginkgo.By("Waiting for the pod to be re-initialized and run")
++		err = e2epod.WaitForPodCondition(ctx, f.ClientSet, pod.Namespace, pod.Name, "re-initialized", f.Timeouts.PodStart, func(pod *v1.Pod) (bool, error) {
++			if pod.Status.ContainerStatuses[0].RestartCount < 2 {
++				return false, nil
++			}
++			if pod.Status.Phase != v1.PodRunning {
++				return false, nil
++			}
++			return true, nil
++		})
++		framework.ExpectNoError(err)
++
++		ginkgo.By("Parsing results")
++		pod, err = client.Get(ctx, pod.Name, metav1.GetOptions{})
++		framework.ExpectNoError(err)
++		results := parseOutput(pod)
++
++		ginkgo.By("Analyzing results")
++		init1Started, err := results.FindIndex(init1, "Started", 0)
++		framework.ExpectNoError(err)
++		init2Started, err := results.FindIndex(init2, "Started", 0)
++		framework.ExpectNoError(err)
++		init3Started, err := results.FindIndex(init3, "Started", 0)
++		framework.ExpectNoError(err)
++		regular1Started, err := results.FindIndex(regular1, "Started", 0)
++		framework.ExpectNoError(err)
++
++		init1Restarted, err := results.FindIndex(init1, "Started", init1Started+1)
++		framework.ExpectNoError(err)
++		init2Restarted, err := results.FindIndex(init2, "Started", init2Started+1)
++		framework.ExpectNoError(err)
++		init3Restarted, err := results.FindIndex(init3, "Started", init3Started+1)
++		framework.ExpectNoError(err)
++		regular1Restarted, err := results.FindIndex(regular1, "Started", regular1Started+1)
++		framework.ExpectNoError(err)
++
++		framework.ExpectNoError(init1Started.IsBefore(init2Started))
++		framework.ExpectNoError(init2Started.IsBefore(init3Started))
++		framework.ExpectNoError(init3Started.IsBefore(regular1Started))
++
++		framework.ExpectNoError(init1Restarted.IsBefore(init2Restarted))
++		framework.ExpectNoError(init2Restarted.IsBefore(init3Restarted))
++		framework.ExpectNoError(init3Restarted.IsBefore(regular1Restarted))
++	})
++})
++
+ var _ = SIGDescribe("[NodeAlphaFeature:SidecarContainers] Containers Lifecycle ", func() {
+ 	f := framework.NewDefaultFramework("containers-lifecycle-test")
+ 	f.NamespacePodSecurityEnforceLevel = admissionapi.LevelPrivileged

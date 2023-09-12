@@ -66,7 +66,7 @@ index 46d053734d1..d7f48672394 100644
  API rule violation: names_match,k8s.io/cloud-provider/config/v1alpha1,CloudControllerManagerConfiguration,ServiceController
  API rule violation: names_match,k8s.io/cloud-provider/config/v1alpha1,CloudProviderConfiguration,CloudConfigFile
 diff --git a/pkg/generated/openapi/zz_generated.openapi.go b/pkg/generated/openapi/zz_generated.openapi.go
-index 2f95dd08064..869f5f6c04f 100644
+index e256a0ca87a..4504c85eb6b 100644
 --- a/pkg/generated/openapi/zz_generated.openapi.go
 +++ b/pkg/generated/openapi/zz_generated.openapi.go
 @@ -51107,6 +51107,13 @@ func schema_k8sio_cloud_provider_config_v1alpha1_CloudControllerManagerConfigura

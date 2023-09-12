@@ -1,2 +1,2 @@
-13fe98fd5a05c53b1a16bc32ae223894e9646a05e4f1c9b3dbff942debc218d1  _output/1-24/bin/external-provisioner/linux-amd64/csi-provisioner
-203fd191fff1a30af988eabb22ef81c44285a561b26ebbdf02747992c4d1967e  _output/1-24/bin/external-provisioner/linux-arm64/csi-provisioner
+e6ac06359d5c1760900a864b0a72d4216bbdf9c5c1f9cfb340c3cda32a062538  _output/1-24/bin/external-provisioner/linux-amd64/csi-provisioner
+c66cd5cab42ae3c4bb9f5f7497cfbf68b09bfdb004cf56a158a0a3a5e14f6a40  _output/1-24/bin/external-provisioner/linux-arm64/csi-provisioner
