@@ -1,0 +1,43 @@
+From 7aa66745ca6c25ab68baa2cabfefbbb444b7598c Mon Sep 17 00:00:00 2001
+From: Sajia Zafreen <sajiazafreen@u.boisestate.edu>
+Date: Wed, 13 Sep 2023 12:19:43 -0700
+Subject: [PATCH] Bump go-restful to 2.16.0+incompatible to address
+ CVE-2022-1996
+
+Signed-off-by: Sajia Zafreen <sajiazafreen@u.boisestate.edu>
+---
+ go.mod | 2 +-
+ go.sum | 3 ++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/go.mod b/go.mod
+index de8c075c..216fe3f8 100644
+--- a/go.mod
++++ b/go.mod
+@@ -65,7 +65,7 @@ require (
+ 	github.com/dgraph-io/ristretto v0.1.0 // indirect
+ 	github.com/dimchansky/utfbom v1.1.1 // indirect
+ 	github.com/dustin/go-humanize v1.0.0 // indirect
+-	github.com/emicklei/go-restful v2.9.5+incompatible // indirect
++	github.com/emicklei/go-restful v2.16.0+incompatible // indirect
+ 	github.com/evanphx/json-patch v4.12.0+incompatible // indirect
+ 	github.com/flynn/go-shlex v0.0.0-20150515145356-3f9db97f8568 // indirect
+ 	github.com/go-logr/logr v1.2.0 // indirect
+diff --git a/go.sum b/go.sum
+index 463010aa..9bdc6205 100644
+--- a/go.sum
++++ b/go.sum
+@@ -216,8 +216,9 @@ github.com/elastic/go-elasticsearch/v7 v7.17.1/go.mod h1:OJ4wdbtDNk5g503kvlHLyEr
+ github.com/elazarl/goproxy v0.0.0-20170405201442-c4fc26588b6e/go.mod h1:/Zj4wYkgs4iZTTu3o/KG3Itv/qCCa8VVMlb3i9OVuzc=
+ github.com/elazarl/goproxy v0.0.0-20180725130230-947c36da3153/go.mod h1:/Zj4wYkgs4iZTTu3o/KG3Itv/qCCa8VVMlb3i9OVuzc=
+ github.com/emicklei/go-restful v0.0.0-20170410110728-ff4f55a20633/go.mod h1:otzb+WCGbkyDHkqmQmT5YD2WR4BBwUdeQoFo8l/7tVs=
+-github.com/emicklei/go-restful v2.9.5+incompatible h1:spTtZBk5DYEvbxMVutUuTyh1Ao2r4iyvLdACqsl/Ljk=
+ github.com/emicklei/go-restful v2.9.5+incompatible/go.mod h1:otzb+WCGbkyDHkqmQmT5YD2WR4BBwUdeQoFo8l/7tVs=
++github.com/emicklei/go-restful v2.16.0+incompatible h1:rgqiKNjTnFQA6kkhFe16D8epTksy9HQ1MyrbDXSdYhM=
++github.com/emicklei/go-restful v2.16.0+incompatible/go.mod h1:otzb+WCGbkyDHkqmQmT5YD2WR4BBwUdeQoFo8l/7tVs=
+ github.com/envoyproxy/go-control-plane v0.6.9/go.mod h1:SBwIajubJHhxtWwsL9s8ss4safvEdbitLhGGK48rN6g=
+ github.com/envoyproxy/go-control-plane v0.9.0/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
+ github.com/envoyproxy/go-control-plane v0.9.1-0.20191026205805-5f8ba28d4473/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
+-- 
+2.39.1
+
