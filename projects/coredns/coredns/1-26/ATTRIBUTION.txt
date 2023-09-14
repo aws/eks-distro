@@ -1248,7 +1248,7 @@ Copyright (c) 2015 Datadog, Inc
 https://github.com/DataDog/datadog-go/v5
 Copyright (c) 2015 Datadog, Inc
 
-** github.com/emicklei/go-restful; version v2.9.5+incompatible --
+** github.com/emicklei/go-restful; version v2.16.0+incompatible --
 https://github.com/emicklei/go-restful
 Copyright (c) 2012,2013 Ernest Micklei
 
