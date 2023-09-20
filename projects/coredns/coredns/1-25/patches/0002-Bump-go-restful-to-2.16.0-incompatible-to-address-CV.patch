@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Sajia Zafreen <sajiazafreen@u.boisestate.edu>
-Date: Wed, 13 Sep 2023 12:31:57 -0700
+Date: Wed, 13 Sep 2023 12:19:43 -0700
 Subject: [PATCH] Bump go-restful to 2.16.0+incompatible to address
  CVE-2022-1996
 
