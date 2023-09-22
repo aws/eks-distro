@@ -66,7 +66,7 @@ index 46d053734d1..d7f48672394 100644
  API rule violation: names_match,k8s.io/cloud-provider/config/v1alpha1,CloudControllerManagerConfiguration,ServiceController
  API rule violation: names_match,k8s.io/cloud-provider/config/v1alpha1,CloudProviderConfiguration,CloudConfigFile
 diff --git a/pkg/generated/openapi/zz_generated.openapi.go b/pkg/generated/openapi/zz_generated.openapi.go
-index e256a0ca87a..4504c85eb6b 100644
+index 9d0b8a0e2ec..910b2c08a0a 100644
 --- a/pkg/generated/openapi/zz_generated.openapi.go
 +++ b/pkg/generated/openapi/zz_generated.openapi.go
 @@ -51107,6 +51107,13 @@ func schema_k8sio_cloud_provider_config_v1alpha1_CloudControllerManagerConfigura
@@ -96,7 +96,7 @@ index e256a0ca87a..4504c85eb6b 100644
 +			"k8s.io/apimachinery/pkg/apis/meta/v1.Duration", "k8s.io/cloud-provider/config/v1alpha1.KubeCloudSharedConfiguration", "k8s.io/cloud-provider/controllers/node/config/v1alpha1.NodeControllerConfiguration", "k8s.io/cloud-provider/controllers/service/config/v1alpha1.ServiceControllerConfiguration", "k8s.io/controller-manager/config/v1alpha1.GenericControllerManagerConfiguration"},
  	}
  }
- 
+
 diff --git a/staging/src/k8s.io/cloud-provider/app/core.go b/staging/src/k8s.io/cloud-provider/app/core.go
 index baa8411cdf9..d94c29d4113 100644
 --- a/staging/src/k8s.io/cloud-provider/app/core.go
@@ -114,7 +114,7 @@ index bcb523e9173..ada14b36153 100644
 --- a/staging/src/k8s.io/cloud-provider/config/types.go
 +++ b/staging/src/k8s.io/cloud-provider/config/types.go
 @@ -18,6 +18,7 @@ package config
- 
+
  import (
  	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 +	nodeconfig "k8s.io/cloud-provider/controllers/node/config"
@@ -124,7 +124,7 @@ index bcb523e9173..ada14b36153 100644
 @@ -34,6 +35,10 @@ type CloudControllerManagerConfiguration struct {
  	// both in cloud controller manager and kube-controller manager.
  	KubeCloudShared KubeCloudSharedConfiguration
- 
+
 +	// NodeController holds configuration for node controller
 +	// related features.
 +	NodeController nodeconfig.NodeControllerConfiguration
@@ -137,7 +137,7 @@ index a47cf53384e..c7f4760b47c 100644
 --- a/staging/src/k8s.io/cloud-provider/config/v1alpha1/defaults.go
 +++ b/staging/src/k8s.io/cloud-provider/config/v1alpha1/defaults.go
 @@ -21,6 +21,7 @@ import (
- 
+
  	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
  	"k8s.io/apimachinery/pkg/runtime"
 +	nodeconfigv1alpha1 "k8s.io/cloud-provider/controllers/node/config/v1alpha1"
@@ -151,14 +151,14 @@ index a47cf53384e..c7f4760b47c 100644
 +	// Use the default RecommendedDefaultNodeControllerConfiguration options
 +	nodeconfigv1alpha1.RecommendedDefaultNodeControllerConfiguration(&obj.NodeController)
  }
- 
+
  func SetDefaults_KubeCloudSharedConfiguration(obj *KubeCloudSharedConfiguration) {
 diff --git a/staging/src/k8s.io/cloud-provider/config/v1alpha1/types.go b/staging/src/k8s.io/cloud-provider/config/v1alpha1/types.go
 index 0aed1aa2471..145d612d532 100644
 --- a/staging/src/k8s.io/cloud-provider/config/v1alpha1/types.go
 +++ b/staging/src/k8s.io/cloud-provider/config/v1alpha1/types.go
 @@ -18,6 +18,7 @@ package v1alpha1
- 
+
  import (
  	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 +	nodeconfigv1alpha1 "k8s.io/cloud-provider/controllers/node/config/v1alpha1"
@@ -543,10 +543,10 @@ index c14fe43b8f8..7dfbbd88cb8 100644
 +++ b/staging/src/k8s.io/cloud-provider/controllers/node/node_controller.go
 @@ -101,6 +101,7 @@ type CloudNodeController struct {
  	cloud cloudprovider.Interface
- 
+
  	nodeStatusUpdateFrequency time.Duration
 +	workerCount               int32
- 
+
  	nodesLister corelisters.NodeLister
  	nodesSynced cache.InformerSynced
 @@ -112,7 +113,8 @@ func NewCloudNodeController(
@@ -556,7 +556,7 @@ index c14fe43b8f8..7dfbbd88cb8 100644
 -	nodeStatusUpdateFrequency time.Duration) (*CloudNodeController, error) {
 +	nodeStatusUpdateFrequency time.Duration,
 +	workerCount int32) (*CloudNodeController, error) {
- 
+
  	eventBroadcaster := record.NewBroadcaster()
  	recorder := eventBroadcaster.NewRecorder(scheme.Scheme, v1.EventSource{Component: "cloud-node-controller"})
 @@ -130,6 +132,7 @@ func NewCloudNodeController(
@@ -570,12 +570,12 @@ index c14fe43b8f8..7dfbbd88cb8 100644
 @@ -178,7 +181,9 @@ func (cnc *CloudNodeController) Run(stopCh <-chan struct{}, controllerManagerMet
  		}
  	}, cnc.nodeStatusUpdateFrequency, stopCh)
- 
+
 -	go wait.Until(cnc.runWorker, time.Second, stopCh)
 +	for i := int32(0); i < cnc.workerCount; i++ {
 +		go wait.Until(cnc.runWorker, time.Second, stopCh)
 +	}
- 
+
  	<-stopCh
  }
 diff --git a/staging/src/k8s.io/cloud-provider/options/nodecontroller.go b/staging/src/k8s.io/cloud-provider/options/nodecontroller.go
@@ -729,7 +729,7 @@ index 908c79fc777..fdf8e65c704 100644
  	KubeCloudShared   *KubeCloudSharedOptions
  	ServiceController *ServiceControllerOptions
 +	NodeController    *NodeControllerOptions
- 
+
  	SecureServing  *apiserveroptions.SecureServingOptionsWithLoopback
  	Authentication *apiserveroptions.DelegatingAuthenticationOptions
 @@ -79,6 +80,9 @@ func NewCloudControllerManagerOptions() (*CloudControllerManagerOptions, error)
@@ -749,21 +749,21 @@ index 908c79fc777..fdf8e65c704 100644
 +
  	return internal, nil
  }
- 
+
 @@ -119,6 +124,7 @@ func (o *CloudControllerManagerOptions) Flags(allControllers, disabledByDefaultC
  	fss := cliflag.NamedFlagSets{}
  	o.Generic.AddFlags(&fss, allControllers, disabledByDefaultControllers)
  	o.KubeCloudShared.AddFlags(fss.FlagSet("generic"))
 +	o.NodeController.AddFlags(fss.FlagSet("node controller"))
  	o.ServiceController.AddFlags(fss.FlagSet("service controller"))
- 
+
  	o.SecureServing.AddFlags(fss.FlagSet("secure serving"))
 @@ -198,6 +204,7 @@ func (o *CloudControllerManagerOptions) ApplyTo(c *config.Config, userAgent stri
  	// sync back to component config
  	// TODO: find more elegant way than syncing back the values.
  	c.ComponentConfig.NodeStatusUpdateFrequency = o.NodeStatusUpdateFrequency
 +	c.ComponentConfig.NodeController.ConcurrentNodeSyncs = o.NodeController.ConcurrentNodeSyncs
- 
+
  	return nil
  }
 diff --git a/staging/src/k8s.io/cloud-provider/options/options_test.go b/staging/src/k8s.io/cloud-provider/options/options_test.go
@@ -811,10 +811,10 @@ index 194f455380b..b7d10ca5d2c 100644
  			ServiceControllerConfiguration: &serviceconfig.ServiceControllerConfiguration{
  				ConcurrentServiceSyncs: 1,
 diff --git a/vendor/modules.txt b/vendor/modules.txt
-index f42094ddf77..ea3a2dd5567 100644
+index c1bf5cea2a6..5b03408d81b 100644
 --- a/vendor/modules.txt
 +++ b/vendor/modules.txt
-@@ -1965,6 +1965,8 @@ k8s.io/cloud-provider/config
+@@ -1964,6 +1964,8 @@ k8s.io/cloud-provider/config
  k8s.io/cloud-provider/config/install
  k8s.io/cloud-provider/config/v1alpha1
  k8s.io/cloud-provider/controllers/node
