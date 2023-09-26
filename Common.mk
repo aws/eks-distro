@@ -562,7 +562,9 @@ binaries: $(BINARY_TARGETS)
 
 .PHONY: run-govulncheck
 run-govulncheck: $(BINARY_TARGETS)
-	source $(BUILD_LIB)/common.sh \
+	source $(BUILD_LIB)/govulncheck.sh \
+		&& rungovulncheck $(GOLANG_VERSION) $(REPO)
+#	source $(BUILD_LIB)/common.sh \
 		&& build::common::use_go_version $(GOLANG_VERSION) \
 		&& go install golang.org/x/vuln/cmd/govulncheck@latest \
 	 	&& $$(go env GOPATH)/bin/govulncheck -C $(REPO) -json ./... > _output/govuln-output.json \
