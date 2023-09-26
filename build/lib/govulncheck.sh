@@ -34,7 +34,7 @@ rungovulncheck() {
     cleanedbuilderbasegoversion="eks-distro-golang:${cleanedbuilderbasegoversion//./-}"
     echo "builder base golang version: $cleanedbuilderbasegoversion"
 
-    fixedcves=$(getgolangvex | jq --arg v "$cleanedgoversion" '.vulnerabilities[] | select( .product_status.fixed[] | contains($v)) | .cve')
+    fixedcves=$(getgolangvex | jq --arg v "$cleanedgoversion" '[.vulnerabilities[] | select( .product_status.fixed[] | contains($v)) | .cve'])
     echo $fixedcves
 }
 
