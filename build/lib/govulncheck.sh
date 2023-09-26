@@ -26,7 +26,7 @@ rungovulncheck() {
 
     build::common::use_go_version $goversion
     go install golang.org/x/vuln/cmd/govulncheck@latest
-    govluncheckoutput=$(go env GOPATH)/bin/govulncheck -C $REPO -json ./...
+    govluncheckoutput=$(go env GOPATH)/bin/govulncheck -C $repo -json ./...
     echo govluncheckoutput
 
     builderbasegoversion=$(getbuilderbasegoversion $goversion)
