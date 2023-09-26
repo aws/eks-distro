@@ -30,7 +30,7 @@ require (
 	github.com/docker/distribution v2.8.2+incompatible
 	github.com/docker/go-units v0.5.0
 	github.com/emicklei/go-restful/v3 v3.9.0
-	github.com/evanphx/json-patch v5.6.0+incompatible
+	github.com/evanphx/json-patch v4.12.0+incompatible
 	github.com/fsnotify/fsnotify v1.6.0
 	github.com/go-logr/logr v1.2.4
 	github.com/godbus/dbus/v5 v5.0.6
@@ -39,7 +39,7 @@ require (
 	github.com/golang/mock v1.6.0
 	github.com/golang/protobuf v1.5.3
 	github.com/google/cadvisor v0.47.3
-	github.com/google/cel-go v0.16.0
+	github.com/google/cel-go v0.16.1
 	github.com/google/gnostic-models v0.6.8
 	github.com/google/go-cmp v0.5.9
 	github.com/google/gofuzz v1.2.0
