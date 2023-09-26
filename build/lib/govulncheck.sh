@@ -13,10 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+set -x
 set -o errexit
 set -o nounset
 set -o pipefail
-set -x
 
 SCRIPT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 source "${SCRIPT_ROOT}/common.sh"
@@ -28,7 +28,12 @@ rungovulncheck() {
     build::common::use_go_version $goversion
     go install golang.org/x/vuln/cmd/govulncheck@latest
     govluncheckoutput=$($(go env GOPATH)/bin/govulncheck -C $repo -json ./...)
-    echo $govluncheckoutput | jq '.osv | select( . != null ) | "\(.aliases[0])"'
+    detectedcves=$(echo $govluncheckoutput | jq '.osv | select( . != null ) | .aliases[0]')
+    if [ "$detectedcves" == "" ];then
+        echo "No CVEs detected "
+        exit 0
+    fi
+    echo $detectedcves
 
     builderbasegoversion=$(getbuilderbasegoversion $goversion)
     cleanedbuilderbasegoversion="v${builderbasegoversion/-/-eks-}"
@@ -36,7 +41,18 @@ rungovulncheck() {
     echo "builder base golang version: $cleanedbuilderbasegoversion"
 
     fixedcves=$(getgolangvex | jq --arg v "$cleanedbuilderbasegoversion" '[.vulnerabilities[] | select( .product_status.fixed[] | contains($v)) | .cve'])
-    echo $fixedcves | jq
+    if [ "$fixedcves" == "" ];then
+        echo "No CVE fixes present"
+    fi
+    echo $fixedcves
+
+    for cve in $detectedcves
+    do
+        cvefixed=$(echo $fixedcves | jq "index($cve) | select( . != null)")
+        if [ "$cvefixed" == "" ]; then
+            echo "CVE Detected: $cve is not addressed by a known patch to $goversion"
+        fi
+    done
 }
 
 getbuilderbasegoversion() {
