@@ -66,7 +66,7 @@ You can install the CRD API type, the release channel manifest for EKS-D, and
 view the release channel by running the following commands:
 
 ```bash
-RELEASE_BRANCH=1-27
+RELEASE_BRANCH=1-28
 kubectl apply -f https://distro.eks.amazonaws.com/crds/releasechannels.distro.eks.amazonaws.com-v1alpha1.yaml
 kubectl apply -f https://distro.eks.amazonaws.com/releasechannels/${RELEASE_BRANCH}.yaml
 kubectl get -o yaml releasechannels
@@ -105,8 +105,8 @@ manifest for EKS Distro, and view the release by running the following
 commands:
 
 ```bash
-RELEASE_BRANCH=1-27
-RELEASE=12
+RELEASE_BRANCH=1-28
+RELEASE=5
 kubectl apply -f https://distro.eks.amazonaws.com/crds/releases.distro.eks.amazonaws.com-v1alpha1.yaml
 kubectl apply -f https://distro.eks.amazonaws.com/kubernetes-${RELEASE_BRANCH}/kubernetes-${RELEASE_BRANCH}-eks-${RELEASE}.yaml
 kubectl get release kubernetes-${RELEASE_BRANCH}-eks-${RELEASE}
@@ -119,6 +119,14 @@ The EKS Distro of Kubernetes source repository does not include any AMIs (Amazon
 Machine Images), but it does use the EKS Optimized AMI. See the project
 repository for the [EKS Optimized AMI](https://github.com/awslabs/amazon-eks-ami)
 if you are interested in the AL2 container runtime kernel version.
+
+#### EKS-D 1.28 Version Dependencies
+* [v1-28-eks-5](releases/1-28/5/index.md) (September 14, 2023)
+* [v1-28-eks-4](releases/1-28/4/index.md) (September 7, 2023)
+* [v1-28-eks-3](releases/1-28/3/index.md) (August 31, 2023)
+* [v1-28-eks-2](releases/1-28/2/index.md) (August 17, 2023)
+* [v1-28-eks-1](releases/1-28/1/index.md) (August 3, 2023)
+
 
 #### EKS-D 1.27 Version Dependencies
 * [v1-27-eks-12](releases/1-27/12/index.md) (September 15, 2023)

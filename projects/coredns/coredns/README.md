@@ -7,6 +7,7 @@
 | 1-25    | ![Version](https://img.shields.io/badge/version-v1.9.3-blue) |
 | 1-26    | ![Version](https://img.shields.io/badge/version-v1.9.3-blue) |
 | 1-27    | ![Version](https://img.shields.io/badge/version-v1.10.1-blue)|
+| 1-28    | ![Version](https://img.shields.io/badge/version-v1.10.1-blue)|
 
 ### Updating
 
