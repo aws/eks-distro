@@ -16,6 +16,7 @@
 set -o errexit
 set -o nounset
 set -o pipefail
+set -x
 
 SCRIPT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 source "${SCRIPT_ROOT}/common.sh"
@@ -27,15 +28,15 @@ rungovulncheck() {
     build::common::use_go_version $goversion
     go install golang.org/x/vuln/cmd/govulncheck@latest
     govluncheckoutput=$($(go env GOPATH)/bin/govulncheck -C $repo -json ./...)
-    echo $govluncheckoutput | jq
+    echo $govluncheckoutput | jq '.osv | select( . != null ) | "\(.aliases[0])"'
 
     builderbasegoversion=$(getbuilderbasegoversion $goversion)
     cleanedbuilderbasegoversion="v${builderbasegoversion/-/-eks-}"
     cleanedbuilderbasegoversion="eks-distro-golang:${cleanedbuilderbasegoversion//./-}"
     echo "builder base golang version: $cleanedbuilderbasegoversion"
 
-    fixedcves=$(getgolangvex | jq --arg v "$cleanedgoversion" '[.vulnerabilities[] | select( .product_status.fixed[] | contains($v)) | .cve'])
-    echo $fixedcves
+    fixedcves=$(getgolangvex | jq --arg v "$cleanedbuilderbasegoversion" '[.vulnerabilities[] | select( .product_status.fixed[] | contains($v)) | .cve'])
+    echo $fixedcves | jq
 }
 
 getbuilderbasegoversion() {
