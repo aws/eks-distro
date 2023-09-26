@@ -20,11 +20,30 @@ set -o pipefail
 SCRIPT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 source "${SCRIPT_ROOT}/common.sh"
 
-GOLANG_VERSION="$1"
-REPO="$2"
-
 rungovulncheck() {
+    local -r goversion=$1
+    local -r repo=$2
+
     build::common::use_go_version $GOLANG_VERSION
     go install golang.org/x/vuln/cmd/govulncheck@latest
-    $(go env GOPATH)/bin/govulncheck -C $REPO -json ./...
+    govluncheckoutput=$(go env GOPATH)/bin/govulncheck -C $REPO -json ./...
+    echo govluncheckoutput
+
+    builderbasegoversion=$(getbuilderbasegoversion $goversion)
+    cleanedbuilderbasegoversion="v${builderbasegoversion/-/-eks-}"
+    cleanedbuilderbasegoversion="eks-distro-golang:${cleanedbuilderbasegoversion//./-}"
+    echo "builder base golang version: $cleanedbuilderbasegoversion"
+
+    fixedcves=$(getgolangvex | jq --arg v "$cleanedgoversion" '.vulnerabilities[] | select( .product_status.fixed[] | contains($v)) | .cve')
+    echo $fixedcves
+}
+
+getbuilderbasegoversion() {
+    local -r goversion=$1
+    local -r cleanedversion=${goversion//.}
+    curl -s https://raw.githubusercontent.com/aws/eks-distro-build-tooling/main/builder-base/versions.yaml | yq ".GOLANG_VERSION_$cleanedversion"
+}
+
+getgolangvex() {
+    curl -s https://raw.githubusercontent.com/aws/eks-distro-build-tooling/main/projects/golang/go/VulnerabilityManagement/eks-distro-golang-vex.json
 }
