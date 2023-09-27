@@ -98,7 +98,7 @@ https://github.com/google/cadvisor
 ** github.com/google/cadvisor/third_party/containerd/api; version v0.46.1 --
 https://github.com/google/cadvisor
 
-** github.com/google/cel-go; version v0.12.6 --
+** github.com/google/cel-go; version v0.12.7 --
 https://github.com/google/cel-go
 
 ** github.com/google/gnostic; version v0.5.7-v3refs --
@@ -215,7 +215,7 @@ https://github.com/open-telemetry/opentelemetry-go-contrib
 ** go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc; version v0.35.0 --
 https://github.com/open-telemetry/opentelemetry-go-contrib
 
-** go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp; version v0.35.0 --
+** go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp; version v0.35.1 --
 https://github.com/open-telemetry/opentelemetry-go-contrib
 
 ** go.opentelemetry.io/otel; version v1.10.0 --
@@ -335,7 +335,7 @@ https://github.com/kubernetes/kubectl
 ** k8s.io/kubelet; version v0.0.0 --
 https://github.com/kubernetes/kubelet
 
-** k8s.io/kubernetes; version v1.26.8 --
+** k8s.io/kubernetes; version v1.26.9 --
 https://github.com/kubernetes/kubernetes
 
 ** k8s.io/legacy-cloud-providers; version v0.0.0 --
@@ -949,7 +949,7 @@ https://github.com/liggitt/tabwriter
 ** github.com/vmware/govmomi/vim25/xml; version v0.30.0 --
 https://github.com/vmware/govmomi
 
-** golang.org/go; version go1.19.12 --
+** golang.org/go; version go1.20.8 --
 https://github.com/golang/go
 
 ** golang.org/x/crypto; version v0.1.0 --
@@ -985,7 +985,7 @@ https://github.com/kubernetes/apimachinery
 ** k8s.io/client-go/third_party/forked/golang/template; version v0.0.0 --
 https://github.com/kubernetes/client-go
 
-** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.26.8 --
+** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.26.9 --
 https://github.com/kubernetes/kubernetes
 
 ** k8s.io/utils/inotify; version v0.0.0-20221107191617-1a15be271d1d --
@@ -1806,7 +1806,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.26.8 --
+** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.26.9 --
 https://github.com/kubernetes/kubernetes
 
 Copyright ©2013 The gonum Authors. All rights reserved.

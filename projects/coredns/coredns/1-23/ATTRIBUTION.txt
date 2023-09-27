@@ -465,7 +465,7 @@ limitations under the License.
 ** github.com/aws/aws-sdk-go/internal/sync/singleflight; version v1.42.30 --
 https://github.com/aws/aws-sdk-go
 
-** golang.org/go; version go1.18.10 --
+** golang.org/go; version go1.20.8 --
 https://github.com/golang/go
 
 ** golang.org/x/crypto; version v0.0.0-20210921155107-089bfa567519 --
