@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -x
 set -o errexit
 set -o nounset
 set -o pipefail
@@ -44,10 +43,11 @@ rungovulncheck() {
     if [ "$fixedcves" == "" ];then
         echo "No CVE fixes present"
     fi
-    echo $fixedcves
+    echo "CVEs addressed by EKS Go Patches: $fixedcves"
 
     for cve in $detectedcves
     do
+        echo "Checking if detected CVE $cve is addressed by golang patches..."
         cvefixed=$(echo $fixedcves | jq "index($cve) | select( . != null)")
         if [ "$cvefixed" == "" ]; then
             echo "CVE Detected: $cve is not addressed by a known patch to $goversion"
