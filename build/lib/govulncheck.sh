@@ -45,8 +45,9 @@ rungovulncheck() {
     fi
     echo "CVEs addressed by EKS Go Patches: $fixedcves"
 
-    unmitigatedcves=()
-    mitigatedcves=()
+
+    declare -a unmitigatedcves
+    declare -a mitigatedcves
     for cve in $detectedcves
     do
         echo "Checking if detected CVE $cve is addressed by golang patches..."
@@ -60,8 +61,14 @@ rungovulncheck() {
             mitigatedcves+=($cve)
         fi
     done
-    echo "mitigated_cves=${mitigatedcves[@]}"
-    echo "unmitigated_cves=${unmitigatedcves[@]}"
+
+    if [ -n "${unmitigatedcves-}" ]; then
+        echo "unmitigated_cves=${unmitigatedcves[@]}"
+    fi
+
+    if [ -n "${mitigatedcves-}" ]; then
+        echo "mitigated_cves=${mitigatedcves[@]}"
+    fi
 }
 
 getbuilderbasegoversion() {
