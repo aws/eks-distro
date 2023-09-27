@@ -66,7 +66,7 @@ rungovulncheck() {
 
     if [ -n "${unmitigatedcves-}" ]; then
         echo "unmitigated_cves=${unmitigatedcves[@]}"
-        echo $govluncheckoutput | jq --var v $unmitigatedcves '.osv | select( . != null ) | select( .aliases[0] == $v)'
+        echo $govluncheckoutput | jq --arg v $unmitigatedcves '.osv | select( . != null ) | select( .aliases[0] == $v)'
     fi
 
 
