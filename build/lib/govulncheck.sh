@@ -45,14 +45,23 @@ rungovulncheck() {
     fi
     echo "CVEs addressed by EKS Go Patches: $fixedcves"
 
+    unmitigatedcves=()
+    mitigatedcves=()
     for cve in $detectedcves
     do
         echo "Checking if detected CVE $cve is addressed by golang patches..."
         cvefixed=$(echo $fixedcves | jq "index($cve) | select( . != null)")
-        if [ "$cvefixed" == "" ]; then
-            echo "CVE Detected: $cve is not addressed by a known patch to $goversion"
+        if [ "$cvefixed" == "" ]; 
+        then
+            echo "Unmitigated CVE Detected: $cve is not addressed by a known patch to $goversion"
+            unmitigatedcves+=($cve)
+        else
+            echo "Mitigated CVE Detected: $cve is addressed by a known patch to $goversion" 
+            mitigatedcves+=($cve)
         fi
     done
+    echo "mitigated_cves=${mitigatedcves[@]}"
+    echo "unmitigated_cves=${unmitigatedcves[@]}"
 }
 
 getbuilderbasegoversion() {
