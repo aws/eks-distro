@@ -28,7 +28,7 @@ rungovulncheck() {
     go version
     go install golang.org/x/vuln/cmd/govulncheck@latest
     govluncheckoutput=$($(go env GOPATH)/bin/govulncheck -C $repo -json ./...)
-    echo $govluncheckoutput
+    echo $govluncheckoutputvulnerabilitycheck
     detectedcves=$(echo $govluncheckoutput | jq '.osv | select( . != null ) | .aliases[0]')
     if [ "$detectedcves" == "" ];then
         echo "No CVEs detected "
