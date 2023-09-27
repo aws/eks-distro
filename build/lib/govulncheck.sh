@@ -26,8 +26,8 @@ rungovulncheck() {
 
     build::common::use_go_version $goversion
     go version
-    GOPROXY=direct go install golang.org/x/vuln/cmd/govulncheck@latest
-    govluncheckoutput=$($(go env GOPATH)/bin/govulncheck -C $repo -json ./...)
+    go install golang.org/x/vuln/cmd/govulncheck@latest
+    govluncheckoutput=$(GOPROXY=direct $(go env GOPATH)/bin/govulncheck -C $repo -json ./...)
     echo $govluncheckoutput
     detectedcves=$(echo $govluncheckoutput | jq '.osv | select( . != null ) | .aliases[0]')
     if [ "$detectedcves" == "" ];then
