@@ -25,8 +25,10 @@ rungovulncheck() {
     local -r repo=$2
 
     build::common::use_go_version $goversion
-    go install golang.org/x/vuln/cmd/govulncheck@latest
+    go version
+    GOPROXY=direct go install golang.org/x/vuln/cmd/govulncheck@latest
     govluncheckoutput=$($(go env GOPATH)/bin/govulncheck -C $repo -json ./...)
+    echo $govluncheckoutput
     detectedcves=$(echo $govluncheckoutput | jq '.osv | select( . != null ) | .aliases[0]')
     if [ "$detectedcves" == "" ];then
         echo "No CVEs detected "
@@ -64,7 +66,9 @@ rungovulncheck() {
 
     if [ -n "${unmitigatedcves-}" ]; then
         echo "unmitigated_cves=${unmitigatedcves[@]}"
+        echo $govluncheckoutput | jq --var v $unmitigatedcves '.osv | select( . != null ) | select( .aliases[0] == $v)'
     fi
+
 
     if [ -n "${mitigatedcves-}" ]; then
         echo "mitigated_cves=${mitigatedcves[@]}"
