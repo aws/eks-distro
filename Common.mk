@@ -564,15 +564,6 @@ binaries: $(BINARY_TARGETS)
 run-govulncheck: $(BINARY_TARGETS)
 	source $(BUILD_LIB)/govulncheck.sh \
 		&& rungovulncheck $(GOLANG_VERSION) $(REPO)
-#	source $(BUILD_LIB)/common.sh \
-		&& build::common::use_go_version $(GOLANG_VERSION) \
-		&& go install golang.org/x/vuln/cmd/govulncheck@latest \
-	 	&& $$(go env GOPATH)/bin/govulncheck -C $(REPO) -json ./... > _output/govuln-output.json \
-		&& comm -13 <(jq -rj '.["$(GOLANG_VERSION)"] | join("\n\n")' $(BASE_DIRECTORY)/EKS_GO_FIXES.json | sort) <(jq -sr '.[].finding | select(. != null) | .osv' _output/govuln-output.json  | uniq | sort) > _output/govuln-cves \
-		&& if [ -s "_output/govuln-cves" ]; then \
-			cat _output/govuln-cves; \
-			exit 1; \
-		fi
 
 $(KUSTOMIZE_TARGET):
 	@mkdir -p $(OUTPUT_DIR)
