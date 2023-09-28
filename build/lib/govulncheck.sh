@@ -27,7 +27,7 @@ rungovulncheck() {
     build::common::use_go_version $goversion
     go version
     go install golang.org/x/vuln/cmd/govulncheck@latest
-    govluncheckoutput=$(GOSUMDB=off $(go env GOPATH)/bin/govulncheck -C $repo -json ./...)
+    govluncheckoutput=$(GONOSUMDB="github.com/sigstore/cosign" $(go env GOPATH)/bin/govulncheck -C $repo -json ./...)
     echo $govluncheckoutput
     detectedcves=$(echo $govluncheckoutput | jq '.osv | select( . != null ) | .aliases[0]')
     if [ "$detectedcves" == "" ];then
