@@ -29,7 +29,7 @@ rungovulncheck() {
     go install golang.org/x/vuln/cmd/govulncheck@latest
 
     echo "Running govulncheck..."
-    govluncheckoutput=$(GONOPROXY="github.com/sigstore/cosign" && go env && $(go env GOPATH)/bin/govulncheck -C $repo -json ./...)
+    govluncheckoutput=$(GONOPROXY="github.com/sigstore/cosign" $(go env GOPATH)/bin/govulncheck -C $repo -json ./...)
     echo $govluncheckoutput
 
     echo "Analyzing CVEs..."
