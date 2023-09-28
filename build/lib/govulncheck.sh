@@ -25,10 +25,14 @@ rungovulncheck() {
     local -r repo=$2
 
     build::common::use_go_version $goversion
-    go version
+    echo "Installing govulncheck...."
     go install golang.org/x/vuln/cmd/govulncheck@latest
-    govluncheckoutput=$(GONOSUMDB="github.com/sigstore/cosign" $(go env GOPATH)/bin/govulncheck -C $repo -json ./...)
+
+    echo "Running govulncheck..."
+    govluncheckoutput=$(GOPROXY="github.com/sigstore/cosign" && go env && $(go env GOPATH)/bin/govulncheck -C $repo -json ./...)
     echo $govluncheckoutput
+
+    echo "Analyzing CVEs..."
     detectedcves=$(echo $govluncheckoutput | jq '.osv | select( . != null ) | .aliases[0]')
     if [ "$detectedcves" == "" ];then
         echo "No CVEs detected "
@@ -46,7 +50,6 @@ rungovulncheck() {
         echo "No CVE fixes present"
     fi
     echo "CVEs addressed by EKS Go Patches: $fixedcves"
-
 
     declare -a unmitigatedcves
     declare -a mitigatedcves
