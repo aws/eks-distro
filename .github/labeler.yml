@@ -2,7 +2,8 @@ documentation:
 - 'docs/**/*'
 
 project:
-- '**/GIT_TAG'
+- 'projects/**/GIT_TAG'
+- 'projects/**/GOLANG_VERSION'
 
 patch:
 - '**/*.patch'
