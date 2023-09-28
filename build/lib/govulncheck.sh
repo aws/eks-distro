@@ -30,7 +30,7 @@ rungovulncheck() {
 
     echo "Running govulncheck..."
     # Use direct GOPROXY and don't check GOSUMDB hashes for sigstore/cosign, as the 1.9 tag used in several projects was force-pushed and fails the athens proxy pull
-    govluncheckoutput=$(rm -rf $repo/go.sum && GONOPROXY="github.com/sigstore/cosign" GONOSUMDB="github.com/sigstore/cosign" $(go env GOPATH)/bin/govulncheck -C $repo -json ./...)
+    govluncheckoutput=$(GONOPROXY="github.com/sigstore/cosign" GONOSUMDB="github.com/sigstore/cosign" $(go env GOPATH)/bin/govulncheck -C $repo -json ./...)
     echo $govluncheckoutput
 
     echo "Analyzing CVEs..."
