@@ -515,7 +515,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ** github.com/aws/aws-sdk-go/internal/sync/singleflight; version v1.44.22 --
 https://github.com/aws/aws-sdk-go
 
-** golang.org/go; version go1.18.10 --
+** golang.org/go; version go1.20.8 --
 https://github.com/golang/go
 
 ** golang.org/x/crypto; version v0.0.0-20220525230936-793ad666bf5e --
@@ -783,7 +783,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ------
 
 ** github.com/imdario/mergo; version v0.3.12 --
-https://github.com/imdario/mergo
+https://github.com/darccio/mergo
 
 Copyright (c) 2013 Dario Castañé. All rights reserved.
 Copyright (c) 2012 The Go Authors. All rights reserved.
@@ -1248,7 +1248,7 @@ Copyright (c) 2015 Datadog, Inc
 https://github.com/DataDog/datadog-go/v5
 Copyright (c) 2015 Datadog, Inc
 
-** github.com/emicklei/go-restful; version v2.9.5+incompatible --
+** github.com/emicklei/go-restful; version v2.16.0+incompatible --
 https://github.com/emicklei/go-restful
 Copyright (c) 2012,2013 Ernest Micklei
 

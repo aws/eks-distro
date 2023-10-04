@@ -1,13 +1,14 @@
 ## EKS Distro Repository
 ---
 
-| Release | Development Build Status |
-|------| --- |
-| 1-23 | [![1-23](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-23-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-23-postsubmit) |
-| 1-24 | [![1-24](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-24-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-24-postsubmit) |
-| 1-25 | [![1-25](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-25-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-25-postsubmit) |
-| 1-26 | [![1-26](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-26-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-26-postsubmit) |
-| 1-27 | [![1-27](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-27-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-27-postsubmit) |
+| Release | Development Build Status                                                                                                                  |
+|---------|-------------------------------------------------------------------------------------------------------------------------------------------|
+| 1-23    | [![1-23](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-23-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-23-postsubmit) |
+| 1-24    | [![1-24](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-24-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-24-postsubmit) |
+| 1-25    | [![1-25](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-25-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-25-postsubmit) |
+| 1-26    | [![1-26](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-26-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-26-postsubmit) |
+| 1-27    | [![1-27](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-27-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-27-postsubmit) |
+| 1-28    | [![1-28](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-28-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-28-postsubmit) |
 
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/6111/badge)](https://bestpractices.coreinfrastructure.org/projects/6111)
 
@@ -35,38 +36,45 @@ To receive notifications about new EKS-D releases, subscribe to the EKS-D update
 Source: https://github.com/cncf/artwork/tree/master/projects/kubernetes/certified-kubernetes
 -->
 
+### Kubernetes 1-28
+
+| Release | Manifest | Kubernetes Version |
+| -- | --- | --- |
+| 6 | [v1-28-eks-6](https://distro.eks.amazonaws.com/kubernetes-1-28/kubernetes-1-28-eks-6.yaml) | [v1.28.2](https://github.com/kubernetes/kubernetes/release/tag/v1.28.2) |
+
+
 ### Kubernetes 1-27
 
 | Release | Manifest | Kubernetes Version |
 | -- | --- | --- |
-| 9 | [v1-27-eks-9](https://distro.eks.amazonaws.com/kubernetes-1-27/kubernetes-1-27-eks-9.yaml) | [v1.27.4](https://github.com/kubernetes/kubernetes/release/tag/v1.27.4) |
+| 13 | [v1-27-eks-13](https://distro.eks.amazonaws.com/kubernetes-1-27/kubernetes-1-27-eks-13.yaml) | [v1.27.6](https://github.com/kubernetes/kubernetes/release/tag/v1.27.6) |
 
 
 ### Kubernetes 1-26
 
 | Release | Manifest | Kubernetes Version |
 | -- | --- | --- |
-| 15 | [v1-26-eks-15](https://distro.eks.amazonaws.com/kubernetes-1-26/kubernetes-1-26-eks-15.yaml) | [v1.26.7](https://github.com/kubernetes/kubernetes/release/tag/v1.26.7) |
+| 19 | [v1-26-eks-19](https://distro.eks.amazonaws.com/kubernetes-1-26/kubernetes-1-26-eks-19.yaml) | [v1.26.9](https://github.com/kubernetes/kubernetes/release/tag/v1.26.9) |
 
 
 ### Kubernetes 1-25
 
 | Release | Manifest | Kubernetes Version |
 | -- | --- | --- |
-| 19 | [v1-25-eks-19](https://distro.eks.amazonaws.com/kubernetes-1-25/kubernetes-1-25-eks-19.yaml) | [v1.25.12](https://github.com/kubernetes/kubernetes/release/tag/v1.25.12) |
+| 23 | [v1-25-eks-23](https://distro.eks.amazonaws.com/kubernetes-1-25/kubernetes-1-25-eks-23.yaml) | [v1.25.14](https://github.com/kubernetes/kubernetes/release/tag/v1.25.14) |
 
 
 ### Kubernetes 1-24
 
 | Release | Manifest | Kubernetes Version |
 | --- | --- | --- |
-| 23 | [v1-24-eks-23](https://distro.eks.amazonaws.com/kubernetes-1-24/kubernetes-1-24-eks-23.yaml) | [v1.24.16](https://github.com/kubernetes/kubernetes/release/tag/v1.24.16) |
+| 27 | [v1-24-eks-27](https://distro.eks.amazonaws.com/kubernetes-1-24/kubernetes-1-24-eks-27.yaml) | [v1.24.17](https://github.com/kubernetes/kubernetes/release/tag/v1.24.17) |
 
 ### Kubernetes 1-23
 
 | Release | Manifest | Kubernetes Version |
 | --- | --- | --- |
-| 28 | [v1-23-eks-28](https://distro.eks.amazonaws.com/kubernetes-1-23/kubernetes-1-23-eks-28.yaml) | [v1.23.17](https://github.com/kubernetes/kubernetes/release/tag/v1.23.17) |
+| 32 | [v1-23-eks-32](https://distro.eks.amazonaws.com/kubernetes-1-23/kubernetes-1-23-eks-32.yaml) | [v1.23.17](https://github.com/kubernetes/kubernetes/release/tag/v1.23.17) |
 
 
 ### Kubernetes 1.18, 1.19, 1.20, 1.21 and 1.22: DEPRECATED

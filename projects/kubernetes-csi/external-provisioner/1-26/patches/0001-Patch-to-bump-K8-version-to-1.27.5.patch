@@ -1,0 +1,77 @@
+From 7b464dc15b86f6a5ac4446e59e8e2085fa64bd78 Mon Sep 17 00:00:00 2001
+From: Sajia Zafreen <sajiazafreen@u.boisestate.edu>
+Date: Mon, 28 Aug 2023 17:56:54 -0700
+Subject: [PATCH] Patch to bump K8 version to 1.27.5
+
+Signed-off-by: Sajia Zafreen <sajiazafreen@u.boisestate.edu>
+---
+ go.mod |  6 +++---
+ go.sum | 12 ++++++------
+ 2 files changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/go.mod b/go.mod
+index 42ebab570..1411003ff 100644
+--- a/go.mod
++++ b/go.mod
+@@ -33,7 +33,7 @@ require (
+ require (
+ 	github.com/onsi/ginkgo/v2 v2.9.2
+ 	github.com/onsi/gomega v1.27.6
+-	k8s.io/kubernetes v1.27.0
++	k8s.io/kubernetes v1.27.5
+ )
+ 
+ require (
+@@ -124,13 +124,13 @@ require (
+ 	k8s.io/cloud-provider v0.27.0 // indirect
+ 	k8s.io/controller-manager v0.27.0 // indirect
+ 	k8s.io/kms v0.27.0 // indirect
+-	k8s.io/kube-openapi v0.0.0-20230308215209-15aac26d736a // indirect
++	k8s.io/kube-openapi v0.0.0-20230501164219-8b0f38b5fd1f // indirect
+ 	k8s.io/kubectl v0.27.0 // indirect
+ 	k8s.io/kubelet v0.27.0 // indirect
+ 	k8s.io/mount-utils v0.27.0 // indirect
+ 	k8s.io/pod-security-admission v0.27.0 // indirect
+ 	k8s.io/utils v0.0.0-20230209194617-a36077c30491 // indirect
+-	sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.1.1 // indirect
++	sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.1.2 // indirect
+ 	sigs.k8s.io/json v0.0.0-20221116044647-bc3834ca7abd // indirect
+ 	sigs.k8s.io/structured-merge-diff/v4 v4.2.3 // indirect
+ 	sigs.k8s.io/yaml v1.3.0 // indirect
+diff --git a/go.sum b/go.sum
+index e1f0107b4..b3a61b027 100644
+--- a/go.sum
++++ b/go.sum
+@@ -756,14 +756,14 @@ k8s.io/klog/v2 v2.90.1 h1:m4bYOKall2MmOiRaR1J+We67Do7vm9KiQVlT96lnHUw=
+ k8s.io/klog/v2 v2.90.1/go.mod h1:y1WjHnz7Dj687irZUWR/WLkLc5N1YHtjLdmgWjndZn0=
+ k8s.io/kms v0.27.0 h1:adCotKQybOjxwbxW7ogXyv8uQGan/3Y126S2aNW4YFY=
+ k8s.io/kms v0.27.0/go.mod h1:vI2R4Nhw+PZ+DYtVPVYKsIqip2IYjZWK9bESR64WdIw=
+-k8s.io/kube-openapi v0.0.0-20230308215209-15aac26d736a h1:gmovKNur38vgoWfGtP5QOGNOA7ki4n6qNYoFAgMlNvg=
+-k8s.io/kube-openapi v0.0.0-20230308215209-15aac26d736a/go.mod h1:y5VtZWM9sHHc2ZodIH/6SHzXj+TPU5USoA8lcIeKEKY=
++k8s.io/kube-openapi v0.0.0-20230501164219-8b0f38b5fd1f h1:2kWPakN3i/k81b0gvD5C5FJ2kxm1WrQFanWchyKuqGg=
++k8s.io/kube-openapi v0.0.0-20230501164219-8b0f38b5fd1f/go.mod h1:byini6yhqGC14c3ebc/QwanvYwhuMWF6yz2F8uwW8eg=
+ k8s.io/kubectl v0.27.0 h1:ZcWS6ufixDXwovWtzF149gd5GzxdpsIl4YqfioSkq5w=
+ k8s.io/kubectl v0.27.0/go.mod h1:tyFzo+6WfbUEccm8rFIliQ79FAmm9uTFN+1oC5Ytamo=
+ k8s.io/kubelet v0.27.0 h1:zn70SDJKNmRSFG2qeU2UITzZWdEbLVWIf/u1kd1raUQ=
+ k8s.io/kubelet v0.27.0/go.mod h1:Z6ipUvM0AFzUWxvSmot8OodwcMN15lgkFM3bcBexBsI=
+-k8s.io/kubernetes v1.27.0 h1:VCI2Qoksx2cv6mHu9g9KVH30ZHNtWSB/+9BtKLSqduM=
+-k8s.io/kubernetes v1.27.0/go.mod h1:TTwPjSCKQ+a/NTiFKRGjvOnEaQL8wIG40nsYH8Er4bA=
++k8s.io/kubernetes v1.27.5 h1:qnkrNAPz2jm/k+oWBNOJ6q+kCQ7OXkO8v3WWU9jumwo=
++k8s.io/kubernetes v1.27.5/go.mod h1:MbYZxAacYS6HjZ6VJuvKaKTilbzp0B0atzW3J8TFBEo=
+ k8s.io/mount-utils v0.27.0 h1:hLyzqhLYjIBI1W+6VklbmE6rUOjbYDFdjhhc5q17Vxw=
+ k8s.io/mount-utils v0.27.0/go.mod h1:vmcjYdi2Vg1VTWY7KkhvwJVY6WDHxb/QQhiQKkR8iNs=
+ k8s.io/pod-security-admission v0.27.0 h1:kDzfG42E3CRON82ryFQBK3sHgtKOsdOho5QDSRJm014=
+@@ -773,8 +773,8 @@ k8s.io/utils v0.0.0-20230209194617-a36077c30491/go.mod h1:OLgZIPagt7ERELqWJFomSt
+ rsc.io/binaryregexp v0.2.0/go.mod h1:qTv7/COck+e2FymRvadv62gMdZztPaShugOCi3I+8D8=
+ rsc.io/quote/v3 v3.1.0/go.mod h1:yEA65RcK8LyAZtP9Kv3t0HmxON59tX3rD+tICJqUlj0=
+ rsc.io/sampler v1.3.0/go.mod h1:T1hPZKmBbMNahiBKFy5HrXp6adAjACjK9JXDnKaTXpA=
+-sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.1.1 h1:MB1zkK+WMOmfLxEpjr1wEmkpcIhZC7kfTkZ0stg5bog=
+-sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.1.1/go.mod h1:/4NLd21PQY0B+H+X0aDZdwUiVXYJQl/2NXA5KVtDiP4=
++sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.1.2 h1:trsWhjU5jZrx6UvFu4WzQDrN7Pga4a7Qg+zcfcj64PA=
++sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.1.2/go.mod h1:+qG7ISXqCDVVcyO8hLn12AKVYYUjM7ftlqsqmrhMZE0=
+ sigs.k8s.io/controller-runtime v0.14.6 h1:oxstGVvXGNnMvY7TAESYk+lzr6S3V5VFxQ6d92KcwQA=
+ sigs.k8s.io/controller-runtime v0.14.6/go.mod h1:WqIdsAY6JBsjfc/CqO0CORmNtoCtE4S6qbPc9s68h+0=
+ sigs.k8s.io/gateway-api v0.6.2 h1:583XHiX2M2bKEA0SAdkoxL1nY73W1+/M+IAm8LJvbEA=
+-- 
+2.39.1
+
