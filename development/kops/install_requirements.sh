@@ -68,8 +68,14 @@ then
     mv sonobuoy ./bin
 fi
 
+version_num=${RELEASE_BRANCH#*-} # extract the minor version number from the release branch
+
 echo "$(which kops): $(kops version)"
-echo "$(which kubectl): $(kubectl version --client=true)"
+if (( version_num >= 23 && version_num <= 27 )); then
+  echo "$(which kubectl): $(kubectl version --client=true --short)"
+else
+  echo "$(which kubectl): $(kubectl version --client=true)"
+fi
 echo "$(which helm): $(helm version --short)"
 echo "$(which sonobuoy): $(sonobuoy version --short)"
 
