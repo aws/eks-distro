@@ -34,7 +34,7 @@ source ./set_environment.sh
 $PREFLIGHT_CHECK_PASSED || exit 1
 ./install_requirements.sh
 
-// If presubmit job, ignore state store and stop before creating cluster
+# If presubmit job, ignore state store and stop before creating cluster
 if [ "${JOB_TYPE:-}" == "presubmit" ]; then
 	trap cleanup_and_error SIGINT SIGTERM ERR
 	./create_values_yaml.sh
