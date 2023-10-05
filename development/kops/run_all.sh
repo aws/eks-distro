@@ -33,7 +33,16 @@ echo "This script will create a cluster, run tests and tear it down"
 source ./set_environment.sh
 $PREFLIGHT_CHECK_PASSED || exit 1
 ./install_requirements.sh
-if [[ "${KOPS_STATE_STORE}" != "" && "$JOB_TYPE" != "presubmit" ]]; then
+
+// If presubmit job, ignore state store and stop before creating cluster
+if [ "${JOB_TYPE:-}" == "presubmit" ]; then
+	trap cleanup_and_error SIGINT SIGTERM ERR
+	./create_values_yaml.sh
+	./create_configuration.sh
+	exit 0
+fi
+
+if [[ "${KOPS_STATE_STORE}" != "" ]]; then
 	for cluster_name in $(aws s3 ls ${KOPS_STATE_STORE}); do
 		if [[ "${cluster_name}" == "${RELEASE_BRANCH}-${NODE_ARCHITECTURE}-"* ]]; then
 			# Only delete if older than a day, get timestamp from config file in s3
@@ -53,10 +62,6 @@ fi
 trap cleanup_and_error SIGINT SIGTERM ERR
 ./create_values_yaml.sh
 ./create_configuration.sh
-// If presubmit exit before creating cluster
-if [ "$JOB_TYPE" == "presubmit" ]; then
-	exit 0
-fi
 ./create_cluster.sh
 ./set_nodeport_access.sh
 ./cluster_wait.sh

@@ -104,7 +104,7 @@ kops-arm-ubuntu-22: kops-prereqs
 	RELEASE=$(RELEASE) $(KOPS_ENTRYPOINT);
 
 .PHONY: kops-prereqs
-kops-prereqs: $(if $(JOB_TYPE) == "presubmit",,postsubmit-build)
+kops-prereqs: $(if $(filter presubmit,$(JOB_TYPE)),,postsubmit-build)
 	ssh-keygen -b 2048 -t rsa -f ~/.ssh/id_rsa -q -N ""
 	cd development/kops && RELEASE=$(RELEASE) ./install_requirements.sh
 
