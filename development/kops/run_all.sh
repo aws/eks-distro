@@ -17,44 +17,46 @@ set -exo pipefail
 BASEDIR=$(dirname "$0")
 cd ${BASEDIR}
 
-function cleanup()
-{
-  echo 'Deleting...'
-  ./gather_logs.sh || true
-  ./delete_cluster.sh
-  ./delete_store.sh
+function cleanup() {
+	echo 'Deleting...'
+	./gather_logs.sh || true
+	./delete_cluster.sh
+	./delete_store.sh
 }
 
-function cleanup_and_error()
-{
-  cleanup
-  exit 255;
+function cleanup_and_error() {
+	cleanup
+	exit 255
 }
 
 echo "This script will create a cluster, run tests and tear it down"
 source ./set_environment.sh
 $PREFLIGHT_CHECK_PASSED || exit 1
 ./install_requirements.sh
-if [[ "${KOPS_STATE_STORE}" != "" ]]; then
-  for cluster_name in $(aws s3 ls ${KOPS_STATE_STORE}); do
-    if [[ "${cluster_name}" == "${RELEASE_BRANCH}-${NODE_ARCHITECTURE}-"* ]]; then
-      # Only delete if older than a day, get timestamp from config file in s3
-      cluster_fqdn="$(echo ${cluster_name}|tr -d "/")"
-      config=$(aws s3 ls ${KOPS_STATE_STORE}/${cluster_fqdn}/config)
-      createDate=$(echo $config | awk {'print $1" "$2'})
-      createDate=$(date -d"$createDate" +%s)
-      olderThan=$(date --date "1 day ago" +%s)
-      if [[ $createDate -lt $olderThan ]]; then
-        echo "Deleting cluster ${cluster_fqdn}"
-        ${KOPS} delete cluster --state "${KOPS_STATE_STORE}" --name ${cluster_fqdn} --yes
-        aws s3 rm --recursive "${KOPS_STATE_STORE}/${cluster_name}"
-      fi
-    fi
-  done
+if [[ "${KOPS_STATE_STORE}" != "" && "$JOB_TYPE" != "presubmit" ]]; then
+	for cluster_name in $(aws s3 ls ${KOPS_STATE_STORE}); do
+		if [[ "${cluster_name}" == "${RELEASE_BRANCH}-${NODE_ARCHITECTURE}-"* ]]; then
+			# Only delete if older than a day, get timestamp from config file in s3
+			cluster_fqdn="$(echo ${cluster_name} | tr -d "/")"
+			config=$(aws s3 ls ${KOPS_STATE_STORE}/${cluster_fqdn}/config)
+			createDate=$(echo $config | awk {'print $1" "$2'})
+			createDate=$(date -d"$createDate" +%s)
+			olderThan=$(date --date "1 day ago" +%s)
+			if [[ $createDate -lt $olderThan ]]; then
+				echo "Deleting cluster ${cluster_fqdn}"
+				${KOPS} delete cluster --state "${KOPS_STATE_STORE}" --name ${cluster_fqdn} --yes
+				aws s3 rm --recursive "${KOPS_STATE_STORE}/${cluster_name}"
+			fi
+		fi
+	done
 fi
 trap cleanup_and_error SIGINT SIGTERM ERR
 ./create_values_yaml.sh
 ./create_configuration.sh
+// If presubmit exit before creating cluster
+if [ "$JOB_TYPE" == "presubmit" ]; then
+	exit 0
+fi
 ./create_cluster.sh
 ./set_nodeport_access.sh
 ./cluster_wait.sh

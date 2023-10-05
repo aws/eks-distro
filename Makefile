@@ -104,35 +104,7 @@ kops-arm-ubuntu-22: kops-prereqs
 	RELEASE=$(RELEASE) $(KOPS_ENTRYPOINT);
 
 .PHONY: kops-prereqs
-kops-prereqs: postsubmit-build
-	ssh-keygen -b 2048 -t rsa -f ~/.ssh/id_rsa -q -N ""
-	cd development/kops && RELEASE=$(RELEASE) ./install_requirements.sh
-
-.PHONY: kops-prow-nobuild
-kops-prow-nobuild: KOPS_ENTRYPOINT=development/kops/prow.sh
-kops-prow-nobuild: kops-amd-nobuild kops-arm-nobuild
-	@echo 'Done kops-prow'
-
-.PHONY: kops-amd-nobuild
-kops-amd-nobuild: kops-prereqs-nobuild
-	RELEASE=$(RELEASE) $(KOPS_ENTRYPOINT)
-
-.PHONY: kops-arm-nobuild
-kops-arm-nobuild: export NODE_INSTANCE_TYPE=t4g.medium
-kops-arm-nobuild: export NODE_ARCHITECTURE=arm64
-kops-arm-nobuild: kops-prereqs-nobuild
-	export IPV6=true; \
-	sleep 5m; \
-	RELEASE=$(RELEASE) $(KOPS_ENTRYPOINT);
-
-.PHONY: kops-arm-ubuntu-22-nobuild
-kops-arm-ubuntu-22-nobuild: export UBUNTU_RELEASE=jammy-22.04
-kops-arm-ubuntu-22-nobuild: kops-prereqs-nobuild
-	sleep 10m; \
-	RELEASE=$(RELEASE) $(KOPS_ENTRYPOINT);
-
-.PHONY: kops-prereqs-nobuild
-kops-prereqs-nobuild: 
+kops-prereqs: $(if $(JOB_TYPE) == "presubmit",,postsubmit-build)
 	ssh-keygen -b 2048 -t rsa -f ~/.ssh/id_rsa -q -N ""
 	cd development/kops && RELEASE=$(RELEASE) ./install_requirements.sh
 
