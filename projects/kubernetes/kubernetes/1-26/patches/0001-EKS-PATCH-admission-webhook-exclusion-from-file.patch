@@ -35,14 +35,14 @@ Kubernetes version this patch can be dropped:
 
 Signed-off-by: Jyoti Mahapatra <jyotima@amazon.com>
 ---
- .../exclusionrules/critical_path_excluder.go  | 186 +++++
+ .../exclusionrules/critical_path_excluder.go  | 162 +++++
  .../critical_path_excluder_test.go            | 680 ++++++++++++++++++
  .../webhook/generic/exclusionrules/matcher.go |  91 +++
  .../generic/exclusionrules/matcher_test.go    | 412 +++++++++++
  .../plugin/webhook/generic/webhook.go         |  24 +
  .../webhook_exclusion_rules_test.go           | 283 ++++++++
  vendor/modules.txt                            |   1 +
- 7 files changed, 1677 insertions(+)
+ 7 files changed, 1653 insertions(+)
  create mode 100644 staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/critical_path_excluder.go
  create mode 100644 staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/critical_path_excluder_test.go
  create mode 100644 staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/matcher.go
@@ -51,10 +51,10 @@ Signed-off-by: Jyoti Mahapatra <jyotima@amazon.com>
 
 diff --git a/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/critical_path_excluder.go b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/critical_path_excluder.go
 new file mode 100644
-index 00000000000..dc432d04249
+index 00000000000..2340b1c4fca
 --- /dev/null
 +++ b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/critical_path_excluder.go
-@@ -0,0 +1,186 @@
+@@ -0,0 +1,162 @@
 +package exclusionrules
 +
 +import (
@@ -113,46 +113,22 @@ index 00000000000..dc432d04249
 +}
 +
 +func readFile() []ExclusionRule {
-+	//Default values for backwards compatability for eks-d
-+	namespace := v1.NamespacedScope
-+	defaultExclusion := []ExclusionRule{
-+		{
-+			APIGroup:   "coordination.k8s.io",
-+			APIVersion: "v1",
-+			Kind:       "Lease",
-+			Namespace:  "kube-system",
-+			Name:       []string{"kube-controller-manager", "kube-scheduler"},
-+			Scope:      &namespace,
-+			Username:   "*",
-+		},
-+		{
-+			APIGroup:   "",
-+			APIVersion: "v1",
-+			Kind:       "Endpoints",
-+			Namespace:  "kube-system",
-+			Name:       []string{"kube-controller-manager", "kube-scheduler"},
-+			Scope:      &namespace,
-+			Username:   "*",
-+		},
-+	}
-+
++	data := []ExclusionRule{}
 +	if fileLocation, ok := os.LookupEnv(ADMISSION_WEBHOOK_EXCLUSION_ENV_VAR); ok {
 +		file, err := os.ReadFile(fileLocation)
 +		if err != nil {
 +			klog.Errorf("Error reading %v file: %v", ADMISSION_WEBHOOK_EXCLUSION_ENV_VAR, err)
-+			return defaultExclusion
++			return data
 +		}
-+		data := []ExclusionRule{}
 +		err = json.Unmarshal(file, &data)
 +		if err != nil {
 +			klog.Errorf("Error converting %v file to exclusion rules: %v", ADMISSION_WEBHOOK_EXCLUSION_ENV_VAR, err)
-+			return defaultExclusion
++			return data
 +		}
 +		klog.Infof("Successfully found and loaded %v exclusion rules", len(data))
 +		return data
 +	}
-+	klog.Info("No environment variable set, using default exclusion rules")
-+	return defaultExclusion
++	return data
 +}
 +
 +func filterValidRules(inputExclusionRules []ExclusionRule) []ExclusionRule {
@@ -1443,7 +1419,7 @@ index 00000000000..9925764a5b9
 +	}
 +}
 diff --git a/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/webhook.go b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/webhook.go
-index c04225e94f7..8d9c56c9db6 100644
+index 52df53af82b..f22bff4ed52 100644
 --- a/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/webhook.go
 +++ b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/webhook.go
 @@ -20,6 +20,8 @@ import (
@@ -1788,17 +1764,17 @@ index 00000000000..2c26ca24870
 +	}
 +}
 diff --git a/vendor/modules.txt b/vendor/modules.txt
-index 7995b8bfdcd..8d5a0da858a 100644
+index 40b673d73fa..3ddf116d222 100644
 --- a/vendor/modules.txt
 +++ b/vendor/modules.txt
-@@ -1606,6 +1606,7 @@ k8s.io/apiserver/pkg/admission/plugin/webhook/config/apis/webhookadmission/v1
+@@ -1472,6 +1472,7 @@ k8s.io/apiserver/pkg/admission/plugin/webhook/config/apis/webhookadmission/v1
  k8s.io/apiserver/pkg/admission/plugin/webhook/config/apis/webhookadmission/v1alpha1
  k8s.io/apiserver/pkg/admission/plugin/webhook/errors
  k8s.io/apiserver/pkg/admission/plugin/webhook/generic
 +k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules
  k8s.io/apiserver/pkg/admission/plugin/webhook/initializer
  k8s.io/apiserver/pkg/admission/plugin/webhook/mutating
- k8s.io/apiserver/pkg/admission/plugin/webhook/namespace
+ k8s.io/apiserver/pkg/admission/plugin/webhook/predicates/namespace
 -- 
 2.42.0
 
