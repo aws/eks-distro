@@ -33,15 +33,16 @@ Kubernetes version this patch can be dropped:
 * When the upstream efforts to implement these changes are merged.
 * We can replace with new match using match conditions in 1.28+ or when match conditions become GA
 
+Signed-off-by: Jyoti Mahapatra <jyotima@amazon.com>
 ---
- .../exclusionrules/critical_path_excluder.go  | 186 +++++
+ .../exclusionrules/critical_path_excluder.go  | 163 +++++
  .../critical_path_excluder_test.go            | 680 ++++++++++++++++++
  .../webhook/generic/exclusionrules/matcher.go |  91 +++
  .../generic/exclusionrules/matcher_test.go    | 412 +++++++++++
  .../plugin/webhook/generic/webhook.go         |  24 +
  .../webhook_exclusion_rules_test.go           | 283 ++++++++
  vendor/modules.txt                            |   1 +
- 7 files changed, 1677 insertions(+)
+ 7 files changed, 1654 insertions(+)
  create mode 100644 staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/critical_path_excluder.go
  create mode 100644 staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/critical_path_excluder_test.go
  create mode 100644 staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/matcher.go
@@ -50,10 +51,10 @@ Kubernetes version this patch can be dropped:
 
 diff --git a/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/critical_path_excluder.go b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/critical_path_excluder.go
 new file mode 100644
-index 00000000000..dc432d04249
+index 00000000000..93a3952e301
 --- /dev/null
 +++ b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/critical_path_excluder.go
-@@ -0,0 +1,186 @@
+@@ -0,0 +1,163 @@
 +package exclusionrules
 +
 +import (
@@ -74,6 +75,7 @@ index 00000000000..dc432d04249
 +
 +type ExclusionRule struct {
 +	// APIGroup is the API groups the resources belong to.
++	// Required.
 +	APIGroup string `json:"apiGroup,omitempty"`
 +
 +	// APIVersions is the API versions the resources belong to.
@@ -112,46 +114,22 @@ index 00000000000..dc432d04249
 +}
 +
 +func readFile() []ExclusionRule {
-+	//Default values for backwards compatability for eks-d
-+	namespace := v1.NamespacedScope
-+	defaultExclusion := []ExclusionRule{
-+		{
-+			APIGroup:   "coordination.k8s.io",
-+			APIVersion: "v1",
-+			Kind:       "Lease",
-+			Namespace:  "kube-system",
-+			Name:       []string{"kube-controller-manager", "kube-scheduler"},
-+			Scope:      &namespace,
-+			Username:   "*",
-+		},
-+		{
-+			APIGroup:   "",
-+			APIVersion: "v1",
-+			Kind:       "Endpoints",
-+			Namespace:  "kube-system",
-+			Name:       []string{"kube-controller-manager", "kube-scheduler"},
-+			Scope:      &namespace,
-+			Username:   "*",
-+		},
-+	}
-+
++	data := []ExclusionRule{}
 +	if fileLocation, ok := os.LookupEnv(ADMISSION_WEBHOOK_EXCLUSION_ENV_VAR); ok {
 +		file, err := os.ReadFile(fileLocation)
 +		if err != nil {
 +			klog.Errorf("Error reading %v file: %v", ADMISSION_WEBHOOK_EXCLUSION_ENV_VAR, err)
-+			return defaultExclusion
++			return data
 +		}
-+		data := []ExclusionRule{}
 +		err = json.Unmarshal(file, &data)
 +		if err != nil {
 +			klog.Errorf("Error converting %v file to exclusion rules: %v", ADMISSION_WEBHOOK_EXCLUSION_ENV_VAR, err)
-+			return defaultExclusion
++			return data
 +		}
 +		klog.Infof("Successfully found and loaded %v exclusion rules", len(data))
 +		return data
 +	}
-+	klog.Info("No environment variable set, using default exclusion rules")
-+	return defaultExclusion
++	return data
 +}
 +
 +func filterValidRules(inputExclusionRules []ExclusionRule) []ExclusionRule {
@@ -160,7 +138,7 @@ index 00000000000..dc432d04249
 +	filteredRules := []ExclusionRule{}
 +	for _, rule := range inputExclusionRules {
 +		if rule.Scope == nil || rule.Username == "" || nilOrEmpty(rule.Name) || rule.Kind == "" || rule.APIVersion == "" {
-+			klog.Errorf("Invalid webhook admission exclusion rule, missing required field of (Name, Kind, APIGroup, APIVersion, Username, Scope), skipping rule")
++			klog.Errorf("Invalid webhook admission exclusion rule, missing required field of (Name, Kind, APIVersion, Username, Scope), skipping rule")
 +			continue
 +		}
 +		// No namespace if cluster scoped
@@ -1442,7 +1420,7 @@ index 00000000000..9925764a5b9
 +	}
 +}
 diff --git a/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/webhook.go b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/webhook.go
-index c04225e94f7..8d9c56c9db6 100644
+index a5828983112..c1117469c38 100644
 --- a/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/webhook.go
 +++ b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/webhook.go
 @@ -20,6 +20,8 @@ import (
@@ -1454,8 +1432,8 @@ index c04225e94f7..8d9c56c9db6 100644
  
  	admissionv1 "k8s.io/api/admission/v1"
  	admissionv1beta1 "k8s.io/api/admission/v1beta1"
-@@ -38,6 +40,20 @@ import (
- 	clientset "k8s.io/client-go/kubernetes"
+@@ -41,6 +43,20 @@ import (
+ 	"k8s.io/klog/v2"
  )
  
 +var criticalPathExcluder exclusionrules.CriticalPathExcluder
@@ -1475,7 +1453,7 @@ index c04225e94f7..8d9c56c9db6 100644
  // Webhook is an abstract admission plugin with all the infrastructure to define Admit or Validate on-top.
  type Webhook struct {
  	*admission.Handler
-@@ -85,6 +101,10 @@ func NewWebhook(handler *admission.Handler, configFile io.Reader, sourceFactory
+@@ -90,6 +106,10 @@ func NewWebhook(handler *admission.Handler, configFile io.Reader, sourceFactory
  	cm.SetAuthenticationInfoResolver(authInfoResolver)
  	cm.SetServiceResolver(webhookutil.NewDefaultServiceResolver())
  
@@ -1486,7 +1464,7 @@ index c04225e94f7..8d9c56c9db6 100644
  	return &Webhook{
  		Handler:          handler,
  		sourceFactory:    sourceFactory,
-@@ -153,6 +173,10 @@ func (a *Webhook) ShouldCallHook(h webhook.WebhookAccessor, attr admission.Attri
+@@ -163,6 +183,10 @@ func (a *Webhook) ShouldCallHook(ctx context.Context, h webhook.WebhookAccessor,
  		return nil, nil
  	}
  
@@ -1787,17 +1765,14 @@ index 00000000000..2c26ca24870
 +	}
 +}
 diff --git a/vendor/modules.txt b/vendor/modules.txt
-index 7995b8bfdcd..8d5a0da858a 100644
+index c5ad2ad8a13..dd54c25b053 100644
 --- a/vendor/modules.txt
 +++ b/vendor/modules.txt
-@@ -1606,6 +1606,7 @@ k8s.io/apiserver/pkg/admission/plugin/webhook/config/apis/webhookadmission/v1
+@@ -1415,6 +1415,7 @@ k8s.io/apiserver/pkg/admission/plugin/webhook/config/apis/webhookadmission/v1
  k8s.io/apiserver/pkg/admission/plugin/webhook/config/apis/webhookadmission/v1alpha1
  k8s.io/apiserver/pkg/admission/plugin/webhook/errors
  k8s.io/apiserver/pkg/admission/plugin/webhook/generic
 +k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules
  k8s.io/apiserver/pkg/admission/plugin/webhook/initializer
+ k8s.io/apiserver/pkg/admission/plugin/webhook/matchconditions
  k8s.io/apiserver/pkg/admission/plugin/webhook/mutating
- k8s.io/apiserver/pkg/admission/plugin/webhook/namespace
--- 
-2.42.0
-
