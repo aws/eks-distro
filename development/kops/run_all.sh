@@ -36,7 +36,7 @@ $PREFLIGHT_CHECK_PASSED || exit 1
 
 # If presubmit job, ignore state store and stop before creating cluster
 # ${JOB_TYPE##*-} strips the presubmit name until the last '-'
-if [ "${JOB_TYPE##*-}" == "presubmit" ]; then
+if [ "${JOB_TYPE}" == "presubmit" ]; then
 	trap cleanup_and_error SIGINT SIGTERM ERR
 	./create_values_yaml.sh
 	./create_configuration.sh
