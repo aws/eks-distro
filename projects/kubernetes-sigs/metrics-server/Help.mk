@@ -9,6 +9,7 @@
 ##@ GIT/Repo Targets
 clone-repo:  ## Clone upstream `metrics-server`
 checkout-repo: ## Checkout upstream tag based on value in GIT_TAG file
+patch-repo: ## Patch upstream repo with patches in patches directory
 
 ##@ Binary Targets
 binaries: ## Build all binaries: `metrics-server` for `linux/amd64 linux/arm64`
