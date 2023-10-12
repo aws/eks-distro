@@ -14,7 +14,6 @@
 # limitations under the License.
 
 # This job is run by kop-build-1-X-presubmit, check the last name of the JOB_TYPE is presubmit
-# ${JOB_TYPE##*-} strips the presubmit name until the last '-'
 if [[ "$AWS_ROLE_ARN" == "" && "${JOB_TYPE:-}" != "presubmit" ]]; then
 	echo "Empty AWS_ROLE_ARN, AWS_ROLE_ARN is required if this script is run in a postsubmit pod for IAM Roles for Service Accounts"
 	exit 1
