@@ -1,0 +1,19 @@
+# Changelog for v1-28-eks-7
+
+This changelog highlights the changes for [v1-28-eks-7](https://github.com/aws/eks-distro/tree/v1-28-eks-7).
+
+## Changes
+
+### Patches
+* Update k8s patches ([2423](https://github.com/aws/eks-distro/pull/2423))
+* Bump external provisioner to v3.6.0 ([2430](https://github.com/aws/eks-distro/pull/2430))
+* Patch Metrics-Server to fix CVE-2023-42821 ([2426](https://github.com/aws/eks-distro/pull/2426))
+
+### Projects
+* Bump external provisioner to v3.6.0 ([2430](https://github.com/aws/eks-distro/pull/2430))
+* Bump livenessprobe to v2.11.0 ([2429](https://github.com/aws/eks-distro/pull/2429))
+
+### Base Image
+* Update base image in tag file(s) ([2427](https://github.com/aws/eks-distro/pull/2427))
+* Update base image in tag file(s) ([2424](https://github.com/aws/eks-distro/pull/2424))
+
