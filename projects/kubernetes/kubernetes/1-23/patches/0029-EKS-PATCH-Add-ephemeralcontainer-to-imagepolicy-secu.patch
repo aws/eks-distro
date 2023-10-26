@@ -1,0 +1,550 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Rita Zhang <rita.z.zhang@gmail.com>
+Date: Tue, 30 May 2023 20:35:33 +0000
+Subject: [PATCH] --EKS-PATCH-- Add ephemeralcontainer to imagepolicy
+ securityaccount admission plugin
+
+Signed-off-by: Rita Zhang <rita.z.zhang@gmail.com>
+---
+ plugin/pkg/admission/imagepolicy/admission.go |  28 ++--
+ .../admission/imagepolicy/admission_test.go   | 147 +++++++++++++++++-
+ .../pkg/admission/serviceaccount/admission.go |  57 ++++++-
+ .../serviceaccount/admission_test.go          |  88 +++++++++++
+ 4 files changed, 297 insertions(+), 23 deletions(-)
+
+diff --git a/plugin/pkg/admission/imagepolicy/admission.go b/plugin/pkg/admission/imagepolicy/admission.go
+index aea4f713eb5..3dfcbf95eef 100644
+--- a/plugin/pkg/admission/imagepolicy/admission.go
++++ b/plugin/pkg/admission/imagepolicy/admission.go
+@@ -46,6 +46,7 @@ import (
+ 
+ // PluginName indicates name of admission plugin.
+ const PluginName = "ImagePolicyWebhook"
++const ephemeralcontainers = "ephemeralcontainers"
+ 
+ // AuditKeyPrefix is used as the prefix for all audit keys handled by this
+ // pluggin. Some well known suffixes are listed below.
+@@ -132,8 +133,9 @@ func (a *Plugin) webhookError(pod *api.Pod, attributes admission.Attributes, err
+ 
+ // Validate makes an admission decision based on the request attributes
+ func (a *Plugin) Validate(ctx context.Context, attributes admission.Attributes, o admission.ObjectInterfaces) (err error) {
+-	// Ignore all calls to subresources or resources other than pods.
+-	if attributes.GetSubresource() != "" || attributes.GetResource().GroupResource() != api.Resource("pods") {
++	// Ignore all calls to subresources other than ephemeralcontainers or calls to resources other than pods.
++	subresource := attributes.GetSubresource()
++	if (subresource != "" && subresource != ephemeralcontainers) || attributes.GetResource().GroupResource() != api.Resource("pods") {
+ 		return nil
+ 	}
+ 
+@@ -144,13 +146,21 @@ func (a *Plugin) Validate(ctx context.Context, attributes admission.Attributes,
+ 
+ 	// Build list of ImageReviewContainerSpec
+ 	var imageReviewContainerSpecs []v1alpha1.ImageReviewContainerSpec
+-	containers := make([]api.Container, 0, len(pod.Spec.Containers)+len(pod.Spec.InitContainers))
+-	containers = append(containers, pod.Spec.Containers...)
+-	containers = append(containers, pod.Spec.InitContainers...)
+-	for _, c := range containers {
+-		imageReviewContainerSpecs = append(imageReviewContainerSpecs, v1alpha1.ImageReviewContainerSpec{
+-			Image: c.Image,
+-		})
++	if subresource == "" {
++		containers := make([]api.Container, 0, len(pod.Spec.Containers)+len(pod.Spec.InitContainers))
++		containers = append(containers, pod.Spec.Containers...)
++		containers = append(containers, pod.Spec.InitContainers...)
++		for _, c := range containers {
++			imageReviewContainerSpecs = append(imageReviewContainerSpecs, v1alpha1.ImageReviewContainerSpec{
++				Image: c.Image,
++			})
++		}
++	} else if subresource == ephemeralcontainers {
++		for _, c := range pod.Spec.EphemeralContainers {
++			imageReviewContainerSpecs = append(imageReviewContainerSpecs, v1alpha1.ImageReviewContainerSpec{
++				Image: c.Image,
++			})
++		}
+ 	}
+ 	imageReview := v1alpha1.ImageReview{
+ 		Spec: v1alpha1.ImageReviewSpec{
+diff --git a/plugin/pkg/admission/imagepolicy/admission_test.go b/plugin/pkg/admission/imagepolicy/admission_test.go
+index d1f81d51950..e535f54c607 100644
+--- a/plugin/pkg/admission/imagepolicy/admission_test.go
++++ b/plugin/pkg/admission/imagepolicy/admission_test.go
+@@ -21,6 +21,7 @@ import (
+ 	"crypto/tls"
+ 	"crypto/x509"
+ 	"encoding/json"
++	"io/ioutil"
+ 	"math/rand"
+ 	"net/http"
+ 	"net/http/httptest"
+@@ -37,7 +38,6 @@ import (
+ 	api "k8s.io/kubernetes/pkg/apis/core"
+ 
+ 	"fmt"
+-	"io/ioutil"
+ 	"os"
+ 	"path/filepath"
+ 	"text/template"
+@@ -92,7 +92,7 @@ func TestNewFromConfig(t *testing.T) {
+ 		{data.Key, clientKey},
+ 	}
+ 	for _, file := range files {
+-		if err := ioutil.WriteFile(file.name, file.data, 0400); err != nil {
++		if err := os.WriteFile(file.name, file.data, 0400); err != nil {
+ 			t.Fatal(err)
+ 		}
+ 	}
+@@ -196,7 +196,7 @@ current-context: default
+ 		// Use a closure so defer statements trigger between loop iterations.
+ 		t.Run(tt.msg, func(t *testing.T) {
+ 			err := func() error {
+-				tempfile, err := ioutil.TempFile("", "")
++				tempfile, err := os.CreateTemp("", "")
+ 				if err != nil {
+ 					return err
+ 				}
+@@ -211,7 +211,7 @@ current-context: default
+ 					return fmt.Errorf("failed to execute test template: %v", err)
+ 				}
+ 
+-				tempconfigfile, err := ioutil.TempFile("", "")
++				tempconfigfile, err := os.CreateTemp("", "")
+ 				if err != nil {
+ 					return err
+ 				}
+@@ -359,7 +359,7 @@ func (m *mockService) HTTPStatusCode() int { return m.statusCode }
+ // newImagePolicyWebhook creates a temporary kubeconfig file from the provided arguments and attempts to load
+ // a new newImagePolicyWebhook from it.
+ func newImagePolicyWebhook(callbackURL string, clientCert, clientKey, ca []byte, cacheTime time.Duration, defaultAllow bool) (*Plugin, error) {
+-	tempfile, err := ioutil.TempFile("", "")
++	tempfile, err := os.CreateTemp("", "")
+ 	if err != nil {
+ 		return nil, err
+ 	}
+@@ -381,7 +381,7 @@ func newImagePolicyWebhook(callbackURL string, clientCert, clientKey, ca []byte,
+ 		return nil, err
+ 	}
+ 
+-	tempconfigfile, err := ioutil.TempFile("", "")
++	tempconfigfile, err := os.CreateTemp("", "")
+ 	if err != nil {
+ 		return nil, err
+ 	}
+@@ -595,17 +595,23 @@ func TestContainerCombinations(t *testing.T) {
+ 		test                 string
+ 		pod                  *api.Pod
+ 		wantAllowed, wantErr bool
++		subresource          string
++		operation            admission.Operation
+ 	}{
+ 		{
+ 			test:        "Single container allowed",
+ 			pod:         goodPod("good"),
+ 			wantAllowed: true,
++			subresource: "",
++			operation:   admission.Create,
+ 		},
+ 		{
+ 			test:        "Single container denied",
+ 			pod:         goodPod("bad"),
+ 			wantAllowed: false,
+ 			wantErr:     true,
++			subresource: "",
++			operation:   admission.Create,
+ 		},
+ 		{
+ 			test: "One good container, one bad",
+@@ -627,6 +633,8 @@ func TestContainerCombinations(t *testing.T) {
+ 			},
+ 			wantAllowed: false,
+ 			wantErr:     true,
++			subresource: "",
++			operation:   admission.Create,
+ 		},
+ 		{
+ 			test: "Multiple good containers",
+@@ -648,6 +656,8 @@ func TestContainerCombinations(t *testing.T) {
+ 			},
+ 			wantAllowed: true,
+ 			wantErr:     false,
++			subresource: "",
++			operation:   admission.Create,
+ 		},
+ 		{
+ 			test: "Multiple bad containers",
+@@ -669,6 +679,8 @@ func TestContainerCombinations(t *testing.T) {
+ 			},
+ 			wantAllowed: false,
+ 			wantErr:     true,
++			subresource: "",
++			operation:   admission.Create,
+ 		},
+ 		{
+ 			test: "Good container, bad init container",
+@@ -692,6 +704,8 @@ func TestContainerCombinations(t *testing.T) {
+ 			},
+ 			wantAllowed: false,
+ 			wantErr:     true,
++			subresource: "",
++			operation:   admission.Create,
+ 		},
+ 		{
+ 			test: "Bad container, good init container",
+@@ -715,6 +729,8 @@ func TestContainerCombinations(t *testing.T) {
+ 			},
+ 			wantAllowed: false,
+ 			wantErr:     true,
++			subresource: "",
++			operation:   admission.Create,
+ 		},
+ 		{
+ 			test: "Good container, good init container",
+@@ -738,6 +754,123 @@ func TestContainerCombinations(t *testing.T) {
+ 			},
+ 			wantAllowed: true,
+ 			wantErr:     false,
++			subresource: "",
++			operation:   admission.Create,
++		},
++		{
++			test: "Good container, good init container, bad ephemeral container when updating ephemeralcontainers subresource",
++			pod: &api.Pod{
++				Spec: api.PodSpec{
++					ServiceAccountName: "default",
++					SecurityContext:    &api.PodSecurityContext{},
++					Containers: []api.Container{
++						{
++							Image:           "good",
++							SecurityContext: &api.SecurityContext{},
++						},
++					},
++					InitContainers: []api.Container{
++						{
++							Image:           "good",
++							SecurityContext: &api.SecurityContext{},
++						},
++					},
++					EphemeralContainers: []api.EphemeralContainer{
++						{
++							EphemeralContainerCommon: api.EphemeralContainerCommon{
++								Image:           "bad",
++								SecurityContext: &api.SecurityContext{},
++							},
++						},
++					},
++				},
++			},
++			wantAllowed: false,
++			wantErr:     true,
++			subresource: "ephemeralcontainers",
++			operation:   admission.Update,
++		},
++		{
++			test: "Good container, good init container, bad ephemeral container when updating subresource=='' which sets initContainer and container only",
++			pod: &api.Pod{
++				Spec: api.PodSpec{
++					ServiceAccountName: "default",
++					SecurityContext:    &api.PodSecurityContext{},
++					Containers: []api.Container{
++						{
++							Image:           "good",
++							SecurityContext: &api.SecurityContext{},
++						},
++					},
++					InitContainers: []api.Container{
++						{
++							Image:           "good",
++							SecurityContext: &api.SecurityContext{},
++						},
++					},
++					EphemeralContainers: []api.EphemeralContainer{
++						{
++							EphemeralContainerCommon: api.EphemeralContainerCommon{
++								Image:           "bad",
++								SecurityContext: &api.SecurityContext{},
++							},
++						},
++					},
++				},
++			},
++			wantAllowed: true,
++			wantErr:     false,
++			subresource: "",
++			operation:   admission.Update,
++		},
++
++		{
++			test: "Bad container, good ephemeral container when updating subresource=='ephemeralcontainers' which sets ephemeralcontainers only",
++			pod: &api.Pod{
++				Spec: api.PodSpec{
++					ServiceAccountName: "default",
++					SecurityContext:    &api.PodSecurityContext{},
++					Containers: []api.Container{
++						{
++							Image:           "bad",
++							SecurityContext: &api.SecurityContext{},
++						},
++					},
++					EphemeralContainers: []api.EphemeralContainer{
++						{
++							EphemeralContainerCommon: api.EphemeralContainerCommon{
++								Image:           "good",
++								SecurityContext: &api.SecurityContext{},
++							},
++						},
++					},
++				},
++			},
++			wantAllowed: true,
++			wantErr:     false,
++			subresource: "ephemeralcontainers",
++			operation:   admission.Update,
++		},
++		{
++			test: "Good ephemeral container",
++			pod: &api.Pod{
++				Spec: api.PodSpec{
++					ServiceAccountName: "default",
++					SecurityContext:    &api.PodSecurityContext{},
++					EphemeralContainers: []api.EphemeralContainer{
++						{
++							EphemeralContainerCommon: api.EphemeralContainerCommon{
++								Image:           "good",
++								SecurityContext: &api.SecurityContext{},
++							},
++						},
++					},
++				},
++			},
++			wantAllowed: true,
++			wantErr:     false,
++			subresource: "ephemeralcontainers",
++			operation:   admission.Update,
+ 		},
+ 	}
+ 	for _, tt := range tests {
+@@ -759,7 +892,7 @@ func TestContainerCombinations(t *testing.T) {
+ 				return
+ 			}
+ 
+-			attr := admission.NewAttributesRecord(tt.pod, nil, api.Kind("Pod").WithVersion("version"), "namespace", "", api.Resource("pods").WithVersion("version"), "", admission.Create, &metav1.CreateOptions{}, false, &user.DefaultInfo{})
++			attr := admission.NewAttributesRecord(tt.pod, nil, api.Kind("Pod").WithVersion("version"), "namespace", "", api.Resource("pods").WithVersion("version"), tt.subresource, tt.operation, &metav1.CreateOptions{}, false, &user.DefaultInfo{})
+ 
+ 			err = wh.Validate(context.TODO(), attr, nil)
+ 			if tt.wantAllowed {
+diff --git a/plugin/pkg/admission/serviceaccount/admission.go b/plugin/pkg/admission/serviceaccount/admission.go
+index 035d54ea8ea..f6e25f3c19d 100644
+--- a/plugin/pkg/admission/serviceaccount/admission.go
++++ b/plugin/pkg/admission/serviceaccount/admission.go
+@@ -100,7 +100,7 @@ var _ = genericadmissioninitializer.WantsExternalKubeInformerFactory(&Plugin{})
+ // 5. If MountServiceAccountToken is true, it adds a VolumeMount with the pod's ServiceAccount's api token secret to containers
+ func NewServiceAccount() *Plugin {
+ 	return &Plugin{
+-		Handler: admission.NewHandler(admission.Create),
++		Handler: admission.NewHandler(admission.Create, admission.Update),
+ 		// TODO: enable this once we've swept secret usage to account for adding secret references to service accounts
+ 		LimitSecretReferences: false,
+ 		// Auto mount service account API token secrets
+@@ -140,7 +140,10 @@ func (s *Plugin) Admit(ctx context.Context, a admission.Attributes, o admission.
+ 	if shouldIgnore(a) {
+ 		return nil
+ 	}
+-
++	if a.GetOperation() != admission.Create {
++		// we only mutate pods during create requests
++		return nil
++	}
+ 	pod := a.GetObject().(*api.Pod)
+ 
+ 	// Don't modify the spec of mirror pods.
+@@ -157,7 +160,7 @@ func (s *Plugin) Admit(ctx context.Context, a admission.Attributes, o admission.
+ 
+ 	serviceAccount, err := s.getServiceAccount(a.GetNamespace(), pod.Spec.ServiceAccountName)
+ 	if err != nil {
+-		return admission.NewForbidden(a, fmt.Errorf("error looking up service account %s/%s: %v", a.GetNamespace(), pod.Spec.ServiceAccountName, err))
++		return admission.NewForbidden(a, fmt.Errorf("error looking up service account %s/%s: %w", a.GetNamespace(), pod.Spec.ServiceAccountName, err))
+ 	}
+ 	if s.MountServiceAccountToken && shouldAutomount(serviceAccount, pod) {
+ 		s.mountServiceAccountToken(serviceAccount, pod)
+@@ -180,6 +183,15 @@ func (s *Plugin) Validate(ctx context.Context, a admission.Attributes, o admissi
+ 
+ 	pod := a.GetObject().(*api.Pod)
+ 
++	if a.GetOperation() == admission.Update && a.GetSubresource() == "ephemeralcontainers" {
++		return s.limitEphemeralContainerSecretReferences(pod, a)
++	}
++
++	if a.GetOperation() != admission.Create {
++		// we only validate pod specs during create requests
++		return nil
++	}
++
+ 	// Mirror pods have restrictions on what they can reference
+ 	if _, isMirrorPod := pod.Annotations[api.MirrorPodAnnotationKey]; isMirrorPod {
+ 		if len(pod.Spec.ServiceAccountName) != 0 {
+@@ -205,6 +217,10 @@ func (s *Plugin) Validate(ctx context.Context, a admission.Attributes, o admissi
+ 		return nil
+ 	}
+ 
++	// Require container pods to have service accounts
++	if len(pod.Spec.ServiceAccountName) == 0 {
++		return admission.NewForbidden(a, fmt.Errorf("no service account specified for pod %s/%s", a.GetNamespace(), pod.Name))
++	}
+ 	// Ensure the referenced service account exists
+ 	serviceAccount, err := s.getServiceAccount(a.GetNamespace(), pod.Spec.ServiceAccountName)
+ 	if err != nil {
+@@ -221,10 +237,7 @@ func (s *Plugin) Validate(ctx context.Context, a admission.Attributes, o admissi
+ }
+ 
+ func shouldIgnore(a admission.Attributes) bool {
+-	if a.GetResource().GroupResource() != api.Resource("pods") {
+-		return true
+-	}
+-	if a.GetSubresource() != "" {
++	if a.GetResource().GroupResource() != api.Resource("pods") || (a.GetSubresource() != "" && a.GetSubresource() != "ephemeralcontainers") {
+ 		return true
+ 	}
+ 	obj := a.GetObject()
+@@ -350,6 +363,36 @@ func (s *Plugin) limitSecretReferences(serviceAccount *corev1.ServiceAccount, po
+ 	return nil
+ }
+ 
++func (s *Plugin) limitEphemeralContainerSecretReferences(pod *api.Pod, a admission.Attributes) error {
++	// Require ephemeral container pods to have service accounts
++	if len(pod.Spec.ServiceAccountName) == 0 {
++		return admission.NewForbidden(a, fmt.Errorf("no service account specified for pod %s/%s", a.GetNamespace(), pod.Name))
++	}
++	// Ensure the referenced service account exists
++	serviceAccount, err := s.getServiceAccount(a.GetNamespace(), pod.Spec.ServiceAccountName)
++	if err != nil {
++		return admission.NewForbidden(a, fmt.Errorf("error looking up service account %s/%s: %w", a.GetNamespace(), pod.Spec.ServiceAccountName, err))
++	}
++	if !s.enforceMountableSecrets(serviceAccount) {
++		return nil
++	}
++	// Ensure all secrets the ephemeral containers reference are allowed by the service account
++	mountableSecrets := sets.NewString()
++	for _, s := range serviceAccount.Secrets {
++		mountableSecrets.Insert(s.Name)
++	}
++	for _, container := range pod.Spec.EphemeralContainers {
++		for _, env := range container.Env {
++			if env.ValueFrom != nil && env.ValueFrom.SecretKeyRef != nil {
++				if !mountableSecrets.Has(env.ValueFrom.SecretKeyRef.Name) {
++					return fmt.Errorf("ephemeral container %s with envVar %s referencing secret.secretName=\"%s\" is not allowed because service account %s does not reference that secret", container.Name, env.Name, env.ValueFrom.SecretKeyRef.Name, serviceAccount.Name)
++				}
++			}
++		}
++	}
++	return nil
++}
++
+ func (s *Plugin) mountServiceAccountToken(serviceAccount *corev1.ServiceAccount, pod *api.Pod) {
+ 	// Find the volume and volume name for the ServiceAccountTokenSecret if it already exists
+ 	tokenVolumeName := ""
+diff --git a/plugin/pkg/admission/serviceaccount/admission_test.go b/plugin/pkg/admission/serviceaccount/admission_test.go
+index ca43abf9c3f..f5359253985 100644
+--- a/plugin/pkg/admission/serviceaccount/admission_test.go
++++ b/plugin/pkg/admission/serviceaccount/admission_test.go
+@@ -545,6 +545,34 @@ func TestAllowsReferencedSecret(t *testing.T) {
+ 	if err := admissiontesting.WithReinvocationTesting(t, admit).Admit(context.TODO(), attrs, nil); err != nil {
+ 		t.Errorf("Unexpected error: %v", err)
+ 	}
++
++	pod2 = &api.Pod{
++		Spec: api.PodSpec{
++			ServiceAccountName: DefaultServiceAccountName,
++			EphemeralContainers: []api.EphemeralContainer{
++				{
++					EphemeralContainerCommon: api.EphemeralContainerCommon{
++						Name: "container-2",
++						Env: []api.EnvVar{
++							{
++								Name: "env-1",
++								ValueFrom: &api.EnvVarSource{
++									SecretKeyRef: &api.SecretKeySelector{
++										LocalObjectReference: api.LocalObjectReference{Name: "foo"},
++									},
++								},
++							},
++						},
++					},
++				},
++			},
++		},
++	}
++	// validate enforces restrictions on secret mounts when operation==create and subresource=='' or operation==update and subresource==ephemeralcontainers"
++	attrs = admission.NewAttributesRecord(pod2, nil, api.Kind("Pod").WithVersion("version"), ns, "myname", api.Resource("pods").WithVersion("version"), "ephemeralcontainers", admission.Update, &metav1.UpdateOptions{}, false, nil)
++	if err := admit.Validate(context.TODO(), attrs, nil); err != nil {
++		t.Errorf("Unexpected error: %v", err)
++	}
+ }
+ 
+ func TestRejectsUnreferencedSecretVolumes(t *testing.T) {
+@@ -622,6 +650,66 @@ func TestRejectsUnreferencedSecretVolumes(t *testing.T) {
+ 	if err := admissiontesting.WithReinvocationTesting(t, admit).Admit(context.TODO(), attrs, nil); err == nil || !strings.Contains(err.Error(), "with envVar") {
+ 		t.Errorf("Unexpected error: %v", err)
+ 	}
++
++	pod2 = &api.Pod{
++		Spec: api.PodSpec{
++			ServiceAccountName: DefaultServiceAccountName,
++			InitContainers: []api.Container{
++				{
++					Name: "container-1",
++					Env: []api.EnvVar{
++						{
++							Name: "env-1",
++							ValueFrom: &api.EnvVarSource{
++								SecretKeyRef: &api.SecretKeySelector{
++									LocalObjectReference: api.LocalObjectReference{Name: "foo"},
++								},
++							},
++						},
++					},
++				},
++			},
++		},
++	}
++	attrs = admission.NewAttributesRecord(pod2, nil, api.Kind("Pod").WithVersion("version"), ns, "myname", api.Resource("pods").WithVersion("version"), "", admission.Update, &metav1.UpdateOptions{}, false, nil)
++	if err := admissiontesting.WithReinvocationTesting(t, admit).Admit(context.TODO(), attrs, nil); err != nil {
++		t.Errorf("admit only enforces restrictions on secret mounts when operation==create. Unexpected error: %v", err)
++	}
++	attrs = admission.NewAttributesRecord(pod2, nil, api.Kind("Pod").WithVersion("version"), ns, "myname", api.Resource("pods").WithVersion("version"), "", admission.Create, &metav1.CreateOptions{}, false, nil)
++	if err := admit.Validate(context.TODO(), attrs, nil); err == nil || !strings.Contains(err.Error(), "with envVar") {
++		t.Errorf("validate only enforces restrictions on secret mounts when operation==create and subresource==''. Unexpected error: %v", err)
++	}
++
++	pod2 = &api.Pod{
++		Spec: api.PodSpec{
++			ServiceAccountName: DefaultServiceAccountName,
++			EphemeralContainers: []api.EphemeralContainer{
++				{
++					EphemeralContainerCommon: api.EphemeralContainerCommon{
++						Name: "container-2",
++						Env: []api.EnvVar{
++							{
++								Name: "env-1",
++								ValueFrom: &api.EnvVarSource{
++									SecretKeyRef: &api.SecretKeySelector{
++										LocalObjectReference: api.LocalObjectReference{Name: "foo"},
++									},
++								},
++							},
++						},
++					},
++				},
++			},
++		},
++	}
++	attrs = admission.NewAttributesRecord(pod2, nil, api.Kind("Pod").WithVersion("version"), ns, "myname", api.Resource("pods").WithVersion("version"), "", admission.Update, &metav1.UpdateOptions{}, false, nil)
++	if err := admissiontesting.WithReinvocationTesting(t, admit).Admit(context.TODO(), attrs, nil); err != nil {
++		t.Errorf("admit only enforces restrictions on secret mounts when operation==create and subresource==''. Unexpected error: %v", err)
++	}
++	attrs = admission.NewAttributesRecord(pod2, nil, api.Kind("Pod").WithVersion("version"), ns, "myname", api.Resource("pods").WithVersion("version"), "ephemeralcontainers", admission.Update, &metav1.UpdateOptions{}, false, nil)
++	if err := admit.Validate(context.TODO(), attrs, nil); err == nil || !strings.Contains(err.Error(), "with envVar") {
++		t.Errorf("validate enforces restrictions on secret mounts when operation==update and subresource==ephemeralcontainers. Unexpected error: %v", err)
++	}
+ }
+ 
+ func TestAllowUnreferencedSecretVolumesForPermissiveSAs(t *testing.T) {
