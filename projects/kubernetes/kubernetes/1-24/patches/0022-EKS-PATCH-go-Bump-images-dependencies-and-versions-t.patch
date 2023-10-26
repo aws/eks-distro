@@ -1,0 +1,110 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: "Mengqi (David) Yu" <mengqiyu@amazon.com>
+Date: Thu, 19 Oct 2023 22:14:55 +0000
+Subject: [PATCH] --EKS-PATCH-- [go] Bump images, dependencies and versions to
+ go 1.20.10
+
+Applied similar changes as
+https://github.com/kubernetes/kubernetes/pull/121150
+
+Signed-off-by: David Yu mengqiyu@amazon.com
+---
+ .go-version                     | 2 +-
+ build/build-image/cross/VERSION | 2 +-
+ build/common.sh                 | 2 +-
+ build/dependencies.yaml         | 6 +++---
+ staging/publishing/rules.yaml   | 4 ++--
+ test/images/Makefile            | 2 +-
+ 6 files changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/.go-version b/.go-version
+index 8909929f6e7..acdfc7930c8 100644
+--- a/.go-version
++++ b/.go-version
+@@ -1 +1 @@
+-1.20.7
++1.20.10
+diff --git a/build/build-image/cross/VERSION b/build/build-image/cross/VERSION
+index b4eeb4c4461..1c23712774b 100644
+--- a/build/build-image/cross/VERSION
++++ b/build/build-image/cross/VERSION
+@@ -1 +1 @@
+-v1.24.0-go1.20.7-bullseye.0
++v1.24.0-go1.20.10-bullseye.0
+diff --git a/build/common.sh b/build/common.sh
+index 257d36b2fa7..ad417166ec2 100755
+--- a/build/common.sh
++++ b/build/common.sh
+@@ -91,7 +91,7 @@ readonly KUBE_CONTAINER_RSYNC_PORT=8730
+ 
+ # These are the default versions (image tags) for their respective base images.
+ readonly __default_debian_iptables_version=bullseye-v1.3.0
+-readonly __default_go_runner_version=v2.3.1-go1.20.7-bullseye.0
++readonly __default_go_runner_version=v2.3.1-go1.20.10-bullseye.0
+ readonly __default_setcap_version=bullseye-v1.2.0
+ 
+ # These are the base images for the Docker-wrapped binaries.
+diff --git a/build/dependencies.yaml b/build/dependencies.yaml
+index 7236ede3380..4be87dd52f6 100644
+--- a/build/dependencies.yaml
++++ b/build/dependencies.yaml
+@@ -88,7 +88,7 @@ dependencies:
+ 
+   # Golang
+   - name: "golang: upstream version"
+-    version: 1.20.7
++    version: 1.20.10
+     refPaths:
+     - path: .go-version
+     - path: build/build-image/cross/VERSION
+@@ -112,7 +112,7 @@ dependencies:
+     #  match: minimum_go_version=go([0-9]+\.[0-9]+)
+ 
+   - name: "k8s.gcr.io/kube-cross: dependents"
+-    version: v1.24.0-go1.20.7-bullseye.0
++    version: v1.24.0-go1.20.10-bullseye.0
+     refPaths:
+     - path: build/build-image/cross/VERSION
+ 
+@@ -142,7 +142,7 @@ dependencies:
+       match: configs\[DebianIptables\] = Config{list\.BuildImageRegistry, "debian-iptables", "[a-zA-Z]+\-v((([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?)(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?)"}
+ 
+   - name: "k8s.gcr.io/go-runner: dependents"
+-    version: v2.3.1-go1.20.7-bullseye.0
++    version: v2.3.1-go1.20.10-bullseye.0
+     refPaths:
+     - path: build/common.sh
+       match: __default_go_runner_version=
+diff --git a/staging/publishing/rules.yaml b/staging/publishing/rules.yaml
+index 9bf41ce0bca..ff705342019 100644
+--- a/staging/publishing/rules.yaml
++++ b/staging/publishing/rules.yaml
+@@ -8,7 +8,7 @@ recursive-delete-patterns:
+ - "*/BUILD.bazel"
+ - Gopkg.toml
+ - "*/.gitattributes"
+-default-go-version: 1.20.7
++default-go-version: 1.20.10
+ rules:
+ - destination: code-generator
+   branches:
+@@ -1968,4 +1968,4 @@ rules:
+     - repository: client-go
+       branch: release-1.23
+     - repository: component-base
+-      branch: release-1.23
++      branch: release-1.23
+\ No newline at end of file
+diff --git a/test/images/Makefile b/test/images/Makefile
+index 8191b84d6b0..d244f82d3e9 100644
+--- a/test/images/Makefile
++++ b/test/images/Makefile
+@@ -16,7 +16,7 @@ REGISTRY ?= k8s.gcr.io/e2e-test-images
+ GOARM ?= 7
+ DOCKER_CERT_BASE_PATH ?=
+ QEMUVERSION=v5.1.0-2
+-GOLANG_VERSION=1.20.7
++GOLANG_VERSION=1.20.10
+ export
+ 
+ ifndef WHAT
