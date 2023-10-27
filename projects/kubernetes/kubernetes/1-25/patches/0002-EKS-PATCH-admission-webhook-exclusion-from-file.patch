@@ -32,7 +32,6 @@ same.
 Kubernetes version this patch can be dropped:
 * When the upstream efforts to implement these changes are merged.
 * We can replace with new match using match conditions in 1.28+ or when match conditions become GA
-
 ---
  .../exclusionrules/critical_path_excluder.go  | 186 +++++
  .../critical_path_excluder_test.go            | 680 ++++++++++++++++++
@@ -1787,10 +1786,10 @@ index 00000000000..2c26ca24870
 +	}
 +}
 diff --git a/vendor/modules.txt b/vendor/modules.txt
-index 7995b8bfdcd..8d5a0da858a 100644
+index c9c17ae486c..4210f022632 100644
 --- a/vendor/modules.txt
 +++ b/vendor/modules.txt
-@@ -1606,6 +1606,7 @@ k8s.io/apiserver/pkg/admission/plugin/webhook/config/apis/webhookadmission/v1
+@@ -1559,6 +1559,7 @@ k8s.io/apiserver/pkg/admission/plugin/webhook/config/apis/webhookadmission/v1
  k8s.io/apiserver/pkg/admission/plugin/webhook/config/apis/webhookadmission/v1alpha1
  k8s.io/apiserver/pkg/admission/plugin/webhook/errors
  k8s.io/apiserver/pkg/admission/plugin/webhook/generic
@@ -1798,6 +1797,3 @@ index 7995b8bfdcd..8d5a0da858a 100644
  k8s.io/apiserver/pkg/admission/plugin/webhook/initializer
  k8s.io/apiserver/pkg/admission/plugin/webhook/mutating
  k8s.io/apiserver/pkg/admission/plugin/webhook/namespace
--- 
-2.42.0
-

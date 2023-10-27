@@ -58,8 +58,8 @@ Kubernetes version this patch can be dropped:
  .../aws/aws-sdk-go/service/kms/doc.go         |    16 +-
  .../aws/aws-sdk-go/service/kms/errors.go      |   293 +-
  .../aws/aws-sdk-go/service/sts/api.go         |   230 +-
- vendor/modules.txt                            |     3 +-
- 29 files changed, 24977 insertions(+), 2266 deletions(-)
+ vendor/modules.txt                            |     2 +-
+ 29 files changed, 24976 insertions(+), 2266 deletions(-)
  create mode 100644 vendor/github.com/aws/aws-sdk-go/internal/shareddefaults/shared_config_resolve_home.go
  create mode 100644 vendor/github.com/aws/aws-sdk-go/internal/shareddefaults/shared_config_resolve_home_go1.12.go
 
@@ -37641,7 +37641,7 @@ index 2b7e675ab86..63729d0a78b 100644
  	// You can pass a session tag with the same key as a tag that is already attached
  	// to the user you are federating. When you do, session tags override a user
 diff --git a/vendor/modules.txt b/vendor/modules.txt
-index a14eb421487..c3fd25547f3 100644
+index 34c1969aa6f..c3fd25547f3 100644
 --- a/vendor/modules.txt
 +++ b/vendor/modules.txt
 @@ -105,7 +105,7 @@ github.com/armon/go-socks5
@@ -37653,11 +37653,3 @@ index a14eb421487..c3fd25547f3 100644
  ## explicit; go 1.11
  github.com/aws/aws-sdk-go/aws
  github.com/aws/aws-sdk-go/aws/awserr
-@@ -1471,6 +1471,7 @@ k8s.io/apiserver/pkg/admission/plugin/webhook/config/apis/webhookadmission/v1
- k8s.io/apiserver/pkg/admission/plugin/webhook/config/apis/webhookadmission/v1alpha1
- k8s.io/apiserver/pkg/admission/plugin/webhook/errors
- k8s.io/apiserver/pkg/admission/plugin/webhook/generic
-+k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules
- k8s.io/apiserver/pkg/admission/plugin/webhook/initializer
- k8s.io/apiserver/pkg/admission/plugin/webhook/mutating
- k8s.io/apiserver/pkg/admission/plugin/webhook/predicates/namespace
