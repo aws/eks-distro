@@ -1,7 +1,6 @@
 ## **cloud-provider-aws**
 | Release | Version                                                        |
 |---------|----------------------------------------------------------------|
-| 1-23    | ![Version](https://img.shields.io/badge/version-v1.23.17-blue) |
 | 1-24    | ![Version](https://img.shields.io/badge/version-v1.24.15-blue) |
 | 1-25    | ![Version](https://img.shields.io/badge/version-v1.25.11-blue) |
 | 1-26    | ![Version](https://img.shields.io/badge/version-v1.26.6-blue)  |
