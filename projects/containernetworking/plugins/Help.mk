@@ -9,6 +9,7 @@
 ##@ GIT/Repo Targets
 clone-repo:  ## Clone upstream `plugins`
 checkout-repo: ## Checkout upstream tag based on value in GIT_TAG file
+patch-repo: ## Patch upstream repo with patches in patches directory
 
 ##@ Binary Targets
 binaries: ## Build all binaries: `bandwidth firewall portmap sbr tuning vrf bridge dummy host-device ipvlan loopback macvlan ptp tap vlan dhcp host-local static ` for `linux/amd64 linux/arm64`
