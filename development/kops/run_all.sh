@@ -36,8 +36,6 @@ $PREFLIGHT_CHECK_PASSED || exit 1
 
 # If presubmit job, ignore state store and stop before creating cluster
 if [ "${JOB_TYPE:-}" == "presubmit" ]; then
-	./create_values_yaml.sh
-	./create_configuration.sh
 	exit 0
 fi
 
