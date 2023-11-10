@@ -11,7 +11,7 @@ https://github.com/go-logr/stdr
 ** github.com/kubernetes-csi/csi-lib-utils; version v0.15.0 --
 https://github.com/kubernetes-csi/csi-lib-utils
 
-** github.com/kubernetes-csi/node-driver-registrar; version v2.9.0 --
+** github.com/kubernetes-csi/node-driver-registrar; version v2.9.1 --
 https://github.com/kubernetes-csi/node-driver-registrar
 
 ** github.com/matttproud/golang_protobuf_extensions/pbutil; version v1.0.4 --
@@ -41,10 +41,10 @@ https://github.com/open-telemetry/opentelemetry-go
 ** go.opentelemetry.io/otel/trace; version v1.15.0 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** google.golang.org/genproto/googleapis/rpc/status; version v0.0.0-20230711160842-782d3b101e98 --
+** google.golang.org/genproto/googleapis/rpc/status; version v0.0.0-20230822172742-b8732ec3820d --
 https://github.com/googleapis/go-genproto
 
-** google.golang.org/grpc; version v1.58.0 --
+** google.golang.org/grpc; version v1.59.0 --
 https://github.com/grpc/grpc-go
 
 ** k8s.io/apimachinery/pkg; version v0.28.0 --

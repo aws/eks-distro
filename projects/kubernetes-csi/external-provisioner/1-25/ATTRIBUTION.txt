@@ -26,7 +26,7 @@ https://github.com/google/gofuzz
 ** github.com/kubernetes-csi/csi-lib-utils; version v0.14.0 --
 https://github.com/kubernetes-csi/csi-lib-utils
 
-** github.com/kubernetes-csi/external-provisioner; version v3.6.1 --
+** github.com/kubernetes-csi/external-provisioner; version v3.6.2 --
 https://github.com/kubernetes-csi/external-provisioner
 
 ** github.com/kubernetes-csi/external-snapshotter/client/v6; version v6.2.0 --
@@ -59,7 +59,7 @@ https://github.com/spf13/cobra
 ** google.golang.org/genproto/googleapis/rpc/status; version v0.0.0-20230822172742-b8732ec3820d --
 https://github.com/googleapis/go-genproto
 
-** google.golang.org/grpc; version v1.57.0 --
+** google.golang.org/grpc; version v1.59.0 --
 https://github.com/grpc/grpc-go
 
 ** gopkg.in/yaml.v2; version v2.4.0 --
