@@ -53,9 +53,9 @@ else
     LAST_RELEASE_BRANCH=""
     for release in $(cat $MAKE_ROOT/release/SUPPORTED_RELEASE_BRANCHES) ; do
         export RELEASE_BRANCH="$release"
+        GIT_TAG="$(cat $PROJECT_ROOT/$release/GIT_TAG)"
 
-        if [[ $release != "1-23" ]] || [[ $PROJECT == "kubernetes" ]]; then 
-            GIT_TAG="$(cat $PROJECT_ROOT/$release/GIT_TAG)"
+        if [[ $release != "1-23" ]] || [[ $PROJECT == "kubernetes" ]]; then
             if [ "$GIT_TAG" != "$LAST_GIT_TAG" ] || [ $TARGET == "update-go-mods" ]; then
                 # clean before regenerating to ensure there are no intermediate files left around
                 make -C $PROJECT_ROOT clean clean-go-cache
