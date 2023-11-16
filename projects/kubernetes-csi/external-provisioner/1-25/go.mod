@@ -17,23 +17,23 @@ require (
 	github.com/stretchr/testify v1.8.4
 	google.golang.org/grpc v1.59.0
 	google.golang.org/protobuf v1.31.0
-	k8s.io/api v0.28.0
-	k8s.io/apimachinery v0.28.0
-	k8s.io/apiserver v0.28.0
-	k8s.io/client-go v0.28.0
-	k8s.io/component-base v0.28.0
+	k8s.io/api v0.28.1
+	k8s.io/apimachinery v0.28.1
+	k8s.io/apiserver v0.28.1
+	k8s.io/client-go v0.28.1
+	k8s.io/component-base v0.28.1
 	k8s.io/component-helpers v0.28.0
 	k8s.io/csi-translation-lib v0.28.0
 	k8s.io/klog/v2 v2.100.1
-	sigs.k8s.io/controller-runtime v0.15.1
-	sigs.k8s.io/gateway-api v0.7.1
+	sigs.k8s.io/controller-runtime v0.16.2
+	sigs.k8s.io/gateway-api v0.8.1
 	sigs.k8s.io/sig-storage-lib-external-provisioner/v9 v9.1.0-rc.0
 )
 
 require (
 	github.com/onsi/ginkgo/v2 v2.12.0
 	github.com/onsi/gomega v1.27.10
-	k8s.io/kubernetes v1.28.0
+	k8s.io/kubernetes v1.28.2
 )
 
 require (
@@ -64,7 +64,7 @@ require (
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
-	github.com/google/cel-go v0.16.0 // indirect
+	github.com/google/cel-go v0.16.1 // indirect
 	github.com/google/gnostic-models v0.6.8 // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/google/pprof v0.0.0-20210720184732-4bb14d4b1be1 // indirect
@@ -124,10 +124,10 @@ require (
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	k8s.io/apiextensions-apiserver v0.28.0 // indirect
+	k8s.io/apiextensions-apiserver v0.28.1 // indirect
 	k8s.io/cloud-provider v0.28.0 // indirect
 	k8s.io/controller-manager v0.28.0 // indirect
-	k8s.io/kms v0.28.0 // indirect
+	k8s.io/kms v0.28.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20230717233707-2695361300d9 // indirect
 	k8s.io/kubectl v0.27.0 // indirect
 	k8s.io/kubelet v0.27.0 // indirect
