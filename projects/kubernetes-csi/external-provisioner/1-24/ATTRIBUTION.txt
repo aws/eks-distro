@@ -98,10 +98,10 @@ https://github.com/kubernetes/kube-openapi
 ** k8s.io/utils; version v0.0.0-20230406110748-d93618cff8a2 --
 https://github.com/kubernetes/utils
 
-** sigs.k8s.io/controller-runtime/pkg; version v0.15.1 --
+** sigs.k8s.io/controller-runtime/pkg; version v0.16.2 --
 https://github.com/kubernetes-sigs/controller-runtime
 
-** sigs.k8s.io/gateway-api; version v0.7.1 --
+** sigs.k8s.io/gateway-api; version v0.8.1 --
 https://github.com/kubernetes-sigs/gateway-api
 
 ** sigs.k8s.io/json; version v0.0.0-20221116044647-bc3834ca7abd --
@@ -767,7 +767,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/go; version go1.20.10 --
+** golang.org/go; version go1.20.11 --
 https://github.com/golang/go
 
 ** golang.org/x/net; version v0.17.0 --
