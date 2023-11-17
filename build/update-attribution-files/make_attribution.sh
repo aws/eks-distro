@@ -55,7 +55,7 @@ else
         export RELEASE_BRANCH="$release"
         GIT_TAG="$(cat $PROJECT_ROOT/$release/GIT_TAG)"
 
-        if [[ $release != "1-23" ]] || [[ $PROJECT == "kubernetes" ]]; then
+        if [[ $release != "1-23" ]] || [[ $PROJECT == "projects/kubernetes/kubernetes" ]] || [[ $PROJECT == "projects/kubernetes/release" ]]; then
             if [[ $LAST_RELEASE_BRANCH == "1-23" ]] || [ "$GIT_TAG" != "$LAST_GIT_TAG" ] || [ $TARGET == "update-go-mods" ]; then
                 # clean before regenerating to ensure there are no intermediate files left around
                 make -C $PROJECT_ROOT clean clean-go-cache
