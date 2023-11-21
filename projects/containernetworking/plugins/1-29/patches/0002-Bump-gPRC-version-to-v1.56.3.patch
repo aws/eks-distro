@@ -1,0 +1,3159 @@
+From 6931d1b50aa18227ae9ff19b438b380d96378bf1 Mon Sep 17 00:00:00 2001
+From: Sajia Zafreen <sajiazafreen@u.boisestate.edu>
+Date: Tue, 7 Nov 2023 14:54:55 -0800
+Subject: [PATCH] Bump gPRC version to v1.56.3
+
+Signed-off-by: Sajia Zafreen <sajiazafreen@u.boisestate.edu>
+---
+ go.mod                                        |   6 +-
+ go.sum                                        |  41 +--
+ .../googleapis/rpc/status/status.pb.go        |  10 +-
+ .../grpc/attributes/attributes.go             | 130 +++++++
+ .../grpc/codes/code_string.go                 |  51 ++-
+ .../grpc/connectivity/connectivity.go         |  94 +++++
+ .../grpc/credentials/credentials.go           | 291 +++++++++++++++
+ .../google.golang.org/grpc/credentials/tls.go | 236 +++++++++++++
+ .../grpc/grpclog/component.go                 | 117 +++++++
+ .../google.golang.org/grpc/grpclog/grpclog.go | 132 +++++++
+ .../google.golang.org/grpc/grpclog/logger.go  |  87 +++++
+ .../grpc/grpclog/loggerv2.go                  | 258 ++++++++++++++
+ .../grpc/internal/credentials/credentials.go  |  49 +++
+ .../grpc/internal/credentials/spiffe.go       |  75 ++++
+ .../grpc/internal/credentials/syscallconn.go  |  58 +++
+ .../grpc/internal/credentials/util.go         |  52 +++
+ .../grpc/internal/grpclog/grpclog.go          | 126 +++++++
+ .../grpc/internal/grpclog/prefixLogger.go     |  93 +++++
+ .../grpc/internal/internal.go                 | 194 ++++++++++
+ .../grpc/internal/status/status.go            |  10 +
+ .../grpc/internal/xds_handshake_cluster.go    |  40 +++
+ vendor/google.golang.org/grpc/resolver/map.go | 138 ++++++++
+ .../grpc/resolver/resolver.go                 | 330 ++++++++++++++++++
+ .../grpc/serviceconfig/serviceconfig.go       |  44 +++
+ .../google.golang.org/grpc/status/status.go   |  61 +++-
+ .../protobuf/internal/version/version.go      |   4 +-
+ vendor/modules.txt                            |  17 +-
+ 27 files changed, 2677 insertions(+), 67 deletions(-)
+ create mode 100644 vendor/google.golang.org/grpc/attributes/attributes.go
+ create mode 100644 vendor/google.golang.org/grpc/connectivity/connectivity.go
+ create mode 100644 vendor/google.golang.org/grpc/credentials/credentials.go
+ create mode 100644 vendor/google.golang.org/grpc/credentials/tls.go
+ create mode 100644 vendor/google.golang.org/grpc/grpclog/component.go
+ create mode 100644 vendor/google.golang.org/grpc/grpclog/grpclog.go
+ create mode 100644 vendor/google.golang.org/grpc/grpclog/logger.go
+ create mode 100644 vendor/google.golang.org/grpc/grpclog/loggerv2.go
+ create mode 100644 vendor/google.golang.org/grpc/internal/credentials/credentials.go
+ create mode 100644 vendor/google.golang.org/grpc/internal/credentials/spiffe.go
+ create mode 100644 vendor/google.golang.org/grpc/internal/credentials/syscallconn.go
+ create mode 100644 vendor/google.golang.org/grpc/internal/credentials/util.go
+ create mode 100644 vendor/google.golang.org/grpc/internal/grpclog/grpclog.go
+ create mode 100644 vendor/google.golang.org/grpc/internal/grpclog/prefixLogger.go
+ create mode 100644 vendor/google.golang.org/grpc/internal/internal.go
+ create mode 100644 vendor/google.golang.org/grpc/internal/xds_handshake_cluster.go
+ create mode 100644 vendor/google.golang.org/grpc/resolver/map.go
+ create mode 100644 vendor/google.golang.org/grpc/resolver/resolver.go
+ create mode 100644 vendor/google.golang.org/grpc/serviceconfig/serviceconfig.go
+
+diff --git a/go.mod b/go.mod
+index 9a51ae4e..97215537 100644
+--- a/go.mod
++++ b/go.mod
+@@ -43,8 +43,8 @@ require (
+ 	golang.org/x/net v0.17.0 // indirect
+ 	golang.org/x/text v0.13.0 // indirect
+ 	golang.org/x/tools v0.7.0 // indirect
+-	google.golang.org/genproto v0.0.0-20220502173005-c8bf987b8c21 // indirect
+-	google.golang.org/grpc v1.50.1 // indirect
+-	google.golang.org/protobuf v1.29.1 // indirect
++	google.golang.org/genproto v0.0.0-20230410155749-daa745c078e1 // indirect
++	google.golang.org/grpc v1.56.3 // indirect
++	google.golang.org/protobuf v1.30.0 // indirect
+ 	gopkg.in/yaml.v3 v3.0.1 // indirect
+ )
+diff --git a/go.sum b/go.sum
+index 91d39933..24696937 100644
+--- a/go.sum
++++ b/go.sum
+@@ -1,5 +1,4 @@
+ cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
+-cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
+ github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
+ github.com/Microsoft/go-winio v0.6.1 h1:9/kr64B9VUZrLm5YYwbGtUJnMgqWVOdUAXu6Migciow=
+ github.com/Microsoft/go-winio v0.6.1/go.mod h1:LRdKpFKfdobln8UmuiYcKPot9D2v6svN5+sAH+4kjUM=
+@@ -7,21 +6,14 @@ github.com/Microsoft/hcsshim v0.11.4 h1:68vKo2VN8DE9AdN4tnkWnmdhqdbpUFM8OF3Airm7
+ github.com/Microsoft/hcsshim v0.11.4/go.mod h1:smjE4dvqPX9Zldna+t5FG3rnoHhaB7QYxPRqGcpAD9w=
+ github.com/alexflint/go-filemutex v1.2.0 h1:1v0TJPDtlhgpW4nJ+GvxCLSlUDC3+gW0CQQvlmfDR/s=
+ github.com/alexflint/go-filemutex v1.2.0/go.mod h1:mYyQSWvw9Tx2/H2n9qXPb52tTYfE0pZAWcBq5mK025c=
+-github.com/antihax/optional v1.0.0/go.mod h1:uupD/76wgC+ih3iEmQUL+0Ugr19nfwCT1kdvxnR2qWY=
+ github.com/buger/jsonparser v1.1.1 h1:2PnMjfWD7wBILjqQbt530v576A/cAbQvEW9gGIpYMUs=
+ github.com/buger/jsonparser v1.1.1/go.mod h1:6RYKKt7H4d4+iWqouImQ9R2FZql3VbhNgx27UK13J/0=
+ github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
+-github.com/cespare/xxhash/v2 v2.1.1/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
+ github.com/chzyer/logex v1.1.10/go.mod h1:+Ywpsq7O8HXn0nuIou7OrIPyXbp3wmkHB+jjWRnGsAI=
+ github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e/go.mod h1:nSuG5e5PlCu98SY8svDHJxuZscDgtXS6KTTbou5AhLI=
+ github.com/chzyer/test v0.0.0-20180213035817-a1ea475d72b1/go.mod h1:Q3SI9o4m/ZMnBNeIyt5eFwwo7qiLfzFZmjNmxjkiQlU=
+ github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
+ github.com/cncf/udpa/go v0.0.0-20191209042840-269d4d468f6f/go.mod h1:M8M6+tZqaGXZJjfX53e64911xZQV5JYwmTeXPW+k8Sc=
+-github.com/cncf/udpa/go v0.0.0-20201120205902-5459f2c99403/go.mod h1:WmhPx2Nbnhtbo57+VJT5O0JRkEi1Wbu0z5j0R8u5Hbk=
+-github.com/cncf/udpa/go v0.0.0-20210930031921-04548b0d99d4/go.mod h1:6pvJx4me5XPnfI9Z40ddWsdw2W/uZgQLFXToKeRcDiI=
+-github.com/cncf/xds/go v0.0.0-20210922020428-25de7278fc84/go.mod h1:eXthEFrGJvWHgFFCl3hGmgk+/aYT6PnTQLykKQRLhEs=
+-github.com/cncf/xds/go v0.0.0-20211001041855-01bcc9b48dfe/go.mod h1:eXthEFrGJvWHgFFCl3hGmgk+/aYT6PnTQLykKQRLhEs=
+-github.com/cncf/xds/go v0.0.0-20211011173535-cb28da3451f1/go.mod h1:eXthEFrGJvWHgFFCl3hGmgk+/aYT6PnTQLykKQRLhEs=
+ github.com/containerd/cgroups v1.1.0 h1:v8rEWFl6EoqHB+swVNjVoCJE8o3jX7e8nqBGPLaDFBM=
+ github.com/containerd/cgroups v1.1.0/go.mod h1:6ppBcbh/NOOUU+dMKrykgaBnK9lCIBxHqJDGwsa1mIw=
+ github.com/containerd/containerd v1.6.23 h1:KYJd6UJhKHzwMhiD70iTtSmU+k4565ac22GOTI3AuTA=
+@@ -46,12 +38,9 @@ github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSs
+ github.com/envoyproxy/go-control-plane v0.9.0/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
+ github.com/envoyproxy/go-control-plane v0.9.1-0.20191026205805-5f8ba28d4473/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
+ github.com/envoyproxy/go-control-plane v0.9.4/go.mod h1:6rpuAdCZL397s3pYoYcLgu1mIlRU8Am5FuJP05cCM98=
+-github.com/envoyproxy/go-control-plane v0.9.9-0.20201210154907-fd9021fe5dad/go.mod h1:cXg6YxExXjJnVBQHBLXeUAgxn2UodCpnH306RInaBQk=
+-github.com/envoyproxy/go-control-plane v0.10.2-0.20220325020618-49ff273808a1/go.mod h1:KJwIaB5Mv44NWtYuAOFCVOjcI94vtpEz2JU/D2v6IjE=
+ github.com/envoyproxy/protoc-gen-validate v0.1.0/go.mod h1:iSmxcyjqTsJpI2R4NaDN7+kN2VEUnK/pcBlmesArF7c=
+ github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMoQvtojpjFo=
+ github.com/fsnotify/fsnotify v1.4.9/go.mod h1:znqG4EE+3YCdAaPaxE2ZRY/06pZUdp0tY4IgpuI1SZQ=
+-github.com/ghodss/yaml v1.0.0/go.mod h1:4dBDuWmgqj2HViK6kFavaiC9ZROes6MMH2rRYeMEF04=
+ github.com/go-logr/logr v1.2.4 h1:g01GSCwiDw2xSZfjJ2/T9M+S6pFdcNtFYsp+Y43HYDQ=
+ github.com/go-logr/logr v1.2.4/go.mod h1:jdQByPbusPIv2/zmleS9BjJVeZ6kBagPoEUsqbVz/1A=
+ github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0/go.mod h1:fyg7847qk6SyHyPtNmDHnmrv/HOrqktSC+C9fM+CJOE=
+@@ -69,7 +58,6 @@ github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da/go.mod h1:cIg4er
+ github.com/golang/mock v1.1.1/go.mod h1:oTYuIxOrZwtPieC+H1uAHpcLFnEyAGVDL/k47Jfbm0A=
+ github.com/golang/protobuf v1.2.0/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=
+ github.com/golang/protobuf v1.3.2/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=
+-github.com/golang/protobuf v1.3.3/go.mod h1:vzj43D7+SQXF/4pzW/hwtAqwc6iTitCiVSaWz5lYuqw=
+ github.com/golang/protobuf v1.4.0-rc.1/go.mod h1:ceaxUfeHdC40wWswd/P6IGgMaK3YpKi5j83Wpe3EHw8=
+ github.com/golang/protobuf v1.4.0-rc.1.0.20200221234624-67d41d38c208/go.mod h1:xKAWHe0F5eneWXFV3EuXVDTCmh+JuBKY0li0aMyXATA=
+ github.com/golang/protobuf v1.4.0-rc.2/go.mod h1:LlEzMj4AhA7rCAGe4KMBDvJI+AwstrUpVNzEA03Pprs=
+@@ -89,14 +77,12 @@ github.com/google/go-cmp v0.4.0/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/
+ github.com/google/go-cmp v0.5.0/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
+ github.com/google/go-cmp v0.5.3/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
+ github.com/google/go-cmp v0.5.5/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
+-github.com/google/go-cmp v0.5.6/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
+ github.com/google/go-cmp v0.5.9 h1:O2Tfq5qg4qc4AmwVlvv0oLiVAGB7enBSJ2x2DqQFi38=
+ github.com/google/go-cmp v0.5.9/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
+ github.com/google/pprof v0.0.0-20210407192527-94a9f03dee38/go.mod h1:kpwsk12EmLew5upagYY7GY0pfYCcupk39gWOCRROcvE=
+ github.com/google/pprof v0.0.0-20230323073829-e72429f035bd h1:r8yyd+DJDmsUhGrRBxH5Pj7KeFK5l+Y3FsgT8keqKtk=
+ github.com/google/pprof v0.0.0-20230323073829-e72429f035bd/go.mod h1:79YE0hCXdHag9sBkw2o+N/YnZtTkXi0UT9Nnixa5eYk=
+ github.com/google/uuid v1.1.2/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
+-github.com/grpc-ecosystem/grpc-gateway v1.16.0/go.mod h1:BDjrQk3hbvj6Nolgz8mAMFbcEtjT1g+wF4CSlocrBnw=
+ github.com/hpcloud/tail v1.0.0/go.mod h1:ab1qPbhIpdTxEkNHXyeSf5vhxWSCs/tWer42PpOxQnU=
+ github.com/ianlancetaylor/demangle v0.0.0-20200824232613-28f6c0f3b639/go.mod h1:aSSvb/t6k1mPoxDqO4vJh6VOCGPwU4O0C2/Eqndh1Sc=
+ github.com/kisielk/errcheck v1.5.0/go.mod h1:pFxgyoBC7bSaBwPgfKdkLd5X25qrDl4LWUI2bnpBCr8=
+@@ -125,7 +111,6 @@ github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINE
+ github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
+ github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
+ github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4/go.mod h1:xMI15A0UPsDsEKsMN9yxemIoYk6Tm2C1GtYGdfGttqA=
+-github.com/rogpeppe/fastuuid v1.2.0/go.mod h1:jVj6XXZzXRy/MSR5jhDC/2q6DgLz+nrA6LYCDYWNEvQ=
+ github.com/safchain/ethtool v0.3.0 h1:gimQJpsI6sc1yIqP/y8GYgiXn/NjgvpM0RNoWLVVmP0=
+ github.com/safchain/ethtool v0.3.0/go.mod h1:SA9BwrgyAqNo7M+uaL6IYbxpm5wk3L7Mm6ocLW+CJUs=
+ github.com/sirupsen/logrus v1.9.0 h1:trlNQbNUG3OdDrDil03MCb1H2o9nJ1x4/5LYw7byDE0=
+@@ -151,7 +136,6 @@ github.com/yuin/goldmark v1.2.1/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9dec
+ github.com/yuin/goldmark v1.3.5/go.mod h1:mwnBkeHKe2W/ZEtQ+71ViKU8L12m81fl3OWwC1Zlc8k=
+ go.opencensus.io v0.24.0 h1:y73uSU6J157QMP2kn2r30vwW1A2W2WFwSCGnAVxeaD0=
+ go.opencensus.io v0.24.0/go.mod h1:vNK8G9p7aAivkbmorf4v+7Hgx+Zs0yY+0fOtgBfjQKo=
+-go.opentelemetry.io/proto/otlp v0.7.0/go.mod h1:PqfVotwruBrMGOCsRd/89rSnXhoiJIqeYNgFYFoEGnI=
+ golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
+ golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
+ golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
+@@ -167,14 +151,12 @@ golang.org/x/mod v0.9.0/go.mod h1:iBbtSCu2XBx23ZKBPSOrRkjjQPZFPuis4dIYUhu/chs=
+ golang.org/x/net v0.0.0-20180724234803-3673e40ba225/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
+ golang.org/x/net v0.0.0-20180826012351-8a410e7b638d/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
+ golang.org/x/net v0.0.0-20180906233101-161cd47e91fd/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
+-golang.org/x/net v0.0.0-20190108225652-1e06a53dbb7e/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
+ golang.org/x/net v0.0.0-20190213061140-3a22650c66bd/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
+ golang.org/x/net v0.0.0-20190311183353-d8887717615a/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
+ golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
+ golang.org/x/net v0.0.0-20190620200207-3b0461eec859/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
+ golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
+ golang.org/x/net v0.0.0-20200520004742-59133d7f0dd7/go.mod h1:qpuaurCH72eLCgpAm/N6yyVIVM9cpaDIP3A8BGJEC5A=
+-golang.org/x/net v0.0.0-20200822124328-c89045814202/go.mod h1:/O7V0waA8r7cgGh81Ro3o1hOxt32SMVPicZroKQ2sZA=
+ golang.org/x/net v0.0.0-20201021035429-f5854403a974/go.mod h1:sp8m0HH+o8qH0wwXwYZr8TS3Oi6o0r6Gce1SSxlDquU=
+ golang.org/x/net v0.0.0-20201110031124-69a78807bb2b/go.mod h1:sp8m0HH+o8qH0wwXwYZr8TS3Oi6o0r6Gce1SSxlDquU=
+ golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4/go.mod h1:p54w0d4576C0XHj96bSt6lcn1PtDYWL6XObtHCRCNQM=
+@@ -182,10 +164,8 @@ golang.org/x/net v0.0.0-20210428140749-89ef3d95e781/go.mod h1:OJAsFXCWl8Ukc7SiCT
+ golang.org/x/net v0.17.0 h1:pVaXccu2ozPjCXewfr1S7xza/zcXTity9cCdXQYSjIM=
+ golang.org/x/net v0.17.0/go.mod h1:NxSsAGuq816PNPmqtQdLE42eU2Fs7NoRIZrHJAlaCOE=
+ golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
+-golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
+ golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20181108010431-42b317875d0f/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+-golang.org/x/sync v0.0.0-20181221193216-37e7f081c4d4/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+@@ -205,7 +185,6 @@ golang.org/x/sys v0.0.0-20200728102440-3e129f6d46b1/go.mod h1:h1NjWce9XRLGQEsW7w
+ golang.org/x/sys v0.0.0-20200930185726-fdedc70b468f/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+ golang.org/x/sys v0.0.0-20201119102817-f84b799fce68/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+ golang.org/x/sys v0.0.0-20210112080510-489259a85091/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+-golang.org/x/sys v0.0.0-20210119212857-b64e53b001e4/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+ golang.org/x/sys v0.0.0-20210330210617-4fbd30eecc44/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+ golang.org/x/sys v0.0.0-20210423082822-04245dca01da/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+ golang.org/x/sys v0.0.0-20210510120138-977fb7262007/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+@@ -217,7 +196,6 @@ golang.org/x/sys v0.13.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
+ golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
+ golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
+-golang.org/x/text v0.3.5/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
+ golang.org/x/text v0.3.6/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
+ golang.org/x/text v0.13.0 h1:ablQoSUd0tRdKxZewP80B+BaqeKJuVhuRxj/dkrun3k=
+ golang.org/x/text v0.13.0/go.mod h1:TvPlkZtksWOMsz7fbANvkp4WM8x/WCo/om8BMLbz+aE=
+@@ -241,20 +219,16 @@ google.golang.org/appengine v1.1.0/go.mod h1:EbEs0AVv82hx2wNQdGPgUI5lhzA/G0D9Ywl
+ google.golang.org/appengine v1.4.0/go.mod h1:xpcJRLb0r/rnEns0DIKYYv+WjYCduHsrkT7/EB5XEv4=
+ google.golang.org/genproto v0.0.0-20180817151627-c66870c02cf8/go.mod h1:JiN7NxoALGmiZfu7CAH4rXhgtRTLTxftemlI0sWmxmc=
+ google.golang.org/genproto v0.0.0-20190819201941-24fa4b261c55/go.mod h1:DMBHOl98Agz4BDEuKkezgsaosCRResVns1a3J2ZsMNc=
+-google.golang.org/genproto v0.0.0-20200513103714-09dca8ec2884/go.mod h1:55QSHmfGQM9UVYDPBsyGGes0y52j32PQ3BqQfXhyH3c=
+ google.golang.org/genproto v0.0.0-20200526211855-cb27e3aa2013/go.mod h1:NbSheEEYHJ7i3ixzK3sjbqSGDJWnxyFXZblF3eUsNvo=
+-google.golang.org/genproto v0.0.0-20220502173005-c8bf987b8c21 h1:hrbNEivu7Zn1pxvHk6MBrq9iE22woVILTHqexqBxe6I=
+-google.golang.org/genproto v0.0.0-20220502173005-c8bf987b8c21/go.mod h1:RAyBrSAP7Fh3Nc84ghnVLDPuV51xc9agzmm4Ph6i0Q4=
++google.golang.org/genproto v0.0.0-20230410155749-daa745c078e1 h1:KpwkzHKEF7B9Zxg18WzOa7djJ+Ha5DzthMyZYQfEn2A=
++google.golang.org/genproto v0.0.0-20230410155749-daa745c078e1/go.mod h1:nKE/iIaLqn2bQwXBg8f1g2Ylh6r5MN5CmZvuzZCgsCU=
+ google.golang.org/grpc v1.19.0/go.mod h1:mqu4LbDTu4XGKhr4mRzUsmM4RtVoemTSY81AxZiDr8c=
+ google.golang.org/grpc v1.23.0/go.mod h1:Y5yQAOtifL1yxbo5wqy6BxZv8vAUGQwXBOALyacEbxg=
+ google.golang.org/grpc v1.25.1/go.mod h1:c3i+UQWmh7LiEpx4sFZnkU36qjEYZ0imhYfXVyQciAY=
+ google.golang.org/grpc v1.27.0/go.mod h1:qbnxyOmOxrQa7FizSgH+ReBfzJrCY1pSN7KXBS8abTk=
+-google.golang.org/grpc v1.33.1/go.mod h1:fr5YgcSWrqhRRxogOsw7RzIpsmvOZ6IcH4kBYTpR3n0=
+ google.golang.org/grpc v1.33.2/go.mod h1:JMHMWHQWaTccqQQlmk3MJZS+GWXOdAesneDmEnv2fbc=
+-google.golang.org/grpc v1.36.0/go.mod h1:qjiiYl8FncCW8feJPdyg3v6XW24KsRHe+dy9BAGRRjU=
+-google.golang.org/grpc v1.46.0/go.mod h1:vN9eftEi1UMyUsIF80+uQXhHjbXYbm0uXoFCACuMGWk=
+-google.golang.org/grpc v1.50.1 h1:DS/BukOZWp8s6p4Dt/tOaJaTQyPyOoCcrjroHuCeLzY=
+-google.golang.org/grpc v1.50.1/go.mod h1:ZgQEeidpAuNRZ8iRrlBKXZQP1ghovWIVhdJRyCDK+GI=
++google.golang.org/grpc v1.56.3 h1:8I4C0Yq1EjstUzUJzpcRVbuYA2mODtEmpWiQoN/b2nc=
++google.golang.org/grpc v1.56.3/go.mod h1:I9bI3vqKfayGqPUAwGdOSu7kt6oIJLixfffKrpXqQ9s=
+ google.golang.org/protobuf v0.0.0-20200109180630-ec00e32a8dfd/go.mod h1:DFci5gLYBciE7Vtevhsrf46CRTquxDuWsQurQQe4oz8=
+ google.golang.org/protobuf v0.0.0-20200221191635-4d8936d0db64/go.mod h1:kwYJMbMJ01Woi6D6+Kah6886xMZcty6N08ah7+eCXa0=
+ google.golang.org/protobuf v0.0.0-20200228230310-ab0ca4ff8a60/go.mod h1:cfTl7dwQJ+fmap5saPgwCLgHXTUD7jkjRqWcaiX5VyM=
+@@ -266,16 +240,13 @@ google.golang.org/protobuf v1.23.1-0.20200526195155-81db48ad09cc/go.mod h1:EGpAD
+ google.golang.org/protobuf v1.25.0/go.mod h1:9JNX74DMeImyA3h4bdi1ymwjUzf21/xIlbajtzgsN7c=
+ google.golang.org/protobuf v1.26.0-rc.1/go.mod h1:jlhhOSvTdKEhbULTjvd4ARK9grFBp09yW+WbY/TyQbw=
+ google.golang.org/protobuf v1.26.0/go.mod h1:9q0QmTI4eRPtz6boOQmLYwt+qCgq0jsYwAQnmE0givc=
+-google.golang.org/protobuf v1.27.1/go.mod h1:9q0QmTI4eRPtz6boOQmLYwt+qCgq0jsYwAQnmE0givc=
+-google.golang.org/protobuf v1.28.0/go.mod h1:HV8QOd/L58Z+nl8r43ehVNZIU/HEI6OcFqwMG9pJV4I=
+-google.golang.org/protobuf v1.29.1 h1:7QBf+IK2gx70Ap/hDsOmam3GE0v9HicjfEdAxE62UoM=
+-google.golang.org/protobuf v1.29.1/go.mod h1:HV8QOd/L58Z+nl8r43ehVNZIU/HEI6OcFqwMG9pJV4I=
++google.golang.org/protobuf v1.30.0 h1:kPPoIgf3TsEvrm0PFe15JQ+570QVxYzEvvHqChK+cng=
++google.golang.org/protobuf v1.30.0/go.mod h1:HV8QOd/L58Z+nl8r43ehVNZIU/HEI6OcFqwMG9pJV4I=
+ gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+SDo693bJlVdllGtEeKM=
+ gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
+ gopkg.in/fsnotify.v1 v1.4.7/go.mod h1:Tz8NjZHkW78fSQdbUxIjBTcgA1z1m8ZHf0WmKUhAMys=
+ gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7/go.mod h1:dt/ZhP58zS4L8KSrWDmTeBkI65Dw0HsyUHuEVlX15mw=
+ gopkg.in/yaml.v2 v2.2.2/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
+-gopkg.in/yaml.v2 v2.2.3/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
+ gopkg.in/yaml.v2 v2.2.4/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
+ gopkg.in/yaml.v2 v2.3.0/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
+ gopkg.in/yaml.v2 v2.4.0/go.mod h1:RDklbk79AGWmwhnvt/jBztapEOGDOx6ZbXqjP6csGnQ=
+diff --git a/vendor/google.golang.org/genproto/googleapis/rpc/status/status.pb.go b/vendor/google.golang.org/genproto/googleapis/rpc/status/status.pb.go
+index f34a38e4..a6b50818 100644
+--- a/vendor/google.golang.org/genproto/googleapis/rpc/status/status.pb.go
++++ b/vendor/google.golang.org/genproto/googleapis/rpc/status/status.pb.go
+@@ -1,4 +1,4 @@
+-// Copyright 2020 Google LLC
++// Copyright 2022 Google LLC
+ //
+ // Licensed under the Apache License, Version 2.0 (the "License");
+ // you may not use this file except in compliance with the License.
+@@ -15,7 +15,7 @@
+ // Code generated by protoc-gen-go. DO NOT EDIT.
+ // versions:
+ // 	protoc-gen-go v1.26.0
+-// 	protoc        v3.12.2
++// 	protoc        v3.21.9
+ // source: google/rpc/status.proto
+ 
+ package status
+@@ -48,11 +48,13 @@ type Status struct {
+ 	sizeCache     protoimpl.SizeCache
+ 	unknownFields protoimpl.UnknownFields
+ 
+-	// The status code, which should be an enum value of [google.rpc.Code][google.rpc.Code].
++	// The status code, which should be an enum value of
++	// [google.rpc.Code][google.rpc.Code].
+ 	Code int32 `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
+ 	// A developer-facing error message, which should be in English. Any
+ 	// user-facing error message should be localized and sent in the
+-	// [google.rpc.Status.details][google.rpc.Status.details] field, or localized by the client.
++	// [google.rpc.Status.details][google.rpc.Status.details] field, or localized
++	// by the client.
+ 	Message string `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+ 	// A list of messages that carry the error details.  There is a common set of
+ 	// message types for APIs to use.
+diff --git a/vendor/google.golang.org/grpc/attributes/attributes.go b/vendor/google.golang.org/grpc/attributes/attributes.go
+new file mode 100644
+index 00000000..3efca459
+--- /dev/null
++++ b/vendor/google.golang.org/grpc/attributes/attributes.go
+@@ -0,0 +1,130 @@
++/*
++ *
++ * Copyright 2019 gRPC authors.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ *
++ */
++
++// Package attributes defines a generic key/value store used in various gRPC
++// components.
++//
++// # Experimental
++//
++// Notice: This package is EXPERIMENTAL and may be changed or removed in a
++// later release.
++package attributes
++
++import (
++	"fmt"
++	"strings"
++)
++
++// Attributes is an immutable struct for storing and retrieving generic
++// key/value pairs.  Keys must be hashable, and users should define their own
++// types for keys.  Values should not be modified after they are added to an
++// Attributes or if they were received from one.  If values implement 'Equal(o
++// interface{}) bool', it will be called by (*Attributes).Equal to determine
++// whether two values with the same key should be considered equal.
++type Attributes struct {
++	m map[interface{}]interface{}
++}
++
++// New returns a new Attributes containing the key/value pair.
++func New(key, value interface{}) *Attributes {
++	return &Attributes{m: map[interface{}]interface{}{key: value}}
++}
++
++// WithValue returns a new Attributes containing the previous keys and values
++// and the new key/value pair.  If the same key appears multiple times, the
++// last value overwrites all previous values for that key.  To remove an
++// existing key, use a nil value.  value should not be modified later.
++func (a *Attributes) WithValue(key, value interface{}) *Attributes {
++	if a == nil {
++		return New(key, value)
++	}
++	n := &Attributes{m: make(map[interface{}]interface{}, len(a.m)+1)}
++	for k, v := range a.m {
++		n.m[k] = v
++	}
++	n.m[key] = value
++	return n
++}
++
++// Value returns the value associated with these attributes for key, or nil if
++// no value is associated with key.  The returned value should not be modified.
++func (a *Attributes) Value(key interface{}) interface{} {
++	if a == nil {
++		return nil
++	}
++	return a.m[key]
++}
++
++// Equal returns whether a and o are equivalent.  If 'Equal(o interface{})
++// bool' is implemented for a value in the attributes, it is called to
++// determine if the value matches the one stored in the other attributes.  If
++// Equal is not implemented, standard equality is used to determine if the two
++// values are equal. Note that some types (e.g. maps) aren't comparable by
++// default, so they must be wrapped in a struct, or in an alias type, with Equal
++// defined.
++func (a *Attributes) Equal(o *Attributes) bool {
++	if a == nil && o == nil {
++		return true
++	}
++	if a == nil || o == nil {
++		return false
++	}
++	if len(a.m) != len(o.m) {
++		return false
++	}
++	for k, v := range a.m {
++		ov, ok := o.m[k]
++		if !ok {
++			// o missing element of a
++			return false
++		}
++		if eq, ok := v.(interface{ Equal(o interface{}) bool }); ok {
++			if !eq.Equal(ov) {
++				return false
++			}
++		} else if v != ov {
++			// Fallback to a standard equality check if Value is unimplemented.
++			return false
++		}
++	}
++	return true
++}
++
++// String prints the attribute map. If any key or values throughout the map
++// implement fmt.Stringer, it calls that method and appends.
++func (a *Attributes) String() string {
++	var sb strings.Builder
++	sb.WriteString("{")
++	first := true
++	for k, v := range a.m {
++		var key, val string
++		if str, ok := k.(interface{ String() string }); ok {
++			key = str.String()
++		}
++		if str, ok := v.(interface{ String() string }); ok {
++			val = str.String()
++		}
++		if !first {
++			sb.WriteString(", ")
++		}
++		sb.WriteString(fmt.Sprintf("%q: %q, ", key, val))
++		first = false
++	}
++	sb.WriteString("}")
++	return sb.String()
++}
+diff --git a/vendor/google.golang.org/grpc/codes/code_string.go b/vendor/google.golang.org/grpc/codes/code_string.go
+index 0b206a57..934fac2b 100644
+--- a/vendor/google.golang.org/grpc/codes/code_string.go
++++ b/vendor/google.golang.org/grpc/codes/code_string.go
+@@ -18,7 +18,15 @@
+ 
+ package codes
+ 
+-import "strconv"
++import (
++	"strconv"
++
++	"google.golang.org/grpc/internal"
++)
++
++func init() {
++	internal.CanonicalString = canonicalString
++}
+ 
+ func (c Code) String() string {
+ 	switch c {
+@@ -60,3 +68,44 @@ func (c Code) String() string {
+ 		return "Code(" + strconv.FormatInt(int64(c), 10) + ")"
+ 	}
+ }
++
++func canonicalString(c Code) string {
++	switch c {
++	case OK:
++		return "OK"
++	case Canceled:
++		return "CANCELLED"
++	case Unknown:
++		return "UNKNOWN"
++	case InvalidArgument:
++		return "INVALID_ARGUMENT"
++	case DeadlineExceeded:
++		return "DEADLINE_EXCEEDED"
++	case NotFound:
++		return "NOT_FOUND"
++	case AlreadyExists:
++		return "ALREADY_EXISTS"
++	case PermissionDenied:
++		return "PERMISSION_DENIED"
++	case ResourceExhausted:
++		return "RESOURCE_EXHAUSTED"
++	case FailedPrecondition:
++		return "FAILED_PRECONDITION"
++	case Aborted:
++		return "ABORTED"
++	case OutOfRange:
++		return "OUT_OF_RANGE"
++	case Unimplemented:
++		return "UNIMPLEMENTED"
++	case Internal:
++		return "INTERNAL"
++	case Unavailable:
++		return "UNAVAILABLE"
++	case DataLoss:
++		return "DATA_LOSS"
++	case Unauthenticated:
++		return "UNAUTHENTICATED"
++	default:
++		return "CODE(" + strconv.FormatInt(int64(c), 10) + ")"
++	}
++}
+diff --git a/vendor/google.golang.org/grpc/connectivity/connectivity.go b/vendor/google.golang.org/grpc/connectivity/connectivity.go
+new file mode 100644
+index 00000000..4a899264
+--- /dev/null
++++ b/vendor/google.golang.org/grpc/connectivity/connectivity.go
+@@ -0,0 +1,94 @@
++/*
++ *
++ * Copyright 2017 gRPC authors.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ *
++ */
++
++// Package connectivity defines connectivity semantics.
++// For details, see https://github.com/grpc/grpc/blob/master/doc/connectivity-semantics-and-api.md.
++package connectivity
++
++import (
++	"google.golang.org/grpc/grpclog"
++)
++
++var logger = grpclog.Component("core")
++
++// State indicates the state of connectivity.
++// It can be the state of a ClientConn or SubConn.
++type State int
++
++func (s State) String() string {
++	switch s {
++	case Idle:
++		return "IDLE"
++	case Connecting:
++		return "CONNECTING"
++	case Ready:
++		return "READY"
++	case TransientFailure:
++		return "TRANSIENT_FAILURE"
++	case Shutdown:
++		return "SHUTDOWN"
++	default:
++		logger.Errorf("unknown connectivity state: %d", s)
++		return "INVALID_STATE"
++	}
++}
++
++const (
++	// Idle indicates the ClientConn is idle.
++	Idle State = iota
++	// Connecting indicates the ClientConn is connecting.
++	Connecting
++	// Ready indicates the ClientConn is ready for work.
++	Ready
++	// TransientFailure indicates the ClientConn has seen a failure but expects to recover.
++	TransientFailure
++	// Shutdown indicates the ClientConn has started shutting down.
++	Shutdown
++)
++
++// ServingMode indicates the current mode of operation of the server.
++//
++// Only xDS enabled gRPC servers currently report their serving mode.
++type ServingMode int
++
++const (
++	// ServingModeStarting indicates that the server is starting up.
++	ServingModeStarting ServingMode = iota
++	// ServingModeServing indicates that the server contains all required
++	// configuration and is serving RPCs.
++	ServingModeServing
++	// ServingModeNotServing indicates that the server is not accepting new
++	// connections. Existing connections will be closed gracefully, allowing
++	// in-progress RPCs to complete. A server enters this mode when it does not
++	// contain the required configuration to serve RPCs.
++	ServingModeNotServing
++)
++
++func (s ServingMode) String() string {
++	switch s {
++	case ServingModeStarting:
++		return "STARTING"
++	case ServingModeServing:
++		return "SERVING"
++	case ServingModeNotServing:
++		return "NOT_SERVING"
++	default:
++		logger.Errorf("unknown serving mode: %d", s)
++		return "INVALID_MODE"
++	}
++}
+diff --git a/vendor/google.golang.org/grpc/credentials/credentials.go b/vendor/google.golang.org/grpc/credentials/credentials.go
+new file mode 100644
+index 00000000..5feac3aa
+--- /dev/null
++++ b/vendor/google.golang.org/grpc/credentials/credentials.go
+@@ -0,0 +1,291 @@
++/*
++ *
++ * Copyright 2014 gRPC authors.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ *
++ */
++
++// Package credentials implements various credentials supported by gRPC library,
++// which encapsulate all the state needed by a client to authenticate with a
++// server and make various assertions, e.g., about the client's identity, role,
++// or whether it is authorized to make a particular call.
++package credentials // import "google.golang.org/grpc/credentials"
++
++import (
++	"context"
++	"errors"
++	"fmt"
++	"net"
++
++	"github.com/golang/protobuf/proto"
++	"google.golang.org/grpc/attributes"
++	icredentials "google.golang.org/grpc/internal/credentials"
++)
++
++// PerRPCCredentials defines the common interface for the credentials which need to
++// attach security information to every RPC (e.g., oauth2).
++type PerRPCCredentials interface {
++	// GetRequestMetadata gets the current request metadata, refreshing tokens
++	// if required. This should be called by the transport layer on each
++	// request, and the data should be populated in headers or other
++	// context. If a status code is returned, it will be used as the status for
++	// the RPC (restricted to an allowable set of codes as defined by gRFC
++	// A54). uri is the URI of the entry point for the request.  When supported
++	// by the underlying implementation, ctx can be used for timeout and
++	// cancellation. Additionally, RequestInfo data will be available via ctx
++	// to this call.  TODO(zhaoq): Define the set of the qualified keys instead
++	// of leaving it as an arbitrary string.
++	GetRequestMetadata(ctx context.Context, uri ...string) (map[string]string, error)
++	// RequireTransportSecurity indicates whether the credentials requires
++	// transport security.
++	RequireTransportSecurity() bool
++}
++
++// SecurityLevel defines the protection level on an established connection.
++//
++// This API is experimental.
++type SecurityLevel int
++
++const (
++	// InvalidSecurityLevel indicates an invalid security level.
++	// The zero SecurityLevel value is invalid for backward compatibility.
++	InvalidSecurityLevel SecurityLevel = iota
++	// NoSecurity indicates a connection is insecure.
++	NoSecurity
++	// IntegrityOnly indicates a connection only provides integrity protection.
++	IntegrityOnly
++	// PrivacyAndIntegrity indicates a connection provides both privacy and integrity protection.
++	PrivacyAndIntegrity
++)
++
++// String returns SecurityLevel in a string format.
++func (s SecurityLevel) String() string {
++	switch s {
++	case NoSecurity:
++		return "NoSecurity"
++	case IntegrityOnly:
++		return "IntegrityOnly"
++	case PrivacyAndIntegrity:
++		return "PrivacyAndIntegrity"
++	}
++	return fmt.Sprintf("invalid SecurityLevel: %v", int(s))
++}
++
++// CommonAuthInfo contains authenticated information common to AuthInfo implementations.
++// It should be embedded in a struct implementing AuthInfo to provide additional information
++// about the credentials.
++//
++// This API is experimental.
++type CommonAuthInfo struct {
++	SecurityLevel SecurityLevel
++}
++
++// GetCommonAuthInfo returns the pointer to CommonAuthInfo struct.
++func (c CommonAuthInfo) GetCommonAuthInfo() CommonAuthInfo {
++	return c
++}
++
++// ProtocolInfo provides information regarding the gRPC wire protocol version,
++// security protocol, security protocol version in use, server name, etc.
++type ProtocolInfo struct {
++	// ProtocolVersion is the gRPC wire protocol version.
++	ProtocolVersion string
++	// SecurityProtocol is the security protocol in use.
++	SecurityProtocol string
++	// SecurityVersion is the security protocol version.  It is a static version string from the
++	// credentials, not a value that reflects per-connection protocol negotiation.  To retrieve
++	// details about the credentials used for a connection, use the Peer's AuthInfo field instead.
++	//
++	// Deprecated: please use Peer.AuthInfo.
++	SecurityVersion string
++	// ServerName is the user-configured server name.
++	ServerName string
++}
++
++// AuthInfo defines the common interface for the auth information the users are interested in.
++// A struct that implements AuthInfo should embed CommonAuthInfo by including additional
++// information about the credentials in it.
++type AuthInfo interface {
++	AuthType() string
++}
++
++// ErrConnDispatched indicates that rawConn has been dispatched out of gRPC
++// and the caller should not close rawConn.
++var ErrConnDispatched = errors.New("credentials: rawConn is dispatched out of gRPC")
++
++// TransportCredentials defines the common interface for all the live gRPC wire
++// protocols and supported transport security protocols (e.g., TLS, SSL).
++type TransportCredentials interface {
++	// ClientHandshake does the authentication handshake specified by the
++	// corresponding authentication protocol on rawConn for clients. It returns
++	// the authenticated connection and the corresponding auth information
++	// about the connection.  The auth information should embed CommonAuthInfo
++	// to return additional information about the credentials. Implementations
++	// must use the provided context to implement timely cancellation.  gRPC
++	// will try to reconnect if the error returned is a temporary error
++	// (io.EOF, context.DeadlineExceeded or err.Temporary() == true).  If the
++	// returned error is a wrapper error, implementations should make sure that
++	// the error implements Temporary() to have the correct retry behaviors.
++	// Additionally, ClientHandshakeInfo data will be available via the context
++	// passed to this call.
++	//
++	// The second argument to this method is the `:authority` header value used
++	// while creating new streams on this connection after authentication
++	// succeeds. Implementations must use this as the server name during the
++	// authentication handshake.
++	//
++	// If the returned net.Conn is closed, it MUST close the net.Conn provided.
++	ClientHandshake(context.Context, string, net.Conn) (net.Conn, AuthInfo, error)
++	// ServerHandshake does the authentication handshake for servers. It returns
++	// the authenticated connection and the corresponding auth information about
++	// the connection. The auth information should embed CommonAuthInfo to return additional information
++	// about the credentials.
++	//
++	// If the returned net.Conn is closed, it MUST close the net.Conn provided.
++	ServerHandshake(net.Conn) (net.Conn, AuthInfo, error)
++	// Info provides the ProtocolInfo of this TransportCredentials.
++	Info() ProtocolInfo
++	// Clone makes a copy of this TransportCredentials.
++	Clone() TransportCredentials
++	// OverrideServerName specifies the value used for the following:
++	// - verifying the hostname on the returned certificates
++	// - as SNI in the client's handshake to support virtual hosting
++	// - as the value for `:authority` header at stream creation time
++	//
++	// Deprecated: use grpc.WithAuthority instead. Will be supported
++	// throughout 1.x.
++	OverrideServerName(string) error
++}
++
++// Bundle is a combination of TransportCredentials and PerRPCCredentials.
++//
++// It also contains a mode switching method, so it can be used as a combination
++// of different credential policies.
++//
++// Bundle cannot be used together with individual TransportCredentials.
++// PerRPCCredentials from Bundle will be appended to other PerRPCCredentials.
++//
++// This API is experimental.
++type Bundle interface {
++	// TransportCredentials returns the transport credentials from the Bundle.
++	//
++	// Implementations must return non-nil transport credentials. If transport
++	// security is not needed by the Bundle, implementations may choose to
++	// return insecure.NewCredentials().
++	TransportCredentials() TransportCredentials
++
++	// PerRPCCredentials returns the per-RPC credentials from the Bundle.
++	//
++	// May be nil if per-RPC credentials are not needed.
++	PerRPCCredentials() PerRPCCredentials
++
++	// NewWithMode should make a copy of Bundle, and switch mode. Modifying the
++	// existing Bundle may cause races.
++	//
++	// NewWithMode returns nil if the requested mode is not supported.
++	NewWithMode(mode string) (Bundle, error)
++}
++
++// RequestInfo contains request data attached to the context passed to GetRequestMetadata calls.
++//
++// This API is experimental.
++type RequestInfo struct {
++	// The method passed to Invoke or NewStream for this RPC. (For proto methods, this has the format "/some.Service/Method")
++	Method string
++	// AuthInfo contains the information from a security handshake (TransportCredentials.ClientHandshake, TransportCredentials.ServerHandshake)
++	AuthInfo AuthInfo
++}
++
++// RequestInfoFromContext extracts the RequestInfo from the context if it exists.
++//
++// This API is experimental.
++func RequestInfoFromContext(ctx context.Context) (ri RequestInfo, ok bool) {
++	ri, ok = icredentials.RequestInfoFromContext(ctx).(RequestInfo)
++	return ri, ok
++}
++
++// ClientHandshakeInfo holds data to be passed to ClientHandshake. This makes
++// it possible to pass arbitrary data to the handshaker from gRPC, resolver,
++// balancer etc. Individual credential implementations control the actual
++// format of the data that they are willing to receive.
++//
++// This API is experimental.
++type ClientHandshakeInfo struct {
++	// Attributes contains the attributes for the address. It could be provided
++	// by the gRPC, resolver, balancer etc.
++	Attributes *attributes.Attributes
++}
++
++// ClientHandshakeInfoFromContext returns the ClientHandshakeInfo struct stored
++// in ctx.
++//
++// This API is experimental.
++func ClientHandshakeInfoFromContext(ctx context.Context) ClientHandshakeInfo {
++	chi, _ := icredentials.ClientHandshakeInfoFromContext(ctx).(ClientHandshakeInfo)
++	return chi
++}
++
++// CheckSecurityLevel checks if a connection's security level is greater than or equal to the specified one.
++// It returns success if 1) the condition is satisified or 2) AuthInfo struct does not implement GetCommonAuthInfo() method
++// or 3) CommonAuthInfo.SecurityLevel has an invalid zero value. For 2) and 3), it is for the purpose of backward-compatibility.
++//
++// This API is experimental.
++func CheckSecurityLevel(ai AuthInfo, level SecurityLevel) error {
++	type internalInfo interface {
++		GetCommonAuthInfo() CommonAuthInfo
++	}
++	if ai == nil {
++		return errors.New("AuthInfo is nil")
++	}
++	if ci, ok := ai.(internalInfo); ok {
++		// CommonAuthInfo.SecurityLevel has an invalid value.
++		if ci.GetCommonAuthInfo().SecurityLevel == InvalidSecurityLevel {
++			return nil
++		}
++		if ci.GetCommonAuthInfo().SecurityLevel < level {
++			return fmt.Errorf("requires SecurityLevel %v; connection has %v", level, ci.GetCommonAuthInfo().SecurityLevel)
++		}
++	}
++	// The condition is satisfied or AuthInfo struct does not implement GetCommonAuthInfo() method.
++	return nil
++}
++
++// ChannelzSecurityInfo defines the interface that security protocols should implement
++// in order to provide security info to channelz.
++//
++// This API is experimental.
++type ChannelzSecurityInfo interface {
++	GetSecurityValue() ChannelzSecurityValue
++}
++
++// ChannelzSecurityValue defines the interface that GetSecurityValue() return value
++// should satisfy. This interface should only be satisfied by *TLSChannelzSecurityValue
++// and *OtherChannelzSecurityValue.
++//
++// This API is experimental.
++type ChannelzSecurityValue interface {
++	isChannelzSecurityValue()
++}
++
++// OtherChannelzSecurityValue defines the struct that non-TLS protocol should return
++// from GetSecurityValue(), which contains protocol specific security info. Note
++// the Value field will be sent to users of channelz requesting channel info, and
++// thus sensitive info should better be avoided.
++//
++// This API is experimental.
++type OtherChannelzSecurityValue struct {
++	ChannelzSecurityValue
++	Name  string
++	Value proto.Message
++}
+diff --git a/vendor/google.golang.org/grpc/credentials/tls.go b/vendor/google.golang.org/grpc/credentials/tls.go
+new file mode 100644
+index 00000000..877b7cd2
+--- /dev/null
++++ b/vendor/google.golang.org/grpc/credentials/tls.go
+@@ -0,0 +1,236 @@
++/*
++ *
++ * Copyright 2014 gRPC authors.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ *
++ */
++
++package credentials
++
++import (
++	"context"
++	"crypto/tls"
++	"crypto/x509"
++	"fmt"
++	"net"
++	"net/url"
++	"os"
++
++	credinternal "google.golang.org/grpc/internal/credentials"
++)
++
++// TLSInfo contains the auth information for a TLS authenticated connection.
++// It implements the AuthInfo interface.
++type TLSInfo struct {
++	State tls.ConnectionState
++	CommonAuthInfo
++	// This API is experimental.
++	SPIFFEID *url.URL
++}
++
++// AuthType returns the type of TLSInfo as a string.
++func (t TLSInfo) AuthType() string {
++	return "tls"
++}
++
++// GetSecurityValue returns security info requested by channelz.
++func (t TLSInfo) GetSecurityValue() ChannelzSecurityValue {
++	v := &TLSChannelzSecurityValue{
++		StandardName: cipherSuiteLookup[t.State.CipherSuite],
++	}
++	// Currently there's no way to get LocalCertificate info from tls package.
++	if len(t.State.PeerCertificates) > 0 {
++		v.RemoteCertificate = t.State.PeerCertificates[0].Raw
++	}
++	return v
++}
++
++// tlsCreds is the credentials required for authenticating a connection using TLS.
++type tlsCreds struct {
++	// TLS configuration
++	config *tls.Config
++}
++
++func (c tlsCreds) Info() ProtocolInfo {
++	return ProtocolInfo{
++		SecurityProtocol: "tls",
++		SecurityVersion:  "1.2",
++		ServerName:       c.config.ServerName,
++	}
++}
++
++func (c *tlsCreds) ClientHandshake(ctx context.Context, authority string, rawConn net.Conn) (_ net.Conn, _ AuthInfo, err error) {
++	// use local cfg to avoid clobbering ServerName if using multiple endpoints
++	cfg := credinternal.CloneTLSConfig(c.config)
++	if cfg.ServerName == "" {
++		serverName, _, err := net.SplitHostPort(authority)
++		if err != nil {
++			// If the authority had no host port or if the authority cannot be parsed, use it as-is.
++			serverName = authority
++		}
++		cfg.ServerName = serverName
++	}
++	conn := tls.Client(rawConn, cfg)
++	errChannel := make(chan error, 1)
++	go func() {
++		errChannel <- conn.Handshake()
++		close(errChannel)
++	}()
++	select {
++	case err := <-errChannel:
++		if err != nil {
++			conn.Close()
++			return nil, nil, err
++		}
++	case <-ctx.Done():
++		conn.Close()
++		return nil, nil, ctx.Err()
++	}
++	tlsInfo := TLSInfo{
++		State: conn.ConnectionState(),
++		CommonAuthInfo: CommonAuthInfo{
++			SecurityLevel: PrivacyAndIntegrity,
++		},
++	}
++	id := credinternal.SPIFFEIDFromState(conn.ConnectionState())
++	if id != nil {
++		tlsInfo.SPIFFEID = id
++	}
++	return credinternal.WrapSyscallConn(rawConn, conn), tlsInfo, nil
++}
++
++func (c *tlsCreds) ServerHandshake(rawConn net.Conn) (net.Conn, AuthInfo, error) {
++	conn := tls.Server(rawConn, c.config)
++	if err := conn.Handshake(); err != nil {
++		conn.Close()
++		return nil, nil, err
++	}
++	tlsInfo := TLSInfo{
++		State: conn.ConnectionState(),
++		CommonAuthInfo: CommonAuthInfo{
++			SecurityLevel: PrivacyAndIntegrity,
++		},
++	}
++	id := credinternal.SPIFFEIDFromState(conn.ConnectionState())
++	if id != nil {
++		tlsInfo.SPIFFEID = id
++	}
++	return credinternal.WrapSyscallConn(rawConn, conn), tlsInfo, nil
++}
++
++func (c *tlsCreds) Clone() TransportCredentials {
++	return NewTLS(c.config)
++}
++
++func (c *tlsCreds) OverrideServerName(serverNameOverride string) error {
++	c.config.ServerName = serverNameOverride
++	return nil
++}
++
++// NewTLS uses c to construct a TransportCredentials based on TLS.
++func NewTLS(c *tls.Config) TransportCredentials {
++	tc := &tlsCreds{credinternal.CloneTLSConfig(c)}
++	tc.config.NextProtos = credinternal.AppendH2ToNextProtos(tc.config.NextProtos)
++	return tc
++}
++
++// NewClientTLSFromCert constructs TLS credentials from the provided root
++// certificate authority certificate(s) to validate server connections. If
++// certificates to establish the identity of the client need to be included in
++// the credentials (eg: for mTLS), use NewTLS instead, where a complete
++// tls.Config can be specified.
++// serverNameOverride is for testing only. If set to a non empty string,
++// it will override the virtual host name of authority (e.g. :authority header
++// field) in requests.
++func NewClientTLSFromCert(cp *x509.CertPool, serverNameOverride string) TransportCredentials {
++	return NewTLS(&tls.Config{ServerName: serverNameOverride, RootCAs: cp})
++}
++
++// NewClientTLSFromFile constructs TLS credentials from the provided root
++// certificate authority certificate file(s) to validate server connections. If
++// certificates to establish the identity of the client need to be included in
++// the credentials (eg: for mTLS), use NewTLS instead, where a complete
++// tls.Config can be specified.
++// serverNameOverride is for testing only. If set to a non empty string,
++// it will override the virtual host name of authority (e.g. :authority header
++// field) in requests.
++func NewClientTLSFromFile(certFile, serverNameOverride string) (TransportCredentials, error) {
++	b, err := os.ReadFile(certFile)
++	if err != nil {
++		return nil, err
++	}
++	cp := x509.NewCertPool()
++	if !cp.AppendCertsFromPEM(b) {
++		return nil, fmt.Errorf("credentials: failed to append certificates")
++	}
++	return NewTLS(&tls.Config{ServerName: serverNameOverride, RootCAs: cp}), nil
++}
++
++// NewServerTLSFromCert constructs TLS credentials from the input certificate for server.
++func NewServerTLSFromCert(cert *tls.Certificate) TransportCredentials {
++	return NewTLS(&tls.Config{Certificates: []tls.Certificate{*cert}})
++}
++
++// NewServerTLSFromFile constructs TLS credentials from the input certificate file and key
++// file for server.
++func NewServerTLSFromFile(certFile, keyFile string) (TransportCredentials, error) {
++	cert, err := tls.LoadX509KeyPair(certFile, keyFile)
++	if err != nil {
++		return nil, err
++	}
++	return NewTLS(&tls.Config{Certificates: []tls.Certificate{cert}}), nil
++}
++
++// TLSChannelzSecurityValue defines the struct that TLS protocol should return
++// from GetSecurityValue(), containing security info like cipher and certificate used.
++//
++// # Experimental
++//
++// Notice: This type is EXPERIMENTAL and may be changed or removed in a
++// later release.
++type TLSChannelzSecurityValue struct {
++	ChannelzSecurityValue
++	StandardName      string
++	LocalCertificate  []byte
++	RemoteCertificate []byte
++}
++
++var cipherSuiteLookup = map[uint16]string{
++	tls.TLS_RSA_WITH_RC4_128_SHA:                "TLS_RSA_WITH_RC4_128_SHA",
++	tls.TLS_RSA_WITH_3DES_EDE_CBC_SHA:           "TLS_RSA_WITH_3DES_EDE_CBC_SHA",
++	tls.TLS_RSA_WITH_AES_128_CBC_SHA:            "TLS_RSA_WITH_AES_128_CBC_SHA",
++	tls.TLS_RSA_WITH_AES_256_CBC_SHA:            "TLS_RSA_WITH_AES_256_CBC_SHA",
++	tls.TLS_RSA_WITH_AES_128_GCM_SHA256:         "TLS_RSA_WITH_AES_128_GCM_SHA256",
++	tls.TLS_RSA_WITH_AES_256_GCM_SHA384:         "TLS_RSA_WITH_AES_256_GCM_SHA384",
++	tls.TLS_ECDHE_ECDSA_WITH_RC4_128_SHA:        "TLS_ECDHE_ECDSA_WITH_RC4_128_SHA",
++	tls.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA:    "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA",
++	tls.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA:    "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA",
++	tls.TLS_ECDHE_RSA_WITH_RC4_128_SHA:          "TLS_ECDHE_RSA_WITH_RC4_128_SHA",
++	tls.TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA:     "TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA",
++	tls.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA:      "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA",
++	tls.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA:      "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA",
++	tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256:   "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
++	tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256: "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
++	tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384:   "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",
++	tls.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384: "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384",
++	tls.TLS_FALLBACK_SCSV:                       "TLS_FALLBACK_SCSV",
++	tls.TLS_RSA_WITH_AES_128_CBC_SHA256:         "TLS_RSA_WITH_AES_128_CBC_SHA256",
++	tls.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256: "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256",
++	tls.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256:   "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256",
++	tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305:    "TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305",
++	tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305:  "TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305",
++	tls.TLS_AES_128_GCM_SHA256:                  "TLS_AES_128_GCM_SHA256",
++	tls.TLS_AES_256_GCM_SHA384:                  "TLS_AES_256_GCM_SHA384",
++	tls.TLS_CHACHA20_POLY1305_SHA256:            "TLS_CHACHA20_POLY1305_SHA256",
++}
+diff --git a/vendor/google.golang.org/grpc/grpclog/component.go b/vendor/google.golang.org/grpc/grpclog/component.go
+new file mode 100644
+index 00000000..8358dd6e
+--- /dev/null
++++ b/vendor/google.golang.org/grpc/grpclog/component.go
+@@ -0,0 +1,117 @@
++/*
++ *
++ * Copyright 2020 gRPC authors.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ *
++ */
++
++package grpclog
++
++import (
++	"fmt"
++
++	"google.golang.org/grpc/internal/grpclog"
++)
++
++// componentData records the settings for a component.
++type componentData struct {
++	name string
++}
++
++var cache = map[string]*componentData{}
++
++func (c *componentData) InfoDepth(depth int, args ...interface{}) {
++	args = append([]interface{}{"[" + string(c.name) + "]"}, args...)
++	grpclog.InfoDepth(depth+1, args...)
++}
++
++func (c *componentData) WarningDepth(depth int, args ...interface{}) {
++	args = append([]interface{}{"[" + string(c.name) + "]"}, args...)
++	grpclog.WarningDepth(depth+1, args...)
++}
++
++func (c *componentData) ErrorDepth(depth int, args ...interface{}) {
++	args = append([]interface{}{"[" + string(c.name) + "]"}, args...)
++	grpclog.ErrorDepth(depth+1, args...)
++}
++
++func (c *componentData) FatalDepth(depth int, args ...interface{}) {
++	args = append([]interface{}{"[" + string(c.name) + "]"}, args...)
++	grpclog.FatalDepth(depth+1, args...)
++}
++
++func (c *componentData) Info(args ...interface{}) {
++	c.InfoDepth(1, args...)
++}
++
++func (c *componentData) Warning(args ...interface{}) {
++	c.WarningDepth(1, args...)
++}
++
++func (c *componentData) Error(args ...interface{}) {
++	c.ErrorDepth(1, args...)
++}
++
++func (c *componentData) Fatal(args ...interface{}) {
++	c.FatalDepth(1, args...)
++}
++
++func (c *componentData) Infof(format string, args ...interface{}) {
++	c.InfoDepth(1, fmt.Sprintf(format, args...))
++}
++
++func (c *componentData) Warningf(format string, args ...interface{}) {
++	c.WarningDepth(1, fmt.Sprintf(format, args...))
++}
++
++func (c *componentData) Errorf(format string, args ...interface{}) {
++	c.ErrorDepth(1, fmt.Sprintf(format, args...))
++}
++
++func (c *componentData) Fatalf(format string, args ...interface{}) {
++	c.FatalDepth(1, fmt.Sprintf(format, args...))
++}
++
++func (c *componentData) Infoln(args ...interface{}) {
++	c.InfoDepth(1, args...)
++}
++
++func (c *componentData) Warningln(args ...interface{}) {
++	c.WarningDepth(1, args...)
++}
++
++func (c *componentData) Errorln(args ...interface{}) {
++	c.ErrorDepth(1, args...)
++}
++
++func (c *componentData) Fatalln(args ...interface{}) {
++	c.FatalDepth(1, args...)
++}
++
++func (c *componentData) V(l int) bool {
++	return V(l)
++}
++
++// Component creates a new component and returns it for logging. If a component
++// with the name already exists, nothing will be created and it will be
++// returned. SetLoggerV2 will panic if it is called with a logger created by
++// Component.
++func Component(componentName string) DepthLoggerV2 {
++	if cData, ok := cache[componentName]; ok {
++		return cData
++	}
++	c := &componentData{componentName}
++	cache[componentName] = c
++	return c
++}
+diff --git a/vendor/google.golang.org/grpc/grpclog/grpclog.go b/vendor/google.golang.org/grpc/grpclog/grpclog.go
+new file mode 100644
+index 00000000..c8bb2be3
+--- /dev/null
++++ b/vendor/google.golang.org/grpc/grpclog/grpclog.go
+@@ -0,0 +1,132 @@
++/*
++ *
++ * Copyright 2017 gRPC authors.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ *
++ */
++
++// Package grpclog defines logging for grpc.
++//
++// All logs in transport and grpclb packages only go to verbose level 2.
++// All logs in other packages in grpc are logged in spite of the verbosity level.
++//
++// In the default logger,
++// severity level can be set by environment variable GRPC_GO_LOG_SEVERITY_LEVEL,
++// verbosity level can be set by GRPC_GO_LOG_VERBOSITY_LEVEL.
++package grpclog // import "google.golang.org/grpc/grpclog"
++
++import (
++	"os"
++
++	"google.golang.org/grpc/internal/grpclog"
++)
++
++func init() {
++	SetLoggerV2(newLoggerV2())
++}
++
++// V reports whether verbosity level l is at least the requested verbose level.
++func V(l int) bool {
++	return grpclog.Logger.V(l)
++}
++
++// Info logs to the INFO log.
++func Info(args ...interface{}) {
++	grpclog.Logger.Info(args...)
++}
++
++// Infof logs to the INFO log. Arguments are handled in the manner of fmt.Printf.
++func Infof(format string, args ...interface{}) {
++	grpclog.Logger.Infof(format, args...)
++}
++
++// Infoln logs to the INFO log. Arguments are handled in the manner of fmt.Println.
++func Infoln(args ...interface{}) {
++	grpclog.Logger.Infoln(args...)
++}
++
++// Warning logs to the WARNING log.
++func Warning(args ...interface{}) {
++	grpclog.Logger.Warning(args...)
++}
++
++// Warningf logs to the WARNING log. Arguments are handled in the manner of fmt.Printf.
++func Warningf(format string, args ...interface{}) {
++	grpclog.Logger.Warningf(format, args...)
++}
++
++// Warningln logs to the WARNING log. Arguments are handled in the manner of fmt.Println.
++func Warningln(args ...interface{}) {
++	grpclog.Logger.Warningln(args...)
++}
++
++// Error logs to the ERROR log.
++func Error(args ...interface{}) {
++	grpclog.Logger.Error(args...)
++}
++
++// Errorf logs to the ERROR log. Arguments are handled in the manner of fmt.Printf.
++func Errorf(format string, args ...interface{}) {
++	grpclog.Logger.Errorf(format, args...)
++}
++
++// Errorln logs to the ERROR log. Arguments are handled in the manner of fmt.Println.
++func Errorln(args ...interface{}) {
++	grpclog.Logger.Errorln(args...)
++}
++
++// Fatal logs to the FATAL log. Arguments are handled in the manner of fmt.Print.
++// It calls os.Exit() with exit code 1.
++func Fatal(args ...interface{}) {
++	grpclog.Logger.Fatal(args...)
++	// Make sure fatal logs will exit.
++	os.Exit(1)
++}
++
++// Fatalf logs to the FATAL log. Arguments are handled in the manner of fmt.Printf.
++// It calls os.Exit() with exit code 1.
++func Fatalf(format string, args ...interface{}) {
++	grpclog.Logger.Fatalf(format, args...)
++	// Make sure fatal logs will exit.
++	os.Exit(1)
++}
++
++// Fatalln logs to the FATAL log. Arguments are handled in the manner of fmt.Println.
++// It calle os.Exit()) with exit code 1.
++func Fatalln(args ...interface{}) {
++	grpclog.Logger.Fatalln(args...)
++	// Make sure fatal logs will exit.
++	os.Exit(1)
++}
++
++// Print prints to the logger. Arguments are handled in the manner of fmt.Print.
++//
++// Deprecated: use Info.
++func Print(args ...interface{}) {
++	grpclog.Logger.Info(args...)
++}
++
++// Printf prints to the logger. Arguments are handled in the manner of fmt.Printf.
++//
++// Deprecated: use Infof.
++func Printf(format string, args ...interface{}) {
++	grpclog.Logger.Infof(format, args...)
++}
++
++// Println prints to the logger. Arguments are handled in the manner of fmt.Println.
++//
++// Deprecated: use Infoln.
++func Println(args ...interface{}) {
++	grpclog.Logger.Infoln(args...)
++}
+diff --git a/vendor/google.golang.org/grpc/grpclog/logger.go b/vendor/google.golang.org/grpc/grpclog/logger.go
+new file mode 100644
+index 00000000..ef06a482
+--- /dev/null
++++ b/vendor/google.golang.org/grpc/grpclog/logger.go
+@@ -0,0 +1,87 @@
++/*
++ *
++ * Copyright 2015 gRPC authors.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ *
++ */
++
++package grpclog
++
++import "google.golang.org/grpc/internal/grpclog"
++
++// Logger mimics golang's standard Logger as an interface.
++//
++// Deprecated: use LoggerV2.
++type Logger interface {
++	Fatal(args ...interface{})
++	Fatalf(format string, args ...interface{})
++	Fatalln(args ...interface{})
++	Print(args ...interface{})
++	Printf(format string, args ...interface{})
++	Println(args ...interface{})
++}
++
++// SetLogger sets the logger that is used in grpc. Call only from
++// init() functions.
++//
++// Deprecated: use SetLoggerV2.
++func SetLogger(l Logger) {
++	grpclog.Logger = &loggerWrapper{Logger: l}
++}
++
++// loggerWrapper wraps Logger into a LoggerV2.
++type loggerWrapper struct {
++	Logger
++}
++
++func (g *loggerWrapper) Info(args ...interface{}) {
++	g.Logger.Print(args...)
++}
++
++func (g *loggerWrapper) Infoln(args ...interface{}) {
++	g.Logger.Println(args...)
++}
++
++func (g *loggerWrapper) Infof(format string, args ...interface{}) {
++	g.Logger.Printf(format, args...)
++}
++
++func (g *loggerWrapper) Warning(args ...interface{}) {
++	g.Logger.Print(args...)
++}
++
++func (g *loggerWrapper) Warningln(args ...interface{}) {
++	g.Logger.Println(args...)
++}
++
++func (g *loggerWrapper) Warningf(format string, args ...interface{}) {
++	g.Logger.Printf(format, args...)
++}
++
++func (g *loggerWrapper) Error(args ...interface{}) {
++	g.Logger.Print(args...)
++}
++
++func (g *loggerWrapper) Errorln(args ...interface{}) {
++	g.Logger.Println(args...)
++}
++
++func (g *loggerWrapper) Errorf(format string, args ...interface{}) {
++	g.Logger.Printf(format, args...)
++}
++
++func (g *loggerWrapper) V(l int) bool {
++	// Returns true for all verbose level.
++	return true
++}
+diff --git a/vendor/google.golang.org/grpc/grpclog/loggerv2.go b/vendor/google.golang.org/grpc/grpclog/loggerv2.go
+new file mode 100644
+index 00000000..5de66e40
+--- /dev/null
++++ b/vendor/google.golang.org/grpc/grpclog/loggerv2.go
+@@ -0,0 +1,258 @@
++/*
++ *
++ * Copyright 2017 gRPC authors.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ *
++ */
++
++package grpclog
++
++import (
++	"encoding/json"
++	"fmt"
++	"io"
++	"log"
++	"os"
++	"strconv"
++	"strings"
++
++	"google.golang.org/grpc/internal/grpclog"
++)
++
++// LoggerV2 does underlying logging work for grpclog.
++type LoggerV2 interface {
++	// Info logs to INFO log. Arguments are handled in the manner of fmt.Print.
++	Info(args ...interface{})
++	// Infoln logs to INFO log. Arguments are handled in the manner of fmt.Println.
++	Infoln(args ...interface{})
++	// Infof logs to INFO log. Arguments are handled in the manner of fmt.Printf.
++	Infof(format string, args ...interface{})
++	// Warning logs to WARNING log. Arguments are handled in the manner of fmt.Print.
++	Warning(args ...interface{})
++	// Warningln logs to WARNING log. Arguments are handled in the manner of fmt.Println.
++	Warningln(args ...interface{})
++	// Warningf logs to WARNING log. Arguments are handled in the manner of fmt.Printf.
++	Warningf(format string, args ...interface{})
++	// Error logs to ERROR log. Arguments are handled in the manner of fmt.Print.
++	Error(args ...interface{})
++	// Errorln logs to ERROR log. Arguments are handled in the manner of fmt.Println.
++	Errorln(args ...interface{})
++	// Errorf logs to ERROR log. Arguments are handled in the manner of fmt.Printf.
++	Errorf(format string, args ...interface{})
++	// Fatal logs to ERROR log. Arguments are handled in the manner of fmt.Print.
++	// gRPC ensures that all Fatal logs will exit with os.Exit(1).
++	// Implementations may also call os.Exit() with a non-zero exit code.
++	Fatal(args ...interface{})
++	// Fatalln logs to ERROR log. Arguments are handled in the manner of fmt.Println.
++	// gRPC ensures that all Fatal logs will exit with os.Exit(1).
++	// Implementations may also call os.Exit() with a non-zero exit code.
++	Fatalln(args ...interface{})
++	// Fatalf logs to ERROR log. Arguments are handled in the manner of fmt.Printf.
++	// gRPC ensures that all Fatal logs will exit with os.Exit(1).
++	// Implementations may also call os.Exit() with a non-zero exit code.
++	Fatalf(format string, args ...interface{})
++	// V reports whether verbosity level l is at least the requested verbose level.
++	V(l int) bool
++}
++
++// SetLoggerV2 sets logger that is used in grpc to a V2 logger.
++// Not mutex-protected, should be called before any gRPC functions.
++func SetLoggerV2(l LoggerV2) {
++	if _, ok := l.(*componentData); ok {
++		panic("cannot use component logger as grpclog logger")
++	}
++	grpclog.Logger = l
++	grpclog.DepthLogger, _ = l.(grpclog.DepthLoggerV2)
++}
++
++const (
++	// infoLog indicates Info severity.
++	infoLog int = iota
++	// warningLog indicates Warning severity.
++	warningLog
++	// errorLog indicates Error severity.
++	errorLog
++	// fatalLog indicates Fatal severity.
++	fatalLog
++)
++
++// severityName contains the string representation of each severity.
++var severityName = []string{
++	infoLog:    "INFO",
++	warningLog: "WARNING",
++	errorLog:   "ERROR",
++	fatalLog:   "FATAL",
++}
++
++// loggerT is the default logger used by grpclog.
++type loggerT struct {
++	m          []*log.Logger
++	v          int
++	jsonFormat bool
++}
++
++// NewLoggerV2 creates a loggerV2 with the provided writers.
++// Fatal logs will be written to errorW, warningW, infoW, followed by exit(1).
++// Error logs will be written to errorW, warningW and infoW.
++// Warning logs will be written to warningW and infoW.
++// Info logs will be written to infoW.
++func NewLoggerV2(infoW, warningW, errorW io.Writer) LoggerV2 {
++	return newLoggerV2WithConfig(infoW, warningW, errorW, loggerV2Config{})
++}
++
++// NewLoggerV2WithVerbosity creates a loggerV2 with the provided writers and
++// verbosity level.
++func NewLoggerV2WithVerbosity(infoW, warningW, errorW io.Writer, v int) LoggerV2 {
++	return newLoggerV2WithConfig(infoW, warningW, errorW, loggerV2Config{verbose: v})
++}
++
++type loggerV2Config struct {
++	verbose    int
++	jsonFormat bool
++}
++
++func newLoggerV2WithConfig(infoW, warningW, errorW io.Writer, c loggerV2Config) LoggerV2 {
++	var m []*log.Logger
++	flag := log.LstdFlags
++	if c.jsonFormat {
++		flag = 0
++	}
++	m = append(m, log.New(infoW, "", flag))
++	m = append(m, log.New(io.MultiWriter(infoW, warningW), "", flag))
++	ew := io.MultiWriter(infoW, warningW, errorW) // ew will be used for error and fatal.
++	m = append(m, log.New(ew, "", flag))
++	m = append(m, log.New(ew, "", flag))
++	return &loggerT{m: m, v: c.verbose, jsonFormat: c.jsonFormat}
++}
++
++// newLoggerV2 creates a loggerV2 to be used as default logger.
++// All logs are written to stderr.
++func newLoggerV2() LoggerV2 {
++	errorW := io.Discard
++	warningW := io.Discard
++	infoW := io.Discard
++
++	logLevel := os.Getenv("GRPC_GO_LOG_SEVERITY_LEVEL")
++	switch logLevel {
++	case "", "ERROR", "error": // If env is unset, set level to ERROR.
++		errorW = os.Stderr
++	case "WARNING", "warning":
++		warningW = os.Stderr
++	case "INFO", "info":
++		infoW = os.Stderr
++	}
++
++	var v int
++	vLevel := os.Getenv("GRPC_GO_LOG_VERBOSITY_LEVEL")
++	if vl, err := strconv.Atoi(vLevel); err == nil {
++		v = vl
++	}
++
++	jsonFormat := strings.EqualFold(os.Getenv("GRPC_GO_LOG_FORMATTER"), "json")
++
++	return newLoggerV2WithConfig(infoW, warningW, errorW, loggerV2Config{
++		verbose:    v,
++		jsonFormat: jsonFormat,
++	})
++}
++
++func (g *loggerT) output(severity int, s string) {
++	sevStr := severityName[severity]
++	if !g.jsonFormat {
++		g.m[severity].Output(2, fmt.Sprintf("%v: %v", sevStr, s))
++		return
++	}
++	// TODO: we can also include the logging component, but that needs more
++	// (API) changes.
++	b, _ := json.Marshal(map[string]string{
++		"severity": sevStr,
++		"message":  s,
++	})
++	g.m[severity].Output(2, string(b))
++}
++
++func (g *loggerT) Info(args ...interface{}) {
++	g.output(infoLog, fmt.Sprint(args...))
++}
++
++func (g *loggerT) Infoln(args ...interface{}) {
++	g.output(infoLog, fmt.Sprintln(args...))
++}
++
++func (g *loggerT) Infof(format string, args ...interface{}) {
++	g.output(infoLog, fmt.Sprintf(format, args...))
++}
++
++func (g *loggerT) Warning(args ...interface{}) {
++	g.output(warningLog, fmt.Sprint(args...))
++}
++
++func (g *loggerT) Warningln(args ...interface{}) {
++	g.output(warningLog, fmt.Sprintln(args...))
++}
++
++func (g *loggerT) Warningf(format string, args ...interface{}) {
++	g.output(warningLog, fmt.Sprintf(format, args...))
++}
++
++func (g *loggerT) Error(args ...interface{}) {
++	g.output(errorLog, fmt.Sprint(args...))
++}
++
++func (g *loggerT) Errorln(args ...interface{}) {
++	g.output(errorLog, fmt.Sprintln(args...))
++}
++
++func (g *loggerT) Errorf(format string, args ...interface{}) {
++	g.output(errorLog, fmt.Sprintf(format, args...))
++}
++
++func (g *loggerT) Fatal(args ...interface{}) {
++	g.output(fatalLog, fmt.Sprint(args...))
++	os.Exit(1)
++}
++
++func (g *loggerT) Fatalln(args ...interface{}) {
++	g.output(fatalLog, fmt.Sprintln(args...))
++	os.Exit(1)
++}
++
++func (g *loggerT) Fatalf(format string, args ...interface{}) {
++	g.output(fatalLog, fmt.Sprintf(format, args...))
++	os.Exit(1)
++}
++
++func (g *loggerT) V(l int) bool {
++	return l <= g.v
++}
++
++// DepthLoggerV2 logs at a specified call frame. If a LoggerV2 also implements
++// DepthLoggerV2, the below functions will be called with the appropriate stack
++// depth set for trivial functions the logger may ignore.
++//
++// # Experimental
++//
++// Notice: This type is EXPERIMENTAL and may be changed or removed in a
++// later release.
++type DepthLoggerV2 interface {
++	LoggerV2
++	// InfoDepth logs to INFO log at the specified depth. Arguments are handled in the manner of fmt.Println.
++	InfoDepth(depth int, args ...interface{})
++	// WarningDepth logs to WARNING log at the specified depth. Arguments are handled in the manner of fmt.Println.
++	WarningDepth(depth int, args ...interface{})
++	// ErrorDepth logs to ERROR log at the specified depth. Arguments are handled in the manner of fmt.Println.
++	ErrorDepth(depth int, args ...interface{})
++	// FatalDepth logs to FATAL log at the specified depth. Arguments are handled in the manner of fmt.Println.
++	FatalDepth(depth int, args ...interface{})
++}
+diff --git a/vendor/google.golang.org/grpc/internal/credentials/credentials.go b/vendor/google.golang.org/grpc/internal/credentials/credentials.go
+new file mode 100644
+index 00000000..32c9b590
+--- /dev/null
++++ b/vendor/google.golang.org/grpc/internal/credentials/credentials.go
+@@ -0,0 +1,49 @@
++/*
++ * Copyright 2021 gRPC authors.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++package credentials
++
++import (
++	"context"
++)
++
++// requestInfoKey is a struct to be used as the key to store RequestInfo in a
++// context.
++type requestInfoKey struct{}
++
++// NewRequestInfoContext creates a context with ri.
++func NewRequestInfoContext(ctx context.Context, ri interface{}) context.Context {
++	return context.WithValue(ctx, requestInfoKey{}, ri)
++}
++
++// RequestInfoFromContext extracts the RequestInfo from ctx.
++func RequestInfoFromContext(ctx context.Context) interface{} {
++	return ctx.Value(requestInfoKey{})
++}
++
++// clientHandshakeInfoKey is a struct used as the key to store
++// ClientHandshakeInfo in a context.
++type clientHandshakeInfoKey struct{}
++
++// ClientHandshakeInfoFromContext extracts the ClientHandshakeInfo from ctx.
++func ClientHandshakeInfoFromContext(ctx context.Context) interface{} {
++	return ctx.Value(clientHandshakeInfoKey{})
++}
++
++// NewClientHandshakeInfoContext creates a context with chi.
++func NewClientHandshakeInfoContext(ctx context.Context, chi interface{}) context.Context {
++	return context.WithValue(ctx, clientHandshakeInfoKey{}, chi)
++}
+diff --git a/vendor/google.golang.org/grpc/internal/credentials/spiffe.go b/vendor/google.golang.org/grpc/internal/credentials/spiffe.go
+new file mode 100644
+index 00000000..25ade623
+--- /dev/null
++++ b/vendor/google.golang.org/grpc/internal/credentials/spiffe.go
+@@ -0,0 +1,75 @@
++/*
++ *
++ * Copyright 2020 gRPC authors.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ *
++ */
++
++// Package credentials defines APIs for parsing SPIFFE ID.
++//
++// All APIs in this package are experimental.
++package credentials
++
++import (
++	"crypto/tls"
++	"crypto/x509"
++	"net/url"
++
++	"google.golang.org/grpc/grpclog"
++)
++
++var logger = grpclog.Component("credentials")
++
++// SPIFFEIDFromState parses the SPIFFE ID from State. If the SPIFFE ID format
++// is invalid, return nil with warning.
++func SPIFFEIDFromState(state tls.ConnectionState) *url.URL {
++	if len(state.PeerCertificates) == 0 || len(state.PeerCertificates[0].URIs) == 0 {
++		return nil
++	}
++	return SPIFFEIDFromCert(state.PeerCertificates[0])
++}
++
++// SPIFFEIDFromCert parses the SPIFFE ID from x509.Certificate. If the SPIFFE
++// ID format is invalid, return nil with warning.
++func SPIFFEIDFromCert(cert *x509.Certificate) *url.URL {
++	if cert == nil || cert.URIs == nil {
++		return nil
++	}
++	var spiffeID *url.URL
++	for _, uri := range cert.URIs {
++		if uri == nil || uri.Scheme != "spiffe" || uri.Opaque != "" || (uri.User != nil && uri.User.Username() != "") {
++			continue
++		}
++		// From this point, we assume the uri is intended for a SPIFFE ID.
++		if len(uri.String()) > 2048 {
++			logger.Warning("invalid SPIFFE ID: total ID length larger than 2048 bytes")
++			return nil
++		}
++		if len(uri.Host) == 0 || len(uri.Path) == 0 {
++			logger.Warning("invalid SPIFFE ID: domain or workload ID is empty")
++			return nil
++		}
++		if len(uri.Host) > 255 {
++			logger.Warning("invalid SPIFFE ID: domain length larger than 255 characters")
++			return nil
++		}
++		// A valid SPIFFE certificate can only have exactly one URI SAN field.
++		if len(cert.URIs) > 1 {
++			logger.Warning("invalid SPIFFE ID: multiple URI SANs")
++			return nil
++		}
++		spiffeID = uri
++	}
++	return spiffeID
++}
+diff --git a/vendor/google.golang.org/grpc/internal/credentials/syscallconn.go b/vendor/google.golang.org/grpc/internal/credentials/syscallconn.go
+new file mode 100644
+index 00000000..2919632d
+--- /dev/null
++++ b/vendor/google.golang.org/grpc/internal/credentials/syscallconn.go
+@@ -0,0 +1,58 @@
++/*
++ *
++ * Copyright 2018 gRPC authors.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ *
++ */
++
++package credentials
++
++import (
++	"net"
++	"syscall"
++)
++
++type sysConn = syscall.Conn
++
++// syscallConn keeps reference of rawConn to support syscall.Conn for channelz.
++// SyscallConn() (the method in interface syscall.Conn) is explicitly
++// implemented on this type,
++//
++// Interface syscall.Conn is implemented by most net.Conn implementations (e.g.
++// TCPConn, UnixConn), but is not part of net.Conn interface. So wrapper conns
++// that embed net.Conn don't implement syscall.Conn. (Side note: tls.Conn
++// doesn't embed net.Conn, so even if syscall.Conn is part of net.Conn, it won't
++// help here).
++type syscallConn struct {
++	net.Conn
++	// sysConn is a type alias of syscall.Conn. It's necessary because the name
++	// `Conn` collides with `net.Conn`.
++	sysConn
++}
++
++// WrapSyscallConn tries to wrap rawConn and newConn into a net.Conn that
++// implements syscall.Conn. rawConn will be used to support syscall, and newConn
++// will be used for read/write.
++//
++// This function returns newConn if rawConn doesn't implement syscall.Conn.
++func WrapSyscallConn(rawConn, newConn net.Conn) net.Conn {
++	sysConn, ok := rawConn.(syscall.Conn)
++	if !ok {
++		return newConn
++	}
++	return &syscallConn{
++		Conn:    newConn,
++		sysConn: sysConn,
++	}
++}
+diff --git a/vendor/google.golang.org/grpc/internal/credentials/util.go b/vendor/google.golang.org/grpc/internal/credentials/util.go
+new file mode 100644
+index 00000000..f792fd22
+--- /dev/null
++++ b/vendor/google.golang.org/grpc/internal/credentials/util.go
+@@ -0,0 +1,52 @@
++/*
++ *
++ * Copyright 2020 gRPC authors.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ *
++ */
++
++package credentials
++
++import (
++	"crypto/tls"
++)
++
++const alpnProtoStrH2 = "h2"
++
++// AppendH2ToNextProtos appends h2 to next protos.
++func AppendH2ToNextProtos(ps []string) []string {
++	for _, p := range ps {
++		if p == alpnProtoStrH2 {
++			return ps
++		}
++	}
++	ret := make([]string, 0, len(ps)+1)
++	ret = append(ret, ps...)
++	return append(ret, alpnProtoStrH2)
++}
++
++// CloneTLSConfig returns a shallow clone of the exported
++// fields of cfg, ignoring the unexported sync.Once, which
++// contains a mutex and must not be copied.
++//
++// If cfg is nil, a new zero tls.Config is returned.
++//
++// TODO: inline this function if possible.
++func CloneTLSConfig(cfg *tls.Config) *tls.Config {
++	if cfg == nil {
++		return &tls.Config{}
++	}
++
++	return cfg.Clone()
++}
+diff --git a/vendor/google.golang.org/grpc/internal/grpclog/grpclog.go b/vendor/google.golang.org/grpc/internal/grpclog/grpclog.go
+new file mode 100644
+index 00000000..b68e26a3
+--- /dev/null
++++ b/vendor/google.golang.org/grpc/internal/grpclog/grpclog.go
+@@ -0,0 +1,126 @@
++/*
++ *
++ * Copyright 2020 gRPC authors.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ *
++ */
++
++// Package grpclog (internal) defines depth logging for grpc.
++package grpclog
++
++import (
++	"os"
++)
++
++// Logger is the logger used for the non-depth log functions.
++var Logger LoggerV2
++
++// DepthLogger is the logger used for the depth log functions.
++var DepthLogger DepthLoggerV2
++
++// InfoDepth logs to the INFO log at the specified depth.
++func InfoDepth(depth int, args ...interface{}) {
++	if DepthLogger != nil {
++		DepthLogger.InfoDepth(depth, args...)
++	} else {
++		Logger.Infoln(args...)
++	}
++}
++
++// WarningDepth logs to the WARNING log at the specified depth.
++func WarningDepth(depth int, args ...interface{}) {
++	if DepthLogger != nil {
++		DepthLogger.WarningDepth(depth, args...)
++	} else {
++		Logger.Warningln(args...)
++	}
++}
++
++// ErrorDepth logs to the ERROR log at the specified depth.
++func ErrorDepth(depth int, args ...interface{}) {
++	if DepthLogger != nil {
++		DepthLogger.ErrorDepth(depth, args...)
++	} else {
++		Logger.Errorln(args...)
++	}
++}
++
++// FatalDepth logs to the FATAL log at the specified depth.
++func FatalDepth(depth int, args ...interface{}) {
++	if DepthLogger != nil {
++		DepthLogger.FatalDepth(depth, args...)
++	} else {
++		Logger.Fatalln(args...)
++	}
++	os.Exit(1)
++}
++
++// LoggerV2 does underlying logging work for grpclog.
++// This is a copy of the LoggerV2 defined in the external grpclog package. It
++// is defined here to avoid a circular dependency.
++type LoggerV2 interface {
++	// Info logs to INFO log. Arguments are handled in the manner of fmt.Print.
++	Info(args ...interface{})
++	// Infoln logs to INFO log. Arguments are handled in the manner of fmt.Println.
++	Infoln(args ...interface{})
++	// Infof logs to INFO log. Arguments are handled in the manner of fmt.Printf.
++	Infof(format string, args ...interface{})
++	// Warning logs to WARNING log. Arguments are handled in the manner of fmt.Print.
++	Warning(args ...interface{})
++	// Warningln logs to WARNING log. Arguments are handled in the manner of fmt.Println.
++	Warningln(args ...interface{})
++	// Warningf logs to WARNING log. Arguments are handled in the manner of fmt.Printf.
++	Warningf(format string, args ...interface{})
++	// Error logs to ERROR log. Arguments are handled in the manner of fmt.Print.
++	Error(args ...interface{})
++	// Errorln logs to ERROR log. Arguments are handled in the manner of fmt.Println.
++	Errorln(args ...interface{})
++	// Errorf logs to ERROR log. Arguments are handled in the manner of fmt.Printf.
++	Errorf(format string, args ...interface{})
++	// Fatal logs to ERROR log. Arguments are handled in the manner of fmt.Print.
++	// gRPC ensures that all Fatal logs will exit with os.Exit(1).
++	// Implementations may also call os.Exit() with a non-zero exit code.
++	Fatal(args ...interface{})
++	// Fatalln logs to ERROR log. Arguments are handled in the manner of fmt.Println.
++	// gRPC ensures that all Fatal logs will exit with os.Exit(1).
++	// Implementations may also call os.Exit() with a non-zero exit code.
++	Fatalln(args ...interface{})
++	// Fatalf logs to ERROR log. Arguments are handled in the manner of fmt.Printf.
++	// gRPC ensures that all Fatal logs will exit with os.Exit(1).
++	// Implementations may also call os.Exit() with a non-zero exit code.
++	Fatalf(format string, args ...interface{})
++	// V reports whether verbosity level l is at least the requested verbose level.
++	V(l int) bool
++}
++
++// DepthLoggerV2 logs at a specified call frame. If a LoggerV2 also implements
++// DepthLoggerV2, the below functions will be called with the appropriate stack
++// depth set for trivial functions the logger may ignore.
++// This is a copy of the DepthLoggerV2 defined in the external grpclog package.
++// It is defined here to avoid a circular dependency.
++//
++// # Experimental
++//
++// Notice: This type is EXPERIMENTAL and may be changed or removed in a
++// later release.
++type DepthLoggerV2 interface {
++	// InfoDepth logs to INFO log at the specified depth. Arguments are handled in the manner of fmt.Println.
++	InfoDepth(depth int, args ...interface{})
++	// WarningDepth logs to WARNING log at the specified depth. Arguments are handled in the manner of fmt.Println.
++	WarningDepth(depth int, args ...interface{})
++	// ErrorDepth logs to ERROR log at the specified depth. Arguments are handled in the manner of fmt.Println.
++	ErrorDepth(depth int, args ...interface{})
++	// FatalDepth logs to FATAL log at the specified depth. Arguments are handled in the manner of fmt.Println.
++	FatalDepth(depth int, args ...interface{})
++}
+diff --git a/vendor/google.golang.org/grpc/internal/grpclog/prefixLogger.go b/vendor/google.golang.org/grpc/internal/grpclog/prefixLogger.go
+new file mode 100644
+index 00000000..02224b42
+--- /dev/null
++++ b/vendor/google.golang.org/grpc/internal/grpclog/prefixLogger.go
+@@ -0,0 +1,93 @@
++/*
++ *
++ * Copyright 2020 gRPC authors.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ *
++ */
++
++package grpclog
++
++import (
++	"fmt"
++)
++
++// PrefixLogger does logging with a prefix.
++//
++// Logging method on a nil logs without any prefix.
++type PrefixLogger struct {
++	logger DepthLoggerV2
++	prefix string
++}
++
++// Infof does info logging.
++func (pl *PrefixLogger) Infof(format string, args ...interface{}) {
++	if pl != nil {
++		// Handle nil, so the tests can pass in a nil logger.
++		format = pl.prefix + format
++		pl.logger.InfoDepth(1, fmt.Sprintf(format, args...))
++		return
++	}
++	InfoDepth(1, fmt.Sprintf(format, args...))
++}
++
++// Warningf does warning logging.
++func (pl *PrefixLogger) Warningf(format string, args ...interface{}) {
++	if pl != nil {
++		format = pl.prefix + format
++		pl.logger.WarningDepth(1, fmt.Sprintf(format, args...))
++		return
++	}
++	WarningDepth(1, fmt.Sprintf(format, args...))
++}
++
++// Errorf does error logging.
++func (pl *PrefixLogger) Errorf(format string, args ...interface{}) {
++	if pl != nil {
++		format = pl.prefix + format
++		pl.logger.ErrorDepth(1, fmt.Sprintf(format, args...))
++		return
++	}
++	ErrorDepth(1, fmt.Sprintf(format, args...))
++}
++
++// Debugf does info logging at verbose level 2.
++func (pl *PrefixLogger) Debugf(format string, args ...interface{}) {
++	// TODO(6044): Refactor interfaces LoggerV2 and DepthLogger, and maybe
++	// rewrite PrefixLogger a little to ensure that we don't use the global
++	// `Logger` here, and instead use the `logger` field.
++	if !Logger.V(2) {
++		return
++	}
++	if pl != nil {
++		// Handle nil, so the tests can pass in a nil logger.
++		format = pl.prefix + format
++		pl.logger.InfoDepth(1, fmt.Sprintf(format, args...))
++		return
++	}
++	InfoDepth(1, fmt.Sprintf(format, args...))
++
++}
++
++// V reports whether verbosity level l is at least the requested verbose level.
++func (pl *PrefixLogger) V(l int) bool {
++	// TODO(6044): Refactor interfaces LoggerV2 and DepthLogger, and maybe
++	// rewrite PrefixLogger a little to ensure that we don't use the global
++	// `Logger` here, and instead use the `logger` field.
++	return Logger.V(l)
++}
++
++// NewPrefixLogger creates a prefix logger with the given prefix.
++func NewPrefixLogger(logger DepthLoggerV2, prefix string) *PrefixLogger {
++	return &PrefixLogger{logger: logger, prefix: prefix}
++}
+diff --git a/vendor/google.golang.org/grpc/internal/internal.go b/vendor/google.golang.org/grpc/internal/internal.go
+new file mode 100644
+index 00000000..42ff39c8
+--- /dev/null
++++ b/vendor/google.golang.org/grpc/internal/internal.go
+@@ -0,0 +1,194 @@
++/*
++ * Copyright 2016 gRPC authors.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ *
++ */
++
++// Package internal contains gRPC-internal code, to avoid polluting
++// the godoc of the top-level grpc package.  It must not import any grpc
++// symbols to avoid circular dependencies.
++package internal
++
++import (
++	"context"
++	"time"
++
++	"google.golang.org/grpc/connectivity"
++	"google.golang.org/grpc/serviceconfig"
++)
++
++var (
++	// WithHealthCheckFunc is set by dialoptions.go
++	WithHealthCheckFunc interface{} // func (HealthChecker) DialOption
++	// HealthCheckFunc is used to provide client-side LB channel health checking
++	HealthCheckFunc HealthChecker
++	// BalancerUnregister is exported by package balancer to unregister a balancer.
++	BalancerUnregister func(name string)
++	// KeepaliveMinPingTime is the minimum ping interval.  This must be 10s by
++	// default, but tests may wish to set it lower for convenience.
++	KeepaliveMinPingTime = 10 * time.Second
++	// ParseServiceConfig parses a JSON representation of the service config.
++	ParseServiceConfig interface{} // func(string) *serviceconfig.ParseResult
++	// EqualServiceConfigForTesting is for testing service config generation and
++	// parsing. Both a and b should be returned by ParseServiceConfig.
++	// This function compares the config without rawJSON stripped, in case the
++	// there's difference in white space.
++	EqualServiceConfigForTesting func(a, b serviceconfig.Config) bool
++	// GetCertificateProviderBuilder returns the registered builder for the
++	// given name. This is set by package certprovider for use from xDS
++	// bootstrap code while parsing certificate provider configs in the
++	// bootstrap file.
++	GetCertificateProviderBuilder interface{} // func(string) certprovider.Builder
++	// GetXDSHandshakeInfoForTesting returns a pointer to the xds.HandshakeInfo
++	// stored in the passed in attributes. This is set by
++	// credentials/xds/xds.go.
++	GetXDSHandshakeInfoForTesting interface{} // func (*attributes.Attributes) *xds.HandshakeInfo
++	// GetServerCredentials returns the transport credentials configured on a
++	// gRPC server. An xDS-enabled server needs to know what type of credentials
++	// is configured on the underlying gRPC server. This is set by server.go.
++	GetServerCredentials interface{} // func (*grpc.Server) credentials.TransportCredentials
++	// CanonicalString returns the canonical string of the code defined here:
++	// https://github.com/grpc/grpc/blob/master/doc/statuscodes.md.
++	//
++	// This is used in the 1.0 release of gcp/observability, and thus must not be
++	// deleted or changed.
++	CanonicalString interface{} // func (codes.Code) string
++	// DrainServerTransports initiates a graceful close of existing connections
++	// on a gRPC server accepted on the provided listener address. An
++	// xDS-enabled server invokes this method on a grpc.Server when a particular
++	// listener moves to "not-serving" mode.
++	DrainServerTransports interface{} // func(*grpc.Server, string)
++	// AddGlobalServerOptions adds an array of ServerOption that will be
++	// effective globally for newly created servers. The priority will be: 1.
++	// user-provided; 2. this method; 3. default values.
++	//
++	// This is used in the 1.0 release of gcp/observability, and thus must not be
++	// deleted or changed.
++	AddGlobalServerOptions interface{} // func(opt ...ServerOption)
++	// ClearGlobalServerOptions clears the array of extra ServerOption. This
++	// method is useful in testing and benchmarking.
++	//
++	// This is used in the 1.0 release of gcp/observability, and thus must not be
++	// deleted or changed.
++	ClearGlobalServerOptions func()
++	// AddGlobalDialOptions adds an array of DialOption that will be effective
++	// globally for newly created client channels. The priority will be: 1.
++	// user-provided; 2. this method; 3. default values.
++	//
++	// This is used in the 1.0 release of gcp/observability, and thus must not be
++	// deleted or changed.
++	AddGlobalDialOptions interface{} // func(opt ...DialOption)
++	// DisableGlobalDialOptions returns a DialOption that prevents the
++	// ClientConn from applying the global DialOptions (set via
++	// AddGlobalDialOptions).
++	//
++	// This is used in the 1.0 release of gcp/observability, and thus must not be
++	// deleted or changed.
++	DisableGlobalDialOptions interface{} // func() grpc.DialOption
++	// ClearGlobalDialOptions clears the array of extra DialOption. This
++	// method is useful in testing and benchmarking.
++	//
++	// This is used in the 1.0 release of gcp/observability, and thus must not be
++	// deleted or changed.
++	ClearGlobalDialOptions func()
++	// JoinDialOptions combines the dial options passed as arguments into a
++	// single dial option.
++	JoinDialOptions interface{} // func(...grpc.DialOption) grpc.DialOption
++	// JoinServerOptions combines the server options passed as arguments into a
++	// single server option.
++	JoinServerOptions interface{} // func(...grpc.ServerOption) grpc.ServerOption
++
++	// WithBinaryLogger returns a DialOption that specifies the binary logger
++	// for a ClientConn.
++	//
++	// This is used in the 1.0 release of gcp/observability, and thus must not be
++	// deleted or changed.
++	WithBinaryLogger interface{} // func(binarylog.Logger) grpc.DialOption
++	// BinaryLogger returns a ServerOption that can set the binary logger for a
++	// server.
++	//
++	// This is used in the 1.0 release of gcp/observability, and thus must not be
++	// deleted or changed.
++	BinaryLogger interface{} // func(binarylog.Logger) grpc.ServerOption
++
++	// NewXDSResolverWithConfigForTesting creates a new xds resolver builder using
++	// the provided xds bootstrap config instead of the global configuration from
++	// the supported environment variables.  The resolver.Builder is meant to be
++	// used in conjunction with the grpc.WithResolvers DialOption.
++	//
++	// Testing Only
++	//
++	// This function should ONLY be used for testing and may not work with some
++	// other features, including the CSDS service.
++	NewXDSResolverWithConfigForTesting interface{} // func([]byte) (resolver.Builder, error)
++
++	// RegisterRLSClusterSpecifierPluginForTesting registers the RLS Cluster
++	// Specifier Plugin for testing purposes, regardless of the XDSRLS environment
++	// variable.
++	//
++	// TODO: Remove this function once the RLS env var is removed.
++	RegisterRLSClusterSpecifierPluginForTesting func()
++
++	// UnregisterRLSClusterSpecifierPluginForTesting unregisters the RLS Cluster
++	// Specifier Plugin for testing purposes. This is needed because there is no way
++	// to unregister the RLS Cluster Specifier Plugin after registering it solely
++	// for testing purposes using RegisterRLSClusterSpecifierPluginForTesting().
++	//
++	// TODO: Remove this function once the RLS env var is removed.
++	UnregisterRLSClusterSpecifierPluginForTesting func()
++
++	// RegisterRBACHTTPFilterForTesting registers the RBAC HTTP Filter for testing
++	// purposes, regardless of the RBAC environment variable.
++	//
++	// TODO: Remove this function once the RBAC env var is removed.
++	RegisterRBACHTTPFilterForTesting func()
++
++	// UnregisterRBACHTTPFilterForTesting unregisters the RBAC HTTP Filter for
++	// testing purposes. This is needed because there is no way to unregister the
++	// HTTP Filter after registering it solely for testing purposes using
++	// RegisterRBACHTTPFilterForTesting().
++	//
++	// TODO: Remove this function once the RBAC env var is removed.
++	UnregisterRBACHTTPFilterForTesting func()
++
++	// ORCAAllowAnyMinReportingInterval is for examples/orca use ONLY.
++	ORCAAllowAnyMinReportingInterval interface{} // func(so *orca.ServiceOptions)
++)
++
++// HealthChecker defines the signature of the client-side LB channel health checking function.
++//
++// The implementation is expected to create a health checking RPC stream by
++// calling newStream(), watch for the health status of serviceName, and report
++// it's health back by calling setConnectivityState().
++//
++// The health checking protocol is defined at:
++// https://github.com/grpc/grpc/blob/master/doc/health-checking.md
++type HealthChecker func(ctx context.Context, newStream func(string) (interface{}, error), setConnectivityState func(connectivity.State, error), serviceName string) error
++
++const (
++	// CredsBundleModeFallback switches GoogleDefaultCreds to fallback mode.
++	CredsBundleModeFallback = "fallback"
++	// CredsBundleModeBalancer switches GoogleDefaultCreds to grpclb balancer
++	// mode.
++	CredsBundleModeBalancer = "balancer"
++	// CredsBundleModeBackendFromBalancer switches GoogleDefaultCreds to mode
++	// that supports backend returned by grpclb balancer.
++	CredsBundleModeBackendFromBalancer = "backend-from-balancer"
++)
++
++// RLSLoadBalancingPolicyName is the name of the RLS LB policy.
++//
++// It currently has an experimental suffix which would be removed once
++// end-to-end testing of the policy is completed.
++const RLSLoadBalancingPolicyName = "rls_experimental"
+diff --git a/vendor/google.golang.org/grpc/internal/status/status.go b/vendor/google.golang.org/grpc/internal/status/status.go
+index e5c6513e..b0ead4f5 100644
+--- a/vendor/google.golang.org/grpc/internal/status/status.go
++++ b/vendor/google.golang.org/grpc/internal/status/status.go
+@@ -164,3 +164,13 @@ func (e *Error) Is(target error) bool {
+ 	}
+ 	return proto.Equal(e.s.s, tse.s.s)
+ }
++
++// IsRestrictedControlPlaneCode returns whether the status includes a code
++// restricted for control plane usage as defined by gRFC A54.
++func IsRestrictedControlPlaneCode(s *Status) bool {
++	switch s.Code() {
++	case codes.InvalidArgument, codes.NotFound, codes.AlreadyExists, codes.FailedPrecondition, codes.Aborted, codes.OutOfRange, codes.DataLoss:
++		return true
++	}
++	return false
++}
+diff --git a/vendor/google.golang.org/grpc/internal/xds_handshake_cluster.go b/vendor/google.golang.org/grpc/internal/xds_handshake_cluster.go
+new file mode 100644
+index 00000000..e8b49277
+--- /dev/null
++++ b/vendor/google.golang.org/grpc/internal/xds_handshake_cluster.go
+@@ -0,0 +1,40 @@
++/*
++ * Copyright 2021 gRPC authors.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++package internal
++
++import (
++	"google.golang.org/grpc/attributes"
++	"google.golang.org/grpc/resolver"
++)
++
++// handshakeClusterNameKey is the type used as the key to store cluster name in
++// the Attributes field of resolver.Address.
++type handshakeClusterNameKey struct{}
++
++// SetXDSHandshakeClusterName returns a copy of addr in which the Attributes field
++// is updated with the cluster name.
++func SetXDSHandshakeClusterName(addr resolver.Address, clusterName string) resolver.Address {
++	addr.Attributes = addr.Attributes.WithValue(handshakeClusterNameKey{}, clusterName)
++	return addr
++}
++
++// GetXDSHandshakeClusterName returns cluster name stored in attr.
++func GetXDSHandshakeClusterName(attr *attributes.Attributes) (string, bool) {
++	v := attr.Value(handshakeClusterNameKey{})
++	name, ok := v.(string)
++	return name, ok
++}
+diff --git a/vendor/google.golang.org/grpc/resolver/map.go b/vendor/google.golang.org/grpc/resolver/map.go
+new file mode 100644
+index 00000000..efcb7f3e
+--- /dev/null
++++ b/vendor/google.golang.org/grpc/resolver/map.go
+@@ -0,0 +1,138 @@
++/*
++ *
++ * Copyright 2021 gRPC authors.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ *
++ */
++
++package resolver
++
++type addressMapEntry struct {
++	addr  Address
++	value interface{}
++}
++
++// AddressMap is a map of addresses to arbitrary values taking into account
++// Attributes.  BalancerAttributes are ignored, as are Metadata and Type.
++// Multiple accesses may not be performed concurrently.  Must be created via
++// NewAddressMap; do not construct directly.
++type AddressMap struct {
++	// The underlying map is keyed by an Address with fields that we don't care
++	// about being set to their zero values. The only fields that we care about
++	// are `Addr`, `ServerName` and `Attributes`. Since we need to be able to
++	// distinguish between addresses with same `Addr` and `ServerName`, but
++	// different `Attributes`, we cannot store the `Attributes` in the map key.
++	//
++	// The comparison operation for structs work as follows:
++	//  Struct values are comparable if all their fields are comparable. Two
++	//  struct values are equal if their corresponding non-blank fields are equal.
++	//
++	// The value type of the map contains a slice of addresses which match the key
++	// in their `Addr` and `ServerName` fields and contain the corresponding value
++	// associated with them.
++	m map[Address]addressMapEntryList
++}
++
++func toMapKey(addr *Address) Address {
++	return Address{Addr: addr.Addr, ServerName: addr.ServerName}
++}
++
++type addressMapEntryList []*addressMapEntry
++
++// NewAddressMap creates a new AddressMap.
++func NewAddressMap() *AddressMap {
++	return &AddressMap{m: make(map[Address]addressMapEntryList)}
++}
++
++// find returns the index of addr in the addressMapEntry slice, or -1 if not
++// present.
++func (l addressMapEntryList) find(addr Address) int {
++	for i, entry := range l {
++		// Attributes are the only thing to match on here, since `Addr` and
++		// `ServerName` are already equal.
++		if entry.addr.Attributes.Equal(addr.Attributes) {
++			return i
++		}
++	}
++	return -1
++}
++
++// Get returns the value for the address in the map, if present.
++func (a *AddressMap) Get(addr Address) (value interface{}, ok bool) {
++	addrKey := toMapKey(&addr)
++	entryList := a.m[addrKey]
++	if entry := entryList.find(addr); entry != -1 {
++		return entryList[entry].value, true
++	}
++	return nil, false
++}
++
++// Set updates or adds the value to the address in the map.
++func (a *AddressMap) Set(addr Address, value interface{}) {
++	addrKey := toMapKey(&addr)
++	entryList := a.m[addrKey]
++	if entry := entryList.find(addr); entry != -1 {
++		entryList[entry].value = value
++		return
++	}
++	a.m[addrKey] = append(entryList, &addressMapEntry{addr: addr, value: value})
++}
++
++// Delete removes addr from the map.
++func (a *AddressMap) Delete(addr Address) {
++	addrKey := toMapKey(&addr)
++	entryList := a.m[addrKey]
++	entry := entryList.find(addr)
++	if entry == -1 {
++		return
++	}
++	if len(entryList) == 1 {
++		entryList = nil
++	} else {
++		copy(entryList[entry:], entryList[entry+1:])
++		entryList = entryList[:len(entryList)-1]
++	}
++	a.m[addrKey] = entryList
++}
++
++// Len returns the number of entries in the map.
++func (a *AddressMap) Len() int {
++	ret := 0
++	for _, entryList := range a.m {
++		ret += len(entryList)
++	}
++	return ret
++}
++
++// Keys returns a slice of all current map keys.
++func (a *AddressMap) Keys() []Address {
++	ret := make([]Address, 0, a.Len())
++	for _, entryList := range a.m {
++		for _, entry := range entryList {
++			ret = append(ret, entry.addr)
++		}
++	}
++	return ret
++}
++
++// Values returns a slice of all current map values.
++func (a *AddressMap) Values() []interface{} {
++	ret := make([]interface{}, 0, a.Len())
++	for _, entryList := range a.m {
++		for _, entry := range entryList {
++			ret = append(ret, entry.value)
++		}
++	}
++	return ret
++}
+diff --git a/vendor/google.golang.org/grpc/resolver/resolver.go b/vendor/google.golang.org/grpc/resolver/resolver.go
+new file mode 100644
+index 00000000..353c10b6
+--- /dev/null
++++ b/vendor/google.golang.org/grpc/resolver/resolver.go
+@@ -0,0 +1,330 @@
++/*
++ *
++ * Copyright 2017 gRPC authors.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ *
++ */
++
++// Package resolver defines APIs for name resolution in gRPC.
++// All APIs in this package are experimental.
++package resolver
++
++import (
++	"context"
++	"fmt"
++	"net"
++	"net/url"
++	"strings"
++
++	"google.golang.org/grpc/attributes"
++	"google.golang.org/grpc/credentials"
++	"google.golang.org/grpc/serviceconfig"
++)
++
++var (
++	// m is a map from scheme to resolver builder.
++	m = make(map[string]Builder)
++	// defaultScheme is the default scheme to use.
++	defaultScheme = "passthrough"
++)
++
++// TODO(bar) install dns resolver in init(){}.
++
++// Register registers the resolver builder to the resolver map. b.Scheme will
++// be used as the scheme registered with this builder. The registry is case
++// sensitive, and schemes should not contain any uppercase characters.
++//
++// NOTE: this function must only be called during initialization time (i.e. in
++// an init() function), and is not thread-safe. If multiple Resolvers are
++// registered with the same name, the one registered last will take effect.
++func Register(b Builder) {
++	m[b.Scheme()] = b
++}
++
++// Get returns the resolver builder registered with the given scheme.
++//
++// If no builder is register with the scheme, nil will be returned.
++func Get(scheme string) Builder {
++	if b, ok := m[scheme]; ok {
++		return b
++	}
++	return nil
++}
++
++// SetDefaultScheme sets the default scheme that will be used. The default
++// default scheme is "passthrough".
++//
++// NOTE: this function must only be called during initialization time (i.e. in
++// an init() function), and is not thread-safe. The scheme set last overrides
++// previously set values.
++func SetDefaultScheme(scheme string) {
++	defaultScheme = scheme
++}
++
++// GetDefaultScheme gets the default scheme that will be used.
++func GetDefaultScheme() string {
++	return defaultScheme
++}
++
++// AddressType indicates the address type returned by name resolution.
++//
++// Deprecated: use Attributes in Address instead.
++type AddressType uint8
++
++const (
++	// Backend indicates the address is for a backend server.
++	//
++	// Deprecated: use Attributes in Address instead.
++	Backend AddressType = iota
++	// GRPCLB indicates the address is for a grpclb load balancer.
++	//
++	// Deprecated: to select the GRPCLB load balancing policy, use a service
++	// config with a corresponding loadBalancingConfig.  To supply balancer
++	// addresses to the GRPCLB load balancing policy, set State.Attributes
++	// using balancer/grpclb/state.Set.
++	GRPCLB
++)
++
++// Address represents a server the client connects to.
++//
++// # Experimental
++//
++// Notice: This type is EXPERIMENTAL and may be changed or removed in a
++// later release.
++type Address struct {
++	// Addr is the server address on which a connection will be established.
++	Addr string
++
++	// ServerName is the name of this address.
++	// If non-empty, the ServerName is used as the transport certification authority for
++	// the address, instead of the hostname from the Dial target string. In most cases,
++	// this should not be set.
++	//
++	// If Type is GRPCLB, ServerName should be the name of the remote load
++	// balancer, not the name of the backend.
++	//
++	// WARNING: ServerName must only be populated with trusted values. It
++	// is insecure to populate it with data from untrusted inputs since untrusted
++	// values could be used to bypass the authority checks performed by TLS.
++	ServerName string
++
++	// Attributes contains arbitrary data about this address intended for
++	// consumption by the SubConn.
++	Attributes *attributes.Attributes
++
++	// BalancerAttributes contains arbitrary data about this address intended
++	// for consumption by the LB policy.  These attributes do not affect SubConn
++	// creation, connection establishment, handshaking, etc.
++	BalancerAttributes *attributes.Attributes
++
++	// Type is the type of this address.
++	//
++	// Deprecated: use Attributes instead.
++	Type AddressType
++
++	// Metadata is the information associated with Addr, which may be used
++	// to make load balancing decision.
++	//
++	// Deprecated: use Attributes instead.
++	Metadata interface{}
++}
++
++// Equal returns whether a and o are identical.  Metadata is compared directly,
++// not with any recursive introspection.
++func (a Address) Equal(o Address) bool {
++	return a.Addr == o.Addr && a.ServerName == o.ServerName &&
++		a.Attributes.Equal(o.Attributes) &&
++		a.BalancerAttributes.Equal(o.BalancerAttributes) &&
++		a.Type == o.Type && a.Metadata == o.Metadata
++}
++
++// String returns JSON formatted string representation of the address.
++func (a Address) String() string {
++	var sb strings.Builder
++	sb.WriteString(fmt.Sprintf("{Addr: %q, ", a.Addr))
++	sb.WriteString(fmt.Sprintf("ServerName: %q, ", a.ServerName))
++	if a.Attributes != nil {
++		sb.WriteString(fmt.Sprintf("Attributes: %v, ", a.Attributes.String()))
++	}
++	if a.BalancerAttributes != nil {
++		sb.WriteString(fmt.Sprintf("BalancerAttributes: %v", a.BalancerAttributes.String()))
++	}
++	sb.WriteString("}")
++	return sb.String()
++}
++
++// BuildOptions includes additional information for the builder to create
++// the resolver.
++type BuildOptions struct {
++	// DisableServiceConfig indicates whether a resolver implementation should
++	// fetch service config data.
++	DisableServiceConfig bool
++	// DialCreds is the transport credentials used by the ClientConn for
++	// communicating with the target gRPC service (set via
++	// WithTransportCredentials). In cases where a name resolution service
++	// requires the same credentials, the resolver may use this field. In most
++	// cases though, it is not appropriate, and this field may be ignored.
++	DialCreds credentials.TransportCredentials
++	// CredsBundle is the credentials bundle used by the ClientConn for
++	// communicating with the target gRPC service (set via
++	// WithCredentialsBundle). In cases where a name resolution service
++	// requires the same credentials, the resolver may use this field. In most
++	// cases though, it is not appropriate, and this field may be ignored.
++	CredsBundle credentials.Bundle
++	// Dialer is the custom dialer used by the ClientConn for dialling the
++	// target gRPC service (set via WithDialer). In cases where a name
++	// resolution service requires the same dialer, the resolver may use this
++	// field. In most cases though, it is not appropriate, and this field may
++	// be ignored.
++	Dialer func(context.Context, string) (net.Conn, error)
++}
++
++// State contains the current Resolver state relevant to the ClientConn.
++type State struct {
++	// Addresses is the latest set of resolved addresses for the target.
++	Addresses []Address
++
++	// ServiceConfig contains the result from parsing the latest service
++	// config.  If it is nil, it indicates no service config is present or the
++	// resolver does not provide service configs.
++	ServiceConfig *serviceconfig.ParseResult
++
++	// Attributes contains arbitrary data about the resolver intended for
++	// consumption by the load balancing policy.
++	Attributes *attributes.Attributes
++}
++
++// ClientConn contains the callbacks for resolver to notify any updates
++// to the gRPC ClientConn.
++//
++// This interface is to be implemented by gRPC. Users should not need a
++// brand new implementation of this interface. For the situations like
++// testing, the new implementation should embed this interface. This allows
++// gRPC to add new methods to this interface.
++type ClientConn interface {
++	// UpdateState updates the state of the ClientConn appropriately.
++	//
++	// If an error is returned, the resolver should try to resolve the
++	// target again. The resolver should use a backoff timer to prevent
++	// overloading the server with requests. If a resolver is certain that
++	// reresolving will not change the result, e.g. because it is
++	// a watch-based resolver, returned errors can be ignored.
++	//
++	// If the resolved State is the same as the last reported one, calling
++	// UpdateState can be omitted.
++	UpdateState(State) error
++	// ReportError notifies the ClientConn that the Resolver encountered an
++	// error.  The ClientConn will notify the load balancer and begin calling
++	// ResolveNow on the Resolver with exponential backoff.
++	ReportError(error)
++	// NewAddress is called by resolver to notify ClientConn a new list
++	// of resolved addresses.
++	// The address list should be the complete list of resolved addresses.
++	//
++	// Deprecated: Use UpdateState instead.
++	NewAddress(addresses []Address)
++	// NewServiceConfig is called by resolver to notify ClientConn a new
++	// service config. The service config should be provided as a json string.
++	//
++	// Deprecated: Use UpdateState instead.
++	NewServiceConfig(serviceConfig string)
++	// ParseServiceConfig parses the provided service config and returns an
++	// object that provides the parsed config.
++	ParseServiceConfig(serviceConfigJSON string) *serviceconfig.ParseResult
++}
++
++// Target represents a target for gRPC, as specified in:
++// https://github.com/grpc/grpc/blob/master/doc/naming.md.
++// It is parsed from the target string that gets passed into Dial or DialContext
++// by the user. And gRPC passes it to the resolver and the balancer.
++//
++// If the target follows the naming spec, and the parsed scheme is registered
++// with gRPC, we will parse the target string according to the spec. If the
++// target does not contain a scheme or if the parsed scheme is not registered
++// (i.e. no corresponding resolver available to resolve the endpoint), we will
++// apply the default scheme, and will attempt to reparse it.
++//
++// Examples:
++//
++//   - "dns://some_authority/foo.bar"
++//     Target{Scheme: "dns", Authority: "some_authority", Endpoint: "foo.bar"}
++//   - "foo.bar"
++//     Target{Scheme: resolver.GetDefaultScheme(), Endpoint: "foo.bar"}
++//   - "unknown_scheme://authority/endpoint"
++//     Target{Scheme: resolver.GetDefaultScheme(), Endpoint: "unknown_scheme://authority/endpoint"}
++type Target struct {
++	// Deprecated: use URL.Scheme instead.
++	Scheme string
++	// Deprecated: use URL.Host instead.
++	Authority string
++	// URL contains the parsed dial target with an optional default scheme added
++	// to it if the original dial target contained no scheme or contained an
++	// unregistered scheme. Any query params specified in the original dial
++	// target can be accessed from here.
++	URL url.URL
++}
++
++// Endpoint retrieves endpoint without leading "/" from either `URL.Path`
++// or `URL.Opaque`. The latter is used when the former is empty.
++func (t Target) Endpoint() string {
++	endpoint := t.URL.Path
++	if endpoint == "" {
++		endpoint = t.URL.Opaque
++	}
++	// For targets of the form "[scheme]://[authority]/endpoint, the endpoint
++	// value returned from url.Parse() contains a leading "/". Although this is
++	// in accordance with RFC 3986, we do not want to break existing resolver
++	// implementations which expect the endpoint without the leading "/". So, we
++	// end up stripping the leading "/" here. But this will result in an
++	// incorrect parsing for something like "unix:///path/to/socket". Since we
++	// own the "unix" resolver, we can workaround in the unix resolver by using
++	// the `URL` field.
++	return strings.TrimPrefix(endpoint, "/")
++}
++
++// Builder creates a resolver that will be used to watch name resolution updates.
++type Builder interface {
++	// Build creates a new resolver for the given target.
++	//
++	// gRPC dial calls Build synchronously, and fails if the returned error is
++	// not nil.
++	Build(target Target, cc ClientConn, opts BuildOptions) (Resolver, error)
++	// Scheme returns the scheme supported by this resolver.  Scheme is defined
++	// at https://github.com/grpc/grpc/blob/master/doc/naming.md.  The returned
++	// string should not contain uppercase characters, as they will not match
++	// the parsed target's scheme as defined in RFC 3986.
++	Scheme() string
++}
++
++// ResolveNowOptions includes additional information for ResolveNow.
++type ResolveNowOptions struct{}
++
++// Resolver watches for the updates on the specified target.
++// Updates include address updates and service config updates.
++type Resolver interface {
++	// ResolveNow will be called by gRPC to try to resolve the target name
++	// again. It's just a hint, resolver can ignore this if it's not necessary.
++	//
++	// It could be called multiple times concurrently.
++	ResolveNow(ResolveNowOptions)
++	// Close closes the resolver.
++	Close()
++}
++
++// UnregisterForTesting removes the resolver builder with the given scheme from the
++// resolver map.
++// This function is for testing only.
++func UnregisterForTesting(scheme string) {
++	delete(m, scheme)
++}
+diff --git a/vendor/google.golang.org/grpc/serviceconfig/serviceconfig.go b/vendor/google.golang.org/grpc/serviceconfig/serviceconfig.go
+new file mode 100644
+index 00000000..35e7a20a
+--- /dev/null
++++ b/vendor/google.golang.org/grpc/serviceconfig/serviceconfig.go
+@@ -0,0 +1,44 @@
++/*
++ *
++ * Copyright 2019 gRPC authors.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ *
++ */
++
++// Package serviceconfig defines types and methods for operating on gRPC
++// service configs.
++//
++// # Experimental
++//
++// Notice: This package is EXPERIMENTAL and may be changed or removed in a
++// later release.
++package serviceconfig
++
++// Config represents an opaque data structure holding a service config.
++type Config interface {
++	isServiceConfig()
++}
++
++// LoadBalancingConfig represents an opaque data structure holding a load
++// balancing config.
++type LoadBalancingConfig interface {
++	isLoadBalancingConfig()
++}
++
++// ParseResult contains a service config or an error.  Exactly one must be
++// non-nil.
++type ParseResult struct {
++	Config Config
++	Err    error
++}
+diff --git a/vendor/google.golang.org/grpc/status/status.go b/vendor/google.golang.org/grpc/status/status.go
+index 6d163b6e..bcf2e4d8 100644
+--- a/vendor/google.golang.org/grpc/status/status.go
++++ b/vendor/google.golang.org/grpc/status/status.go
+@@ -76,22 +76,50 @@ func FromProto(s *spb.Status) *Status {
+ 
+ // FromError returns a Status representation of err.
+ //
+-// - If err was produced by this package or implements the method `GRPCStatus()
+-//   *Status`, the appropriate Status is returned.
++//   - If err was produced by this package or implements the method `GRPCStatus()
++//     *Status` and `GRPCStatus()` does not return nil, or if err wraps a type
++//     satisfying this, the Status from `GRPCStatus()` is returned.  For wrapped
++//     errors, the message returned contains the entire err.Error() text and not
++//     just the wrapped status. In that case, ok is true.
+ //
+-// - If err is nil, a Status is returned with codes.OK and no message.
++//   - If err is nil, a Status is returned with codes.OK and no message, and ok
++//     is true.
+ //
+-// - Otherwise, err is an error not compatible with this package.  In this
+-//   case, a Status is returned with codes.Unknown and err's Error() message,
+-//   and ok is false.
++//   - If err implements the method `GRPCStatus() *Status` and `GRPCStatus()`
++//     returns nil (which maps to Codes.OK), or if err wraps a type
++//     satisfying this, a Status is returned with codes.Unknown and err's
++//     Error() message, and ok is false.
++//
++//   - Otherwise, err is an error not compatible with this package.  In this
++//     case, a Status is returned with codes.Unknown and err's Error() message,
++//     and ok is false.
+ func FromError(err error) (s *Status, ok bool) {
+ 	if err == nil {
+ 		return nil, true
+ 	}
+-	if se, ok := err.(interface {
+-		GRPCStatus() *Status
+-	}); ok {
+-		return se.GRPCStatus(), true
++	type grpcstatus interface{ GRPCStatus() *Status }
++	if gs, ok := err.(grpcstatus); ok {
++		if gs.GRPCStatus() == nil {
++			// Error has status nil, which maps to codes.OK. There
++			// is no sensible behavior for this, so we turn it into
++			// an error with codes.Unknown and discard the existing
++			// status.
++			return New(codes.Unknown, err.Error()), false
++		}
++		return gs.GRPCStatus(), true
++	}
++	var gs grpcstatus
++	if errors.As(err, &gs) {
++		if gs.GRPCStatus() == nil {
++			// Error wraps an error that has status nil, which maps
++			// to codes.OK.  There is no sensible behavior for this,
++			// so we turn it into an error with codes.Unknown and
++			// discard the existing status.
++			return New(codes.Unknown, err.Error()), false
++		}
++		p := gs.GRPCStatus().Proto()
++		p.Message = err.Error()
++		return status.FromProto(p), true
+ 	}
+ 	return New(codes.Unknown, err.Error()), false
+ }
+@@ -103,19 +131,16 @@ func Convert(err error) *Status {
+ 	return s
+ }
+ 
+-// Code returns the Code of the error if it is a Status error, codes.OK if err
+-// is nil, or codes.Unknown otherwise.
++// Code returns the Code of the error if it is a Status error or if it wraps a
++// Status error. If that is not the case, it returns codes.OK if err is nil, or
++// codes.Unknown otherwise.
+ func Code(err error) codes.Code {
+ 	// Don't use FromError to avoid allocation of OK status.
+ 	if err == nil {
+ 		return codes.OK
+ 	}
+-	if se, ok := err.(interface {
+-		GRPCStatus() *Status
+-	}); ok {
+-		return se.GRPCStatus().Code()
+-	}
+-	return codes.Unknown
++
++	return Convert(err).Code()
+ }
+ 
+ // FromContextError converts a context error or wrapped context error into a
+diff --git a/vendor/google.golang.org/protobuf/internal/version/version.go b/vendor/google.golang.org/protobuf/internal/version/version.go
+index daefe110..f7014cd5 100644
+--- a/vendor/google.golang.org/protobuf/internal/version/version.go
++++ b/vendor/google.golang.org/protobuf/internal/version/version.go
+@@ -51,8 +51,8 @@ import (
+ //  10. Send out the CL for review and submit it.
+ const (
+ 	Major      = 1
+-	Minor      = 29
+-	Patch      = 1
++	Minor      = 30
++	Patch      = 0
+ 	PreRelease = ""
+ )
+ 
+diff --git a/vendor/modules.txt b/vendor/modules.txt
+index 9ee7ad31..259f429d 100644
+--- a/vendor/modules.txt
++++ b/vendor/modules.txt
+@@ -245,15 +245,24 @@ golang.org/x/tools/internal/pkgbits
+ golang.org/x/tools/internal/tokeninternal
+ golang.org/x/tools/internal/typeparams
+ golang.org/x/tools/internal/typesinternal
+-# google.golang.org/genproto v0.0.0-20220502173005-c8bf987b8c21
+-## explicit; go 1.15
++# google.golang.org/genproto v0.0.0-20230410155749-daa745c078e1
++## explicit; go 1.19
+ google.golang.org/genproto/googleapis/rpc/status
+-# google.golang.org/grpc v1.50.1
++# google.golang.org/grpc v1.56.3
+ ## explicit; go 1.17
++google.golang.org/grpc/attributes
+ google.golang.org/grpc/codes
++google.golang.org/grpc/connectivity
++google.golang.org/grpc/credentials
++google.golang.org/grpc/grpclog
++google.golang.org/grpc/internal
++google.golang.org/grpc/internal/credentials
++google.golang.org/grpc/internal/grpclog
+ google.golang.org/grpc/internal/status
++google.golang.org/grpc/resolver
++google.golang.org/grpc/serviceconfig
+ google.golang.org/grpc/status
+-# google.golang.org/protobuf v1.29.1
++# google.golang.org/protobuf v1.30.0
+ ## explicit; go 1.11
+ google.golang.org/protobuf/encoding/prototext
+ google.golang.org/protobuf/encoding/protowire
+-- 
+2.39.1
+
