@@ -1,41 +1,44 @@
-documentation: 
-- 'docs/**/*'
+documentation:
+  - "docs/**/*"
 
 project:
-- 'projects/**/GIT_TAG'
-- 'projects/**/GOLANG_VERSION'
+  - "projects/**/GIT_TAG"
+  - "projects/**/GOLANG_VERSION"
 
 patch:
-- '**/*.patch'
+  - "**/*.patch"
 
 release:
-- 'release/**/*'
-- 'docs/contents/releases/**/*'
+  - "release/**/*"
+  - "docs/contents/releases/**/*"
 
 PROD-release:
-- 'release/*/production/RELEASE'
+  - "release/*/production/RELEASE"
 
 DEV-release:
-- 'release/*/development/RELEASE'
+  - "release/*/development/RELEASE"
 
 do-not-merge/hold:
-- 'release/**/*'
-- 'docs/contents/releases/**/*'
+  - "release/**/*"
+  - "docs/contents/releases/**/*"
 
 base-img-pkg-update:
-- 'EKS_DISTRO_BASE_TAG_FILE'
+  - "EKS_DISTRO_BASE_TAG_FILE"
 
 v1.24:
-- '**/1-24/**/*'
+  - "**/1-24/**/*"
 
 v1.25:
-- '**/1-25/**/*'
+  - "**/1-25/**/*"
 
 v1.26:
-- '**/1-26/**/*'
+  - "**/1-26/**/*"
 
 v1.27:
-- '**/1-27/**/*'
+  - "**/1-27/**/*"
 
 v1.28:
-- '**/1-28/**/*'
+  - "**/1-28/**/*"
+
+v1.29:
+  - "**/1-29/**/*"
