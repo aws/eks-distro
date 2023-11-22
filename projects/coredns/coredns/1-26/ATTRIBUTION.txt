@@ -1,5 +1,5 @@
 
-** cloud.google.com/go/compute/metadata; version v1.6.1 --
+** cloud.google.com/go/compute/metadata; version v0.2.3 --
 https://github.com/googleapis/google-cloud-go
 
 ** github.com/aws/aws-sdk-go; version v1.44.22 --
@@ -74,7 +74,7 @@ https://github.com/go-openapi/jsonreference
 ** github.com/go-openapi/swag; version v0.19.14 --
 https://github.com/go-openapi/swag
 
-** github.com/golang/glog; version v0.0.0-20160126235308-23def4e6c14b --
+** github.com/golang/glog; version v1.1.0 --
 https://github.com/golang/glog
 
 ** github.com/golang/groupcache/lru; version v0.0.0-20210331224755-41bb18bfe9da --
@@ -85,6 +85,12 @@ https://github.com/google/gnostic
 
 ** github.com/google/gofuzz; version v1.2.0 --
 https://github.com/google/gofuzz
+
+** github.com/google/s2a-go; version v0.1.4 --
+https://github.com/google/s2a-go
+
+** github.com/googleapis/enterprise-certificate-proxy/client; version v0.2.3 --
+https://github.com/googleapis/enterprise-certificate-proxy
 
 ** github.com/infobloxopen/go-trees; version v0.0.0-20200715205103-96a057b8dfb9 --
 https://github.com/infobloxopen/go-trees
@@ -134,13 +140,19 @@ https://github.com/etcd-io/etcd
 ** go.etcd.io/etcd/client/v3; version v3.5.4 --
 https://github.com/etcd-io/etcd
 
-** go.opencensus.io; version v0.23.0 --
+** go.opencensus.io; version v0.24.0 --
 https://github.com/census-instrumentation/opencensus-go
 
-** google.golang.org/genproto/googleapis; version v0.0.0-20220519153652-3a47de7e79bd --
+** google.golang.org/appengine; version v1.6.7 --
+https://github.com/golang/appengine
+
+** google.golang.org/genproto/googleapis/api; version v0.0.0-20230711160842-782d3b101e98 --
 https://github.com/googleapis/go-genproto
 
-** google.golang.org/grpc; version v1.46.2 --
+** google.golang.org/genproto/googleapis/rpc; version v0.0.0-20230711160842-782d3b101e98 --
+https://github.com/googleapis/go-genproto
+
+** google.golang.org/grpc; version v1.58.3 --
 https://github.com/grpc/grpc-go
 
 ** gopkg.in/DataDog/dd-trace-go.v1; version v1.38.1 --
@@ -524,10 +536,10 @@ https://golang.org/x/crypto
 ** golang.org/x/net; version v0.17.0 --
 https://golang.org/x/net
 
-** golang.org/x/oauth2; version v0.0.0-20220411215720-9780585627b5 --
+** golang.org/x/oauth2; version v0.10.0 --
 https://golang.org/x/oauth2
 
-** golang.org/x/sys/unix; version v0.13.0 --
+** golang.org/x/sys; version v0.13.0 --
 https://golang.org/x/sys
 
 ** golang.org/x/term; version v0.13.0 --
@@ -616,7 +628,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/golang/protobuf; version v1.5.2 --
+** github.com/golang/protobuf; version v1.5.3 --
 https://github.com/golang/protobuf
 
 Copyright 2010 The Go Authors.  All rights reserved.
@@ -650,7 +662,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/google/go-cmp/cmp; version v0.5.8 --
+** github.com/google/go-cmp/cmp; version v0.5.9 --
 https://github.com/google/go-cmp
 
 Copyright (c) 2017 The Go Authors. All rights reserved.
@@ -716,7 +728,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/googleapis/gax-go/v2; version v2.4.0 --
+** github.com/googleapis/gax-go/v2; version v2.11.0 --
 https://github.com/googleapis/gax-go/v2
 
 Copyright 2016, Google Inc.
@@ -1013,7 +1025,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/x/xerrors; version v0.0.0-20220517211312-f3a8303e98df --
+** golang.org/x/xerrors; version v0.0.0-20231012003039-104605ab7028 --
 https://golang.org/x/xerrors
 
 Copyright (c) 2019 The Go Authors. All rights reserved.
@@ -1046,7 +1058,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** google.golang.org/api; version v0.81.0 --
+** google.golang.org/api; version v0.126.0 --
 https://github.com/googleapis/google-api-go-client
 
 Copyright (c) 2011 Google Inc. All rights reserved.
@@ -1079,7 +1091,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** google.golang.org/api/internal/third_party/uritemplates; version v0.81.0 --
+** google.golang.org/api/internal/third_party/uritemplates; version v0.126.0 --
 https://github.com/googleapis/google-api-go-client
 
 Copyright (c) 2013 Joshua Tacoma. All rights reserved.
@@ -1112,7 +1124,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** google.golang.org/protobuf; version v1.28.0 --
+** google.golang.org/protobuf; version v1.31.0 --
 https://go.googlesource.com/protobuf
 
 Copyright (c) 2018 The Go Authors. All rights reserved.
@@ -1236,7 +1248,7 @@ Copyright (c) Microsoft Corporation.
 https://github.com/beorn7/perks
 Copyright (C) 2013 Blake Mizerany
 
-** github.com/cespare/xxhash/v2; version v2.1.2 --
+** github.com/cespare/xxhash/v2; version v2.2.0 --
 https://github.com/cespare/xxhash/v2
 Copyright (c) 2016 Caleb Spare
 
@@ -1417,7 +1429,7 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ------
 
-** gopkg.in/yaml.v3; version v3.0.0 --
+** gopkg.in/yaml.v3; version v3.0.1 --
 https://gopkg.in/yaml.v3
 Copyright (c) 2006-2010 Kirill Simonov
 Copyright (c) 2006-2011 Kirill Simonov
