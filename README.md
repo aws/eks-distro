@@ -3,7 +3,6 @@
 
 | Release | Development Build Status                                                                                                                  |
 |---------|-------------------------------------------------------------------------------------------------------------------------------------------|
-| 1-23    | [![1-23](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-23-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-23-postsubmit) |
 | 1-24    | [![1-24](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-24-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-24-postsubmit) |
 | 1-25    | [![1-25](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-25-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-25-postsubmit) |
 | 1-26    | [![1-26](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-26-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-26-postsubmit) |
@@ -40,52 +39,46 @@ Source: https://github.com/cncf/artwork/tree/master/projects/kubernetes/certifie
 
 | Release | Manifest | Kubernetes Version |
 | -- | --- | --- |
-| 5 | [v1-28-eks-5](https://distro.eks.amazonaws.com/kubernetes-1-28/kubernetes-1-28-eks-5.yaml) | [v1.28.2](https://github.com/kubernetes/kubernetes/release/tag/v1.28.2) |
+| 9 | [v1-28-eks-9](https://distro.eks.amazonaws.com/kubernetes-1-28/kubernetes-1-28-eks-9.yaml) | [v1.28.3](https://github.com/kubernetes/kubernetes/release/tag/v1.28.3) |
 
 
 ### Kubernetes 1-27
 
 | Release | Manifest | Kubernetes Version |
 | -- | --- | --- |
-| 12 | [v1-27-eks-12](https://distro.eks.amazonaws.com/kubernetes-1-27/kubernetes-1-27-eks-12.yaml) | [v1.27.5](https://github.com/kubernetes/kubernetes/release/tag/v1.27.5) |
+| 16 | [v1-27-eks-16](https://distro.eks.amazonaws.com/kubernetes-1-27/kubernetes-1-27-eks-16.yaml) | [v1.27.7](https://github.com/kubernetes/kubernetes/release/tag/v1.27.7) |
 
 
 ### Kubernetes 1-26
 
 | Release | Manifest | Kubernetes Version |
 | -- | --- | --- |
-| 18 | [v1-26-eks-18](https://distro.eks.amazonaws.com/kubernetes-1-26/kubernetes-1-26-eks-18.yaml) | [v1.26.8](https://github.com/kubernetes/kubernetes/release/tag/v1.26.8) |
+| 22 | [v1-26-eks-22](https://distro.eks.amazonaws.com/kubernetes-1-26/kubernetes-1-26-eks-22.yaml) | [v1.26.10](https://github.com/kubernetes/kubernetes/release/tag/v1.26.10) |
 
 
 ### Kubernetes 1-25
 
 | Release | Manifest | Kubernetes Version |
 | -- | --- | --- |
-| 22 | [v1-25-eks-22](https://distro.eks.amazonaws.com/kubernetes-1-25/kubernetes-1-25-eks-22.yaml) | [v1.25.13](https://github.com/kubernetes/kubernetes/release/tag/v1.25.13) |
+| 26 | [v1-25-eks-26](https://distro.eks.amazonaws.com/kubernetes-1-25/kubernetes-1-25-eks-26.yaml) | [v1.25.15](https://github.com/kubernetes/kubernetes/release/tag/v1.25.15) |
 
 
 ### Kubernetes 1-24
 
 | Release | Manifest | Kubernetes Version |
 | --- | --- | --- |
-| 26 | [v1-24-eks-26](https://distro.eks.amazonaws.com/kubernetes-1-24/kubernetes-1-24-eks-26.yaml) | [v1.24.17](https://github.com/kubernetes/kubernetes/release/tag/v1.24.17) |
-
-### Kubernetes 1-23
-
-| Release | Manifest | Kubernetes Version |
-| --- | --- | --- |
-| 31 | [v1-23-eks-31](https://distro.eks.amazonaws.com/kubernetes-1-23/kubernetes-1-23-eks-31.yaml) | [v1.23.17](https://github.com/kubernetes/kubernetes/release/tag/v1.23.17) |
+| 30 | [v1-24-eks-30](https://distro.eks.amazonaws.com/kubernetes-1-24/kubernetes-1-24-eks-30.yaml) | [v1.24.17](https://github.com/kubernetes/kubernetes/release/tag/v1.24.17) |
 
 
-### Kubernetes 1.18, 1.19, 1.20, 1.21 and 1.22: DEPRECATED
+### Kubernetes 1.18 - 1.23: DEPRECATED
 
 In alignment with the [Amazon EKS release calendar](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html#kubernetes-release-calendar),
-EKS Distro has discontinued support of Kubernetes v1.18 - v1.22. While there are
+EKS Distro has discontinued support of Kubernetes v1.18 - v1.23. While there are
 no plans to remove these versions' images from EKS Distro ECR, there will be no
 more updates, including security fixes, for them.
 
 **Due to the increased security risk this poses, it is HIGHLY recommended that
-users of v1.18 - v1.22 update to a supported version (v1.23+) as soon as
+users of v1.18 - v1.23 update to a supported version (v1.24+) as soon as
 possible.**
 
 ## Development

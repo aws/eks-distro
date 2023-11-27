@@ -1,0 +1,2128 @@
+From 4c5d0d8b945a2fe6e1f2daf8f07f5be004ee2d62 Mon Sep 17 00:00:00 2001
+From: Sajia Zafreen <sajiazafreen@u.boisestate.edu>
+Date: Fri, 10 Nov 2023 19:11:57 -0800
+Subject: [PATCH] Bump k8 version to 1.28.2
+
+Signed-off-by: Sajia Zafreen <sajiazafreen@u.boisestate.edu>
+---
+ go.mod                                        |  22 +--
+ go.sum                                        |  18 +--
+ .../github.com/google/cel-go/checker/cost.go  |  26 +++-
+ .../k8s.io/kubernetes/pkg/apis/batch/types.go |   1 +
+ .../volume/util/subpath/subpath_windows.go    |  12 +-
+ .../k8s.io/kubernetes/pkg/volume/util/util.go |  12 +-
+ .../kubernetes/test/e2e/framework/util.go     |  31 +++-
+ vendor/modules.txt                            |  24 +--
+ .../pkg/client/apiutil/errors.go              |  54 +++++++
+ .../pkg/client/apiutil/restmapper.go          |   3 +-
+ .../controller-runtime/pkg/client/client.go   |   8 +-
+ .../pkg/client/fake/client.go                 |  63 +-------
+ .../controller-runtime/pkg/client/fake/doc.go |   2 +-
+ .../pkg/client/interfaces.go                  |   1 +
+ .../controller-runtime/pkg/log/deleg.go       |   3 +
+ .../controller-runtime/pkg/log/log.go         |  11 +-
+ .../gateway-api/apis/v1alpha2/doc.go          |   1 +
+ .../apis/v1alpha2/gateway_types.go            |   1 +
+ .../apis/v1alpha2/gatewayclass_types.go       |   1 +
+ .../apis/v1alpha2/grpcroute_types.go          |  36 ++++-
+ .../apis/v1alpha2/httproute_types.go          |   1 +
+ .../gateway-api/apis/v1alpha2/policy_types.go |  37 ++++-
+ .../apis/v1alpha2/referencegrant_types.go     |  12 +-
+ .../gateway-api/apis/v1alpha2/shared_types.go |   4 +
+ .../apis/v1alpha2/zz_generated.deepcopy.go    |  22 ++-
+ .../gateway-api/apis/v1beta1/doc.go           |   1 +
+ .../gateway-api/apis/v1beta1/gateway_types.go |  71 +++++++--
+ .../apis/v1beta1/gatewayclass_types.go        |  49 ++++++
+ .../apis/v1beta1/httproute_types.go           | 145 +++++++++++++++++-
+ .../apis/v1beta1/object_reference_types.go    |   2 +
+ .../apis/v1beta1/referencegrant_types.go      |   3 +-
+ .../gateway-api/apis/v1beta1/shared_types.go  |  84 ++++++++--
+ .../apis/v1beta1/zz_generated.deepcopy.go     |  53 ++++++-
+ .../typed/apis/v1alpha2/fake/fake_gateway.go  |   5 +-
+ .../apis/v1alpha2/fake/fake_gatewayclass.go   |   5 +-
+ .../apis/v1alpha2/fake/fake_grpcroute.go      |   5 +-
+ .../apis/v1alpha2/fake/fake_httproute.go      |   5 +-
+ .../apis/v1alpha2/fake/fake_referencegrant.go |   5 +-
+ .../typed/apis/v1alpha2/fake/fake_tcproute.go |   5 +-
+ .../typed/apis/v1alpha2/fake/fake_tlsroute.go |   5 +-
+ .../typed/apis/v1alpha2/fake/fake_udproute.go |   5 +-
+ .../typed/apis/v1beta1/fake/fake_gateway.go   |   5 +-
+ .../apis/v1beta1/fake/fake_gatewayclass.go    |   5 +-
+ .../typed/apis/v1beta1/fake/fake_httproute.go |   5 +-
+ .../apis/v1beta1/fake/fake_referencegrant.go  |   5 +-
+ .../informers/externalversions/factory.go     |   4 +-
+ 46 files changed, 686 insertions(+), 192 deletions(-)
+ create mode 100644 vendor/sigs.k8s.io/controller-runtime/pkg/client/apiutil/errors.go
+
+diff --git a/go.mod b/go.mod
+index e60c82061..41f61df9d 100644
+--- a/go.mod
++++ b/go.mod
+@@ -17,23 +17,23 @@ require (
+ 	github.com/stretchr/testify v1.8.4
+ 	google.golang.org/grpc v1.59.0
+ 	google.golang.org/protobuf v1.31.0
+-	k8s.io/api v0.28.0
+-	k8s.io/apimachinery v0.28.0
+-	k8s.io/apiserver v0.28.0
+-	k8s.io/client-go v0.28.0
+-	k8s.io/component-base v0.28.0
++	k8s.io/api v0.28.1
++	k8s.io/apimachinery v0.28.1
++	k8s.io/apiserver v0.28.1
++	k8s.io/client-go v0.28.1
++	k8s.io/component-base v0.28.1
+ 	k8s.io/component-helpers v0.28.0
+ 	k8s.io/csi-translation-lib v0.28.0
+ 	k8s.io/klog/v2 v2.100.1
+-	sigs.k8s.io/controller-runtime v0.15.1
+-	sigs.k8s.io/gateway-api v0.7.1
++	sigs.k8s.io/controller-runtime v0.16.2
++	sigs.k8s.io/gateway-api v0.8.1
+ 	sigs.k8s.io/sig-storage-lib-external-provisioner/v9 v9.1.0-rc.0
+ )
+ 
+ require (
+ 	github.com/onsi/ginkgo/v2 v2.12.0
+ 	github.com/onsi/gomega v1.27.10
+-	k8s.io/kubernetes v1.28.0
++	k8s.io/kubernetes v1.28.2
+ )
+ 
+ require (
+@@ -64,7 +64,7 @@ require (
+ 	github.com/gogo/protobuf v1.3.2 // indirect
+ 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
+ 	github.com/golang/protobuf v1.5.3 // indirect
+-	github.com/google/cel-go v0.16.0 // indirect
++	github.com/google/cel-go v0.16.1 // indirect
+ 	github.com/google/gnostic-models v0.6.8 // indirect
+ 	github.com/google/go-cmp v0.5.9 // indirect
+ 	github.com/google/pprof v0.0.0-20210720184732-4bb14d4b1be1 // indirect
+@@ -124,10 +124,10 @@ require (
+ 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
+ 	gopkg.in/yaml.v2 v2.4.0 // indirect
+ 	gopkg.in/yaml.v3 v3.0.1 // indirect
+-	k8s.io/apiextensions-apiserver v0.28.0 // indirect
++	k8s.io/apiextensions-apiserver v0.28.1 // indirect
+ 	k8s.io/cloud-provider v0.28.0 // indirect
+ 	k8s.io/controller-manager v0.28.0 // indirect
+-	k8s.io/kms v0.28.0 // indirect
++	k8s.io/kms v0.28.1 // indirect
+ 	k8s.io/kube-openapi v0.0.0-20230717233707-2695361300d9 // indirect
+ 	k8s.io/kubectl v0.27.0 // indirect
+ 	k8s.io/kubelet v0.27.0 // indirect
+diff --git a/go.sum b/go.sum
+index 1bca31115..b1f83a299 100644
+--- a/go.sum
++++ b/go.sum
+@@ -119,8 +119,8 @@ github.com/golang/protobuf v1.5.2/go.mod h1:XVQd3VNwM+JqD3oG2Ue2ip4fOMUkwXdXDdiu
+ github.com/golang/protobuf v1.5.3 h1:KhyjKVUg7Usr/dYsdSqoFveMYd5ko72D+zANwlG1mmg=
+ github.com/golang/protobuf v1.5.3/go.mod h1:XVQd3VNwM+JqD3oG2Ue2ip4fOMUkwXdXDdiuN0vRsmY=
+ github.com/google/btree v1.0.1 h1:gK4Kx5IaGY9CD5sPJ36FHiBJ6ZXl0kilRiiCj+jdYp4=
+-github.com/google/cel-go v0.16.0 h1:DG9YQ8nFCFXAs/FDDwBxmL1tpKNrdlGUM9U3537bX/Y=
+-github.com/google/cel-go v0.16.0/go.mod h1:HXZKzB0LXqer5lHHgfWAnlYwJaQBDKMjxjulNQzhwhY=
++github.com/google/cel-go v0.16.1 h1:3hZfSNiAU3KOiNtxuFXVp5WFy4hf/Ly3Sa4/7F8SXNo=
++github.com/google/cel-go v0.16.1/go.mod h1:HXZKzB0LXqer5lHHgfWAnlYwJaQBDKMjxjulNQzhwhY=
+ github.com/google/gnostic-models v0.6.8 h1:yo/ABAfM5IMRsS1VnXjTBvUb61tFIHozhlYvRgGre9I=
+ github.com/google/gnostic-models v0.6.8/go.mod h1:5n7qKqH0f5wFt+aWF8CW6pZLLNOfYuF5OpfBSENuI8U=
+ github.com/google/go-cmp v0.2.0/go.mod h1:oXzfMopK8JAjlY9xF4vHSVASa0yLyX7SntLO5aqRK0M=
+@@ -406,7 +406,7 @@ golang.org/x/xerrors v0.0.0-20190717185122-a985d3407aa7/go.mod h1:I/5z698sn9Ka8T
+ golang.org/x/xerrors v0.0.0-20191011141410-1b5146add898/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
+ golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
+ golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
+-gomodules.xyz/jsonpatch/v2 v2.3.0 h1:8NFhfS6gzxNqjLIYnZxg319wZ5Qjnx4m/CcX+Klzazc=
++gomodules.xyz/jsonpatch/v2 v2.4.0 h1:Ci3iUJyx9UeRx7CeFN8ARgGbkESwJK+KB9lLcWxY/Zw=
+ google.golang.org/appengine v1.1.0/go.mod h1:EbEs0AVv82hx2wNQdGPgUI5lhzA/G0D9YwlJXL52JkM=
+ google.golang.org/appengine v1.4.0/go.mod h1:xpcJRLb0r/rnEns0DIKYYv+WjYCduHsrkT7/EB5XEv4=
+ google.golang.org/appengine v1.6.7 h1:FZR1q0exgwxzPzp/aF+VccGrSfxfPpkBqjIIEq3ru6c=
+@@ -501,8 +501,8 @@ k8s.io/kubectl v0.28.0 h1:qhfju0OaU+JGeBlToPeeIg2UJUWP++QwTkpio6nlPKg=
+ k8s.io/kubectl v0.28.0/go.mod h1:1We+E5nSX3/TVoSQ6y5Bzld5OhTBHZHlKEYl7g/NaTk=
+ k8s.io/kubelet v0.28.0 h1:H/3JAkLIungVF+WLpqrxhgJ4gzwsbN8VA8LOTYsEX3U=
+ k8s.io/kubelet v0.28.0/go.mod h1:i8jUg4ltbRusT3ExOhSAeqETuHdoHTZcTT2cPr9RTgc=
+-k8s.io/kubernetes v1.28.0 h1:p8qq/VoNHnBWinLEi5LO2IvCfzFouN7Jhdz8+L++V+U=
+-k8s.io/kubernetes v1.28.0/go.mod h1:rBQpjGYlLBV0KuOLw8EG45N5EBCskWiPpi0xy5liHMI=
++k8s.io/kubernetes v1.28.2 h1:GhcnYeNTukeaC0dD5BC+UWBvzQsFEpWj7XBVMQptfYc=
++k8s.io/kubernetes v1.28.2/go.mod h1:FmB1Mlp9ua0ezuwQCTGs/y6wj/fVisN2sVxhzjj0WDk=
+ k8s.io/mount-utils v0.28.0 h1:BGYxriZPWTJFCEWDtXsdC1ZPFvI6HbfXCWpjJ42mIw4=
+ k8s.io/mount-utils v0.28.0/go.mod h1:AyP8LmZSLgpGdFQr+vzHTerlPiGvXUdP99n98Er47jw=
+ k8s.io/pod-security-admission v0.28.0 h1:Vz8XTjMAKHQFZv9Q4GdmO59CUtelkPPDRJTy/WTTc3g=
+@@ -511,10 +511,10 @@ k8s.io/utils v0.0.0-20230406110748-d93618cff8a2 h1:qY1Ad8PODbnymg2pRbkyMT/ylpTrC
+ k8s.io/utils v0.0.0-20230406110748-d93618cff8a2/go.mod h1:OLgZIPagt7ERELqWJFomSt595RzquPNLL48iOWgYOg0=
+ sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.1.4 h1:1RSHUg/47zxbcYkN4r+zMS8ZObRFpyDDBkcmWjTD5vM=
+ sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.1.4/go.mod h1:e7I0gvW7fYKOqZDDsvaETBEyfM4dXh6DQ/SsqNInVC0=
+-sigs.k8s.io/controller-runtime v0.15.1 h1:9UvgKD4ZJGcj24vefUFgZFP3xej/3igL9BsOUTb/+4c=
+-sigs.k8s.io/controller-runtime v0.15.1/go.mod h1:7ngYvp1MLT+9GeZ+6lH3LOlcHkp/+tzA/fmHa4iq9kk=
+-sigs.k8s.io/gateway-api v0.7.1 h1:Tts2jeepVkPA5rVG/iO+S43s9n7Vp7jCDhZDQYtPigQ=
+-sigs.k8s.io/gateway-api v0.7.1/go.mod h1:Xv0+ZMxX0lu1nSSDIIPEfbVztgNZ+3cfiYrJsa2Ooso=
++sigs.k8s.io/controller-runtime v0.16.2 h1:mwXAVuEk3EQf478PQwQ48zGOXvW27UJc8NHktQVuIPU=
++sigs.k8s.io/controller-runtime v0.16.2/go.mod h1:vpMu3LpI5sYWtujJOa2uPK61nB5rbwlN7BAB8aSLvGU=
++sigs.k8s.io/gateway-api v0.8.1 h1:Bo4NMAQFYkQZnHXOfufbYwbPW7b3Ic5NjpbeW6EJxuU=
++sigs.k8s.io/gateway-api v0.8.1/go.mod h1:0PteDrsrgkRmr13nDqFWnev8tOysAVrwnvfFM55tSVg=
+ sigs.k8s.io/json v0.0.0-20221116044647-bc3834ca7abd h1:EDPBXCAspyGV4jQlpZSudPeMmr1bNJefnuqLsRAsHZo=
+ sigs.k8s.io/json v0.0.0-20221116044647-bc3834ca7abd/go.mod h1:B8JuhiUyNFVKdsE8h686QcCxMaH6HrOAZj4vswFpcB0=
+ sigs.k8s.io/sig-storage-lib-external-provisioner/v9 v9.1.0-rc.0 h1:0aLQSafwBXlXTPiA9wJK5wEDsgYUh5uJlKHpBw9dwCk=
+diff --git a/vendor/github.com/google/cel-go/checker/cost.go b/vendor/github.com/google/cel-go/checker/cost.go
+index 8ae8d18bf..ef58df766 100644
+--- a/vendor/github.com/google/cel-go/checker/cost.go
++++ b/vendor/github.com/google/cel-go/checker/cost.go
+@@ -533,14 +533,34 @@ func (c *coster) functionCost(function, overloadID string, target *AstNode, args
+ 
+ 	if est := c.estimator.EstimateCallCost(function, overloadID, target, args); est != nil {
+ 		callEst := *est
+-		return CallEstimate{CostEstimate: callEst.Add(argCostSum())}
++		return CallEstimate{CostEstimate: callEst.Add(argCostSum()), ResultSize: est.ResultSize}
+ 	}
+ 	switch overloadID {
+ 	// O(n) functions
+-	case overloads.StartsWithString, overloads.EndsWithString, overloads.StringToBytes, overloads.BytesToString, overloads.ExtQuoteString, overloads.ExtFormatString:
+-		if overloadID == overloads.ExtFormatString {
++	case overloads.ExtFormatString:
++		if target != nil {
++			// ResultSize not calculated because we can't bound the max size.
+ 			return CallEstimate{CostEstimate: c.sizeEstimate(*target).MultiplyByCostFactor(common.StringTraversalCostFactor).Add(argCostSum())}
+ 		}
++	case overloads.StringToBytes:
++		if len(args) == 1 {
++			sz := c.sizeEstimate(args[0])
++			// ResultSize max is when each char converts to 4 bytes.
++			return CallEstimate{CostEstimate: sz.MultiplyByCostFactor(common.StringTraversalCostFactor).Add(argCostSum()), ResultSize: &SizeEstimate{Min: sz.Min, Max: sz.Max * 4}}
++		}
++	case overloads.BytesToString:
++		if len(args) == 1 {
++			sz := c.sizeEstimate(args[0])
++			// ResultSize min is when 4 bytes convert to 1 char.
++			return CallEstimate{CostEstimate: sz.MultiplyByCostFactor(common.StringTraversalCostFactor).Add(argCostSum()), ResultSize: &SizeEstimate{Min: sz.Min / 4, Max: sz.Max}}
++		}
++	case overloads.ExtQuoteString:
++		if len(args) == 1 {
++			sz := c.sizeEstimate(args[0])
++			// ResultSize max is when each char is escaped. 2 quote chars always added.
++			return CallEstimate{CostEstimate: sz.MultiplyByCostFactor(common.StringTraversalCostFactor).Add(argCostSum()), ResultSize: &SizeEstimate{Min: sz.Min + 2, Max: sz.Max*2 + 2}}
++		}
++	case overloads.StartsWithString, overloads.EndsWithString:
+ 		if len(args) == 1 {
+ 			return CallEstimate{CostEstimate: c.sizeEstimate(args[0]).MultiplyByCostFactor(common.StringTraversalCostFactor).Add(argCostSum())}
+ 		}
+diff --git a/vendor/k8s.io/kubernetes/pkg/apis/batch/types.go b/vendor/k8s.io/kubernetes/pkg/apis/batch/types.go
+index a3a8caf03..cb5e6eb22 100644
+--- a/vendor/k8s.io/kubernetes/pkg/apis/batch/types.go
++++ b/vendor/k8s.io/kubernetes/pkg/apis/batch/types.go
+@@ -241,6 +241,7 @@ type PodFailurePolicyRule struct {
+ 	// as a list of pod condition patterns. The requirement is satisfied if at
+ 	// least one pattern matches an actual pod condition. At most 20 elements are allowed.
+ 	// +listType=atomic
++	// +optional
+ 	OnPodConditions []PodFailurePolicyOnPodConditionsPattern
+ }
+ 
+diff --git a/vendor/k8s.io/kubernetes/pkg/volume/util/subpath/subpath_windows.go b/vendor/k8s.io/kubernetes/pkg/volume/util/subpath/subpath_windows.go
+index 7d40ce590..bf02de632 100644
+--- a/vendor/k8s.io/kubernetes/pkg/volume/util/subpath/subpath_windows.go
++++ b/vendor/k8s.io/kubernetes/pkg/volume/util/subpath/subpath_windows.go
+@@ -76,8 +76,10 @@ func getUpperPath(path string) string {
+ // Check whether a directory/file is a link type or not
+ // LinkType could be SymbolicLink, Junction, or HardLink
+ func isLinkPath(path string) (bool, error) {
+-	cmd := fmt.Sprintf("(Get-Item -LiteralPath %q).LinkType", path)
+-	output, err := exec.Command("powershell", "/c", cmd).CombinedOutput()
++	cmd := exec.Command("powershell", "/c", "$ErrorActionPreference = 'Stop'; (Get-Item -Force -LiteralPath $env:linkpath).LinkType")
++	cmd.Env = append(os.Environ(), fmt.Sprintf("linkpath=%s", path))
++	klog.V(8).Infof("Executing command: %q", cmd.String())
++	output, err := cmd.CombinedOutput()
+ 	if err != nil {
+ 		return false, err
+ 	}
+@@ -115,8 +117,10 @@ func evalSymlink(path string) (string, error) {
+ 	}
+ 	// This command will give the target path of a given symlink
+ 	// The -Force parameter will allow Get-Item to also evaluate hidden folders, like AppData.
+-	cmd := fmt.Sprintf("(Get-Item -Force -LiteralPath %q).Target", upperpath)
+-	output, err := exec.Command("powershell", "/c", cmd).CombinedOutput()
++	cmd := exec.Command("powershell", "/c", "$ErrorActionPreference = 'Stop'; (Get-Item -Force -LiteralPath $env:linkpath).Target")
++	cmd.Env = append(os.Environ(), fmt.Sprintf("linkpath=%s", upperpath))
++	klog.V(8).Infof("Executing command: %q", cmd.String())
++	output, err := cmd.CombinedOutput()
+ 	if err != nil {
+ 		return "", err
+ 	}
+diff --git a/vendor/k8s.io/kubernetes/pkg/volume/util/util.go b/vendor/k8s.io/kubernetes/pkg/volume/util/util.go
+index 05415215b..601dc6460 100644
+--- a/vendor/k8s.io/kubernetes/pkg/volume/util/util.go
++++ b/vendor/k8s.io/kubernetes/pkg/volume/util/util.go
+@@ -709,11 +709,15 @@ func HasMountRefs(mountPath string, mountRefs []string) bool {
+ func WriteVolumeCache(deviceMountPath string, exec utilexec.Interface) error {
+ 	// If runtime os is windows, execute Write-VolumeCache powershell command on the disk
+ 	if runtime.GOOS == "windows" {
+-		cmd := fmt.Sprintf("Get-Volume -FilePath %s | Write-Volumecache", deviceMountPath)
+-		output, err := exec.Command("powershell", "/c", cmd).CombinedOutput()
+-		klog.Infof("command (%q) execeuted: %v, output: %q", cmd, err, string(output))
++		cmdString := "Get-Volume -FilePath $env:mountpath | Write-Volumecache"
++		cmd := exec.Command("powershell", "/c", cmdString)
++		env := append(os.Environ(), fmt.Sprintf("mountpath=%s", deviceMountPath))
++		cmd.SetEnv(env)
++		klog.V(8).Infof("Executing command: %q", cmdString)
++		output, err := cmd.CombinedOutput()
++		klog.Infof("command (%q) execeuted: %v, output: %q", cmdString, err, string(output))
+ 		if err != nil {
+-			return fmt.Errorf("command (%q) failed: %v, output: %q", cmd, err, string(output))
++			return fmt.Errorf("command (%q) failed: %v, output: %q", cmdString, err, string(output))
+ 		}
+ 	}
+ 	// For linux runtime, it skips because unmount will automatically flush disk data
+diff --git a/vendor/k8s.io/kubernetes/test/e2e/framework/util.go b/vendor/k8s.io/kubernetes/test/e2e/framework/util.go
+index 8182bc11d..f10e3254c 100644
+--- a/vendor/k8s.io/kubernetes/test/e2e/framework/util.go
++++ b/vendor/k8s.io/kubernetes/test/e2e/framework/util.go
+@@ -436,6 +436,13 @@ func WaitForServiceEndpointsNum(ctx context.Context, c clientset.Interface, name
+ 			return false, nil
+ 		}
+ 
++		// Endpoints are single family but EndpointSlices can have dual stack addresses,
++		// so we verify the number of addresses that matches the same family on both.
++		addressType := discoveryv1.AddressTypeIPv4
++		if isIPv6Endpoint(endpoint) {
++			addressType = discoveryv1.AddressTypeIPv6
++		}
++
+ 		esList, err := c.DiscoveryV1().EndpointSlices(namespace).List(ctx, metav1.ListOptions{LabelSelector: fmt.Sprintf("%s=%s", discoveryv1.LabelServiceName, serviceName)})
+ 		if err != nil {
+ 			Logf("Unexpected error trying to get EndpointSlices for %s : %v", serviceName, err)
+@@ -447,8 +454,8 @@ func WaitForServiceEndpointsNum(ctx context.Context, c clientset.Interface, name
+ 			return false, nil
+ 		}
+ 
+-		if countEndpointsSlicesNum(esList) != expectNum {
+-			Logf("Unexpected number of Endpoints on Slices, got %d, expected %d", countEndpointsSlicesNum(esList), expectNum)
++		if countEndpointsSlicesNum(esList, addressType) != expectNum {
++			Logf("Unexpected number of Endpoints on Slices, got %d, expected %d", countEndpointsSlicesNum(esList, addressType), expectNum)
+ 			return false, nil
+ 		}
+ 		return true, nil
+@@ -463,10 +470,28 @@ func countEndpointsNum(e *v1.Endpoints) int {
+ 	return num
+ }
+ 
+-func countEndpointsSlicesNum(epList *discoveryv1.EndpointSliceList) int {
++// isIPv6Endpoint returns true if the Endpoint uses IPv6 addresses
++func isIPv6Endpoint(e *v1.Endpoints) bool {
++	for _, sub := range e.Subsets {
++		for _, addr := range sub.Addresses {
++			if len(addr.IP) == 0 {
++				continue
++			}
++			// Endpoints are single family, so it is enough to check only one address
++			return netutils.IsIPv6String(addr.IP)
++		}
++	}
++	// default to IPv4 an Endpoint without IP addresses
++	return false
++}
++
++func countEndpointsSlicesNum(epList *discoveryv1.EndpointSliceList, addressType discoveryv1.AddressType) int {
+ 	// EndpointSlices can contain the same address on multiple Slices
+ 	addresses := sets.Set[string]{}
+ 	for _, epSlice := range epList.Items {
++		if epSlice.AddressType != addressType {
++			continue
++		}
+ 		for _, ep := range epSlice.Endpoints {
+ 			if len(ep.Addresses) > 0 {
+ 				addresses.Insert(ep.Addresses[0])
+diff --git a/vendor/modules.txt b/vendor/modules.txt
+index 544ab2d1f..e3d57c5d4 100644
+--- a/vendor/modules.txt
++++ b/vendor/modules.txt
+@@ -101,7 +101,7 @@ github.com/golang/protobuf/ptypes/any
+ github.com/golang/protobuf/ptypes/duration
+ github.com/golang/protobuf/ptypes/timestamp
+ github.com/golang/protobuf/ptypes/wrappers
+-# github.com/google/cel-go v0.16.0
++# github.com/google/cel-go v0.16.1
+ ## explicit; go 1.18
+ github.com/google/cel-go/cel
+ github.com/google/cel-go/checker
+@@ -638,7 +638,7 @@ gopkg.in/yaml.v2
+ # gopkg.in/yaml.v3 v3.0.1
+ ## explicit
+ gopkg.in/yaml.v3
+-# k8s.io/api v0.28.0 => k8s.io/api v0.28.0
++# k8s.io/api v0.28.1 => k8s.io/api v0.28.0
+ ## explicit; go 1.20
+ k8s.io/api/admission/v1
+ k8s.io/api/admission/v1beta1
+@@ -694,12 +694,12 @@ k8s.io/api/scheduling/v1beta1
+ k8s.io/api/storage/v1
+ k8s.io/api/storage/v1alpha1
+ k8s.io/api/storage/v1beta1
+-# k8s.io/apiextensions-apiserver v0.28.0 => k8s.io/apiextensions-apiserver v0.28.0
++# k8s.io/apiextensions-apiserver v0.28.1 => k8s.io/apiextensions-apiserver v0.28.0
+ ## explicit; go 1.20
+ k8s.io/apiextensions-apiserver/pkg/apis/apiextensions
+ k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1
+ k8s.io/apiextensions-apiserver/pkg/features
+-# k8s.io/apimachinery v0.28.0 => k8s.io/apimachinery v0.28.0
++# k8s.io/apimachinery v0.28.1 => k8s.io/apimachinery v0.28.0
+ ## explicit; go 1.20
+ k8s.io/apimachinery/pkg/api/equality
+ k8s.io/apimachinery/pkg/api/errors
+@@ -761,7 +761,7 @@ k8s.io/apimachinery/pkg/watch
+ k8s.io/apimachinery/third_party/forked/golang/json
+ k8s.io/apimachinery/third_party/forked/golang/netutil
+ k8s.io/apimachinery/third_party/forked/golang/reflect
+-# k8s.io/apiserver v0.28.0 => k8s.io/apiserver v0.28.0
++# k8s.io/apiserver v0.28.1 => k8s.io/apiserver v0.28.0
+ ## explicit; go 1.20
+ k8s.io/apiserver/pkg/admission
+ k8s.io/apiserver/pkg/admission/cel
+@@ -906,7 +906,7 @@ k8s.io/apiserver/plugin/pkg/audit/truncate
+ k8s.io/apiserver/plugin/pkg/audit/webhook
+ k8s.io/apiserver/plugin/pkg/authenticator/token/webhook
+ k8s.io/apiserver/plugin/pkg/authorizer/webhook
+-# k8s.io/client-go v0.28.0 => k8s.io/client-go v0.28.0
++# k8s.io/client-go v0.28.1 => k8s.io/client-go v0.28.0
+ ## explicit; go 1.20
+ k8s.io/client-go/applyconfigurations/admissionregistration/v1
+ k8s.io/client-go/applyconfigurations/admissionregistration/v1alpha1
+@@ -1243,7 +1243,7 @@ k8s.io/cloud-provider/controllers/service/config
+ k8s.io/cloud-provider/controllers/service/config/v1alpha1
+ k8s.io/cloud-provider/names
+ k8s.io/cloud-provider/options
+-# k8s.io/component-base v0.28.0 => k8s.io/component-base v0.28.0
++# k8s.io/component-base v0.28.1 => k8s.io/component-base v0.28.0
+ ## explicit; go 1.20
+ k8s.io/component-base/cli/flag
+ k8s.io/component-base/config
+@@ -1296,7 +1296,7 @@ k8s.io/klog/v2/internal/clock
+ k8s.io/klog/v2/internal/dbg
+ k8s.io/klog/v2/internal/serialize
+ k8s.io/klog/v2/internal/severity
+-# k8s.io/kms v0.28.0 => k8s.io/kms v0.28.0
++# k8s.io/kms v0.28.1 => k8s.io/kms v0.28.0
+ ## explicit; go 1.20
+ k8s.io/kms/apis/v1beta1
+ k8s.io/kms/apis/v2
+@@ -1331,7 +1331,7 @@ k8s.io/kubectl/pkg/util/podutils
+ # k8s.io/kubelet v0.27.0 => k8s.io/kubelet v0.28.0
+ ## explicit; go 1.20
+ k8s.io/kubelet/pkg/apis
+-# k8s.io/kubernetes v1.28.0
++# k8s.io/kubernetes v1.28.2
+ ## explicit; go 1.20
+ k8s.io/kubernetes/pkg/api/legacyscheme
+ k8s.io/kubernetes/pkg/api/service
+@@ -1423,7 +1423,7 @@ sigs.k8s.io/apiserver-network-proxy/konnectivity-client/pkg/client
+ sigs.k8s.io/apiserver-network-proxy/konnectivity-client/pkg/client/metrics
+ sigs.k8s.io/apiserver-network-proxy/konnectivity-client/pkg/common/metrics
+ sigs.k8s.io/apiserver-network-proxy/konnectivity-client/proto/client
+-# sigs.k8s.io/controller-runtime v0.15.1
++# sigs.k8s.io/controller-runtime v0.16.2
+ ## explicit; go 1.20
+ sigs.k8s.io/controller-runtime/pkg/client
+ sigs.k8s.io/controller-runtime/pkg/client/apiutil
+@@ -1432,8 +1432,8 @@ sigs.k8s.io/controller-runtime/pkg/client/interceptor
+ sigs.k8s.io/controller-runtime/pkg/internal/field/selector
+ sigs.k8s.io/controller-runtime/pkg/internal/objectutil
+ sigs.k8s.io/controller-runtime/pkg/log
+-# sigs.k8s.io/gateway-api v0.7.1
+-## explicit; go 1.19
++# sigs.k8s.io/gateway-api v0.8.1
++## explicit; go 1.20
+ sigs.k8s.io/gateway-api/apis/v1alpha2
+ sigs.k8s.io/gateway-api/apis/v1beta1
+ sigs.k8s.io/gateway-api/pkg/client/clientset/versioned
+diff --git a/vendor/sigs.k8s.io/controller-runtime/pkg/client/apiutil/errors.go b/vendor/sigs.k8s.io/controller-runtime/pkg/client/apiutil/errors.go
+new file mode 100644
+index 000000000..c216c49d2
+--- /dev/null
++++ b/vendor/sigs.k8s.io/controller-runtime/pkg/client/apiutil/errors.go
+@@ -0,0 +1,54 @@
++/*
++Copyright 2023 The Kubernetes Authors.
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++*/
++
++package apiutil
++
++import (
++	"fmt"
++	"sort"
++	"strings"
++
++	apierrors "k8s.io/apimachinery/pkg/api/errors"
++	"k8s.io/apimachinery/pkg/api/meta"
++
++	"k8s.io/apimachinery/pkg/runtime/schema"
++)
++
++// ErrResourceDiscoveryFailed is returned if the RESTMapper cannot discover supported resources for some GroupVersions.
++// It wraps the errors encountered, except "NotFound" errors are replaced with meta.NoResourceMatchError, for
++// backwards compatibility with code that uses meta.IsNoMatchError() to check for unsupported APIs.
++type ErrResourceDiscoveryFailed map[schema.GroupVersion]error
++
++// Error implements the error interface.
++func (e *ErrResourceDiscoveryFailed) Error() string {
++	subErrors := []string{}
++	for k, v := range *e {
++		subErrors = append(subErrors, fmt.Sprintf("%s: %v", k, v))
++	}
++	sort.Strings(subErrors)
++	return fmt.Sprintf("unable to retrieve the complete list of server APIs: %s", strings.Join(subErrors, ", "))
++}
++
++func (e *ErrResourceDiscoveryFailed) Unwrap() []error {
++	subErrors := []error{}
++	for gv, err := range *e {
++		if apierrors.IsNotFound(err) {
++			err = &meta.NoResourceMatchError{PartialResource: gv.WithResource("")}
++		}
++		subErrors = append(subErrors, err)
++	}
++	return subErrors
++}
+diff --git a/vendor/sigs.k8s.io/controller-runtime/pkg/client/apiutil/restmapper.go b/vendor/sigs.k8s.io/controller-runtime/pkg/client/apiutil/restmapper.go
+index e0ff72dc1..d5e03b2b1 100644
+--- a/vendor/sigs.k8s.io/controller-runtime/pkg/client/apiutil/restmapper.go
++++ b/vendor/sigs.k8s.io/controller-runtime/pkg/client/apiutil/restmapper.go
+@@ -286,7 +286,8 @@ func (m *mapper) fetchGroupVersionResources(groupName string, versions ...string
+ 	}
+ 
+ 	if len(failedGroups) > 0 {
+-		return nil, &discovery.ErrGroupDiscoveryFailed{Groups: failedGroups}
++		err := ErrResourceDiscoveryFailed(failedGroups)
++		return nil, &err
+ 	}
+ 
+ 	return groupVersionResources, nil
+diff --git a/vendor/sigs.k8s.io/controller-runtime/pkg/client/client.go b/vendor/sigs.k8s.io/controller-runtime/pkg/client/client.go
+index 0d8b9fbe1..2fb0acb7b 100644
+--- a/vendor/sigs.k8s.io/controller-runtime/pkg/client/client.go
++++ b/vendor/sigs.k8s.io/controller-runtime/pkg/client/client.go
+@@ -77,10 +77,12 @@ type CacheOptions struct {
+ 	// Reader is a cache-backed reader that will be used to read objects from the cache.
+ 	// +required
+ 	Reader Reader
+-	// DisableFor is a list of objects that should not be read from the cache.
++	// DisableFor is a list of objects that should never be read from the cache.
++	// Objects configured here always result in a live lookup.
+ 	DisableFor []Object
+ 	// Unstructured is a flag that indicates whether the cache-backed client should
+ 	// read unstructured objects or lists from the cache.
++	// If false, unstructured objects will always result in a live lookup.
+ 	Unstructured bool
+ }
+ 
+@@ -342,9 +344,11 @@ func (c *client) Get(ctx context.Context, key ObjectKey, obj Object, opts ...Get
+ 	if isUncached, err := c.shouldBypassCache(obj); err != nil {
+ 		return err
+ 	} else if !isUncached {
++		// Attempt to get from the cache.
+ 		return c.cache.Get(ctx, key, obj, opts...)
+ 	}
+ 
++	// Perform a live lookup.
+ 	switch obj.(type) {
+ 	case runtime.Unstructured:
+ 		return c.unstructuredClient.Get(ctx, key, obj, opts...)
+@@ -362,9 +366,11 @@ func (c *client) List(ctx context.Context, obj ObjectList, opts ...ListOption) e
+ 	if isUncached, err := c.shouldBypassCache(obj); err != nil {
+ 		return err
+ 	} else if !isUncached {
++		// Attempt to get from the cache.
+ 		return c.cache.List(ctx, obj, opts...)
+ 	}
+ 
++	// Perform a live lookup.
+ 	switch x := obj.(type) {
+ 	case runtime.Unstructured:
+ 		return c.unstructuredClient.List(ctx, obj, opts...)
+diff --git a/vendor/sigs.k8s.io/controller-runtime/pkg/client/fake/client.go b/vendor/sigs.k8s.io/controller-runtime/pkg/client/fake/client.go
+index aaedac844..d70237e95 100644
+--- a/vendor/sigs.k8s.io/controller-runtime/pkg/client/fake/client.go
++++ b/vendor/sigs.k8s.io/controller-runtime/pkg/client/fake/client.go
+@@ -31,8 +31,6 @@ import (
+ 
+ 	// Using v4 to match upstream
+ 	jsonpatch "github.com/evanphx/json-patch"
+-	"sigs.k8s.io/controller-runtime/pkg/client/interceptor"
+-
+ 	corev1 "k8s.io/api/core/v1"
+ 	policyv1 "k8s.io/api/policy/v1"
+ 	policyv1beta1 "k8s.io/api/policy/v1beta1"
+@@ -52,10 +50,11 @@ import (
+ 	"k8s.io/apimachinery/pkg/watch"
+ 	"k8s.io/client-go/kubernetes/scheme"
+ 	"k8s.io/client-go/testing"
+-	"sigs.k8s.io/controller-runtime/pkg/internal/field/selector"
+ 
+ 	"sigs.k8s.io/controller-runtime/pkg/client"
+ 	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
++	"sigs.k8s.io/controller-runtime/pkg/client/interceptor"
++	"sigs.k8s.io/controller-runtime/pkg/internal/field/selector"
+ 	"sigs.k8s.io/controller-runtime/pkg/internal/objectutil"
+ )
+ 
+@@ -88,21 +87,10 @@ const (
+ 
+ // NewFakeClient creates a new fake client for testing.
+ // You can choose to initialize it with a slice of runtime.Object.
+-//
+-// Deprecated: Please use NewClientBuilder instead.
+ func NewFakeClient(initObjs ...runtime.Object) client.WithWatch {
+ 	return NewClientBuilder().WithRuntimeObjects(initObjs...).Build()
+ }
+ 
+-// NewFakeClientWithScheme creates a new fake client with the given scheme
+-// for testing.
+-// You can choose to initialize it with a slice of runtime.Object.
+-//
+-// Deprecated: Please use NewClientBuilder instead.
+-func NewFakeClientWithScheme(clientScheme *runtime.Scheme, initObjs ...runtime.Object) client.WithWatch {
+-	return NewClientBuilder().WithScheme(clientScheme).WithRuntimeObjects(initObjs...).Build()
+-}
+-
+ // NewClientBuilder returns a new builder to create a fake client.
+ func NewClientBuilder() *ClientBuilder {
+ 	return &ClientBuilder{}
+@@ -412,9 +400,12 @@ func (t versionedTracker) update(gvr schema.GroupVersionResource, obj runtime.Ob
+ 
+ 	if t.withStatusSubresource.Has(gvk) {
+ 		if isStatus { // copy everything but status and metadata.ResourceVersion from original object
+-			if err := copyNonStatusFrom(oldObject, obj); err != nil {
++			if err := copyStatusFrom(obj, oldObject); err != nil {
+ 				return fmt.Errorf("failed to copy non-status field for object with status subresouce: %w", err)
+ 			}
++			passedRV := accessor.GetResourceVersion()
++			reflect.ValueOf(obj).Elem().Set(reflect.ValueOf(oldObject.DeepCopyObject()).Elem())
++			accessor.SetResourceVersion(passedRV)
+ 		} else { // copy status from original object
+ 			if err := copyStatusFrom(oldObject, obj); err != nil {
+ 				return fmt.Errorf("failed to copy the status for object with status subresource: %w", err)
+@@ -961,45 +952,6 @@ func dryPatch(action testing.PatchActionImpl, tracker testing.ObjectTracker) (ru
+ 	return obj, nil
+ }
+ 
+-func copyNonStatusFrom(old, new runtime.Object) error {
+-	newClientObject, ok := new.(client.Object)
+-	if !ok {
+-		return fmt.Errorf("%T is not a client.Object", new)
+-	}
+-	// The only thing other than status we have to retain
+-	rv := newClientObject.GetResourceVersion()
+-
+-	oldMapStringAny, err := toMapStringAny(old)
+-	if err != nil {
+-		return fmt.Errorf("failed to convert old to *unstructured.Unstructured: %w", err)
+-	}
+-	newMapStringAny, err := toMapStringAny(new)
+-	if err != nil {
+-		return fmt.Errorf("failed to convert new to *unststructured.Unstructured: %w", err)
+-	}
+-
+-	// delete everything other than status in case it has fields that were not present in
+-	// the old object
+-	for k := range newMapStringAny {
+-		if k != "status" {
+-			delete(newMapStringAny, k)
+-		}
+-	}
+-	// copy everything other than status from the old object
+-	for k := range oldMapStringAny {
+-		if k != "status" {
+-			newMapStringAny[k] = oldMapStringAny[k]
+-		}
+-	}
+-
+-	if err := fromMapStringAny(newMapStringAny, new); err != nil {
+-		return fmt.Errorf("failed to convert back from map[string]any: %w", err)
+-	}
+-	newClientObject.SetResourceVersion(rv)
+-
+-	return nil
+-}
+-
+ // copyStatusFrom copies the status from old into new
+ func copyStatusFrom(old, new runtime.Object) error {
+ 	oldMapStringAny, err := toMapStringAny(old)
+@@ -1045,6 +997,7 @@ func fromMapStringAny(u map[string]any, target runtime.Object) error {
+ 		return fmt.Errorf("failed to serialize: %w", err)
+ 	}
+ 
++	zero(target)
+ 	if err := json.Unmarshal(serialized, &target); err != nil {
+ 		return fmt.Errorf("failed to deserialize: %w", err)
+ 	}
+@@ -1177,7 +1130,7 @@ func allowsUnconditionalUpdate(gvk schema.GroupVersionKind) bool {
+ 		case "PodSecurityPolicy":
+ 			return true
+ 		}
+-	case "rbac":
++	case "rbac.authorization.k8s.io":
+ 		switch gvk.Kind {
+ 		case "ClusterRole", "ClusterRoleBinding", "Role", "RoleBinding":
+ 			return true
+diff --git a/vendor/sigs.k8s.io/controller-runtime/pkg/client/fake/doc.go b/vendor/sigs.k8s.io/controller-runtime/pkg/client/fake/doc.go
+index d0614666e..d42347a2e 100644
+--- a/vendor/sigs.k8s.io/controller-runtime/pkg/client/fake/doc.go
++++ b/vendor/sigs.k8s.io/controller-runtime/pkg/client/fake/doc.go
+@@ -20,7 +20,7 @@ Package fake provides a fake client for testing.
+ A fake client is backed by its simple object store indexed by GroupVersionResource.
+ You can create a fake client with optional objects.
+ 
+-	client := NewFakeClientWithScheme(scheme, initObjs...) // initObjs is a slice of runtime.Object
++	client := NewClientBuilder().WithScheme(scheme).WithObj(initObjs...).Build()
+ 
+ You can invoke the methods defined in the Client interface.
+ 
+diff --git a/vendor/sigs.k8s.io/controller-runtime/pkg/client/interfaces.go b/vendor/sigs.k8s.io/controller-runtime/pkg/client/interfaces.go
+index 0ddda3163..3cd745e4c 100644
+--- a/vendor/sigs.k8s.io/controller-runtime/pkg/client/interfaces.go
++++ b/vendor/sigs.k8s.io/controller-runtime/pkg/client/interfaces.go
+@@ -142,6 +142,7 @@ type SubResourceWriter interface {
+ 	// Create saves the subResource object in the Kubernetes cluster. obj must be a
+ 	// struct pointer so that obj can be updated with the content returned by the Server.
+ 	Create(ctx context.Context, obj Object, subResource Object, opts ...SubResourceCreateOption) error
++
+ 	// Update updates the fields corresponding to the status subresource for the
+ 	// given obj. obj must be a struct pointer so that obj can be updated
+ 	// with the content returned by the Server.
+diff --git a/vendor/sigs.k8s.io/controller-runtime/pkg/log/deleg.go b/vendor/sigs.k8s.io/controller-runtime/pkg/log/deleg.go
+index c27b4305f..6eb551d3b 100644
+--- a/vendor/sigs.k8s.io/controller-runtime/pkg/log/deleg.go
++++ b/vendor/sigs.k8s.io/controller-runtime/pkg/log/deleg.go
+@@ -188,6 +188,9 @@ func (l *delegatingLogSink) WithValues(tags ...interface{}) logr.LogSink {
+ // provided, instead of the temporary initial one, if this method
+ // has not been previously called.
+ func (l *delegatingLogSink) Fulfill(actual logr.LogSink) {
++	if actual == nil {
++		actual = NullLogSink{}
++	}
+ 	if l.promise != nil {
+ 		l.promise.Fulfill(actual)
+ 	}
+diff --git a/vendor/sigs.k8s.io/controller-runtime/pkg/log/log.go b/vendor/sigs.k8s.io/controller-runtime/pkg/log/log.go
+index a79151c69..ade21d6fb 100644
+--- a/vendor/sigs.k8s.io/controller-runtime/pkg/log/log.go
++++ b/vendor/sigs.k8s.io/controller-runtime/pkg/log/log.go
+@@ -34,6 +34,7 @@ limitations under the License.
+ package log
+ 
+ import (
++	"bytes"
+ 	"context"
+ 	"fmt"
+ 	"os"
+@@ -56,7 +57,15 @@ func eventuallyFulfillRoot() {
+ 	}
+ 	if time.Since(rootLogCreated).Seconds() >= 30 {
+ 		if logFullfilled.CompareAndSwap(false, true) {
+-			fmt.Fprintf(os.Stderr, "[controller-runtime] log.SetLogger(...) was never called, logs will not be displayed:\n%s", debug.Stack())
++			stack := debug.Stack()
++			stackLines := bytes.Count(stack, []byte{'\n'})
++			sep := []byte{'\n', '\t', '>', ' ', ' '}
++
++			fmt.Fprintf(os.Stderr,
++				"[controller-runtime] log.SetLogger(...) was never called; logs will not be displayed.\nDetected at:%s%s", sep,
++				// prefix every line, so it's clear this is a stack trace related to the above message
++				bytes.Replace(stack, []byte{'\n'}, sep, stackLines-1),
++			)
+ 			SetLogger(logr.New(NullLogSink{}))
+ 		}
+ 	}
+diff --git a/vendor/sigs.k8s.io/gateway-api/apis/v1alpha2/doc.go b/vendor/sigs.k8s.io/gateway-api/apis/v1alpha2/doc.go
+index 0fcba7318..68e165955 100644
+--- a/vendor/sigs.k8s.io/gateway-api/apis/v1alpha2/doc.go
++++ b/vendor/sigs.k8s.io/gateway-api/apis/v1alpha2/doc.go
+@@ -16,6 +16,7 @@ limitations under the License.
+ 
+ // Package v1alpha2 contains API Schema definitions for the
+ // gateway.networking.k8s.io API group.
++//
+ // +kubebuilder:object:generate=true
+ // +groupName=gateway.networking.k8s.io
+ package v1alpha2
+diff --git a/vendor/sigs.k8s.io/gateway-api/apis/v1alpha2/gateway_types.go b/vendor/sigs.k8s.io/gateway-api/apis/v1alpha2/gateway_types.go
+index a2e540ae6..9eed72d50 100644
+--- a/vendor/sigs.k8s.io/gateway-api/apis/v1alpha2/gateway_types.go
++++ b/vendor/sigs.k8s.io/gateway-api/apis/v1alpha2/gateway_types.go
+@@ -26,6 +26,7 @@ import (
+ // +kubebuilder:object:root=true
+ // +kubebuilder:resource:categories=gateway-api,shortName=gtw
+ // +kubebuilder:subresource:status
++// +kubebuilder:unservedversion
+ // +kubebuilder:deprecatedversion:warning="The v1alpha2 version of Gateway has been deprecated and will be removed in a future release of the API. Please upgrade to v1beta1."
+ // +kubebuilder:printcolumn:name="Class",type=string,JSONPath=`.spec.gatewayClassName`
+ // +kubebuilder:printcolumn:name="Address",type=string,JSONPath=`.status.addresses[*].value`
+diff --git a/vendor/sigs.k8s.io/gateway-api/apis/v1alpha2/gatewayclass_types.go b/vendor/sigs.k8s.io/gateway-api/apis/v1alpha2/gatewayclass_types.go
+index fe33b8ecd..87d08ebff 100644
+--- a/vendor/sigs.k8s.io/gateway-api/apis/v1alpha2/gatewayclass_types.go
++++ b/vendor/sigs.k8s.io/gateway-api/apis/v1alpha2/gatewayclass_types.go
+@@ -27,6 +27,7 @@ import (
+ // +kubebuilder:object:root=true
+ // +kubebuilder:resource:categories=gateway-api,scope=Cluster,shortName=gc
+ // +kubebuilder:subresource:status
++// +kubebuilder:unservedversion
+ // +kubebuilder:deprecatedversion:warning="The v1alpha2 version of GatewayClass has been deprecated and will be removed in a future release of the API. Please upgrade to v1beta1."
+ // +kubebuilder:printcolumn:name="Controller",type=string,JSONPath=`.spec.controllerName`
+ // +kubebuilder:printcolumn:name="Accepted",type=string,JSONPath=`.status.conditions[?(@.type=="Accepted")].status`
+diff --git a/vendor/sigs.k8s.io/gateway-api/apis/v1alpha2/grpcroute_types.go b/vendor/sigs.k8s.io/gateway-api/apis/v1alpha2/grpcroute_types.go
+index f98a03aa3..54c116411 100644
+--- a/vendor/sigs.k8s.io/gateway-api/apis/v1alpha2/grpcroute_types.go
++++ b/vendor/sigs.k8s.io/gateway-api/apis/v1alpha2/grpcroute_types.go
+@@ -57,8 +57,6 @@ import (
+ // for the affected listener with a reason of "UnsupportedProtocol".
+ // Implementations MAY also accept HTTP/2 connections with an upgrade from
+ // HTTP/1, i.e. without prior knowledge.
+-//
+-// Support: Extended
+ type GRPCRoute struct {
+ 	metav1.TypeMeta   `json:",inline"`
+ 	metav1.ObjectMeta `json:"metadata,omitempty"`
+@@ -147,7 +145,6 @@ type GRPCRouteSpec struct {
+ 	//
+ 	// +optional
+ 	// +kubebuilder:validation:MaxItems=16
+-	// +kubebuilder:default={{matches: {{method: {type: "Exact"}}}}}
+ 	Rules []GRPCRouteRule `json:"rules,omitempty"`
+ }
+ 
+@@ -223,12 +220,21 @@ type GRPCRouteRule struct {
+ 	// - Implementation-specific custom filters have no API guarantees across
+ 	//   implementations.
+ 	//
+-	// Specifying a core filter multiple times has unspecified or
+-	// implementation-specific conformance.
++	// Specifying the same filter multiple times is not supported unless explicitly
++	// indicated in the filter.
++	//
++	// If an implementation can not support a combination of filters, it must clearly
++	// document that limitation. In cases where incompatible or unsupported
++	// filters are specified and cause the `Accepted` condition to be set to status
++	// `False`, implementations may use the `IncompatibleFilters` reason to specify
++	// this configuration error.
++	//
+ 	// Support: Core
+ 	//
+ 	// +optional
+ 	// +kubebuilder:validation:MaxItems=16
++	// +kubebuilder:validation:XValidation:message="RequestHeaderModifier filter cannot be repeated",rule="self.filter(f, f.type == 'RequestHeaderModifier').size() <= 1"
++	// +kubebuilder:validation:XValidation:message="ResponseHeaderModifier filter cannot be repeated",rule="self.filter(f, f.type == 'ResponseHeaderModifier').size() <= 1"
+ 	Filters []GRPCRouteFilter `json:"filters,omitempty"`
+ 
+ 	// BackendRefs defines the backend(s) where matching requests should be
+@@ -304,6 +310,10 @@ type GRPCRouteMatch struct {
+ // request service and/or method.
+ //
+ // At least one of Service and Method MUST be a non-empty string.
++//
++// +kubebuilder:validation:XValidation:message="One or both of 'service' or 'method' must be specified",rule="has(self.type) ? has(self.service) || has(self.method) : true"
++// +kubebuilder:validation:XValidation:message="service must only contain valid characters (matching ^(?i)\\.?[a-z_][a-z_0-9]*(\\.[a-z_][a-z_0-9]*)*$)",rule="(!has(self.type) || self.type == 'Exact') && has(self.service) ? self.service.matches(r\"\"\"^(?i)\\.?[a-z_][a-z_0-9]*(\\.[a-z_][a-z_0-9]*)*$\"\"\"): true"
++// +kubebuilder:validation:XValidation:message="method must only contain valid characters (matching ^[A-Za-z_][A-Za-z_0-9]*$)",rule="(!has(self.type) || self.type == 'Exact') && has(self.method) ? self.method.matches(r\"\"\"^[A-Za-z_][A-Za-z_0-9]*$\"\"\"): true"
+ type GRPCMethodMatch struct {
+ 	// Type specifies how to match against the service and/or method.
+ 	// Support: Core (Exact with service and method specified)
+@@ -457,6 +467,15 @@ const (
+ // examples include request or response modification, implementing
+ // authentication strategies, rate-limiting, and traffic shaping. API
+ // guarantee/conformance is defined based on the type of the filter.
++//
++// +kubebuilder:validation:XValidation:message="filter.requestHeaderModifier must be nil if the filter.type is not RequestHeaderModifier",rule="!(has(self.requestHeaderModifier) && self.type != 'RequestHeaderModifier')"
++// +kubebuilder:validation:XValidation:message="filter.requestHeaderModifier must be specified for RequestHeaderModifier filter.type",rule="!(!has(self.requestHeaderModifier) && self.type == 'RequestHeaderModifier')"
++// +kubebuilder:validation:XValidation:message="filter.responseHeaderModifier must be nil if the filter.type is not ResponseHeaderModifier",rule="!(has(self.responseHeaderModifier) && self.type != 'ResponseHeaderModifier')"
++// +kubebuilder:validation:XValidation:message="filter.responseHeaderModifier must be specified for ResponseHeaderModifier filter.type",rule="!(!has(self.responseHeaderModifier) && self.type == 'ResponseHeaderModifier')"
++// +kubebuilder:validation:XValidation:message="filter.requestMirror must be nil if the filter.type is not RequestMirror",rule="!(has(self.requestMirror) && self.type != 'RequestMirror')"
++// +kubebuilder:validation:XValidation:message="filter.requestMirror must be specified for RequestMirror filter.type",rule="!(!has(self.requestMirror) && self.type == 'RequestMirror')"
++// +kubebuilder:validation:XValidation:message="filter.extensionRef must be nil if the filter.type is not ExtensionRef",rule="!(has(self.extensionRef) && self.type != 'ExtensionRef')"
++// +kubebuilder:validation:XValidation:message="filter.extensionRef must be specified for ExtensionRef filter.type",rule="!(!has(self.extensionRef) && self.type == 'ExtensionRef')"
+ type GRPCRouteFilter struct {
+ 	// Type identifies the type of filter to apply. As with other API fields,
+ 	// types are classified into three conformance levels:
+@@ -508,6 +527,10 @@ type GRPCRouteFilter struct {
+ 	// Requests are sent to the specified destination, but responses from
+ 	// that destination are ignored.
+ 	//
++	// This filter can be used multiple times within the same rule. Note that
++	// not all implementations will be able to support mirroring to multiple
++	// backends.
++	//
+ 	// Support: Extended
+ 	//
+ 	// +optional
+@@ -520,6 +543,7 @@ type GRPCRouteFilter struct {
+ 	//
+ 	// Support: Implementation-specific
+ 	//
++	// This filter can be used multiple times within the same rule.
+ 	// +optional
+ 	ExtensionRef *LocalObjectReference `json:"extensionRef,omitempty"`
+ }
+@@ -567,5 +591,7 @@ type GRPCBackendRef struct {
+ 	//
+ 	// +optional
+ 	// +kubebuilder:validation:MaxItems=16
++	// +kubebuilder:validation:XValidation:message="RequestHeaderModifier filter cannot be repeated",rule="self.filter(f, f.type == 'RequestHeaderModifier').size() <= 1"
++	// +kubebuilder:validation:XValidation:message="ResponseHeaderModifier filter cannot be repeated",rule="self.filter(f, f.type == 'ResponseHeaderModifier').size() <= 1"
+ 	Filters []GRPCRouteFilter `json:"filters,omitempty"`
+ }
+diff --git a/vendor/sigs.k8s.io/gateway-api/apis/v1alpha2/httproute_types.go b/vendor/sigs.k8s.io/gateway-api/apis/v1alpha2/httproute_types.go
+index 8a32a075d..20e1e3258 100644
+--- a/vendor/sigs.k8s.io/gateway-api/apis/v1alpha2/httproute_types.go
++++ b/vendor/sigs.k8s.io/gateway-api/apis/v1alpha2/httproute_types.go
+@@ -26,6 +26,7 @@ import (
+ // +kubebuilder:object:root=true
+ // +kubebuilder:resource:categories=gateway-api
+ // +kubebuilder:subresource:status
++// +kubebuilder:unservedversion
+ // +kubebuilder:deprecatedversion:warning="The v1alpha2 version of HTTPRoute has been deprecated and will be removed in a future release of the API. Please upgrade to v1beta1."
+ // +kubebuilder:printcolumn:name="Hostnames",type=string,JSONPath=`.spec.hostnames`
+ // +kubebuilder:printcolumn:name="Age",type=date,JSONPath=`.metadata.creationTimestamp`
+diff --git a/vendor/sigs.k8s.io/gateway-api/apis/v1alpha2/policy_types.go b/vendor/sigs.k8s.io/gateway-api/apis/v1alpha2/policy_types.go
+index cf151ea23..83c8107a2 100644
+--- a/vendor/sigs.k8s.io/gateway-api/apis/v1alpha2/policy_types.go
++++ b/vendor/sigs.k8s.io/gateway-api/apis/v1alpha2/policy_types.go
+@@ -16,11 +16,11 @@ limitations under the License.
+ 
+ package v1alpha2
+ 
+-// PolicyTargetReference identifies an API object to apply policy to. This
+-// should be used as part of Policy resources that can target Gateway API
+-// resources. For more information on how this policy attachment model works,
+-// and a sample Policy resource, refer to the policy attachment documentation
+-// for Gateway API.
++// PolicyTargetReference identifies an API object to apply a direct or
++// inherited policy to. This should be used as part of Policy resources
++// that can target Gateway API resources. For more information on how this
++// policy attachment model works, and a sample Policy resource, refer to
++// the policy attachment documentation for Gateway API.
+ type PolicyTargetReference struct {
+ 	// Group is the group of the target resource.
+ 	Group Group `json:"group"`
+@@ -40,6 +40,33 @@ type PolicyTargetReference struct {
+ 	Namespace *Namespace `json:"namespace,omitempty"`
+ }
+ 
++// PolicyTargetReferenceWithSectionName identifies an API object to apply a direct
++// policy to. This should be used as part of Policy resources that can target
++// single resources. For more information on how this policy attachment mode
++// works, and a sample Policy resource, refer to the policy attachment documentation
++// for Gateway API.
++//
++// Note: This should only be used for direct policy attachment when references
++// to SectionName are actually needed. In all other cases, PolicyTargetReference
++// should be used.
++type PolicyTargetReferenceWithSectionName struct {
++	PolicyTargetReference `json:",inline"`
++
++	// SectionName is the name of a section within the target resource. When
++	// unspecified, this targetRef targets the entire resource. In the following
++	// resources, SectionName is interpreted as the following:
++	//
++	// * Gateway: Listener Name
++	// * Service: Port Name
++	//
++	// If a SectionName is specified, but does not exist on the targeted object,
++	// the Policy must fail to attach, and the policy implementation should record
++	// a `ResolvedRefs` or similar Condition in the Policy's status.
++	//
++	// +optional
++	SectionName *SectionName `json:"sectionName,omitempty"`
++}
++
+ // PolicyConditionType is a type of condition for a policy. This type should be
+ // used with a Policy resource Status.Conditions field.
+ type PolicyConditionType string
+diff --git a/vendor/sigs.k8s.io/gateway-api/apis/v1alpha2/referencegrant_types.go b/vendor/sigs.k8s.io/gateway-api/apis/v1alpha2/referencegrant_types.go
+index 8d2955100..d67306260 100644
+--- a/vendor/sigs.k8s.io/gateway-api/apis/v1alpha2/referencegrant_types.go
++++ b/vendor/sigs.k8s.io/gateway-api/apis/v1alpha2/referencegrant_types.go
+@@ -25,8 +25,8 @@ import (
+ // +genclient
+ // +kubebuilder:object:root=true
+ // +kubebuilder:resource:categories=gateway-api,shortName=refgrant
+-// +kubebuilder:storageversion
+ // +kubebuilder:printcolumn:name="Age",type=date,JSONPath=`.metadata.creationTimestamp`
++// +kubebuilder:deprecatedversion:warning="The v1alpha2 version of ReferenceGrant has been deprecated and will be removed in a future release of the API. Please upgrade to v1beta1."
+ 
+ // ReferenceGrant identifies kinds of resources in other namespaces that are
+ // trusted to reference the specified kinds of resources in the same namespace
+@@ -36,16 +36,18 @@ import (
+ // Additional Reference Grants can be used to add to the set of trusted
+ // sources of inbound references for the namespace they are defined within.
+ //
+-// All cross-namespace references in Gateway API (with the exception of cross-namespace
+-// Gateway-route attachment) require a ReferenceGrant.
++// A ReferenceGrant is required for all cross-namespace references in Gateway API
++// (with the exception of cross-namespace Route-Gateway attachment, which is
++// governed by the AllowedRoutes configuration on the Gateway, and cross-namespace
++// Service ParentRefs on a "consumer" mesh Route, which defines routing rules
++// applicable only to workloads in the Route namespace). ReferenceGrants allowing
++// a reference from a Route to a Service are only applicable to BackendRefs.
+ //
+ // ReferenceGrant is a form of runtime verification allowing users to assert
+ // which cross-namespace object references are permitted. Implementations that
+ // support ReferenceGrant MUST NOT permit cross-namespace references which have
+ // no grant, and MUST respond to the removal of a grant by revoking the access
+ // that the grant allowed.
+-//
+-// Support: Core
+ type ReferenceGrant v1beta1.ReferenceGrant
+ 
+ // +kubebuilder:object:root=true
+diff --git a/vendor/sigs.k8s.io/gateway-api/apis/v1alpha2/shared_types.go b/vendor/sigs.k8s.io/gateway-api/apis/v1alpha2/shared_types.go
+index bba8e9516..788fef9a0 100644
+--- a/vendor/sigs.k8s.io/gateway-api/apis/v1alpha2/shared_types.go
++++ b/vendor/sigs.k8s.io/gateway-api/apis/v1alpha2/shared_types.go
+@@ -340,6 +340,10 @@ type AnnotationValue = v1beta1.AnnotationValue
+ // +kubebuilder:validation:Pattern=`^Hostname|IPAddress|NamedAddress|[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*\/[A-Za-z0-9\/\-._~%!$&'()*+,;=:]+$`
+ type AddressType = v1beta1.AddressType
+ 
++// Duration is a string value representing a duration in time. The format is as specified
++// in GEP-2257, a strict subset of the syntax parsed by Golang time.ParseDuration.
++type Duration = v1beta1.Duration
++
+ const (
+ 	// A textual representation of a numeric IP address. IPv4
+ 	// addresses must be in dotted-decimal form. IPv6 addresses
+diff --git a/vendor/sigs.k8s.io/gateway-api/apis/v1alpha2/zz_generated.deepcopy.go b/vendor/sigs.k8s.io/gateway-api/apis/v1alpha2/zz_generated.deepcopy.go
+index f14f4c098..890f57faf 100644
+--- a/vendor/sigs.k8s.io/gateway-api/apis/v1alpha2/zz_generated.deepcopy.go
++++ b/vendor/sigs.k8s.io/gateway-api/apis/v1alpha2/zz_generated.deepcopy.go
+@@ -1,5 +1,4 @@
+ //go:build !ignore_autogenerated
+-// +build !ignore_autogenerated
+ 
+ /*
+ Copyright The Kubernetes Authors.
+@@ -497,6 +496,27 @@ func (in *PolicyTargetReference) DeepCopy() *PolicyTargetReference {
+ 	return out
+ }
+ 
++// DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
++func (in *PolicyTargetReferenceWithSectionName) DeepCopyInto(out *PolicyTargetReferenceWithSectionName) {
++	*out = *in
++	in.PolicyTargetReference.DeepCopyInto(&out.PolicyTargetReference)
++	if in.SectionName != nil {
++		in, out := &in.SectionName, &out.SectionName
++		*out = new(v1beta1.SectionName)
++		**out = **in
++	}
++}
++
++// DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new PolicyTargetReferenceWithSectionName.
++func (in *PolicyTargetReferenceWithSectionName) DeepCopy() *PolicyTargetReferenceWithSectionName {
++	if in == nil {
++		return nil
++	}
++	out := new(PolicyTargetReferenceWithSectionName)
++	in.DeepCopyInto(out)
++	return out
++}
++
+ // DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
+ func (in *ReferenceGrant) DeepCopyInto(out *ReferenceGrant) {
+ 	*out = *in
+diff --git a/vendor/sigs.k8s.io/gateway-api/apis/v1beta1/doc.go b/vendor/sigs.k8s.io/gateway-api/apis/v1beta1/doc.go
+index d29a3c14a..328100aee 100644
+--- a/vendor/sigs.k8s.io/gateway-api/apis/v1beta1/doc.go
++++ b/vendor/sigs.k8s.io/gateway-api/apis/v1beta1/doc.go
+@@ -16,6 +16,7 @@ limitations under the License.
+ 
+ // Package v1beta1 contains API Schema definitions for the
+ // gateway.networking.k8s.io API group.
++//
+ // +kubebuilder:object:generate=true
+ // +groupName=gateway.networking.k8s.io
+ package v1beta1
+diff --git a/vendor/sigs.k8s.io/gateway-api/apis/v1beta1/gateway_types.go b/vendor/sigs.k8s.io/gateway-api/apis/v1beta1/gateway_types.go
+index 58c359835..120f7e2f2 100644
+--- a/vendor/sigs.k8s.io/gateway-api/apis/v1beta1/gateway_types.go
++++ b/vendor/sigs.k8s.io/gateway-api/apis/v1beta1/gateway_types.go
+@@ -72,6 +72,19 @@ type GatewaySpec struct {
+ 	// Each listener in a Gateway must have a unique combination of Hostname,
+ 	// Port, and Protocol.
+ 	//
++	// Within the HTTP Conformance Profile, the below combinations of port and
++	// protocol are considered Core and MUST be supported:
++	//
++	// 1. Port: 80, Protocol: HTTP
++	// 2. Port: 443, Protocol: HTTPS
++	//
++	// Within the TLS Conformance Profile, the below combinations of port and
++	// protocol are considered Core and MUST be supported:
++	//
++	// 1. Port: 443, Protocol: TLS
++	//
++	// Port and protocol combinations not listed above are considered Extended.
++	//
+ 	// An implementation MAY group Listeners by Port and then collapse each
+ 	// group of Listeners into a single Listener if the implementation
+ 	// determines that the Listeners in the group are "compatible". An
+@@ -111,6 +124,11 @@ type GatewaySpec struct {
+ 	// +listMapKey=name
+ 	// +kubebuilder:validation:MinItems=1
+ 	// +kubebuilder:validation:MaxItems=64
++	// +kubebuilder:validation:XValidation:message="tls must be specified for protocols ['HTTPS', 'TLS']",rule="self.all(l, l.protocol in ['HTTPS', 'TLS'] ? has(l.tls) : true)"
++	// +kubebuilder:validation:XValidation:message="tls must not be specified for protocols ['HTTP', 'TCP', 'UDP']",rule="self.all(l, l.protocol in ['HTTP', 'TCP', 'UDP'] ? !has(l.tls) : true)"
++	// +kubebuilder:validation:XValidation:message="hostname must not be specified for protocols ['TCP', 'UDP']",rule="self.all(l, l.protocol in ['TCP', 'UDP']  ? (!has(l.hostname) || l.hostname == '') : true)"
++	// +kubebuilder:validation:XValidation:message="Listener name must be unique within the Gateway",rule="self.all(l1, self.exists_one(l2, l1.name == l2.name))"
++	// +kubebuilder:validation:XValidation:message="Combination of port, protocol and hostname must be unique for each listener",rule="self.all(l1, self.exists_one(l2, l1.port == l2.port && l1.protocol == l2.protocol && (has(l1.hostname) && has(l2.hostname) ? l1.hostname == l2.hostname : !has(l1.hostname) && !has(l2.hostname))))"
+ 	Listeners []Listener `json:"listeners"`
+ 
+ 	// Addresses requested for this Gateway. This is optional and behavior can
+@@ -138,7 +156,10 @@ type GatewaySpec struct {
+ 	// Support: Extended
+ 	//
+ 	// +optional
++	// <gateway:validateIPAddress>
+ 	// +kubebuilder:validation:MaxItems=16
++	// +kubebuilder:validation:XValidation:message="IPAddress values must be unique",rule="self.all(a1, a1.type == 'IPAddress' ? self.exists_one(a2, a2.type == a1.type && a2.value == a1.value) : true )"
++	// +kubebuilder:validation:XValidation:message="Hostname values must be unique",rule="self.all(a1, a1.type == 'Hostname' ? self.exists_one(a2, a2.type == a1.type && a2.value == a1.value) : true )"
+ 	Addresses []GatewayAddress `json:"addresses,omitempty"`
+ }
+ 
+@@ -286,6 +307,8 @@ const (
+ )
+ 
+ // GatewayTLSConfig describes a TLS configuration.
++//
++// +kubebuilder:validation:XValidation:message="certificateRefs must be specified when TLSModeType is Terminate",rule="self.mode == 'Terminate' ? size(self.certificateRefs) > 0 : true"
+ type GatewayTLSConfig struct {
+ 	// Mode defines the TLS behavior for the TLS session initiated by the client.
+ 	// There are two possible modes:
+@@ -416,6 +439,7 @@ const (
+ type RouteNamespaces struct {
+ 	// From indicates where Routes will be selected for this Gateway. Possible
+ 	// values are:
++	//
+ 	// * All: Routes in all namespaces may be used by this Gateway.
+ 	// * Selector: Routes in namespaces selected by the selector may be used by
+ 	//   this Gateway.
+@@ -450,6 +474,8 @@ type RouteGroupKind struct {
+ }
+ 
+ // GatewayAddress describes an address that can be bound to a Gateway.
++//
++// +kubebuilder:validation:XValidation:message="Hostname value must only contain valid characters (matching ^(\\*\\.)?[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$)",rule="self.type == 'Hostname' ? self.value.matches(r\"\"\"^(\\*\\.)?[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$\"\"\"): true"
+ type GatewayAddress struct {
+ 	// Type of the address.
+ 	//
+@@ -467,6 +493,26 @@ type GatewayAddress struct {
+ 	Value string `json:"value"`
+ }
+ 
++// GatewayStatusAddress describes an address that is bound to a Gateway.
++//
++// +kubebuilder:validation:XValidation:message="Hostname value must only contain valid characters (matching ^(\\*\\.)?[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$)",rule="self.type == 'Hostname' ? self.value.matches(r\"\"\"^(\\*\\.)?[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$\"\"\"): true"
++type GatewayStatusAddress struct {
++	// Type of the address.
++	//
++	// +optional
++	// +kubebuilder:default=IPAddress
++	Type *AddressType `json:"type,omitempty"`
++
++	// Value of the address. The validity of the values will depend
++	// on the type and support by the controller.
++	//
++	// Examples: `1.2.3.4`, `128::1`, `my-ip-address`.
++	//
++	// +kubebuilder:validation:MinLength=1
++	// +kubebuilder:validation:MaxLength=253
++	Value string `json:"value"`
++}
++
+ // GatewayStatus defines the observed state of Gateway.
+ type GatewayStatus struct {
+ 	// Addresses lists the IP addresses that have actually been
+@@ -475,8 +521,9 @@ type GatewayStatus struct {
+ 	// assigns an address from a reserved pool.
+ 	//
+ 	// +optional
++	// <gateway:validateIPAddress>
+ 	// +kubebuilder:validation:MaxItems=16
+-	Addresses []GatewayAddress `json:"addresses,omitempty"`
++	Addresses []GatewayStatusAddress `json:"addresses,omitempty"`
+ 
+ 	// Conditions describe the current conditions of the Gateway.
+ 	//
+@@ -617,7 +664,7 @@ const (
+ 	//
+ 	// * The address is already in use.
+ 	// * The type of address is not supported by the implementation.
+-	GatewaReasonUnsupportedAddress GatewayConditionReason = "UnsupportedAddress"
++	GatewayReasonUnsupportedAddress GatewayConditionReason = "UnsupportedAddress"
+ )
+ 
+ const (
+@@ -732,15 +779,17 @@ const (
+ )
+ 
+ const (
+-	// This condition indicates that, even though the listener is
+-	// syntactically and semantically valid, the controller is not able
+-	// to configure it on the underlying Gateway infrastructure.
+-	//
+-	// A Listener is specified as a logical requirement, but needs to be
+-	// configured on a network endpoint (i.e. address and port) by a
+-	// controller. The controller may be unable to attach the Listener
+-	// if it specifies an unsupported requirement, or prerequisite
+-	// resources are not available.
++	// This condition indicates that the listener is syntactically and
++	// semantically valid, and that all features used in the listener's spec are
++	// supported.
++	//
++	// In general, a Listener will be marked as Accepted when the supplied
++	// configuration will generate at least some data plane configuration.
++	//
++	// For example, a Listener with an unsupported protocol will never generate
++	// any data plane config, and so will have Accepted set to `false.`
++	// Conversely, a Listener that does not have any Routes will be able to
++	// generate data plane config, and so will have Accepted set to `true`.
+ 	//
+ 	// Possible reasons for this condition to be True are:
+ 	//
+diff --git a/vendor/sigs.k8s.io/gateway-api/apis/v1beta1/gatewayclass_types.go b/vendor/sigs.k8s.io/gateway-api/apis/v1beta1/gatewayclass_types.go
+index f20487bfa..c2df77f90 100644
+--- a/vendor/sigs.k8s.io/gateway-api/apis/v1beta1/gatewayclass_types.go
++++ b/vendor/sigs.k8s.io/gateway-api/apis/v1beta1/gatewayclass_types.go
+@@ -57,6 +57,9 @@ type GatewayClass struct {
+ 
+ 	// Status defines the current state of GatewayClass.
+ 	//
++	// Implementations MUST populate status on all GatewayClass resources which
++	// specify their controller name.
++	//
+ 	// +kubebuilder:default={conditions: {{type: "Accepted", status: "Unknown", message: "Waiting for controller", reason: "Waiting", lastTransitionTime: "1970-01-01T00:00:00Z"}}}
+ 	Status GatewayClassStatus `json:"status,omitempty"`
+ }
+@@ -78,6 +81,8 @@ type GatewayClassSpec struct {
+ 	// This field is not mutable and cannot be empty.
+ 	//
+ 	// Support: Core
++	//
++	// +kubebuilder:validation:XValidation:message="Value is immutable",rule="self == oldSelf"
+ 	ControllerName GatewayController `json:"controllerName"`
+ 
+ 	// ParametersRef is a reference to a resource that contains the configuration
+@@ -153,6 +158,7 @@ const (
+ 	// Possible reasons for this condition to be False are:
+ 	//
+ 	// * "InvalidParameters"
++	// * "UnsupportedVersion"
+ 	//
+ 	// Possible reasons for this condition to be Unknown are:
+ 	//
+@@ -181,6 +187,49 @@ const (
+ 	GatewayClassReasonWaiting GatewayClassConditionReason = "Waiting"
+ )
+ 
++const (
++	// This condition indicates whether the GatewayClass supports the version(s)
++	// of Gateway API CRDs present in the cluster. This condition MUST be set by
++	// a controller when it marks a GatewayClass "Accepted".
++	//
++	// The version of a Gateway API CRD is defined by the
++	// gateway.networking.k8s.io/bundle-version annotation on the CRD. If
++	// implementations detect any Gateway API CRDs that either do not have this
++	// annotation set, or have it set to a version that is not recognized or
++	// supported by the implementation, this condition MUST be set to false.
++	//
++	// Implementations MAY choose to either provide "best effort" support when
++	// an unrecognized CRD version is present. This would be communicated by
++	// setting the "Accepted" condition to true and the "SupportedVersion"
++	// condition to false.
++	//
++	// Alternatively, implementations MAY choose not to support CRDs with
++	// unrecognized versions. This would be communicated by setting the
++	// "Accepted" condition to false with the reason "UnsupportedVersions".
++	//
++	// Possible reasons for this condition to be true are:
++	//
++	// * "SupportedVersion"
++	//
++	// Possible reasons for this condition to be False are:
++	//
++	// * "UnsupportedVersion"
++	//
++	// Controllers should prefer to use the values of GatewayClassConditionReason
++	// for the corresponding Reason, where appropriate.
++	GatewayClassConditionStatusSupportedVersion GatewayClassConditionType = "SupportedVersion"
++
++	// This reason is used with the "SupportedVersion" condition when the
++	// condition is true.
++	GatewayClassReasonSupportedVersion GatewayClassConditionReason = "SupportedVersion"
++
++	// This reason is used with the "SupportedVersion" or "Accepted" condition
++	// when the condition is false. A message SHOULD be included in this
++	// condition that includes the detected CRD version(s) present in the
++	// cluster and the CRD version(s) that are supported by the GatewayClass.
++	GatewayClassReasonUnsupportedVersion GatewayClassConditionReason = "UnsupportedVersion"
++)
++
+ // GatewayClassStatus is the current status for the GatewayClass.
+ type GatewayClassStatus struct {
+ 	// Conditions is the current status from the controller for
+diff --git a/vendor/sigs.k8s.io/gateway-api/apis/v1beta1/httproute_types.go b/vendor/sigs.k8s.io/gateway-api/apis/v1beta1/httproute_types.go
+index 77b480a71..fb6809ddb 100644
+--- a/vendor/sigs.k8s.io/gateway-api/apis/v1beta1/httproute_types.go
++++ b/vendor/sigs.k8s.io/gateway-api/apis/v1beta1/httproute_types.go
+@@ -56,10 +56,11 @@ type HTTPRouteList struct {
+ type HTTPRouteSpec struct {
+ 	CommonRouteSpec `json:",inline"`
+ 
+-	// Hostnames defines a set of hostname that should match against the HTTP Host
++	// Hostnames defines a set of hostnames that should match against the HTTP Host
+ 	// header to select a HTTPRoute used to process the request. Implementations
+ 	// MUST ignore any port value specified in the HTTP Host header while
+-	// performing a match.
++	// performing a match and (absent of any applicable header modification
++	// configuration) MUST forward this header unmodified to the backend.
+ 	//
+ 	// Valid values for Hostnames are determined by RFC 1123 definition of a
+ 	// hostname with 2 notable exceptions:
+@@ -124,6 +125,12 @@ type HTTPRouteSpec struct {
+ // HTTPRouteRule defines semantics for matching an HTTP request based on
+ // conditions (matches), processing it (filters), and forwarding the request to
+ // an API object (backendRefs).
++//
++// +kubebuilder:validation:XValidation:message="RequestRedirect filter must not be used together with backendRefs",rule="(has(self.backendRefs) && size(self.backendRefs) > 0) ? (!has(self.filters) || self.filters.all(f, !has(f.requestRedirect))): true"
++// +kubebuilder:validation:XValidation:message="When using RequestRedirect filter with path.replacePrefixMatch, exactly one PathPrefix match must be specified",rule="(has(self.filters) && self.filters.exists_one(f, has(f.requestRedirect) && has(f.requestRedirect.path) && f.requestRedirect.path.type == 'ReplacePrefixMatch' && has(f.requestRedirect.path.replacePrefixMatch))) ? ((size(self.matches) != 1 || !has(self.matches[0].path) || self.matches[0].path.type != 'PathPrefix') ? false : true) : true"
++// +kubebuilder:validation:XValidation:message="When using URLRewrite filter with path.replacePrefixMatch, exactly one PathPrefix match must be specified",rule="(has(self.filters) && self.filters.exists_one(f, has(f.urlRewrite) && has(f.urlRewrite.path) && f.urlRewrite.path.type == 'ReplacePrefixMatch' && has(f.urlRewrite.path.replacePrefixMatch))) ? ((size(self.matches) != 1 || !has(self.matches[0].path) || self.matches[0].path.type != 'PathPrefix') ? false : true) : true"
++// +kubebuilder:validation:XValidation:message="Within backendRefs, when using RequestRedirect filter with path.replacePrefixMatch, exactly one PathPrefix match must be specified",rule="(has(self.backendRefs) && self.backendRefs.exists_one(b, (has(b.filters) && b.filters.exists_one(f, has(f.requestRedirect) && has(f.requestRedirect.path) && f.requestRedirect.path.type == 'ReplacePrefixMatch' && has(f.requestRedirect.path.replacePrefixMatch))) )) ? ((size(self.matches) != 1 || !has(self.matches[0].path) || self.matches[0].path.type != 'PathPrefix') ? false : true) : true"
++// +kubebuilder:validation:XValidation:message="Within backendRefs, When using URLRewrite filter with path.replacePrefixMatch, exactly one PathPrefix match must be specified",rule="(has(self.backendRefs) && self.backendRefs.exists_one(b, (has(b.filters) && b.filters.exists_one(f, has(f.urlRewrite) && has(f.urlRewrite.path) && f.urlRewrite.path.type == 'ReplacePrefixMatch' && has(f.urlRewrite.path.replacePrefixMatch))) )) ? ((size(self.matches) != 1 || !has(self.matches[0].path) || self.matches[0].path.type != 'PathPrefix') ? false : true) : true"
+ type HTTPRouteRule struct {
+ 	// Matches define conditions used for matching the rule against incoming
+ 	// HTTP requests. Each match is independent, i.e. this rule will be matched
+@@ -200,19 +207,26 @@ type HTTPRouteRule struct {
+ 	// - Implementation-specific custom filters have no API guarantees across
+ 	//   implementations.
+ 	//
+-	// Specifying a core filter multiple times has unspecified or
+-	// implementation-specific conformance.
++	// Specifying the same filter multiple times is not supported unless explicitly
++	// indicated in the filter.
+ 	//
+ 	// All filters are expected to be compatible with each other except for the
+ 	// URLRewrite and RequestRedirect filters, which may not be combined. If an
+ 	// implementation can not support other combinations of filters, they must clearly
+-	// document that limitation. In all cases where incompatible or unsupported
+-	// filters are specified, implementations MUST add a warning condition to status.
++	// document that limitation. In cases where incompatible or unsupported
++	// filters are specified and cause the `Accepted` condition to be set to status
++	// `False`, implementations may use the `IncompatibleFilters` reason to specify
++	// this configuration error.
+ 	//
+ 	// Support: Core
+ 	//
+ 	// +optional
+ 	// +kubebuilder:validation:MaxItems=16
++	// +kubebuilder:validation:XValidation:message="May specify either httpRouteFilterRequestRedirect or httpRouteFilterRequestRewrite, but not both",rule="!(self.exists(f, f.type == 'RequestRedirect') && self.exists(f, f.type == 'URLRewrite'))"
++	// +kubebuilder:validation:XValidation:message="RequestHeaderModifier filter cannot be repeated",rule="self.filter(f, f.type == 'RequestHeaderModifier').size() <= 1"
++	// +kubebuilder:validation:XValidation:message="ResponseHeaderModifier filter cannot be repeated",rule="self.filter(f, f.type == 'ResponseHeaderModifier').size() <= 1"
++	// +kubebuilder:validation:XValidation:message="RequestRedirect filter cannot be repeated",rule="self.filter(f, f.type == 'RequestRedirect').size() <= 1"
++	// +kubebuilder:validation:XValidation:message="URLRewrite filter cannot be repeated",rule="self.filter(f, f.type == 'URLRewrite').size() <= 1"
+ 	Filters []HTTPRouteFilter `json:"filters,omitempty"`
+ 
+ 	// BackendRefs defines the backend(s) where matching requests should be
+@@ -249,6 +263,57 @@ type HTTPRouteRule struct {
+ 	// +optional
+ 	// +kubebuilder:validation:MaxItems=16
+ 	BackendRefs []HTTPBackendRef `json:"backendRefs,omitempty"`
++
++	// Timeouts defines the timeouts that can be configured for an HTTP request.
++	//
++	// Support: Extended
++	//
++	// +optional
++	// <gateway:experimental>
++	Timeouts *HTTPRouteTimeouts `json:"timeouts,omitempty"`
++}
++
++// HTTPRouteTimeouts defines timeouts that can be configured for an HTTPRoute.
++// Timeout values are represented with Gateway API Duration formatting.
++// Specifying a zero value such as "0s" is interpreted as no timeout.
++//
++// +kubebuilder:validation:XValidation:message="backendRequest timeout cannot be longer than request timeout",rule="!(has(self.request) && has(self.backendRequest) && duration(self.request) != duration('0s') && duration(self.backendRequest) > duration(self.request))"
++type HTTPRouteTimeouts struct {
++	// Request specifies the maximum duration for a gateway to respond to an HTTP request.
++	// If the gateway has not been able to respond before this deadline is met, the gateway
++	// MUST return a timeout error.
++	//
++	// For example, setting the `rules.timeouts.request` field to the value `10s` in an
++	// `HTTPRoute` will cause a timeout if a client request is taking longer than 10 seconds
++	// to complete.
++	//
++	// This timeout is intended to cover as close to the whole request-response transaction
++	// as possible although an implementation MAY choose to start the timeout after the entire
++	// request stream has been received instead of immediately after the transaction is
++	// initiated by the client.
++	//
++	// When this field is unspecified, request timeout behavior is implementation-specific.
++	//
++	// Support: Extended
++	//
++	// +optional
++	Request *Duration `json:"request,omitempty"`
++
++	// BackendRequest specifies a timeout for an individual request from the gateway
++	// to a backend. This covers the time from when the request first starts being
++	// sent from the gateway to when the full response has been received from the backend.
++	//
++	// An entire client HTTP transaction with a gateway, covered by the Request timeout,
++	// may result in more than one call from the gateway to the destination backend,
++	// for example, if automatic retries are supported.
++	//
++	// Because the Request timeout encompasses the BackendRequest timeout, the value of
++	// BackendRequest must be <= the value of Request timeout.
++	//
++	// Support: Extended
++	//
++	// +optional
++	BackendRequest *Duration `json:"backendRequest,omitempty"`
+ }
+ 
+ // PathMatchType specifies the semantics of how HTTP paths should be compared.
+@@ -303,6 +368,18 @@ const (
+ )
+ 
+ // HTTPPathMatch describes how to select a HTTP route by matching the HTTP request path.
++//
++// +kubebuilder:validation:XValidation:message="value must be an absolute path and start with '/' when type one of ['Exact', 'PathPrefix']",rule="(self.type in ['Exact','PathPrefix']) ? self.value.startsWith('/') : true"
++// +kubebuilder:validation:XValidation:message="must not contain '//' when type one of ['Exact', 'PathPrefix']",rule="(self.type in ['Exact','PathPrefix']) ? !self.value.contains('//') : true"
++// +kubebuilder:validation:XValidation:message="must not contain '/./' when type one of ['Exact', 'PathPrefix']",rule="(self.type in ['Exact','PathPrefix']) ? !self.value.contains('/./') : true"
++// +kubebuilder:validation:XValidation:message="must not contain '/../' when type one of ['Exact', 'PathPrefix']",rule="(self.type in ['Exact','PathPrefix']) ? !self.value.contains('/../') : true"
++// +kubebuilder:validation:XValidation:message="must not contain '%2f' when type one of ['Exact', 'PathPrefix']",rule="(self.type in ['Exact','PathPrefix']) ? !self.value.contains('%2f') : true"
++// +kubebuilder:validation:XValidation:message="must not contain '%2F' when type one of ['Exact', 'PathPrefix']",rule="(self.type in ['Exact','PathPrefix']) ? !self.value.contains('%2F') : true"
++// +kubebuilder:validation:XValidation:message="must not contain '#' when type one of ['Exact', 'PathPrefix']",rule="(self.type in ['Exact','PathPrefix']) ? !self.value.contains('#') : true"
++// +kubebuilder:validation:XValidation:message="must not end with '/..' when type one of ['Exact', 'PathPrefix']",rule="(self.type in ['Exact','PathPrefix']) ? !self.value.endsWith('/..') : true"
++// +kubebuilder:validation:XValidation:message="must not end with '/.' when type one of ['Exact', 'PathPrefix']",rule="(self.type in ['Exact','PathPrefix']) ? !self.value.endsWith('/.') : true"
++// +kubebuilder:validation:XValidation:message="type must be one of ['Exact', 'PathPrefix', 'RegularExpression']",rule="self.type in ['Exact','PathPrefix'] || self.type == 'RegularExpression'"
++// +kubebuilder:validation:XValidation:message="must only contain valid characters (matching ^(?:[-A-Za-z0-9/._~!$&'()*+,;=:@]|[%][0-9a-fA-F]{2})+$) for types ['Exact', 'PathPrefix']",rule="(self.type in ['Exact','PathPrefix']) ? self.value.matches(r\"\"\"^(?:[-A-Za-z0-9/._~!$&'()*+,;=:@]|[%][0-9a-fA-F]{2})+$\"\"\") : true"
+ type HTTPPathMatch struct {
+ 	// Type specifies how to match against the path Value.
+ 	//
+@@ -557,6 +634,19 @@ type HTTPRouteMatch struct {
+ // examples include request or response modification, implementing
+ // authentication strategies, rate-limiting, and traffic shaping. API
+ // guarantee/conformance is defined based on the type of the filter.
++//
++// +kubebuilder:validation:XValidation:message="filter.requestHeaderModifier must be nil if the filter.type is not RequestHeaderModifier",rule="!(has(self.requestHeaderModifier) && self.type != 'RequestHeaderModifier')"
++// +kubebuilder:validation:XValidation:message="filter.requestHeaderModifier must be specified for RequestHeaderModifier filter.type",rule="!(!has(self.requestHeaderModifier) && self.type == 'RequestHeaderModifier')"
++// +kubebuilder:validation:XValidation:message="filter.responseHeaderModifier must be nil if the filter.type is not ResponseHeaderModifier",rule="!(has(self.responseHeaderModifier) && self.type != 'ResponseHeaderModifier')"
++// +kubebuilder:validation:XValidation:message="filter.responseHeaderModifier must be specified for ResponseHeaderModifier filter.type",rule="!(!has(self.responseHeaderModifier) && self.type == 'ResponseHeaderModifier')"
++// +kubebuilder:validation:XValidation:message="filter.requestMirror must be nil if the filter.type is not RequestMirror",rule="!(has(self.requestMirror) && self.type != 'RequestMirror')"
++// +kubebuilder:validation:XValidation:message="filter.requestMirror must be specified for RequestMirror filter.type",rule="!(!has(self.requestMirror) && self.type == 'RequestMirror')"
++// +kubebuilder:validation:XValidation:message="filter.requestRedirect must be nil if the filter.type is not RequestRedirect",rule="!(has(self.requestRedirect) && self.type != 'RequestRedirect')"
++// +kubebuilder:validation:XValidation:message="filter.requestRedirect must be specified for RequestRedirect filter.type",rule="!(!has(self.requestRedirect) && self.type == 'RequestRedirect')"
++// +kubebuilder:validation:XValidation:message="filter.urlRewrite must be nil if the filter.type is not URLRewrite",rule="!(has(self.urlRewrite) && self.type != 'URLRewrite')"
++// +kubebuilder:validation:XValidation:message="filter.urlRewrite must be specified for URLRewrite filter.type",rule="!(!has(self.urlRewrite) && self.type == 'URLRewrite')"
++// +kubebuilder:validation:XValidation:message="filter.extensionRef must be nil if the filter.type is not ExtensionRef",rule="!(has(self.extensionRef) && self.type != 'ExtensionRef')"
++// +kubebuilder:validation:XValidation:message="filter.extensionRef must be specified for ExtensionRef filter.type",rule="!(!has(self.extensionRef) && self.type == 'ExtensionRef')"
+ type HTTPRouteFilter struct {
+ 	// Type identifies the type of filter to apply. As with other API fields,
+ 	// types are classified into three conformance levels:
+@@ -615,6 +705,10 @@ type HTTPRouteFilter struct {
+ 	// Requests are sent to the specified destination, but responses from
+ 	// that destination are ignored.
+ 	//
++	// This filter can be used multiple times within the same rule. Note that
++	// not all implementations will be able to support mirroring to multiple
++	// backends.
++	//
+ 	// Support: Extended
+ 	//
+ 	// +optional
+@@ -640,6 +734,8 @@ type HTTPRouteFilter struct {
+ 	// "networking.example.net"). ExtensionRef MUST NOT be used for core and
+ 	// extended filters.
+ 	//
++	// This filter can be used multiple times within the same rule.
++	//
+ 	// Support: Implementation-specific
+ 	//
+ 	// +optional
+@@ -794,6 +890,7 @@ type HTTPHeaderFilter struct {
+ 	//   my-header2: bar
+ 	//
+ 	// +optional
++	// +listType=set
+ 	// +kubebuilder:validation:MaxItems=16
+ 	Remove []string `json:"remove,omitempty"`
+ }
+@@ -820,6 +917,11 @@ const (
+ )
+ 
+ // HTTPPathModifier defines configuration for path modifiers.
++//
++// +kubebuilder:validation:XValidation:message="replaceFullPath must be specified when type is set to 'ReplaceFullPath'",rule="self.type == 'ReplaceFullPath' ? has(self.replaceFullPath) : true"
++// +kubebuilder:validation:XValidation:message="type must be 'ReplaceFullPath' when replaceFullPath is set",rule="has(self.replaceFullPath) ? self.type == 'ReplaceFullPath' : true"
++// +kubebuilder:validation:XValidation:message="replacePrefixMatch must be specified when type is set to 'ReplacePrefixMatch'",rule="self.type == 'ReplacePrefixMatch' ? has(self.replacePrefixMatch) : true"
++// +kubebuilder:validation:XValidation:message="type must be 'ReplacePrefixMatch' when replacePrefixMatch is set",rule="has(self.replacePrefixMatch) ? self.type == 'ReplacePrefixMatch' : true"
+ type HTTPPathModifier struct {
+ 	// Type defines the type of path modifier. Additional types may be
+ 	// added in a future release of the API.
+@@ -843,7 +945,8 @@ type HTTPPathModifier struct {
+ 
+ 	// ReplacePrefixMatch specifies the value with which to replace the prefix
+ 	// match of a request during a rewrite or redirect. For example, a request
+-	// to "/foo/bar" with a prefix match of "/foo" would be modified to "/bar".
++	// to "/foo/bar" with a prefix match of "/foo" and a ReplacePrefixMatch
++	// of "/xyz" would be modified to "/xyz/bar".
+ 	//
+ 	// Note that this matches the behavior of the PathPrefix match type. This
+ 	// matches full path elements. A path element refers to the list of labels
+@@ -851,6 +954,24 @@ type HTTPPathModifier struct {
+ 	// ignored. For example, the paths `/abc`, `/abc/`, and `/abc/def` would all
+ 	// match the prefix `/abc`, but the path `/abcd` would not.
+ 	//
++	// ReplacePrefixMatch is only compatible with a `PathPrefix` HTTPRouteMatch.
++	// Using any other HTTPRouteMatch type on the same HTTPRouteRule will result in
++	// the implementation setting the Accepted Condition for the Route to `status: False`.
++	//
++	// Request Path | Prefix Match | Replace Prefix | Modified Path
++	// -------------|--------------|----------------|----------
++	// /foo/bar     | /foo         | /xyz           | /xyz/bar
++	// /foo/bar     | /foo         | /xyz/          | /xyz/bar
++	// /foo/bar     | /foo/        | /xyz           | /xyz/bar
++	// /foo/bar     | /foo/        | /xyz/          | /xyz/bar
++	// /foo         | /foo         | /xyz           | /xyz
++	// /foo/        | /foo         | /xyz           | /xyz/
++	// /foo/bar     | /foo         | <empty string> | /bar
++	// /foo/        | /foo         | <empty string> | /
++	// /foo         | /foo         | <empty string> | /
++	// /foo/        | /foo         | /              | /
++	// /foo         | /foo         | /              | /
++	//
+ 	// +kubebuilder:validation:MaxLength=1024
+ 	// +optional
+ 	ReplacePrefixMatch *string `json:"replacePrefixMatch,omitempty"`
+@@ -965,6 +1086,10 @@ type HTTPURLRewriteFilter struct {
+ type HTTPRequestMirrorFilter struct {
+ 	// BackendRef references a resource where mirrored requests are sent.
+ 	//
++	// Mirrored requests must be sent only to a single destination endpoint
++	// within this BackendRef, irrespective of how many endpoints are present
++	// within this BackendRef.
++	//
+ 	// If the referent cannot be found, this BackendRef is invalid and must be
+ 	// dropped from the Gateway. The controller must ensure the "ResolvedRefs"
+ 	// condition on the Route status is set to `status: False` and not configure
+@@ -1026,6 +1151,12 @@ type HTTPBackendRef struct {
+ 	//
+ 	// +optional
+ 	// +kubebuilder:validation:MaxItems=16
++	// +kubebuilder:validation:XValidation:message="May specify either httpRouteFilterRequestRedirect or httpRouteFilterRequestRewrite, but not both",rule="!(self.exists(f, f.type == 'RequestRedirect') && self.exists(f, f.type == 'URLRewrite'))"
++	// +kubebuilder:validation:XValidation:message="May specify either httpRouteFilterRequestRedirect or httpRouteFilterRequestRewrite, but not both",rule="!(self.exists(f, f.type == 'RequestRedirect') && self.exists(f, f.type == 'URLRewrite'))"
++	// +kubebuilder:validation:XValidation:message="RequestHeaderModifier filter cannot be repeated",rule="self.filter(f, f.type == 'RequestHeaderModifier').size() <= 1"
++	// +kubebuilder:validation:XValidation:message="ResponseHeaderModifier filter cannot be repeated",rule="self.filter(f, f.type == 'ResponseHeaderModifier').size() <= 1"
++	// +kubebuilder:validation:XValidation:message="RequestRedirect filter cannot be repeated",rule="self.filter(f, f.type == 'RequestRedirect').size() <= 1"
++	// +kubebuilder:validation:XValidation:message="URLRewrite filter cannot be repeated",rule="self.filter(f, f.type == 'URLRewrite').size() <= 1"
+ 	Filters []HTTPRouteFilter `json:"filters,omitempty"`
+ }
+ 
+diff --git a/vendor/sigs.k8s.io/gateway-api/apis/v1beta1/object_reference_types.go b/vendor/sigs.k8s.io/gateway-api/apis/v1beta1/object_reference_types.go
+index 229b27f38..4ef1c3789 100644
+--- a/vendor/sigs.k8s.io/gateway-api/apis/v1beta1/object_reference_types.go
++++ b/vendor/sigs.k8s.io/gateway-api/apis/v1beta1/object_reference_types.go
+@@ -91,6 +91,8 @@ type SecretObjectReference struct {
+ // References to objects with invalid Group and Kind are not valid, and must
+ // be rejected by the implementation, with appropriate Conditions set
+ // on the containing object.
++//
++// +kubebuilder:validation:XValidation:message="Must have port for Service reference",rule="(size(self.group) == 0 && self.kind == 'Service') ? has(self.port) : true"
+ type BackendObjectReference struct {
+ 	// Group is the group of the referent. For example, "gateway.networking.k8s.io".
+ 	// When unspecified or empty string, core API group is inferred.
+diff --git a/vendor/sigs.k8s.io/gateway-api/apis/v1beta1/referencegrant_types.go b/vendor/sigs.k8s.io/gateway-api/apis/v1beta1/referencegrant_types.go
+index 668a73ea9..0b0caf708 100644
+--- a/vendor/sigs.k8s.io/gateway-api/apis/v1beta1/referencegrant_types.go
++++ b/vendor/sigs.k8s.io/gateway-api/apis/v1beta1/referencegrant_types.go
+@@ -22,6 +22,7 @@ import metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ // +kubebuilder:object:root=true
+ // +kubebuilder:resource:categories=gateway-api,shortName=refgrant
+ // +kubebuilder:printcolumn:name="Age",type=date,JSONPath=`.metadata.creationTimestamp`
++// +kubebuilder:storageversion
+ 
+ // ReferenceGrant identifies kinds of resources in other namespaces that are
+ // trusted to reference the specified kinds of resources in the same namespace
+@@ -39,8 +40,6 @@ import metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ // support ReferenceGrant MUST NOT permit cross-namespace references which have
+ // no grant, and MUST respond to the removal of a grant by revoking the access
+ // that the grant allowed.
+-//
+-// Support: Core
+ type ReferenceGrant struct {
+ 	metav1.TypeMeta   `json:",inline"`
+ 	metav1.ObjectMeta `json:"metadata,omitempty"`
+diff --git a/vendor/sigs.k8s.io/gateway-api/apis/v1beta1/shared_types.go b/vendor/sigs.k8s.io/gateway-api/apis/v1beta1/shared_types.go
+index 7540cff62..b879d3a1f 100644
+--- a/vendor/sigs.k8s.io/gateway-api/apis/v1beta1/shared_types.go
++++ b/vendor/sigs.k8s.io/gateway-api/apis/v1beta1/shared_types.go
+@@ -21,9 +21,14 @@ import (
+ )
+ 
+ // ParentReference identifies an API object (usually a Gateway) that can be considered
+-// a parent of this resource (usually a route). The only kind of parent resource
+-// with "Core" support is Gateway. This API may be extended in the future to
+-// support additional kinds of parent resources, such as HTTPRoute.
++// a parent of this resource (usually a route). There are two kinds of parent resources
++// with "Core" support:
++//
++// * Gateway (Gateway conformance profile)
++// * Service (Mesh conformance profile, experimental, ClusterIP Services only)
++//
++// This API may be extended in the future to support additional kinds of parent
++// resources.
+ //
+ // The API object must be valid in the cluster; the Group and Kind must
+ // be registered in the cluster for this reference to be valid.
+@@ -41,9 +46,12 @@ type ParentReference struct {
+ 
+ 	// Kind is kind of the referent.
+ 	//
+-	// Support: Core (Gateway)
++	// There are two kinds of parent resources with "Core" support:
+ 	//
+-	// Support: Implementation-specific (Other Resources)
++	// * Gateway (Gateway conformance profile)
++	// * Service (Mesh conformance profile, experimental, ClusterIP Services only)
++	//
++	// Support for other resources is Implementation-Specific.
+ 	//
+ 	// +kubebuilder:default=Gateway
+ 	// +optional
+@@ -58,6 +66,16 @@ type ParentReference struct {
+ 	// Gateway has the AllowedRoutes field, and ReferenceGrant provides a
+ 	// generic way to enable any other kind of cross-namespace reference.
+ 	//
++	// ParentRefs from a Route to a Service in the same namespace are "producer"
++	// routes, which apply default routing rules to inbound connections from
++	// any namespace to the Service.
++	//
++	// ParentRefs from a Route to a Service in a different namespace are
++	// "consumer" routes, and these routing rules are only applied to outbound
++	// connections originating from the same namespace as the Route, for which
++	// the intended destination of the connections are a Service targeted as a
++	// ParentRef of the Route.
++	//
+ 	// Support: Core
+ 	//
+ 	// +optional
+@@ -74,6 +92,11 @@ type ParentReference struct {
+ 	// * Gateway: Listener Name. When both Port (experimental) and SectionName
+ 	// are specified, the name and port of the selected listener must match
+ 	// both specified values.
++	// * Service: Port Name. When both Port (experimental) and SectionName
++	// are specified, the name and port of the selected listener must match
++	// both specified values. Note that attaching Routes to Services as Parents
++	// is part of experimental Mesh support and is not supported for any other
++	// purpose.
+ 	//
+ 	// Implementations MAY choose to support attaching Routes to other resources.
+ 	// If that is the case, they MUST clearly document how SectionName is
+@@ -104,6 +127,10 @@ type ParentReference struct {
+ 	// and SectionName are specified, the name and port of the selected listener
+ 	// must match both specified values.
+ 	//
++	// When the parent resource is a Service, this targets a specific port in the
++	// Service spec. When both Port (experimental) and SectionName are specified,
++	// the name and port of the selected port must match both specified values.
++	//
+ 	// Implementations MAY choose to support other parent resources.
+ 	// Implementations supporting other types of parent resources MUST clearly
+ 	// document how/if Port is interpreted.
+@@ -130,15 +157,25 @@ type CommonRouteSpec struct {
+ 	// to be attached to. Note that the referenced parent resource needs to
+ 	// allow this for the attachment to be complete. For Gateways, that means
+ 	// the Gateway needs to allow attachment from Routes of this kind and
+-	// namespace.
++	// namespace. For Services, that means the Service must either be in the same
++	// namespace for a "producer" route, or the mesh implementation must support
++	// and allow "consumer" routes for the referenced Service. ReferenceGrant is
++	// not applicable for governing ParentRefs to Services - it is not possible to
++	// create a "producer" route for a Service in a different namespace from the
++	// Route.
++	//
++	// There are two kinds of parent resources with "Core" support:
+ 	//
+-	// The only kind of parent resource with "Core" support is Gateway. This API
+-	// may be extended in the future to support additional kinds of parent
+-	// resources such as one of the route kinds.
++	// * Gateway (Gateway conformance profile)
++	// * Service (Mesh conformance profile, experimental, ClusterIP Services only)
++	//
++	// This API may be extended in the future to support additional kinds of parent
++	// resources.
+ 	//
+ 	// It is invalid to reference an identical parent more than once. It is
+ 	// valid to reference multiple distinct sections within the same parent
+-	// resource, such as 2 Listeners within a Gateway.
++	// resource, such as two separate Listeners on the same Gateway or two separate
++	// ports on the same Service.
+ 	//
+ 	// It is possible to separately reference multiple distinct objects that may
+ 	// be collapsed by an implementation. For example, some implementations may
+@@ -150,10 +187,24 @@ type CommonRouteSpec struct {
+ 	// rules. Cross-namespace references are only valid if they are explicitly
+ 	// allowed by something in the namespace they are referring to. For example,
+ 	// Gateway has the AllowedRoutes field, and ReferenceGrant provides a
+-	// generic way to enable any other kind of cross-namespace reference.
++	// generic way to enable other kinds of cross-namespace reference.
++	//
++	// ParentRefs from a Route to a Service in the same namespace are "producer"
++	// routes, which apply default routing rules to inbound connections from
++	// any namespace to the Service.
++	//
++	// ParentRefs from a Route to a Service in a different namespace are
++	// "consumer" routes, and these routing rules are only applied to outbound
++	// connections originating from the same namespace as the Route, for which
++	// the intended destination of the connections are a Service targeted as a
++	// ParentRef of the Route.
+ 	//
+ 	// +optional
+ 	// +kubebuilder:validation:MaxItems=32
++	// <gateway:standard:validation:XValidation:message="sectionName must be specified when parentRefs includes 2 or more references to the same parent",rule="self.all(p1, self.all(p2, p1.group == p2.group && p1.kind == p2.kind && p1.name == p2.name && (((!has(p1.__namespace__) || p1.__namespace__ == '') && (!has(p2.__namespace__) || p2.__namespace__ == '')) || (has(p1.__namespace__) && has(p2.__namespace__) && p1.__namespace__ == p2.__namespace__ )) ? (((!has(p1.sectionName) || p1.sectionName == '') && (!has(p2.sectionName) || p2.sectionName == '')) || (has(p1.sectionName) && p1.sectionName != '' && has(p2.sectionName) && p2.sectionName != '')) : true))">
++	// <gateway:standard:validation:XValidation:message="sectionName must be unique when parentRefs includes 2 or more references to the same parent",rule="self.all(p1, self.exists_one(p2, p1.group == p2.group && p1.kind == p2.kind && p1.name == p2.name && (((!has(p1.__namespace__) || p1.__namespace__ == '') && (!has(p2.__namespace__) || p2.__namespace__ == '')) || (has(p1.__namespace__) && has(p2.__namespace__) && p1.__namespace__ == p2.__namespace__ )) && (((!has(p1.sectionName) || p1.sectionName == '') && (!has(p2.sectionName) || p2.sectionName == '')) || (has(p1.sectionName) && has(p2.sectionName) && p1.sectionName == p2.sectionName))))">
++	// <gateway:experimental:validation:XValidation:message="sectionName or port must be specified when parentRefs includes 2 or more references to the same parent",rule="self.all(p1, self.all(p2, p1.group == p2.group && p1.kind == p2.kind && p1.name == p2.name && ( ( (!has(p1.__namespace__) || p1.__namespace__ == '') && (!has(p2.__namespace__) || p2.__namespace__ == '') ) || ( has(p1.__namespace__) && has(p2.__namespace__) && p1.__namespace__ == p2.__namespace__ ) ) ? ( ( ( (!has(p1.sectionName) || p1.sectionName == '') && (!has(p2.sectionName) || p2.sectionName == '') && (!has(p1.port) || p1.port == 0) && (!has(p2.port) || p2.port == 0) ) || ( ( (has(p1.sectionName) && p1.sectionName != '') || (has(p1.port) && p1.port != 0) ) && ( (has(p2.sectionName) && p2.sectionName != '') || (has(p2.port) && p2.port != 0) ) ) ) ): true ))">
++	// <gateway:experimental:validation:XValidation:message="sectionName or port must be unique when parentRefs includes 2 or more references to the same parent",rule="self.all(p1, self.exists_one(p2, p1.group == p2.group && p1.kind == p2.kind && p1.name == p2.name && (((!has(p1.__namespace__) || p1.__namespace__ == '') && (!has(p2.__namespace__) || p2.__namespace__ == '')) || (has(p1.__namespace__) && has(p2.__namespace__) && p1.__namespace__ == p2.__namespace__ )) && (((!has(p1.sectionName) || p1.sectionName == '') && (!has(p2.sectionName) || p2.sectionName == '')) || ( has(p1.sectionName) && has(p2.sectionName) && p1.sectionName == p2.sectionName)) && (((!has(p1.port) || p1.port == 0) && (!has(p2.port) || p2.port == 0)) || (has(p1.port) && has(p2.port) && p1.port == p2.port))))">
+ 	ParentRefs []ParentReference `json:"parentRefs,omitempty"`
+ }
+ 
+@@ -252,6 +303,11 @@ const (
+ 	// reconciled the route.
+ 	RouteReasonPending RouteConditionReason = "Pending"
+ 
++	// This reason is used with the "Accepted" condition when there
++	// are incompatible filters present on a route rule (for example if
++	// the URLRewrite and RequestRedirect are both present on an HTTPRoute).
++	RouteReasonIncompatibleFilters RouteConditionReason = "IncompatibleFilters"
++
+ 	// This condition indicates whether the controller was able to resolve all
+ 	// the object references for the Route.
+ 	//
+@@ -554,6 +610,12 @@ type AddressType string
+ // +k8s:deepcopy-gen=false
+ type HeaderName string
+ 
++// Duration is a string value representing a duration in time. The format is as specified
++// in GEP-2257, a strict subset of the syntax parsed by Golang time.ParseDuration.
++//
++// +kubebuilder:validation:Pattern=`^([0-9]{1,5}(h|m|s|ms)){1,4}$`
++type Duration string
++
+ const (
+ 	// A textual representation of a numeric IP address. IPv4
+ 	// addresses must be in dotted-decimal form. IPv6 addresses
+diff --git a/vendor/sigs.k8s.io/gateway-api/apis/v1beta1/zz_generated.deepcopy.go b/vendor/sigs.k8s.io/gateway-api/apis/v1beta1/zz_generated.deepcopy.go
+index afda0d4dd..b4c502836 100644
+--- a/vendor/sigs.k8s.io/gateway-api/apis/v1beta1/zz_generated.deepcopy.go
++++ b/vendor/sigs.k8s.io/gateway-api/apis/v1beta1/zz_generated.deepcopy.go
+@@ -1,5 +1,4 @@
+ //go:build !ignore_autogenerated
+-// +build !ignore_autogenerated
+ 
+ /*
+ Copyright The Kubernetes Authors.
+@@ -350,7 +349,7 @@ func (in *GatewayStatus) DeepCopyInto(out *GatewayStatus) {
+ 	*out = *in
+ 	if in.Addresses != nil {
+ 		in, out := &in.Addresses, &out.Addresses
+-		*out = make([]GatewayAddress, len(*in))
++		*out = make([]GatewayStatusAddress, len(*in))
+ 		for i := range *in {
+ 			(*in)[i].DeepCopyInto(&(*out)[i])
+ 		}
+@@ -381,6 +380,26 @@ func (in *GatewayStatus) DeepCopy() *GatewayStatus {
+ 	return out
+ }
+ 
++// DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
++func (in *GatewayStatusAddress) DeepCopyInto(out *GatewayStatusAddress) {
++	*out = *in
++	if in.Type != nil {
++		in, out := &in.Type, &out.Type
++		*out = new(AddressType)
++		**out = **in
++	}
++}
++
++// DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new GatewayStatusAddress.
++func (in *GatewayStatusAddress) DeepCopy() *GatewayStatusAddress {
++	if in == nil {
++		return nil
++	}
++	out := new(GatewayStatusAddress)
++	in.DeepCopyInto(out)
++	return out
++}
++
+ // DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
+ func (in *GatewayTLSConfig) DeepCopyInto(out *GatewayTLSConfig) {
+ 	*out = *in
+@@ -796,6 +815,11 @@ func (in *HTTPRouteRule) DeepCopyInto(out *HTTPRouteRule) {
+ 			(*in)[i].DeepCopyInto(&(*out)[i])
+ 		}
+ 	}
++	if in.Timeouts != nil {
++		in, out := &in.Timeouts, &out.Timeouts
++		*out = new(HTTPRouteTimeouts)
++		(*in).DeepCopyInto(*out)
++	}
+ }
+ 
+ // DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new HTTPRouteRule.
+@@ -852,6 +876,31 @@ func (in *HTTPRouteStatus) DeepCopy() *HTTPRouteStatus {
+ 	return out
+ }
+ 
++// DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
++func (in *HTTPRouteTimeouts) DeepCopyInto(out *HTTPRouteTimeouts) {
++	*out = *in
++	if in.Request != nil {
++		in, out := &in.Request, &out.Request
++		*out = new(Duration)
++		**out = **in
++	}
++	if in.BackendRequest != nil {
++		in, out := &in.BackendRequest, &out.BackendRequest
++		*out = new(Duration)
++		**out = **in
++	}
++}
++
++// DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new HTTPRouteTimeouts.
++func (in *HTTPRouteTimeouts) DeepCopy() *HTTPRouteTimeouts {
++	if in == nil {
++		return nil
++	}
++	out := new(HTTPRouteTimeouts)
++	in.DeepCopyInto(out)
++	return out
++}
++
+ // DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
+ func (in *HTTPURLRewriteFilter) DeepCopyInto(out *HTTPURLRewriteFilter) {
+ 	*out = *in
+diff --git a/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1alpha2/fake/fake_gateway.go b/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1alpha2/fake/fake_gateway.go
+index a6d059483..2313be1bf 100644
+--- a/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1alpha2/fake/fake_gateway.go
++++ b/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1alpha2/fake/fake_gateway.go
+@@ -23,7 +23,6 @@ import (
+ 
+ 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	labels "k8s.io/apimachinery/pkg/labels"
+-	schema "k8s.io/apimachinery/pkg/runtime/schema"
+ 	types "k8s.io/apimachinery/pkg/types"
+ 	watch "k8s.io/apimachinery/pkg/watch"
+ 	testing "k8s.io/client-go/testing"
+@@ -36,9 +35,9 @@ type FakeGateways struct {
+ 	ns   string
+ }
+ 
+-var gatewaysResource = schema.GroupVersionResource{Group: "gateway.networking.k8s.io", Version: "v1alpha2", Resource: "gateways"}
++var gatewaysResource = v1alpha2.SchemeGroupVersion.WithResource("gateways")
+ 
+-var gatewaysKind = schema.GroupVersionKind{Group: "gateway.networking.k8s.io", Version: "v1alpha2", Kind: "Gateway"}
++var gatewaysKind = v1alpha2.SchemeGroupVersion.WithKind("Gateway")
+ 
+ // Get takes name of the gateway, and returns the corresponding gateway object, and an error if there is any.
+ func (c *FakeGateways) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha2.Gateway, err error) {
+diff --git a/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1alpha2/fake/fake_gatewayclass.go b/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1alpha2/fake/fake_gatewayclass.go
+index 25dcc9851..606fe6d78 100644
+--- a/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1alpha2/fake/fake_gatewayclass.go
++++ b/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1alpha2/fake/fake_gatewayclass.go
+@@ -23,7 +23,6 @@ import (
+ 
+ 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	labels "k8s.io/apimachinery/pkg/labels"
+-	schema "k8s.io/apimachinery/pkg/runtime/schema"
+ 	types "k8s.io/apimachinery/pkg/types"
+ 	watch "k8s.io/apimachinery/pkg/watch"
+ 	testing "k8s.io/client-go/testing"
+@@ -35,9 +34,9 @@ type FakeGatewayClasses struct {
+ 	Fake *FakeGatewayV1alpha2
+ }
+ 
+-var gatewayclassesResource = schema.GroupVersionResource{Group: "gateway.networking.k8s.io", Version: "v1alpha2", Resource: "gatewayclasses"}
++var gatewayclassesResource = v1alpha2.SchemeGroupVersion.WithResource("gatewayclasses")
+ 
+-var gatewayclassesKind = schema.GroupVersionKind{Group: "gateway.networking.k8s.io", Version: "v1alpha2", Kind: "GatewayClass"}
++var gatewayclassesKind = v1alpha2.SchemeGroupVersion.WithKind("GatewayClass")
+ 
+ // Get takes name of the gatewayClass, and returns the corresponding gatewayClass object, and an error if there is any.
+ func (c *FakeGatewayClasses) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha2.GatewayClass, err error) {
+diff --git a/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1alpha2/fake/fake_grpcroute.go b/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1alpha2/fake/fake_grpcroute.go
+index 33650a5c5..631106727 100644
+--- a/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1alpha2/fake/fake_grpcroute.go
++++ b/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1alpha2/fake/fake_grpcroute.go
+@@ -23,7 +23,6 @@ import (
+ 
+ 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	labels "k8s.io/apimachinery/pkg/labels"
+-	schema "k8s.io/apimachinery/pkg/runtime/schema"
+ 	types "k8s.io/apimachinery/pkg/types"
+ 	watch "k8s.io/apimachinery/pkg/watch"
+ 	testing "k8s.io/client-go/testing"
+@@ -36,9 +35,9 @@ type FakeGRPCRoutes struct {
+ 	ns   string
+ }
+ 
+-var grpcroutesResource = schema.GroupVersionResource{Group: "gateway.networking.k8s.io", Version: "v1alpha2", Resource: "grpcroutes"}
++var grpcroutesResource = v1alpha2.SchemeGroupVersion.WithResource("grpcroutes")
+ 
+-var grpcroutesKind = schema.GroupVersionKind{Group: "gateway.networking.k8s.io", Version: "v1alpha2", Kind: "GRPCRoute"}
++var grpcroutesKind = v1alpha2.SchemeGroupVersion.WithKind("GRPCRoute")
+ 
+ // Get takes name of the gRPCRoute, and returns the corresponding gRPCRoute object, and an error if there is any.
+ func (c *FakeGRPCRoutes) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha2.GRPCRoute, err error) {
+diff --git a/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1alpha2/fake/fake_httproute.go b/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1alpha2/fake/fake_httproute.go
+index 7e73f537c..cf3bf1b4a 100644
+--- a/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1alpha2/fake/fake_httproute.go
++++ b/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1alpha2/fake/fake_httproute.go
+@@ -23,7 +23,6 @@ import (
+ 
+ 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	labels "k8s.io/apimachinery/pkg/labels"
+-	schema "k8s.io/apimachinery/pkg/runtime/schema"
+ 	types "k8s.io/apimachinery/pkg/types"
+ 	watch "k8s.io/apimachinery/pkg/watch"
+ 	testing "k8s.io/client-go/testing"
+@@ -36,9 +35,9 @@ type FakeHTTPRoutes struct {
+ 	ns   string
+ }
+ 
+-var httproutesResource = schema.GroupVersionResource{Group: "gateway.networking.k8s.io", Version: "v1alpha2", Resource: "httproutes"}
++var httproutesResource = v1alpha2.SchemeGroupVersion.WithResource("httproutes")
+ 
+-var httproutesKind = schema.GroupVersionKind{Group: "gateway.networking.k8s.io", Version: "v1alpha2", Kind: "HTTPRoute"}
++var httproutesKind = v1alpha2.SchemeGroupVersion.WithKind("HTTPRoute")
+ 
+ // Get takes name of the hTTPRoute, and returns the corresponding hTTPRoute object, and an error if there is any.
+ func (c *FakeHTTPRoutes) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha2.HTTPRoute, err error) {
+diff --git a/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1alpha2/fake/fake_referencegrant.go b/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1alpha2/fake/fake_referencegrant.go
+index 86d6686ca..1089d6e1c 100644
+--- a/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1alpha2/fake/fake_referencegrant.go
++++ b/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1alpha2/fake/fake_referencegrant.go
+@@ -23,7 +23,6 @@ import (
+ 
+ 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	labels "k8s.io/apimachinery/pkg/labels"
+-	schema "k8s.io/apimachinery/pkg/runtime/schema"
+ 	types "k8s.io/apimachinery/pkg/types"
+ 	watch "k8s.io/apimachinery/pkg/watch"
+ 	testing "k8s.io/client-go/testing"
+@@ -36,9 +35,9 @@ type FakeReferenceGrants struct {
+ 	ns   string
+ }
+ 
+-var referencegrantsResource = schema.GroupVersionResource{Group: "gateway.networking.k8s.io", Version: "v1alpha2", Resource: "referencegrants"}
++var referencegrantsResource = v1alpha2.SchemeGroupVersion.WithResource("referencegrants")
+ 
+-var referencegrantsKind = schema.GroupVersionKind{Group: "gateway.networking.k8s.io", Version: "v1alpha2", Kind: "ReferenceGrant"}
++var referencegrantsKind = v1alpha2.SchemeGroupVersion.WithKind("ReferenceGrant")
+ 
+ // Get takes name of the referenceGrant, and returns the corresponding referenceGrant object, and an error if there is any.
+ func (c *FakeReferenceGrants) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha2.ReferenceGrant, err error) {
+diff --git a/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1alpha2/fake/fake_tcproute.go b/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1alpha2/fake/fake_tcproute.go
+index 6b5c3dc6a..c6ecb3818 100644
+--- a/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1alpha2/fake/fake_tcproute.go
++++ b/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1alpha2/fake/fake_tcproute.go
+@@ -23,7 +23,6 @@ import (
+ 
+ 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	labels "k8s.io/apimachinery/pkg/labels"
+-	schema "k8s.io/apimachinery/pkg/runtime/schema"
+ 	types "k8s.io/apimachinery/pkg/types"
+ 	watch "k8s.io/apimachinery/pkg/watch"
+ 	testing "k8s.io/client-go/testing"
+@@ -36,9 +35,9 @@ type FakeTCPRoutes struct {
+ 	ns   string
+ }
+ 
+-var tcproutesResource = schema.GroupVersionResource{Group: "gateway.networking.k8s.io", Version: "v1alpha2", Resource: "tcproutes"}
++var tcproutesResource = v1alpha2.SchemeGroupVersion.WithResource("tcproutes")
+ 
+-var tcproutesKind = schema.GroupVersionKind{Group: "gateway.networking.k8s.io", Version: "v1alpha2", Kind: "TCPRoute"}
++var tcproutesKind = v1alpha2.SchemeGroupVersion.WithKind("TCPRoute")
+ 
+ // Get takes name of the tCPRoute, and returns the corresponding tCPRoute object, and an error if there is any.
+ func (c *FakeTCPRoutes) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha2.TCPRoute, err error) {
+diff --git a/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1alpha2/fake/fake_tlsroute.go b/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1alpha2/fake/fake_tlsroute.go
+index 6d17c60bd..f9c0115d5 100644
+--- a/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1alpha2/fake/fake_tlsroute.go
++++ b/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1alpha2/fake/fake_tlsroute.go
+@@ -23,7 +23,6 @@ import (
+ 
+ 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	labels "k8s.io/apimachinery/pkg/labels"
+-	schema "k8s.io/apimachinery/pkg/runtime/schema"
+ 	types "k8s.io/apimachinery/pkg/types"
+ 	watch "k8s.io/apimachinery/pkg/watch"
+ 	testing "k8s.io/client-go/testing"
+@@ -36,9 +35,9 @@ type FakeTLSRoutes struct {
+ 	ns   string
+ }
+ 
+-var tlsroutesResource = schema.GroupVersionResource{Group: "gateway.networking.k8s.io", Version: "v1alpha2", Resource: "tlsroutes"}
++var tlsroutesResource = v1alpha2.SchemeGroupVersion.WithResource("tlsroutes")
+ 
+-var tlsroutesKind = schema.GroupVersionKind{Group: "gateway.networking.k8s.io", Version: "v1alpha2", Kind: "TLSRoute"}
++var tlsroutesKind = v1alpha2.SchemeGroupVersion.WithKind("TLSRoute")
+ 
+ // Get takes name of the tLSRoute, and returns the corresponding tLSRoute object, and an error if there is any.
+ func (c *FakeTLSRoutes) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha2.TLSRoute, err error) {
+diff --git a/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1alpha2/fake/fake_udproute.go b/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1alpha2/fake/fake_udproute.go
+index 1441f6410..88a139e78 100644
+--- a/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1alpha2/fake/fake_udproute.go
++++ b/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1alpha2/fake/fake_udproute.go
+@@ -23,7 +23,6 @@ import (
+ 
+ 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	labels "k8s.io/apimachinery/pkg/labels"
+-	schema "k8s.io/apimachinery/pkg/runtime/schema"
+ 	types "k8s.io/apimachinery/pkg/types"
+ 	watch "k8s.io/apimachinery/pkg/watch"
+ 	testing "k8s.io/client-go/testing"
+@@ -36,9 +35,9 @@ type FakeUDPRoutes struct {
+ 	ns   string
+ }
+ 
+-var udproutesResource = schema.GroupVersionResource{Group: "gateway.networking.k8s.io", Version: "v1alpha2", Resource: "udproutes"}
++var udproutesResource = v1alpha2.SchemeGroupVersion.WithResource("udproutes")
+ 
+-var udproutesKind = schema.GroupVersionKind{Group: "gateway.networking.k8s.io", Version: "v1alpha2", Kind: "UDPRoute"}
++var udproutesKind = v1alpha2.SchemeGroupVersion.WithKind("UDPRoute")
+ 
+ // Get takes name of the uDPRoute, and returns the corresponding uDPRoute object, and an error if there is any.
+ func (c *FakeUDPRoutes) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha2.UDPRoute, err error) {
+diff --git a/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1beta1/fake/fake_gateway.go b/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1beta1/fake/fake_gateway.go
+index f01ba0331..722587f68 100644
+--- a/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1beta1/fake/fake_gateway.go
++++ b/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1beta1/fake/fake_gateway.go
+@@ -23,7 +23,6 @@ import (
+ 
+ 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	labels "k8s.io/apimachinery/pkg/labels"
+-	schema "k8s.io/apimachinery/pkg/runtime/schema"
+ 	types "k8s.io/apimachinery/pkg/types"
+ 	watch "k8s.io/apimachinery/pkg/watch"
+ 	testing "k8s.io/client-go/testing"
+@@ -36,9 +35,9 @@ type FakeGateways struct {
+ 	ns   string
+ }
+ 
+-var gatewaysResource = schema.GroupVersionResource{Group: "gateway.networking.k8s.io", Version: "v1beta1", Resource: "gateways"}
++var gatewaysResource = v1beta1.SchemeGroupVersion.WithResource("gateways")
+ 
+-var gatewaysKind = schema.GroupVersionKind{Group: "gateway.networking.k8s.io", Version: "v1beta1", Kind: "Gateway"}
++var gatewaysKind = v1beta1.SchemeGroupVersion.WithKind("Gateway")
+ 
+ // Get takes name of the gateway, and returns the corresponding gateway object, and an error if there is any.
+ func (c *FakeGateways) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1beta1.Gateway, err error) {
+diff --git a/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1beta1/fake/fake_gatewayclass.go b/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1beta1/fake/fake_gatewayclass.go
+index 183240615..7215742cb 100644
+--- a/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1beta1/fake/fake_gatewayclass.go
++++ b/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1beta1/fake/fake_gatewayclass.go
+@@ -23,7 +23,6 @@ import (
+ 
+ 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	labels "k8s.io/apimachinery/pkg/labels"
+-	schema "k8s.io/apimachinery/pkg/runtime/schema"
+ 	types "k8s.io/apimachinery/pkg/types"
+ 	watch "k8s.io/apimachinery/pkg/watch"
+ 	testing "k8s.io/client-go/testing"
+@@ -35,9 +34,9 @@ type FakeGatewayClasses struct {
+ 	Fake *FakeGatewayV1beta1
+ }
+ 
+-var gatewayclassesResource = schema.GroupVersionResource{Group: "gateway.networking.k8s.io", Version: "v1beta1", Resource: "gatewayclasses"}
++var gatewayclassesResource = v1beta1.SchemeGroupVersion.WithResource("gatewayclasses")
+ 
+-var gatewayclassesKind = schema.GroupVersionKind{Group: "gateway.networking.k8s.io", Version: "v1beta1", Kind: "GatewayClass"}
++var gatewayclassesKind = v1beta1.SchemeGroupVersion.WithKind("GatewayClass")
+ 
+ // Get takes name of the gatewayClass, and returns the corresponding gatewayClass object, and an error if there is any.
+ func (c *FakeGatewayClasses) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1beta1.GatewayClass, err error) {
+diff --git a/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1beta1/fake/fake_httproute.go b/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1beta1/fake/fake_httproute.go
+index 2e022aa04..93f4edf36 100644
+--- a/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1beta1/fake/fake_httproute.go
++++ b/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1beta1/fake/fake_httproute.go
+@@ -23,7 +23,6 @@ import (
+ 
+ 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	labels "k8s.io/apimachinery/pkg/labels"
+-	schema "k8s.io/apimachinery/pkg/runtime/schema"
+ 	types "k8s.io/apimachinery/pkg/types"
+ 	watch "k8s.io/apimachinery/pkg/watch"
+ 	testing "k8s.io/client-go/testing"
+@@ -36,9 +35,9 @@ type FakeHTTPRoutes struct {
+ 	ns   string
+ }
+ 
+-var httproutesResource = schema.GroupVersionResource{Group: "gateway.networking.k8s.io", Version: "v1beta1", Resource: "httproutes"}
++var httproutesResource = v1beta1.SchemeGroupVersion.WithResource("httproutes")
+ 
+-var httproutesKind = schema.GroupVersionKind{Group: "gateway.networking.k8s.io", Version: "v1beta1", Kind: "HTTPRoute"}
++var httproutesKind = v1beta1.SchemeGroupVersion.WithKind("HTTPRoute")
+ 
+ // Get takes name of the hTTPRoute, and returns the corresponding hTTPRoute object, and an error if there is any.
+ func (c *FakeHTTPRoutes) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1beta1.HTTPRoute, err error) {
+diff --git a/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1beta1/fake/fake_referencegrant.go b/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1beta1/fake/fake_referencegrant.go
+index f63fc2512..c103c1c10 100644
+--- a/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1beta1/fake/fake_referencegrant.go
++++ b/vendor/sigs.k8s.io/gateway-api/pkg/client/clientset/versioned/typed/apis/v1beta1/fake/fake_referencegrant.go
+@@ -23,7 +23,6 @@ import (
+ 
+ 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	labels "k8s.io/apimachinery/pkg/labels"
+-	schema "k8s.io/apimachinery/pkg/runtime/schema"
+ 	types "k8s.io/apimachinery/pkg/types"
+ 	watch "k8s.io/apimachinery/pkg/watch"
+ 	testing "k8s.io/client-go/testing"
+@@ -36,9 +35,9 @@ type FakeReferenceGrants struct {
+ 	ns   string
+ }
+ 
+-var referencegrantsResource = schema.GroupVersionResource{Group: "gateway.networking.k8s.io", Version: "v1beta1", Resource: "referencegrants"}
++var referencegrantsResource = v1beta1.SchemeGroupVersion.WithResource("referencegrants")
+ 
+-var referencegrantsKind = schema.GroupVersionKind{Group: "gateway.networking.k8s.io", Version: "v1beta1", Kind: "ReferenceGrant"}
++var referencegrantsKind = v1beta1.SchemeGroupVersion.WithKind("ReferenceGrant")
+ 
+ // Get takes name of the referenceGrant, and returns the corresponding referenceGrant object, and an error if there is any.
+ func (c *FakeReferenceGrants) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1beta1.ReferenceGrant, err error) {
+diff --git a/vendor/sigs.k8s.io/gateway-api/pkg/client/informers/externalversions/factory.go b/vendor/sigs.k8s.io/gateway-api/pkg/client/informers/externalversions/factory.go
+index 392d09779..f4479aa10 100644
+--- a/vendor/sigs.k8s.io/gateway-api/pkg/client/informers/externalversions/factory.go
++++ b/vendor/sigs.k8s.io/gateway-api/pkg/client/informers/externalversions/factory.go
+@@ -166,7 +166,7 @@ func (f *sharedInformerFactory) WaitForCacheSync(stopCh <-chan struct{}) map[ref
+ 	return res
+ }
+ 
+-// InternalInformerFor returns the SharedIndexInformer for obj using an internal
++// InformerFor returns the SharedIndexInformer for obj using an internal
+ // client.
+ func (f *sharedInformerFactory) InformerFor(obj runtime.Object, newFunc internalinterfaces.NewInformerFunc) cache.SharedIndexInformer {
+ 	f.lock.Lock()
+@@ -239,7 +239,7 @@ type SharedInformerFactory interface {
+ 	// ForResource gives generic access to a shared informer of the matching type.
+ 	ForResource(resource schema.GroupVersionResource) (GenericInformer, error)
+ 
+-	// InternalInformerFor returns the SharedIndexInformer for obj using an internal
++	// InformerFor returns the SharedIndexInformer for obj using an internal
+ 	// client.
+ 	InformerFor(obj runtime.Object, newFunc internalinterfaces.NewInformerFunc) cache.SharedIndexInformer
+ 
+-- 
+2.39.1
+

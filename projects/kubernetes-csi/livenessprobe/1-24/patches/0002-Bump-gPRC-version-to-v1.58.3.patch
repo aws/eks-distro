@@ -1,0 +1,1746 @@
+From 0fe1b11ff2d367c5d7976b42397461f5d655a49d Mon Sep 17 00:00:00 2001
+From: Sajia Zafreen <sajiazafreen@u.boisestate.edu>
+Date: Tue, 7 Nov 2023 15:10:23 -0800
+Subject: [PATCH] Bump gPRC version to v1.58.3
+
+Signed-off-by: Sajia Zafreen <sajiazafreen@u.boisestate.edu>
+---
+ go.mod                                        |   9 +-
+ go.sum                                        |  23 +++-
+ vendor/golang.org/x/net/http2/transport.go    |  30 +++-
+ vendor/golang.org/x/sys/unix/mkerrors.sh      |   2 +-
+ vendor/golang.org/x/sys/unix/mmap_nomremap.go |  14 ++
+ vendor/golang.org/x/sys/unix/mremap.go        |  21 ++-
+ vendor/golang.org/x/sys/unix/syscall_aix.go   |  15 --
+ vendor/golang.org/x/sys/unix/syscall_bsd.go   |  14 --
+ .../golang.org/x/sys/unix/syscall_darwin.go   |  50 ++++---
+ vendor/golang.org/x/sys/unix/syscall_linux.go | 128 +-----------------
+ .../x/sys/unix/syscall_linux_amd64.go         |   2 +-
+ .../x/sys/unix/syscall_linux_arm64.go         |   2 +-
+ .../x/sys/unix/syscall_linux_loong64.go       |   2 +-
+ .../x/sys/unix/syscall_linux_mips64x.go       |   2 +-
+ .../x/sys/unix/syscall_linux_riscv64.go       |  13 +-
+ vendor/golang.org/x/sys/unix/syscall_unix.go  |   8 ++
+ .../x/sys/unix/syscall_zos_s390x.go           |  14 --
+ .../x/sys/unix/zerrors_linux_386.go           |   9 ++
+ .../x/sys/unix/zerrors_linux_amd64.go         |   9 ++
+ .../x/sys/unix/zerrors_linux_arm.go           |   9 ++
+ .../x/sys/unix/zerrors_linux_arm64.go         |   9 ++
+ .../x/sys/unix/zerrors_linux_loong64.go       |   9 ++
+ .../x/sys/unix/zerrors_linux_mips.go          |   9 ++
+ .../x/sys/unix/zerrors_linux_mips64.go        |   9 ++
+ .../x/sys/unix/zerrors_linux_mips64le.go      |   9 ++
+ .../x/sys/unix/zerrors_linux_mipsle.go        |   9 ++
+ .../x/sys/unix/zerrors_linux_ppc.go           |   9 ++
+ .../x/sys/unix/zerrors_linux_ppc64.go         |   9 ++
+ .../x/sys/unix/zerrors_linux_ppc64le.go       |   9 ++
+ .../x/sys/unix/zerrors_linux_riscv64.go       |   9 ++
+ .../x/sys/unix/zerrors_linux_s390x.go         |   9 ++
+ .../x/sys/unix/zerrors_linux_sparc64.go       |   9 ++
+ .../golang.org/x/sys/unix/zsyscall_linux.go   |   2 +-
+ .../x/sys/unix/zsyscall_linux_riscv64.go      |  16 +++
+ .../x/sys/unix/zsyscall_netbsd_386.go         |  11 ++
+ .../x/sys/unix/zsyscall_netbsd_amd64.go       |  11 ++
+ .../x/sys/unix/zsyscall_netbsd_arm.go         |  11 ++
+ .../x/sys/unix/zsyscall_netbsd_arm64.go       |  11 ++
+ .../x/sys/unix/zsysnum_linux_riscv64.go       |   2 +
+ vendor/golang.org/x/sys/unix/ztypes_linux.go  |   5 +
+ .../x/sys/windows/syscall_windows.go          |   4 +-
+ vendor/google.golang.org/grpc/call.go         |   5 -
+ vendor/google.golang.org/grpc/clientconn.go   |  38 ++++--
+ .../grpc/internal/transport/http2_server.go   |  11 +-
+ vendor/google.golang.org/grpc/server.go       |  71 +++++++---
+ vendor/google.golang.org/grpc/stream.go       |  15 +-
+ vendor/google.golang.org/grpc/version.go      |   2 +-
+ vendor/modules.txt                            |  41 +-----
+ 48 files changed, 434 insertions(+), 306 deletions(-)
+ create mode 100644 vendor/golang.org/x/sys/unix/mmap_nomremap.go
+
+diff --git a/go.mod b/go.mod
+index 1d87210..d82a40d 100644
+--- a/go.mod
++++ b/go.mod
+@@ -7,7 +7,7 @@ require (
+ 	github.com/golang/mock v1.6.0
+ 	github.com/kubernetes-csi/csi-lib-utils v0.14.0
+ 	github.com/kubernetes-csi/csi-test/v5 v5.0.0
+-	google.golang.org/grpc v1.58.0
++	google.golang.org/grpc v1.58.3
+ 	k8s.io/klog/v2 v2.100.1
+ )
+ 
+@@ -23,13 +23,6 @@ require (
+ 	github.com/prometheus/common v0.44.0 // indirect
+ 	github.com/prometheus/procfs v0.10.1 // indirect
+ 	github.com/spf13/pflag v1.0.5 // indirect
+-	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.41.0 // indirect
+-	go.opentelemetry.io/otel v1.15.0 // indirect
+-	go.opentelemetry.io/otel/metric v0.38.0 // indirect
+-	go.opentelemetry.io/otel/trace v1.15.0 // indirect
+-	go.uber.org/atomic v1.10.0 // indirect
+-	go.uber.org/multierr v1.11.0 // indirect
+-	go.uber.org/zap v1.19.0 // indirect
+ 	golang.org/x/net v0.17.0 // indirect
+ 	golang.org/x/sys v0.13.0 // indirect
+ 	golang.org/x/text v0.13.0 // indirect
+diff --git a/go.sum b/go.sum
+index d4a9711..a8c75cf 100644
+--- a/go.sum
++++ b/go.sum
+@@ -137,9 +137,17 @@ golang.org/x/net v0.0.0-20200822124328-c89045814202/go.mod h1:/O7V0waA8r7cgGh81R
+ golang.org/x/net v0.0.0-20201021035429-f5854403a974/go.mod h1:sp8m0HH+o8qH0wwXwYZr8TS3Oi6o0r6Gce1SSxlDquU=
+ golang.org/x/net v0.0.0-20210226172049-e18ecbb05110/go.mod h1:m0MpNAwzfU5UDzcl9v0D8zg8gWTRqZa9RBIspLL5mdg=
+ golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4/go.mod h1:p54w0d4576C0XHj96bSt6lcn1PtDYWL6XObtHCRCNQM=
++golang.org/x/net v0.0.0-20210428140749-89ef3d95e781/go.mod h1:OJAsFXCWl8Ukc7SiCT/9KSuxbyM7479/AVlXFRxuMCk=
++golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
++golang.org/x/net v0.0.0-20220225172249-27dd8689420f/go.mod h1:CfG3xpIq0wQ8r1q4Su4UZFWDARRcnwPjda9FqA0JpMk=
++golang.org/x/net v0.0.0-20220425223048-2871e0cb64e4/go.mod h1:CfG3xpIq0wQ8r1q4Su4UZFWDARRcnwPjda9FqA0JpMk=
++golang.org/x/net v0.0.0-20220802222814-0bcc04d9c69b/go.mod h1:YDH+HFinaLZZlnHAfSS6ZXJJ9M9t4Dl22yv3iI2vPwk=
+ golang.org/x/net v0.17.0 h1:pVaXccu2ozPjCXewfr1S7xza/zcXTity9cCdXQYSjIM=
+ golang.org/x/net v0.17.0/go.mod h1:NxSsAGuq816PNPmqtQdLE42eU2Fs7NoRIZrHJAlaCOE=
+-golang.org/x/oauth2 v0.10.0 h1:zHCpF2Khkwy4mMB4bv0U37YtJdTGW8jI0glAApi0Kh8=
++golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
++golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
++golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
++golang.org/x/sync v0.0.0-20181108010431-42b317875d0f/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20181221193216-37e7f081c4d4/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+@@ -160,12 +168,21 @@ golang.org/x/sys v0.0.0-20210119212857-b64e53b001e4/go.mod h1:h1NjWce9XRLGQEsW7w
+ golang.org/x/sys v0.0.0-20210330210617-4fbd30eecc44/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+ golang.org/x/sys v0.0.0-20210423082822-04245dca01da/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+ golang.org/x/sys v0.0.0-20210510120138-977fb7262007/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
++golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
++golang.org/x/sys v0.0.0-20211019181941-9d821ace8654/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
++golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
++golang.org/x/sys v0.0.0-20220319134239-a9b59b0215f8/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
++golang.org/x/sys v0.0.0-20220422013727-9388b58f7150/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
++golang.org/x/sys v0.0.0-20220728004956-3c1f35247d10/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
++golang.org/x/sys v0.0.0-20220731174439-a90be440212d/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.13.0 h1:Af8nKPmuFypiUBjVoU9V20FiaFXOcuZI21p0ycVYYGE=
+ golang.org/x/sys v0.13.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
+ golang.org/x/term v0.0.0-20210927222741-03fcf44c2211/go.mod h1:jbD1KX2456YbFQfuXm/mYQcufACuNUgVhRMnK/tPxf8=
+ golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
+ golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
++golang.org/x/text v0.3.6/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
++golang.org/x/text v0.3.7/go.mod h1:u+2+/6zg+i71rQMx5EYifcz6MCKuco9NR6JIITiCfzQ=
+ golang.org/x/text v0.13.0 h1:ablQoSUd0tRdKxZewP80B+BaqeKJuVhuRxj/dkrun3k=
+ golang.org/x/text v0.13.0/go.mod h1:TvPlkZtksWOMsz7fbANvkp4WM8x/WCo/om8BMLbz+aE=
+ golang.org/x/tools v0.0.0-20180917221912-90fa682c2a6e/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
+@@ -198,8 +215,8 @@ google.golang.org/grpc v1.27.0/go.mod h1:qbnxyOmOxrQa7FizSgH+ReBfzJrCY1pSN7KXBS8
+ google.golang.org/grpc v1.33.1/go.mod h1:fr5YgcSWrqhRRxogOsw7RzIpsmvOZ6IcH4kBYTpR3n0=
+ google.golang.org/grpc v1.36.0/go.mod h1:qjiiYl8FncCW8feJPdyg3v6XW24KsRHe+dy9BAGRRjU=
+ google.golang.org/grpc v1.48.0/go.mod h1:vN9eftEi1UMyUsIF80+uQXhHjbXYbm0uXoFCACuMGWk=
+-google.golang.org/grpc v1.58.0 h1:32JY8YpPMSR45K+c3o6b8VL73V+rR8k+DeMIr4vRH8o=
+-google.golang.org/grpc v1.58.0/go.mod h1:tgX3ZQDlNJGU96V6yHh1T/JeoBQ2TXdr43YbYSsCJk0=
++google.golang.org/grpc v1.58.3 h1:BjnpXut1btbtgN/6sp+brB2Kbm2LjNXnidYujAVbSoQ=
++google.golang.org/grpc v1.58.3/go.mod h1:tgX3ZQDlNJGU96V6yHh1T/JeoBQ2TXdr43YbYSsCJk0=
+ google.golang.org/protobuf v0.0.0-20200109180630-ec00e32a8dfd/go.mod h1:DFci5gLYBciE7Vtevhsrf46CRTquxDuWsQurQQe4oz8=
+ google.golang.org/protobuf v0.0.0-20200221191635-4d8936d0db64/go.mod h1:kwYJMbMJ01Woi6D6+Kah6886xMZcty6N08ah7+eCXa0=
+ google.golang.org/protobuf v0.0.0-20200228230310-ab0ca4ff8a60/go.mod h1:cfTl7dwQJ+fmap5saPgwCLgHXTUD7jkjRqWcaiX5VyM=
+diff --git a/vendor/golang.org/x/net/http2/transport.go b/vendor/golang.org/x/net/http2/transport.go
+index 7497f56..4515b22 100644
+--- a/vendor/golang.org/x/net/http2/transport.go
++++ b/vendor/golang.org/x/net/http2/transport.go
+@@ -19,6 +19,7 @@ import (
+ 	"io/fs"
+ 	"log"
+ 	"math"
++	"math/bits"
+ 	mathrand "math/rand"
+ 	"net"
+ 	"net/http"
+@@ -1679,7 +1680,27 @@ func (cs *clientStream) frameScratchBufferLen(maxFrameSize int) int {
+ 	return int(n) // doesn't truncate; max is 512K
+ }
+ 
+-var bufPool sync.Pool // of *[]byte
++// Seven bufPools manage different frame sizes. This helps to avoid scenarios where long-running
++// streaming requests using small frame sizes occupy large buffers initially allocated for prior
++// requests needing big buffers. The size ranges are as follows:
++// {0 KB, 16 KB], {16 KB, 32 KB], {32 KB, 64 KB], {64 KB, 128 KB], {128 KB, 256 KB],
++// {256 KB, 512 KB], {512 KB, infinity}
++// In practice, the maximum scratch buffer size should not exceed 512 KB due to
++// frameScratchBufferLen(maxFrameSize), thus the "infinity pool" should never be used.
++// It exists mainly as a safety measure, for potential future increases in max buffer size.
++var bufPools [7]sync.Pool // of *[]byte
++func bufPoolIndex(size int) int {
++	if size <= 16384 {
++		return 0
++	}
++	size -= 1
++	bits := bits.Len(uint(size))
++	index := bits - 14
++	if index >= len(bufPools) {
++		return len(bufPools) - 1
++	}
++	return index
++}
+ 
+ func (cs *clientStream) writeRequestBody(req *http.Request) (err error) {
+ 	cc := cs.cc
+@@ -1697,12 +1718,13 @@ func (cs *clientStream) writeRequestBody(req *http.Request) (err error) {
+ 	// Scratch buffer for reading into & writing from.
+ 	scratchLen := cs.frameScratchBufferLen(maxFrameSize)
+ 	var buf []byte
+-	if bp, ok := bufPool.Get().(*[]byte); ok && len(*bp) >= scratchLen {
+-		defer bufPool.Put(bp)
++	index := bufPoolIndex(scratchLen)
++	if bp, ok := bufPools[index].Get().(*[]byte); ok && len(*bp) >= scratchLen {
++		defer bufPools[index].Put(bp)
+ 		buf = *bp
+ 	} else {
+ 		buf = make([]byte, scratchLen)
+-		defer bufPool.Put(&buf)
++		defer bufPools[index].Put(&buf)
+ 	}
+ 
+ 	var sawEOF bool
+diff --git a/vendor/golang.org/x/sys/unix/mkerrors.sh b/vendor/golang.org/x/sys/unix/mkerrors.sh
+index 831f9e3..47fa6a7 100644
+--- a/vendor/golang.org/x/sys/unix/mkerrors.sh
++++ b/vendor/golang.org/x/sys/unix/mkerrors.sh
+@@ -625,7 +625,7 @@ ccflags="$@"
+ 		$2 ~ /^MEM/ ||
+ 		$2 ~ /^WG/ ||
+ 		$2 ~ /^FIB_RULE_/ ||
+-		$2 ~ /^BLK[A-Z]*(GET$|SET$|BUF$|PART$|SIZE)/ {printf("\t%s = C.%s\n", $2, $2)}
++		$2 ~ /^BLK[A-Z]*(GET$|SET$|BUF$|PART$|SIZE|IOMIN$|IOOPT$|ALIGNOFF$|DISCARD|ROTATIONAL$|ZEROOUT$|GETDISKSEQ$)/ {printf("\t%s = C.%s\n", $2, $2)}
+ 		$2 ~ /^__WCOREFLAG$/ {next}
+ 		$2 ~ /^__W[A-Z0-9]+$/ {printf("\t%s = C.%s\n", substr($2,3), $2)}
+ 
+diff --git a/vendor/golang.org/x/sys/unix/mmap_nomremap.go b/vendor/golang.org/x/sys/unix/mmap_nomremap.go
+new file mode 100644
+index 0000000..ca05136
+--- /dev/null
++++ b/vendor/golang.org/x/sys/unix/mmap_nomremap.go
+@@ -0,0 +1,14 @@
++// Copyright 2023 The Go Authors. All rights reserved.
++// Use of this source code is governed by a BSD-style
++// license that can be found in the LICENSE file.
++
++//go:build aix || darwin || dragonfly || freebsd || openbsd || solaris
++// +build aix darwin dragonfly freebsd openbsd solaris
++
++package unix
++
++var mapper = &mmapper{
++	active: make(map[*byte][]byte),
++	mmap:   mmap,
++	munmap: munmap,
++}
+diff --git a/vendor/golang.org/x/sys/unix/mremap.go b/vendor/golang.org/x/sys/unix/mremap.go
+index 86213c0..fa93d0a 100644
+--- a/vendor/golang.org/x/sys/unix/mremap.go
++++ b/vendor/golang.org/x/sys/unix/mremap.go
+@@ -2,8 +2,8 @@
+ // Use of this source code is governed by a BSD-style
+ // license that can be found in the LICENSE file.
+ 
+-//go:build linux
+-// +build linux
++//go:build linux || netbsd
++// +build linux netbsd
+ 
+ package unix
+ 
+@@ -14,8 +14,17 @@ type mremapMmapper struct {
+ 	mremap func(oldaddr uintptr, oldlength uintptr, newlength uintptr, flags int, newaddr uintptr) (xaddr uintptr, err error)
+ }
+ 
++var mapper = &mremapMmapper{
++	mmapper: mmapper{
++		active: make(map[*byte][]byte),
++		mmap:   mmap,
++		munmap: munmap,
++	},
++	mremap: mremap,
++}
++
+ func (m *mremapMmapper) Mremap(oldData []byte, newLength int, flags int) (data []byte, err error) {
+-	if newLength <= 0 || len(oldData) == 0 || len(oldData) != cap(oldData) || flags&MREMAP_FIXED != 0 {
++	if newLength <= 0 || len(oldData) == 0 || len(oldData) != cap(oldData) || flags&mremapFixed != 0 {
+ 		return nil, EINVAL
+ 	}
+ 
+@@ -32,9 +41,13 @@ func (m *mremapMmapper) Mremap(oldData []byte, newLength int, flags int) (data [
+ 	}
+ 	bNew := unsafe.Slice((*byte)(unsafe.Pointer(newAddr)), newLength)
+ 	pNew := &bNew[cap(bNew)-1]
+-	if flags&MREMAP_DONTUNMAP == 0 {
++	if flags&mremapDontunmap == 0 {
+ 		delete(m.active, pOld)
+ 	}
+ 	m.active[pNew] = bNew
+ 	return bNew, nil
+ }
++
++func Mremap(oldData []byte, newLength int, flags int) (data []byte, err error) {
++	return mapper.Mremap(oldData, newLength, flags)
++}
+diff --git a/vendor/golang.org/x/sys/unix/syscall_aix.go b/vendor/golang.org/x/sys/unix/syscall_aix.go
+index 6f77ff5..e94e6cd 100644
+--- a/vendor/golang.org/x/sys/unix/syscall_aix.go
++++ b/vendor/golang.org/x/sys/unix/syscall_aix.go
+@@ -533,21 +533,6 @@ func Fsync(fd int) error {
+ //sys	sendmsg(s int, msg *Msghdr, flags int) (n int, err error) = nsendmsg
+ 
+ //sys	munmap(addr uintptr, length uintptr) (err error)
+-
+-var mapper = &mmapper{
+-	active: make(map[*byte][]byte),
+-	mmap:   mmap,
+-	munmap: munmap,
+-}
+-
+-func Mmap(fd int, offset int64, length int, prot int, flags int) (data []byte, err error) {
+-	return mapper.Mmap(fd, offset, length, prot, flags)
+-}
+-
+-func Munmap(b []byte) (err error) {
+-	return mapper.Munmap(b)
+-}
+-
+ //sys	Madvise(b []byte, advice int) (err error)
+ //sys	Mprotect(b []byte, prot int) (err error)
+ //sys	Mlock(b []byte) (err error)
+diff --git a/vendor/golang.org/x/sys/unix/syscall_bsd.go b/vendor/golang.org/x/sys/unix/syscall_bsd.go
+index 7705c32..4217de5 100644
+--- a/vendor/golang.org/x/sys/unix/syscall_bsd.go
++++ b/vendor/golang.org/x/sys/unix/syscall_bsd.go
+@@ -601,20 +601,6 @@ func Poll(fds []PollFd, timeout int) (n int, err error) {
+ //	Gethostuuid(uuid *byte, timeout *Timespec) (err error)
+ //	Ptrace(req int, pid int, addr uintptr, data int) (ret uintptr, err error)
+ 
+-var mapper = &mmapper{
+-	active: make(map[*byte][]byte),
+-	mmap:   mmap,
+-	munmap: munmap,
+-}
+-
+-func Mmap(fd int, offset int64, length int, prot int, flags int) (data []byte, err error) {
+-	return mapper.Mmap(fd, offset, length, prot, flags)
+-}
+-
+-func Munmap(b []byte) (err error) {
+-	return mapper.Munmap(b)
+-}
+-
+ //sys	Madvise(b []byte, behav int) (err error)
+ //sys	Mlock(b []byte) (err error)
+ //sys	Mlockall(flags int) (err error)
+diff --git a/vendor/golang.org/x/sys/unix/syscall_darwin.go b/vendor/golang.org/x/sys/unix/syscall_darwin.go
+index 3b0bd2d..59542a8 100644
+--- a/vendor/golang.org/x/sys/unix/syscall_darwin.go
++++ b/vendor/golang.org/x/sys/unix/syscall_darwin.go
+@@ -510,30 +510,36 @@ func SysctlKinfoProcSlice(name string, args ...int) ([]KinfoProc, error) {
+ 		return nil, err
+ 	}
+ 
+-	// Find size.
+-	n := uintptr(0)
+-	if err := sysctl(mib, nil, &n, nil, 0); err != nil {
+-		return nil, err
+-	}
+-	if n == 0 {
+-		return nil, nil
+-	}
+-	if n%SizeofKinfoProc != 0 {
+-		return nil, fmt.Errorf("sysctl() returned a size of %d, which is not a multiple of %d", n, SizeofKinfoProc)
+-	}
++	for {
++		// Find size.
++		n := uintptr(0)
++		if err := sysctl(mib, nil, &n, nil, 0); err != nil {
++			return nil, err
++		}
++		if n == 0 {
++			return nil, nil
++		}
++		if n%SizeofKinfoProc != 0 {
++			return nil, fmt.Errorf("sysctl() returned a size of %d, which is not a multiple of %d", n, SizeofKinfoProc)
++		}
+ 
+-	// Read into buffer of that size.
+-	buf := make([]KinfoProc, n/SizeofKinfoProc)
+-	if err := sysctl(mib, (*byte)(unsafe.Pointer(&buf[0])), &n, nil, 0); err != nil {
+-		return nil, err
+-	}
+-	if n%SizeofKinfoProc != 0 {
+-		return nil, fmt.Errorf("sysctl() returned a size of %d, which is not a multiple of %d", n, SizeofKinfoProc)
+-	}
++		// Read into buffer of that size.
++		buf := make([]KinfoProc, n/SizeofKinfoProc)
++		if err := sysctl(mib, (*byte)(unsafe.Pointer(&buf[0])), &n, nil, 0); err != nil {
++			if err == ENOMEM {
++				// Process table grew. Try again.
++				continue
++			}
++			return nil, err
++		}
++		if n%SizeofKinfoProc != 0 {
++			return nil, fmt.Errorf("sysctl() returned a size of %d, which is not a multiple of %d", n, SizeofKinfoProc)
++		}
+ 
+-	// The actual call may return less than the original reported required
+-	// size so ensure we deal with that.
+-	return buf[:n/SizeofKinfoProc], nil
++		// The actual call may return less than the original reported required
++		// size so ensure we deal with that.
++		return buf[:n/SizeofKinfoProc], nil
++	}
+ }
+ 
+ //sys	sendfile(infd int, outfd int, offset int64, len *int64, hdtr unsafe.Pointer, flags int) (err error)
+diff --git a/vendor/golang.org/x/sys/unix/syscall_linux.go b/vendor/golang.org/x/sys/unix/syscall_linux.go
+index c905ec8..fb4e502 100644
+--- a/vendor/golang.org/x/sys/unix/syscall_linux.go
++++ b/vendor/golang.org/x/sys/unix/syscall_linux.go
+@@ -1876,7 +1876,7 @@ func Getpgrp() (pid int) {
+ //sys	PerfEventOpen(attr *PerfEventAttr, pid int, cpu int, groupFd int, flags int) (fd int, err error)
+ //sys	PivotRoot(newroot string, putold string) (err error) = SYS_PIVOT_ROOT
+ //sys	Prctl(option int, arg2 uintptr, arg3 uintptr, arg4 uintptr, arg5 uintptr) (err error)
+-//sys	Pselect(nfd int, r *FdSet, w *FdSet, e *FdSet, timeout *Timespec, sigmask *Sigset_t) (n int, err error) = SYS_PSELECT6
++//sys	pselect6(nfd int, r *FdSet, w *FdSet, e *FdSet, timeout *Timespec, sigmask *sigset_argpack) (n int, err error)
+ //sys	read(fd int, p []byte) (n int, err error)
+ //sys	Removexattr(path string, attr string) (err error)
+ //sys	Renameat2(olddirfd int, oldpath string, newdirfd int, newpath string, flags uint) (err error)
+@@ -2114,28 +2114,6 @@ func writevRacedetect(iovecs []Iovec, n int) {
+ // mmap varies by architecture; see syscall_linux_*.go.
+ //sys	munmap(addr uintptr, length uintptr) (err error)
+ //sys	mremap(oldaddr uintptr, oldlength uintptr, newlength uintptr, flags int, newaddr uintptr) (xaddr uintptr, err error)
+-
+-var mapper = &mremapMmapper{
+-	mmapper: mmapper{
+-		active: make(map[*byte][]byte),
+-		mmap:   mmap,
+-		munmap: munmap,
+-	},
+-	mremap: mremap,
+-}
+-
+-func Mmap(fd int, offset int64, length int, prot int, flags int) (data []byte, err error) {
+-	return mapper.Mmap(fd, offset, length, prot, flags)
+-}
+-
+-func Munmap(b []byte) (err error) {
+-	return mapper.Munmap(b)
+-}
+-
+-func Mremap(oldData []byte, newLength int, flags int) (data []byte, err error) {
+-	return mapper.Mremap(oldData, newLength, flags)
+-}
+-
+ //sys	Madvise(b []byte, advice int) (err error)
+ //sys	Mprotect(b []byte, prot int) (err error)
+ //sys	Mlock(b []byte) (err error)
+@@ -2144,6 +2122,12 @@ func Mremap(oldData []byte, newLength int, flags int) (data []byte, err error) {
+ //sys	Munlock(b []byte) (err error)
+ //sys	Munlockall() (err error)
+ 
++const (
++	mremapFixed     = MREMAP_FIXED
++	mremapDontunmap = MREMAP_DONTUNMAP
++	mremapMaymove   = MREMAP_MAYMOVE
++)
++
+ // Vmsplice splices user pages from a slice of Iovecs into a pipe specified by fd,
+ // using the specified flags.
+ func Vmsplice(fd int, iovs []Iovec, flags int) (int, error) {
+@@ -2443,103 +2427,6 @@ func Getresgid() (rgid, egid, sgid int) {
+ 	return int(r), int(e), int(s)
+ }
+ 
+-<<<<<<< HEAD
+-/*
+- * Unimplemented
+- */
+-// AfsSyscall
+-// ArchPrctl
+-// Brk
+-// ClockNanosleep
+-// ClockSettime
+-// Clone
+-// EpollCtlOld
+-// EpollPwait
+-// EpollWaitOld
+-// Execve
+-// Fork
+-// Futex
+-// GetKernelSyms
+-// GetMempolicy
+-// GetRobustList
+-// GetThreadArea
+-// Getpmsg
+-// IoCancel
+-// IoDestroy
+-// IoGetevents
+-// IoSetup
+-// IoSubmit
+-// IoprioGet
+-// IoprioSet
+-// KexecLoad
+-// LookupDcookie
+-// Mbind
+-// MigratePages
+-// Mincore
+-// ModifyLdt
+-// Mount
+-// MovePages
+-// MqGetsetattr
+-// MqNotify
+-// MqOpen
+-// MqTimedreceive
+-// MqTimedsend
+-// MqUnlink
+-// Msgctl
+-// Msgget
+-// Msgrcv
+-// Msgsnd
+-// Nfsservctl
+-// Personality
+-// Pselect6
+-// Ptrace
+-// Putpmsg
+-// Quotactl
+-// Readahead
+-// Readv
+-// RemapFilePages
+-// RestartSyscall
+-// RtSigaction
+-// RtSigpending
+-// RtSigqueueinfo
+-// RtSigreturn
+-// RtSigsuspend
+-// RtSigtimedwait
+-// SchedGetPriorityMax
+-// SchedGetPriorityMin
+-// SchedGetparam
+-// SchedGetscheduler
+-// SchedRrGetInterval
+-// SchedSetparam
+-// SchedYield
+-// Security
+-// Semctl
+-// Semget
+-// Semop
+-// Semtimedop
+-// SetMempolicy
+-// SetRobustList
+-// SetThreadArea
+-// SetTidAddress
+-// Sigaltstack
+-// Swapoff
+-// Swapon
+-// Sysfs
+-// TimerCreate
+-// TimerDelete
+-// TimerGetoverrun
+-// TimerGettime
+-// TimerSettime
+-// Tkill (obsolete)
+-// Tuxcall
+-// Umount2
+-// Uselib
+-// Utimensat
+-// Vfork
+-// Vhangup
+-// Vserver
+-// _Sysctl
+-=======
+ // Pselect is a wrapper around the Linux pselect6 system call.
+ // This version does not modify the timeout argument.
+ func Pselect(nfd int, r *FdSet, w *FdSet, e *FdSet, timeout *Timespec, sigmask *Sigset_t) (n int, err error) {
+@@ -2595,4 +2482,3 @@ func SchedGetAttr(pid int, flags uint) (*SchedAttr, error) {
+ 	}
+ 	return attr, nil
+ }
+->>>>>>> 48ed37b (CVE-2023-44487: bump golang.org/x/net to v0.17.0)
+diff --git a/vendor/golang.org/x/sys/unix/syscall_linux_amd64.go b/vendor/golang.org/x/sys/unix/syscall_linux_amd64.go
+index 5b21fcf..70601ce 100644
+--- a/vendor/golang.org/x/sys/unix/syscall_linux_amd64.go
++++ b/vendor/golang.org/x/sys/unix/syscall_linux_amd64.go
+@@ -40,7 +40,7 @@ func Select(nfd int, r *FdSet, w *FdSet, e *FdSet, timeout *Timeval) (n int, err
+ 	if timeout != nil {
+ 		ts = &Timespec{Sec: timeout.Sec, Nsec: timeout.Usec * 1000}
+ 	}
+-	return Pselect(nfd, r, w, e, ts, nil)
++	return pselect6(nfd, r, w, e, ts, nil)
+ }
+ 
+ //sys	sendfile(outfd int, infd int, offset *int64, count int) (written int, err error)
+diff --git a/vendor/golang.org/x/sys/unix/syscall_linux_arm64.go b/vendor/golang.org/x/sys/unix/syscall_linux_arm64.go
+index a81f574..f526668 100644
+--- a/vendor/golang.org/x/sys/unix/syscall_linux_arm64.go
++++ b/vendor/golang.org/x/sys/unix/syscall_linux_arm64.go
+@@ -33,7 +33,7 @@ func Select(nfd int, r *FdSet, w *FdSet, e *FdSet, timeout *Timeval) (n int, err
+ 	if timeout != nil {
+ 		ts = &Timespec{Sec: timeout.Sec, Nsec: timeout.Usec * 1000}
+ 	}
+-	return Pselect(nfd, r, w, e, ts, nil)
++	return pselect6(nfd, r, w, e, ts, nil)
+ }
+ 
+ //sys	sendfile(outfd int, infd int, offset *int64, count int) (written int, err error)
+diff --git a/vendor/golang.org/x/sys/unix/syscall_linux_loong64.go b/vendor/golang.org/x/sys/unix/syscall_linux_loong64.go
+index 69d2d7c..f6ab02e 100644
+--- a/vendor/golang.org/x/sys/unix/syscall_linux_loong64.go
++++ b/vendor/golang.org/x/sys/unix/syscall_linux_loong64.go
+@@ -28,7 +28,7 @@ func Select(nfd int, r *FdSet, w *FdSet, e *FdSet, timeout *Timeval) (n int, err
+ 	if timeout != nil {
+ 		ts = &Timespec{Sec: timeout.Sec, Nsec: timeout.Usec * 1000}
+ 	}
+-	return Pselect(nfd, r, w, e, ts, nil)
++	return pselect6(nfd, r, w, e, ts, nil)
+ }
+ 
+ //sys	sendfile(outfd int, infd int, offset *int64, count int) (written int, err error)
+diff --git a/vendor/golang.org/x/sys/unix/syscall_linux_mips64x.go b/vendor/golang.org/x/sys/unix/syscall_linux_mips64x.go
+index 76d5640..93fe59d 100644
+--- a/vendor/golang.org/x/sys/unix/syscall_linux_mips64x.go
++++ b/vendor/golang.org/x/sys/unix/syscall_linux_mips64x.go
+@@ -31,7 +31,7 @@ func Select(nfd int, r *FdSet, w *FdSet, e *FdSet, timeout *Timeval) (n int, err
+ 	if timeout != nil {
+ 		ts = &Timespec{Sec: timeout.Sec, Nsec: timeout.Usec * 1000}
+ 	}
+-	return Pselect(nfd, r, w, e, ts, nil)
++	return pselect6(nfd, r, w, e, ts, nil)
+ }
+ 
+ //sys	sendfile(outfd int, infd int, offset *int64, count int) (written int, err error)
+diff --git a/vendor/golang.org/x/sys/unix/syscall_linux_riscv64.go b/vendor/golang.org/x/sys/unix/syscall_linux_riscv64.go
+index 35851ef..5e6ceee 100644
+--- a/vendor/golang.org/x/sys/unix/syscall_linux_riscv64.go
++++ b/vendor/golang.org/x/sys/unix/syscall_linux_riscv64.go
+@@ -32,7 +32,7 @@ func Select(nfd int, r *FdSet, w *FdSet, e *FdSet, timeout *Timeval) (n int, err
+ 	if timeout != nil {
+ 		ts = &Timespec{Sec: timeout.Sec, Nsec: timeout.Usec * 1000}
+ 	}
+-	return Pselect(nfd, r, w, e, ts, nil)
++	return pselect6(nfd, r, w, e, ts, nil)
+ }
+ 
+ //sys	sendfile(outfd int, infd int, offset *int64, count int) (written int, err error)
+@@ -177,3 +177,14 @@ func KexecFileLoad(kernelFd int, initrdFd int, cmdline string, flags int) error
+ 	}
+ 	return kexecFileLoad(kernelFd, initrdFd, cmdlineLen, cmdline, flags)
+ }
++
++//sys	riscvHWProbe(pairs []RISCVHWProbePairs, cpuCount uintptr, cpus *CPUSet, flags uint) (err error)
++
++func RISCVHWProbe(pairs []RISCVHWProbePairs, set *CPUSet, flags uint) (err error) {
++	var setSize uintptr
++
++	if set != nil {
++		setSize = uintptr(unsafe.Sizeof(*set))
++	}
++	return riscvHWProbe(pairs, setSize, set, flags)
++}
+diff --git a/vendor/golang.org/x/sys/unix/syscall_unix.go b/vendor/golang.org/x/sys/unix/syscall_unix.go
+index a4b2c98..f6eda27 100644
+--- a/vendor/golang.org/x/sys/unix/syscall_unix.go
++++ b/vendor/golang.org/x/sys/unix/syscall_unix.go
+@@ -147,6 +147,14 @@ func (m *mmapper) Munmap(data []byte) (err error) {
+ 	return nil
+ }
+ 
++func Mmap(fd int, offset int64, length int, prot int, flags int) (data []byte, err error) {
++	return mapper.Mmap(fd, offset, length, prot, flags)
++}
++
++func Munmap(b []byte) (err error) {
++	return mapper.Munmap(b)
++}
++
+ func Read(fd int, p []byte) (n int, err error) {
+ 	n, err = read(fd, p)
+ 	if raceenabled {
+diff --git a/vendor/golang.org/x/sys/unix/syscall_zos_s390x.go b/vendor/golang.org/x/sys/unix/syscall_zos_s390x.go
+index 799302f..4596d04 100644
+--- a/vendor/golang.org/x/sys/unix/syscall_zos_s390x.go
++++ b/vendor/golang.org/x/sys/unix/syscall_zos_s390x.go
+@@ -284,25 +284,11 @@ func Close(fd int) (err error) {
+ 	return
+ }
+ 
+-var mapper = &mmapper{
+-	active: make(map[*byte][]byte),
+-	mmap:   mmap,
+-	munmap: munmap,
+-}
+-
+ // Dummy function: there are no semantics for Madvise on z/OS
+ func Madvise(b []byte, advice int) (err error) {
+ 	return
+ }
+ 
+-func Mmap(fd int, offset int64, length int, prot int, flags int) (data []byte, err error) {
+-	return mapper.Mmap(fd, offset, length, prot, flags)
+-}
+-
+-func Munmap(b []byte) (err error) {
+-	return mapper.Munmap(b)
+-}
+-
+ //sys   Gethostname(buf []byte) (err error) = SYS___GETHOSTNAME_A
+ //sysnb	Getegid() (egid int)
+ //sysnb	Geteuid() (uid int)
+diff --git a/vendor/golang.org/x/sys/unix/zerrors_linux_386.go b/vendor/golang.org/x/sys/unix/zerrors_linux_386.go
+index c5aeab3..30aee00 100644
+--- a/vendor/golang.org/x/sys/unix/zerrors_linux_386.go
++++ b/vendor/golang.org/x/sys/unix/zerrors_linux_386.go
+@@ -27,22 +27,31 @@ const (
+ 	B57600                           = 0x1001
+ 	B576000                          = 0x1006
+ 	B921600                          = 0x1007
++	BLKALIGNOFF                      = 0x127a
+ 	BLKBSZGET                        = 0x80041270
+ 	BLKBSZSET                        = 0x40041271
++	BLKDISCARD                       = 0x1277
++	BLKDISCARDZEROES                 = 0x127c
+ 	BLKFLSBUF                        = 0x1261
+ 	BLKFRAGET                        = 0x1265
+ 	BLKFRASET                        = 0x1264
++	BLKGETDISKSEQ                    = 0x80081280
+ 	BLKGETSIZE                       = 0x1260
+ 	BLKGETSIZE64                     = 0x80041272
++	BLKIOMIN                         = 0x1278
++	BLKIOOPT                         = 0x1279
+ 	BLKPBSZGET                       = 0x127b
+ 	BLKRAGET                         = 0x1263
+ 	BLKRASET                         = 0x1262
+ 	BLKROGET                         = 0x125e
+ 	BLKROSET                         = 0x125d
++	BLKROTATIONAL                    = 0x127e
+ 	BLKRRPART                        = 0x125f
++	BLKSECDISCARD                    = 0x127d
+ 	BLKSECTGET                       = 0x1267
+ 	BLKSECTSET                       = 0x1266
+ 	BLKSSZGET                        = 0x1268
++	BLKZEROOUT                       = 0x127f
+ 	BOTHER                           = 0x1000
+ 	BS1                              = 0x2000
+ 	BSDLY                            = 0x2000
+diff --git a/vendor/golang.org/x/sys/unix/zerrors_linux_amd64.go b/vendor/golang.org/x/sys/unix/zerrors_linux_amd64.go
+index 6b9fda9..8ebfa51 100644
+--- a/vendor/golang.org/x/sys/unix/zerrors_linux_amd64.go
++++ b/vendor/golang.org/x/sys/unix/zerrors_linux_amd64.go
+@@ -27,22 +27,31 @@ const (
+ 	B57600                           = 0x1001
+ 	B576000                          = 0x1006
+ 	B921600                          = 0x1007
++	BLKALIGNOFF                      = 0x127a
+ 	BLKBSZGET                        = 0x80081270
+ 	BLKBSZSET                        = 0x40081271
++	BLKDISCARD                       = 0x1277
++	BLKDISCARDZEROES                 = 0x127c
+ 	BLKFLSBUF                        = 0x1261
+ 	BLKFRAGET                        = 0x1265
+ 	BLKFRASET                        = 0x1264
++	BLKGETDISKSEQ                    = 0x80081280
+ 	BLKGETSIZE                       = 0x1260
+ 	BLKGETSIZE64                     = 0x80081272
++	BLKIOMIN                         = 0x1278
++	BLKIOOPT                         = 0x1279
+ 	BLKPBSZGET                       = 0x127b
+ 	BLKRAGET                         = 0x1263
+ 	BLKRASET                         = 0x1262
+ 	BLKROGET                         = 0x125e
+ 	BLKROSET                         = 0x125d
++	BLKROTATIONAL                    = 0x127e
+ 	BLKRRPART                        = 0x125f
++	BLKSECDISCARD                    = 0x127d
+ 	BLKSECTGET                       = 0x1267
+ 	BLKSECTSET                       = 0x1266
+ 	BLKSSZGET                        = 0x1268
++	BLKZEROOUT                       = 0x127f
+ 	BOTHER                           = 0x1000
+ 	BS1                              = 0x2000
+ 	BSDLY                            = 0x2000
+diff --git a/vendor/golang.org/x/sys/unix/zerrors_linux_arm.go b/vendor/golang.org/x/sys/unix/zerrors_linux_arm.go
+index f015600..271a21c 100644
+--- a/vendor/golang.org/x/sys/unix/zerrors_linux_arm.go
++++ b/vendor/golang.org/x/sys/unix/zerrors_linux_arm.go
+@@ -27,22 +27,31 @@ const (
+ 	B57600                           = 0x1001
+ 	B576000                          = 0x1006
+ 	B921600                          = 0x1007
++	BLKALIGNOFF                      = 0x127a
+ 	BLKBSZGET                        = 0x80041270
+ 	BLKBSZSET                        = 0x40041271
++	BLKDISCARD                       = 0x1277
++	BLKDISCARDZEROES                 = 0x127c
+ 	BLKFLSBUF                        = 0x1261
+ 	BLKFRAGET                        = 0x1265
+ 	BLKFRASET                        = 0x1264
++	BLKGETDISKSEQ                    = 0x80081280
+ 	BLKGETSIZE                       = 0x1260
+ 	BLKGETSIZE64                     = 0x80041272
++	BLKIOMIN                         = 0x1278
++	BLKIOOPT                         = 0x1279
+ 	BLKPBSZGET                       = 0x127b
+ 	BLKRAGET                         = 0x1263
+ 	BLKRASET                         = 0x1262
+ 	BLKROGET                         = 0x125e
+ 	BLKROSET                         = 0x125d
++	BLKROTATIONAL                    = 0x127e
+ 	BLKRRPART                        = 0x125f
++	BLKSECDISCARD                    = 0x127d
+ 	BLKSECTGET                       = 0x1267
+ 	BLKSECTSET                       = 0x1266
+ 	BLKSSZGET                        = 0x1268
++	BLKZEROOUT                       = 0x127f
+ 	BOTHER                           = 0x1000
+ 	BS1                              = 0x2000
+ 	BSDLY                            = 0x2000
+diff --git a/vendor/golang.org/x/sys/unix/zerrors_linux_arm64.go b/vendor/golang.org/x/sys/unix/zerrors_linux_arm64.go
+index f760f2a..910c330 100644
+--- a/vendor/golang.org/x/sys/unix/zerrors_linux_arm64.go
++++ b/vendor/golang.org/x/sys/unix/zerrors_linux_arm64.go
+@@ -27,22 +27,31 @@ const (
+ 	B57600                           = 0x1001
+ 	B576000                          = 0x1006
+ 	B921600                          = 0x1007
++	BLKALIGNOFF                      = 0x127a
+ 	BLKBSZGET                        = 0x80081270
+ 	BLKBSZSET                        = 0x40081271
++	BLKDISCARD                       = 0x1277
++	BLKDISCARDZEROES                 = 0x127c
+ 	BLKFLSBUF                        = 0x1261
+ 	BLKFRAGET                        = 0x1265
+ 	BLKFRASET                        = 0x1264
++	BLKGETDISKSEQ                    = 0x80081280
+ 	BLKGETSIZE                       = 0x1260
+ 	BLKGETSIZE64                     = 0x80081272
++	BLKIOMIN                         = 0x1278
++	BLKIOOPT                         = 0x1279
+ 	BLKPBSZGET                       = 0x127b
+ 	BLKRAGET                         = 0x1263
+ 	BLKRASET                         = 0x1262
+ 	BLKROGET                         = 0x125e
+ 	BLKROSET                         = 0x125d
++	BLKROTATIONAL                    = 0x127e
+ 	BLKRRPART                        = 0x125f
++	BLKSECDISCARD                    = 0x127d
+ 	BLKSECTGET                       = 0x1267
+ 	BLKSECTSET                       = 0x1266
+ 	BLKSSZGET                        = 0x1268
++	BLKZEROOUT                       = 0x127f
+ 	BOTHER                           = 0x1000
+ 	BS1                              = 0x2000
+ 	BSDLY                            = 0x2000
+diff --git a/vendor/golang.org/x/sys/unix/zerrors_linux_loong64.go b/vendor/golang.org/x/sys/unix/zerrors_linux_loong64.go
+index 12f266c..a640798 100644
+--- a/vendor/golang.org/x/sys/unix/zerrors_linux_loong64.go
++++ b/vendor/golang.org/x/sys/unix/zerrors_linux_loong64.go
+@@ -27,22 +27,31 @@ const (
+ 	B57600                           = 0x1001
+ 	B576000                          = 0x1006
+ 	B921600                          = 0x1007
++	BLKALIGNOFF                      = 0x127a
+ 	BLKBSZGET                        = 0x80081270
+ 	BLKBSZSET                        = 0x40081271
++	BLKDISCARD                       = 0x1277
++	BLKDISCARDZEROES                 = 0x127c
+ 	BLKFLSBUF                        = 0x1261
+ 	BLKFRAGET                        = 0x1265
+ 	BLKFRASET                        = 0x1264
++	BLKGETDISKSEQ                    = 0x80081280
+ 	BLKGETSIZE                       = 0x1260
+ 	BLKGETSIZE64                     = 0x80081272
++	BLKIOMIN                         = 0x1278
++	BLKIOOPT                         = 0x1279
+ 	BLKPBSZGET                       = 0x127b
+ 	BLKRAGET                         = 0x1263
+ 	BLKRASET                         = 0x1262
+ 	BLKROGET                         = 0x125e
+ 	BLKROSET                         = 0x125d
++	BLKROTATIONAL                    = 0x127e
+ 	BLKRRPART                        = 0x125f
++	BLKSECDISCARD                    = 0x127d
+ 	BLKSECTGET                       = 0x1267
+ 	BLKSECTSET                       = 0x1266
+ 	BLKSSZGET                        = 0x1268
++	BLKZEROOUT                       = 0x127f
+ 	BOTHER                           = 0x1000
+ 	BS1                              = 0x2000
+ 	BSDLY                            = 0x2000
+diff --git a/vendor/golang.org/x/sys/unix/zerrors_linux_mips.go b/vendor/golang.org/x/sys/unix/zerrors_linux_mips.go
+index 7fd3806..0d5925d 100644
+--- a/vendor/golang.org/x/sys/unix/zerrors_linux_mips.go
++++ b/vendor/golang.org/x/sys/unix/zerrors_linux_mips.go
+@@ -27,22 +27,31 @@ const (
+ 	B57600                           = 0x1001
+ 	B576000                          = 0x1006
+ 	B921600                          = 0x1007
++	BLKALIGNOFF                      = 0x2000127a
+ 	BLKBSZGET                        = 0x40041270
+ 	BLKBSZSET                        = 0x80041271
++	BLKDISCARD                       = 0x20001277
++	BLKDISCARDZEROES                 = 0x2000127c
+ 	BLKFLSBUF                        = 0x20001261
+ 	BLKFRAGET                        = 0x20001265
+ 	BLKFRASET                        = 0x20001264
++	BLKGETDISKSEQ                    = 0x40081280
+ 	BLKGETSIZE                       = 0x20001260
+ 	BLKGETSIZE64                     = 0x40041272
++	BLKIOMIN                         = 0x20001278
++	BLKIOOPT                         = 0x20001279
+ 	BLKPBSZGET                       = 0x2000127b
+ 	BLKRAGET                         = 0x20001263
+ 	BLKRASET                         = 0x20001262
+ 	BLKROGET                         = 0x2000125e
+ 	BLKROSET                         = 0x2000125d
++	BLKROTATIONAL                    = 0x2000127e
+ 	BLKRRPART                        = 0x2000125f
++	BLKSECDISCARD                    = 0x2000127d
+ 	BLKSECTGET                       = 0x20001267
+ 	BLKSECTSET                       = 0x20001266
+ 	BLKSSZGET                        = 0x20001268
++	BLKZEROOUT                       = 0x2000127f
+ 	BOTHER                           = 0x1000
+ 	BS1                              = 0x2000
+ 	BSDLY                            = 0x2000
+diff --git a/vendor/golang.org/x/sys/unix/zerrors_linux_mips64.go b/vendor/golang.org/x/sys/unix/zerrors_linux_mips64.go
+index c38d426..d72a00e 100644
+--- a/vendor/golang.org/x/sys/unix/zerrors_linux_mips64.go
++++ b/vendor/golang.org/x/sys/unix/zerrors_linux_mips64.go
+@@ -27,22 +27,31 @@ const (
+ 	B57600                           = 0x1001
+ 	B576000                          = 0x1006
+ 	B921600                          = 0x1007
++	BLKALIGNOFF                      = 0x2000127a
+ 	BLKBSZGET                        = 0x40081270
+ 	BLKBSZSET                        = 0x80081271
++	BLKDISCARD                       = 0x20001277
++	BLKDISCARDZEROES                 = 0x2000127c
+ 	BLKFLSBUF                        = 0x20001261
+ 	BLKFRAGET                        = 0x20001265
+ 	BLKFRASET                        = 0x20001264
++	BLKGETDISKSEQ                    = 0x40081280
+ 	BLKGETSIZE                       = 0x20001260
+ 	BLKGETSIZE64                     = 0x40081272
++	BLKIOMIN                         = 0x20001278
++	BLKIOOPT                         = 0x20001279
+ 	BLKPBSZGET                       = 0x2000127b
+ 	BLKRAGET                         = 0x20001263
+ 	BLKRASET                         = 0x20001262
+ 	BLKROGET                         = 0x2000125e
+ 	BLKROSET                         = 0x2000125d
++	BLKROTATIONAL                    = 0x2000127e
+ 	BLKRRPART                        = 0x2000125f
++	BLKSECDISCARD                    = 0x2000127d
+ 	BLKSECTGET                       = 0x20001267
+ 	BLKSECTSET                       = 0x20001266
+ 	BLKSSZGET                        = 0x20001268
++	BLKZEROOUT                       = 0x2000127f
+ 	BOTHER                           = 0x1000
+ 	BS1                              = 0x2000
+ 	BSDLY                            = 0x2000
+diff --git a/vendor/golang.org/x/sys/unix/zerrors_linux_mips64le.go b/vendor/golang.org/x/sys/unix/zerrors_linux_mips64le.go
+index 17a5f97..02ba129 100644
+--- a/vendor/golang.org/x/sys/unix/zerrors_linux_mips64le.go
++++ b/vendor/golang.org/x/sys/unix/zerrors_linux_mips64le.go
+@@ -27,22 +27,31 @@ const (
+ 	B57600                           = 0x1001
+ 	B576000                          = 0x1006
+ 	B921600                          = 0x1007
++	BLKALIGNOFF                      = 0x2000127a
+ 	BLKBSZGET                        = 0x40081270
+ 	BLKBSZSET                        = 0x80081271
++	BLKDISCARD                       = 0x20001277
++	BLKDISCARDZEROES                 = 0x2000127c
+ 	BLKFLSBUF                        = 0x20001261
+ 	BLKFRAGET                        = 0x20001265
+ 	BLKFRASET                        = 0x20001264
++	BLKGETDISKSEQ                    = 0x40081280
+ 	BLKGETSIZE                       = 0x20001260
+ 	BLKGETSIZE64                     = 0x40081272
++	BLKIOMIN                         = 0x20001278
++	BLKIOOPT                         = 0x20001279
+ 	BLKPBSZGET                       = 0x2000127b
+ 	BLKRAGET                         = 0x20001263
+ 	BLKRASET                         = 0x20001262
+ 	BLKROGET                         = 0x2000125e
+ 	BLKROSET                         = 0x2000125d
++	BLKROTATIONAL                    = 0x2000127e
+ 	BLKRRPART                        = 0x2000125f
++	BLKSECDISCARD                    = 0x2000127d
+ 	BLKSECTGET                       = 0x20001267
+ 	BLKSECTSET                       = 0x20001266
+ 	BLKSSZGET                        = 0x20001268
++	BLKZEROOUT                       = 0x2000127f
+ 	BOTHER                           = 0x1000
+ 	BS1                              = 0x2000
+ 	BSDLY                            = 0x2000
+diff --git a/vendor/golang.org/x/sys/unix/zerrors_linux_mipsle.go b/vendor/golang.org/x/sys/unix/zerrors_linux_mipsle.go
+index b73088d..8daa6dd 100644
+--- a/vendor/golang.org/x/sys/unix/zerrors_linux_mipsle.go
++++ b/vendor/golang.org/x/sys/unix/zerrors_linux_mipsle.go
+@@ -27,22 +27,31 @@ const (
+ 	B57600                           = 0x1001
+ 	B576000                          = 0x1006
+ 	B921600                          = 0x1007
++	BLKALIGNOFF                      = 0x2000127a
+ 	BLKBSZGET                        = 0x40041270
+ 	BLKBSZSET                        = 0x80041271
++	BLKDISCARD                       = 0x20001277
++	BLKDISCARDZEROES                 = 0x2000127c
+ 	BLKFLSBUF                        = 0x20001261
+ 	BLKFRAGET                        = 0x20001265
+ 	BLKFRASET                        = 0x20001264
++	BLKGETDISKSEQ                    = 0x40081280
+ 	BLKGETSIZE                       = 0x20001260
+ 	BLKGETSIZE64                     = 0x40041272
++	BLKIOMIN                         = 0x20001278
++	BLKIOOPT                         = 0x20001279
+ 	BLKPBSZGET                       = 0x2000127b
+ 	BLKRAGET                         = 0x20001263
+ 	BLKRASET                         = 0x20001262
+ 	BLKROGET                         = 0x2000125e
+ 	BLKROSET                         = 0x2000125d
++	BLKROTATIONAL                    = 0x2000127e
+ 	BLKRRPART                        = 0x2000125f
++	BLKSECDISCARD                    = 0x2000127d
+ 	BLKSECTGET                       = 0x20001267
+ 	BLKSECTSET                       = 0x20001266
+ 	BLKSSZGET                        = 0x20001268
++	BLKZEROOUT                       = 0x2000127f
+ 	BOTHER                           = 0x1000
+ 	BS1                              = 0x2000
+ 	BSDLY                            = 0x2000
+diff --git a/vendor/golang.org/x/sys/unix/zerrors_linux_ppc.go b/vendor/golang.org/x/sys/unix/zerrors_linux_ppc.go
+index 80b8d52..63c8fa2 100644
+--- a/vendor/golang.org/x/sys/unix/zerrors_linux_ppc.go
++++ b/vendor/golang.org/x/sys/unix/zerrors_linux_ppc.go
+@@ -27,22 +27,31 @@ const (
+ 	B57600                           = 0x10
+ 	B576000                          = 0x15
+ 	B921600                          = 0x16
++	BLKALIGNOFF                      = 0x2000127a
+ 	BLKBSZGET                        = 0x40041270
+ 	BLKBSZSET                        = 0x80041271
++	BLKDISCARD                       = 0x20001277
++	BLKDISCARDZEROES                 = 0x2000127c
+ 	BLKFLSBUF                        = 0x20001261
+ 	BLKFRAGET                        = 0x20001265
+ 	BLKFRASET                        = 0x20001264
++	BLKGETDISKSEQ                    = 0x40081280
+ 	BLKGETSIZE                       = 0x20001260
+ 	BLKGETSIZE64                     = 0x40041272
++	BLKIOMIN                         = 0x20001278
++	BLKIOOPT                         = 0x20001279
+ 	BLKPBSZGET                       = 0x2000127b
+ 	BLKRAGET                         = 0x20001263
+ 	BLKRASET                         = 0x20001262
+ 	BLKROGET                         = 0x2000125e
+ 	BLKROSET                         = 0x2000125d
++	BLKROTATIONAL                    = 0x2000127e
+ 	BLKRRPART                        = 0x2000125f
++	BLKSECDISCARD                    = 0x2000127d
+ 	BLKSECTGET                       = 0x20001267
+ 	BLKSECTSET                       = 0x20001266
+ 	BLKSSZGET                        = 0x20001268
++	BLKZEROOUT                       = 0x2000127f
+ 	BOTHER                           = 0x1f
+ 	BS1                              = 0x8000
+ 	BSDLY                            = 0x8000
+diff --git a/vendor/golang.org/x/sys/unix/zerrors_linux_ppc64.go b/vendor/golang.org/x/sys/unix/zerrors_linux_ppc64.go
+index 8292e16..930799e 100644
+--- a/vendor/golang.org/x/sys/unix/zerrors_linux_ppc64.go
++++ b/vendor/golang.org/x/sys/unix/zerrors_linux_ppc64.go
+@@ -27,22 +27,31 @@ const (
+ 	B57600                           = 0x10
+ 	B576000                          = 0x15
+ 	B921600                          = 0x16
++	BLKALIGNOFF                      = 0x2000127a
+ 	BLKBSZGET                        = 0x40081270
+ 	BLKBSZSET                        = 0x80081271
++	BLKDISCARD                       = 0x20001277
++	BLKDISCARDZEROES                 = 0x2000127c
+ 	BLKFLSBUF                        = 0x20001261
+ 	BLKFRAGET                        = 0x20001265
+ 	BLKFRASET                        = 0x20001264
++	BLKGETDISKSEQ                    = 0x40081280
+ 	BLKGETSIZE                       = 0x20001260
+ 	BLKGETSIZE64                     = 0x40081272
++	BLKIOMIN                         = 0x20001278
++	BLKIOOPT                         = 0x20001279
+ 	BLKPBSZGET                       = 0x2000127b
+ 	BLKRAGET                         = 0x20001263
+ 	BLKRASET                         = 0x20001262
+ 	BLKROGET                         = 0x2000125e
+ 	BLKROSET                         = 0x2000125d
++	BLKROTATIONAL                    = 0x2000127e
+ 	BLKRRPART                        = 0x2000125f
++	BLKSECDISCARD                    = 0x2000127d
+ 	BLKSECTGET                       = 0x20001267
+ 	BLKSECTSET                       = 0x20001266
+ 	BLKSSZGET                        = 0x20001268
++	BLKZEROOUT                       = 0x2000127f
+ 	BOTHER                           = 0x1f
+ 	BS1                              = 0x8000
+ 	BSDLY                            = 0x8000
+diff --git a/vendor/golang.org/x/sys/unix/zerrors_linux_ppc64le.go b/vendor/golang.org/x/sys/unix/zerrors_linux_ppc64le.go
+index bb1ebb8..8605a7d 100644
+--- a/vendor/golang.org/x/sys/unix/zerrors_linux_ppc64le.go
++++ b/vendor/golang.org/x/sys/unix/zerrors_linux_ppc64le.go
+@@ -27,22 +27,31 @@ const (
+ 	B57600                           = 0x10
+ 	B576000                          = 0x15
+ 	B921600                          = 0x16
++	BLKALIGNOFF                      = 0x2000127a
+ 	BLKBSZGET                        = 0x40081270
+ 	BLKBSZSET                        = 0x80081271
++	BLKDISCARD                       = 0x20001277
++	BLKDISCARDZEROES                 = 0x2000127c
+ 	BLKFLSBUF                        = 0x20001261
+ 	BLKFRAGET                        = 0x20001265
+ 	BLKFRASET                        = 0x20001264
++	BLKGETDISKSEQ                    = 0x40081280
+ 	BLKGETSIZE                       = 0x20001260
+ 	BLKGETSIZE64                     = 0x40081272
++	BLKIOMIN                         = 0x20001278
++	BLKIOOPT                         = 0x20001279
+ 	BLKPBSZGET                       = 0x2000127b
+ 	BLKRAGET                         = 0x20001263
+ 	BLKRASET                         = 0x20001262
+ 	BLKROGET                         = 0x2000125e
+ 	BLKROSET                         = 0x2000125d
++	BLKROTATIONAL                    = 0x2000127e
+ 	BLKRRPART                        = 0x2000125f
++	BLKSECDISCARD                    = 0x2000127d
+ 	BLKSECTGET                       = 0x20001267
+ 	BLKSECTSET                       = 0x20001266
+ 	BLKSSZGET                        = 0x20001268
++	BLKZEROOUT                       = 0x2000127f
+ 	BOTHER                           = 0x1f
+ 	BS1                              = 0x8000
+ 	BSDLY                            = 0x8000
+diff --git a/vendor/golang.org/x/sys/unix/zerrors_linux_riscv64.go b/vendor/golang.org/x/sys/unix/zerrors_linux_riscv64.go
+index 28006d4..95a016f 100644
+--- a/vendor/golang.org/x/sys/unix/zerrors_linux_riscv64.go
++++ b/vendor/golang.org/x/sys/unix/zerrors_linux_riscv64.go
+@@ -27,22 +27,31 @@ const (
+ 	B57600                           = 0x1001
+ 	B576000                          = 0x1006
+ 	B921600                          = 0x1007
++	BLKALIGNOFF                      = 0x127a
+ 	BLKBSZGET                        = 0x80081270
+ 	BLKBSZSET                        = 0x40081271
++	BLKDISCARD                       = 0x1277
++	BLKDISCARDZEROES                 = 0x127c
+ 	BLKFLSBUF                        = 0x1261
+ 	BLKFRAGET                        = 0x1265
+ 	BLKFRASET                        = 0x1264
++	BLKGETDISKSEQ                    = 0x80081280
+ 	BLKGETSIZE                       = 0x1260
+ 	BLKGETSIZE64                     = 0x80081272
++	BLKIOMIN                         = 0x1278
++	BLKIOOPT                         = 0x1279
+ 	BLKPBSZGET                       = 0x127b
+ 	BLKRAGET                         = 0x1263
+ 	BLKRASET                         = 0x1262
+ 	BLKROGET                         = 0x125e
+ 	BLKROSET                         = 0x125d
++	BLKROTATIONAL                    = 0x127e
+ 	BLKRRPART                        = 0x125f
++	BLKSECDISCARD                    = 0x127d
+ 	BLKSECTGET                       = 0x1267
+ 	BLKSECTSET                       = 0x1266
+ 	BLKSSZGET                        = 0x1268
++	BLKZEROOUT                       = 0x127f
+ 	BOTHER                           = 0x1000
+ 	BS1                              = 0x2000
+ 	BSDLY                            = 0x2000
+diff --git a/vendor/golang.org/x/sys/unix/zerrors_linux_s390x.go b/vendor/golang.org/x/sys/unix/zerrors_linux_s390x.go
+index 75e263b..1ae0108 100644
+--- a/vendor/golang.org/x/sys/unix/zerrors_linux_s390x.go
++++ b/vendor/golang.org/x/sys/unix/zerrors_linux_s390x.go
+@@ -27,22 +27,31 @@ const (
+ 	B57600                           = 0x1001
+ 	B576000                          = 0x1006
+ 	B921600                          = 0x1007
++	BLKALIGNOFF                      = 0x127a
+ 	BLKBSZGET                        = 0x80081270
+ 	BLKBSZSET                        = 0x40081271
++	BLKDISCARD                       = 0x1277
++	BLKDISCARDZEROES                 = 0x127c
+ 	BLKFLSBUF                        = 0x1261
+ 	BLKFRAGET                        = 0x1265
+ 	BLKFRASET                        = 0x1264
++	BLKGETDISKSEQ                    = 0x80081280
+ 	BLKGETSIZE                       = 0x1260
+ 	BLKGETSIZE64                     = 0x80081272
++	BLKIOMIN                         = 0x1278
++	BLKIOOPT                         = 0x1279
+ 	BLKPBSZGET                       = 0x127b
+ 	BLKRAGET                         = 0x1263
+ 	BLKRASET                         = 0x1262
+ 	BLKROGET                         = 0x125e
+ 	BLKROSET                         = 0x125d
++	BLKROTATIONAL                    = 0x127e
+ 	BLKRRPART                        = 0x125f
++	BLKSECDISCARD                    = 0x127d
+ 	BLKSECTGET                       = 0x1267
+ 	BLKSECTSET                       = 0x1266
+ 	BLKSSZGET                        = 0x1268
++	BLKZEROOUT                       = 0x127f
+ 	BOTHER                           = 0x1000
+ 	BS1                              = 0x2000
+ 	BSDLY                            = 0x2000
+diff --git a/vendor/golang.org/x/sys/unix/zerrors_linux_sparc64.go b/vendor/golang.org/x/sys/unix/zerrors_linux_sparc64.go
+index 5d2d76a..1bb7c63 100644
+--- a/vendor/golang.org/x/sys/unix/zerrors_linux_sparc64.go
++++ b/vendor/golang.org/x/sys/unix/zerrors_linux_sparc64.go
+@@ -30,22 +30,31 @@ const (
+ 	B57600                           = 0x1001
+ 	B576000                          = 0x1006
+ 	B921600                          = 0x1007
++	BLKALIGNOFF                      = 0x2000127a
+ 	BLKBSZGET                        = 0x40081270
+ 	BLKBSZSET                        = 0x80081271
++	BLKDISCARD                       = 0x20001277
++	BLKDISCARDZEROES                 = 0x2000127c
+ 	BLKFLSBUF                        = 0x20001261
+ 	BLKFRAGET                        = 0x20001265
+ 	BLKFRASET                        = 0x20001264
++	BLKGETDISKSEQ                    = 0x40081280
+ 	BLKGETSIZE                       = 0x20001260
+ 	BLKGETSIZE64                     = 0x40081272
++	BLKIOMIN                         = 0x20001278
++	BLKIOOPT                         = 0x20001279
+ 	BLKPBSZGET                       = 0x2000127b
+ 	BLKRAGET                         = 0x20001263
+ 	BLKRASET                         = 0x20001262
+ 	BLKROGET                         = 0x2000125e
+ 	BLKROSET                         = 0x2000125d
++	BLKROTATIONAL                    = 0x2000127e
+ 	BLKRRPART                        = 0x2000125f
++	BLKSECDISCARD                    = 0x2000127d
+ 	BLKSECTGET                       = 0x20001267
+ 	BLKSECTSET                       = 0x20001266
+ 	BLKSSZGET                        = 0x20001268
++	BLKZEROOUT                       = 0x2000127f
+ 	BOTHER                           = 0x1000
+ 	BS1                              = 0x2000
+ 	BSDLY                            = 0x2000
+diff --git a/vendor/golang.org/x/sys/unix/zsyscall_linux.go b/vendor/golang.org/x/sys/unix/zsyscall_linux.go
+index 8e5cee2..1ff3aec 100644
+--- a/vendor/golang.org/x/sys/unix/zsyscall_linux.go
++++ b/vendor/golang.org/x/sys/unix/zsyscall_linux.go
+@@ -1356,7 +1356,7 @@ func Prctl(option int, arg2 uintptr, arg3 uintptr, arg4 uintptr, arg5 uintptr) (
+ 
+ // THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
+ 
+-func Pselect(nfd int, r *FdSet, w *FdSet, e *FdSet, timeout *Timespec, sigmask *Sigset_t) (n int, err error) {
++func pselect6(nfd int, r *FdSet, w *FdSet, e *FdSet, timeout *Timespec, sigmask *sigset_argpack) (n int, err error) {
+ 	r0, _, e1 := Syscall6(SYS_PSELECT6, uintptr(nfd), uintptr(unsafe.Pointer(r)), uintptr(unsafe.Pointer(w)), uintptr(unsafe.Pointer(e)), uintptr(unsafe.Pointer(timeout)), uintptr(unsafe.Pointer(sigmask)))
+ 	n = int(r0)
+ 	if e1 != 0 {
+diff --git a/vendor/golang.org/x/sys/unix/zsyscall_linux_riscv64.go b/vendor/golang.org/x/sys/unix/zsyscall_linux_riscv64.go
+index 0b29239..0ab4f2e 100644
+--- a/vendor/golang.org/x/sys/unix/zsyscall_linux_riscv64.go
++++ b/vendor/golang.org/x/sys/unix/zsyscall_linux_riscv64.go
+@@ -531,3 +531,19 @@ func kexecFileLoad(kernelFd int, initrdFd int, cmdlineLen int, cmdline string, f
+ 	}
+ 	return
+ }
++
++// THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
++
++func riscvHWProbe(pairs []RISCVHWProbePairs, cpuCount uintptr, cpus *CPUSet, flags uint) (err error) {
++	var _p0 unsafe.Pointer
++	if len(pairs) > 0 {
++		_p0 = unsafe.Pointer(&pairs[0])
++	} else {
++		_p0 = unsafe.Pointer(&_zero)
++	}
++	_, _, e1 := Syscall6(SYS_RISCV_HWPROBE, uintptr(_p0), uintptr(len(pairs)), uintptr(cpuCount), uintptr(unsafe.Pointer(cpus)), uintptr(flags), 0)
++	if e1 != 0 {
++		err = errnoErr(e1)
++	}
++	return
++}
+diff --git a/vendor/golang.org/x/sys/unix/zsyscall_netbsd_386.go b/vendor/golang.org/x/sys/unix/zsyscall_netbsd_386.go
+index af06b23..2df3c5b 100644
+--- a/vendor/golang.org/x/sys/unix/zsyscall_netbsd_386.go
++++ b/vendor/golang.org/x/sys/unix/zsyscall_netbsd_386.go
+@@ -1836,3 +1836,14 @@ func utimensat(dirfd int, path string, times *[2]Timespec, flags int) (err error
+ 	}
+ 	return
+ }
++
++// THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
++
++func mremapNetBSD(oldp uintptr, oldsize uintptr, newp uintptr, newsize uintptr, flags int) (xaddr uintptr, err error) {
++	r0, _, e1 := Syscall6(SYS_MREMAP, uintptr(oldp), uintptr(oldsize), uintptr(newp), uintptr(newsize), uintptr(flags), 0)
++	xaddr = uintptr(r0)
++	if e1 != 0 {
++		err = errnoErr(e1)
++	}
++	return
++}
+diff --git a/vendor/golang.org/x/sys/unix/zsyscall_netbsd_amd64.go b/vendor/golang.org/x/sys/unix/zsyscall_netbsd_amd64.go
+index 093fcf3..a60556b 100644
+--- a/vendor/golang.org/x/sys/unix/zsyscall_netbsd_amd64.go
++++ b/vendor/golang.org/x/sys/unix/zsyscall_netbsd_amd64.go
+@@ -1836,3 +1836,14 @@ func utimensat(dirfd int, path string, times *[2]Timespec, flags int) (err error
+ 	}
+ 	return
+ }
++
++// THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
++
++func mremapNetBSD(oldp uintptr, oldsize uintptr, newp uintptr, newsize uintptr, flags int) (xaddr uintptr, err error) {
++	r0, _, e1 := Syscall6(SYS_MREMAP, uintptr(oldp), uintptr(oldsize), uintptr(newp), uintptr(newsize), uintptr(flags), 0)
++	xaddr = uintptr(r0)
++	if e1 != 0 {
++		err = errnoErr(e1)
++	}
++	return
++}
+diff --git a/vendor/golang.org/x/sys/unix/zsyscall_netbsd_arm.go b/vendor/golang.org/x/sys/unix/zsyscall_netbsd_arm.go
+index 4a78567..9f78891 100644
+--- a/vendor/golang.org/x/sys/unix/zsyscall_netbsd_arm.go
++++ b/vendor/golang.org/x/sys/unix/zsyscall_netbsd_arm.go
+@@ -1836,3 +1836,14 @@ func utimensat(dirfd int, path string, times *[2]Timespec, flags int) (err error
+ 	}
+ 	return
+ }
++
++// THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
++
++func mremapNetBSD(oldp uintptr, oldsize uintptr, newp uintptr, newsize uintptr, flags int) (xaddr uintptr, err error) {
++	r0, _, e1 := Syscall6(SYS_MREMAP, uintptr(oldp), uintptr(oldsize), uintptr(newp), uintptr(newsize), uintptr(flags), 0)
++	xaddr = uintptr(r0)
++	if e1 != 0 {
++		err = errnoErr(e1)
++	}
++	return
++}
+diff --git a/vendor/golang.org/x/sys/unix/zsyscall_netbsd_arm64.go b/vendor/golang.org/x/sys/unix/zsyscall_netbsd_arm64.go
+index 741d8be..82a4cb2 100644
+--- a/vendor/golang.org/x/sys/unix/zsyscall_netbsd_arm64.go
++++ b/vendor/golang.org/x/sys/unix/zsyscall_netbsd_arm64.go
+@@ -1836,3 +1836,14 @@ func utimensat(dirfd int, path string, times *[2]Timespec, flags int) (err error
+ 	}
+ 	return
+ }
++
++// THIS FILE IS GENERATED BY THE COMMAND AT THE TOP; DO NOT EDIT
++
++func mremapNetBSD(oldp uintptr, oldsize uintptr, newp uintptr, newsize uintptr, flags int) (xaddr uintptr, err error) {
++	r0, _, e1 := Syscall6(SYS_MREMAP, uintptr(oldp), uintptr(oldsize), uintptr(newp), uintptr(newsize), uintptr(flags), 0)
++	xaddr = uintptr(r0)
++	if e1 != 0 {
++		err = errnoErr(e1)
++	}
++	return
++}
+diff --git a/vendor/golang.org/x/sys/unix/zsysnum_linux_riscv64.go b/vendor/golang.org/x/sys/unix/zsysnum_linux_riscv64.go
+index 676245e..9d1738d 100644
+--- a/vendor/golang.org/x/sys/unix/zsysnum_linux_riscv64.go
++++ b/vendor/golang.org/x/sys/unix/zsysnum_linux_riscv64.go
+@@ -251,6 +251,8 @@ const (
+ 	SYS_ACCEPT4                 = 242
+ 	SYS_RECVMMSG                = 243
+ 	SYS_ARCH_SPECIFIC_SYSCALL   = 244
++	SYS_RISCV_HWPROBE           = 258
++	SYS_RISCV_FLUSH_ICACHE      = 259
+ 	SYS_WAIT4                   = 260
+ 	SYS_PRLIMIT64               = 261
+ 	SYS_FANOTIFY_INIT           = 262
+diff --git a/vendor/golang.org/x/sys/unix/ztypes_linux.go b/vendor/golang.org/x/sys/unix/ztypes_linux.go
+index 2d93b09..18aa70b 100644
+--- a/vendor/golang.org/x/sys/unix/ztypes_linux.go
++++ b/vendor/golang.org/x/sys/unix/ztypes_linux.go
+@@ -866,6 +866,11 @@ const (
+ 	POLLNVAL = 0x20
+ )
+ 
++type sigset_argpack struct {
++	ss    *Sigset_t
++	ssLen uintptr
++}
++
+ type SignalfdSiginfo struct {
+ 	Signo     uint32
+ 	Errno     int32
+diff --git a/vendor/golang.org/x/sys/windows/syscall_windows.go b/vendor/golang.org/x/sys/windows/syscall_windows.go
+index a3cf746..35cfc57 100644
+--- a/vendor/golang.org/x/sys/windows/syscall_windows.go
++++ b/vendor/golang.org/x/sys/windows/syscall_windows.go
+@@ -133,14 +133,14 @@ func Getpagesize() int { return 4096 }
+ 
+ // NewCallback converts a Go function to a function pointer conforming to the stdcall calling convention.
+ // This is useful when interoperating with Windows code requiring callbacks.
+-// The argument is expected to be a function with with one uintptr-sized result. The function must not have arguments with size larger than the size of uintptr.
++// The argument is expected to be a function with one uintptr-sized result. The function must not have arguments with size larger than the size of uintptr.
+ func NewCallback(fn interface{}) uintptr {
+ 	return syscall.NewCallback(fn)
+ }
+ 
+ // NewCallbackCDecl converts a Go function to a function pointer conforming to the cdecl calling convention.
+ // This is useful when interoperating with Windows code requiring callbacks.
+-// The argument is expected to be a function with with one uintptr-sized result. The function must not have arguments with size larger than the size of uintptr.
++// The argument is expected to be a function with one uintptr-sized result. The function must not have arguments with size larger than the size of uintptr.
+ func NewCallbackCDecl(fn interface{}) uintptr {
+ 	return syscall.NewCallbackCDecl(fn)
+ }
+diff --git a/vendor/google.golang.org/grpc/call.go b/vendor/google.golang.org/grpc/call.go
+index a67a3db..788c89c 100644
+--- a/vendor/google.golang.org/grpc/call.go
++++ b/vendor/google.golang.org/grpc/call.go
+@@ -27,11 +27,6 @@ import (
+ //
+ // All errors returned by Invoke are compatible with the status package.
+ func (cc *ClientConn) Invoke(ctx context.Context, method string, args, reply any, opts ...CallOption) error {
+-	if err := cc.idlenessMgr.OnCallBegin(); err != nil {
+-		return err
+-	}
+-	defer cc.idlenessMgr.OnCallEnd()
+-
+ 	// allow interceptor to see all applicable call options, which means those
+ 	// configured as defaults from dial option as well as per-call options
+ 	opts = combine(cc.dopts.callOptions, opts)
+diff --git a/vendor/google.golang.org/grpc/clientconn.go b/vendor/google.golang.org/grpc/clientconn.go
+index d53d91d..ff7fea1 100644
+--- a/vendor/google.golang.org/grpc/clientconn.go
++++ b/vendor/google.golang.org/grpc/clientconn.go
+@@ -1091,8 +1091,8 @@ func (ac *addrConn) updateAddrs(addrs []resolver.Address) {
+ 	ac.cancel()
+ 	ac.ctx, ac.cancel = context.WithCancel(ac.cc.ctx)
+ 
+-	// We have to defer here because GracefulClose => Close => onClose, which
+-	// requires locking ac.mu.
++	// We have to defer here because GracefulClose => onClose, which requires
++	// locking ac.mu.
+ 	if ac.transport != nil {
+ 		defer ac.transport.GracefulClose()
+ 		ac.transport = nil
+@@ -1680,16 +1680,7 @@ func (ac *addrConn) tearDown(err error) {
+ 	ac.updateConnectivityState(connectivity.Shutdown, nil)
+ 	ac.cancel()
+ 	ac.curAddr = resolver.Address{}
+-	if err == errConnDrain && curTr != nil {
+-		// GracefulClose(...) may be executed multiple times when
+-		// i) receiving multiple GoAway frames from the server; or
+-		// ii) there are concurrent name resolver/Balancer triggered
+-		// address removal and GoAway.
+-		// We have to unlock and re-lock here because GracefulClose => Close => onClose, which requires locking ac.mu.
+-		ac.mu.Unlock()
+-		curTr.GracefulClose()
+-		ac.mu.Lock()
+-	}
++
+ 	channelz.AddTraceEvent(logger, ac.channelzID, 0, &channelz.TraceEventDesc{
+ 		Desc:     "Subchannel deleted",
+ 		Severity: channelz.CtInfo,
+@@ -1703,6 +1694,29 @@ func (ac *addrConn) tearDown(err error) {
+ 	// being deleted right away.
+ 	channelz.RemoveEntry(ac.channelzID)
+ 	ac.mu.Unlock()
++
++	// We have to release the lock before the call to GracefulClose/Close here
++	// because both of them call onClose(), which requires locking ac.mu.
++	if curTr != nil {
++		if err == errConnDrain {
++			// Close the transport gracefully when the subConn is being shutdown.
++			//
++			// GracefulClose() may be executed multiple times if:
++			// - multiple GoAway frames are received from the server
++			// - there are concurrent name resolver or balancer triggered
++			//   address removal and GoAway
++			curTr.GracefulClose()
++		} else {
++			// Hard close the transport when the channel is entering idle or is
++			// being shutdown. In the case where the channel is being shutdown,
++			// closing of transports is also taken care of by cancelation of cc.ctx.
++			// But in the case where the channel is entering idle, we need to
++			// explicitly close the transports here. Instead of distinguishing
++			// between these two cases, it is simpler to close the transport
++			// unconditionally here.
++			curTr.Close(err)
++		}
++	}
+ }
+ 
+ func (ac *addrConn) getState() connectivity.State {
+diff --git a/vendor/google.golang.org/grpc/internal/transport/http2_server.go b/vendor/google.golang.org/grpc/internal/transport/http2_server.go
+index 8d3a353..c06db67 100644
+--- a/vendor/google.golang.org/grpc/internal/transport/http2_server.go
++++ b/vendor/google.golang.org/grpc/internal/transport/http2_server.go
+@@ -171,15 +171,10 @@ func NewServerTransport(conn net.Conn, config *ServerConfig) (_ ServerTransport,
+ 		ID:  http2.SettingMaxFrameSize,
+ 		Val: http2MaxFrameLen,
+ 	}}
+-	// TODO(zhaoq): Have a better way to signal "no limit" because 0 is
+-	// permitted in the HTTP2 spec.
+-	maxStreams := config.MaxStreams
+-	if maxStreams == 0 {
+-		maxStreams = math.MaxUint32
+-	} else {
++	if config.MaxStreams != math.MaxUint32 {
+ 		isettings = append(isettings, http2.Setting{
+ 			ID:  http2.SettingMaxConcurrentStreams,
+-			Val: maxStreams,
++			Val: config.MaxStreams,
+ 		})
+ 	}
+ 	dynamicWindow := true
+@@ -258,7 +253,7 @@ func NewServerTransport(conn net.Conn, config *ServerConfig) (_ ServerTransport,
+ 		framer:            framer,
+ 		readerDone:        make(chan struct{}),
+ 		writerDone:        make(chan struct{}),
+-		maxStreams:        maxStreams,
++		maxStreams:        config.MaxStreams,
+ 		inTapHandle:       config.InTapHandle,
+ 		fc:                &trInFlow{limit: uint32(icwz)},
+ 		state:             reachable,
+diff --git a/vendor/google.golang.org/grpc/server.go b/vendor/google.golang.org/grpc/server.go
+index 244123c..eeae92f 100644
+--- a/vendor/google.golang.org/grpc/server.go
++++ b/vendor/google.golang.org/grpc/server.go
+@@ -115,12 +115,6 @@ type serviceInfo struct {
+ 	mdata       any
+ }
+ 
+-type serverWorkerData struct {
+-	st     transport.ServerTransport
+-	wg     *sync.WaitGroup
+-	stream *transport.Stream
+-}
+-
+ // Server is a gRPC server to serve RPC requests.
+ type Server struct {
+ 	opts serverOptions
+@@ -145,7 +139,7 @@ type Server struct {
+ 	channelzID *channelz.Identifier
+ 	czData     *channelzData
+ 
+-	serverWorkerChannel chan *serverWorkerData
++	serverWorkerChannel chan func()
+ }
+ 
+ type serverOptions struct {
+@@ -179,6 +173,7 @@ type serverOptions struct {
+ }
+ 
+ var defaultServerOptions = serverOptions{
++	maxConcurrentStreams:  math.MaxUint32,
+ 	maxReceiveMessageSize: defaultServerMaxReceiveMessageSize,
+ 	maxSendMessageSize:    defaultServerMaxSendMessageSize,
+ 	connectionTimeout:     120 * time.Second,
+@@ -404,6 +399,9 @@ func MaxSendMsgSize(m int) ServerOption {
+ // MaxConcurrentStreams returns a ServerOption that will apply a limit on the number
+ // of concurrent streams to each ServerTransport.
+ func MaxConcurrentStreams(n uint32) ServerOption {
++	if n == 0 {
++		n = math.MaxUint32
++	}
+ 	return newFuncServerOption(func(o *serverOptions) {
+ 		o.maxConcurrentStreams = n
+ 	})
+@@ -605,24 +603,19 @@ const serverWorkerResetThreshold = 1 << 16
+ // [1] https://github.com/golang/go/issues/18138
+ func (s *Server) serverWorker() {
+ 	for completed := 0; completed < serverWorkerResetThreshold; completed++ {
+-		data, ok := <-s.serverWorkerChannel
++		f, ok := <-s.serverWorkerChannel
+ 		if !ok {
+ 			return
+ 		}
+-		s.handleSingleStream(data)
++		f()
+ 	}
+ 	go s.serverWorker()
+ }
+ 
+-func (s *Server) handleSingleStream(data *serverWorkerData) {
+-	defer data.wg.Done()
+-	s.handleStream(data.st, data.stream, s.traceInfo(data.st, data.stream))
+-}
+-
+ // initServerWorkers creates worker goroutines and a channel to process incoming
+ // connections to reduce the time spent overall on runtime.morestack.
+ func (s *Server) initServerWorkers() {
+-	s.serverWorkerChannel = make(chan *serverWorkerData)
++	s.serverWorkerChannel = make(chan func())
+ 	for i := uint32(0); i < s.opts.numServerWorkers; i++ {
+ 		go s.serverWorker()
+ 	}
+@@ -982,21 +975,26 @@ func (s *Server) serveStreams(st transport.ServerTransport) {
+ 	defer st.Close(errors.New("finished serving streams for the server transport"))
+ 	var wg sync.WaitGroup
+ 
++	streamQuota := newHandlerQuota(s.opts.maxConcurrentStreams)
+ 	st.HandleStreams(func(stream *transport.Stream) {
+ 		wg.Add(1)
++
++		streamQuota.acquire()
++		f := func() {
++			defer streamQuota.release()
++			defer wg.Done()
++			s.handleStream(st, stream, s.traceInfo(st, stream))
++		}
++
+ 		if s.opts.numServerWorkers > 0 {
+-			data := &serverWorkerData{st: st, wg: &wg, stream: stream}
+ 			select {
+-			case s.serverWorkerChannel <- data:
++			case s.serverWorkerChannel <- f:
+ 				return
+ 			default:
+ 				// If all stream workers are busy, fallback to the default code path.
+ 			}
+ 		}
+-		go func() {
+-			defer wg.Done()
+-			s.handleStream(st, stream, s.traceInfo(st, stream))
+-		}()
++		go f()
+ 	}, func(ctx context.Context, method string) context.Context {
+ 		if !EnableTracing {
+ 			return ctx
+@@ -2091,3 +2089,34 @@ func validateSendCompressor(name, clientCompressors string) error {
+ 	}
+ 	return fmt.Errorf("client does not support compressor %q", name)
+ }
++
++// atomicSemaphore implements a blocking, counting semaphore. acquire should be
++// called synchronously; release may be called asynchronously.
++type atomicSemaphore struct {
++	n    atomic.Int64
++	wait chan struct{}
++}
++
++func (q *atomicSemaphore) acquire() {
++	if q.n.Add(-1) < 0 {
++		// We ran out of quota.  Block until a release happens.
++		<-q.wait
++	}
++}
++
++func (q *atomicSemaphore) release() {
++	// N.B. the "<= 0" check below should allow for this to work with multiple
++	// concurrent calls to acquire, but also note that with synchronous calls to
++	// acquire, as our system does, n will never be less than -1.  There are
++	// fairness issues (queuing) to consider if this was to be generalized.
++	if q.n.Add(1) <= 0 {
++		// An acquire was waiting on us.  Unblock it.
++		q.wait <- struct{}{}
++	}
++}
++
++func newHandlerQuota(n uint32) *atomicSemaphore {
++	a := &atomicSemaphore{wait: make(chan struct{}, 1)}
++	a.n.Store(int64(n))
++	return a
++}
+diff --git a/vendor/google.golang.org/grpc/stream.go b/vendor/google.golang.org/grpc/stream.go
+index 421a41f..b14b2fb 100644
+--- a/vendor/google.golang.org/grpc/stream.go
++++ b/vendor/google.golang.org/grpc/stream.go
+@@ -158,11 +158,6 @@ type ClientStream interface {
+ // If none of the above happen, a goroutine and a context will be leaked, and grpc
+ // will not call the optionally-configured stats handler with a stats.End message.
+ func (cc *ClientConn) NewStream(ctx context.Context, desc *StreamDesc, method string, opts ...CallOption) (ClientStream, error) {
+-	if err := cc.idlenessMgr.OnCallBegin(); err != nil {
+-		return nil, err
+-	}
+-	defer cc.idlenessMgr.OnCallEnd()
+-
+ 	// allow interceptor to see all applicable call options, which means those
+ 	// configured as defaults from dial option as well as per-call options
+ 	opts = combine(cc.dopts.callOptions, opts)
+@@ -179,6 +174,16 @@ func NewClientStream(ctx context.Context, desc *StreamDesc, cc *ClientConn, meth
+ }
+ 
+ func newClientStream(ctx context.Context, desc *StreamDesc, cc *ClientConn, method string, opts ...CallOption) (_ ClientStream, err error) {
++	// Start tracking the RPC for idleness purposes. This is where a stream is
++	// created for both streaming and unary RPCs, and hence is a good place to
++	// track active RPC count.
++	if err := cc.idlenessMgr.OnCallBegin(); err != nil {
++		return nil, err
++	}
++	// Add a calloption, to decrement the active call count, that gets executed
++	// when the RPC completes.
++	opts = append([]CallOption{OnFinish(func(error) { cc.idlenessMgr.OnCallEnd() })}, opts...)
++
+ 	if md, added, ok := metadata.FromOutgoingContextRaw(ctx); ok {
+ 		// validate md
+ 		if err := imetadata.Validate(md); err != nil {
+diff --git a/vendor/google.golang.org/grpc/version.go b/vendor/google.golang.org/grpc/version.go
+index 914ce66..724ad21 100644
+--- a/vendor/google.golang.org/grpc/version.go
++++ b/vendor/google.golang.org/grpc/version.go
+@@ -19,4 +19,4 @@
+ package grpc
+ 
+ // Version is the current grpc version.
+-const Version = "1.58.0"
++const Version = "1.58.3"
+diff --git a/vendor/modules.txt b/vendor/modules.txt
+index a028c0a..b6e43e5 100644
+--- a/vendor/modules.txt
++++ b/vendor/modules.txt
+@@ -61,45 +61,6 @@ github.com/prometheus/procfs/internal/util
+ # github.com/spf13/pflag v1.0.5
+ ## explicit; go 1.12
+ github.com/spf13/pflag
+-# go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.41.0
+-## explicit; go 1.19
+-go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc
+-go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc/internal
+-# go.opentelemetry.io/otel v1.15.0
+-## explicit; go 1.19
+-go.opentelemetry.io/otel
+-go.opentelemetry.io/otel/attribute
+-go.opentelemetry.io/otel/baggage
+-go.opentelemetry.io/otel/codes
+-go.opentelemetry.io/otel/internal
+-go.opentelemetry.io/otel/internal/attribute
+-go.opentelemetry.io/otel/internal/baggage
+-go.opentelemetry.io/otel/internal/global
+-go.opentelemetry.io/otel/propagation
+-go.opentelemetry.io/otel/semconv/v1.17.0
+-# go.opentelemetry.io/otel/metric v0.38.0
+-## explicit; go 1.19
+-go.opentelemetry.io/otel/metric
+-go.opentelemetry.io/otel/metric/embedded
+-go.opentelemetry.io/otel/metric/global
+-go.opentelemetry.io/otel/metric/internal/global
+-# go.opentelemetry.io/otel/trace v1.15.0
+-## explicit; go 1.19
+-go.opentelemetry.io/otel/trace
+-# go.uber.org/atomic v1.10.0
+-## explicit; go 1.18
+-go.uber.org/atomic
+-# go.uber.org/multierr v1.11.0
+-## explicit; go 1.19
+-go.uber.org/multierr
+-# go.uber.org/zap v1.19.0
+-## explicit; go 1.13
+-go.uber.org/zap
+-go.uber.org/zap/buffer
+-go.uber.org/zap/internal/bufferpool
+-go.uber.org/zap/internal/color
+-go.uber.org/zap/internal/exit
+-go.uber.org/zap/zapcore
+ # golang.org/x/net v0.17.0
+ ## explicit; go 1.17
+ golang.org/x/net/http/httpguts
+@@ -121,7 +82,7 @@ golang.org/x/text/unicode/norm
+ # google.golang.org/genproto/googleapis/rpc v0.0.0-20230711160842-782d3b101e98
+ ## explicit; go 1.19
+ google.golang.org/genproto/googleapis/rpc/status
+-# google.golang.org/grpc v1.58.0
++# google.golang.org/grpc v1.58.3
+ ## explicit; go 1.19
+ google.golang.org/grpc
+ google.golang.org/grpc/attributes
+-- 
+2.39.1
+
