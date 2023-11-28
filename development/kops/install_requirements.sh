@@ -22,59 +22,54 @@ source ${BASEDIR}/set_environment.sh
 
 mkdir -p ${BASEDIR}/bin
 
-if [ ! -x ${KOPS} ]
-then
-    echo "Determine kops version"
-    echo "Download kops"
-    KOPS_URL="https://eks-d-postsubmit-artifacts.s3.us-west-2.amazonaws.com/kops/${KOPS_VERSION}/${OS}/${ARCH}/kops"
-    set -x
-    curl -A "${USERAGENT}" -L -o ${KOPS} "${KOPS_URL}"
-    chmod 755 ${KOPS}
-    set +x
+if [ ! -x ${KOPS} ]; then
+	echo "Determine kops version"
+	echo "Download kops"
+	KOPS_URL="https://eks-d-postsubmit-artifacts.s3.us-west-2.amazonaws.com/kops/${KOPS_VERSION}/${OS}/${ARCH}/kops"
+	set -x
+	curl -A "${USERAGENT}" -L -o ${KOPS} "${KOPS_URL}"
+	chmod 755 ${KOPS}
+	set +x
 fi
 
-if ! command -v kubectl &> /dev/null
-then
-    echo "kubectl could not be found. Downloading..."
-    KUBECTL_VERSION=$(cat ${BASEDIR}/../../projects/kubernetes/kubernetes/${RELEASE_BRANCH}/GIT_TAG)
-    KUBECTL_PATH=${BASEDIR}/bin/kubectl
-    COUNT=0
-    while [ ! "$(${KUBECTL_PATH} version)" ]; do
-        sleep 5
-        COUNT=$(expr $COUNT + 1)
-        if [ $COUNT -gt 120 ]
-        then
-            echo "Failed to download kubectl"
-            exit 1
-        fi
-        set -x
-        curl -A "${USERAGENT}" -sSL "${ARTIFACT_URL}/kubernetes/${KUBECTL_VERSION}/bin/${OS}/${ARCH}/kubectl" -o ${KUBECTL_PATH}
-        chmod +x ${KUBECTL_PATH}
-        set +x
-    done
+if ! command -v kubectl &>/dev/null; then
+	echo "kubectl could not be found. Downloading..."
+	KUBECTL_VERSION=$(cat ${BASEDIR}/../../projects/kubernetes/kubernetes/${RELEASE_BRANCH}/GIT_TAG)
+	KUBECTL_PATH=${BASEDIR}/bin/kubectl
+	COUNT=0
+	while [ ! "$(${KUBECTL_PATH} version)" ]; do
+		sleep 5
+		COUNT=$(expr $COUNT + 1)
+		if [ $COUNT -gt 120 ]; then
+			echo "Failed to download kubectl"
+			exit 1
+		fi
+		set -x
+		curl -A "${USERAGENT}" -sSL "${ARTIFACT_URL}/kubernetes/${KUBECTL_VERSION}/bin/${OS}/${ARCH}/kubectl" -o ${KUBECTL_PATH}
+		chmod +x ${KUBECTL_PATH}
+		set +x
+	done
 fi
 
-if ! command -v helm &> /dev/null
-then
-    curl -A "${USERAGENT}" -s https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | HELM_INSTALL_DIR=${BASEDIR}/bin bash
+if ! command -v helm &>/dev/null; then
+	curl -A "${USERAGENT}" -s https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | HELM_INSTALL_DIR=${BASEDIR}/bin bash
 fi
 
-if ! command -v sonobuoy &> /dev/null
-then
-    echo "Download sonobuoy"
-    SONOBUOY=https://github.com/vmware-tanzu/sonobuoy/releases/download/v0.56.2/sonobuoy_0.56.2_${OS}_${ARCH}.tar.gz
-    wget -qO- ${SONOBUOY} |tar -xz sonobuoy
-    chmod 755 sonobuoy
-    mv sonobuoy ./bin
+if ! command -v sonobuoy &>/dev/null; then
+	echo "Download sonobuoy"
+	SONOBUOY=https://github.com/vmware-tanzu/sonobuoy/releases/download/v0.57.1/sonobuoy_0.57.1_${OS}_${ARCH}.tar.gz
+	wget -qO- ${SONOBUOY} | tar -xz sonobuoy
+	chmod 755 sonobuoy
+	mv sonobuoy ./bin
 fi
 
 version_num=${RELEASE_BRANCH#*-} # extract the minor version number from the release branch
 
 echo "$(which kops): $(kops version)"
-if (( version_num >= 23 && version_num <= 27 )); then
-  echo "$(which kubectl): $(kubectl version --client=true --short)"
+if ((version_num >= 23 && version_num <= 27)); then
+	echo "$(which kubectl): $(kubectl version --client=true --short)"
 else
-  echo "$(which kubectl): $(kubectl version --client=true)"
+	echo "$(which kubectl): $(kubectl version --client=true)"
 fi
 echo "$(which helm): $(helm version --short)"
 echo "$(which sonobuoy): $(sonobuoy version --short)"
