@@ -1282,7 +1282,7 @@ PERFORMANCE OF THIS SOFTWARE.
 ------
 
 ** github.com/antonmedv/expr; version v1.12.0 --
-https://github.com/antonmedv/expr
+https://github.com/expr-lang/expr
 Copyright (c) 2019 Anton Medvedev
 
 ** github.com/apparentlymart/go-cidr/cidr; version v1.1.0 --
