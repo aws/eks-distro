@@ -1,6 +1,6 @@
-From b00679bcc430364b956540a9644fe45c8d7a3019 Mon Sep 17 00:00:00 2001
+From f1fa1a70492c715fff410e72e71acdcf1eadabe0 Mon Sep 17 00:00:00 2001
 From: Sajia Zafreen <szafreen@amazon.com>
-Date: Wed, 6 Dec 2023 18:37:08 +0000
+Date: Wed, 6 Dec 2023 20:31:40 +0000
 Subject: [PATCH] Bump otelgrpc and otelhtt to 0.46.1
 
 Signed-off-by: Sajia Zafreen <szafreen@amazon.com>
@@ -10,7 +10,7 @@ Signed-off-by: Sajia Zafreen <szafreen@amazon.com>
  2 files changed, 233 insertions(+), 669 deletions(-)
 
 diff --git a/go.mod b/go.mod
-index 2851a8a..8827141 100644
+index 2851a8a..6acd47a 100644
 --- a/go.mod
 +++ b/go.mod
 @@ -4,21 +4,21 @@ go 1.19
@@ -191,14 +191,14 @@ index 2851a8a..8827141 100644
 -	sigs.k8s.io/json v0.0.0-20211020170558-c049b76a60c6 // indirect
 +	k8s.io/kms v0.28.4 // indirect
 +	k8s.io/utils v0.0.0-20230406110748-d93618cff8a2 // indirect
-+	sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.28.2 // indirect
++	sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.1.2 // indirect
 +	sigs.k8s.io/json v0.0.0-20221116044647-bc3834ca7abd // indirect
  	sigs.k8s.io/structured-merge-diff/v4 v4.2.3 // indirect
 -	sigs.k8s.io/yaml v1.2.0 // indirect
 +	sigs.k8s.io/yaml v1.3.0 // indirect
  )
 diff --git a/go.sum b/go.sum
-index cdf0014..144eadc 100644
+index cdf0014..852b4f8 100644
 --- a/go.sum
 +++ b/go.sum
 @@ -1,45 +1,7 @@
@@ -1229,8 +1229,8 @@ index cdf0014..144eadc 100644
 -sigs.k8s.io/json v0.0.0-20211020170558-c049b76a60c6/go.mod h1:p4QtZmO4uMYipTQNzagwnNoseA6OxSUutVw05NhYDRs=
 +k8s.io/utils v0.0.0-20230406110748-d93618cff8a2 h1:qY1Ad8PODbnymg2pRbkyMT/ylpTrCM8P2RJ0yroCyIk=
 +k8s.io/utils v0.0.0-20230406110748-d93618cff8a2/go.mod h1:OLgZIPagt7ERELqWJFomSt595RzquPNLL48iOWgYOg0=
-+sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.28.2 h1:vAt+mVqNki7yUgcuQijC3hLoeOv/RiTt8eARcxaxiDg=
-+sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.28.2/go.mod h1:z7+wmGM2dfIiLRfrC6jb5kV2Mq/sK1ZP303cxzkV5Y4=
++sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.1.2 h1:trsWhjU5jZrx6UvFu4WzQDrN7Pga4a7Qg+zcfcj64PA=
++sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.1.2/go.mod h1:+qG7ISXqCDVVcyO8hLn12AKVYYUjM7ftlqsqmrhMZE0=
 +sigs.k8s.io/json v0.0.0-20221116044647-bc3834ca7abd h1:EDPBXCAspyGV4jQlpZSudPeMmr1bNJefnuqLsRAsHZo=
 +sigs.k8s.io/json v0.0.0-20221116044647-bc3834ca7abd/go.mod h1:B8JuhiUyNFVKdsE8h686QcCxMaH6HrOAZj4vswFpcB0=
  sigs.k8s.io/logtools v0.4.1 h1:b1SFUhj3Iu1af7pJSf02EyNGlbdCkwGOuAq12dW9c9g=
