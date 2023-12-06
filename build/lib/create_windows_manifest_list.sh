@@ -44,7 +44,8 @@ for version in "${VERSIONS[@]}"; do
         exit 1
     fi
 
-    BASE_IMAGE=$(jq -r '."containerimage.buildinfo".attrs."build-arg:BASE_IMAGE"' /tmp/$IMAGE_NAME-$version-metadata.json)
+    BASE_IMAGE_TAG_FILE=${SCRIPT_ROOT}/../../EKS_DISTRO_WINDOWS_BASE_$(echo $version | tr '[:lower:]' '[:upper:]' | tr '-' '_')_TAG_FILE
+    BASE_IMAGE=public.ecr.aws/eks-distro-build-tooling/eks-distro-windows-base:$(cat $BASE_IMAGE_TAG_FILE)
 
     # need to remove mediaType from descri since buildx segfaults when it is set
     jq -r '."containerimage.descriptor"  | {size, digest}' /tmp/$IMAGE_NAME-$version-metadata.json > /tmp/$IMAGE_NAME-$version-descr.json
