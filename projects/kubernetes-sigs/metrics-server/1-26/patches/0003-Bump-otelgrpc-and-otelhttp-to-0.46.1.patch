@@ -1,19 +1,23 @@
-From 9561baf15724800244a7ef4554f73dbf4fc88149 Mon Sep 17 00:00:00 2001
+From 21eab17fc138b916d0130b8dd9f2738f2f8e530c Mon Sep 17 00:00:00 2001
 From: Sajia Zafreen <szafreen@amazon.com>
-Date: Thu, 7 Dec 2023 20:53:39 +0000
+Date: Thu, 7 Dec 2023 21:18:00 +0000
 Subject: [PATCH] Bump otelgrpc and otelhttp to 0.46.1
 
 Signed-off-by: Sajia Zafreen <szafreen@amazon.com>
 ---
- go.mod | 135 +++++-----
+ go.mod | 137 ++++++-----
  go.sum | 767 ++++++++++++---------------------------------------------
- 2 files changed, 233 insertions(+), 669 deletions(-)
+ 2 files changed, 234 insertions(+), 670 deletions(-)
 
 diff --git a/go.mod b/go.mod
-index 2851a8a..6acd47a 100644
+index 2851a8a..92355ce 100644
 --- a/go.mod
 +++ b/go.mod
-@@ -4,21 +4,21 @@ go 1.19
+@@ -1,24 +1,24 @@
+ module sigs.k8s.io/metrics-server
+ 
+-go 1.19
++go 1.20
  
  require (
  	github.com/google/addlicense v1.0.0
