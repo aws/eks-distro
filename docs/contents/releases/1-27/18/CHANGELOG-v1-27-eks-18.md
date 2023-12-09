@@ -5,7 +5,7 @@ This changelog highlights the changes for [v1-27-eks-18](https://github.com/aws/
 ## Changes
 
 ### Patches
-* Patch external-provisioner and Bump k8 to 1.28.4and otelgrpc, otelhttp to 0.46.1 ([2595](https://github.com/aws/eks-distro/pull/2595))
+* Patch external-provisioner and Bump k8 to 1.28.4 and otelgrpc, otelhttp to 0.46.1 ([2595](https://github.com/aws/eks-distro/pull/2595))
 
 ### Projects
 * update 1.24-1.28 external-snapshotter golang version to 1.20 ([2599](https://github.com/aws/eks-distro/pull/2599))
