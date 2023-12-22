@@ -432,7 +432,7 @@ TARGET_END_LOG?="------------------- `$(DATE_CMD) +'%Y-%m-%dT%H:%M:%S.$(DATE_NAN
 ####################################################
 
 #################### TARGETS FOR OVERRIDING ########
-BUILD_TARGETS?=validate-checksums attribution $(if $(IMAGE_NAMES),local-images,) $(if $(filter true,$(HAS_HELM_CHART)),helm/build,) $(if $(filter true,$(HAS_S3_ARTIFACTS)),upload-artifacts,) attribution-pr
+BUILD_TARGETS?=run-govulncheck validate-checksums attribution $(if $(IMAGE_NAMES),local-images,) $(if $(filter true,$(HAS_HELM_CHART)),helm/build,) $(if $(filter true,$(HAS_S3_ARTIFACTS)),upload-artifacts,) attribution-pr
 RELEASE_TARGETS?=validate-checksums $(if $(IMAGE_NAMES),images,) $(if $(filter true,$(HAS_HELM_CHART)),helm/push,) $(if $(filter true,$(HAS_S3_ARTIFACTS)),upload-artifacts,)
 ####################################################
 
@@ -559,6 +559,18 @@ endif
 
 .PHONY: binaries
 binaries: $(BINARY_TARGETS)
+
+.PHONY: run-govulncheck
+run-govulncheck: $(BINARY_TARGETS)
+	source $(BUILD_LIB)/common.sh \
+		&& build::common::use_go_version $(GOLANG_VERSION) \
+		&& go install golang.org/x/vuln/cmd/govulncheck@latest \
+	 	&& $$(go env GOPATH)/bin/govulncheck -C $(REPO) -json ./... > _output/govuln-output.json \
+		&& comm -13 <(jq -rj '.["$(GOLANG_VERSION)"] | join("\n\n")' $(BASE_DIRECTORY)/EKS_GO_FIXES.json | sort) <(jq -sr '.[].finding | select(. != null) | .osv' _output/govuln-output.json  | uniq | sort) > _output/govuln-cves \
+		&& if [ -s "_output/govuln-cves" ]; then \
+			cat _output/govuln-cves; \
+			exit 1; \
+		fi
 
 $(KUSTOMIZE_TARGET):
 	@mkdir -p $(OUTPUT_DIR)
