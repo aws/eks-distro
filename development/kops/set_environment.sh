@@ -26,10 +26,8 @@ export UBUNTU_RELEASE=${UBUNTU_RELEASE:-focal-20.04}
 export IPV6=${IPV6:-false}
 if [ "$RELEASE_BRANCH" == "1-29" ]; then
 	export KOPS_VERSION="1.29.0-alpha.2"
-elif [ "$RELEASE_BRANCH" == "1-28" ]; then
-	export KOPS_VERSION="1.28.0-alpha.1"
 else
-	export KOPS_VERSION="1.27.0"
+	export KOPS_VERSION="1.28.1"
 fi
 
 if [ -n "$ARTIFACT_BUCKET" ]; then
@@ -74,7 +72,7 @@ if [ "${PREFLIGHT_CHECK_PASSED:-false}" != "true" ]; then
 		echo -e "${GOOD} KOPS_CLUSTER_NAME=${KOPS_CLUSTER_NAME}"
 	fi
 
-	if [ ${JOB_TYPE:-} == 'presubmit' ]; then
+	if [ "${JOB_TYPE:-}" == "presubmit" ]; then
 		PREFLIGHT_CHECK_PASSED=true
 	fi
 fi

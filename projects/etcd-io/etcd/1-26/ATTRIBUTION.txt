@@ -47,25 +47,25 @@ https://github.com/soheilhy/cmux
 ** github.com/spf13/cobra; version v1.1.3 --
 https://github.com/spf13/cobra
 
-** go.etcd.io/etcd/api/v3; version v3.5.9 --
+** go.etcd.io/etcd/api/v3; version v3.5.10 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/client/pkg/v3; version v3.5.9 --
+** go.etcd.io/etcd/client/pkg/v3; version v3.5.10 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/client/v2; version v2.305.9 --
+** go.etcd.io/etcd/client/v2; version v2.305.10 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/client/v3; version v3.5.9 --
+** go.etcd.io/etcd/client/v3; version v3.5.10 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/pkg/v3; version v3.5.9 --
+** go.etcd.io/etcd/pkg/v3; version v3.5.10 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/raft/v3; version v3.5.9 --
+** go.etcd.io/etcd/raft/v3; version v3.5.10 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/server/v3; version v3.5.9 --
+** go.etcd.io/etcd/server/v3; version v3.5.10 --
 https://github.com/etcd-io/etcd
 
 ** go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc; version v0.25.0 --
@@ -89,10 +89,16 @@ https://github.com/open-telemetry/opentelemetry-go
 ** go.opentelemetry.io/proto/otlp; version v0.9.0 --
 https://github.com/open-telemetry/opentelemetry-proto-go
 
-** google.golang.org/genproto; version v0.0.0-20210602131652-f16073e35f0c --
+** google.golang.org/genproto/googleapis/api; version v0.0.0-20230711160842-782d3b101e98 --
 https://github.com/googleapis/go-genproto
 
-** google.golang.org/grpc; version v1.41.0 --
+** google.golang.org/genproto/googleapis/rpc; version v0.0.0-20230711160842-782d3b101e98 --
+https://github.com/googleapis/go-genproto
+
+** google.golang.org/genproto/protobuf/field_mask; version v0.0.0-20230711160842-782d3b101e98 --
+https://github.com/googleapis/go-genproto
+
+** google.golang.org/grpc; version v1.58.3 --
 https://github.com/grpc/grpc-go
 
 ** gopkg.in/yaml.v2; version v2.4.0 --
@@ -460,7 +466,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/golang/protobuf; version v1.5.2 --
+** github.com/golang/protobuf; version v1.5.3 --
 https://github.com/golang/protobuf
 
 Copyright 2010 The Go Authors.  All rights reserved.
@@ -597,19 +603,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/go; version go1.19.13 --
+** golang.org/go; version go1.20.12 --
 https://github.com/golang/go
 
-** golang.org/x/crypto; version v0.0.0-20220411220226-7b82a4e95df4 --
+** golang.org/x/crypto; version v0.14.0 --
 https://golang.org/x/crypto
 
-** golang.org/x/net; version v0.7.0 --
+** golang.org/x/net; version v0.17.0 --
 https://golang.org/x/net
 
-** golang.org/x/sys/unix; version v0.5.0 --
+** golang.org/x/sys/unix; version v0.13.0 --
 https://golang.org/x/sys
 
-** golang.org/x/text; version v0.7.0 --
+** golang.org/x/text; version v0.13.0 --
 https://golang.org/x/text
 
 ** golang.org/x/time/rate; version v0.0.0-20210220033141-f8bda1e9f3ba --
@@ -645,7 +651,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** google.golang.org/protobuf; version v1.27.1 --
+** google.golang.org/protobuf; version v1.31.0 --
 https://go.googlesource.com/protobuf
 
 Copyright (c) 2018 The Go Authors. All rights reserved.
@@ -686,7 +692,7 @@ Copyright (C) 2013 Blake Mizerany
 https://github.com/cenkalti/backoff/v4
 Copyright (c) 2014 Cenk Altı
 
-** github.com/cespare/xxhash/v2; version v2.1.1 --
+** github.com/cespare/xxhash/v2; version v2.2.0 --
 https://github.com/cespare/xxhash/v2
 Copyright (c) 2016 Caleb Spare
 
@@ -711,7 +717,7 @@ Copyright (C) 2016 Travis Cline
 https://github.com/xiang90/probing
 Copyright (c) 2015 Xiang Li
 
-** go.etcd.io/bbolt; version v1.3.7 --
+** go.etcd.io/bbolt; version v1.3.8 --
 https://github.com/etcd-io/bbolt
 Copyright (c) 2013 Ben Johnson
 

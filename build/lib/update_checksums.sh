@@ -31,8 +31,13 @@ CHECKSUMS_FILE=$PROJECT_ROOT/CHECKSUMS
 
 rm -f $CHECKSUMS_FILE
 for file in $(find ${OUTPUT_BIN_DIR} -type f | sort); do
+  if [ "$(uname)" == "Darwin" ]; then
+    filepath=$(grealpath --relative-base=$MAKE_ROOT $file)
+    sha256sum $filepath >>$CHECKSUMS_FILE
+  else
     filepath=$(realpath --relative-base=$MAKE_ROOT $file)
     sha256sum $filepath >> $CHECKSUMS_FILE
+  fi
 done
 
 echo "*************** CHECKSUMS ***************"

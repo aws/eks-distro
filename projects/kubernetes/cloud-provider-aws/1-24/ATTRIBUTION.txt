@@ -107,10 +107,16 @@ https://github.com/open-telemetry/opentelemetry-go
 ** go.opentelemetry.io/proto/otlp; version v0.7.0 --
 https://github.com/open-telemetry/opentelemetry-proto-go
 
-** google.golang.org/genproto; version v0.0.0-20220107163113-42d7afdf6368 --
+** google.golang.org/genproto/googleapis/api; version v0.0.0-20230711160842-782d3b101e98 --
 https://github.com/googleapis/go-genproto
 
-** google.golang.org/grpc; version v1.40.0 --
+** google.golang.org/genproto/googleapis/rpc/status; version v0.0.0-20230711160842-782d3b101e98 --
+https://github.com/googleapis/go-genproto
+
+** google.golang.org/genproto/protobuf/field_mask; version v0.0.0-20230711160842-782d3b101e98 --
+https://github.com/googleapis/go-genproto
+
+** google.golang.org/grpc; version v1.58.3 --
 https://github.com/grpc/grpc-go
 
 ** gopkg.in/yaml.v2; version v2.4.0 --
@@ -131,7 +137,7 @@ https://github.com/kubernetes/client-go
 ** k8s.io/cloud-provider; version v0.24.17 --
 https://github.com/kubernetes/cloud-provider
 
-** k8s.io/cloud-provider-aws; version v1.24.16 --
+** k8s.io/cloud-provider-aws; version v1.24.17 --
 https://github.com/kubernetes/cloud-provider-aws
 
 ** k8s.io/component-base; version v0.24.17 --
@@ -530,7 +536,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ** github.com/aws/aws-sdk-go/internal/sync/singleflight; version v1.44.145 --
 https://github.com/aws/aws-sdk-go
 
-** golang.org/go; version go1.20.11 --
+** golang.org/go; version go1.21.5 --
 https://github.com/golang/go
 
 ** golang.org/x/crypto; version v0.14.0 --
@@ -539,10 +545,10 @@ https://golang.org/x/crypto
 ** golang.org/x/net; version v0.17.0 --
 https://golang.org/x/net
 
-** golang.org/x/oauth2; version v0.0.0-20211104180415-d3ed0bb246c8 --
+** golang.org/x/oauth2; version v0.10.0 --
 https://golang.org/x/oauth2
 
-** golang.org/x/sync/singleflight; version v0.1.0 --
+** golang.org/x/sync/singleflight; version v0.3.0 --
 https://golang.org/x/sync
 
 ** golang.org/x/sys/unix; version v0.13.0 --
@@ -696,7 +702,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/golang/protobuf; version v1.5.2 --
+** github.com/golang/protobuf; version v1.5.3 --
 https://github.com/golang/protobuf
 
 Copyright 2010 The Go Authors.  All rights reserved.
@@ -730,7 +736,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/google/go-cmp/cmp; version v0.5.8 --
+** github.com/google/go-cmp/cmp; version v0.5.9 --
 https://github.com/google/go-cmp
 
 Copyright (c) 2017 The Go Authors. All rights reserved.
@@ -1024,7 +1030,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** google.golang.org/protobuf; version v1.27.1 --
+** google.golang.org/protobuf; version v1.31.0 --
 https://go.googlesource.com/protobuf
 
 Copyright (c) 2018 The Go Authors. All rights reserved.
@@ -1123,11 +1129,11 @@ Copyright (C) 2013 Blake Mizerany
 https://github.com/blang/semver/v4
 Copyright (c) 2014 Benedikt Lang <github at benediktlang.de>
 
-** github.com/cespare/xxhash/v2; version v2.1.2 --
+** github.com/cespare/xxhash/v2; version v2.2.0 --
 https://github.com/cespare/xxhash/v2
 Copyright (c) 2016 Caleb Spare
 
-** github.com/emicklei/go-restful; version v2.9.5+incompatible --
+** github.com/emicklei/go-restful; version v2.16.0+incompatible --
 https://github.com/emicklei/go-restful
 Copyright (c) 2012,2013 Ernest Micklei
 

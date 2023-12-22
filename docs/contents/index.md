@@ -106,7 +106,7 @@ commands:
 
 ```bash
 RELEASE_BRANCH=1-28
-RELEASE=9
+RELEASE=11
 kubectl apply -f https://distro.eks.amazonaws.com/crds/releases.distro.eks.amazonaws.com-v1alpha1.yaml
 kubectl apply -f https://distro.eks.amazonaws.com/kubernetes-${RELEASE_BRANCH}/kubernetes-${RELEASE_BRANCH}-eks-${RELEASE}.yaml
 kubectl get release kubernetes-${RELEASE_BRANCH}-eks-${RELEASE}
@@ -121,6 +121,8 @@ repository for the [EKS Optimized AMI](https://github.com/awslabs/amazon-eks-ami
 if you are interested in the AL2 container runtime kernel version.
 
 #### EKS-D 1.28 Version Dependencies
+* [v1-28-eks-11](releases/1-28/11/index.md) (December 08, 2023)
+* [v1-28-eks-10](releases/1-28/10/index.md) (November 28, 2023)
 * [v1-28-eks-9](releases/1-28/9/index.md) (November 10, 2023)
 * [v1-28-eks-8](releases/1-28/8/index.md) (October 27, 2023)
 * [v1-28-eks-7](releases/1-28/7/index.md) (October 13, 2023)
@@ -133,6 +135,8 @@ if you are interested in the AL2 container runtime kernel version.
 
 
 #### EKS-D 1.27 Version Dependencies
+* [v1-27-eks-18](releases/1-27/18/index.md) (December 08, 2023)
+* [v1-27-eks-17](releases/1-27/17/index.md) (November 28, 2023)
 * [v1-27-eks-16](releases/1-27/16/index.md) (November 10, 2023)
 * [v1-27-eks-15](releases/1-27/15/index.md) (October 27, 2023)
 * [v1-27-eks-14](releases/1-27/14/index.md) (October 13, 2023)
@@ -151,6 +155,8 @@ if you are interested in the AL2 container runtime kernel version.
 * [v1-27-eks-1](releases/1-27/1/index.md) (May 24, 2023)
 
 #### EKS-D 1.26 Version Dependencies
+* [v1-26-eks-24](releases/1-26/24/index.md) (December 08, 2023)
+* [v1-26-eks-23](releases/1-26/23/index.md) (November 28, 2023)
 * [v1-26-eks-22](releases/1-26/22/index.md) (November 10, 2023)
 * [v1-26-eks-21](releases/1-26/21/index.md) (October 27, 2023)
 * [v1-26-eks-20](releases/1-26/20/index.md) (October 13, 2023)
@@ -175,6 +181,8 @@ if you are interested in the AL2 container runtime kernel version.
 * [v1-26-eks-1](releases/1-26/1/index.md) (February 8, 2023)
 
 #### EKS-D 1.25 Version Dependencies
+* [v1-25-eks-28](releases/1-25/28/index.md) (December 08, 2023)
+* [v1-25-eks-27](releases/1-25/27/index.md) (November 28, 2023)
 * [v1-25-eks-26](releases/1-25/26/index.md) (November 10, 2023)
 * [v1-25-eks-25](releases/1-25/25/index.md) (October 27, 2023)
 * [v1-25-eks-24](releases/1-25/24/index.md) (October 13, 2023)
@@ -203,6 +211,8 @@ if you are interested in the AL2 container runtime kernel version.
 * [v1-25-eks-1](releases/1-25/1/index.md) (December 29, 2022)
 
 #### EKS-D 1.24 Version Dependencies
+* [v1-24-eks-32](releases/1-24/32/index.md) (December 08, 2023)
+* [v1-24-eks-31](releases/1-24/31/index.md) (November 28, 2023)
 * [v1-24-eks-30](releases/1-24/30/index.md) (November 10, 2023)
 * [v1-24-eks-29](releases/1-24/29/index.md) (October 27, 2023)
 * [v1-24-eks-28](releases/1-24/28/index.md) (October 13, 2023)
