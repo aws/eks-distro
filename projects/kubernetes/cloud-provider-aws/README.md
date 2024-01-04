@@ -1,11 +1,11 @@
 ## **cloud-provider-aws**
 | Release | Version                                                        |
 |---------|----------------------------------------------------------------|
-| 1-24    | ![Version](https://img.shields.io/badge/version-v1.24.16-blue) |
-| 1-25    | ![Version](https://img.shields.io/badge/version-v1.25.12-blue) |
-| 1-26    | ![Version](https://img.shields.io/badge/version-v1.26.8-blue)  |
-| 1-27    | ![Version](https://img.shields.io/badge/version-v1.27.3-blue)  |
-| 1-28    | ![Version](https://img.shields.io/badge/version-v1.28.2-blue)  |
+| 1-24    | ![Version](https://img.shields.io/badge/version-v1.24.18-blue) |
+| 1-25    | ![Version](https://img.shields.io/badge/version-v1.25.14-blue) |
+| 1-26    | ![Version](https://img.shields.io/badge/version-v1.26.10-blue) |
+| 1-27    | ![Version](https://img.shields.io/badge/version-v1.27.5-blue)  |
+| 1-28    | ![Version](https://img.shields.io/badge/version-v1.28.4-blue)  |
 
 The AWS cloud provider provides the interface between a Kubernetes cluster and AWS service APIs. This project allows a Kubernetes cluster to provision, monitor and remove AWS resources necessary for operation of the cluster. 
 
