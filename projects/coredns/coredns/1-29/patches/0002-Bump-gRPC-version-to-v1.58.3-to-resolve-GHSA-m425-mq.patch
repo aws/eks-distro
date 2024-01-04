@@ -1,0 +1,42 @@
+From 0b22421df74510cd26be2833585cdb2e435c6ec1 Mon Sep 17 00:00:00 2001
+From: Sajia Zafreen <sajiazafreen@u.boisestate.edu>
+Date: Thu, 4 Jan 2024 13:31:00 -0800
+Subject: [PATCH] Bump gRPC version to v1.58.3 to resolve GHSA-m425-mq94-257g
+
+Signed-off-by: Sajia Zafreen <sajiazafreen@u.boisestate.edu>
+---
+ go.mod | 2 +-
+ go.sum | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/go.mod b/go.mod
+index 289591a7..403c8300 100644
+--- a/go.mod
++++ b/go.mod
+@@ -30,7 +30,7 @@ require (
+ 	golang.org/x/crypto v0.14.0
+ 	golang.org/x/sys v0.13.0
+ 	google.golang.org/api v0.136.0
+-	google.golang.org/grpc v1.57.0
++	google.golang.org/grpc v1.58.3
+ 	google.golang.org/protobuf v1.31.0
+ 	gopkg.in/DataDog/dd-trace-go.v1 v1.54.0
+ 	k8s.io/api v0.27.4
+diff --git a/go.sum b/go.sum
+index 27baee6b..2063232a 100644
+--- a/go.sum
++++ b/go.sum
+@@ -451,8 +451,8 @@ google.golang.org/grpc v1.33.1/go.mod h1:fr5YgcSWrqhRRxogOsw7RzIpsmvOZ6IcH4kBYTp
+ google.golang.org/grpc v1.33.2/go.mod h1:JMHMWHQWaTccqQQlmk3MJZS+GWXOdAesneDmEnv2fbc=
+ google.golang.org/grpc v1.36.0/go.mod h1:qjiiYl8FncCW8feJPdyg3v6XW24KsRHe+dy9BAGRRjU=
+ google.golang.org/grpc v1.45.0/go.mod h1:lN7owxKUQEqMfSyQikvvk5tf/6zMPsrK+ONuO11+0rQ=
+-google.golang.org/grpc v1.57.0 h1:kfzNeI/klCGD2YPMUlaGNT3pxvYfga7smW3Vth8Zsiw=
+-google.golang.org/grpc v1.57.0/go.mod h1:Sd+9RMTACXwmub0zcNY2c4arhtrbBYD1AUHI/dt16Mo=
++google.golang.org/grpc v1.58.3 h1:BjnpXut1btbtgN/6sp+brB2Kbm2LjNXnidYujAVbSoQ=
++google.golang.org/grpc v1.58.3/go.mod h1:tgX3ZQDlNJGU96V6yHh1T/JeoBQ2TXdr43YbYSsCJk0=
+ google.golang.org/protobuf v0.0.0-20200109180630-ec00e32a8dfd/go.mod h1:DFci5gLYBciE7Vtevhsrf46CRTquxDuWsQurQQe4oz8=
+ google.golang.org/protobuf v0.0.0-20200221191635-4d8936d0db64/go.mod h1:kwYJMbMJ01Woi6D6+Kah6886xMZcty6N08ah7+eCXa0=
+ google.golang.org/protobuf v0.0.0-20200228230310-ab0ca4ff8a60/go.mod h1:cfTl7dwQJ+fmap5saPgwCLgHXTUD7jkjRqWcaiX5VyM=
+-- 
+2.39.1
+
