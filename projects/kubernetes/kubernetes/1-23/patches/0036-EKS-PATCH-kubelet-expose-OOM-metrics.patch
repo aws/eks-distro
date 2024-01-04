@@ -1,0 +1,39 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: "Mengqi (David) Yu" <mengqiyu@amazon.com>
+Date: Tue, 5 Dec 2023 19:46:34 +0000
+Subject: [PATCH] --EKS-PATCH-- kubelet: expose OOM metrics
+
+Cherry-pick of upstream Kubernetes PR #108004
+
+Original author: Jorik Jonker <jorik.jonker@eu.equinix.com>
+
+Signed-off by: David Yu <mengqiyu@amazon.com>
+---
+ pkg/kubelet/cadvisor/cadvisor_linux.go | 1 +
+ pkg/kubelet/server/server.go           | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/pkg/kubelet/cadvisor/cadvisor_linux.go b/pkg/kubelet/cadvisor/cadvisor_linux.go
+index 92a2a3ca254..1b118722777 100644
+--- a/pkg/kubelet/cadvisor/cadvisor_linux.go
++++ b/pkg/kubelet/cadvisor/cadvisor_linux.go
+@@ -91,6 +91,7 @@ func New(imageFsInfoProvider ImageFsInfoProvider, rootPath string, cgroupRoots [
+ 		cadvisormetrics.NetworkUsageMetrics: struct{}{},
+ 		cadvisormetrics.AppMetrics:          struct{}{},
+ 		cadvisormetrics.ProcessMetrics:      struct{}{},
++		cadvisormetrics.OOMMetrics:          struct{}{},
+ 	}
+ 
+ 	// Only add the Accelerator metrics if the feature is inactive
+diff --git a/pkg/kubelet/server/server.go b/pkg/kubelet/server/server.go
+index 28dfc44977c..3f50ae56fbc 100644
+--- a/pkg/kubelet/server/server.go
++++ b/pkg/kubelet/server/server.go
+@@ -368,6 +368,7 @@ func (s *Server) InstallDefaultHandlers() {
+ 		cadvisormetrics.NetworkUsageMetrics: struct{}{},
+ 		cadvisormetrics.AppMetrics:          struct{}{},
+ 		cadvisormetrics.ProcessMetrics:      struct{}{},
++		cadvisormetrics.OOMMetrics:          struct{}{},
+ 	}
+ 
+ 	// Only add the Accelerator metrics if the feature is inactive

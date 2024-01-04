@@ -1,8 +1,9 @@
 From f8e4c5c48714bf8567e10875d3f6750322675e52 Mon Sep 17 00:00:00 2001
 From: kodurub <kodurub@amazon.com>
 Date: Thu, 4 Jan 2024 13:54:00 -0800
-Subject: [PATCH] Test patch 5
+Subject: [PATCH] --EKS-PATCH-- bump google.golang.org/grpc to v1.56.3
 
+This is regenrated patch
 ---
  go.mod                                        |  44 +-
  go.sum                                        |  30 +-
