@@ -1429,13 +1429,13 @@ index a5828983112..c1117469c38 100644
  	"io"
 +	"k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules"
 +	"sync"
-
+ 
  	admissionv1 "k8s.io/api/admission/v1"
  	admissionv1beta1 "k8s.io/api/admission/v1beta1"
 @@ -41,6 +43,20 @@ import (
  	"k8s.io/klog/v2"
  )
-
+ 
 +var criticalPathExcluder exclusionrules.CriticalPathExcluder
 +var LoadCriticalPathExcluder *sync.Once
 +
@@ -1456,7 +1456,7 @@ index a5828983112..c1117469c38 100644
 @@ -90,6 +106,10 @@ func NewWebhook(handler *admission.Handler, configFile io.Reader, sourceFactory
  	cm.SetAuthenticationInfoResolver(authInfoResolver)
  	cm.SetServiceResolver(webhookutil.NewDefaultServiceResolver())
-
+ 
 +	LoadCriticalPathExcluder.Do(func() {
 +		criticalPathExcluder = exclusionrules.NewCriticalPathExcluder()
 +	})
@@ -1467,7 +1467,7 @@ index a5828983112..c1117469c38 100644
 @@ -163,6 +183,10 @@ func (a *Webhook) ShouldCallHook(ctx context.Context, h webhook.WebhookAccessor,
  		return nil, nil
  	}
-
+ 
 +	if criticalPathExcluder.ShouldSkipWebhookDueToExclusionRules(attr) {
 +		return nil, nil
 +	}
@@ -1765,7 +1765,7 @@ index 00000000000..2c26ca24870
 +	}
 +}
 diff --git a/vendor/modules.txt b/vendor/modules.txt
-index c9ef57e45ec..b75d4887001 100644
+index d674d57ac4e..a48d1889c08 100644
 --- a/vendor/modules.txt
 +++ b/vendor/modules.txt
 @@ -1426,6 +1426,7 @@ k8s.io/apiserver/pkg/admission/plugin/webhook/config/apis/webhookadmission/v1
