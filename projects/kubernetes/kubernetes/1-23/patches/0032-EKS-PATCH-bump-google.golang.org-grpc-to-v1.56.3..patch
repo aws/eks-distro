@@ -23445,7 +23445,7 @@ index 2fd344d7285..58bc54b807b 100644
  github.com/cpuguy83/go-md2man/v2/md2man
 +# github.com/creack/pty v1.1.11 => github.com/creack/pty v1.1.11
 +## explicit; go 1.13
- # github.com/cyphar/filepath-securejoin v0.2.3 => github.com/cyphar/filepath-securejoin v0.2.3
+ # github.com/cyphar/filepath-securejoin v0.2.4 => github.com/cyphar/filepath-securejoin v0.2.4
  ## explicit; go 1.13
  github.com/cyphar/filepath-securejoin
 @@ -254,6 +323,8 @@ github.com/davecgh/go-spew/spew
