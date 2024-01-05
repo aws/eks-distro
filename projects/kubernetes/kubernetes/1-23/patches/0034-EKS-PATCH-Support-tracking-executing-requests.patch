@@ -1,0 +1,828 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: "Mengqi (David) Yu" <mengqiyu@amazon.com>
+Date: Thu, 17 Aug 2023 21:47:16 +0000
+Subject: [PATCH] --EKS-PATCH-- Support tracking executing requests
+
+Cherry-pick upstream PR https://github.com/kubernetes/kubernetes/pull/119009
+to support tracking executing requests in APF debug endpoints.
+
+Original upstream author: Mike Spreitzer <mspreitz@us.ibm.com>
+---
+ .../util/flowcontrol/apf_controller_debug.go  | 84 ++++++++++--------
+ .../pkg/util/flowcontrol/debug/dump.go        | 12 +--
+ .../fairqueuing/queueset/queueset.go          | 63 ++++++++------
+ .../fairqueuing/queueset/queueset_test.go     | 71 ++++++++++++----
+ .../fairqueuing/queueset/requestset.go        | 78 +++++++++++++++++
+ .../flowcontrol/fairqueuing/queueset/types.go | 85 +++++++++++++------
+ 6 files changed, 285 insertions(+), 108 deletions(-)
+ create mode 100644 staging/src/k8s.io/apiserver/pkg/util/flowcontrol/fairqueuing/queueset/requestset.go
+
+diff --git a/staging/src/k8s.io/apiserver/pkg/util/flowcontrol/apf_controller_debug.go b/staging/src/k8s.io/apiserver/pkg/util/flowcontrol/apf_controller_debug.go
+index 91c49a4beda..e4aaf762031 100644
+--- a/staging/src/k8s.io/apiserver/pkg/util/flowcontrol/apf_controller_debug.go
++++ b/staging/src/k8s.io/apiserver/pkg/util/flowcontrol/apf_controller_debug.go
+@@ -28,6 +28,7 @@ import (
+ 	"k8s.io/apimachinery/pkg/runtime/schema"
+ 	"k8s.io/apimachinery/pkg/util/runtime"
+ 	"k8s.io/apiserver/pkg/server/mux"
++	"k8s.io/apiserver/pkg/util/flowcontrol/debug"
+ )
+ 
+ const (
+@@ -162,18 +163,19 @@ func (cfgCtlr *configController) dumpRequests(w http.ResponseWriter, r *http.Req
+ 		"InitialSeats",        // 7
+ 		"FinalSeats",          // 8
+ 		"AdditionalLatency",   // 9
++		"StartTime",           // 10
+ 	}))
+ 	if includeRequestDetails {
+ 		continueLine(tabWriter)
+ 		tabPrint(tabWriter, rowForHeaders([]string{
+-			"UserName",    // 10
+-			"Verb",        // 11
+-			"APIPath",     // 12
+-			"Namespace",   // 13
+-			"Name",        // 14
+-			"APIVersion",  // 15
+-			"Resource",    // 16
+-			"SubResource", // 17
++			"UserName",    // 11
++			"Verb",        // 12
++			"APIPath",     // 13
++			"Namespace",   // 14
++			"Name",        // 15
++			"APIVersion",  // 16
++			"Resource",    // 17
++			"SubResource", // 18
+ 		}))
+ 	}
+ 	endLine(tabWriter)
+@@ -182,37 +184,47 @@ func (cfgCtlr *configController) dumpRequests(w http.ResponseWriter, r *http.Req
+ 			continue
+ 		}
+ 		queueSetDigest := plState.queues.Dump(includeRequestDetails)
++		dumpRequest := func(iq, ir int, r debug.RequestDump) {
++			tabPrint(tabWriter, row(
++				plState.pl.Name,     // 1
++				r.MatchedFlowSchema, // 2
++				strconv.Itoa(iq),    // 3
++				strconv.Itoa(ir),    // 4
++				r.FlowDistinguisher, // 5
++				r.ArriveTime.UTC().Format(time.RFC3339Nano),    // 6
++				strconv.Itoa(int(r.WorkEstimate.InitialSeats)), // 7
++				strconv.Itoa(int(r.WorkEstimate.FinalSeats)),   // 8
++				r.WorkEstimate.AdditionalLatency.String(),      // 9
++				r.StartTime.UTC().Format(time.RFC3339Nano),     // 10
++			))
++			if includeRequestDetails {
++				continueLine(tabWriter)
++				tabPrint(tabWriter, rowForRequestDetails(
++					r.UserName,              // 11
++					r.RequestInfo.Verb,      // 12
++					r.RequestInfo.Path,      // 13
++					r.RequestInfo.Namespace, // 14
++					r.RequestInfo.Name,      // 15
++					schema.GroupVersion{
++						Group:   r.RequestInfo.APIGroup,
++						Version: r.RequestInfo.APIVersion,
++					}.String(), // 16
++					r.RequestInfo.Resource,    // 17
++					r.RequestInfo.Subresource, // 18
++				))
++			}
++			endLine(tabWriter)
++		}
+ 		for iq, q := range queueSetDigest.Queues {
+ 			for ir, r := range q.Requests {
+-				tabPrint(tabWriter, row(
+-					plState.pl.Name,     // 1
+-					r.MatchedFlowSchema, // 2
+-					strconv.Itoa(iq),    // 3
+-					strconv.Itoa(ir),    // 4
+-					r.FlowDistinguisher, // 5
+-					r.ArriveTime.UTC().Format(time.RFC3339Nano),    // 6
+-					strconv.Itoa(int(r.WorkEstimate.InitialSeats)), // 7
+-					strconv.Itoa(int(r.WorkEstimate.FinalSeats)),   // 8
+-					r.WorkEstimate.AdditionalLatency.String(),      // 9
+-				))
+-				if includeRequestDetails {
+-					continueLine(tabWriter)
+-					tabPrint(tabWriter, rowForRequestDetails(
+-						r.UserName,              // 10
+-						r.RequestInfo.Verb,      // 11
+-						r.RequestInfo.Path,      // 12
+-						r.RequestInfo.Namespace, // 13
+-						r.RequestInfo.Name,      // 14
+-						schema.GroupVersion{
+-							Group:   r.RequestInfo.APIGroup,
+-							Version: r.RequestInfo.APIVersion,
+-						}.String(), // 15
+-						r.RequestInfo.Resource,    // 16
+-						r.RequestInfo.Subresource, // 17
+-					))
+-				}
+-				endLine(tabWriter)
++				dumpRequest(iq, ir, r)
+ 			}
++			for _, r := range q.RequestsExecuting {
++				dumpRequest(iq, -1, r)
++			}
++		}
++		for _, r := range queueSetDigest.QueuelessExecutingRequests {
++			dumpRequest(-1, -1, r)
+ 		}
+ 	}
+ 	runtime.HandleError(tabWriter.Flush())
+diff --git a/staging/src/k8s.io/apiserver/pkg/util/flowcontrol/debug/dump.go b/staging/src/k8s.io/apiserver/pkg/util/flowcontrol/debug/dump.go
+index b3cdb17bb95..365b8dd72f1 100644
+--- a/staging/src/k8s.io/apiserver/pkg/util/flowcontrol/debug/dump.go
++++ b/staging/src/k8s.io/apiserver/pkg/util/flowcontrol/debug/dump.go
+@@ -25,16 +25,18 @@ import (
+ 
+ // QueueSetDump is an instant dump of queue-set.
+ type QueueSetDump struct {
+-	Queues     []QueueDump
+-	Waiting    int
+-	Executing  int
+-	SeatsInUse int
++	Queues                     []QueueDump
++	QueuelessExecutingRequests []RequestDump
++	Waiting                    int
++	Executing                  int
++	SeatsInUse                 int
+ }
+ 
+ // QueueDump is an instant dump of one queue in a queue-set.
+ type QueueDump struct {
+ 	QueueSum          QueueSum
+-	Requests          []RequestDump
++	Requests          []RequestDump // just the waiting ones
++	RequestsExecuting []RequestDump
+ 	NextDispatchR     string
+ 	ExecutingRequests int
+ 	SeatsInUse        int
+diff --git a/staging/src/k8s.io/apiserver/pkg/util/flowcontrol/fairqueuing/queueset/queueset.go b/staging/src/k8s.io/apiserver/pkg/util/flowcontrol/fairqueuing/queueset/queueset.go
+index 71591ccdbc8..12c6f656086 100644
+--- a/staging/src/k8s.io/apiserver/pkg/util/flowcontrol/fairqueuing/queueset/queueset.go
++++ b/staging/src/k8s.io/apiserver/pkg/util/flowcontrol/fairqueuing/queueset/queueset.go
+@@ -135,6 +135,10 @@ type queueSet struct {
+ 	// from that queue.
+ 	totRequestsExecuting int
+ 
++	// requestsExecutingSet is the set of requests executing in the real world IF
++	// there are no queues; otherwise the requests are tracked in the queues.
++	requestsExecutingSet requestSet
++
+ 	// totSeatsInUse is the number of total "seats" in use by all the
+ 	// request(s) that are currently executing in this queueset.
+ 	totSeatsInUse int
+@@ -194,6 +198,7 @@ func (qsc *queueSetCompleter) Complete(dCfg fq.DispatchingConfig) fq.QueueSet {
+ 			qCfg:                     qsc.qCfg,
+ 			currentR:                 0,
+ 			lastRealTime:             qsc.factory.clock.Now(),
++			requestsExecutingSet:     NewRequestSet(),
+ 		}
+ 		qs.promiseFactory = qsc.factory.promiseFactoryFactory(qs)
+ 	}
+@@ -205,7 +210,7 @@ func (qsc *queueSetCompleter) Complete(dCfg fq.DispatchingConfig) fq.QueueSet {
+ func createQueues(n, baseIndex int) []*queue {
+ 	fqqueues := make([]*queue, n)
+ 	for i := 0; i < n; i++ {
+-		fqqueues[i] = &queue{index: baseIndex + i, requests: newRequestFIFO()}
++		fqqueues[i] = &queue{index: baseIndex + i, requestsWaiting: newRequestFIFO(), requestsExecuting: NewRequestSet()}
+ 	}
+ 	return fqqueues
+ }
+@@ -468,7 +473,7 @@ func (qs *queueSet) advanceEpoch(ctx context.Context, now time.Time, incrR fqreq
+ 	klog.InfoS("Advancing epoch", "QS", qs.qCfg.Name, "when", now.Format(nsTimeFmt), "oldR", oldR, "newR", qs.currentR, "incrR", incrR)
+ 	success := true
+ 	for qIdx, queue := range qs.queues {
+-		if queue.requests.Length() == 0 && queue.requestsExecuting == 0 {
++		if queue.requestsWaiting.Length() == 0 && queue.requestsExecuting.Len() == 0 {
+ 			// Do not just decrement, the value could be quite outdated.
+ 			// It is safe to reset to zero in this case, because the next request
+ 			// will overwrite the zero with `qs.currentR`.
+@@ -481,7 +486,7 @@ func (qs *queueSet) advanceEpoch(ctx context.Context, now time.Time, incrR fqreq
+ 			klog.ErrorS(errors.New("queue::nextDispatchR underflow"), "Underflow", "QS", qs.qCfg.Name, "queue", qIdx, "oldNextDispatchR", oldNextDispatchR, "newNextDispatchR", queue.nextDispatchR, "incrR", incrR)
+ 			success = false
+ 		}
+-		queue.requests.Walk(func(req *request) bool {
++		queue.requestsWaiting.Walk(func(req *request) bool {
+ 			oldArrivalR := req.arrivalR
+ 			req.arrivalR -= rDecrement
+ 			if req.arrivalR > oldArrivalR {
+@@ -502,8 +507,8 @@ func (qs *queueSet) getVirtualTimeRatioLocked() float64 {
+ 	for _, queue := range qs.queues {
+ 		// here we want the sum of the maximum width of the requests in this queue since our
+ 		// goal is to find the maximum rate at which the queue could work.
+-		seatsRequested += (queue.seatsInUse + queue.requests.QueueSum().MaxSeatsSum)
+-		if queue.requests.Length() > 0 || queue.requestsExecuting > 0 {
++		seatsRequested += (queue.seatsInUse + queue.requestsWaiting.QueueSum().MaxSeatsSum)
++		if queue.requestsWaiting.Length() > 0 || queue.requestsExecuting.Len() > 0 {
+ 			activeQueues++
+ 		}
+ 	}
+@@ -553,7 +558,7 @@ func (qs *queueSet) timeoutOldRequestsAndRejectOrEnqueueLocked(ctx context.Conte
+ 	if ok := qs.rejectOrEnqueueToBoundLocked(req); !ok {
+ 		return nil
+ 	}
+-	metrics.ObserveQueueLength(ctx, qs.qCfg.Name, fsName, queue.requests.Length())
++	metrics.ObserveQueueLength(ctx, qs.qCfg.Name, fsName, queue.requestsWaiting.Length())
+ 	return req
+ }
+ 
+@@ -572,7 +577,7 @@ func (qs *queueSet) shuffleShardLocked(hashValue uint64, descr1, descr2 interfac
+ 	for i := 0; i < handSize; i++ {
+ 		queueIdx := hand[(offset+i)%handSize]
+ 		queue := qs.queues[queueIdx]
+-		queueSum := queue.requests.QueueSum()
++		queueSum := queue.requestsWaiting.QueueSum()
+ 
+ 		// this is the total amount of work in seat-seconds for requests
+ 		// waiting in this queue, we will select the queue with the minimum.
+@@ -585,7 +590,7 @@ func (qs *queueSet) shuffleShardLocked(hashValue uint64, descr1, descr2 interfac
+ 	}
+ 	if klog.V(6).Enabled() {
+ 		chosenQueue := qs.queues[bestQueueIdx]
+-		klog.V(6).Infof("QS(%s) at t=%s R=%v: For request %#+v %#+v chose queue %d, with sum: %#v & %d seats in use & nextDispatchR=%v", qs.qCfg.Name, qs.clock.Now().Format(nsTimeFmt), qs.currentR, descr1, descr2, bestQueueIdx, chosenQueue.requests.QueueSum(), chosenQueue.seatsInUse, chosenQueue.nextDispatchR)
++		klog.V(6).Infof("QS(%s) at t=%s R=%v: For request %#+v %#+v chose queue %d, with sum: %#v & %d seats in use & nextDispatchR=%v", qs.qCfg.Name, qs.clock.Now().Format(nsTimeFmt), qs.currentR, descr1, descr2, bestQueueIdx, chosenQueue.requestsWaiting.QueueSum(), chosenQueue.seatsInUse, chosenQueue.nextDispatchR)
+ 	}
+ 	return bestQueueIdx
+ }
+@@ -595,7 +600,7 @@ func (qs *queueSet) shuffleShardLocked(hashValue uint64, descr1, descr2 interfac
+ func (qs *queueSet) removeTimedOutRequestsFromQueueToBoundLocked(queue *queue, fsName string) {
+ 	timeoutCount := 0
+ 	now := qs.clock.Now()
+-	reqs := queue.requests
++	reqs := queue.requestsWaiting
+ 	// reqs are sorted oldest -> newest
+ 	// can short circuit loop (break) if oldest requests are not timing out
+ 	// as newer requests also will not have timed out
+@@ -629,7 +634,7 @@ func (qs *queueSet) removeTimedOutRequestsFromQueueToBoundLocked(queue *queue, f
+ // Otherwise enqueues and returns true.
+ func (qs *queueSet) rejectOrEnqueueToBoundLocked(request *request) bool {
+ 	queue := request.queue
+-	curQueueLength := queue.requests.Length()
++	curQueueLength := queue.requestsWaiting.Length()
+ 	// rejects the newly arrived request if resource criteria not met
+ 	if qs.totSeatsInUse >= qs.dCfg.ConcurrencyLimit &&
+ 		curQueueLength >= qs.qCfg.QueueLengthLimit {
+@@ -644,14 +649,14 @@ func (qs *queueSet) rejectOrEnqueueToBoundLocked(request *request) bool {
+ func (qs *queueSet) enqueueToBoundLocked(request *request) {
+ 	queue := request.queue
+ 	now := qs.clock.Now()
+-	if queue.requests.Length() == 0 && queue.requestsExecuting == 0 {
++	if queue.requestsWaiting.Length() == 0 && queue.requestsExecuting.Len() == 0 {
+ 		// the queue’s start R is set to the virtual time.
+ 		queue.nextDispatchR = qs.currentR
+ 		if klog.V(6).Enabled() {
+ 			klog.Infof("QS(%s) at t=%s R=%v: initialized queue %d start R due to request %#+v %#+v", qs.qCfg.Name, now.Format(nsTimeFmt), queue.nextDispatchR, queue.index, request.descr1, request.descr2)
+ 		}
+ 	}
+-	request.removeFromQueueLocked = queue.requests.Enqueue(request)
++	request.removeFromQueueLocked = queue.requestsWaiting.Enqueue(request)
+ 	qs.totRequestsWaiting++
+ 	metrics.AddRequestsInQueues(request.ctx, qs.qCfg.Name, request.fsName, 1)
+ 	request.NoteQueued(true)
+@@ -682,6 +687,7 @@ func (qs *queueSet) dispatchSansQueueLocked(ctx context.Context, workEstimate *f
+ 	}
+ 	qs.totRequestsExecuting++
+ 	qs.totSeatsInUse += req.MaxSeats()
++	qs.requestsExecutingSet = qs.requestsExecutingSet.Insert(req)
+ 	metrics.AddRequestsExecuting(ctx, qs.qCfg.Name, fsName, 1)
+ 	metrics.AddRequestConcurrencyInUse(qs.qCfg.Name, fsName, req.MaxSeats())
+ 	qs.reqsObsPair.RequestsExecuting.Add(1)
+@@ -721,7 +727,7 @@ func (qs *queueSet) dispatchLocked() bool {
+ 	// problem because other overhead is also included.
+ 	qs.totRequestsExecuting++
+ 	qs.totSeatsInUse += request.MaxSeats()
+-	queue.requestsExecuting++
++	queue.requestsExecuting = queue.requestsExecuting.Insert(request)
+ 	queue.seatsInUse += request.MaxSeats()
+ 	metrics.AddRequestsExecuting(request.ctx, qs.qCfg.Name, request.fsName, 1)
+ 	metrics.AddRequestConcurrencyInUse(qs.qCfg.Name, request.fsName, request.MaxSeats())
+@@ -730,7 +736,7 @@ func (qs *queueSet) dispatchLocked() bool {
+ 	if klog.V(6).Enabled() {
+ 		klog.Infof("QS(%s) at t=%s R=%v: dispatching request %#+v %#+v work %v from queue %d with start R %v, queue will have %d waiting & %d requests occupying %d seats, set will have %d seats occupied",
+ 			qs.qCfg.Name, request.startTime.Format(nsTimeFmt), qs.currentR, request.descr1, request.descr2,
+-			request.workEstimate, queue.index, queue.nextDispatchR, queue.requests.Length(), queue.requestsExecuting, queue.seatsInUse, qs.totSeatsInUse)
++			request.workEstimate, queue.index, queue.nextDispatchR, queue.requestsWaiting.Length(), queue.requestsExecuting.Len(), queue.seatsInUse, qs.totSeatsInUse)
+ 	}
+ 	// When a request is dequeued for service -> qs.virtualStart += G * width
+ 	if request.totalWork() > rDecrement/100 { // A single increment should never be so big
+@@ -782,7 +788,7 @@ func (qs *queueSet) findDispatchQueueToBoundLocked() (*queue, *request) {
+ 	for range qs.queues {
+ 		qs.robinIndex = (qs.robinIndex + 1) % nq
+ 		queue := qs.queues[qs.robinIndex]
+-		oldestWaiting, _ := queue.requests.Peek()
++		oldestWaiting, _ := queue.requestsWaiting.Peek()
+ 		if oldestWaiting != nil {
+ 			sMin = ssMin(sMin, queue.nextDispatchR)
+ 			sMax = ssMax(sMax, queue.nextDispatchR)
+@@ -799,7 +805,7 @@ func (qs *queueSet) findDispatchQueueToBoundLocked() (*queue, *request) {
+ 		}
+ 	}
+ 
+-	oldestReqFromMinQueue, _ := minQueue.requests.Peek()
++	oldestReqFromMinQueue, _ := minQueue.requestsWaiting.Peek()
+ 	if oldestReqFromMinQueue == nil {
+ 		// This cannot happen
+ 		klog.ErrorS(errors.New("selected queue is empty"), "Impossible", "queueSet", qs.qCfg.Name)
+@@ -899,7 +905,7 @@ func (qs *queueSet) finishRequestLocked(r *request) {
+ 			} else if r.queue != nil {
+ 				klog.Infof("QS(%s) at t=%s R=%v: request %#+v %#+v finished all use of %d seats, adjusted queue %d start R to %v due to service time %.9fs, queue will have %d requests with %#v waiting & %d requests occupying %d seats",
+ 					qs.qCfg.Name, now.Format(nsTimeFmt), qs.currentR, r.descr1, r.descr2, r.workEstimate.MaxSeats(), r.queue.index,
+-					r.queue.nextDispatchR, actualServiceDuration.Seconds(), r.queue.requests.Length(), r.queue.requests.QueueSum(), r.queue.requestsExecuting, r.queue.seatsInUse)
++					r.queue.nextDispatchR, actualServiceDuration.Seconds(), r.queue.requestsWaiting.Length(), r.queue.requestsWaiting.QueueSum(), r.queue.requestsExecuting.Len(), r.queue.seatsInUse)
+ 			} else {
+ 				klog.Infof("QS(%s) at t=%s R=%v: request %#+v %#+v finished all use of %d seats, qs will have %d requests occupying %d seats", qs.qCfg.Name, now.Format(nsTimeFmt), qs.currentR, r.descr1, r.descr2, r.workEstimate.InitialSeats, qs.totRequestsExecuting, qs.totSeatsInUse)
+ 			}
+@@ -911,7 +917,7 @@ func (qs *queueSet) finishRequestLocked(r *request) {
+ 		} else if r.queue != nil {
+ 			klog.Infof("QS(%s) at t=%s R=%v: request %#+v %#+v finished main use of %d seats but lingering on %d seats for %v seconds, adjusted queue %d start R to %v due to service time %.9fs, queue will have %d requests with %#v waiting & %d requests occupying %d seats",
+ 				qs.qCfg.Name, now.Format(nsTimeFmt), qs.currentR, r.descr1, r.descr2, r.workEstimate.InitialSeats, r.workEstimate.FinalSeats, additionalLatency.Seconds(), r.queue.index,
+-				r.queue.nextDispatchR, actualServiceDuration.Seconds(), r.queue.requests.Length(), r.queue.requests.QueueSum(), r.queue.requestsExecuting, r.queue.seatsInUse)
++				r.queue.nextDispatchR, actualServiceDuration.Seconds(), r.queue.requestsWaiting.Length(), r.queue.requestsWaiting.QueueSum(), r.queue.requestsExecuting.Len(), r.queue.seatsInUse)
+ 		} else {
+ 			klog.Infof("QS(%s) at t=%s R=%v: request %#+v %#+v finished main use of %d seats but lingering on %d seats for %v seconds, qs will have %d requests occupying %d seats", qs.qCfg.Name, now.Format(nsTimeFmt), qs.currentR, r.descr1, r.descr2, r.workEstimate.InitialSeats, r.workEstimate.FinalSeats, additionalLatency.Seconds(), qs.totRequestsExecuting, qs.totSeatsInUse)
+ 		}
+@@ -928,7 +934,7 @@ func (qs *queueSet) finishRequestLocked(r *request) {
+ 			} else if r.queue != nil {
+ 				klog.Infof("QS(%s) at t=%s R=%v: request %#+v %#+v finished lingering on %d seats, queue %d will have %d requests with %#v waiting & %d requests occupying %d seats",
+ 					qs.qCfg.Name, now.Format(nsTimeFmt), qs.currentR, r.descr1, r.descr2, r.workEstimate.FinalSeats, r.queue.index,
+-					r.queue.requests.Length(), r.queue.requests.QueueSum(), r.queue.requestsExecuting, r.queue.seatsInUse)
++					r.queue.requestsWaiting.Length(), r.queue.requestsWaiting.QueueSum(), r.queue.requestsExecuting.Len(), r.queue.seatsInUse)
+ 			} else {
+ 				klog.Infof("QS(%s) at t=%s R=%v: request %#+v %#+v finished lingering on %d seats, qs will have %d requests occupying %d seats", qs.qCfg.Name, now.Format(nsTimeFmt), qs.currentR, r.descr1, r.descr2, r.workEstimate.FinalSeats, qs.totRequestsExecuting, qs.totSeatsInUse)
+ 			}
+@@ -938,12 +944,14 @@ func (qs *queueSet) finishRequestLocked(r *request) {
+ 
+ 	if r.queue != nil {
+ 		// request has finished, remove from requests executing
+-		r.queue.requestsExecuting--
++		r.queue.requestsExecuting = r.queue.requestsExecuting.Delete(r)
+ 
+ 		// When a request finishes being served, and the actual service time was S,
+ 		// the queue’s start R is decremented by (G - S)*width.
+ 		r.queue.nextDispatchR -= fqrequest.SeatsTimesDuration(float64(r.InitialSeats()), qs.estimatedServiceDuration-actualServiceDuration)
+ 		qs.boundNextDispatchLocked(r.queue)
++	} else {
++		qs.requestsExecutingSet = qs.requestsExecutingSet.Delete(r)
+ 	}
+ }
+ 
+@@ -955,7 +963,7 @@ func (qs *queueSet) finishRequestLocked(r *request) {
+ // The following hack addresses the first side of that inequity,
+ // by insisting that dispatch in the virtual world not precede arrival.
+ func (qs *queueSet) boundNextDispatchLocked(queue *queue) {
+-	oldestReqFromMinQueue, _ := queue.requests.Peek()
++	oldestReqFromMinQueue, _ := queue.requestsWaiting.Peek()
+ 	if oldestReqFromMinQueue == nil {
+ 		return
+ 	}
+@@ -976,8 +984,8 @@ func (qs *queueSet) removeQueueIfEmptyLocked(r *request) {
+ 	// If there are more queues than desired and this one has no
+ 	// requests then remove it
+ 	if len(qs.queues) > qs.qCfg.DesiredNumQueues &&
+-		r.queue.requests.Length() == 0 &&
+-		r.queue.requestsExecuting == 0 {
++		r.queue.requestsWaiting.Length() == 0 &&
++		r.queue.requestsExecuting.Len() == 0 {
+ 		qs.queues = removeQueueAndUpdateIndexes(qs.queues, r.queue.index)
+ 
+ 		// decrement here to maintain the invariant that (qs.robinIndex+1) % numQueues
+@@ -1008,10 +1016,11 @@ func (qs *queueSet) Dump(includeRequestDetails bool) debug.QueueSetDump {
+ 	qs.lock.Lock()
+ 	defer qs.lock.Unlock()
+ 	d := debug.QueueSetDump{
+-		Queues:     make([]debug.QueueDump, len(qs.queues)),
+-		Waiting:    qs.totRequestsWaiting,
+-		Executing:  qs.totRequestsExecuting,
+-		SeatsInUse: qs.totSeatsInUse,
++		Queues:                     make([]debug.QueueDump, len(qs.queues)),
++		QueuelessExecutingRequests: SetMapReduce(dumpRequest(includeRequestDetails), append1[debug.RequestDump])(qs.requestsExecutingSet),
++		Waiting:                    qs.totRequestsWaiting,
++		Executing:                  qs.totRequestsExecuting,
++		SeatsInUse:                 qs.totSeatsInUse,
+ 	}
+ 	for i, q := range qs.queues {
+ 		d.Queues[i] = q.dumpLocked(includeRequestDetails)
+diff --git a/staging/src/k8s.io/apiserver/pkg/util/flowcontrol/fairqueuing/queueset/queueset_test.go b/staging/src/k8s.io/apiserver/pkg/util/flowcontrol/fairqueuing/queueset/queueset_test.go
+index 357da60e3d7..0d8aad4b323 100644
+--- a/staging/src/k8s.io/apiserver/pkg/util/flowcontrol/fairqueuing/queueset/queueset_test.go
++++ b/staging/src/k8s.io/apiserver/pkg/util/flowcontrol/fairqueuing/queueset/queueset_test.go
+@@ -32,7 +32,10 @@ import (
+ 
+ 	"k8s.io/utils/clock"
+ 
++	"k8s.io/apiserver/pkg/authentication/user"
++	genericrequest "k8s.io/apiserver/pkg/endpoints/request"
+ 	"k8s.io/apiserver/pkg/util/flowcontrol/counter"
++	"k8s.io/apiserver/pkg/util/flowcontrol/debug"
+ 	fq "k8s.io/apiserver/pkg/util/flowcontrol/fairqueuing"
+ 	"k8s.io/apiserver/pkg/util/flowcontrol/fairqueuing/promise"
+ 	test "k8s.io/apiserver/pkg/util/flowcontrol/fairqueuing/testing"
+@@ -182,6 +185,7 @@ type uniformScenario struct {
+ 	counter                                  counter.GoRoutineCounter
+ 	expectedAverages                         []float64
+ 	expectedEpochAdvances                    int
++	dontDump                                 bool
+ }
+ 
+ func (us uniformScenario) exercise(t *testing.T) {
+@@ -269,7 +273,10 @@ func (ust *uniformScenarioThread) callK(k int) {
+ 	if k >= ust.nCalls {
+ 		return
+ 	}
+-	req, idle := ust.uss.qs.StartRequest(context.Background(), &fcrequest.WorkEstimate{InitialSeats: ust.uc.initialSeats, FinalSeats: ust.uc.finalSeats, AdditionalLatency: ust.uc.padDuration}, ust.uc.hash, "", ust.fsName, ust.uss.name, []int{ust.i, ust.j, k}, nil)
++	ctx := context.Background()
++	username := fmt.Sprintf("%d:%d:%d", ust.i, ust.j, k)
++	ctx = genericrequest.WithUser(ctx, &user.DefaultInfo{Name: username})
++	req, idle := ust.uss.qs.StartRequest(ctx, &fcrequest.WorkEstimate{InitialSeats: ust.uc.initialSeats, FinalSeats: ust.uc.finalSeats, AdditionalLatency: ust.uc.padDuration}, ust.uc.hash, "", ust.fsName, ust.uss.name, []int{ust.i, ust.j, k}, nil)
+ 	ust.uss.t.Logf("%s: %d, %d, %d got req=%p, idle=%v", ust.uss.clk.Now().Format(nsTimeFmt), ust.i, ust.j, k, req, idle)
+ 	if req == nil {
+ 		atomic.AddUint64(&ust.uss.failedCount, 1)
+@@ -279,6 +286,9 @@ func (ust *uniformScenarioThread) callK(k int) {
+ 	if idle {
+ 		ust.uss.t.Error("got request but QueueSet reported idle")
+ 	}
++	if (!ust.uss.dontDump) && k%100 == 0 {
++		insistRequestFromUser(ust.uss.t, ust.uss.qs, username)
++	}
+ 	var executed bool
+ 	var returnTime time.Time
+ 	idle2 := req.Finish(func() {
+@@ -302,6 +312,26 @@ func (ust *uniformScenarioThread) callK(k int) {
+ 	}
+ }
+ 
++func insistRequestFromUser(t *testing.T, qs fq.QueueSet, username string) {
++	qsd := qs.Dump(true)
++	goodRequest := func(rd debug.RequestDump) bool {
++		return rd.UserName == username
++	}
++	goodSliceOfRequests := SliceMapReduce(goodRequest, or)
++	if goodSliceOfRequests(qsd.QueuelessExecutingRequests) {
++		t.Logf("Found user %s among queueless requests", username)
++		return
++	}
++	goodQueueDump := func(qd debug.QueueDump) bool {
++		return goodSliceOfRequests(qd.Requests) || goodSliceOfRequests(qd.RequestsExecuting)
++	}
++	if SliceMapReduce(goodQueueDump, or)(qsd.Queues) {
++		t.Logf("Found user %s among queued requests", username)
++		return
++	}
++	t.Errorf("Failed to find request from user %s", username)
++}
++
+ func (uss *uniformScenarioState) evalTo(lim time.Time, last, expectFair bool, margin float64) {
+ 	uss.clk.Run(&lim)
+ 	uss.clk.SetTime(lim)
+@@ -463,6 +493,7 @@ func TestNoRestraint(t *testing.T) {
+ 				expectAllRequests:      true,
+ 				clk:                    clk,
+ 				counter:                counter,
++				dontDump:               true,
+ 			}.exercise(t)
+ 		})
+ 	}
+@@ -1174,13 +1205,14 @@ func TestFindDispatchQueueLocked(t *testing.T) {
+ 			queues: []*queue{
+ 				{
+ 					nextDispatchR: fcrequest.SeatsTimesDuration(1, 200*time.Second),
+-					requests: newFIFO(
++					requestsWaiting: newFIFO(
+ 						&request{workEstimate: qs0.completeWorkEstimate(&fcrequest.WorkEstimate{InitialSeats: 1})},
+ 					),
++					requestsExecuting: NewRequestSet(),
+ 				},
+ 				{
+ 					nextDispatchR: fcrequest.SeatsTimesDuration(1, 100*time.Second),
+-					requests: newFIFO(
++					requestsWaiting: newFIFO(
+ 						&request{workEstimate: qs0.completeWorkEstimate(&fcrequest.WorkEstimate{InitialSeats: 1})},
+ 					),
+ 				},
+@@ -1197,9 +1229,10 @@ func TestFindDispatchQueueLocked(t *testing.T) {
+ 			queues: []*queue{
+ 				{
+ 					nextDispatchR: fcrequest.SeatsTimesDuration(1, 200*time.Second),
+-					requests: newFIFO(
++					requestsWaiting: newFIFO(
+ 						&request{workEstimate: qs0.completeWorkEstimate(&fcrequest.WorkEstimate{InitialSeats: 1})},
+ 					),
++					requestsExecuting: NewRequestSet(),
+ 				},
+ 			},
+ 			attempts:              1,
+@@ -1214,15 +1247,17 @@ func TestFindDispatchQueueLocked(t *testing.T) {
+ 			queues: []*queue{
+ 				{
+ 					nextDispatchR: fcrequest.SeatsTimesDuration(1, 200*time.Second),
+-					requests: newFIFO(
++					requestsWaiting: newFIFO(
+ 						&request{workEstimate: qs0.completeWorkEstimate(&fcrequest.WorkEstimate{InitialSeats: 50})},
+ 					),
++					requestsExecuting: NewRequestSet(),
+ 				},
+ 				{
+ 					nextDispatchR: fcrequest.SeatsTimesDuration(1, 100*time.Second),
+-					requests: newFIFO(
++					requestsWaiting: newFIFO(
+ 						&request{workEstimate: qs0.completeWorkEstimate(&fcrequest.WorkEstimate{InitialSeats: 25})},
+ 					),
++					requestsExecuting: NewRequestSet(),
+ 				},
+ 			},
+ 			attempts:              1,
+@@ -1237,15 +1272,17 @@ func TestFindDispatchQueueLocked(t *testing.T) {
+ 			queues: []*queue{
+ 				{
+ 					nextDispatchR: fcrequest.SeatsTimesDuration(1, 200*time.Second),
+-					requests: newFIFO(
++					requestsWaiting: newFIFO(
+ 						&request{workEstimate: qs0.completeWorkEstimate(&fcrequest.WorkEstimate{InitialSeats: 10})},
+ 					),
++					requestsExecuting: NewRequestSet(),
+ 				},
+ 				{
+ 					nextDispatchR: fcrequest.SeatsTimesDuration(1, 100*time.Second),
+-					requests: newFIFO(
++					requestsWaiting: newFIFO(
+ 						&request{workEstimate: qs0.completeWorkEstimate(&fcrequest.WorkEstimate{InitialSeats: 25})},
+ 					),
++					requestsExecuting: NewRequestSet(),
+ 				},
+ 			},
+ 			attempts:              3,
+@@ -1260,15 +1297,17 @@ func TestFindDispatchQueueLocked(t *testing.T) {
+ 			queues: []*queue{
+ 				{
+ 					nextDispatchR: fcrequest.SeatsTimesDuration(1, 200*time.Second),
+-					requests: newFIFO(
++					requestsWaiting: newFIFO(
+ 						&request{workEstimate: qs0.completeWorkEstimate(&fcrequest.WorkEstimate{InitialSeats: 10})},
+ 					),
++					requestsExecuting: NewRequestSet(),
+ 				},
+ 				{
+ 					nextDispatchR: fcrequest.SeatsTimesDuration(1, 100*time.Second),
+-					requests: newFIFO(
++					requestsWaiting: newFIFO(
+ 						&request{workEstimate: qs0.completeWorkEstimate(&fcrequest.WorkEstimate{InitialSeats: 25})},
+ 					),
++					requestsExecuting: NewRequestSet(),
+ 				},
+ 			},
+ 			beforeSelectQueueLocked: func(attempt int, qs *queueSet) {
+@@ -1361,23 +1400,25 @@ func TestFinishRequestLocked(t *testing.T) {
+ 				execSeatsObs:             newExecSeatsObserver(clk),
+ 			}
+ 			queue := &queue{
+-				requests: newRequestFIFO(),
++				requestsWaiting:   newRequestFIFO(),
++				requestsExecuting: NewRequestSet(),
+ 			}
+ 			r := &request{
+ 				qs:           qs,
+ 				queue:        queue,
+ 				workEstimate: qs.completeWorkEstimate(&test.workEstimate),
+ 			}
++			rOther := &request{qs: qs, queue: queue}
+ 
+ 			qs.totRequestsExecuting = 111
+ 			qs.totSeatsInUse = 222
+-			queue.requestsExecuting = 11
++			queue.requestsExecuting = NewRequestSet(r, rOther)
+ 			queue.seatsInUse = 22
+ 
+ 			var (
+ 				queuesetTotalRequestsExecutingExpected = qs.totRequestsExecuting - 1
+ 				queuesetTotalSeatsInUseExpected        = qs.totSeatsInUse - test.workEstimate.MaxSeats()
+-				queueRequestsExecutingExpected         = queue.requestsExecuting - 1
++				queueRequestsExecutingExpected         = NewRequestSet(rOther)
+ 				queueSeatsInUseExpected                = queue.seatsInUse - test.workEstimate.MaxSeats()
+ 			)
+ 
+@@ -1392,8 +1433,8 @@ func TestFinishRequestLocked(t *testing.T) {
+ 			if queuesetTotalSeatsInUseExpected != qs.totSeatsInUse {
+ 				t.Errorf("Expected total seats in use: %d, but got: %d", queuesetTotalSeatsInUseExpected, qs.totSeatsInUse)
+ 			}
+-			if queueRequestsExecutingExpected != queue.requestsExecuting {
+-				t.Errorf("Expected requests executing for queue: %d, but got: %d", queueRequestsExecutingExpected, queue.requestsExecuting)
++			if !queueRequestsExecutingExpected.Equal(queue.requestsExecuting) {
++				t.Errorf("Expected requests executing for queue: %v, but got: %v", queueRequestsExecutingExpected, queue.requestsExecuting)
+ 			}
+ 			if queueSeatsInUseExpected != queue.seatsInUse {
+ 				t.Errorf("Expected seats in use for queue: %d, but got: %d", queueSeatsInUseExpected, queue.seatsInUse)
+diff --git a/staging/src/k8s.io/apiserver/pkg/util/flowcontrol/fairqueuing/queueset/requestset.go b/staging/src/k8s.io/apiserver/pkg/util/flowcontrol/fairqueuing/queueset/requestset.go
+new file mode 100644
+index 00000000000..14b1fcba9d5
+--- /dev/null
++++ b/staging/src/k8s.io/apiserver/pkg/util/flowcontrol/fairqueuing/queueset/requestset.go
+@@ -0,0 +1,78 @@
++/*
++Copyright 2022 The Kubernetes Authors.
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++*/
++
++package queueset
++
++import (
++	"k8s.io/apimachinery/pkg/util/sets"
++)
++
++// requestSet is a set of requests in the APF system.
++// We can't simply back-port https://github.com/kubernetes/kubernetes/pull/112377/files#diff-9ab35903af4b8e0b7002c1036ace61756a5653ddf6efa0bf39a06940d62847d0,
++// since it depends on the comparable interface which was introdueced in golang 1.20. But only k8s 1.24+ uses golang 1.20.
++// We have to add this when back-porting https://github.com/kubernetes/kubernetes/pull/119009
++type requestSet map[*request]sets.Empty
++
++// NewRequestSet creates a requestSet from a list of requests.
++func NewRequestSet(items ...*request) requestSet {
++	ss := make(requestSet, len(items))
++	ss.Insert(items...)
++	return ss
++}
++
++// Insert adds items to the set.
++func (s requestSet) Insert(items ...*request) requestSet {
++	for _, item := range items {
++		s[item] = sets.Empty{}
++	}
++	return s
++}
++
++// Delete removes all items from the set.
++func (s requestSet) Delete(items ...*request) requestSet {
++	for _, item := range items {
++		delete(s, item)
++	}
++	return s
++}
++
++// Len returns the size of the set.
++func (s requestSet) Len() int {
++	return len(s)
++}
++
++// Has returns true if and only if item is contained in the set.
++func (s requestSet) Has(item *request) bool {
++	_, contained := s[item]
++	return contained
++}
++
++// IsSuperset returns true if and only if s1 is a superset of s2.
++func (s1 requestSet) IsSuperset(s2 requestSet) bool {
++	for item := range s2 {
++		if !s1.Has(item) {
++			return false
++		}
++	}
++	return true
++}
++
++// Equal returns true if and only if s1 is equal (as a set) to s2.
++// Two sets are equal if their membership is identical.
++// (In practice, this means same elements, order doesn't matter)
++func (s1 requestSet) Equal(s2 requestSet) bool {
++	return len(s1) == len(s2) && s1.IsSuperset(s2)
++}
+diff --git a/staging/src/k8s.io/apiserver/pkg/util/flowcontrol/fairqueuing/queueset/types.go b/staging/src/k8s.io/apiserver/pkg/util/flowcontrol/fairqueuing/queueset/types.go
+index f1073b96b28..47d080001b4 100644
+--- a/staging/src/k8s.io/apiserver/pkg/util/flowcontrol/fairqueuing/queueset/types.go
++++ b/staging/src/k8s.io/apiserver/pkg/util/flowcontrol/fairqueuing/queueset/types.go
+@@ -20,6 +20,7 @@ import (
+ 	"context"
+ 	"time"
+ 
++	"k8s.io/apimachinery/pkg/util/sets"
+ 	genericrequest "k8s.io/apiserver/pkg/endpoints/request"
+ 	"k8s.io/apiserver/pkg/util/flowcontrol/debug"
+ 	fq "k8s.io/apiserver/pkg/util/flowcontrol/fairqueuing"
+@@ -90,15 +91,15 @@ type completedWorkEstimate struct {
+ // queue is a sequence of requests that have arrived but not yet finished
+ // execution in both the real and virtual worlds.
+ type queue struct {
+-	// The requests not yet executing in the real world are stored in a FIFO list.
+-	requests fifo
++	// The requestsWaiting not yet executing in the real world are stored in a FIFO list.
++	requestsWaiting fifo
+ 
+ 	// nextDispatchR is the R progress meter reading at
+ 	// which the next request will be dispatched in the virtual world.
+ 	nextDispatchR fcrequest.SeatSeconds
+ 
+-	// requestsExecuting is the count in the real world.
+-	requestsExecuting int
++	// requestsExecuting is the set of requests executing in the real world.
++	requestsExecuting requestSet
+ 
+ 	// index is the position of this queue among those in its queueSet.
+ 	index int
+@@ -145,28 +146,14 @@ func (qs *queueSet) computeFinalWork(we *fcrequest.WorkEstimate) fcrequest.SeatS
+ }
+ 
+ func (q *queue) dumpLocked(includeDetails bool) debug.QueueDump {
+-	digest := make([]debug.RequestDump, q.requests.Length())
+-	i := 0
+-	q.requests.Walk(func(r *request) bool {
+-		// dump requests.
+-		digest[i].MatchedFlowSchema = r.fsName
+-		digest[i].FlowDistinguisher = r.flowDistinguisher
+-		digest[i].ArriveTime = r.arrivalTime
+-		digest[i].StartTime = r.startTime
+-		digest[i].WorkEstimate = r.workEstimate.WorkEstimate
+-		if includeDetails {
+-			userInfo, _ := genericrequest.UserFrom(r.ctx)
+-			digest[i].UserName = userInfo.GetName()
+-			requestInfo, ok := genericrequest.RequestInfoFrom(r.ctx)
+-			if ok {
+-				digest[i].RequestInfo = *requestInfo
+-			}
+-		}
+-		i++
++	waitingDigest := make([]debug.RequestDump, 0, q.requestsWaiting.Length())
++	q.requestsWaiting.Walk(func(r *request) bool {
++		waitingDigest = append(waitingDigest, dumpRequest(includeDetails)(r))
+ 		return true
+ 	})
++	executingDigest := SetMapReduce(dumpRequest(includeDetails), append1[debug.RequestDump])(q.requestsExecuting)
+ 
+-	sum := q.requests.QueueSum()
++	sum := q.requestsWaiting.QueueSum()
+ 	queueSum := debug.QueueSum{
+ 		InitialSeatsSum: sum.InitialSeatsSum,
+ 		MaxSeatsSum:     sum.MaxSeatsSum,
+@@ -175,9 +162,57 @@ func (q *queue) dumpLocked(includeDetails bool) debug.QueueDump {
+ 
+ 	return debug.QueueDump{
+ 		NextDispatchR:     q.nextDispatchR.String(),
+-		Requests:          digest,
+-		ExecutingRequests: q.requestsExecuting,
++		Requests:          waitingDigest,
++		RequestsExecuting: executingDigest,
++		ExecutingRequests: q.requestsExecuting.Len(),
+ 		SeatsInUse:        q.seatsInUse,
+ 		QueueSum:          queueSum,
+ 	}
+ }
++
++func dumpRequest(includeDetails bool) func(*request) debug.RequestDump {
++	return func(r *request) debug.RequestDump {
++		ans := debug.RequestDump{
++			MatchedFlowSchema: r.fsName,
++			FlowDistinguisher: r.flowDistinguisher,
++			ArriveTime:        r.arrivalTime,
++			StartTime:         r.startTime,
++			WorkEstimate:      r.workEstimate.WorkEstimate,
++		}
++		if includeDetails {
++			userInfo, _ := genericrequest.UserFrom(r.ctx)
++			ans.UserName = userInfo.GetName()
++			requestInfo, ok := genericrequest.RequestInfoFrom(r.ctx)
++			if ok {
++				ans.RequestInfo = *requestInfo
++			}
++		}
++		return ans
++	}
++}
++
++// SetMapReduce is map-reduce starting from a set type in the sets package.
++func SetMapReduce[Elt comparable, Result, Accumulator any](mapFn func(Elt) Result, reduceFn func(Accumulator, Result) Accumulator) func(map[Elt]sets.Empty) Accumulator {
++	return func(set map[Elt]sets.Empty) Accumulator {
++		var ans Accumulator
++		for elt := range set {
++			ans = reduceFn(ans, mapFn(elt))
++		}
++		return ans
++	}
++}
++
++// SliceMapReduce is map-reduce starting from a slice.
++func SliceMapReduce[Elt, Result, Accumulator any](mapFn func(Elt) Result, reduceFn func(Accumulator, Result) Accumulator) func([]Elt) Accumulator {
++	return func(slice []Elt) Accumulator {
++		var ans Accumulator
++		for _, elt := range slice {
++			ans = reduceFn(ans, mapFn(elt))
++		}
++		return ans
++	}
++}
++
++func or(x, y bool) bool { return x || y }
++
++func append1[Elt any](slice []Elt, next Elt) []Elt { return append(slice, next) }
