@@ -1,5 +1,5 @@
 
-** cloud.google.com/go/compute/metadata; version v0.81.0 --
+** cloud.google.com/go/compute/metadata; version v0.2.3 --
 https://github.com/googleapis/google-cloud-go
 
 ** github.com/aws/aws-sdk-go; version v1.44.216 --
@@ -62,7 +62,7 @@ https://github.com/coreos/go-semver
 ** github.com/coreos/go-systemd/v22; version v22.3.2 --
 https://github.com/coreos/go-systemd/v22
 
-** github.com/docker/distribution; version v2.8.1+incompatible --
+** github.com/docker/distribution; version v2.8.2-beta.1+incompatible --
 https://github.com/distribution/distribution
 
 ** github.com/docker/go-units; version v0.4.0 --
@@ -251,7 +251,7 @@ https://github.com/open-telemetry/opentelemetry-proto-go
 ** google.golang.org/genproto; version v0.0.0-20220107163113-42d7afdf6368 --
 https://github.com/googleapis/go-genproto
 
-** google.golang.org/grpc; version v1.40.0 --
+** google.golang.org/grpc; version v1.56.3 --
 https://github.com/grpc/grpc-go
 
 ** gopkg.in/square/go-jose.v2; version v2.2.2 --
@@ -1057,7 +1057,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/cyphar/filepath-securejoin; version v0.2.3 --
+** github.com/cyphar/filepath-securejoin; version v0.2.4 --
 https://github.com/cyphar/filepath-securejoin
 
 Copyright (C) 2014-2015 Docker Inc & Go Authors. All rights reserved.
