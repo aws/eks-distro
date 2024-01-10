@@ -465,7 +465,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/go; version go1.20.10 --
+** golang.org/go; version go1.20.12 --
 https://github.com/golang/go
 
 ** golang.org/x/net; version v0.13.0 --
