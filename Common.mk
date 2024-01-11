@@ -342,7 +342,7 @@ setup_uniq_go_mod_license_filters = \
 			$(eval $(call GO_MOD_TARGET_FOR_BINARY_VAR_NAME,$(1))=$(3)) \
 	$(eval GO_MOD_$(subst /,_,$(3))_LICENSE_PACKAGE_FILTER+=$(call IF_OVERRIDE_VARIABLE,LICENSE_PACKAGE_FILTER,$(2)))
 
-BINARY_PLATFORMS?=linux/amd64 linux/arm64
+BINARY_PLATFORMS?=linux/amd64
 SIMPLE_CREATE_BINARIES?=true
 
 BINARY_TARGETS?=$(call BINARY_TARGETS_FROM_FILES_PLATFORMS, $(BINARY_TARGET_FILES), $(BINARY_PLATFORMS))
@@ -362,7 +362,7 @@ GO_MOD_DOWNLOAD_TARGETS?=$(foreach path, $(UNIQ_GO_MOD_PATHS), $(call GO_MOD_DOW
 
 VENDOR_UPDATE_SCRIPT?=
 #### CGO ############
-CGO_CREATE_BINARIES?=false
+CGO_CREATE_BINARIES?=true
 CGO_SOURCE=$(OUTPUT_DIR)/source
 IS_ON_BUILDER_BASE?=$(shell if [ -f /buildkit.sh ]; then echo true; fi;)
 BUILDER_PLATFORM?=$(shell echo $$(go env GOHOSTOS)/$$(go env GOHOSTARCH))
@@ -377,7 +377,8 @@ CGO_TARGET?=
 #### BUILD FLAGS ####
 ifeq ($(CGO_CREATE_BINARIES),true)
 	CGO_ENABLED=1
-	GO_LDFLAGS?=-s -w -buildid= $(EXTRA_GO_LDFLAGS)
+	GOEXPERIMENT=boringcrypto
+	GO_LDFLAGS?=-s -w -linkmode=external -extldflags=-static -buildid= $(EXTRA_GO_LDFLAGS)
 	CGO_LDFLAGS?=-Wl,--build-id=none
 	EXTRA_GOBUILD_FLAGS?=-gcflags=-trimpath=$(MAKE_ROOT) -asmflags=-trimpath=$(MAKE_ROOT)
 else
@@ -776,7 +777,7 @@ prepare-cgo-folder:
 %/cgo/amd64 %/cgo/arm64: IMAGE_NAME=binary-builder
 %/cgo/amd64 %/cgo/arm64: IMAGE_BUILD_ARGS?=GOPROXY COMPONENT
 %/cgo/amd64 %/cgo/arm64: IMAGE_CONTEXT_DIR?=$(CGO_SOURCE)
-%/cgo/amd64 %/cgo/arm64: BUILDER_IMAGE=$(GOLANG_GCC_BUILDER_IMAGE)
+%/cgo/amd64 %/cgo/arm64: BUILDER_IMAGE=golang:1.21.5
 
 %/cgo/amd64: IMAGE_PLATFORMS=linux/amd64
 %/cgo/arm64: IMAGE_PLATFORMS=linux/arm64

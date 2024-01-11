@@ -12,14 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ARG BASE_IMAGE
+ARG BASE_IMAGE=public.ecr.aws/eks-distro-build-tooling/eks-distro-minimal-base:2023-09-06-1694026927.2
 FROM $BASE_IMAGE
 
-ARG TARGETARCH
-ARG TARGETOS
+ARG TARGETARCH=amd64
+ARG TARGETOS=linux
 
 
-COPY LICENSES /LICENSES
-COPY ATTRIBUTION.txt /ATTRIBUTION.txt
 COPY bin/external-provisioner/$TARGETOS-$TARGETARCH/csi-provisioner /csi-provisioner
 ENTRYPOINT ["/csi-provisioner"]
