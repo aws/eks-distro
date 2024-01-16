@@ -26,8 +26,8 @@ require (
 	github.com/prometheus/common v0.39.0
 	go.etcd.io/etcd/api/v3 v3.5.7
 	go.etcd.io/etcd/client/v3 v3.5.7
-	golang.org/x/crypto v0.14.0
-	golang.org/x/sys v0.13.0
+	golang.org/x/crypto v0.17.0
+	golang.org/x/sys v0.15.0
 	google.golang.org/api v0.126.0
 	google.golang.org/grpc v1.58.3
 	google.golang.org/protobuf v1.31.0
@@ -108,8 +108,8 @@ require (
 	golang.org/x/mod v0.8.0 // indirect
 	golang.org/x/net v0.17.0 // indirect
 	golang.org/x/oauth2 v0.10.0 // indirect
-	golang.org/x/term v0.13.0 // indirect
-	golang.org/x/text v0.13.0 // indirect
+	golang.org/x/term v0.15.0 // indirect
+	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/time v0.0.0-20220210224613-90d013bbcef8 // indirect
 	golang.org/x/tools v0.6.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
