@@ -524,13 +524,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ** github.com/aws/aws-sdk-go/internal/sync/singleflight; version v1.44.322 --
 https://github.com/aws/aws-sdk-go
 
-** golang.org/go; version go1.21.5 --
+** golang.org/go; version go1.21.6 --
 https://github.com/golang/go
 
 ** golang.org/x/crypto; version v0.17.0 --
 https://golang.org/x/crypto
 
-** golang.org/x/exp/constraints; version v0.0.0-20221205204356-47842c84f3db --
+** golang.org/x/exp; version v0.0.0-20221205204356-47842c84f3db --
 https://golang.org/x/exp
 
 ** golang.org/x/net; version v0.17.0 --
@@ -1330,7 +1330,7 @@ Copyright (c) 2013 Mitchell Hashimoto
 https://github.com/philhofer/fwd
 Copyright (c) 2014-2015, Philip Hofer
 
-** github.com/quic-go/quic-go; version v0.37.4 --
+** github.com/quic-go/quic-go; version v0.40.1 --
 https://github.com/quic-go/quic-go
 Copyright (c) 2016 the quic-go authors & Google, Inc.
 
