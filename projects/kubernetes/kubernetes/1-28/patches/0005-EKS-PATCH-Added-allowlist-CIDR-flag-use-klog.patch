@@ -1,0 +1,793 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Ernest Wong <ernwong@amazon.com>
+Date: Fri, 7 Jul 2023 16:14:08 +0000
+Subject: [PATCH] --EKS-PATCH-- Added allowlist CIDR flag, use "klog"
+
+Alternative to https://github.com/kubernetes/kubernetes/pull/71980
+
+Cherry-picked from
+https://github.com/kubernetes/kubernetes/commit/7e814da396692f3e364741fb6f775acea0aaaba3
+
+cmd/kube-apiserver: use "klog" instead of "glog"
+
+To maintain backwards compatibility, the "--proxy-cidr-whitelist"
+flag must remain, despite containing the non-inclusive term
+"whitelist". The "--proxy-cidr-allowlist" flag has the same
+functionality and should be used instead of it. Future releases
+should consider removing the non-inclusive flag.
+
+Signed-off-by: Nick Turner <nic@amazon.com>
+---
+ cmd/kube-apiserver/app/dialer.go              |  53 +++
+ cmd/kube-apiserver/app/options/allowlist.go   |   9 +
+ cmd/kube-apiserver/app/options/options.go     |   9 +
+ .../app/options/options_test.go               |   2 +
+ cmd/kube-apiserver/app/options/validation.go  |  16 +
+ cmd/kube-apiserver/app/server.go              |   5 +-
+ pkg/kubeapiserver/options/ipnetslice.go       |  93 +++++
+ pkg/kubeapiserver/options/ipnetslice_test.go  |  36 ++
+ pkg/kubeapiserver/options/options.go          |   1 +
+ pkg/registry/core/node/strategy.go            |  17 +
+ .../apiserver/proxy_cidr_allowlist_test.go    | 387 ++++++++++++++++++
+ 11 files changed, 627 insertions(+), 1 deletion(-)
+ create mode 100644 cmd/kube-apiserver/app/dialer.go
+ create mode 100644 cmd/kube-apiserver/app/options/allowlist.go
+ create mode 100644 pkg/kubeapiserver/options/ipnetslice.go
+ create mode 100644 pkg/kubeapiserver/options/ipnetslice_test.go
+ create mode 100644 test/integration/apiserver/proxy_cidr_allowlist_test.go
+
+diff --git a/cmd/kube-apiserver/app/dialer.go b/cmd/kube-apiserver/app/dialer.go
+new file mode 100644
+index 00000000000..a072351b851
+--- /dev/null
++++ b/cmd/kube-apiserver/app/dialer.go
+@@ -0,0 +1,53 @@
++package app
++
++import (
++	"context"
++	"crypto/tls"
++	"errors"
++	mathrand "math/rand"
++	"net"
++	"net/http"
++	"time"
++
++	"k8s.io/klog/v2"
++
++	utilnet "k8s.io/apimachinery/pkg/util/net"
++	kubeappoptions "k8s.io/kubernetes/cmd/kube-apiserver/app/options"
++	kubeoptions "k8s.io/kubernetes/pkg/kubeapiserver/options"
++)
++
++func CreateOutboundDialer(s kubeappoptions.CompletedOptions) (*http.Transport, error) {
++	proxyDialerFn := createAllowlistDialer(s.ProxyCIDRAllowlist)
++	// This must be set because it gets plumbed to node proxy handler later.
++	kubeappoptions.ProxyCIDRAllowlist = s.ProxyCIDRAllowlist
++
++	proxyTLSClientConfig := &tls.Config{InsecureSkipVerify: true}
++
++	proxyTransport := utilnet.SetTransportDefaults(&http.Transport{
++		DialContext:     proxyDialerFn,
++		TLSClientConfig: proxyTLSClientConfig,
++	})
++	return proxyTransport, nil
++}
++
++func createAllowlistDialer(allowlist kubeoptions.IPNetSlice) func(context.Context, string, string) (net.Conn, error) {
++	return func(ctx context.Context, network, addr string) (net.Conn, error) {
++		start := time.Now()
++		id := mathrand.Int63() // So you can match begins/ends in the log.
++		klog.Infof("[%x: %v] Dialing...", id, addr)
++		defer func() {
++			klog.Infof("[%x: %v] Dialed in %v.", id, addr, time.Since(start))
++		}()
++
++		host, _, err := net.SplitHostPort(addr)
++		if err != nil {
++			return nil, errors.New("Invalid address")
++		}
++
++		if !allowlist.Contains(host) {
++			return nil, errors.New("Address is not allowed")
++		}
++		dialer := &net.Dialer{}
++		return dialer.DialContext(ctx, network, addr)
++	}
++}
+diff --git a/cmd/kube-apiserver/app/options/allowlist.go b/cmd/kube-apiserver/app/options/allowlist.go
+new file mode 100644
+index 00000000000..d10ec4ebdda
+--- /dev/null
++++ b/cmd/kube-apiserver/app/options/allowlist.go
+@@ -0,0 +1,9 @@
++package options
++
++import (
++	kubeoptions "k8s.io/kubernetes/pkg/kubeapiserver/options"
++)
++
++var (
++	ProxyCIDRAllowlist kubeoptions.IPNetSlice = kubeoptions.DefaultProxyCIDRAllowlist
++)
+diff --git a/cmd/kube-apiserver/app/options/options.go b/cmd/kube-apiserver/app/options/options.go
+index d40c4282fed..6d89e9dca5d 100644
+--- a/cmd/kube-apiserver/app/options/options.go
++++ b/cmd/kube-apiserver/app/options/options.go
+@@ -46,6 +46,7 @@ type Extra struct {
+ 	AllowPrivileged           bool
+ 	KubeletConfig             kubeletclient.KubeletClientConfig
+ 	KubernetesServiceNodePort int
++	ProxyCIDRAllowlist        kubeoptions.IPNetSlice
+ 	// ServiceClusterIPRange is mapped to input provided by user
+ 	ServiceClusterIPRanges string
+ 	// PrimaryServiceClusterIPRange and SecondaryServiceClusterIPRange are the results
+@@ -91,6 +92,8 @@ func NewServerRunOptions() *ServerRunOptions {
+ 			MasterCount:          1,
+ 		},
+ 	}
++	s.ServiceClusterIPRanges = kubeoptions.DefaultServiceIPCIDR.String()
++	s.ProxyCIDRAllowlist = kubeoptions.DefaultProxyCIDRAllowlist
+ 
+ 	return &s
+ }
+@@ -121,6 +124,12 @@ func (s *ServerRunOptions) Flags() (fss cliflag.NamedFlagSets) {
+ 		"A CIDR notation IP range from which to assign service cluster IPs. This must not "+
+ 		"overlap with any IP ranges assigned to nodes or pods. Max of two dual-stack CIDRs is allowed.")
+ 
++	fs.Var(&s.ProxyCIDRAllowlist, "proxy-cidr-allowlist", ""+
++		"A comma-separated list of CIDR IP ranges which the API server can communicate with.")
++
++	fs.Var(&s.ProxyCIDRAllowlist, "proxy-cidr-whitelist", ""+
++		"Deprecated: Use '--proxy-cidr-allowlist' flag instead.")
++
+ 	fs.Var(&s.ServiceNodePortRange, "service-node-port-range", ""+
+ 		"A port range to reserve for services with NodePort visibility.  This must not overlap with the ephemeral port range on nodes.  "+
+ 		"Example: '30000-32767'. Inclusive at both ends of the range.")
+diff --git a/cmd/kube-apiserver/app/options/options_test.go b/cmd/kube-apiserver/app/options/options_test.go
+index 432530f08e2..704c95a4ae1 100644
+--- a/cmd/kube-apiserver/app/options/options_test.go
++++ b/cmd/kube-apiserver/app/options/options_test.go
+@@ -115,6 +115,7 @@ func TestAddFlags(t *testing.T) {
+ 		"--kubelet-client-key=/var/run/kubernetes/server.key",
+ 		"--kubelet-certificate-authority=/var/run/kubernetes/caserver.crt",
+ 		"--tracing-config-file=/var/run/kubernetes/tracing_config.yaml",
++		"--proxy-cidr-whitelist=192.168.0.0/24",
+ 		"--proxy-client-cert-file=/var/run/kubernetes/proxy.crt",
+ 		"--proxy-client-key-file=/var/run/kubernetes/proxy.key",
+ 		"--request-timeout=2m",
+@@ -302,6 +303,7 @@ func TestAddFlags(t *testing.T) {
+ 			ServiceClusterIPRanges: (&net.IPNet{IP: netutils.ParseIPSloppy("192.168.128.0"), Mask: net.CIDRMask(17, 32)}).String(),
+ 			EndpointReconcilerType: string(reconcilers.LeaseEndpointReconcilerType),
+ 			AllowPrivileged:        false,
++			ProxyCIDRAllowlist:     kubeoptions.NewIPNetSlice("192.168.0.0/24"),
+ 			KubeletConfig: kubeletclient.KubeletClientConfig{
+ 				Port:         10250,
+ 				ReadOnlyPort: 10255,
+diff --git a/cmd/kube-apiserver/app/options/validation.go b/cmd/kube-apiserver/app/options/validation.go
+index 53dcdf5e628..0a449710381 100644
+--- a/cmd/kube-apiserver/app/options/validation.go
++++ b/cmd/kube-apiserver/app/options/validation.go
+@@ -31,6 +31,18 @@ import (
+ 	"k8s.io/kubernetes/pkg/features"
+ )
+ 
++func validateProxyCIDRAllowlist(options CompletedOptions) []error {
++	errors := []error{}
++
++	// if its empty, don't add any IPs to the list
++	for _, cidr := range options.ProxyCIDRAllowlist {
++		if cidr.IP == nil {
++			errors = append(errors, fmt.Errorf("invalid --proxy-cidr-allowlist (or --proxy-cidr-whitelist) specified"))
++		}
++	}
++	return errors
++}
++
+ // TODO: Longer term we should read this from some config store, rather than a flag.
+ // validateClusterIPFlags is expected to be called after Complete()
+ func validateClusterIPFlags(options Extra) []error {
+@@ -138,5 +150,9 @@ func (s CompletedOptions) Validate() []error {
+ 		errs = append(errs, fmt.Errorf("--apiserver-count should be a positive number, but value '%d' provided", s.MasterCount))
+ 	}
+ 
++	if es := validateProxyCIDRAllowlist(s); len(es) > 0 {
++		errs = append(errs, es...)
++	}
++
+ 	return errs
+ }
+diff --git a/cmd/kube-apiserver/app/server.go b/cmd/kube-apiserver/app/server.go
+index 807c169631f..de44c495b52 100644
+--- a/cmd/kube-apiserver/app/server.go
++++ b/cmd/kube-apiserver/app/server.go
+@@ -213,7 +213,10 @@ func CreateKubeAPIServerConfig(opts options.CompletedOptions) (
+ 	[]admission.PluginInitializer,
+ 	error,
+ ) {
+-	proxyTransport := CreateProxyTransport()
++	proxyTransport, err := CreateOutboundDialer(opts)
++	if err != nil {
++		return nil, nil, nil, err
++	}
+ 
+ 	genericConfig, versionedInformers, storageFactory, err := controlplaneapiserver.BuildGenericConfig(
+ 		opts.CompletedOptions,
+diff --git a/pkg/kubeapiserver/options/ipnetslice.go b/pkg/kubeapiserver/options/ipnetslice.go
+new file mode 100644
+index 00000000000..8cc2fe76574
+--- /dev/null
++++ b/pkg/kubeapiserver/options/ipnetslice.go
+@@ -0,0 +1,93 @@
++/*
++This file is here because flags seemed to mostly be in staging/k8s.io/apiserver. Is there a better place for this?
++*/
++package options
++
++import (
++	"context"
++	"encoding/csv"
++	"net"
++	"strings"
++)
++
++// IPNetSlice is a flag for comma-separated slices of CIDR addresses
++type IPNetSlice []net.IPNet
++
++// String satisfies pflag.Value
++func (netSlice IPNetSlice) String() string {
++	netStrings := []string{}
++	for _, n := range netSlice {
++		netStrings = append(netStrings, n.String())
++	}
++	return strings.Join(netStrings, ",")
++}
++
++// Set satisfies pflag.Value
++func (netSlice *IPNetSlice) Set(value string) error {
++	cidrStrings, err := readAsCSV(value)
++	if err != nil {
++		return err
++	}
++	for _, v := range cidrStrings {
++		_, n, err := net.ParseCIDR(strings.TrimSpace(v))
++		if err != nil {
++			return err
++		}
++		*netSlice = append(*netSlice, *n)
++	}
++	return nil
++}
++
++func readAsCSV(val string) ([]string, error) {
++	if val == "" {
++		return []string{}, nil
++	}
++	stringReader := strings.NewReader(val)
++	csvReader := csv.NewReader(stringReader)
++	return csvReader.Read()
++}
++
++// Type satisfies plfag.Value
++func (netSlice *IPNetSlice) Type() string {
++	return "[]net.IPNet"
++}
++
++// ContainsHost checks if all the IPs for a given hostname are in the allowlist
++func (netSlice *IPNetSlice) ContainsHost(ctx context.Context, host string) (bool, error) {
++	r := net.Resolver{}
++	resp, err := r.LookupIPAddr(ctx, host)
++	if err != nil {
++		return false, err
++	}
++	for _, host := range resp {
++		// reject if any of the IPs for a hostname are not in the allowlist
++		if !netSlice.Contains(host.String()) {
++			return false, nil
++		}
++	}
++	return true, nil
++}
++
++// Contains checks if a given IP is in the allowlist
++func (netSlice *IPNetSlice) Contains(ip string) bool {
++	// if there are no allowlists, everything is allowed
++	if len(*netSlice) == 0 {
++		return true
++	}
++	netIP := net.ParseIP(ip)
++	for _, cidr := range *netSlice {
++		if cidr.Contains(netIP) {
++			return true
++		}
++	}
++	return false
++}
++
++// NewIPNetSlice creates a new IPNetSlice for a given list of networks
++func NewIPNetSlice(nets ...string) IPNetSlice {
++	netSlice := &IPNetSlice{}
++	for _, network := range nets {
++		netSlice.Set(network)
++	}
++	return *netSlice
++}
+diff --git a/pkg/kubeapiserver/options/ipnetslice_test.go b/pkg/kubeapiserver/options/ipnetslice_test.go
+new file mode 100644
+index 00000000000..f901214d692
+--- /dev/null
++++ b/pkg/kubeapiserver/options/ipnetslice_test.go
+@@ -0,0 +1,36 @@
++package options
++
++import (
++	"testing"
++)
++
++func TestIPNetSliceContains(t *testing.T) {
++	cases := []struct {
++		inputNets []string
++		inputIP   string
++		want      bool
++	}{
++		{
++			[]string{"192.168.0.1/24"},
++			"192.168.0.22",
++			true,
++		},
++		{
++			[]string{"192.168.0.1/24"},
++			"192.168.1.22",
++			false,
++		},
++		{
++			[]string{"192.168.0.1/24", "10.0.0.1/8"},
++			"10.0.100.1",
++			true,
++		},
++	}
++
++	for _, c := range cases {
++		ns := NewIPNetSlice(c.inputNets...)
++		if ns.Contains(c.inputIP) != c.want {
++			t.Errorf("%v.Contains(%s) was wrong: got %t, expected %t", ns, c.inputIP, !c.want, c.want)
++		}
++	}
++}
+diff --git a/pkg/kubeapiserver/options/options.go b/pkg/kubeapiserver/options/options.go
+index 7f172208bcd..367eb6fb981 100644
+--- a/pkg/kubeapiserver/options/options.go
++++ b/pkg/kubeapiserver/options/options.go
+@@ -31,3 +31,4 @@ var DefaultServiceIPCIDR = net.IPNet{IP: netutils.ParseIPSloppy("10.0.0.0"), Mas
+ 
+ // DefaultEtcdPathPrefix is the default key prefix of etcd for API Server
+ const DefaultEtcdPathPrefix = "/registry"
++var DefaultProxyCIDRAllowlist IPNetSlice = NewIPNetSlice()
+diff --git a/pkg/registry/core/node/strategy.go b/pkg/registry/core/node/strategy.go
+index a6900429ff8..f676a770eea 100644
+--- a/pkg/registry/core/node/strategy.go
++++ b/pkg/registry/core/node/strategy.go
+@@ -34,6 +34,7 @@ import (
+ 	"k8s.io/apiserver/pkg/registry/generic"
+ 	pkgstorage "k8s.io/apiserver/pkg/storage"
+ 	"k8s.io/apiserver/pkg/storage/names"
++	kubeapiserveroptions "k8s.io/kubernetes/cmd/kube-apiserver/app/options"
+ 	"k8s.io/kubernetes/pkg/api/legacyscheme"
+ 	api "k8s.io/kubernetes/pkg/apis/core"
+ 	"k8s.io/kubernetes/pkg/apis/core/validation"
+@@ -244,6 +245,22 @@ func ResourceLocation(getter ResourceGetter, connection client.ConnectionInfoGet
+ 		return nil, nil, errors.NewBadRequest(err.Error())
+ 	}
+ 
++	// REVIEW NOTE:
++	// I didn't see a better way to plumb this down here. Feature gates are globals too, but I'd be happy to get the CIDRs here another way
++	// The allowlist must be checked here. In case below the info.Transport is
++	// returned, the allowlist won't otherwise be checked. In case the
++	// proxyTransport is returned, the allowlist will be checked again.
++	included, err := kubeapiserveroptions.ProxyCIDRAllowlist.ContainsHost(
++		ctx,
++		info.Hostname,
++	)
++	if err != nil {
++		return nil, nil, err
++	}
++	if !included {
++		return nil, nil, errors.NewBadRequest("Address is not allowed")
++	}
++
+ 	// We check if we want to get a default Kubelet's transport. It happens if either:
+ 	// - no port is specified in request (Kubelet's port is default)
+ 	// - the requested port matches the kubelet port for this node
+diff --git a/test/integration/apiserver/proxy_cidr_allowlist_test.go b/test/integration/apiserver/proxy_cidr_allowlist_test.go
+new file mode 100644
+index 00000000000..7711511eaab
+--- /dev/null
++++ b/test/integration/apiserver/proxy_cidr_allowlist_test.go
+@@ -0,0 +1,387 @@
++/*
++Copyright 2018 The Kubernetes Authors.
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++*/
++
++package apiserver
++
++import (
++	"context"
++	"fmt"
++	"strconv"
++	"strings"
++	"testing"
++	"time"
++
++	corev1 "k8s.io/api/core/v1"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/util/validation/field"
++	"k8s.io/apiserver/pkg/storage/storagebackend"
++	"k8s.io/client-go/kubernetes"
++	restclient "k8s.io/client-go/rest"
++	kubeapiservertesting "k8s.io/kubernetes/cmd/kube-apiserver/app/testing"
++	"k8s.io/kubernetes/pkg/apis/core/validation"
++	"k8s.io/kubernetes/test/integration/framework"
++)
++
++// TestProxyCidrAllowlist tests the --proxy-cidr-allowlist flag added by an eks
++// patch. The proxy subresource exists for nodes, pods, and services. Requests
++// for this subresource are effectively requests for apiserver to connect to
++// the given node/pod/service and act as a proxy for the client. apiserver must
++// not connect to IPs outside the allowlist.
++// This test should be ignorant of implementation details but they're explained
++// below in case they're useful for navigating the patch, understanding the
++// test and/or debugging failures.
++// For node proxy subresource requests, whether apiserver is allowed to connect
++// to and proxy the location should be dictated by:
++//   1. IsProxyableHostname
++//   2. --proxy-cidr-allowlist
++// For pods, by:
++//   1. IsProxyableIP
++//   2. --proxy-cidr-allowlist
++// For services, by:
++//   1. ValidateNonSpecialIP
++//   2. --proxy-cidr-allowlist
++// IsProxyableHostname, IsProxyableIP, and ValidateNonSpecialIP should filter
++// out special IPs like loopback and link-local regardless of the value of the
++// allowlist.
++// Then the ResourceLocation implementations of node, pod, and service RESTs in
++// pkg/registry/core/node, pkg/registry/core/pod, pkg/registry/core/service
++// should respect the allowlist by returning a proxy handler http.Transport
++// that respects the allowlist (see CreateOutboundDialer).
++// However there is a case in the node ResourceLocation implementation where it
++// may not return a proxy handler if the port requested is the same as
++// kubelet's (default 10250). Ultimately the returned handler is still wrapped
++// in another proxy handler that doesn't know to respect the allowlist. So the
++// function should check the allowlist before returning. Test cases cover both
++// the "same port" (nodePort is not specified) and "different port" (nodePort
++// is specified to something not equal to 10250, 10251).
++func TestProxyCidrAllowlist(t *testing.T) {
++	var testcases = []struct {
++		name               string
++		proxyCidrAllowlist string
++		ip                 string
++		nodePort           int
++		// These tests rely on assertProxyAllowed and proxyAllowed (see their
++		// comments below) to translate errors from proxy requests into explicit
++		// true/false allow/deny decisions. In short, these tests do not bother
++		// testing for error messages (e.g. expectError=nil or expectError="address
++		// is not allowed") because they can't, so they only test for allow/deny.
++		expectNodeProxyAllowed    bool
++		expectPodProxyAllowed     bool
++		expectServiceProxyAllowed bool
++	}{
++		{
++			name:                      "allowlist empty, localhost blocked",
++			proxyCidrAllowlist:        "",
++			ip:                        "127.0.0.1",
++			expectNodeProxyAllowed:    false,
++			expectPodProxyAllowed:     false,
++			expectServiceProxyAllowed: false,
++		},
++		{
++			name:                      "allowlist contains localhost, localhost blocked",
++			proxyCidrAllowlist:        "127.0.0.1/32",
++			ip:                        "127.0.0.1",
++			expectNodeProxyAllowed:    false,
++			expectPodProxyAllowed:     false,
++			expectServiceProxyAllowed: false,
++		},
++		{
++			name:                      "allowlist contains localhost, node port is non-default, localhost blocked",
++			proxyCidrAllowlist:        "127.0.0.1/32",
++			ip:                        "127.0.0.1",
++			nodePort:                  10251,
++			expectNodeProxyAllowed:    false,
++			expectPodProxyAllowed:     false,
++			expectServiceProxyAllowed: false,
++		},
++		{
++			name:                      "allowlist omits localhost, localhost blocked",
++			proxyCidrAllowlist:        "198.51.100.0/24",
++			ip:                        "127.0.0.1",
++			expectNodeProxyAllowed:    false,
++			expectPodProxyAllowed:     false,
++			expectServiceProxyAllowed: false,
++		},
++		{
++			name:                      "allowlist omits localhost, node port is non-default, localhost blocked",
++			proxyCidrAllowlist:        "198.51.100.0/24",
++			ip:                        "127.0.0.1",
++			nodePort:                  10251,
++			expectNodeProxyAllowed:    false,
++			expectPodProxyAllowed:     false,
++			expectServiceProxyAllowed: false,
++		},
++		{
++			name:                      "allowlist empty, 192.0.2.0 allowed",
++			proxyCidrAllowlist:        "",
++			ip:                        "192.0.2.0",
++			expectNodeProxyAllowed:    true,
++			expectPodProxyAllowed:     true,
++			expectServiceProxyAllowed: true,
++		},
++		{
++			name:                      "allowlist contains 192.0.2.0, 192.0.2.0 allowed",
++			proxyCidrAllowlist:        "198.51.100.0/24,192.0.2.0/24",
++			ip:                        "192.0.2.0",
++			expectNodeProxyAllowed:    true,
++			expectPodProxyAllowed:     true,
++			expectServiceProxyAllowed: true,
++		},
++		{
++			name:                      "allowlist contains 192.0.2.0, node port is non-default, 192.0.2.0 allowed",
++			proxyCidrAllowlist:        "198.51.100.0/24,192.0.2.0/24",
++			ip:                        "192.0.2.0",
++			nodePort:                  10251,
++			expectNodeProxyAllowed:    true,
++			expectPodProxyAllowed:     true,
++			expectServiceProxyAllowed: true,
++		},
++		{
++			name:                      "allowlist omits 192.0.2.0, 192.0.2.0 blocked",
++			proxyCidrAllowlist:        "198.51.100.0/24",
++			ip:                        "192.0.2.0",
++			expectNodeProxyAllowed:    false,
++			expectPodProxyAllowed:     false,
++			expectServiceProxyAllowed: false,
++		},
++		{
++			name:                      "allowlist omits 192.0.2.0, node port is non-default, 192.0.2.0 blocked",
++			proxyCidrAllowlist:        "198.51.100.0/24",
++			ip:                        "192.0.2.0",
++			nodePort:                  10251,
++			expectNodeProxyAllowed:    false,
++			expectPodProxyAllowed:     false,
++			expectServiceProxyAllowed: false,
++		},
++	}
++	for _, tc := range testcases {
++		t.Run(tc.name, func(t *testing.T) {
++			apiserver, clientset := startTestServerOrDie(t, framework.SharedEtcd(), tc.proxyCidrAllowlist)
++			defer apiserver.TearDownFn()
++
++			node := createNodeOrDie(t, clientset, tc.ip)
++			ctx, cancel := context.WithTimeout(context.TODO(), 100*time.Millisecond)
++			defer cancel()
++			nodeName := node.GetName()
++			if tc.nodePort != 0 {
++				// https://kubernetes.io/docs/tasks/access-application-cluster/access-cluster/#manually-constructing-apiserver-proxy-urls
++				nodeName += ":" + strconv.Itoa(tc.nodePort)
++			}
++			result := clientset.CoreV1().RESTClient().Get().Resource("nodes").Name(nodeName).SubResource("proxy").Do(ctx)
++			assertProxyAllowed(t, "node", tc.ip, tc.expectNodeProxyAllowed, result)
++
++			namespace := "ns"
++
++			pod := createPodOrDie(t, clientset, tc.ip, namespace, node.Name)
++			ctx, cancel = context.WithTimeout(context.TODO(), 100*time.Millisecond)
++			defer cancel()
++			result = clientset.CoreV1().RESTClient().Get().Namespace(namespace).Resource("pods").Name(pod.GetName()).SubResource("proxy").Do(ctx)
++			assertProxyAllowed(t, "pod", tc.ip, tc.expectPodProxyAllowed, result)
++
++			// Only test the service case if endpoints creation (in
++			// createServiceOrDie) would get past ValidateNonSpecialIP. Otherwise
++			// endpoints creation fails and there is nothing to test anyway.
++			errs := validation.ValidateNonSpecialIP(tc.ip, field.NewPath("ip"))
++			if len(errs) == 0 {
++				service := createServiceOrDie(t, clientset, tc.ip, namespace, pod.Name)
++				ctx, cancel = context.WithTimeout(context.TODO(), 100*time.Millisecond)
++				defer cancel()
++				result = clientset.CoreV1().RESTClient().Get().Namespace(namespace).Resource("services").Name(service.GetName()).SubResource("proxy").Do(ctx)
++				assertProxyAllowed(t, "service", tc.ip, tc.expectServiceProxyAllowed, result)
++			}
++
++		})
++	}
++}
++
++func assertProxyAllowed(t *testing.T, kind, ip string, expect bool, result restclient.Result) {
++	allowed, err := proxyAllowed(result.Error())
++	if err != nil {
++		t.Errorf("error determining if apiserver proxy=%q ip=%q result=%q was allowed: %v", kind, ip, result.Error(), err)
++	} else if allowed != expect {
++		t.Errorf("expected apiserver proxy=%q ip=%q result=%q to be allowed=%v but got allowed=%v", kind, ip, result.Error(), expect, allowed)
++	}
++}
++
++// proxyAllowed translates errors from proxy requests into explicit true/false
++// decisions for whether apiserver was allowed to connect to and proxy the
++// location or not. It is necessary because in this test environment we cannot
++// simply say that err=nil means apiserver was allowed to connect and err!=nil
++// means apiserver was denied. For example, attempts to proxy localhost will
++// probably return "connection refused" when apiserver attempts to connect to
++// it (unless you happen to be running a webserver in your test environment).
++// In this case, err is not nil but apiserver obviously made a connection
++// attempt, hence this returns true.
++func proxyAllowed(err error) (bool, error) {
++	if err == nil {
++		// apiserver was allowed to connect, the server OK'd. This should not
++		// happen in practice because there should be no server running at
++		// 127.0.0.1 or 192.0.2.0
++		return true, nil
++	}
++
++	if strings.Contains(err.Error(), "connection refused") {
++		// apiserver was allowed to connect, the server (127.0.0.1) is just refusing
++		return true, nil
++	}
++
++	if strings.Contains(err.Error(), "context deadline exceeded") {
++		// Assume context time out to mean "true": the apiserver was allowed to
++		// connect to and proxy the location, and was in the process of dialing it.
++		// This assumption is needed because there is no easy way for this test to
++		// verify apiserver really dialed the location. The test can't for example
++		// start a local httptest server for apiserver to dial because IsProxyableIP
++		// would filter it before the allowlist logic could get exercised. Context
++		// time out could also mean "unknown": if time out is observed before the
++		// allowlist logic got exercised, then what the allowlist logic would have
++		// decided is unknown. But it's okay to treat "unknown" as "true" because it
++		// means cases where the allowlist is too permissive are always caught.
++		return true, nil
++	}
++
++	if strings.Contains(err.Error(), "address not allowed") {
++		// IsProxyable denied apiserver and returned ErrAddressNotAllowed
++		return false, nil
++	}
++
++	if strings.Contains(err.Error(), "Address is not allowed") {
++		// Allowlist dialer denied apiserver
++		return false, nil
++	}
++
++	return false, fmt.Errorf("unrecognized error %v", err)
++}
++
++func startTestServerOrDie(t *testing.T, etcd *storagebackend.Config, proxyCidrAllowlist string) (*kubeapiservertesting.TestServer, *kubernetes.Clientset) {
++	proxyCidrWhitelistFlag := "--proxy-cidr-whitelist=" + proxyCidrAllowlist
++	server := kubeapiservertesting.StartTestServerOrDie(t, nil, []string{proxyCidrWhitelistFlag}, etcd)
++
++	clientset, err := kubernetes.NewForConfig(server.ClientConfig)
++	if err != nil {
++		t.Fatalf("error creating client: %v", err)
++	}
++
++	return server, clientset
++}
++
++func createNodeOrDie(t *testing.T, clientset *kubernetes.Clientset, ip string) *corev1.Node {
++	node, err := clientset.CoreV1().Nodes().Create(context.TODO(), &corev1.Node{
++		ObjectMeta: metav1.ObjectMeta{Name: "test-node"},
++	}, metav1.CreateOptions{})
++	if err != nil {
++		t.Fatalf("error creating node: %v", err)
++	}
++	node.Status = corev1.NodeStatus{
++		Addresses: []corev1.NodeAddress{
++			{
++				Type:    corev1.NodeExternalIP,
++				Address: ip,
++			},
++		},
++		DaemonEndpoints: corev1.NodeDaemonEndpoints{
++			KubeletEndpoint: corev1.DaemonEndpoint{
++				Port: int32(10250),
++			},
++		},
++	}
++	node, err = clientset.CoreV1().Nodes().UpdateStatus(context.TODO(), node, metav1.UpdateOptions{})
++	if err != nil {
++		t.Fatalf("error updating node status: %v", err)
++	}
++	return node
++}
++
++func createPodOrDie(t *testing.T, clientset *kubernetes.Clientset, ip, namespace, nodeName string) *corev1.Pod {
++	_, err := clientset.CoreV1().Namespaces().Create(context.TODO(), &corev1.Namespace{
++		ObjectMeta: metav1.ObjectMeta{Name: namespace},
++	}, metav1.CreateOptions{})
++	if err != nil {
++		t.Fatalf("error creating namespace: %v", err)
++	}
++
++	_, err = clientset.CoreV1().ServiceAccounts(namespace).Create(context.TODO(), &corev1.ServiceAccount{
++		ObjectMeta: metav1.ObjectMeta{Name: "default", Namespace: namespace},
++	}, metav1.CreateOptions{})
++	if err != nil {
++		t.Fatalf("error creating serviceaccount: %v", err)
++	}
++
++	falseRef := false
++	pod, err := clientset.CoreV1().Pods(namespace).Create(context.TODO(), &corev1.Pod{
++		ObjectMeta: metav1.ObjectMeta{Name: "test-pod", Namespace: namespace},
++		Spec: corev1.PodSpec{
++			Containers: []corev1.Container{
++				{
++					Name:  "foo",
++					Image: "some/image:latest",
++				},
++			},
++			NodeName:                     nodeName,
++			AutomountServiceAccountToken: &falseRef,
++		},
++	}, metav1.CreateOptions{})
++	if err != nil {
++		t.Fatalf("error creating pod: %v", err)
++	}
++	pod.Status = corev1.PodStatus{PodIPs: []corev1.PodIP{{ip}}}
++	pod, err = clientset.CoreV1().Pods(namespace).UpdateStatus(context.TODO(), pod, metav1.UpdateOptions{})
++	if err != nil {
++		t.Fatalf("error updating pod status: %v", err)
++	}
++	return pod
++}
++
++func createServiceOrDie(t *testing.T, clientset *kubernetes.Clientset, ip, namespace, podName string) *corev1.Service {
++	service, err := clientset.CoreV1().Services(namespace).Create(context.TODO(), &corev1.Service{
++		ObjectMeta: metav1.ObjectMeta{
++			Name:      "test-service",
++			Namespace: namespace,
++		},
++		Spec: corev1.ServiceSpec{
++			Ports: []corev1.ServicePort{{
++				Port: int32(80),
++			}},
++		},
++	}, metav1.CreateOptions{})
++	if err != nil {
++		t.Fatalf("error creating service: %v", err)
++	}
++
++	_, err = clientset.CoreV1().Endpoints(namespace).Create(context.TODO(), &corev1.Endpoints{
++		ObjectMeta: metav1.ObjectMeta{
++			Name:      "test-service",
++			Namespace: namespace,
++		},
++		Subsets: []corev1.EndpointSubset{{
++			Ports: []corev1.EndpointPort{{
++				Port: 80,
++			}},
++			Addresses: []corev1.EndpointAddress{{
++				IP: ip,
++				TargetRef: &corev1.ObjectReference{
++					APIVersion: "v1",
++					Kind:       "Pod",
++					Namespace:  namespace,
++					Name:       podName,
++				},
++			}},
++		}},
++	}, metav1.CreateOptions{})
++	if err != nil {
++		t.Fatalf("error creating endpoints: %v", err)
++	}
++	return service
++}
