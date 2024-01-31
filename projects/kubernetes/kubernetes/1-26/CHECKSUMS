@@ -16,4 +16,4 @@ bf12f80d130b69577e0c8dd2d3e20778ecca8c4e63a1f2f46cae1db7f1cffe09  _output/1-26/b
 1fca6b68138fffd4e51d739af2baa892fe713ba04e22afaeab1ff28f0ac9c8fc  _output/1-26/bin/windows/amd64/kube-proxy.exe
 5af65e885d190a123ffff93a1e1477780fc5eacff731c88bdc95bfbfb6852b37  _output/1-26/bin/windows/amd64/kubeadm.exe
 16ca911c440353f87686f89df281579b9c3f1a9b93254a725ad0c04c7ce8cff1  _output/1-26/bin/windows/amd64/kubectl.exe
-5a5d360bc1dc06bfa6fb7aa4299546b9c8051c32178fb2935439852cbe7f0aa9  _output/1-26/bin/windows/amd64/kubelet.exe 
+5a5d360bc1dc06bfa6fb7aa4299546b9c8051c32178fb2935439852cbe7f0aa9  _output/1-26/bin/windows/amd64/kubelet.exe
