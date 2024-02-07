@@ -21,8 +21,8 @@ upgrading it yourself. For end users, however, running applications is the
 same as with EKS since the two support the same API versions and
 same set of components.
 
-A supported installation method for EKS-D is available with [EKS 
-Anywhere (EKS-A)][eks-a]. To try out EKS-D without EKS-A, the instructions in 
+A supported installation method for EKS-D is available with [EKS
+Anywhere (EKS-A)][eks-a]. To try out EKS-D without EKS-A, the instructions in
 this website describe how to:
 
 [eks-a]: https://anywhere.eks.amazonaws.com/
@@ -31,7 +31,7 @@ this website describe how to:
 
 * Install EKS-D using kOps or other installation methods
 
-Check out EKS Distro's [Starting a cluster](users/index.md) page. 
+Check out EKS Distro's [Starting a cluster](users/index.md) page.
 See the [Partners](users/install/partners.md) page for links to third-party methods for
 installing EKS-D.
 
@@ -49,11 +49,11 @@ The tenets of the EKS Distro (EKS-D) project are:
 
 ## Release Channels
 
-EKS Distro releases Kubernetes versions at the same pace as EKS and issues 
+EKS Distro releases Kubernetes versions at the same pace as EKS and issues
 updates as releases in release channels. A release channel tracks minor
 versions (`v<major>.<minor>.<point>`) of Kubernetes, and a channel will be
 retired when EKS ceases supporting a particular minor version of Kubernetes.
-EKS Distro announces new releases and release channels via an SNS topic 
+EKS Distro announces new releases and release channels via an SNS topic
 (arn:aws:sns:us-east-1:379412251201:eks-distro-updates) at their launch.
 Releases and release channels are structured as Kubernetes Custom
 Resource Definitions
@@ -232,7 +232,7 @@ if you are interested in the AL2 container runtime kernel version.
 * [v1-25-eks-2](releases/1-25/2/index.md) (January 11, 2023)
 * [v1-25-eks-1](releases/1-25/1/index.md) (December 29, 2022)
 
-#### EKS-D 1.24 Version Dependencies
+#### EKS-D 1.24 Version Dependencies (DEPRECATED)
 * [v1-24-eks-36](releases/1-24/36/index.md) (February 01, 2024)
 * [v1-24-eks-35](releases/1-24/35/index.md) (January 19, 2024)
 * [v1-24-eks-34](releases/1-24/34/index.md) (January 05, 2024)

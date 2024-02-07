@@ -2,7 +2,6 @@
 
 | Release | Version                                                      |
 |---------|--------------------------------------------------------------|
-| 1-24    | ![Version](https://img.shields.io/badge/version-v3.5.9-blue) |
 | 1-25    | ![Version](https://img.shields.io/badge/version-v3.5.9-blue) |
 | 1-26    | ![Version](https://img.shields.io/badge/version-v3.5.9-blue) |
 | 1-27    | ![Version](https://img.shields.io/badge/version-v3.5.9-blue) |
@@ -10,11 +9,11 @@
 
 ### Updating
 
-1. Work with EKS teams to decide on a new version. From the upstream [repo](https://github.com/etcd-io/etcd) checkout the version tag branch and find the release.yaml file. This file should mention the [go-version](https://github.com/etcd-io/etcd/blob/cecbe35ce0703cd0f8d2063dad4a9e541ae317e5/.github/workflows/release.yaml#L10) the current tag is using. 
+1. Work with EKS teams to decide on a new version. From the upstream [repo](https://github.com/etcd-io/etcd) checkout the version tag branch and find the release.yaml file. This file should mention the [go-version](https://github.com/etcd-io/etcd/blob/cecbe35ce0703cd0f8d2063dad4a9e541ae317e5/.github/workflows/release.yaml#L10) the current tag is using.
 Please review the [changelogs](https://github.com/etcd-io/etcd/blob/main/CHANGELOG/CHANGELOG-3.6.md) carefully looking for specific version to verify the changes that may affect EKS-D or downstream projects like EKS-A, especially if the new
 version is greater than the one used in upstream Kubernetes.
 1. Update the `GIT_TAG` file to have the new desired version based on the upstream release tags.
-1. Compare the old tag to the new, looking specifically for changes to the `build` file in the root of the repo. 
+1. Compare the old tag to the new, looking specifically for changes to the `build` file in the root of the repo.
 ex: [3.4.14 compared to 3.4.15](https://github.com/etcd-io/etcd/compare/v3.4.14...v3.4.15). Check for any build flag changes, tag changes, dependencies, etc.
 The EKS-D build does not call the build script from upstream directly so pay close attention [build.sh](https://github.com/etcd-io/etcd/blob/main/scripts/build.sh) for changes
 to ldflags.
