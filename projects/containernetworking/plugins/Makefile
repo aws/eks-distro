@@ -45,6 +45,11 @@ validate-cli-version:
 		exit 1; \
 	fi
 
+.PHONY: test
+test: $(GIT_PATCH_TARGET)
+	@echo “!!!GIT_PATCH_TARGET!!! : $(GIT_PATCH_TARGET)”
+	@echo “!!!BINARY_TARGETS!!!: $(BINARY_TARGETS)”
+	build/run_tests.sh $(RELEASE_BRANCH) $(GOLANG_VERSION)
 
 ########### DO NOT EDIT #############################
 # To update call: make add-generated-help-block
