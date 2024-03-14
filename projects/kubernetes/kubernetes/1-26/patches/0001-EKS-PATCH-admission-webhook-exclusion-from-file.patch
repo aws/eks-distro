@@ -1764,7 +1764,7 @@ index 00000000000..2c26ca24870
 +	}
 +}
 diff --git a/vendor/modules.txt b/vendor/modules.txt
-index 852e86cfa01..6af39ce6159 100644
+index 0f4a250177b..f5eec9262ea 100644
 --- a/vendor/modules.txt
 +++ b/vendor/modules.txt
 @@ -1484,6 +1484,7 @@ k8s.io/apiserver/pkg/admission/plugin/webhook/config/apis/webhookadmission/v1

@@ -1,0 +1,25 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Daniel Martin <danmarts@amazon.com>
+Date: Thu, 29 Feb 2024 14:09:24 -0800
+Subject: [PATCH] --EKS-PATCH-- Fix etcd storage_events_received_total metric
+
+Fix etcd storage_events_received_total metric not being registered #122168
+
+Cherry-picked from
+https://github.com/kubernetes/kubernetes/commit/ceb7ca93875cd74bea60500812cf7f024d3b1f2d
+---
+ .../src/k8s.io/apiserver/pkg/storage/etcd3/metrics/metrics.go    | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/staging/src/k8s.io/apiserver/pkg/storage/etcd3/metrics/metrics.go b/staging/src/k8s.io/apiserver/pkg/storage/etcd3/metrics/metrics.go
+index 6f155c0adb2..615ddb32606 100644
+--- a/staging/src/k8s.io/apiserver/pkg/storage/etcd3/metrics/metrics.go
++++ b/staging/src/k8s.io/apiserver/pkg/storage/etcd3/metrics/metrics.go
+@@ -142,6 +142,7 @@ func Register() {
+ 		legacyregistry.MustRegister(etcdRequestLatency)
+ 		legacyregistry.MustRegister(objectCounts)
+ 		legacyregistry.MustRegister(dbTotalSize)
++		legacyregistry.MustRegister(etcdEventsReceivedCounts)
+ 		legacyregistry.MustRegister(etcdBookmarkCounts)
+ 		legacyregistry.MustRegister(etcdLeaseObjectCounts)
+ 		legacyregistry.MustRegister(listStorageCount)

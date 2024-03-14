@@ -811,7 +811,7 @@ index 194f455380b..b7d10ca5d2c 100644
  			ServiceControllerConfiguration: &serviceconfig.ServiceControllerConfiguration{
  				ConcurrentServiceSyncs: 1,
 diff --git a/vendor/modules.txt b/vendor/modules.txt
-index b2392b9b2ee..98702bd7eff 100644
+index ad7f80f5d85..7c538b9dd9b 100644
 --- a/vendor/modules.txt
 +++ b/vendor/modules.txt
 @@ -1977,6 +1977,8 @@ k8s.io/cloud-provider/config
