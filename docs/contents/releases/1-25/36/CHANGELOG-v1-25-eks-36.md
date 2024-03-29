@@ -25,4 +25,5 @@ This changelog highlights the changes for [v1-25-eks-36](https://github.com/aws/
 * Patch protobuf to resolve CVE-2024-24786 for External-Provisioner ([2847](https://github.com/aws/eks-distro/pull/2847))
 
 ### Base Image
-No update since last release
+No changes since last release
+
