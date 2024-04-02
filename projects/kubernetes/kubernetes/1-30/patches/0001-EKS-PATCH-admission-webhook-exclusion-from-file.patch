@@ -41,8 +41,7 @@ Signed-off-by: Jyoti Mahapatra <jyotima@amazon.com>
  .../generic/exclusionrules/matcher_test.go    | 412 +++++++++++
  .../plugin/webhook/generic/webhook.go         |  24 +
  .../webhook_exclusion_rules_test.go           | 283 ++++++++
- vendor/modules.txt                            |   1 +
- 7 files changed, 1654 insertions(+)
+ 6 files changed, 1653 insertions(+)
  create mode 100644 staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/critical_path_excluder.go
  create mode 100644 staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/critical_path_excluder_test.go
  create mode 100644 staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules/matcher.go
@@ -1764,15 +1763,3 @@ index 00000000000..2c26ca24870
 +		},
 +	}
 +}
-diff --git a/vendor/modules.txt b/vendor/modules.txt
-index b949fa35b4a..56039fb088c 100644
---- a/vendor/modules.txt
-+++ b/vendor/modules.txt
-@@ -1474,6 +1474,7 @@ k8s.io/apiserver/pkg/admission/plugin/webhook/config/apis/webhookadmission/v1
- k8s.io/apiserver/pkg/admission/plugin/webhook/config/apis/webhookadmission/v1alpha1
- k8s.io/apiserver/pkg/admission/plugin/webhook/errors
- k8s.io/apiserver/pkg/admission/plugin/webhook/generic
-+k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules
- k8s.io/apiserver/pkg/admission/plugin/webhook/initializer
- k8s.io/apiserver/pkg/admission/plugin/webhook/matchconditions
- k8s.io/apiserver/pkg/admission/plugin/webhook/mutating
