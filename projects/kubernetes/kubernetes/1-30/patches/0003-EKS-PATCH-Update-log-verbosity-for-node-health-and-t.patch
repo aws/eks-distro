@@ -5,7 +5,6 @@ Subject: [PATCH] --EKS-PATCH-- Update log verbosity for node health and taint
  checks
 
 cherrypick of https://github.com/kubernetes/kubernetes/pull/121967
-For more details https://t.corp.amazon.com/V1088905731
 
 Signed-off-by: torredil <torredil@amazon.com>
 ---
