@@ -116,25 +116,25 @@ https://github.com/grpc/grpc-go
 ** gopkg.in/yaml.v2; version v2.4.0 --
 https://gopkg.in/yaml.v2
 
-** k8s.io/api; version v0.29.0 --
+** k8s.io/api; version v0.29.2 --
 https://github.com/kubernetes/api
 
-** k8s.io/apimachinery/pkg; version v0.29.0 --
+** k8s.io/apimachinery/pkg; version v0.29.2 --
 https://github.com/kubernetes/apimachinery
 
-** k8s.io/apiserver; version v0.29.0 --
+** k8s.io/apiserver; version v0.29.2 --
 https://github.com/kubernetes/apiserver
 
-** k8s.io/client-go; version v0.29.0 --
+** k8s.io/client-go; version v0.29.2 --
 https://github.com/kubernetes/client-go
 
-** k8s.io/component-base; version v0.29.0 --
+** k8s.io/component-base; version v0.29.2 --
 https://github.com/kubernetes/component-base
 
 ** k8s.io/klog/v2; version v2.120.0 --
 https://github.com/kubernetes/klog
 
-** k8s.io/kms; version v0.29.0 --
+** k8s.io/kms; version v0.29.2 --
 https://github.com/kubernetes/kms
 
 ** k8s.io/kube-openapi/pkg; version v0.0.0-20231010175941-2dd684a91f00 --
@@ -149,7 +149,7 @@ https://github.com/kubernetes/kube-openapi
 ** k8s.io/kube-openapi/pkg/validation/strfmt; version v0.0.0-20231010175941-2dd684a91f00 --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/metrics/pkg/apis/metrics; version v0.29.0 --
+** k8s.io/metrics/pkg/apis/metrics; version v0.29.2 --
 https://github.com/kubernetes/metrics
 
 ** k8s.io/utils; version v0.0.0-20230726121419-3b25d923346b --
@@ -161,7 +161,7 @@ https://github.com/kubernetes-sigs/apiserver-network-proxy
 ** sigs.k8s.io/json; version v0.0.0-20221116044647-bc3834ca7abd --
 https://github.com/kubernetes-sigs/json
 
-** sigs.k8s.io/metrics-server; version v0.7.0 --
+** sigs.k8s.io/metrics-server; version v0.7.1 --
 https://github.com/kubernetes-sigs/metrics-server
 
 ** sigs.k8s.io/structured-merge-diff/v4; version v4.4.1 --
@@ -834,7 +834,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ** github.com/grafana/regexp; version v0.0.0-20221122212121-6b5c0a4cb7fd --
 https://github.com/grafana/regexp
 
-** golang.org/go; version go1.21.8 --
+** golang.org/go; version go1.21.9 --
 https://github.com/golang/go
 
 ** golang.org/x/crypto; version v0.18.0 --
@@ -864,7 +864,7 @@ https://golang.org/x/text
 ** golang.org/x/time/rate; version v0.3.0 --
 https://golang.org/x/time
 
-** k8s.io/apimachinery/third_party/forked/golang; version v0.29.0 --
+** k8s.io/apimachinery/third_party/forked/golang; version v0.29.2 --
 https://github.com/kubernetes/apimachinery
 
 Copyright (c) 2009 The Go Authors. All rights reserved.

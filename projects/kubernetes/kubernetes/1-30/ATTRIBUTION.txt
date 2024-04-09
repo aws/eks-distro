@@ -2,30 +2,6 @@
 ** cloud.google.com/go/compute/metadata; version v0.2.3 --
 https://github.com/googleapis/google-cloud-go
 
-** github.com/Azure/go-autorest/autorest; version v0.11.29 --
-https://github.com/Azure/go-autorest/autorest
-
-** github.com/Azure/go-autorest/autorest/adal; version v0.9.23 --
-https://github.com/Azure/go-autorest/autorest/adal
-
-** github.com/Azure/go-autorest/autorest/date; version v0.3.0 --
-https://github.com/Azure/go-autorest/autorest/date
-
-** github.com/Azure/go-autorest/autorest/mocks; version v0.4.2 --
-https://github.com/Azure/go-autorest/autorest/mocks
-
-** github.com/Azure/go-autorest/autorest/to; version v0.4.0 --
-https://github.com/Azure/go-autorest/autorest/to
-
-** github.com/Azure/go-autorest/autorest/validation; version v0.3.1 --
-https://github.com/Azure/go-autorest/autorest/validation
-
-** github.com/Azure/go-autorest/logger; version v0.2.1 --
-https://github.com/Azure/go-autorest/logger
-
-** github.com/Azure/go-autorest/tracing; version v0.6.0 --
-https://github.com/Azure/go-autorest/tracing
-
 ** github.com/checkpoint-restore/go-criu/v5; version v5.3.0 --
 https://github.com/checkpoint-restore/go-criu/v5
 
@@ -56,9 +32,6 @@ https://github.com/coreos/go-semver
 ** github.com/coreos/go-systemd/v22; version v22.5.0 --
 https://github.com/coreos/go-systemd/v22
 
-** github.com/danwinship/knftables; version v0.0.13 --
-https://github.com/danwinship/knftables
-
 ** github.com/distribution/reference; version v0.5.0 --
 https://github.com/distribution/reference
 
@@ -68,13 +41,13 @@ https://github.com/docker/go-units
 ** github.com/euank/go-kmsg-parser/kmsgparser; version v2.0.0+incompatible --
 https://github.com/euank/go-kmsg-parser
 
-** github.com/go-logr/logr; version v1.3.0 --
+** github.com/go-logr/logr; version v1.4.1 --
 https://github.com/go-logr/logr
 
 ** github.com/go-logr/stdr; version v1.2.2 --
 https://github.com/go-logr/stdr
 
-** github.com/go-logr/zapr; version v1.2.3 --
+** github.com/go-logr/zapr; version v1.3.0 --
 https://github.com/go-logr/zapr
 
 ** github.com/go-openapi/jsonpointer; version v0.19.6 --
@@ -95,13 +68,13 @@ https://github.com/golang/mock
 ** github.com/google/btree; version v1.0.1 --
 https://github.com/google/btree
 
-** github.com/google/cadvisor; version v0.48.1 --
+** github.com/google/cadvisor; version v0.49.0 --
 https://github.com/google/cadvisor
 
-** github.com/google/cadvisor/third_party/containerd/api; version v0.48.1 --
+** github.com/google/cadvisor/third_party/containerd/api; version v0.49.0 --
 https://github.com/google/cadvisor
 
-** github.com/google/cel-go; version v0.17.7 --
+** github.com/google/cel-go; version v0.17.8 --
 https://github.com/google/cel-go
 
 ** github.com/google/gnostic-models; version v0.6.8 --
@@ -164,7 +137,7 @@ https://github.com/nytimes/gziphandler
 ** github.com/opencontainers/go-digest; version v1.0.0 --
 https://github.com/opencontainers/go-digest
 
-** github.com/opencontainers/runc; version v1.1.10 --
+** github.com/opencontainers/runc; version v1.1.12 --
 https://github.com/opencontainers/runc
 
 ** github.com/opencontainers/runtime-spec/specs-go; version v1.0.3-0.20220909204839-494a5a6aca78 --
@@ -196,9 +169,6 @@ https://github.com/vishvananda/netlink
 
 ** github.com/vishvananda/netns; version v0.0.4 --
 https://github.com/vishvananda/netns
-
-** github.com/vmware/govmomi; version v0.30.6 --
-https://github.com/vmware/govmomi
 
 ** go.etcd.io/etcd/api/v3; version v3.5.10 --
 https://github.com/etcd-io/etcd
@@ -257,103 +227,103 @@ https://gopkg.in/square/go-jose.v2
 ** gopkg.in/yaml.v2; version v2.4.0 --
 https://gopkg.in/yaml.v2
 
-** k8s.io/api; version v0.0.0 --
+** k8s.io/api; version v1.30.0-rc.0 --
 https://github.com/kubernetes/api
 
-** k8s.io/apiextensions-apiserver/pkg; version v0.0.0 --
+** k8s.io/apiextensions-apiserver/pkg; version v1.30.0-rc.0 --
 https://github.com/kubernetes/apiextensions-apiserver
 
-** k8s.io/apimachinery/pkg; version v0.0.0 --
+** k8s.io/apimachinery/pkg; version v1.30.0-rc.0 --
 https://github.com/kubernetes/apimachinery
 
-** k8s.io/apiserver; version v0.0.0 --
+** k8s.io/apiserver; version v1.30.0-rc.0 --
 https://github.com/kubernetes/apiserver
 
-** k8s.io/cli-runtime/pkg; version v0.0.0 --
+** k8s.io/cli-runtime/pkg; version v1.30.0-rc.0 --
 https://github.com/kubernetes/cli-runtime
 
-** k8s.io/client-go; version v0.0.0 --
+** k8s.io/client-go; version v1.30.0-rc.0 --
 https://github.com/kubernetes/client-go
 
-** k8s.io/cloud-provider; version v0.0.0 --
+** k8s.io/cloud-provider; version v1.30.0-rc.0 --
 https://github.com/kubernetes/cloud-provider
 
-** k8s.io/cluster-bootstrap; version v0.0.0 --
+** k8s.io/cluster-bootstrap; version v1.30.0-rc.0 --
 https://github.com/kubernetes/cluster-bootstrap
 
-** k8s.io/component-base; version v0.0.0 --
+** k8s.io/component-base; version v1.30.0-rc.0 --
 https://github.com/kubernetes/component-base
 
-** k8s.io/component-helpers; version v0.0.0 --
+** k8s.io/component-helpers; version v1.30.0-rc.0 --
 https://github.com/kubernetes/component-helpers
 
-** k8s.io/controller-manager; version v0.0.0 --
+** k8s.io/controller-manager; version v1.30.0-rc.0 --
 https://github.com/kubernetes/controller-manager
 
-** k8s.io/cri-api/pkg; version v0.0.0 --
+** k8s.io/cri-api/pkg; version v1.30.0-rc.0 --
 https://github.com/kubernetes/cri-api
 
-** k8s.io/csi-translation-lib; version v0.0.0 --
+** k8s.io/csi-translation-lib; version v1.30.0-rc.0 --
 https://github.com/kubernetes/csi-translation-lib
 
-** k8s.io/dynamic-resource-allocation/resourceclaim; version v0.0.0 --
+** k8s.io/dynamic-resource-allocation; version v1.30.0-rc.0 --
 https://github.com/kubernetes/dynamic-resource-allocation
 
-** k8s.io/endpointslice; version v0.0.0 --
+** k8s.io/endpointslice; version v1.30.0-rc.0 --
 https://github.com/kubernetes/endpointslice
 
-** k8s.io/klog/v2; version v2.110.1 --
+** k8s.io/klog/v2; version v2.120.1 --
 https://github.com/kubernetes/klog
 
-** k8s.io/kms; version v0.0.0 --
+** k8s.io/kms; version v1.30.0-rc.0 --
 https://github.com/kubernetes/kms
 
-** k8s.io/kube-aggregator/pkg; version v0.0.0 --
+** k8s.io/kube-aggregator/pkg; version v1.30.0-rc.0 --
 https://github.com/kubernetes/kube-aggregator
 
-** k8s.io/kube-controller-manager/config/v1alpha1; version v0.0.0 --
+** k8s.io/kube-controller-manager/config/v1alpha1; version v1.30.0-rc.0 --
 https://github.com/kubernetes/kube-controller-manager
 
-** k8s.io/kube-openapi/pkg; version v0.0.0-20231010175941-2dd684a91f00 --
+** k8s.io/kube-openapi/pkg; version v0.0.0-20240228011516-70dd3763d340 --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kube-openapi/pkg/validation/errors; version v0.0.0-20231010175941-2dd684a91f00 --
+** k8s.io/kube-openapi/pkg/validation/errors; version v0.0.0-20240228011516-70dd3763d340 --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kube-openapi/pkg/validation/spec; version v0.0.0-20231010175941-2dd684a91f00 --
+** k8s.io/kube-openapi/pkg/validation/spec; version v0.0.0-20240228011516-70dd3763d340 --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kube-openapi/pkg/validation/strfmt; version v0.0.0-20231010175941-2dd684a91f00 --
+** k8s.io/kube-openapi/pkg/validation/strfmt; version v0.0.0-20240228011516-70dd3763d340 --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kube-openapi/pkg/validation/validate; version v0.0.0-20231010175941-2dd684a91f00 --
+** k8s.io/kube-openapi/pkg/validation/validate; version v0.0.0-20240228011516-70dd3763d340 --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kube-proxy/config/v1alpha1; version v0.0.0 --
+** k8s.io/kube-proxy/config/v1alpha1; version v1.30.0-rc.0 --
 https://github.com/kubernetes/kube-proxy
 
-** k8s.io/kube-scheduler; version v0.0.0 --
+** k8s.io/kube-scheduler; version v1.30.0-rc.0 --
 https://github.com/kubernetes/kube-scheduler
 
-** k8s.io/kubectl/pkg; version v0.0.0 --
+** k8s.io/kubectl/pkg; version v1.30.0-rc.0 --
 https://github.com/kubernetes/kubectl
 
-** k8s.io/kubelet; version v0.0.0 --
+** k8s.io/kubelet; version v1.30.0-rc.0 --
 https://github.com/kubernetes/kubelet
 
-** k8s.io/kubernetes; version v1.29.1 --
+** k8s.io/kubernetes; version v1.30.0-rc.0 --
 https://github.com/kubernetes/kubernetes
 
-** k8s.io/legacy-cloud-providers; version v0.0.0 --
+** k8s.io/legacy-cloud-providers/gce; version v1.30.0-rc.0 --
 https://github.com/kubernetes/legacy-cloud-providers
 
-** k8s.io/metrics/pkg; version v0.0.0 --
+** k8s.io/metrics/pkg; version v1.30.0-rc.0 --
 https://github.com/kubernetes/metrics
 
-** k8s.io/mount-utils; version v0.0.0 --
+** k8s.io/mount-utils; version v1.30.0-rc.0 --
 https://github.com/kubernetes/mount-utils
 
-** k8s.io/pod-security-admission; version v0.0.0 --
+** k8s.io/pod-security-admission; version v1.30.0-rc.0 --
 https://github.com/kubernetes/pod-security-admission
 
 ** k8s.io/system-validators/validators; version v1.8.0 --
@@ -362,11 +332,14 @@ https://github.com/kubernetes/system-validators
 ** k8s.io/utils; version v0.0.0-20230726121419-3b25d923346b --
 https://github.com/kubernetes/utils
 
-** sigs.k8s.io/apiserver-network-proxy/konnectivity-client; version v0.28.0 --
+** sigs.k8s.io/apiserver-network-proxy/konnectivity-client; version v0.29.0 --
 https://github.com/kubernetes-sigs/apiserver-network-proxy
 
 ** sigs.k8s.io/json; version v0.0.0-20221116044647-bc3834ca7abd --
 https://github.com/kubernetes-sigs/json
+
+** sigs.k8s.io/knftables; version v0.0.14 --
+https://github.com/kubernetes-sigs/knftables
 
 ** sigs.k8s.io/kustomize/api; version v0.13.5-0.20230601165947-6ce0bf390ce3 --
 https://github.com/kubernetes-sigs/kustomize
@@ -1144,7 +1117,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/golang/protobuf; version v1.5.3 --
+** github.com/golang/protobuf; version v1.5.4 --
 https://github.com/golang/protobuf
 
 Copyright 2010 The Go Authors.  All rights reserved.
@@ -1347,31 +1320,28 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ** github.com/liggitt/tabwriter; version v0.0.0-20181228230101-89fcab3d43de --
 https://github.com/liggitt/tabwriter
 
-** github.com/vmware/govmomi/vim25/xml; version v0.30.6 --
-https://github.com/vmware/govmomi
-
-** golang.org/go; version go1.21.8 --
+** golang.org/go; version go1.22.2 --
 https://github.com/golang/go
 
-** golang.org/x/crypto; version v0.16.0 --
+** golang.org/x/crypto; version v0.19.0 --
 https://golang.org/x/crypto
 
 ** golang.org/x/exp; version v0.0.0-20220722155223-a9213eeb770e --
 https://golang.org/x/exp
 
-** golang.org/x/net; version v0.19.0 --
+** golang.org/x/net; version v0.21.0 --
 https://golang.org/x/net
 
 ** golang.org/x/oauth2; version v0.10.0 --
 https://golang.org/x/oauth2
 
-** golang.org/x/sync; version v0.5.0 --
+** golang.org/x/sync; version v0.6.0 --
 https://golang.org/x/sync
 
-** golang.org/x/sys; version v0.15.0 --
+** golang.org/x/sys; version v0.17.0 --
 https://golang.org/x/sys
 
-** golang.org/x/term; version v0.15.0 --
+** golang.org/x/term; version v0.17.0 --
 https://golang.org/x/term
 
 ** golang.org/x/text; version v0.14.0 --
@@ -1380,16 +1350,16 @@ https://golang.org/x/text
 ** golang.org/x/time/rate; version v0.3.0 --
 https://golang.org/x/time
 
-** golang.org/x/tools/container/intsets; version v0.16.1 --
+** golang.org/x/tools/container/intsets; version v0.18.0 --
 https://golang.org/x/tools
 
-** k8s.io/apimachinery/third_party/forked/golang; version v0.0.0 --
+** k8s.io/apimachinery/third_party/forked/golang; version v1.30.0-rc.0 --
 https://github.com/kubernetes/apimachinery
 
-** k8s.io/client-go/third_party/forked/golang/template; version v0.0.0 --
+** k8s.io/client-go/third_party/forked/golang/template; version v1.30.0-rc.0 --
 https://github.com/kubernetes/client-go
 
-** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.29.1 --
+** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.30.0-rc.0 --
 https://github.com/kubernetes/kubernetes
 
 ** k8s.io/utils/inotify; version v0.0.0-20230726121419-3b25d923346b --
@@ -1701,7 +1671,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** google.golang.org/protobuf; version v1.31.0 --
+** google.golang.org/protobuf; version v1.33.0 --
 https://go.googlesource.com/protobuf
 
 Copyright (c) 2018 The Go Authors. All rights reserved.
@@ -1807,7 +1777,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** k8s.io/kube-openapi/pkg/internal/third_party/go-json-experiment/json; version v0.0.0-20231010175941-2dd684a91f00 --
+** k8s.io/kube-openapi/pkg/internal/third_party/go-json-experiment/json; version v0.0.0-20240228011516-70dd3763d340 --
 https://github.com/kubernetes/kube-openapi
 
 Copyright (c) 2020 The Go Authors. All rights reserved.
@@ -1840,7 +1810,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.29.1 --
+** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.30.0-rc.0 --
 https://github.com/kubernetes/kubernetes
 
 Copyright ©2013 The gonum Authors. All rights reserved.
@@ -1897,10 +1867,6 @@ Copyright (c) 2013 Armon Dadgar
 https://github.com/asaskevich/govalidator
 Copyright (c) 2014 Alex Saskevich
 
-** github.com/Azure/azure-sdk-for-go; version v68.0.0+incompatible --
-https://github.com/Azure/azure-sdk-for-go
-Copyright (c) Microsoft Corporation.
-
 ** github.com/beorn7/perks/quantile; version v1.0.1 --
 https://github.com/beorn7/perks
 Copyright (C) 2013 Blake Mizerany
@@ -1947,15 +1913,6 @@ Copyright (c) 2015 Frits van Bommel
 https://github.com/go-errors/errors
 Copyright (c) 2015 Conrad Irwin <conrad@bugsnag.com>
 
-** github.com/gofrs/uuid; version v4.4.0+incompatible --
-https://github.com/gofrs/uuid
-Copyright (C) 2013-2018 by Maxim Bublis <b@codemonkey.ru>
-
-** github.com/golang-jwt/jwt/v4; version v4.5.0 --
-https://github.com/golang-jwt/jwt/v4
-Copyright (c) 2012 Dave Grijalva
-Copyright (c) 2021 golang-jwt maintainers
-
 ** github.com/josharian/intern; version v1.0.0 --
 https://github.com/josharian/intern
 Copyright (c) 2019 Josh Bleecher Snyder
@@ -1992,10 +1949,6 @@ Copyright (c) [2015] [go-gitignore]
 https://github.com/peterbourgon/diskv
 Copyright (c) 2011-2012 Peter Bourgon
 
-** github.com/rubiojr/go-vhd/vhd; version v0.0.0-20200706105327-02e210299021 --
-https://github.com/rubiojr/go-vhd
-Copyright (c) 2015 Sergio Rubio
-
 ** github.com/sirupsen/logrus; version v1.9.0 --
 https://github.com/sirupsen/logrus
 Copyright (c) 2014 Simon Eskildsen
@@ -2004,15 +1957,11 @@ Copyright (c) 2014 Simon Eskildsen
 https://github.com/stoewer/go-strcase
 Copyright (c) 2017, Adrian Stoewer <adrian.stoewer@rz.ifi.lmu.de>
 
-** go.uber.org/atomic; version v1.10.0 --
-https://github.com/uber-go/atomic
-Copyright (c) 2016 Uber Technologies, Inc.
-
 ** go.uber.org/multierr; version v1.11.0 --
 https://github.com/uber-go/multierr
 Copyright (c) 2017-2021 Uber Technologies, Inc.
 
-** go.uber.org/zap; version v1.19.0 --
+** go.uber.org/zap; version v1.26.0 --
 https://github.com/uber-go/zap
 Copyright (c) 2016-2017 Uber Technologies, Inc.
 
