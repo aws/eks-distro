@@ -24,10 +24,10 @@ export NODE_INSTANCE_TYPE=${NODE_INSTANCE_TYPE:-t3.medium}
 export NODE_ARCHITECTURE=${NODE_ARCHITECTURE:-amd64}
 export UBUNTU_RELEASE=${UBUNTU_RELEASE:-focal-20.04}
 export IPV6=${IPV6:-false}
-if [ "$RELEASE_BRANCH" == "1-29" ]; then
-	export KOPS_VERSION="1.29.0-alpha.3"
+if [ "$RELEASE_BRANCH" == "1-30" ]; then
+	export KOPS_VERSION="v1.29.0-beta.1"
 else
-	export KOPS_VERSION="1.28.1"
+	export KOPS_VERSION="1.28.4"
 fi
 
 if [ -n "$ARTIFACT_BUCKET" ]; then
