@@ -20,21 +20,21 @@ source ${BASEDIR}/set_environment.sh
 $PREFLIGHT_CHECK_PASSED || exit 1
 
 # Create the bucket if it doesn't exist
-_bucket_name=$(aws s3api list-buckets  --query "Buckets[?Name=='$BUCKET_NAME'].Name | [0]" --out text)
+_bucket_name=$(aws s3api list-buckets --query "Buckets[?Name=='$BUCKET_NAME'].Name | [0]" --out text)
 if [ $_bucket_name == "None" ]; then
-    echo "Creating kOps state store: $KOPS_STATE_STORE"
-    if [ "$AWS_DEFAULT_REGION" == "us-east-1" ]; then
-        aws s3api create-bucket --bucket $BUCKET_NAME
-    else
-        aws s3api create-bucket --bucket $BUCKET_NAME --create-bucket-configuration LocationConstraint=$AWS_DEFAULT_REGION
-    fi
+  echo "Creating kOps state store: $KOPS_STATE_STORE"
+  if [ "$AWS_DEFAULT_REGION" == "us-east-1" ]; then
+    aws s3api create-bucket --bucket $BUCKET_NAME
+  else
+    aws s3api create-bucket --bucket $BUCKET_NAME --create-bucket-configuration LocationConstraint=$AWS_DEFAULT_REGION
+  fi
 else
-    echo "Using kOps state store: $KOPS_STATE_STORE"
+  echo "Using kOps state store: $KOPS_STATE_STORE"
 fi
 
 mkdir -p ./${KOPS_CLUSTER_NAME}
 echo "Creating ./${KOPS_CLUSTER_NAME}/aws-iam-authenticator.yaml"
-cat << EOF > ./${KOPS_CLUSTER_NAME}/aws-iam-authenticator.yaml
+cat <<EOF >./${KOPS_CLUSTER_NAME}/aws-iam-authenticator.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -48,15 +48,14 @@ data:
 EOF
 
 echo "Creating ${KOPS_CLUSTER_NAME}.yaml"
-${KOPS} toolbox template --template ${BASEDIR}/eks-d.tpl --values ./${KOPS_CLUSTER_NAME}/values.yaml > "./${KOPS_CLUSTER_NAME}/${KOPS_CLUSTER_NAME}.yaml"
+${KOPS} toolbox template --template ${BASEDIR}/eks-d.tpl --values ./${KOPS_CLUSTER_NAME}/values.yaml >"./${KOPS_CLUSTER_NAME}/${KOPS_CLUSTER_NAME}.yaml"
 
 echo "Creating cluster configuration"
 ${KOPS} create -f "./${KOPS_CLUSTER_NAME}/${KOPS_CLUSTER_NAME}.yaml"
 
 echo "Creating cluster ssh key"
 SSH_FILE=${SSH_KEY_PATH:-$HOME/.ssh/id_rsa}
-if [ ! -f "$SSH_FILE" ]
-then
+if [ ! -f "$SSH_FILE" ]; then
   ssh-keygen -t rsa -b 4096 -f "$SSH_FILE"
 fi
 export SSH_KEY_PATH="$SSH_FILE"
@@ -69,20 +68,24 @@ echo "export KOPS_CLUSTER_NAME=$KOPS_CLUSTER_NAME" | tee -a ./${KOPS_CLUSTER_NAM
 echo "export KOPS_STATE_STORE=$KOPS_STATE_STORE" | tee -a ./${KOPS_CLUSTER_NAME}/env.sh
 echo "export KOPS_BASE_URL=$KOPS_BASE_URL" | tee -a ./${KOPS_CLUSTER_NAME}/env.sh
 if [ -n "$CONTROL_PLANE_INSTANCE_PROFILE" ]; then
-    echo "export CONTROL_PLANE_INSTANCE_PROFILE=$CONTROL_PLANE_INSTANCE_PROFILE" | tee -a ./${KOPS_CLUSTER_NAME}/env.sh
+  echo "export CONTROL_PLANE_INSTANCE_PROFILE=$CONTROL_PLANE_INSTANCE_PROFILE" | tee -a ./${KOPS_CLUSTER_NAME}/env.sh
 fi
 if [ -n "$NODE_INSTANCE_PROFILE" ]; then
-    echo "export NODE_INSTANCE_PROFILE=$NODE_INSTANCE_PROFILE" | tee -a ./${KOPS_CLUSTER_NAME}/env.sh
+  echo "export NODE_INSTANCE_PROFILE=$NODE_INSTANCE_PROFILE" | tee -a ./${KOPS_CLUSTER_NAME}/env.sh
 fi
 if [ -n "$NODE_INSTANCE_TYPE" ]; then
-    echo "export NODE_INSTANCE_TYPE=$NODE_INSTANCE_TYPE" | tee -a ./${KOPS_CLUSTER_NAME}/env.sh
+  echo "export NODE_INSTANCE_TYPE=$NODE_INSTANCE_TYPE" | tee -a ./${KOPS_CLUSTER_NAME}/env.sh
 fi
 if [ -n "$NODE_ARCHITECTURE" ]; then
-    echo "export NODE_ARCHITECTURE=$NODE_ARCHITECTURE" | tee -a ./${KOPS_CLUSTER_NAME}/env.sh
+  echo "export NODE_ARCHITECTURE=$NODE_ARCHITECTURE" | tee -a ./${KOPS_CLUSTER_NAME}/env.sh
 fi
 if [ -n "$ARTIFACT_BUCKET" ]; then
-    echo "export ARTIFACT_BUCKET=$ARTIFACT_BUCKET" | tee -a ./${KOPS_CLUSTER_NAME}/env.sh
+  echo "export ARTIFACT_BUCKET=$ARTIFACT_BUCKET" | tee -a ./${KOPS_CLUSTER_NAME}/env.sh
 fi
 if [ -n "$IMAGE_REPO" ]; then
-    echo "export IMAGE_REPO=$IMAGE_REPO" | tee -a ./${KOPS_CLUSTER_NAME}/env.sh
+  echo "export IMAGE_REPO=$IMAGE_REPO" | tee -a ./${KOPS_CLUSTER_NAME}/env.sh
+fi
+# Check for the occasion the release branch version is newer than the most recent release of KOPS
+if [[ ${RELEASE_BRANCH#*-} > ${KOPS_VERSION#*.} ]]; then
+  echo "export KOPS_RUN_TOO_NEW_VERSION=1 | tee -a ./${KOPS_CLUSTER_NAME}/env.sh"
 fi
