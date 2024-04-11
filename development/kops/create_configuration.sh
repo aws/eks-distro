@@ -84,5 +84,9 @@ if [ -n "$ARTIFACT_BUCKET" ]; then
     echo "export ARTIFACT_BUCKET=$ARTIFACT_BUCKET" | tee -a ./${KOPS_CLUSTER_NAME}/env.sh
 fi
 if [ -n "$IMAGE_REPO" ]; then
-    echo "export IMAGE_REPO=$IMAGE_REPO" | tee -a ./${KOPS_CLUSTER_NAME}/env.sh
+  echo "export IMAGE_REPO=$IMAGE_REPO" | tee -a ./${KOPS_CLUSTER_NAME}/env.sh
+fi
+# Check for the occasion the release branch version is newer than the most recent release of KOPS
+if [[ ${RELEASE_BRANCH#*-} > ${KOPS_VERSION#*.} ]]; then
+  echo "export KOPS_RUN_TOO_NEW_VERSION=1" | tee -a ./${KOPS_CLUSTER_NAME}/env.sh
 fi
