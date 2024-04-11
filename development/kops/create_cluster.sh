@@ -19,10 +19,6 @@ BASEDIR=$(dirname "$0")
 source ${BASEDIR}/set_environment.sh
 $PREFLIGHT_CHECK_PASSED || exit 1
 
-if [[ ${RELEASE_BRANCH#*-} > ${KOPS_VERSION#*.} ]]; then
-  export KOPS_RUN_TOO_NEW_VERSION=1
-fi
-
 ADDITIONAL_ARGS=""
 if [ -n "$NODE_INSTANCE_PROFILE" ]; then
   ADDITIONAL_ARGS="--lifecycle-overrides IAMRole=ExistsAndWarnIfChanges,IAMRolePolicy=ExistsAndWarnIfChanges,IAMInstanceProfileRole=ExistsAndWarnIfChanges"

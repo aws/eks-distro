@@ -87,5 +87,5 @@ if [ -n "$IMAGE_REPO" ]; then
 fi
 # Check for the occasion the release branch version is newer than the most recent release of KOPS
 if [[ ${RELEASE_BRANCH#*-} > ${KOPS_VERSION#*.} ]]; then
-  echo "export KOPS_RUN_TOO_NEW_VERSION=1 | tee -a ./${KOPS_CLUSTER_NAME}/env.sh"
+  echo "export KOPS_RUN_TOO_NEW_VERSION=1" | tee -a ./${KOPS_CLUSTER_NAME}/env.sh
 fi
