@@ -24,54 +24,57 @@ export NODE_INSTANCE_TYPE=${NODE_INSTANCE_TYPE:-t3.medium}
 export NODE_ARCHITECTURE=${NODE_ARCHITECTURE:-amd64}
 export UBUNTU_RELEASE=${UBUNTU_RELEASE:-focal-20.04}
 export IPV6=${IPV6:-false}
-
-export KOPS_VERSION="1.29.0-beta.1"
+if [[ ! "$RELEASE_BRANCH" < "1-29" ]]; then
+	export KOPS_VERSION="1.29.0-beta.1"
+else
+	export KOPS_VERSION="1.28.4"
+fi
 
 if [ -n "$ARTIFACT_BUCKET" ]; then
-  export ARTIFACT_BASE_URL="https://$ARTIFACT_BUCKET.s3.amazonaws.com"
+	export ARTIFACT_BASE_URL="https://$ARTIFACT_BUCKET.s3.amazonaws.com"
 fi
 
 if [ "${PREFLIGHT_CHECK_PASSED:-false}" != "true" ]; then
-  PREFLIGHT_CHECK_PASSED=true
-  GOOD="\xE2\x9C\x94"
-  BAD="\xE2\x9D\x8C"
-  export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-${AWS_REGION}}
-  export AWS_REGION="${AWS_DEFAULT_REGION}"
-  if [ -z "$AWS_DEFAULT_REGION" ]; then
-    PREFLIGHT_CHECK_PASSED=false
-    echo -e "${BAD} AWS_REGION must be set and exported"
-  else
-    echo -e "${GOOD} AWS_REGION=${AWS_REGION}"
-  fi
+	PREFLIGHT_CHECK_PASSED=true
+	GOOD="\xE2\x9C\x94"
+	BAD="\xE2\x9D\x8C"
+	export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-${AWS_REGION}}
+	export AWS_REGION="${AWS_DEFAULT_REGION}"
+	if [ -z "$AWS_DEFAULT_REGION" ]; then
+		PREFLIGHT_CHECK_PASSED=false
+		echo -e "${BAD} AWS_REGION must be set and exported"
+	else
+		echo -e "${GOOD} AWS_REGION=${AWS_REGION}"
+	fi
 
-  if ! aws sts get-caller-identity --query Account --output text >/dev/null 2>/dev/null; then
-    PREFLIGHT_CHECK_PASSED=false
-    echo -e "${BAD} AWS CLI failed to authenticate"
-  else
-    echo -e "${GOOD} AWS CLI authenticated"
-  fi
+	if ! aws sts get-caller-identity --query Account --output text >/dev/null 2>/dev/null; then
+		PREFLIGHT_CHECK_PASSED=false
+		echo -e "${BAD} AWS CLI failed to authenticate"
+	else
+		echo -e "${GOOD} AWS CLI authenticated"
+	fi
 
-  if [ -z "$KOPS_STATE_STORE" ]; then
-    PREFLIGHT_CHECK_PASSED=false
-    echo -e "${BAD} KOPS_STATE_STORE must be set and exported"
-  else
-    echo -e "${GOOD} KOPS_STATE_STORE=${KOPS_STATE_STORE}"
-  fi
-  if [[ "${KOPS_STATE_STORE}" != s3://* ]]; then
-    export KOPS_STATE_STORE="s3://${KOPS_STATE_STORE}"
-  fi
-  export BUCKET_NAME=${KOPS_STATE_STORE#"s3://"}
+	if [ -z "$KOPS_STATE_STORE" ]; then
+		PREFLIGHT_CHECK_PASSED=false
+		echo -e "${BAD} KOPS_STATE_STORE must be set and exported"
+	else
+		echo -e "${GOOD} KOPS_STATE_STORE=${KOPS_STATE_STORE}"
+	fi
+	if [[ "${KOPS_STATE_STORE}" != s3://* ]]; then
+		export KOPS_STATE_STORE="s3://${KOPS_STATE_STORE}"
+	fi
+	export BUCKET_NAME=${KOPS_STATE_STORE#"s3://"}
 
-  if [ -z "$KOPS_CLUSTER_NAME" ]; then
-    PREFLIGHT_CHECK_PASSED=false
-    echo -e "${BAD} KOPS_CLUSTER_NAME must be set and exported"
-  else
-    echo -e "${GOOD} KOPS_CLUSTER_NAME=${KOPS_CLUSTER_NAME}"
-  fi
+	if [ -z "$KOPS_CLUSTER_NAME" ]; then
+		PREFLIGHT_CHECK_PASSED=false
+		echo -e "${BAD} KOPS_CLUSTER_NAME must be set and exported"
+	else
+		echo -e "${GOOD} KOPS_CLUSTER_NAME=${KOPS_CLUSTER_NAME}"
+	fi
 
-  if [ "${JOB_TYPE:-}" == "presubmit" ]; then
-    PREFLIGHT_CHECK_PASSED=true
-  fi
+	if [ "${JOB_TYPE:-}" == "presubmit" ]; then
+		PREFLIGHT_CHECK_PASSED=true
+	fi
 fi
 export PREFLIGHT_CHECK_PASSED
 
@@ -88,16 +91,16 @@ export PATH=$(pwd)/bin:${PATH}
 
 # Set OS and ARCH env vars
 if [ "$(uname)" == "Darwin" ]; then
-  export OS="darwin"
-  export ARCH="amd64"
+	export OS="darwin"
+	export ARCH="amd64"
 else
-  export OS="linux"
-  export ARCH="amd64"
+	export OS="linux"
+	export ARCH="amd64"
 fi
 
 # Set customer user-agent for curl to ensure we can track requests against the CloudFront distribution
 UA_SYSTEM_INFO="${OS}/${ARCH};"
 if [[ -n "${PROW_JOB_ID}" ]]; then
-  UA_SYSTEM_INFO+=" prowJobId:${PROW_JOB_ID};"
+	UA_SYSTEM_INFO+=" prowJobId:${PROW_JOB_ID};"
 fi
 export USERAGENT="EksDistro-${BASENAME}/${RELEASE_BRANCH} ($UA_SYSTEM_INFO)"
