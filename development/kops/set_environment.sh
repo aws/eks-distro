@@ -27,7 +27,7 @@ export IPV6=${IPV6:-false}
 if [[ ! "$RELEASE_BRANCH" < "1-29" ]]; then
 	export KOPS_VERSION="v1.29.0-beta.1"
 else
-	export KOPS_VERSION="1.28.4"
+	export KOPS_VERSION="1.28.1"
 fi
 
 if [ -n "$ARTIFACT_BUCKET" ]; then
