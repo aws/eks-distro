@@ -1,0 +1,36 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: torredil <torredil@amazon.com>
+Date: Mon, 20 Nov 2023 17:54:16 +0000
+Subject: [PATCH] --EKS-PATCH-- Update log verbosity for node health and taint
+ checks
+
+cherrypick of https://github.com/kubernetes/kubernetes/pull/121967
+For more details https://t.corp.amazon.com/V1088905731
+
+Signed-off-by: torredil <torredil@amazon.com>
+---
+ pkg/controller/volume/attachdetach/reconciler/reconciler.go | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/pkg/controller/volume/attachdetach/reconciler/reconciler.go b/pkg/controller/volume/attachdetach/reconciler/reconciler.go
+index 79e0df3614a..05aade1b971 100644
+--- a/pkg/controller/volume/attachdetach/reconciler/reconciler.go
++++ b/pkg/controller/volume/attachdetach/reconciler/reconciler.go
+@@ -216,7 +216,7 @@ func (rc *reconciler) reconcile() {
+ 
+ 			isHealthy, err := rc.nodeIsHealthy(attachedVolume.NodeName)
+ 			if err != nil {
+-				klog.Errorf("failed to get health of node %s: %s", attachedVolume.NodeName, err.Error())
++				klog.V(5).Infof("failed to get health of node %s: %s", attachedVolume.NodeName, err.Error())
+ 			}
+ 
+ 			// Force detach volumes from unhealthy nodes after maxWaitForUnmountDuration.
+@@ -224,7 +224,7 @@ func (rc *reconciler) reconcile() {
+ 
+ 			hasOutOfServiceTaint, err := rc.hasOutOfServiceTaint(attachedVolume.NodeName)
+ 			if err != nil {
+-				klog.Errorf("failed to get taint specs for node %s: %s", attachedVolume.NodeName, err.Error())
++				klog.V(5).Infof("failed to get taint specs for node %s: %s", attachedVolume.NodeName, err.Error())
+ 			}
+ 
+ 			// Check whether volume is still mounted. Skip detach if it is still mounted unless force detach timeout
