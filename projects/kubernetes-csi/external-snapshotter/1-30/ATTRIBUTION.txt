@@ -32,7 +32,7 @@ https://github.com/kubernetes-csi/csi-lib-utils
 ** github.com/kubernetes-csi/external-snapshotter/client/v7; version v7.0.0 --
 https://github.com/kubernetes-csi/external-snapshotter/client/v7
 
-** github.com/kubernetes-csi/external-snapshotter/v7; version v7.0.1 --
+** github.com/kubernetes-csi/external-snapshotter/v7; version v7.0.2 --
 https://github.com/kubernetes-csi/external-snapshotter/v7
 
 ** github.com/modern-go/concurrent; version v0.0.0-20180306012644-bacd9c7ef1dd --
