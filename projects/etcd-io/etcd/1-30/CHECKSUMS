@@ -1,4 +1,4 @@
-1dcefe5b6a47a8dedf398802ffb61fcf9dffcea6bbcbb590daffb70115995bca  _output/1-30/bin/etcd/linux-amd64/etcd
-e9130686e2093a3f15428f98704db1977b6d7709422f3cebf45f522889b9bec2  _output/1-30/bin/etcd/linux-amd64/etcdctl
-95fdff32dc05c1e4f73fa857ab410bfa566043b782c9b7f59449f0262bf8e92a  _output/1-30/bin/etcd/linux-arm64/etcd
-6bb4a22e44c3ceb5f75e91c70d8dd73ab0125f9052e111b9f80277badd539dfd  _output/1-30/bin/etcd/linux-arm64/etcdctl
+3b4ab045856de07bdacb175211428431b131b0ee7cc15aa4cc98f860c9302a15  _output/1-30/bin/etcd/linux-amd64/etcd
+3c56a1cfe608986df0b8fef2f00e3693514eb45c9f0f3cd591cafc7814bb9ae0  _output/1-30/bin/etcd/linux-amd64/etcdctl
+26ac28025dea9df727db04c7d740dbc8e009733d5c70d73c0d49946cdb050f97  _output/1-30/bin/etcd/linux-arm64/etcd
+4b05f4264d2a343de23528fce74ddcc4d8615d24ec84ad6600ed3fb7e26ee1b5  _output/1-30/bin/etcd/linux-arm64/etcdctl
