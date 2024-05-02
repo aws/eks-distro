@@ -25,6 +25,8 @@ while read ANNOUNCEMENT; do
     echo "Must be run in a Prowjob for access to PULL_BASE_SHA"
     exit 1
   fi
-  echo "git tag -a ${RELEASE_TAG} ${BASE_PULL_SHA} -m ${RELEASE_TAG}"
-  echo "git push upstream ${RELEASE_TAG}"
+  git remote -v # TODO: Remove once we confirm the git repo has the correct remotes.
+  git tag -a ${RELEASE_TAG} ${BASE_PULL_SHA} -m ${RELEASE_TAG}
+  git push upstream ${RELEASE_TAG}
+
 done <$(git -C . diff --name-only HEAD^ HEAD | grep '^docs/contents/releases' | grep release-announcement.txt)
