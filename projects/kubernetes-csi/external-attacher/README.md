@@ -2,11 +2,10 @@
 
 | Release | Version                                                      |
 |---------|--------------------------------------------------------------|
-| 1-25    | ![Version](https://img.shields.io/badge/version-v4.5.0-blue) |
-| 1-26    | ![Version](https://img.shields.io/badge/version-v4.5.0-blue) |
-| 1-27    | ![Version](https://img.shields.io/badge/version-v4.5.0-blue) |
-| 1-28    | ![Version](https://img.shields.io/badge/version-v4.5.0-blue) |
-
+| 1-26    | ![Version](https://img.shields.io/badge/version-v4.5.1-blue) |
+| 1-27    | ![Version](https://img.shields.io/badge/version-v4.5.1-blue) |
+| 1-28    | ![Version](https://img.shields.io/badge/version-v4.5.1-blue) |
+| 1-29    | ![Version](https://img.shields.io/badge/version-v4.5.1-blue) |
 
 ### Updating
 
