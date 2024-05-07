@@ -56,9 +56,6 @@ https://github.com/coreos/go-semver
 ** github.com/coreos/go-systemd/v22; version v22.5.0 --
 https://github.com/coreos/go-systemd/v22
 
-** github.com/danwinship/knftables; version v0.0.13 --
-https://github.com/danwinship/knftables
-
 ** github.com/distribution/reference; version v0.5.0 --
 https://github.com/distribution/reference
 
@@ -341,7 +338,7 @@ https://github.com/kubernetes/kubectl
 ** k8s.io/kubelet; version v0.0.0 --
 https://github.com/kubernetes/kubelet
 
-** k8s.io/kubernetes; version v1.29.3 --
+** k8s.io/kubernetes; version v1.29.4 --
 https://github.com/kubernetes/kubernetes
 
 ** k8s.io/legacy-cloud-providers; version v0.0.0 --
@@ -367,6 +364,9 @@ https://github.com/kubernetes-sigs/apiserver-network-proxy
 
 ** sigs.k8s.io/json; version v0.0.0-20221116044647-bc3834ca7abd --
 https://github.com/kubernetes-sigs/json
+
+** sigs.k8s.io/knftables; version v0.0.14 --
+https://github.com/kubernetes-sigs/knftables
 
 ** sigs.k8s.io/kustomize/api; version v0.13.5-0.20230601165947-6ce0bf390ce3 --
 https://github.com/kubernetes-sigs/kustomize
@@ -1353,13 +1353,13 @@ https://github.com/vmware/govmomi
 ** golang.org/go; version go1.21.9 --
 https://github.com/golang/go
 
-** golang.org/x/crypto; version v0.16.0 --
+** golang.org/x/crypto; version v0.21.0 --
 https://golang.org/x/crypto
 
 ** golang.org/x/exp; version v0.0.0-20220722155223-a9213eeb770e --
 https://golang.org/x/exp
 
-** golang.org/x/net; version v0.19.0 --
+** golang.org/x/net; version v0.23.0 --
 https://golang.org/x/net
 
 ** golang.org/x/oauth2; version v0.10.0 --
@@ -1368,10 +1368,10 @@ https://golang.org/x/oauth2
 ** golang.org/x/sync; version v0.5.0 --
 https://golang.org/x/sync
 
-** golang.org/x/sys; version v0.15.0 --
+** golang.org/x/sys; version v0.18.0 --
 https://golang.org/x/sys
 
-** golang.org/x/term; version v0.15.0 --
+** golang.org/x/term; version v0.18.0 --
 https://golang.org/x/term
 
 ** golang.org/x/text; version v0.14.0 --
@@ -1389,7 +1389,7 @@ https://github.com/kubernetes/apimachinery
 ** k8s.io/client-go/third_party/forked/golang/template; version v0.0.0 --
 https://github.com/kubernetes/client-go
 
-** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.29.3 --
+** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.29.4 --
 https://github.com/kubernetes/kubernetes
 
 ** k8s.io/utils/inotify; version v0.0.0-20230726121419-3b25d923346b --
@@ -1840,7 +1840,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.29.3 --
+** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.29.4 --
 https://github.com/kubernetes/kubernetes
 
 Copyright ©2013 The gonum Authors. All rights reserved.
