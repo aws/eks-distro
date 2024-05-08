@@ -1,0 +1,25 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Jyoti Mahapatra <jyotima@amazon.com>
+Date: Wed, 18 Oct 2023 22:37:00 -0700
+Subject: [PATCH] --EKS-PATCH-- Exclude kms check on controller startup Refer
+ https://gitlab.aws.dev/eks-dataplane/eks-kubernetes-patches/-/merge_requests/195
+ for corresponding KCM patch
+
+Signed-off-by: Jyoti Mahapatra <jyotima@amazon.com>
+---
+ vendor/k8s.io/controller-manager/app/helper.go | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/vendor/k8s.io/controller-manager/app/helper.go b/vendor/k8s.io/controller-manager/app/helper.go
+index 1807a38cc8a..f4daad28392 100644
+--- a/vendor/k8s.io/controller-manager/app/helper.go
++++ b/vendor/k8s.io/controller-manager/app/helper.go
+@@ -34,7 +34,7 @@ func WaitForAPIServer(client clientset.Interface, timeout time.Duration) error {
+ 
+ 	err := wait.PollImmediate(time.Second, timeout, func() (bool, error) {
+ 		healthStatus := 0
+-		result := client.Discovery().RESTClient().Get().AbsPath("/healthz").Do(context.TODO()).StatusCode(&healthStatus)
++		result := client.Discovery().RESTClient().Get().AbsPath("/healthz").Param("exclude", "kms-provider-0").Do(context.TODO()).StatusCode(&healthStatus)
+ 		if result.Error() != nil {
+ 			lastErr = fmt.Errorf("failed to get apiserver /healthz status: %v", result.Error())
+ 			return false, nil

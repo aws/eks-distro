@@ -1,0 +1,64 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Davanum Srinivas <davanum@gmail.com>
+Date: Mon, 20 Mar 2023 20:13:26 -0400
+Subject: [PATCH] --EKS-PATCH-- Added workerCount env var to node controller in
+ cloud controller manager
+
+See https://github.com/kubernetes/kubernetes/pull/113104/
+
+we pick just the minimum needed from the PR.
+
+NOTE: we need to set the "CONCURRENT-NODE-SYNCS" based on some
+heuristics from where this binary is running (CPU count?)
+
+Signed-off-by: Davanum Srinivas <davanum@gmail.com>
+
+concurrentNodeSyncs must be a valid C_IDENTIFIER
+
+Signed-off-by: Jyoti Mahapatra <jyotima@amazon.com>
+---
+ .../controllers/node/node_controller.go       | 20 ++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
+
+diff --git a/vendor/k8s.io/cloud-provider/controllers/node/node_controller.go b/vendor/k8s.io/cloud-provider/controllers/node/node_controller.go
+index c14fe43b8f8..f1f93b68c48 100644
+--- a/vendor/k8s.io/cloud-provider/controllers/node/node_controller.go
++++ b/vendor/k8s.io/cloud-provider/controllers/node/node_controller.go
+@@ -21,6 +21,8 @@ import (
+ 	"errors"
+ 	"fmt"
+ 	"net"
++	"os"
++	"strconv"
+ 	"time"
+ 
+ 	v1 "k8s.io/api/core/v1"
+@@ -178,11 +180,27 @@ func (cnc *CloudNodeController) Run(stopCh <-chan struct{}, controllerManagerMet
+ 		}
+ 	}, cnc.nodeStatusUpdateFrequency, stopCh)
+ 
+-	go wait.Until(cnc.runWorker, time.Second, stopCh)
++	// The most important part from https://github.com/kubernetes/kubernetes/pull/113104
++	// instead of a command line parameter we use "CONCURRENT_NODE_SYNCS" env variable
++	// to keep the footprint of this temporary change small
++	for i := 0; i < getConcurrentNodeSyncsFromEnv(); i++ {
++		go wait.Until(cnc.runWorker, time.Second, stopCh)
++	}
+ 
+ 	<-stopCh
+ }
+ 
++// getConcurrentNodeSyncsFromEnv returns the number of concurrent worker threads. by default it
++// returns the current default of 1 if "CONCURRENT_NODE_SYNCS" environment variable is not set
++func getConcurrentNodeSyncsFromEnv() int {
++	if concurrentNodeSyncsEnv := os.Getenv("CONCURRENT_NODE_SYNCS"); concurrentNodeSyncsEnv != "" {
++		if nodeSyncs, err := strconv.Atoi(concurrentNodeSyncsEnv); err != nil {
++			return nodeSyncs
++		}
++	}
++	return 1
++}
++
+ // runWorker is a long-running function that will continually call the
+ // processNextWorkItem function in order to read and process a message on the
+ // workqueue.

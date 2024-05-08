@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Jyoti Mahapatra <jyotima@amazon.com>
+Date: Wed, 18 Oct 2023 23:58:18 -0700
+Subject: [PATCH] --EKS-PATCH-- Add Vendor to Dockerfile
+
+Signed-off-by: Jyoti Mahapatra <jyotima@amazon.com>
+---
+ Dockerfile | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Dockerfile b/Dockerfile
+index 60d2d2de6ad..46775558ac2 100644
+--- a/Dockerfile
++++ b/Dockerfile
+@@ -37,6 +37,7 @@ ARG TARGETARCH
+ ARG VERSION
+ 
+ WORKDIR /build
++COPY vendor/ vendor/
+ COPY go.mod go.sum ./
+ COPY cmd/ cmd/
+ COPY pkg/ pkg/
