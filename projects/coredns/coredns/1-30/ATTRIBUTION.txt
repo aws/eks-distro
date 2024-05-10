@@ -62,7 +62,7 @@ https://github.com/farsightsec/golang-framestream
 ** github.com/flynn/go-shlex; version v0.0.0-20150515145356-3f9db97f8568 --
 https://github.com/flynn-archive/go-shlex
 
-** github.com/go-logr/logr; version v1.2.4 --
+** github.com/go-logr/logr; version v1.4.1 --
 https://github.com/go-logr/logr
 
 ** github.com/go-openapi/jsonpointer; version v0.19.6 --
@@ -527,28 +527,28 @@ https://github.com/aws/aws-sdk-go
 ** golang.org/go; version go1.21.9 --
 https://github.com/golang/go
 
-** golang.org/x/crypto; version v0.17.0 --
+** golang.org/x/crypto; version v0.22.0 --
 https://golang.org/x/crypto
 
-** golang.org/x/exp; version v0.0.0-20221205204356-47842c84f3db --
+** golang.org/x/exp/rand; version v0.0.0-20240409090435-93d18d7e34b8 --
 https://golang.org/x/exp
 
-** golang.org/x/net; version v0.17.0 --
+** golang.org/x/net; version v0.24.0 --
 https://golang.org/x/net
 
 ** golang.org/x/oauth2; version v0.13.0 --
 https://golang.org/x/oauth2
 
-** golang.org/x/sys; version v0.15.0 --
+** golang.org/x/sys; version v0.19.0 --
 https://golang.org/x/sys
 
-** golang.org/x/term; version v0.15.0 --
+** golang.org/x/term; version v0.19.0 --
 https://golang.org/x/term
 
 ** golang.org/x/text; version v0.14.0 --
 https://golang.org/x/text
 
-** golang.org/x/time/rate; version v0.3.0 --
+** golang.org/x/time/rate; version v0.5.0 --
 https://golang.org/x/time
 
 ** k8s.io/apimachinery/third_party/forked/golang/reflect; version v0.27.4 --
@@ -692,7 +692,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/google/go-cmp/cmp; version v0.5.9 --
+** github.com/google/go-cmp/cmp; version v0.6.0 --
 https://github.com/google/go-cmp
 
 Copyright (c) 2017 The Go Authors. All rights reserved.
@@ -1099,7 +1099,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** google.golang.org/protobuf; version v1.31.0 --
+** google.golang.org/protobuf; version v1.33.0 --
 https://go.googlesource.com/protobuf
 
 Copyright (c) 2018 The Go Authors. All rights reserved.
@@ -1330,7 +1330,7 @@ Copyright (c) 2013 Mitchell Hashimoto
 https://github.com/philhofer/fwd
 Copyright (c) 2014-2015, Philip Hofer
 
-** github.com/quic-go/quic-go; version v0.40.1 --
+** github.com/quic-go/quic-go; version v0.42.0 --
 https://github.com/quic-go/quic-go
 Copyright (c) 2016 the quic-go authors & Google, Inc.
 
