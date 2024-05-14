@@ -42,6 +42,7 @@ function log_dump_custom_get_instances() {
     # Container logs are symlinks and need a slightly different chmod
     # log-dump-ssh comes the upstream log-dump.sh script
     for node in $nodes ; do log-dump-ssh $node "sudo chmod a+r /var/log/containers/*" || true ; done
+    for node in $nodes ; do log-dump-ssh $node "sudo chmod +x /var/log/pods" || true ; done
 
     echo "$nodes"
 }
