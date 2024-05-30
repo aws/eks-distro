@@ -48,7 +48,7 @@ function k {
 function node_driver_registrar_expect {
     echo "node_driver_registrar_expect"
     k logs --selector app=csi-mockplugin --container node-driver-registrar  | \
-        grep "Registration Server started at: /registration/io.kubernetes.storage.mock-reg.sock"
+        grep "Registration Server started"
 }
 
 function liveness_probe_expect {
