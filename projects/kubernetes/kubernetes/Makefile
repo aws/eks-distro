@@ -28,6 +28,7 @@ KUBE_SCHEDULER_IMAGE_COMPONENT=kubernetes/kube-scheduler
 KUBE_PROXY_IMAGE_COMPONENT=kubernetes/kube-proxy
 
 IMAGE_NAMES=pause kube-proxy kube-apiserver kube-controller-manager kube-scheduler
+DOCKER_TAR_IMAGE_NAMES=$(filter-out pause,$(IMAGE_NAMES))
 BUILD_OCI_TARS=true
 
 DOCKERFILE_FOLDER=./docker
@@ -74,6 +75,15 @@ $(GATHER_LICENSES_TARGETS): fix-licenses
 $(GO_MOD_DOWNLOAD_TARGETS):
 	touch $@
 
+# upstream builds the server images as docker format vs oci
+$(foreach image,$(DOCKER_TAR_IMAGE_NAMES),$(image)/images/amd64 $(image)/images/arm64): IMAGE_OUTPUT_TYPE=docker
+# we only want the main tag, not the -latest, in the repoTags in the final docker manifest
+$(foreach image,$(DOCKER_TAR_IMAGE_NAMES),$(image)/images/amd64 $(image)/images/arm64): ALL_IMAGE_TAGS=$(IMAGE)
+# since these images are included in the tar we need to generate them during presubmit/local-images
+# by default only the amd64s are built to match the host arch on prow
+# since these images are simple COPY/ADD dockerfiles there should be no problem building for arm on an amd host, even without qemu
+local-images: $(foreach image,$(DOCKER_TAR_IMAGE_NAMES),$(image)/images/arm64)
+
 # For kube proxy images, use the kube proxy base
 kube-proxy/images/%: BASE_IMAGE=$(KUBE_PROXY_BASE_IMAGE)
 
@@ -100,6 +110,7 @@ cleanup-artifacts:
 	rm -rf $(OUTPUT_DIR)/{attribution,LICENSES,pause} $(OUTPUT_DIR)/bin/{LICENSES,ATTRIBUTION.txt}
 	mv $(OUTPUT_DIR)/bin/* $(ARTIFACTS_PATH)/bin
 	cp $(OUTPUT_DIR)/ATTRIBUTION.txt $(ARTIFACTS_PATH)
+	if [ "$(FAKE_ARM_IMAGES_FOR_VALIDATION)" = "true" ]; then rm -rf $(OUTPUT_DIR)/images/bin/linux/arm64; fi
 
 .PHONY: test
 test: $(GIT_PATCH_TARGET)
