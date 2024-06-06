@@ -9,7 +9,6 @@
 ##@ GIT/Repo Targets
 clone-repo:  ## Clone upstream `external-resizer`
 checkout-repo: ## Checkout upstream tag based on value in GIT_TAG file
-patch-repo: ## Patch upstream repo with patches in patches directory
 
 ##@ Binary Targets
 binaries: ## Build all binaries: `csi-resizer` for `linux/amd64 linux/arm64`
