@@ -14,6 +14,7 @@
 # limitations under the License.
 
 set -e
+set -x
 set -o pipefail
 
 if [[ -z "$JOB_TYPE" ]]; then
