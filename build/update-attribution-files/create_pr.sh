@@ -17,6 +17,8 @@ set -e
 set -x
 set -o pipefail
 
+echo "===== Starting ${BASH_SOURCE[0]} ====="
+
 if [[ -z "$JOB_TYPE" ]]; then
     exit 0
 fi
@@ -243,3 +245,5 @@ for FILE in $(find . -type f \( -name go.sum -o -name go.mod \)); do
 done
 
 pr::create::go-mod
+
+echo "===== Ending ${BASH_SOURCE[0]} ====="
