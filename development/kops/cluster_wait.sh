@@ -53,7 +53,7 @@ k apply -f metrics-server-0.6-clusterrole.yaml
 # kops doesnt support setting these cilium values
 # session affinity for conformance tess
 # kube-proxy disabled to make sure we are validating our kube-proxy
-k -n kube-system patch cm/cilium-config --type merge -p '{"data":{"enable-session-affinity":"true","k8s-service-proxy-name":"cilium"}}'
+k -n kube-system patch cm/cilium-config --type merge -p '{"data":{"enable-session-affinity":"true"}}'
 k -n kube-system rollout restart deployment/cilium-operator
 k -n kube-system rollout status deployment/cilium-operator --timeout=30s
 k -n kube-system delete pods -lk8s-app=cilium
