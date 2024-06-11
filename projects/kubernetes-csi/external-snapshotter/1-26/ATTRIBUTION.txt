@@ -26,13 +26,13 @@ https://github.com/google/gnostic-models
 ** github.com/google/gofuzz; version v1.2.0 --
 https://github.com/google/gofuzz
 
-** github.com/kubernetes-csi/csi-lib-utils; version v0.18.0 --
+** github.com/kubernetes-csi/csi-lib-utils; version v0.18.1 --
 https://github.com/kubernetes-csi/csi-lib-utils
 
 ** github.com/kubernetes-csi/external-snapshotter/client/v8; version v8.0.0 --
 https://github.com/kubernetes-csi/external-snapshotter/client/v8
 
-** github.com/kubernetes-csi/external-snapshotter/v8; version v8.0.0 --
+** github.com/kubernetes-csi/external-snapshotter/v8; version v8.0.1 --
 https://github.com/kubernetes-csi/external-snapshotter/v8
 
 ** github.com/modern-go/concurrent; version v0.0.0-20180306012644-bacd9c7ef1dd --
