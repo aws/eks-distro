@@ -8,7 +8,7 @@ require (
 	github.com/evanphx/json-patch v5.9.0+incompatible
 	github.com/golang/mock v1.6.0
 	github.com/golang/protobuf v1.5.4
-	github.com/kubernetes-csi/csi-lib-utils v0.18.0
+	github.com/kubernetes-csi/csi-lib-utils v0.18.1
 	github.com/kubernetes-csi/csi-test/v5 v5.2.0
 	google.golang.org/grpc v1.64.0
 	k8s.io/api v0.30.0
