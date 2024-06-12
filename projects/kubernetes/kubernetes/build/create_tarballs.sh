@@ -37,10 +37,11 @@ fi
 OUTPUT_RELEASE_DIR="${OUTPUT_DIR}/${RELEASE_BRANCH}"
 BIN="${OUTPUT_RELEASE_DIR}/bin" 
 TAR_OUTPUT_DIR=${OUTPUT_DIR}/tar/${RELEASE_BRANCH}
+IMAGES_DIR="${OUTPUT_RELEASE_DIR}/images/bin"
 
 mkdir -p $TAR_OUTPUT_DIR
 build::common::ensure_tar
-build::tarballs::create_tarballs $BIN $OUTPUT_RELEASE_DIR $TAR_OUTPUT_DIR
+build::tarballs::create_tarballs $BIN $OUTPUT_RELEASE_DIR $TAR_OUTPUT_DIR $IMAGES_DIR
 
 # exclude helper files used for make targets
 echo "eks-distro-checkout-$GIT_TAG export-ignore" >> $SOURCE_DIR/.git/info/attributes

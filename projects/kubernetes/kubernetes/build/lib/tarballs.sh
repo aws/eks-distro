@@ -43,6 +43,7 @@ function build::tarballs::server_targets() {
     cmd/kubelet
     cmd/kubeadm
     cmd/kube-scheduler
+    cmd/kubectl
   )
   echo "${targets[@]}"
 }
@@ -50,6 +51,7 @@ function build::tarballs::server_targets() {
 IFS=" " read -ra KUBE_SERVER_TARGETS <<< "$(build::tarballs::server_targets)"
 readonly KUBE_SERVER_TARGETS
 readonly KUBE_SERVER_BINARIES=("${KUBE_SERVER_TARGETS[@]##*/}")
+readonly KUBE_SERVER_IMAGES=(kube-proxy kube-apiserver kube-controller-manager kube-scheduler)
 
 ### node binaries
 function build::tarballs::node_targets() {
@@ -77,6 +79,7 @@ function build::tarballs::create_tarballs(){
     local -r bin_root="$1"
     local -r output_dir="$2"
     local -r tar_output_dir="$3"
+    local -r images_root="$4"
 
     for platform in "${KUBE_SUPPORTED_SERVER_PLATFORMS[@]}"; do
         # The substitution on platform_src below will replace all slashes with
@@ -89,6 +92,10 @@ function build::tarballs::create_tarballs(){
         mkdir -p $bin_dir
         for bin in ${KUBE_SERVER_BINARIES[@]}; do
             cp ${bin_root}/${platform}/${bin} $bin_dir
+        done
+        for image in ${KUBE_SERVER_IMAGES[@]}; do
+            cp ${images_root}/${platform}/${image}.tar $bin_dir
+            cp ${images_root}/${platform}/${image}.docker_tag $bin_dir
         done
         cp -rf $output_dir/LICENSES $ch_dir/kubernetes
         cp $output_dir/ATTRIBUTION.txt $ch_dir/kubernetes

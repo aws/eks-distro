@@ -106,7 +106,7 @@ commands:
 
 ```bash
 RELEASE_BRANCH=1-30
-RELEASE=6
+RELEASE=7
 kubectl apply -f https://distro.eks.amazonaws.com/crds/releases.distro.eks.amazonaws.com-v1alpha1.yaml
 kubectl apply -f https://distro.eks.amazonaws.com/kubernetes-${RELEASE_BRANCH}/kubernetes-${RELEASE_BRANCH}-eks-${RELEASE}.yaml
 kubectl get release kubernetes-${RELEASE_BRANCH}-eks-${RELEASE}
@@ -121,10 +121,12 @@ repository for the [EKS Optimized AMI](https://github.com/awslabs/amazon-eks-ami
 if you are interested in the AL2 container runtime kernel version.
 
 #### EKS-D 1.30 Version Dependencies
+* [v1-30-eks-7](releases/1-30/7/index.md) (June 07, 2024)
 * [v1-30-eks-6](releases/1-30/6/index.md) (May 31, 2024)
 * [v1-30-eks-5](releases/1-30/5/index.md) (May 28, 2024)
 
 #### EKS-D 1.29 Version Dependencies
+* [v1-29-eks-14](releases/1-29/14/index.md) (June 07, 2024)
 * [v1-29-eks-13](releases/1-29/13/index.md) (May 31, 2024)
 * [v1-29-eks-12](releases/1-29/12/index.md) (May 28, 2024)
 * [v1-29-eks-11](releases/1-29/11/index.md) (May 13, 2024)
@@ -140,6 +142,7 @@ if you are interested in the AL2 container runtime kernel version.
 * [v1-29-eks-1](releases/1-29/1/index.md) (December 16, 2023)
 
 #### EKS-D 1.28 Version Dependencies
+* [v1-28-eks-25](releases/1-28/25/index.md) (June 07, 2024)
 * [v1-28-eks-24](releases/1-28/24/index.md) (May 31, 2024)
 * [v1-28-eks-23](releases/1-28/23/index.md) (May 28, 2024)
 * [v1-28-eks-22](releases/1-28/22/index.md) (May 13, 2024)
@@ -167,6 +170,7 @@ if you are interested in the AL2 container runtime kernel version.
 
 
 #### EKS-D 1.27 Version Dependencies
+* [v1-27-eks-32](releases/1-27/32/index.md) (June 07, 2024)
 * [v1-27-eks-31](releases/1-27/31/index.md) (May 31, 2024)
 * [v1-27-eks-30](releases/1-27/30/index.md) (May 28, 2024)
 * [v1-27-eks-29](releases/1-27/29/index.md) (May 13, 2024)
@@ -200,6 +204,7 @@ if you are interested in the AL2 container runtime kernel version.
 * [v1-27-eks-1](releases/1-27/1/index.md) (May 24, 2023)
 
 #### EKS-D 1.26 Version Dependencies
+* [v1-26-eks-38](releases/1-26/38/index.md) (June 07, 2024)
 * [v1-26-eks-37](releases/1-26/37/index.md) (May 31, 2024)
 * [v1-26-eks-36](releases/1-26/36/index.md) (May 28, 2024)
 * [v1-26-eks-35](releases/1-26/35/index.md) (May 13, 2024)
