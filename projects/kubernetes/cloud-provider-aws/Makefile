@@ -19,7 +19,7 @@ HAS_S3_ARTIFACTS=true
 # 1-28 and 1-29 includes patches that add the vendor directory
 # as well as one that modifies content inside the vendor directory
 # set to true to avoid downloading deps overwriting this change/patch
-RELEASE_BRANCHES_VENDORED=1-28 1-29
+RELEASE_BRANCHES_VENDORED=1-26 1-27 1-28 1-29
 GO_MODS_VENDORED=$(if $(filter $(RELEASE_BRANCH),$(RELEASE_BRANCHES_VENDORED)),true,false)
 EXTRA_GO_LDFLAGS=-X k8s.io/component-base/version.gitVersion=$(GIT_TAG)
 
