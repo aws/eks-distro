@@ -583,7 +583,7 @@ https://golang.org/x/crypto
 ** golang.org/x/exp; version v0.0.0-20230321023759-10a507213a29 --
 https://golang.org/x/exp
 
-** golang.org/x/net; version v0.17.0 --
+** golang.org/x/net; version v0.25.0 --
 https://golang.org/x/net
 
 ** golang.org/x/oauth2; version v0.11.0 --
@@ -592,13 +592,13 @@ https://golang.org/x/oauth2
 ** golang.org/x/sync/singleflight; version v0.3.0 --
 https://golang.org/x/sync
 
-** golang.org/x/sys/unix; version v0.15.0 --
+** golang.org/x/sys/unix; version v0.20.0 --
 https://golang.org/x/sys
 
-** golang.org/x/term; version v0.15.0 --
+** golang.org/x/term; version v0.20.0 --
 https://golang.org/x/term
 
-** golang.org/x/text; version v0.14.0 --
+** golang.org/x/text; version v0.15.0 --
 https://golang.org/x/text
 
 ** golang.org/x/time/rate; version v0.3.0 --
