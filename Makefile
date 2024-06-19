@@ -232,6 +232,14 @@ update-release-numbers: update-dev-release-number update-prod-release-number
 update-all-release-numbers:
 	for r_b in $(SUPPORTED_RELEASE_BRANCHES); do RELEASE_BRANCH=$$r_b $(MAKE) update-release-numbers; done
 
+.PHONY: update-all-dev-release-numbers
+update-all-dev-release-numbers:
+	for r_b in $(SUPPORTED_RELEASE_BRANCHES); do RELEASE_BRANCH=$$r_b $(MAKE) update-dev-release-numbers; done
+
+.PHONY: update-all-prod-release-numbers
+update-all-prod-release-numbers:
+	for r_b in $(SUPPORTED_RELEASE_BRANCHES); do RELEASE_BRANCH=$$r_b $(MAKE) update-prod-release-numbers; done
+
 # See important note about minor releases in the Go function called.
 # release-docs is intended to be used to generate release docs for the latest release branch. If this command is used in
 # conjunction with release-docs-limited to make all the release docs for a new minor release, WITH_GIT_AND_PR should be
