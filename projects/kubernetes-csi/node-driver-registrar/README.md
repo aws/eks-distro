@@ -1,11 +1,11 @@
 ## CSI node-driver-registrar
 
-| Release | Version                                                      |
-|---------|--------------------------------------------------------------|
-| 1-26    | ![Version](https://img.shields.io/badge/version-v2.10.1-blue) |
-| 1-27    | ![Version](https://img.shields.io/badge/version-v2.10.1-blue) |
-| 1-28    | ![Version](https://img.shields.io/badge/version-v2.10.1-blue) |
-| 1-29    | ![Version](https://img.shields.io/badge/version-v2.10.1-blue) |
+| Release | Version                                                       |
+|---------|---------------------------------------------------------------|
+| 1-27    | ![Version](https://img.shields.io/badge/version-v2.11.0-blue) |
+| 1-28    | ![Version](https://img.shields.io/badge/version-v2.11.0-blue) |
+| 1-29    | ![Version](https://img.shields.io/badge/version-v2.11.0-blue) |
+| 1-30    | ![Version](https://img.shields.io/badge/version-v2.11.0-blue) |
 
 ### Updating
 
