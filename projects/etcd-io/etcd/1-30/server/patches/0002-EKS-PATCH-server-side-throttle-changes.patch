@@ -1,0 +1,950 @@
+From 2e288fab329e9710af5f78949951f855028eead0 Mon Sep 17 00:00:00 2001
+From: Yiqing Liu <yqliu@amazon.com>
+Date: Tue, 30 Apr 2024 21:00:09 +0000
+Subject: [PATCH] --EKS-PATCH-- server side throttle changes
+
+---
+ api/v3rpc/rpctypes/error.go                |   7 +-
+ go.mod                                     |   1 +
+ go.sum                                     |   4 +
+ server/config/config.go                    |  12 +
+ server/embed/config.go                     |  12 +
+ server/embed/etcd.go                       |   6 +-
+ server/etcdmain/config.go                  |   5 +
+ server/etcdmain/help.go                    |   8 +
+ server/etcdserver/api/v3rpc/grpc.go        |   4 +
+ server/etcdserver/api/v3rpc/interceptor.go |  19 +
+ server/etcdserver/api/v3rpc/metrics.go     |  19 +
+ server/etcdserver/api/v3rpc/qmon.go        | 384 +++++++++++++++++++++
+ server/go.mod                              |   4 +-
+ server/go.sum                              |   4 +
+ tests/go.mod                               |   1 +
+ tests/go.sum                               |   4 +
+ tests/integration/cluster.go               |  18 +
+ tests/integration/qmon_test.go             | 147 ++++++++
+ 18 files changed, 655 insertions(+), 4 deletions(-)
+ create mode 100644 server/etcdserver/api/v3rpc/qmon.go
+ create mode 100644 tests/integration/qmon_test.go
+
+diff --git a/api/v3rpc/rpctypes/error.go b/api/v3rpc/rpctypes/error.go
+index 23201302e..f37ea5b44 100644
+--- a/api/v3rpc/rpctypes/error.go
++++ b/api/v3rpc/rpctypes/error.go
+@@ -88,8 +88,9 @@ var (
+ 	ErrGRPCDowngradeInProcess            = status.New(codes.FailedPrecondition, "etcdserver: cluster has a downgrade job in progress").Err()
+ 	ErrGRPCNoInflightDowngrade           = status.New(codes.FailedPrecondition, "etcdserver: no inflight downgrade job").Err()
+
+-	ErrGRPCCanceled         = status.New(codes.Canceled, "etcdserver: request canceled").Err()
+-	ErrGRPCDeadlineExceeded = status.New(codes.DeadlineExceeded, "etcdserver: context deadline exceeded").Err()
++	ErrGRPCCanceled            = status.New(codes.Canceled, "etcdserver: request canceled").Err()
++	ErrGRPCDeadlineExceeded    = status.New(codes.DeadlineExceeded, "etcdserver: context deadline exceeded").Err()
++	ErrGRPCQmonTooManyRequests = status.New(codes.ResourceExhausted, "etcdserver: throttle: too many requests").Err()
+
+ 	errStringToError = map[string]error{
+ 		ErrorDesc(ErrGRPCEmptyKey):      ErrGRPCEmptyKey,
+@@ -155,6 +156,7 @@ var (
+ 		ErrorDesc(ErrGRPCInvalidDowngradeTargetVersion): ErrGRPCInvalidDowngradeTargetVersion,
+ 		ErrorDesc(ErrGRPCDowngradeInProcess):            ErrGRPCDowngradeInProcess,
+ 		ErrorDesc(ErrGRPCNoInflightDowngrade):           ErrGRPCNoInflightDowngrade,
++		ErrorDesc(ErrGRPCQmonTooManyRequests):           ErrGRPCQmonTooManyRequests,
+ 	}
+ )
+
+@@ -222,6 +224,7 @@ var (
+ 	ErrInvalidDowngradeTargetVersion = Error(ErrGRPCInvalidDowngradeTargetVersion)
+ 	ErrDowngradeInProcess            = Error(ErrGRPCDowngradeInProcess)
+ 	ErrNoInflightDowngrade           = Error(ErrGRPCNoInflightDowngrade)
++	ErrQmonTooManyRequests           = Error(ErrGRPCQmonTooManyRequests)
+ )
+
+ // EtcdError defines gRPC server errors.
+diff --git a/go.mod b/go.mod
+index 152b4bb60..0731d354a 100644
+--- a/go.mod
++++ b/go.mod
+@@ -67,6 +67,7 @@ require (
+ 	github.com/prometheus/client_model v0.2.0 // indirect
+ 	github.com/prometheus/common v0.26.0 // indirect
+ 	github.com/prometheus/procfs v0.6.0 // indirect
++	github.com/shenwei356/countminsketch v0.0.0-20160519110546-b4482acb35b1 // indirect
+ 	github.com/sirupsen/logrus v1.9.3 // indirect
+ 	github.com/soheilhy/cmux v0.1.5 // indirect
+ 	github.com/spf13/pflag v1.0.5 // indirect
+diff --git a/go.sum b/go.sum
+index 7681e5c91..ffe828dc9 100644
+--- a/go.sum
++++ b/go.sum
+@@ -36,6 +36,8 @@ github.com/beorn7/perks v1.0.1/go.mod h1:G2ZrVWU2WbWT9wwq4/hrbKbnv/1ERSJQ0ibhJ6r
+ github.com/bgentry/speakeasy v0.1.0 h1:ByYyxL9InA1OWqxJqqp2A5pYHUrCiAL6K3J+LKSsQkY=
+ github.com/bgentry/speakeasy v0.1.0/go.mod h1:+zsyZBPWlz7T6j88CTgSN5bM796AkVf0kBD4zp0CCIs=
+ github.com/bketelsen/crypt v0.0.3-0.20200106085610-5cbc8cc4026c/go.mod h1:MKsuJmJgSg28kpZDP6UIiPt0e0Oz0kqKNGyRaWEPv84=
++github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869 h1:DDGfHa7BWjL4YnC6+E63dPcxHo2sUxDIu8g3QgEJdRY=
++github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869/go.mod h1:Ekp36dRnpXw/yCqJaO+ZrUyxD+3VXMFFr56k5XYrpB4=
+ github.com/cenkalti/backoff/v4 v4.2.1 h1:y4OZtCnogmCPw98Zjyt5a6+QwPLGkiQsYW5oUqylYbM=
+ github.com/cenkalti/backoff/v4 v4.2.1/go.mod h1:Y3VNntkOUPxTVeUxJ/G5vcM//AlwfmyYozVcomhLiZE=
+ github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
+@@ -270,6 +272,8 @@ github.com/rogpeppe/go-internal v1.10.0/go.mod h1:UQnix2H7Ngw/k4C5ijL5+65zddjncj
+ github.com/russross/blackfriday/v2 v2.0.1/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
+ github.com/ryanuber/columnize v0.0.0-20160712163229-9b3edd62028f/go.mod h1:sm1tb6uqfes/u+d4ooFouqFdy9/2g9QGwK3SQygK0Ts=
+ github.com/sean-/seed v0.0.0-20170313163322-e2103e2c3529/go.mod h1:DxrIzT+xaE7yg65j358z/aeFdxmN0P9QXhEzd20vsDc=
++github.com/shenwei356/countminsketch v0.0.0-20160519110546-b4482acb35b1 h1:Y8xKgTgaESaNqyciwIY5PHfKOimhM9dtkXYXwtL+Ps0=
++github.com/shenwei356/countminsketch v0.0.0-20160519110546-b4482acb35b1/go.mod h1:p44/LKtqBsOfeSgj9WBuJ48nRof36+s0iFtzmsVMKaE=
+ github.com/shurcooL/sanitized_anchor_name v1.0.0/go.mod h1:1NzhyTcUVG4SuEtjjoZeVRXNmyL/1OwPU0+IJeTBvfc=
+ github.com/sirupsen/logrus v1.2.0/go.mod h1:LxeOpSwHxABJmUn/MG1IvRgCAasNZTLOkJPxbbu5VWo=
+ github.com/sirupsen/logrus v1.4.2/go.mod h1:tLMulIdttU9McNUspp0xgXVQah82FyeX6MwdIuYE2rE=
+diff --git a/server/config/config.go b/server/config/config.go
+index 0dac25c41..b678f0c60 100644
+--- a/server/config/config.go
++++ b/server/config/config.go
+@@ -193,6 +193,18 @@ type ServerConfig struct {
+
+ 	// V2Deprecation defines a phase of v2store deprecation process.
+ 	V2Deprecation V2DeprecationEnum `json:"v2-deprecation"`
++
++	// ExperimentalQmonEnableBandwidthThrottle enables query monitor to do memory pressure aware bandwidth throttling.
++	ExperimentalQmonEnableBandwidthThrottle bool
++
++	// ExperimentalQmonMemoryBudgetMegabytes is the total memory budget for the process. Throttle will begin if the processes exceeds this.
++	ExperimentalQmonMemoryBudgetMegabytes uint
++
++	// ExperimentalQmonThrottleEnableAtPercent - throttle is enabled when rss is this much percent of total memory budget
++	ExperimentalQmonThrottleEnableAtPercent uint
++
++	// ExperimentalQmonAlwaysOnForLargeReq indicates if large requests should be always throttled
++	ExperimentalQmonAlwaysOnForLargeReq bool
+ }
+
+ // VerifyBootstrap sanity-checks the initial config for bootstrap case
+diff --git a/server/embed/config.go b/server/embed/config.go
+index b14c05860..dfd312e30 100644
+--- a/server/embed/config.go
++++ b/server/embed/config.go
+@@ -416,6 +416,18 @@ type Config struct {
+
+ 	// V2Deprecation describes phase of API & Storage V2 support
+ 	V2Deprecation config.V2DeprecationEnum `json:"v2-deprecation"`
++
++	// ExperimentalQmonEnableBandwidthThrottle indicates if experimental query monitor to do memory pressure aware bandwidth throttling is enabled.
++	ExperimentalQmonEnableBandwidthThrottle bool `json:"experimental-qmon-enable-bandwidth-throttle"`
++
++	// ExperimentalQmonMemoryBudgetMegabytes is the total memory budget for the process. Throttle will begin if the processes exceeds this.
++	ExperimentalQmonMemoryBudgetMegabytes uint `json:"experimental-qmon-memory-budget-megabytes"`
++
++	// ExperimentalQmonThrottleEnableAtPercent throttle is enabled when rss crosses this percent of total memory budget
++	ExperimentalQmonThrottleEnableAtPercent uint `json:"experimental-qmon-throttle-enable-at-percent"`
++
++	// ExperimentalQmonAlwaysOnForLargeReq indicates that large requests (more than 64MB size) will always get throttled
++	ExperimentalQmonAlwaysOnForLargeReq bool `json:"experimental-qmon-always-on-for-large-req"`
+ }
+
+ // configYAML holds the config suitable for yaml parsing
+diff --git a/server/embed/etcd.go b/server/embed/etcd.go
+index 09a9dfb03..68e7bb038 100644
+--- a/server/embed/etcd.go
++++ b/server/embed/etcd.go
+@@ -223,7 +223,11 @@ func StartEtcd(inCfg *Config) (e *Etcd, err error) {
+ 		ExperimentalMemoryMlock:                  cfg.ExperimentalMemoryMlock,
+ 		ExperimentalTxnModeWriteWithSharedBuffer: cfg.ExperimentalTxnModeWriteWithSharedBuffer,
+ 		ExperimentalBootstrapDefragThresholdMegabytes: cfg.ExperimentalBootstrapDefragThresholdMegabytes,
+-		V2Deprecation: cfg.V2DeprecationEffective(),
++		V2Deprecation:                           cfg.V2DeprecationEffective(),
++		ExperimentalQmonEnableBandwidthThrottle: cfg.ExperimentalQmonEnableBandwidthThrottle,
++		ExperimentalQmonMemoryBudgetMegabytes:   cfg.ExperimentalQmonMemoryBudgetMegabytes,
++		ExperimentalQmonThrottleEnableAtPercent: cfg.ExperimentalQmonThrottleEnableAtPercent,
++		ExperimentalQmonAlwaysOnForLargeReq:     cfg.ExperimentalQmonAlwaysOnForLargeReq,
+ 	}
+
+ 	if srvcfg.ExperimentalEnableDistributedTracing {
+diff --git a/server/etcdmain/config.go b/server/etcdmain/config.go
+index 7988f1753..8a4653056 100644
+--- a/server/etcdmain/config.go
++++ b/server/etcdmain/config.go
+@@ -303,6 +303,11 @@ func newConfig() *config {
+ 	fs.BoolVar(&cfg.ec.ExperimentalTxnModeWriteWithSharedBuffer, "experimental-txn-mode-write-with-shared-buffer", true, "Enable the write transaction to use a shared buffer in its readonly check operations.")
+ 	fs.UintVar(&cfg.ec.ExperimentalBootstrapDefragThresholdMegabytes, "experimental-bootstrap-defrag-threshold-megabytes", 0, "Enable the defrag during etcd server bootstrap on condition that it will free at least the provided threshold of disk space. Needs to be set to non-zero value to take effect.")
+
++	fs.BoolVar(&cfg.ec.ExperimentalQmonEnableBandwidthThrottle, "experimental-qmon-enable-bandwidth-throttle", false, "Enable experimental query monitor to do memory pressure aware bandwidth throttle.")
++	fs.UintVar(&cfg.ec.ExperimentalQmonMemoryBudgetMegabytes, "experimental-qmon-memory-budget-megabytes", 0, "Total memory budget. Throttling will begin if the process exceeds this")
++	fs.UintVar(&cfg.ec.ExperimentalQmonThrottleEnableAtPercent, "experimental-qmon-throttle-enable-at-percent", 0, "Requests will be throttled process memory exceeds this much percent of total memory budget")
++	fs.BoolVar(&cfg.ec.ExperimentalQmonAlwaysOnForLargeReq, "experimental-qmon-always-on-for-large-req", false, "Always throttle large range requests. Large req threshold is 64MB")
++
+ 	// unsafe
+ 	fs.BoolVar(&cfg.ec.UnsafeNoFsync, "unsafe-no-fsync", false, "Disables fsync, unsafe, will cause data loss.")
+ 	fs.BoolVar(&cfg.ec.ForceNewCluster, "force-new-cluster", false, "Force to create a new one member cluster.")
+diff --git a/server/etcdmain/help.go b/server/etcdmain/help.go
+index 510022661..eb5b555aa 100644
+--- a/server/etcdmain/help.go
++++ b/server/etcdmain/help.go
+@@ -282,6 +282,14 @@ Experimental feature:
+     Enable the write transaction to use a shared buffer in its readonly check operations.
+   --experimental-bootstrap-defrag-threshold-megabytes
+     Enable the defrag during etcd server bootstrap on condition that it will free at least the provided threshold of disk space. Needs to be set to non-zero value to take effect.
++  --experimental-qmon-enable-bandwidth-throttle
++    Enable experimental query monitor to do memory pressure aware bandwidth throttle.
++  --experimental-qmon-memory-budget-megabytes
++    Total memory budget. Throttling will begin if the process exceeds this.
++  --experimental-qmon-throttle-enable-at-percent
++    Requests will be throttled process memory exceeds this much percent of total memory budget.
++  --experimental-qmon-always-on-for-large-req
++    Always throttle large range requests. Large req threshold is 64MB.
+
+ Unsafe feature:
+   --force-new-cluster 'false'
+diff --git a/server/etcdserver/api/v3rpc/grpc.go b/server/etcdserver/api/v3rpc/grpc.go
+index 349ebea40..5dc95d16a 100644
+--- a/server/etcdserver/api/v3rpc/grpc.go
++++ b/server/etcdserver/api/v3rpc/grpc.go
+@@ -62,6 +62,10 @@ func Server(s *etcdserver.EtcdServer, tls *tls.Config, interceptor grpc.UnarySer
+
+ 	}
+
++	if s.Cfg.ExperimentalQmonEnableBandwidthThrottle {
++		chainUnaryInterceptors = append(chainUnaryInterceptors, newQmonInterceptor(s))
++	}
++
+ 	opts = append(opts, grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(chainUnaryInterceptors...)))
+ 	opts = append(opts, grpc.StreamInterceptor(grpc_middleware.ChainStreamServer(chainStreamInterceptors...)))
+
+diff --git a/server/etcdserver/api/v3rpc/interceptor.go b/server/etcdserver/api/v3rpc/interceptor.go
+index 5c80fcf04..b758d6e6d 100644
+--- a/server/etcdserver/api/v3rpc/interceptor.go
++++ b/server/etcdserver/api/v3rpc/interceptor.go
+@@ -343,3 +343,22 @@ func monitorLeader(s *etcdserver.EtcdServer) *streamsMap {
+
+ 	return smap
+ }
++
++func newQmonInterceptor(s *etcdserver.EtcdServer) grpc.UnaryServerInterceptor {
++	qmonitor := NewQueryMonitor(s, BuildQueryMonitorCfg(s))
++	qmonitor.Start()
++	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
++		var err error
++		if !qmonitor.AdmitReq(req) {
++			err = rpctypes.ErrGRPCQmonTooManyRequests
++			return nil, err
++		}
++		resp, err := handler(ctx, req)
++		defer updateQueryMonitor(qmonitor, req, resp, err)
++		return resp, err
++	}
++}
++
++func updateQueryMonitor(qmon QueryMonitor, req interface{}, resp interface{}, err error) {
++	qmon.UpdateUsage(req, resp, err)
++}
+diff --git a/server/etcdserver/api/v3rpc/metrics.go b/server/etcdserver/api/v3rpc/metrics.go
+index a4ee723c5..62419d310 100644
+--- a/server/etcdserver/api/v3rpc/metrics.go
++++ b/server/etcdserver/api/v3rpc/metrics.go
+@@ -48,6 +48,23 @@ var (
+ 	},
+ 		[]string{"type", "client_api_version"},
+ 	)
++
++	throttledRequests = prometheus.NewCounterVec(prometheus.CounterOpts{
++		Namespace: "etcd",
++		Subsystem: "server",
++		Name:      "qmon_throttled_requests_total",
++		Help:      "The total number of throttled requests per request type.",
++	},
++		[]string{"type", "request_type"},
++	)
++	deniedRequests = prometheus.NewCounterVec(prometheus.CounterOpts{
++		Namespace: "etcd",
++		Subsystem: "server",
++		Name:      "qmon_denied_requests_total",
++		Help:      "The total number of denied requests per request type.",
++	},
++		[]string{"type", "request_type"},
++	)
+ )
+
+ func init() {
+@@ -55,4 +72,6 @@ func init() {
+ 	prometheus.MustRegister(receivedBytes)
+ 	prometheus.MustRegister(streamFailures)
+ 	prometheus.MustRegister(clientRequests)
++	prometheus.MustRegister(throttledRequests)
++	prometheus.MustRegister(deniedRequests)
+ }
+diff --git a/server/etcdserver/api/v3rpc/qmon.go b/server/etcdserver/api/v3rpc/qmon.go
+new file mode 100644
+index 000000000..b7ac3cd8c
+--- /dev/null
++++ b/server/etcdserver/api/v3rpc/qmon.go
+@@ -0,0 +1,384 @@
++// Copyright 2022 The etcd Authors
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package v3rpc
++
++import (
++	"context"
++	"fmt"
++	"os"
++	"runtime"
++	"runtime/debug"
++	"strconv"
++	"strings"
++	"sync"
++	"time"
++
++	adt "github.com/shenwei356/countminsketch"
++	pb "go.etcd.io/etcd/api/v3/etcdserverpb"
++	"go.etcd.io/etcd/server/v3/etcdserver"
++	"go.uber.org/zap"
++	"golang.org/x/time/rate"
++)
++
++const (
++	DefaultTotalMemoryBudget       = 1 * 1024 * 1024 * 1024
++	DefaultThrottleEnableAtPercent = 10
++	MegaByte                       = 1 * 1024 * 1024
++	DefaultRespSize                = 4 * 1024 * 1024
++	DefaultResetTimer              = 15 * time.Second
++	DefaultAuditThresholdPercent   = 50
++	SmallReqThreshold              = 8 * 1024
++	LargeReqThreshold              = 16 * 1024 * 1024
++	DefaultEstInterval             = 10 * time.Minute
++)
++
++type QueryType int64
++
++const (
++	QueryTypeUnknown QueryType = iota
++	QueryTypeRange
++)
++
++type Query struct {
++	qid   string
++	qsize uint64
++	qtype QueryType
++}
++
++type QueryMonitor interface {
++	// Start the monitoring
++	Start()
++
++	// UpdateUsage : update counters
++	UpdateUsage(req interface{}, resp interface{}, err error)
++
++	// AdmitReq : Decide if we can admit the request.
++	AdmitReq(req interface{}) bool
++
++	// Stop the monitoring
++	Stop()
++}
++
++// externally tunable parameters of bandwidth monitor
++type BandwidthMonitorConfig struct {
++	totalMemoryBudget   uint64
++	enableAtPercent     uint64
++	alwaysOnForLargeReq bool
++}
++
++// BandwidthMonitor implements memory pressure aware token bucket based rate limiter
++type BandwidthMonitor struct {
++	cfg                    BandwidthMonitorConfig
++	defaultRespSize        uint64
++	enableAtBytes          uint64
++	budgetExhausted        bool
++	resetTimer             time.Duration
++	estRespSize            *adt.CountMinSketch
++	qcount                 *adt.CountMinSketch
++	respSizeUpdateTime     time.Time
++	estimateUpdateInterval time.Duration
++	updateEstimate         bool
++	auditThresholdPercent  uint64
++	auditOn                bool
++	throttle               *rate.Limiter
++	mu                     sync.Mutex
++	server                 *etcdserver.EtcdServer
++	logger                 *zap.Logger
++}
++
++func BuildQueryMonitorCfg(s *etcdserver.EtcdServer) BandwidthMonitorConfig {
++
++	var cfg BandwidthMonitorConfig
++
++	cfg.totalMemoryBudget = DefaultTotalMemoryBudget
++	if s.Cfg.ExperimentalQmonMemoryBudgetMegabytes != 0 {
++		cfg.totalMemoryBudget = uint64(s.Cfg.ExperimentalQmonMemoryBudgetMegabytes) * MegaByte
++	}
++
++	cfg.enableAtPercent = DefaultThrottleEnableAtPercent
++	if s.Cfg.ExperimentalQmonThrottleEnableAtPercent != 0 {
++		cfg.enableAtPercent = uint64(s.Cfg.ExperimentalQmonThrottleEnableAtPercent)
++	}
++
++	if s.Cfg.ExperimentalQmonAlwaysOnForLargeReq {
++		cfg.alwaysOnForLargeReq = true
++	}
++
++	return cfg
++}
++
++func NewQueryMonitor(s *etcdserver.EtcdServer, cfg BandwidthMonitorConfig) QueryMonitor {
++	var qm BandwidthMonitor
++	qm.cfg = cfg
++
++	qm.enableAtBytes = qm.cfg.totalMemoryBudget * qm.cfg.enableAtPercent / 100
++	qm.defaultRespSize = DefaultRespSize
++	qm.resetTimer = DefaultResetTimer
++
++	//Even when alwaysOnForLargeReq is enabled, do not initialize remaining to totalMemoryBudget
++	//Use the conservative bandwidth instead which is used when mem pressure is high
++	remaining := qm.cfg.totalMemoryBudget - qm.enableAtBytes
++	timeToGC := uint64(qm.resetTimer / time.Second)
++	bw := remaining / timeToGC
++	procs := uint64(runtime.GOMAXPROCS(0))
++
++	qm.estRespSize, _ = adt.NewWithEstimates(0.0001, 0.9999)
++	qm.qcount, _ = adt.NewWithEstimates(0.0001, 0.9999)
++	qm.respSizeUpdateTime = time.Now()
++	qm.estimateUpdateInterval = DefaultEstInterval
++	qm.auditOn = false
++	qm.auditThresholdPercent = DefaultAuditThresholdPercent
++	qm.throttle = rate.NewLimiter(rate.Every(time.Second/time.Duration(bw)), int(bw))
++	qm.budgetExhausted = false
++	qm.server = s
++	qm.logger = s.Cfg.Logger
++	qm.logger.Warn("qmon - created query monitor.",
++		zap.Uint64("memoryBudget", qm.cfg.totalMemoryBudget),
++		zap.Uint64("gomaxprocs", procs),
++		zap.Bool("Always on for large req", qm.cfg.alwaysOnForLargeReq),
++		zap.Uint64("throttle enabled at percent", qm.cfg.enableAtPercent),
++		zap.Uint64("throttle enabled at bytes", qm.enableAtBytes),
++		zap.Uint64("throttle bandwidth bytes per sec per proc", bw))
++
++	return &qm
++}
++
++func (ctrl *BandwidthMonitor) Start() {
++	go ctrl.start()
++}
++
++func (ctrl *BandwidthMonitor) start() {
++	ctrl.update()
++	ctrl.periodicReset()
++}
++
++func (ctrl *BandwidthMonitor) periodicReset() {
++	ticker := time.NewTicker(ctrl.resetTimer)
++	defer ticker.Stop()
++
++	for {
++		select {
++		case <-ticker.C:
++			ctrl.update()
++		case <-ctrl.server.StoppingNotify():
++			return
++		}
++	}
++}
++
++func (ctrl *BandwidthMonitor) update() {
++	rss := getCurrentRssBytes(ctrl.logger)
++	if rss == 0 {
++		ctrl.logger.Error("qmon: unexpected condition rss is zero.")
++		return
++	}
++	ctrl.mu.Lock()
++	defer ctrl.mu.Unlock()
++	ctrl.resetRespSizeUnsafe()
++	ctrl.updateBudgetUnsafe(uint64(rss))
++	ctrl.updateAuditFlagUnsafe(uint64(rss))
++}
++
++func (ctrl *BandwidthMonitor) resetRespSizeUnsafe() {
++	//reset estimates early if we have detected a size difference
++	if ctrl.updateEstimate || time.Since(ctrl.respSizeUpdateTime) > ctrl.estimateUpdateInterval {
++		ctrl.logger.Info("qmon: clearing estimates.")
++		ctrl.estRespSize, _ = adt.NewWithEstimates(0.0001, 0.9999)
++		ctrl.respSizeUpdateTime = time.Now()
++		ctrl.updateEstimate = false
++	}
++}
++
++func (ctrl *BandwidthMonitor) updateAuditFlagUnsafe(rss uint64) {
++	if (ctrl.cfg.totalMemoryBudget*ctrl.auditThresholdPercent)/100 <= uint64(rss) {
++		ctrl.auditOn = true
++	} else {
++		ctrl.auditOn = false
++	}
++}
++
++func (ctrl *BandwidthMonitor) updateBudgetUnsafe(rss uint64) {
++	if ctrl.enableAtBytes <= uint64(rss) {
++		ctrl.budgetExhausted = true
++		debug.FreeOSMemory()
++		ctrl.logger.Warn("qmon: Running FreeOSMemory.")
++	} else {
++		ctrl.budgetExhausted = false
++	}
++	ctrl.qcount, _ = adt.NewWithEstimates(0.0001, 0.9999)
++}
++
++func (ctrl *BandwidthMonitor) isDeclinedUnsafe(q Query) (bool, uint64, uint64) {
++	respSize := q.qsize
++	qcount := ctrl.qcount.EstimateString(q.qid)
++	ctrl.qcount.UpdateString(q.qid, 1)
++	if q.qtype == QueryTypeRange {
++		respSize = ctrl.estRespSize.EstimateString(q.qid)
++		if respSize == 0 {
++			//We have not seen a response for this type of query.
++			//Estimate based on default
++			respSize = ctrl.defaultRespSize
++		}
++		q.qsize = respSize
++	}
++	if ctrl.budgetExhausted {
++		//decline
++		return true, respSize, qcount
++	}
++
++	//admit
++	return false, respSize, qcount
++}
++
++func (ctrl *BandwidthMonitor) newQueryFromReqResp(req interface{}, resp interface{}) Query {
++	var reqSize, respSize int
++	var reqContent string
++	qtype := QueryTypeUnknown
++	switch _resp := resp.(type) {
++	case *pb.RangeResponse:
++		_req, ok := req.(*pb.RangeRequest)
++
++		if ok && ctrl.isExpensiveRangeCall(_req) {
++			reqSize = _req.Size()
++			reqContent = _req.String()
++			qtype = QueryTypeRange
++
++			if _resp != nil && _resp.Count != 0 {
++				respSize = _resp.Size()
++			}
++		}
++
++	default:
++		reqSize = 0
++		respSize = 0
++	}
++
++	var q Query
++	q.qid = reqContent
++	q.qsize = uint64(reqSize + respSize)
++	q.qtype = qtype
++	return q
++}
++
++func (ctrl *BandwidthMonitor) isExpensiveRangeCall(req *pb.RangeRequest) bool {
++	isCountOnly := req.CountOnly
++	isSingleKeyValueQuery := len(req.RangeEnd) == 0
++	return !isCountOnly && !isSingleKeyValueQuery
++}
++
++func (ctrl *BandwidthMonitor) newQueryFromReq(req interface{}) Query {
++	var q Query
++	switch req.(type) {
++	case *pb.RangeRequest:
++		_req, ok := req.(*pb.RangeRequest)
++		if ok && ctrl.isExpensiveRangeCall(_req) {
++			q = ctrl.newQRange(_req)
++		}
++	default:
++	}
++	return q
++}
++
++func (ctrl *BandwidthMonitor) newQRange(r *pb.RangeRequest) Query {
++	var q Query
++	q.qid = r.String()
++	q.qsize = 0
++	q.qtype = QueryTypeRange
++	return q
++}
++
++func (ctrl *BandwidthMonitor) UpdateUsage(req interface{}, resp interface{}, err error) {
++
++	//do not update estimate with failure response
++	if err != nil {
++		return
++	}
++
++	q := ctrl.newQueryFromReqResp(req, resp)
++	ctrl.mu.Lock()
++	defer ctrl.mu.Unlock()
++	if q.qtype == QueryTypeUnknown {
++		return
++	}
++
++	current := ctrl.estRespSize.EstimateString(q.qid)
++	if current == 0 {
++		ctrl.estRespSize.UpdateString(q.qid, q.qsize)
++		current = q.qsize
++	}
++	if current != q.qsize && q.qsize > SmallReqThreshold {
++		ctrl.logger.Debug("qmon qsize changed. update estimates.", zap.String("qid", q.qid), zap.Uint64("qsize", q.qsize), zap.Uint64("current", current))
++		ctrl.updateEstimate = true
++	}
++	if ctrl.auditOn {
++		ctrl.logger.Warn("qmon audit.", zap.String("qid", q.qid), zap.Uint64("qsize", q.qsize))
++	}
++}
++
++func (ctrl *BandwidthMonitor) AdmitReq(req interface{}) bool {
++	q := ctrl.newQueryFromReq(req)
++	declined, qsize, qcount := ctrl.isDeclined(q)
++
++	//dont rely on default resp size too much
++	if (ctrl.cfg.alwaysOnForLargeReq || declined) && qcount > 5 && qsize == ctrl.defaultRespSize {
++		deniedRequests.WithLabelValues("unary", "range").Inc()
++		ctrl.logger.Warn("qmon reject. Response size unknown.", zap.String("qid", q.qid), zap.Uint64("qsize", qsize), zap.Uint64("qcount", qcount))
++		return false
++	}
++
++	if (qsize > SmallReqThreshold && declined) || (qsize > LargeReqThreshold && ctrl.cfg.alwaysOnForLargeReq) {
++		err := ctrl.throttle.WaitN(context.TODO(), int(qsize))
++		if err != nil {
++			throttledRequests.WithLabelValues("unary", "range").Inc()
++			ctrl.logger.Warn("qmon throttle failed.", zap.String("qid", q.qid), zap.Uint64("qsize", qsize), zap.Error(err))
++			return false
++		}
++	}
++	return true
++}
++
++func (ctrl *BandwidthMonitor) isDeclined(q Query) (bool, uint64, uint64) {
++	ctrl.mu.Lock()
++	defer ctrl.mu.Unlock()
++	return ctrl.isDeclinedUnsafe(q)
++}
++
++func (ctrl *BandwidthMonitor) Stop() {
++}
++
++// TODO windows
++func getCurrentRssBytes(logger *zap.Logger) uint64 {
++	pid := os.Getpid()
++	statm := fmt.Sprintf("/proc/%d/statm", pid)
++	buf, err := os.ReadFile(statm)
++	if err != nil {
++		logger.Error("qmon failed to read statm file", zap.String("statm file", statm), zap.Error(err))
++		return 0
++	}
++
++	fields := strings.Split(string(buf), " ")
++	if len(fields) < 2 {
++		logger.Error("qmon failed to parse statm file", zap.String("statm file", statm), zap.String("buff", string(buf)))
++		return 0
++	}
++
++	rss, err := strconv.ParseUint(fields[1], 10, 64)
++	if err != nil {
++		logger.Error("qmon cannot convert rss to int", zap.String("statm file", statm), zap.Error(err))
++		return 0
++	}
++
++	return rss * uint64(os.Getpagesize())
++}
+diff --git a/server/go.mod b/server/go.mod
+index f05e0d50c..acda2621e 100644
+--- a/server/go.mod
++++ b/server/go.mod
+@@ -3,6 +3,7 @@ module go.etcd.io/etcd/server/v3
+ go 1.21
+
+ require (
++	github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869 // indirect
+ 	github.com/coreos/go-semver v0.3.0
+ 	github.com/coreos/go-systemd/v22 v22.3.2
+ 	github.com/dustin/go-humanize v1.0.0
+@@ -18,6 +19,8 @@ require (
+ 	github.com/jonboulle/clockwork v0.2.2
+ 	github.com/prometheus/client_golang v1.11.1
+ 	github.com/prometheus/client_model v0.2.0
++	github.com/shenwei356/countminsketch v0.0.0-20160519110546-b4482acb35b1
++	github.com/sirupsen/logrus v1.9.3 // indirect
+ 	github.com/soheilhy/cmux v0.1.5
+ 	github.com/spf13/cobra v1.1.3
+ 	github.com/stretchr/testify v1.8.4
+@@ -62,7 +65,6 @@ require (
+ 	github.com/pmezard/go-difflib v1.0.0 // indirect
+ 	github.com/prometheus/common v0.26.0 // indirect
+ 	github.com/prometheus/procfs v0.6.0 // indirect
+-	github.com/sirupsen/logrus v1.9.3 // indirect
+ 	github.com/spf13/pflag v1.0.5 // indirect
+ 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.20.0 // indirect
+ 	go.opentelemetry.io/otel/metric v1.20.0 // indirect
+diff --git a/server/go.sum b/server/go.sum
+index 56a6118b8..8d3e9bc20 100644
+--- a/server/go.sum
++++ b/server/go.sum
+@@ -37,6 +37,8 @@ github.com/bgentry/speakeasy v0.1.0/go.mod h1:+zsyZBPWlz7T6j88CTgSN5bM796AkVf0kB
+ github.com/bketelsen/crypt v0.0.3-0.20200106085610-5cbc8cc4026c/go.mod h1:MKsuJmJgSg28kpZDP6UIiPt0e0Oz0kqKNGyRaWEPv84=
+ github.com/cenkalti/backoff/v4 v4.2.1 h1:y4OZtCnogmCPw98Zjyt5a6+QwPLGkiQsYW5oUqylYbM=
+ github.com/cenkalti/backoff/v4 v4.2.1/go.mod h1:Y3VNntkOUPxTVeUxJ/G5vcM//AlwfmyYozVcomhLiZE=
++github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869 h1:DDGfHa7BWjL4YnC6+E63dPcxHo2sUxDIu8g3QgEJdRY=
++github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869/go.mod h1:Ekp36dRnpXw/yCqJaO+ZrUyxD+3VXMFFr56k5XYrpB4=
+ github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
+ github.com/cespare/xxhash v1.1.0/go.mod h1:XrSqR1VqqWfGrhpAt58auRo0WTKS1nRRg3ghfAqPWnc=
+ github.com/cespare/xxhash/v2 v2.1.1/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
+@@ -260,6 +262,8 @@ github.com/rogpeppe/go-internal v1.10.0/go.mod h1:UQnix2H7Ngw/k4C5ijL5+65zddjncj
+ github.com/russross/blackfriday/v2 v2.0.1/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
+ github.com/ryanuber/columnize v0.0.0-20160712163229-9b3edd62028f/go.mod h1:sm1tb6uqfes/u+d4ooFouqFdy9/2g9QGwK3SQygK0Ts=
+ github.com/sean-/seed v0.0.0-20170313163322-e2103e2c3529/go.mod h1:DxrIzT+xaE7yg65j358z/aeFdxmN0P9QXhEzd20vsDc=
++github.com/shenwei356/countminsketch v0.0.0-20160519110546-b4482acb35b1 h1:Y8xKgTgaESaNqyciwIY5PHfKOimhM9dtkXYXwtL+Ps0=
++github.com/shenwei356/countminsketch v0.0.0-20160519110546-b4482acb35b1/go.mod h1:p44/LKtqBsOfeSgj9WBuJ48nRof36+s0iFtzmsVMKaE=
+ github.com/shurcooL/sanitized_anchor_name v1.0.0/go.mod h1:1NzhyTcUVG4SuEtjjoZeVRXNmyL/1OwPU0+IJeTBvfc=
+ github.com/sirupsen/logrus v1.2.0/go.mod h1:LxeOpSwHxABJmUn/MG1IvRgCAasNZTLOkJPxbbu5VWo=
+ github.com/sirupsen/logrus v1.4.2/go.mod h1:tLMulIdttU9McNUspp0xgXVQah82FyeX6MwdIuYE2rE=
+diff --git a/tests/go.mod b/tests/go.mod
+index 451564ccd..c4d40174a 100644
+--- a/tests/go.mod
++++ b/tests/go.mod
+@@ -73,6 +73,7 @@ require (
+ 	github.com/pmezard/go-difflib v1.0.0 // indirect
+ 	github.com/prometheus/client_model v0.2.0 // indirect
+ 	github.com/prometheus/procfs v0.6.0 // indirect
++	github.com/shenwei356/countminsketch v0.0.0-20160519110546-b4482acb35b1 // indirect
+ 	github.com/sirupsen/logrus v1.9.3 // indirect
+ 	github.com/tmc/grpc-websocket-proxy v0.0.0-20201229170055-e5319fda7802 // indirect
+ 	github.com/xiang90/probing v0.0.0-20190116061207-43a291ad63a2 // indirect
+diff --git a/tests/go.sum b/tests/go.sum
+index b9e625bcd..103a80ceb 100644
+--- a/tests/go.sum
++++ b/tests/go.sum
+@@ -37,6 +37,8 @@ github.com/bgentry/speakeasy v0.1.0/go.mod h1:+zsyZBPWlz7T6j88CTgSN5bM796AkVf0kB
+ github.com/bketelsen/crypt v0.0.3-0.20200106085610-5cbc8cc4026c/go.mod h1:MKsuJmJgSg28kpZDP6UIiPt0e0Oz0kqKNGyRaWEPv84=
+ github.com/cenkalti/backoff/v4 v4.2.1 h1:y4OZtCnogmCPw98Zjyt5a6+QwPLGkiQsYW5oUqylYbM=
+ github.com/cenkalti/backoff/v4 v4.2.1/go.mod h1:Y3VNntkOUPxTVeUxJ/G5vcM//AlwfmyYozVcomhLiZE=
++github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869 h1:DDGfHa7BWjL4YnC6+E63dPcxHo2sUxDIu8g3QgEJdRY=
++github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869/go.mod h1:Ekp36dRnpXw/yCqJaO+ZrUyxD+3VXMFFr56k5XYrpB4=
+ github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
+ github.com/cespare/xxhash v1.1.0/go.mod h1:XrSqR1VqqWfGrhpAt58auRo0WTKS1nRRg3ghfAqPWnc=
+ github.com/cespare/xxhash/v2 v2.1.1/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
+@@ -264,6 +266,8 @@ github.com/rogpeppe/go-internal v1.10.0/go.mod h1:UQnix2H7Ngw/k4C5ijL5+65zddjncj
+ github.com/russross/blackfriday/v2 v2.0.1/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
+ github.com/ryanuber/columnize v0.0.0-20160712163229-9b3edd62028f/go.mod h1:sm1tb6uqfes/u+d4ooFouqFdy9/2g9QGwK3SQygK0Ts=
+ github.com/sean-/seed v0.0.0-20170313163322-e2103e2c3529/go.mod h1:DxrIzT+xaE7yg65j358z/aeFdxmN0P9QXhEzd20vsDc=
++github.com/shenwei356/countminsketch v0.0.0-20160519110546-b4482acb35b1 h1:Y8xKgTgaESaNqyciwIY5PHfKOimhM9dtkXYXwtL+Ps0=
++github.com/shenwei356/countminsketch v0.0.0-20160519110546-b4482acb35b1/go.mod h1:p44/LKtqBsOfeSgj9WBuJ48nRof36+s0iFtzmsVMKaE=
+ github.com/shurcooL/sanitized_anchor_name v1.0.0/go.mod h1:1NzhyTcUVG4SuEtjjoZeVRXNmyL/1OwPU0+IJeTBvfc=
+ github.com/sirupsen/logrus v1.2.0/go.mod h1:LxeOpSwHxABJmUn/MG1IvRgCAasNZTLOkJPxbbu5VWo=
+ github.com/sirupsen/logrus v1.4.2/go.mod h1:tLMulIdttU9McNUspp0xgXVQah82FyeX6MwdIuYE2rE=
+diff --git a/tests/integration/cluster.go b/tests/integration/cluster.go
+index f70375c9b..4bb2eacad 100644
+--- a/tests/integration/cluster.go
++++ b/tests/integration/cluster.go
+@@ -172,6 +172,15 @@ type ClusterConfig struct {
+
+ 	WatchProgressNotifyInterval time.Duration
+ 	CorruptCheckTime            time.Duration
++
++	ExperimentalArgs EtcdServerExperimentalQmonArgs
++}
++
++type EtcdServerExperimentalQmonArgs struct {
++	EnableBandwidthThrottle bool
++	MemoryBudgetMegabytes   uint
++	ThrottleEnableAtPercent uint
++	AlwaysOnForLargeReq     bool
+ }
+
+ type cluster struct {
+@@ -337,6 +346,7 @@ func (c *cluster) mustNewMember(t testutil.TB, memberNumber int64) *member {
+ 			leaseCheckpointInterval:     c.cfg.LeaseCheckpointInterval,
+ 			WatchProgressNotifyInterval: c.cfg.WatchProgressNotifyInterval,
+ 			CorruptCheckTime:            c.cfg.CorruptCheckTime,
++			ExperimentalArguments:       c.cfg.ExperimentalArgs,
+ 		})
+ 	m.DiscoveryURL = c.cfg.DiscoveryURL
+ 	if c.cfg.UseGRPC {
+@@ -646,6 +656,7 @@ type memberConfig struct {
+ 	leaseCheckpointPersist      bool
+ 	WatchProgressNotifyInterval time.Duration
+ 	CorruptCheckTime            time.Duration
++	ExperimentalArguments       EtcdServerExperimentalQmonArgs
+ }
+
+ // mustNewMember return an inited member with the given name. If peerTLS is
+@@ -764,6 +775,13 @@ func mustNewMember(t testutil.TB, mcfg memberConfig) *member {
+ 		// might reuse this (t).
+ 		raft.ResetDefaultLogger()
+ 	})
++
++	// apply the given experimental arguments
++	m.ExperimentalQmonAlwaysOnForLargeReq = mcfg.ExperimentalArguments.AlwaysOnForLargeReq
++	m.ExperimentalQmonMemoryBudgetMegabytes = mcfg.ExperimentalArguments.MemoryBudgetMegabytes
++	m.ExperimentalQmonEnableBandwidthThrottle = mcfg.ExperimentalArguments.EnableBandwidthThrottle
++	m.ExperimentalQmonThrottleEnableAtPercent = mcfg.ExperimentalArguments.ThrottleEnableAtPercent
++
+ 	return m
+ }
+
+diff --git a/tests/integration/qmon_test.go b/tests/integration/qmon_test.go
+new file mode 100644
+index 000000000..902bb3e96
+--- /dev/null
++++ b/tests/integration/qmon_test.go
+@@ -0,0 +1,147 @@
++package integration
++
++import (
++	"context"
++	"fmt"
++	"math/rand"
++	"testing"
++
++	"github.com/stretchr/testify/assert"
++	clientv3 "go.etcd.io/etcd/client/v3"
++)
++
++const (
++	throttleErrMsg = "etcdserver: throttle: too many requests"
++)
++
++type qmonTestCase struct {
++	getReqStartKey    string
++	getReqEndKey      string
++	getReqCountOnly   bool
++	expectedErrString string
++}
++
++func TestQmonThrottledRequests(t *testing.T) {
++	var tests = []struct {
++		name         string
++		serverConfig EtcdServerExperimentalQmonArgs
++		objectCount  int
++		testCases    []qmonTestCase
++	}{
++		{
++			name: "throttle expensive range call when " +
++				"the etcd process resident memory breaches threshold and the estimated response size breach rateLimiter burst",
++			// budgetExhausted is always True as rss is expected to larger than 10485 (1 * 1024 * 1024 * 1%) bytes
++			serverConfig: EtcdServerExperimentalQmonArgs{
++				EnableBandwidthThrottle: true,
++				AlwaysOnForLargeReq:     false,
++				ThrottleEnableAtPercent: 1,
++				MemoryBudgetMegabytes:   1,
++			},
++			objectCount: 5,
++			testCases: []qmonTestCase{
++				{
++					getReqStartKey:    "foo_1",
++					getReqEndKey:      "foo_5",
++					getReqCountOnly:   false,
++					expectedErrString: throttleErrMsg,
++				},
++			},
++		},
++		{
++			name: "throttle expensive range call when " +
++				"running on small instance(AlwaysOnForLargeReq=true) & the estimated response size breach rateLimiter burst",
++			serverConfig: EtcdServerExperimentalQmonArgs{
++				EnableBandwidthThrottle: true,
++				AlwaysOnForLargeReq:     true,
++				ThrottleEnableAtPercent: 99,
++				MemoryBudgetMegabytes:   4500,
++			},
++			objectCount: 50,
++			testCases: []qmonTestCase{
++				{
++					getReqStartKey:    "foo_1",
++					getReqEndKey:      "foo_50",
++					getReqCountOnly:   false,
++					expectedErrString: "",
++				},
++				{
++					getReqStartKey:    "foo_1",
++					getReqEndKey:      "foo_50",
++					getReqCountOnly:   false,
++					expectedErrString: throttleErrMsg,
++				},
++			},
++		},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			etcdClient := setUpTestCluster(t, tt.serverConfig, tt.objectCount)
++
++			for _, testCase := range tt.testCases {
++				ops := []clientv3.OpOption{
++					clientv3.WithRange(testCase.getReqEndKey),
++				}
++				if testCase.getReqCountOnly {
++					ops = append(ops, clientv3.WithCountOnly())
++				}
++
++				_, err := etcdClient.Get(context.TODO(), testCase.getReqStartKey, ops...)
++
++				if len(testCase.expectedErrString) > 0 {
++					assert.Contains(t, err.Error(), testCase.expectedErrString)
++				} else {
++					assert.NoError(t, err)
++				}
++			}
++
++			assertCheapRangeRequestsAreNotThrottled(t, etcdClient)
++			assertCheapRangeRequestsAreNotThrottled(t, etcdClient)
++		})
++
++	}
++
++}
++
++func setUpTestCluster(t *testing.T,
++	experimentalArgs EtcdServerExperimentalQmonArgs,
++	objectCount int) *clientv3.Client {
++	BeforeTest(t)
++	clus := NewClusterV3(t, &ClusterConfig{
++		Size:             3,
++		ExperimentalArgs: experimentalArgs,
++	})
++	t.Cleanup(func() {
++		clus.Terminate(t)
++	})
++	etcdClient := clus.RandClient()
++
++	// fill up cluster with desired object count
++	value := make([]byte, 1024*1024)
++	_, err := rand.Read(value)
++	if err != nil {
++		t.Fatalf("fail to generate random bytes, err: %v", err)
++	}
++	counter := 1
++	for counter <= objectCount {
++		_, err = etcdClient.Put(context.TODO(), fmt.Sprintf("foo_%d", counter), string(value))
++		if err != nil {
++			t.Fatalf("couldn't fill cluster with desired config, %v", err)
++		}
++		counter += 1
++	}
++
++	return etcdClient
++}
++
++func assertCheapRangeRequestsAreNotThrottled(t *testing.T, etcdClient *clientv3.Client) {
++	// single key-value query is not impacted
++	_, err := etcdClient.Get(context.TODO(), "foo_1")
++	assert.NoError(t, err)
++
++	// countOnly query is not impacted
++	_, err = etcdClient.Get(context.TODO(), "foo_1",
++		clientv3.WithRange("foo_50"), clientv3.WithCountOnly())
++	assert.NoError(t, err)
++}
+-- 
+2.40.1
+
