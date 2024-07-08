@@ -1,0 +1,33 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Madhav Jivrajani <madhav.jiv@gmail.com>
+Date: Mon, 3 Jul 2023 11:10:52 +0530
+Subject: [PATCH] --EKS-PATCH-- --GO-UPDATE-- prep for go1.21: use -e in go
+ list
+
+For some reason, in go1.21, go list does not allow
+importing main packages anymore, even if it is for
+the sake of tracking dependencies (which is a valid
+use case).
+
+A suggestion to work around this is to use -e flag to
+permit processing of erroneous packages. However, this
+doesn't seem prudent.
+
+Signed-off-by: Madhav Jivrajani <madhav.jiv@gmail.com>
+---
+ hack/update-vendor.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/hack/update-vendor.sh b/hack/update-vendor.sh
+index 382772fa201..66c30b68a26 100755
+--- a/hack/update-vendor.sh
++++ b/hack/update-vendor.sh
+@@ -288,7 +288,7 @@ while IFS= read -r repo; do
+       echo "=== computing imports for ${repo}"
+       go list all
+       echo "=== computing tools imports for ${repo}"
+-      go list -tags=tools all
++      go list -e -tags=tools all
+     } >> "${LOG_FILE}" 2>&1
+ 
+     # capture module dependencies

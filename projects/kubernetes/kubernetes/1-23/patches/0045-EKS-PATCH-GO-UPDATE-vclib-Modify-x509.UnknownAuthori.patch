@@ -1,0 +1,44 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Madhav Jivrajani <madhav.jiv@gmail.com>
+Date: Fri, 6 Jan 2023 14:11:20 +0530
+Subject: [PATCH] --EKS-PATCH-- --GO-UPDATE-- vclib: Modify
+ x509.UnknownAuthorityError unwrap check
+
+Modify unwrap error utility to make it work with go1.20
+This version of Go introduces a new layer of wrapping via
+a new error type. The commit accounts for that while being
+compatible with go1.19
+
+Signed-off-by: Madhav Jivrajani <madhav.jiv@gmail.com>
+---
+ .../vsphere/vclib/connection_test.go                   | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/staging/src/k8s.io/legacy-cloud-providers/vsphere/vclib/connection_test.go b/staging/src/k8s.io/legacy-cloud-providers/vsphere/vclib/connection_test.go
+index 70301ebbbc5..5663afa4a2e 100644
+--- a/staging/src/k8s.io/legacy-cloud-providers/vsphere/vclib/connection_test.go
++++ b/staging/src/k8s.io/legacy-cloud-providers/vsphere/vclib/connection_test.go
+@@ -21,6 +21,7 @@ import (
+ 	"crypto/sha1"
+ 	"crypto/tls"
+ 	"crypto/x509"
++	"errors"
+ 	"fmt"
+ 	"io/ioutil"
+ 	"net/http"
+@@ -187,12 +188,9 @@ func verifyWrappedX509UnkownAuthorityErr(t *testing.T, err error) {
+ 	if !ok {
+ 		t.Fatalf("Expected to receive an url.Error, got '%s' (%#v)", err.Error(), err)
+ 	}
+-	x509Err, ok := urlErr.Err.(x509.UnknownAuthorityError)
+-	if !ok {
+-		t.Fatalf("Expected to receive a wrapped x509.UnknownAuthorityError, got: '%s' (%#v)", urlErr.Error(), urlErr)
+-	}
+-	if msg := x509Err.Error(); msg != "x509: certificate signed by unknown authority" {
+-		t.Fatalf("Expected 'signed by unknown authority' error, got: '%s'", msg)
++	var x509err x509.UnknownAuthorityError
++	if !errors.As(urlErr.Err, &x509err) {
++		t.Fatalf("Expected to receive a wrapped x509.UnknownAuthorityError, got: '%s' (%#v)", urlErr.Err.Error(), urlErr.Err)
+ 	}
+ }
+ 

@@ -1,32 +1,9 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Craig Ingram <cjingram@google.com>
 Date: Fri, 24 Feb 2023 15:24:49 -0500
-Subject: [PATCH] --EKS-PATCH-- Return error for localhost seccomp type with no localhost
- profile defined
+Subject: [PATCH] --EKS-PATCH-- Return error for localhost seccomp type with no
+ localhost profile defined
 
-Description:
-* "Returns an error when a Pod or Container's SecurityContext has a localhost seccomp type but an empty
-localhostProfile field" (PR description)
-
-Upstream PR, Issue, KEP, etc. links:
-* PR: https://github.com/kubernetes/kubernetes/pull/117118
-* Commit: 73174f870735251e7d4240cdc36983d1bef7db5f
-* Issue: https://github.com/kubernetes/kubernetes/issues/118690
-
-If this patch is based on an upstream commit, how (if at all) do this patch and the upstream source differ?
-* The cherry-pick is from 1.24, so there could be some minor differences.
-
-If this patch's changes have not been added by upstream, why not?
-* N/A
-
-Other patches related to this patch:
-* None
-
-Changes made to this patch after its initial creation and reasons for these changes:
-* None
-
-Kubernetes version this patch can be dropped:
-* This patch is not needed in >= 1.24, as it has been added by upstream.
 ---
  pkg/kubelet/kuberuntime/helpers.go            |  66 ++--
  pkg/kubelet/kuberuntime/helpers_test.go       | 350 ++++--------------
@@ -708,10 +685,10 @@ index 25065f30411..70ad7250ce2 100644
  }
  
 diff --git a/pkg/kubelet/kuberuntime/kuberuntime_container_linux.go b/pkg/kubelet/kuberuntime/kuberuntime_container_linux.go
-index 6cb9e54729e..54670673bcd 100644
+index 0162301415c..bff79d4bc6e 100644
 --- a/pkg/kubelet/kuberuntime/kuberuntime_container_linux.go
 +++ b/pkg/kubelet/kuberuntime/kuberuntime_container_linux.go
-@@ -46,15 +46,23 @@ func (m *kubeGenericRuntimeManager) applyPlatformSpecificContainerConfig(config
+@@ -45,15 +45,23 @@ func (m *kubeGenericRuntimeManager) applyPlatformSpecificContainerConfig(config
  		libcontainercgroups.IsCgroup2UnifiedMode() {
  		enforceMemoryQoS = true
  	}
@@ -738,7 +715,7 @@ index 6cb9e54729e..54670673bcd 100644
  	}
  
  	if nsTarget != nil && lc.SecurityContext.NamespaceOptions.Pid == runtimeapi.NamespaceMode_CONTAINER {
-@@ -125,7 +133,7 @@ func (m *kubeGenericRuntimeManager) generateLinuxContainerConfig(container *v1.C
+@@ -124,7 +132,7 @@ func (m *kubeGenericRuntimeManager) generateLinuxContainerConfig(container *v1.C
  		}
  	}
  
@@ -748,7 +725,7 @@ index 6cb9e54729e..54670673bcd 100644
  
  // calculateLinuxResources will create the linuxContainerResources type based on the provided CPU and memory resource requests, limits
 diff --git a/pkg/kubelet/kuberuntime/kuberuntime_container_linux_test.go b/pkg/kubelet/kuberuntime/kuberuntime_container_linux_test.go
-index 46817e00fb0..98f635cc932 100644
+index 44fa80d70e1..4476bc0fd05 100644
 --- a/pkg/kubelet/kuberuntime/kuberuntime_container_linux_test.go
 +++ b/pkg/kubelet/kuberuntime/kuberuntime_container_linux_test.go
 @@ -47,6 +47,8 @@ func makeExpectedConfig(m *kubeGenericRuntimeManager, pod *v1.Pod, containerInde

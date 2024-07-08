@@ -1,0 +1,85 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Jayson Du <jasonxdu@dev-dsk-jasonxdu-2b-5cb25a4f.us-west-2.amazon.com>
+Date: Tue, 6 Feb 2024 07:50:37 +0000
+Subject: [PATCH] --EKS-PATCH-- --GO-UPDATE-- [release-1.23] releng/go: Update
+ images, deps and version to go 1.20.10
+
+---
+ .go-version                     | 2 +-
+ build/build-image/cross/VERSION | 2 +-
+ build/dependencies.yaml         | 6 +++---
+ staging/publishing/rules.yaml   | 2 +-
+ test/images/Makefile            | 2 +-
+ 5 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/.go-version b/.go-version
+index c4729c87820..acdfc7930c8 100644
+--- a/.go-version
++++ b/.go-version
+@@ -1 +1 @@
+-1.19.13
++1.20.10
+diff --git a/build/build-image/cross/VERSION b/build/build-image/cross/VERSION
+index 7bb04c31233..367d29fde35 100644
+--- a/build/build-image/cross/VERSION
++++ b/build/build-image/cross/VERSION
+@@ -1 +1 @@
+-v1.23.0-go1.19.13-bullseye.0
++v1.23.0-go1.20.10-bullseye.0
+diff --git a/build/dependencies.yaml b/build/dependencies.yaml
+index d7ca03b32f0..01930ade159 100644
+--- a/build/dependencies.yaml
++++ b/build/dependencies.yaml
+@@ -87,7 +87,7 @@ dependencies:
+ 
+   # Golang
+   - name: "golang: upstream version"
+-    version: 1.19.13
++    version: 1.20.10
+     refPaths:
+     - path: .go-version
+     - path: build/build-image/cross/VERSION
+@@ -104,7 +104,7 @@ dependencies:
+   # This entry is a stub of the major version to allow dependency checks to
+   # pass when building Kubernetes using a pre-release of Golang.
+   - name: "golang: 1.<major>"
+-    version: 1.19
++    version: 1.20
+     refPaths:
+     - path: build/build-image/cross/VERSION
+     #  we continue to test in the original go version which was go1.17
+@@ -119,7 +119,7 @@ dependencies:
+       match: 'GOLANG_VERSION\?=\d+.\d+(alpha|beta|rc)?\.?(\d+)?'
+ 
+   - name: "k8s.gcr.io/kube-cross: dependents"
+-    version: v1.23.0-go1.19.13-bullseye.0
++    version: v1.23.0-go1.20.10-bullseye.0
+     refPaths:
+     - path: build/build-image/cross/VERSION
+ 
+diff --git a/staging/publishing/rules.yaml b/staging/publishing/rules.yaml
+index d97749b089c..1715cdd0c79 100644
+--- a/staging/publishing/rules.yaml
++++ b/staging/publishing/rules.yaml
+@@ -7,7 +7,7 @@ recursive-delete-patterns:
+ - BUILD.bazel
+ - "*/BUILD.bazel"
+ - Gopkg.toml
+-default-go-version: 1.19.13
++default-go-version: 1.20.10
+ rules:
+ - destination: code-generator
+   branches:
+diff --git a/test/images/Makefile b/test/images/Makefile
+index db858d70cf0..d244f82d3e9 100644
+--- a/test/images/Makefile
++++ b/test/images/Makefile
+@@ -16,7 +16,7 @@ REGISTRY ?= k8s.gcr.io/e2e-test-images
+ GOARM ?= 7
+ DOCKER_CERT_BASE_PATH ?=
+ QEMUVERSION=v5.1.0-2
+-GOLANG_VERSION=1.19.13
++GOLANG_VERSION=1.20.10
+ export
+ 
+ ifndef WHAT

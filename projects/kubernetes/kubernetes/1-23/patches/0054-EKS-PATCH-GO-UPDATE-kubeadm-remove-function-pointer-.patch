@@ -1,0 +1,35 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: "Lubomir I. Ivanov" <lubomirivanov@vmware.com>
+Date: Sat, 20 May 2023 22:58:37 +0300
+Subject: [PATCH] --EKS-PATCH-- --GO-UPDATE-- kubeadm: remove function pointer
+ comparison in phase test
+
+TestBindToCommandArgRequirements has a .Pointer()
+comparison that is not guaranteed to pass given
+the reflected functions are closures.
+
+This test is consistently failing on Go 1.21 rc1.
+Remove said comparison from the test.
+---
+ cmd/kubeadm/app/cmd/phases/workflow/runner_test.go | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/cmd/kubeadm/app/cmd/phases/workflow/runner_test.go b/cmd/kubeadm/app/cmd/phases/workflow/runner_test.go
+index ef546fdd367..0a5594a579c 100644
+--- a/cmd/kubeadm/app/cmd/phases/workflow/runner_test.go
++++ b/cmd/kubeadm/app/cmd/phases/workflow/runner_test.go
+@@ -401,14 +401,8 @@ func TestBindToCommandArgRequirements(t *testing.T) {
+ 					continue
+ 				}
+ 
+-				// Ensure it is the expected function
+-				if reflect.ValueOf(cCmd.Args).Pointer() != reflect.ValueOf(args.args).Pointer() {
+-					t.Error("The function poiners where not equal.")
+-				}
+-
+ 				// Test passing argument set
+ 				err := cCmd.Args(cCmd, args.pass)
+-
+ 				if err != nil {
+ 					t.Errorf("command %s should validate the args: %v\n %v", cCmd.Name(), args.pass, err)
+ 				}

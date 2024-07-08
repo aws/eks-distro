@@ -1,0 +1,25 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Madhav Jivrajani <madhav.jiv@gmail.com>
+Date: Tue, 3 Jan 2023 00:15:30 +0530
+Subject: [PATCH] --EKS-PATCH-- --GO-UPDATE-- vsphere: Adapt to govmomi version
+ bumps
+
+Signed-off-by: Madhav Jivrajani <madhav.jiv@gmail.com>
+---
+ .../src/k8s.io/legacy-cloud-providers/vsphere/vsphere_test.go  | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/staging/src/k8s.io/legacy-cloud-providers/vsphere/vsphere_test.go b/staging/src/k8s.io/legacy-cloud-providers/vsphere/vsphere_test.go
+index 165f79bc639..07acbc5ca62 100644
+--- a/staging/src/k8s.io/legacy-cloud-providers/vsphere/vsphere_test.go
++++ b/staging/src/k8s.io/legacy-cloud-providers/vsphere/vsphere_test.go
+@@ -165,7 +165,8 @@ func configFromSimWithTLS(tlsConfig *tls.Config, insecureAllowed bool) (VSphereC
+ 	model.Service.ServeMux.Handle(path, handler)
+ 
+ 	// vAPI simulator
+-	path, handler = vapi.New(s.URL, vpx.Setting)
++	paths, handler := vapi.New(s.URL, vpx.Setting)
++	path = paths[0]
+ 	model.Service.ServeMux.Handle(path, handler)
+ 
+ 	// Lookup Service simulator
