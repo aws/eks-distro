@@ -20,7 +20,7 @@ require (
 	github.com/Microsoft/hcsshim v0.8.22
 	github.com/armon/circbuf v0.0.0-20150827004946-bbbad097214e
 	github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5
-	github.com/aws/aws-sdk-go v1.44.216
+	github.com/aws/aws-sdk-go v1.54.6
 	github.com/blang/semver/v4 v4.0.0
 	github.com/container-storage-interface/spec v1.7.0
 	github.com/coredns/corefile-migration v1.0.17
@@ -77,12 +77,12 @@ require (
 	go.opentelemetry.io/otel/trace v1.10.0
 	go.opentelemetry.io/proto/otlp v0.19.0
 	go.uber.org/zap v1.19.0
-	golang.org/x/crypto v0.14.0
-	golang.org/x/net v0.17.0
+	golang.org/x/crypto v0.21.0
+	golang.org/x/net v0.23.0
 	golang.org/x/oauth2 v0.7.0
 	golang.org/x/sync v0.3.0
-	golang.org/x/sys v0.13.0
-	golang.org/x/term v0.13.0
+	golang.org/x/sys v0.18.0
+	golang.org/x/term v0.18.0
 	golang.org/x/time v0.3.0
 	golang.org/x/tools v0.12.0
 	google.golang.org/api v0.114.0
@@ -238,7 +238,7 @@ require (
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/multierr v1.6.0 // indirect
 	golang.org/x/mod v0.12.0 // indirect
-	golang.org/x/text v0.13.0 // indirect
+	golang.org/x/text v0.14.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20230525234025-438c736192d0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20230525234020-1aefcd67740a // indirect
