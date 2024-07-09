@@ -1419,7 +1419,7 @@ index 00000000000..9925764a5b9
 +	}
 +}
 diff --git a/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/webhook.go b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/webhook.go
-index 6a513f1c11a..dd1b3337583 100644
+index f067b3f723c..4156df0157c 100644
 --- a/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/webhook.go
 +++ b/staging/src/k8s.io/apiserver/pkg/admission/plugin/webhook/generic/webhook.go
 @@ -20,6 +20,8 @@ import (
@@ -1428,13 +1428,13 @@ index 6a513f1c11a..dd1b3337583 100644
  	"io"
 +	"k8s.io/apiserver/pkg/admission/plugin/webhook/generic/exclusionrules"
 +	"sync"
- 
- 	admissionmetrics "k8s.io/apiserver/pkg/admission/metrics"
+
  	"k8s.io/klog/v2"
-@@ -44,6 +46,20 @@ import (
+
+@@ -46,6 +48,20 @@ import (
  	clientset "k8s.io/client-go/kubernetes"
  )
- 
+
 +var criticalPathExcluder exclusionrules.CriticalPathExcluder
 +var LoadCriticalPathExcluder *sync.Once
 +
@@ -1452,10 +1452,10 @@ index 6a513f1c11a..dd1b3337583 100644
  // Webhook is an abstract admission plugin with all the infrastructure to define Admit or Validate on-top.
  type Webhook struct {
  	*admission.Handler
-@@ -93,6 +109,10 @@ func NewWebhook(handler *admission.Handler, configFile io.Reader, sourceFactory
+@@ -95,6 +111,10 @@ func NewWebhook(handler *admission.Handler, configFile io.Reader, sourceFactory
  	cm.SetAuthenticationInfoResolver(authInfoResolver)
  	cm.SetServiceResolver(webhookutil.NewDefaultServiceResolver())
- 
+
 +	LoadCriticalPathExcluder.Do(func() {
 +		criticalPathExcluder = exclusionrules.NewCriticalPathExcluder()
 +	})
@@ -1463,7 +1463,7 @@ index 6a513f1c11a..dd1b3337583 100644
  	return &Webhook{
  		Handler:          handler,
  		sourceFactory:    sourceFactory,
-@@ -166,6 +186,10 @@ func (a *Webhook) ShouldCallHook(ctx context.Context, h webhook.WebhookAccessor,
+@@ -168,6 +188,10 @@ func (a *Webhook) ShouldCallHook(ctx context.Context, h webhook.WebhookAccessor,
  		return nil, nil
  	}
  
