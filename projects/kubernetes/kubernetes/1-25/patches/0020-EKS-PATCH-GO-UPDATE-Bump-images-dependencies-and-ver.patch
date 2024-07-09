@@ -1,0 +1,376 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Sushanth T <sushanqt@amazon.com>
+Date: Mon, 1 Apr 2024 08:20:16 +0000
+Subject: [PATCH] --EKS-PATCH-- --GO-UPDATE-- Bump images, dependencies and
+ versions to go 1.21.7 / distroless-iptables to v0.4.5
+
+Change: made changes similar to 1.26
+https://github.com/kubernetes/kubernetes/pull/123230/files as part of go
+bump to 1.21 from upstream issue https://github.com/kubernetes/release/issues/3076
+---
+ .go-version                     |  2 +-
+ build/build-image/cross/VERSION |  2 +-
+ build/common.sh                 |  4 +--
+ build/dependencies.yaml         | 10 +++---
+ staging/publishing/rules.yaml   | 56 ++++++++++++++++-----------------
+ test/images/Makefile            |  2 +-
+ test/utils/image/manifest.go    |  2 +-
+ 7 files changed, 39 insertions(+), 39 deletions(-)
+
+diff --git a/.go-version b/.go-version
+index acdfc7930c8..428abfd24fb 100644
+--- a/.go-version
++++ b/.go-version
+@@ -1 +1 @@
+-1.20.10
++1.21.8
+diff --git a/build/build-image/cross/VERSION b/build/build-image/cross/VERSION
+index 074c0ccf0c6..eb3f5069472 100644
+--- a/build/build-image/cross/VERSION
++++ b/build/build-image/cross/VERSION
+@@ -1 +1 @@
+-v1.25.0-go1.20.10-bullseye.0
++v1.25.0-go1.21.8-bullseye.0
+diff --git a/build/common.sh b/build/common.sh
+index c470aceccb9..933dd7ab191 100755
+--- a/build/common.sh
++++ b/build/common.sh
+@@ -90,8 +90,8 @@ readonly KUBE_RSYNC_PORT="${KUBE_RSYNC_PORT:-}"
+ readonly KUBE_CONTAINER_RSYNC_PORT=8730
+ 
+ # These are the default versions (image tags) for their respective base images.
+-readonly __default_distroless_iptables_version=v0.1.1
+-readonly __default_go_runner_version=v2.3.1-go1.20.10-bullseye.0
++readonly __default_distroless_iptables_version=v0.4.5
++readonly __default_go_runner_version=v2.3.1-go1.21.8-bullseye.0
+ readonly __default_setcap_version=bullseye-v1.3.0
+ 
+ # These are the base images for the Docker-wrapped binaries.
+diff --git a/build/dependencies.yaml b/build/dependencies.yaml
+index e3a55f7bd31..421ceaac6bf 100644
+--- a/build/dependencies.yaml
++++ b/build/dependencies.yaml
+@@ -88,7 +88,7 @@ dependencies:
+ 
+   # Golang
+   - name: "golang: upstream version"
+-    version: 1.20.10
++    version: 1.21.8
+     refPaths:
+     - path: .go-version
+     - path: build/build-image/cross/VERSION
+@@ -103,7 +103,7 @@ dependencies:
+   # This entry is a stub of the major version to allow dependency checks to
+   # pass when building Kubernetes using a pre-release of Golang.
+   - name: "golang: 1.<major>"
+-    version: 1.20
++    version: 1.21
+     refPaths:
+     - path: build/build-image/cross/VERSION
+     # we continue to test in the original go version which was go1.19
+@@ -112,7 +112,7 @@ dependencies:
+     #  match: minimum_go_version=go([0-9]+\.[0-9]+)
+ 
+   - name: "registry.k8s.io/kube-cross: dependents"
+-    version: v1.25.0-go1.20.10-bullseye.0
++    version: v1.25.0-go1.21.8-bullseye.0
+     refPaths:
+     - path: build/build-image/cross/VERSION
+ 
+@@ -134,7 +134,7 @@ dependencies:
+       match: BASE_IMAGE_VERSION\?=
+ 
+   - name: "registry.k8s.io/distroless-iptables: dependents"
+-    version: v0.1.1
++    version: v0.4.5
+     refPaths:
+     - path: build/common.sh
+       match: __default_distroless_iptables_version=
+@@ -142,7 +142,7 @@ dependencies:
+       match: configs\[DistrolessIptables\] = Config{list\.BuildImageRegistry, "distroless-iptables", "v([0-9]+)\.([0-9]+)\.([0-9]+)"}
+ 
+   - name: "registry.k8s.io/go-runner: dependents"
+-    version: v2.3.1-go1.20.10-bullseye.0
++    version: v2.3.1-go1.21.8-bullseye.0
+     refPaths:
+     - path: build/common.sh
+       match: __default_go_runner_version=
+diff --git a/staging/publishing/rules.yaml b/staging/publishing/rules.yaml
+index 2aa6dace43d..0d63d4e61d8 100644
+--- a/staging/publishing/rules.yaml
++++ b/staging/publishing/rules.yaml
+@@ -21,7 +21,7 @@ rules:
+       branch: release-1.24
+       dir: staging/src/k8s.io/code-generator
+   - name: release-1.25
+-    go: 1.20.10
++    go: 1.21.8
+     source:
+       branch: release-1.25
+       dir: staging/src/k8s.io/code-generator
+@@ -47,7 +47,7 @@ rules:
+       branch: release-1.24
+       dir: staging/src/k8s.io/apimachinery
+   - name: release-1.25
+-    go: 1.20.10
++    go: 1.21.8
+     source:
+       branch: release-1.25
+       dir: staging/src/k8s.io/apimachinery
+@@ -86,7 +86,7 @@ rules:
+       branch: release-1.24
+       dir: staging/src/k8s.io/api
+   - name: release-1.25
+-    go: 1.20.10
++    go: 1.21.8
+     dependencies:
+     - repository: apimachinery
+       branch: release-1.25
+@@ -152,7 +152,7 @@ rules:
+       go build -mod=mod ./...
+       go test -mod=mod ./...
+   - name: release-1.25
+-    go: 1.20.10
++    go: 1.21.8
+     dependencies:
+     - repository: apimachinery
+       branch: release-1.25
+@@ -216,7 +216,7 @@ rules:
+       branch: release-1.24
+       dir: staging/src/k8s.io/component-base
+   - name: release-1.25
+-    go: 1.20.10
++    go: 1.21.8
+     dependencies:
+     - repository: apimachinery
+       branch: release-1.25
+@@ -278,7 +278,7 @@ rules:
+       branch: release-1.24
+       dir: staging/src/k8s.io/component-helpers
+   - name: release-1.25
+-    go: 1.20.10
++    go: 1.21.8
+     dependencies:
+     - repository: apimachinery
+       branch: release-1.25
+@@ -348,7 +348,7 @@ rules:
+       branch: release-1.24
+       dir: staging/src/k8s.io/apiserver
+   - name: release-1.25
+-    go: 1.20.10
++    go: 1.21.8
+     dependencies:
+     - repository: apimachinery
+       branch: release-1.25
+@@ -436,7 +436,7 @@ rules:
+       branch: release-1.24
+       dir: staging/src/k8s.io/kube-aggregator
+   - name: release-1.25
+-    go: 1.20.10
++    go: 1.21.8
+     dependencies:
+     - repository: apimachinery
+       branch: release-1.25
+@@ -547,7 +547,7 @@ rules:
+       # assumes GO111MODULE=on
+       go build -mod=mod .
+   - name: release-1.25
+-    go: 1.20.10
++    go: 1.21.8
+     dependencies:
+     - repository: apimachinery
+       branch: release-1.25
+@@ -647,7 +647,7 @@ rules:
+       # assumes GO111MODULE=on
+       go build -mod=mod .
+   - name: release-1.25
+-    go: 1.20.10
++    go: 1.21.8
+     dependencies:
+     - repository: apimachinery
+       branch: release-1.25
+@@ -747,7 +747,7 @@ rules:
+     required-packages:
+     - k8s.io/code-generator
+   - name: release-1.25
+-    go: 1.20.10
++    go: 1.21.8
+     dependencies:
+     - repository: apimachinery
+       branch: release-1.25
+@@ -824,7 +824,7 @@ rules:
+       branch: release-1.24
+       dir: staging/src/k8s.io/metrics
+   - name: release-1.25
+-    go: 1.20.10
++    go: 1.21.8
+     dependencies:
+     - repository: apimachinery
+       branch: release-1.25
+@@ -888,7 +888,7 @@ rules:
+       branch: release-1.24
+       dir: staging/src/k8s.io/cli-runtime
+   - name: release-1.25
+-    go: 1.20.10
++    go: 1.21.8
+     dependencies:
+     - repository: api
+       branch: release-1.25
+@@ -958,7 +958,7 @@ rules:
+       branch: release-1.24
+       dir: staging/src/k8s.io/sample-cli-plugin
+   - name: release-1.25
+-    go: 1.20.10
++    go: 1.21.8
+     dependencies:
+     - repository: api
+       branch: release-1.25
+@@ -1029,7 +1029,7 @@ rules:
+       branch: release-1.24
+       dir: staging/src/k8s.io/kube-proxy
+   - name: release-1.25
+-    go: 1.20.10
++    go: 1.21.8
+     dependencies:
+     - repository: apimachinery
+       branch: release-1.25
+@@ -1101,7 +1101,7 @@ rules:
+       branch: release-1.24
+       dir: staging/src/k8s.io/kubelet
+   - name: release-1.25
+-    go: 1.20.10
++    go: 1.21.8
+     dependencies:
+     - repository: apimachinery
+       branch: release-1.25
+@@ -1173,7 +1173,7 @@ rules:
+       branch: release-1.24
+       dir: staging/src/k8s.io/kube-scheduler
+   - name: release-1.25
+-    go: 1.20.10
++    go: 1.21.8
+     dependencies:
+     - repository: apimachinery
+       branch: release-1.25
+@@ -1253,7 +1253,7 @@ rules:
+       branch: release-1.24
+       dir: staging/src/k8s.io/controller-manager
+   - name: release-1.25
+-    go: 1.20.10
++    go: 1.21.8
+     dependencies:
+     - repository: api
+       branch: release-1.25
+@@ -1351,7 +1351,7 @@ rules:
+       branch: release-1.24
+       dir: staging/src/k8s.io/cloud-provider
+   - name: release-1.25
+-    go: 1.20.10
++    go: 1.21.8
+     dependencies:
+     - repository: api
+       branch: release-1.25
+@@ -1461,7 +1461,7 @@ rules:
+       branch: release-1.24
+       dir: staging/src/k8s.io/kube-controller-manager
+   - name: release-1.25
+-    go: 1.20.10
++    go: 1.21.8
+     dependencies:
+     - repository: apimachinery
+       branch: release-1.25
+@@ -1525,7 +1525,7 @@ rules:
+       branch: release-1.24
+       dir: staging/src/k8s.io/cluster-bootstrap
+   - name: release-1.25
+-    go: 1.20.10
++    go: 1.21.8
+     dependencies:
+     - repository: apimachinery
+       branch: release-1.25
+@@ -1577,7 +1577,7 @@ rules:
+       branch: release-1.24
+       dir: staging/src/k8s.io/csi-translation-lib
+   - name: release-1.25
+-    go: 1.20.10
++    go: 1.21.8
+     dependencies:
+     - repository: api
+       branch: release-1.25
+@@ -1609,7 +1609,7 @@ rules:
+       branch: release-1.24
+       dir: staging/src/k8s.io/mount-utils
+   - name: release-1.25
+-    go: 1.20.10
++    go: 1.21.8
+     source:
+       branch: release-1.25
+       dir: staging/src/k8s.io/mount-utils
+@@ -1720,7 +1720,7 @@ rules:
+       branch: release-1.24
+       dir: staging/src/k8s.io/legacy-cloud-providers
+   - name: release-1.25
+-    go: 1.20.10
++    go: 1.21.8
+     dependencies:
+     - repository: api
+       branch: release-1.25
+@@ -1768,7 +1768,7 @@ rules:
+       branch: release-1.24
+       dir: staging/src/k8s.io/cri-api
+   - name: release-1.25
+-    go: 1.20.10
++    go: 1.21.8
+     source:
+       branch: release-1.25
+       dir: staging/src/k8s.io/cri-api
+@@ -1863,7 +1863,7 @@ rules:
+       branch: release-1.24
+       dir: staging/src/k8s.io/kubectl
+   - name: release-1.25
+-    go: 1.20.10
++    go: 1.21.8
+     dependencies:
+     - repository: api
+       branch: release-1.25
+@@ -1951,7 +1951,7 @@ rules:
+       branch: release-1.24
+       dir: staging/src/k8s.io/pod-security-admission
+   - name: release-1.25
+-    go: 1.20.10
++    go: 1.21.8
+     dependencies:
+     - repository: api
+       branch: release-1.25
+@@ -1974,4 +1974,4 @@ recursive-delete-patterns:
+ - '*/BUILD.bazel'
+ - Gopkg.toml
+ - '*/.gitattributes'
+-default-go-version: 1.20.10
++default-go-version: 1.21.8
+diff --git a/test/images/Makefile b/test/images/Makefile
+index ebd6ffd0ff0..769be9c7c86 100644
+--- a/test/images/Makefile
++++ b/test/images/Makefile
+@@ -16,7 +16,7 @@ REGISTRY ?= registry.k8s.io/e2e-test-images
+ GOARM ?= 7
+ DOCKER_CERT_BASE_PATH ?=
+ QEMUVERSION=v5.1.0-2
+-GOLANG_VERSION=1.20.10
++GOLANG_VERSION=1.21.8
+ export
+ 
+ ifndef WHAT
+diff --git a/test/utils/image/manifest.go b/test/utils/image/manifest.go
+index ad8e25c9b5b..9c45889f0c8 100644
+--- a/test/utils/image/manifest.go
++++ b/test/utils/image/manifest.go
+@@ -240,7 +240,7 @@ func initImageConfigs(list RegistryList) (map[ImageID]Config, map[ImageID]Config
+ 	configs[BusyBox] = Config{list.PromoterE2eRegistry, "busybox", "1.29-2"}
+ 	configs[CudaVectorAdd] = Config{list.PromoterE2eRegistry, "cuda-vector-add", "1.0"}
+ 	configs[CudaVectorAdd2] = Config{list.PromoterE2eRegistry, "cuda-vector-add", "2.2"}
+-	configs[DistrolessIptables] = Config{list.BuildImageRegistry, "distroless-iptables", "v0.1.1"}
++	configs[DistrolessIptables] = Config{list.BuildImageRegistry, "distroless-iptables", "v0.4.5"}
+ 	configs[Etcd] = Config{list.GcEtcdRegistry, "etcd", "3.5.9-0"}
+ 	configs[GlusterDynamicProvisioner] = Config{list.PromoterE2eRegistry, "glusterdynamic-provisioner", "v1.3"}
+ 	configs[Httpd] = Config{list.PromoterE2eRegistry, "httpd", "2.4.38-2"}

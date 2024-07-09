@@ -1,20 +1,20 @@
-From f222e7eb4f50871b6066e8ce6d3ace8293da8848 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kir Kolyshkin <kolyshkin@gmail.com>
 Date: Wed, 22 Dec 2021 17:26:08 -0800
 Subject: [PATCH] --EKS-PATCH-- Bump 1.23 runc version to 1.1.6
 
 Description:
-  * Fixes CVE-2023-27561 and CVE-2023-28642. 
+  * Fixes CVE-2023-27561 and CVE-2023-28642.
 
 Upstream PR, Issue, KEP, etc. links:
-  Cherry-pick was done in the following order from the following PRs: 
+  Cherry-pick was done in the following order from the following PRs:
   * https://github.com/kubernetes/kubernetes/pull/108597
   * https://github.com/kubernetes/kubernetes/pull/109029
   * https://github.com/kubernetes/kubernetes/pull/117892
 
 If this patch is based on an upstream commit, how (if at all) do this patch and the upstream source differ?
-  * Due to checksum mismatch issue with dockerdistribution/reference , the version was bunped to v2.8.1+incompatible. 
-  * In `kubelet/cm/cgroup_manager_linux.go` used instances of `libcontainerCgroupConfig.Resources` to ensure cpu quota 
+  * Due to checksum mismatch issue with dockerdistribution/reference , the version was bunped to v2.8.1+incompatible.
+  * In `kubelet/cm/cgroup_manager_linux.go` used instances of `libcontainerCgroupConfig.Resources` to ensure cpu quota
   is set. In dockershim/cm/container_manager_linux.go the new `cgroupfs.NewManager` were refactored.
   * Due to cherry-pick the version of `/apiserver/schema/cel` was bumped to v0.10.0 which led to Junit test failures. As
 	the change is not related to runc version bump, the change was reverted to `/apiserver/schema/cel` version v0.9.0
@@ -1594,7 +1594,7 @@ index 41063cace44..d17237484ef 100644
  }
  
 diff --git a/pkg/kubelet/kuberuntime/kuberuntime_container_linux.go b/pkg/kubelet/kuberuntime/kuberuntime_container_linux.go
-index 54670673bcd..bff79d4bc6e 100644
+index 6cb9e54729e..0162301415c 100644
 --- a/pkg/kubelet/kuberuntime/kuberuntime_container_linux.go
 +++ b/pkg/kubelet/kuberuntime/kuberuntime_container_linux.go
 @@ -24,7 +24,6 @@ import (
@@ -1605,7 +1605,7 @@ index 54670673bcd..bff79d4bc6e 100644
  	v1 "k8s.io/api/core/v1"
  	"k8s.io/apimachinery/pkg/api/resource"
  	utilfeature "k8s.io/apiserver/pkg/util/feature"
-@@ -178,7 +177,7 @@ func GetHugepageLimitsFromResources(resources v1.ResourceRequirements) []*runtim
+@@ -170,7 +169,7 @@ func GetHugepageLimitsFromResources(resources v1.ResourceRequirements) []*runtim
  	var hugepageLimits []*runtimeapi.HugepageLimit
  
  	// For each page size, limit to 0.
@@ -1615,7 +1615,7 @@ index 54670673bcd..bff79d4bc6e 100644
  			PageSize: pageSize,
  			Limit:    uint64(0),
 diff --git a/pkg/kubelet/kuberuntime/kuberuntime_container_linux_test.go b/pkg/kubelet/kuberuntime/kuberuntime_container_linux_test.go
-index 98f635cc932..4476bc0fd05 100644
+index 46817e00fb0..44fa80d70e1 100644
 --- a/pkg/kubelet/kuberuntime/kuberuntime_container_linux_test.go
 +++ b/pkg/kubelet/kuberuntime/kuberuntime_container_linux_test.go
 @@ -25,7 +25,7 @@ import (
@@ -1627,7 +1627,7 @@ index 98f635cc932..4476bc0fd05 100644
  	"github.com/stretchr/testify/assert"
  	v1 "k8s.io/api/core/v1"
  	"k8s.io/apimachinery/pkg/api/resource"
-@@ -372,7 +372,7 @@ func TestGetHugepageLimitsFromResources(t *testing.T) {
+@@ -366,7 +366,7 @@ func TestGetHugepageLimitsFromResources(t *testing.T) {
  	var baseHugepage []*runtimeapi.HugepageLimit
  
  	// For each page size, limit to 0.
@@ -1636,7 +1636,7 @@ index 98f635cc932..4476bc0fd05 100644
  		baseHugepage = append(baseHugepage, &runtimeapi.HugepageLimit{
  			PageSize: pageSize,
  			Limit:    uint64(0),
-@@ -487,7 +487,7 @@ func TestGetHugepageLimitsFromResources(t *testing.T) {
+@@ -481,7 +481,7 @@ func TestGetHugepageLimitsFromResources(t *testing.T) {
  		machineHugepageSupport := true
  		for _, hugepageLimit := range test.expected {
  			hugepageSupport := false
@@ -43222,6 +43222,3 @@ index 9d48da39861..d7d8dbfe8a3 100644
  # golang.org/x/xerrors => golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1
  # gonum.org/v1/gonum => gonum.org/v1/gonum v0.6.2
  # gonum.org/v1/netlib => gonum.org/v1/netlib v0.0.0-20190331212654-76723241ea4e
--- 
-2.40.1
-

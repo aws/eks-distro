@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: root <rajalakshmi.girish1@ibm.com>
+Date: Tue, 10 Jan 2023 04:49:49 +0000
+Subject: [PATCH] --EKS-PATCH-- --GO-UPDATE-- Fixes the issue #114145
+
+---
+ .../pkg/server/genericapiserver_graceful_termination_test.go    | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/staging/src/k8s.io/apiserver/pkg/server/genericapiserver_graceful_termination_test.go b/staging/src/k8s.io/apiserver/pkg/server/genericapiserver_graceful_termination_test.go
+index 6c84271f0e2..91cbd8b7ca5 100644
+--- a/staging/src/k8s.io/apiserver/pkg/server/genericapiserver_graceful_termination_test.go
++++ b/staging/src/k8s.io/apiserver/pkg/server/genericapiserver_graceful_termination_test.go
+@@ -464,7 +464,7 @@ func waitForAPIServerStarted(t *testing.T, doer doer) {
+ 	client := newClient(true)
+ 	i := 1
+ 	err := wait.PollImmediate(100*time.Millisecond, 5*time.Second, func() (done bool, err error) {
+-		result := doer.Do(client, func(httptrace.GotConnInfo) {}, fmt.Sprintf("/echo?message=attempt-%d", i), 100*time.Millisecond)
++		result := doer.Do(client, func(httptrace.GotConnInfo) {}, fmt.Sprintf("/echo?message=attempt-%d", i), time.Second)
+ 		i++
+ 
+ 		if result.err != nil {

@@ -45048,7 +45048,7 @@ index 00000000000..4b91e3384db
 +
 +// Total table size 15512 bytes (15KiB)
 diff --git a/vendor/modules.txt b/vendor/modules.txt
-index 186c645e5fc..a4670655c0a 100644
+index d7d8dbfe8a3..2fd344d7285 100644
 --- a/vendor/modules.txt
 +++ b/vendor/modules.txt
 @@ -1099,7 +1099,7 @@ go.uber.org/zap/internal/ztest
@@ -45104,7 +45104,7 @@ index 186c645e5fc..a4670655c0a 100644
  ## explicit; go 1.17
  golang.org/x/text/encoding
  golang.org/x/text/encoding/charmap
-@@ -2894,18 +2893,18 @@ sigs.k8s.io/yaml
+@@ -2895,18 +2894,18 @@ sigs.k8s.io/yaml
  # go.uber.org/goleak => go.uber.org/goleak v1.2.0
  # go.uber.org/multierr => go.uber.org/multierr v1.6.0
  # go.uber.org/zap => go.uber.org/zap v1.19.0

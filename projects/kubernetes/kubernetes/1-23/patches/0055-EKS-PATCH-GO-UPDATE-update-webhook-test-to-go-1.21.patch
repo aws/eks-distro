@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: HirazawaUi <695097494plus@gmail.com>
+Date: Sun, 21 May 2023 21:32:45 +0800
+Subject: [PATCH] --EKS-PATCH-- --GO-UPDATE-- update webhook test to go 1.21
+
+---
+ staging/src/k8s.io/apiserver/pkg/util/webhook/webhook_test.go | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/staging/src/k8s.io/apiserver/pkg/util/webhook/webhook_test.go b/staging/src/k8s.io/apiserver/pkg/util/webhook/webhook_test.go
+index 475c7e3cfdb..df11f6a86e3 100644
+--- a/staging/src/k8s.io/apiserver/pkg/util/webhook/webhook_test.go
++++ b/staging/src/k8s.io/apiserver/pkg/util/webhook/webhook_test.go
+@@ -47,7 +47,7 @@ import (
+ )
+ 
+ const (
+-	errBadCertificate    = "Get .*: remote error: tls: bad certificate"
++	errBadCertificate    = "Get .*: remote error: tls: (bad certificate|unknown certificate authority)"
+ 	errNoConfiguration   = "invalid configuration: no configuration has been provided"
+ 	errMissingCertPath   = "invalid configuration: unable to read %s %s for %s due to open %s: .*"
+ 	errSignedByUnknownCA = "Get .*: x509: certificate signed by unknown authority"

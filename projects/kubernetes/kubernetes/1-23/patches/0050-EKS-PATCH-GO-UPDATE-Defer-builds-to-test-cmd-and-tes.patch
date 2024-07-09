@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Jordan Liggitt <liggitt@google.com>
+Date: Sat, 28 Jan 2023 12:23:25 -0500
+Subject: [PATCH] --EKS-PATCH-- --GO-UPDATE-- Defer builds to test-cmd and
+ test-integration targets
+
+---
+ hack/jenkins/test-dockerized.sh | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/hack/jenkins/test-dockerized.sh b/hack/jenkins/test-dockerized.sh
+index b2e84778e87..12e8515dda7 100755
+--- a/hack/jenkins/test-dockerized.sh
++++ b/hack/jenkins/test-dockerized.sh
+@@ -48,7 +48,6 @@ export LOG_LEVEL=4
+ cd "${GOPATH}/src/k8s.io/kubernetes"
+ 
+ make generated_files
+-go install ./cmd/...
+ ./hack/install-etcd.sh
+ 
+ make test-cmd
