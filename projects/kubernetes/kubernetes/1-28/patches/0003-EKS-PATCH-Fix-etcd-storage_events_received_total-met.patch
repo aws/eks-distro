@@ -14,7 +14,7 @@ https://github.com/kubernetes/kubernetes/commit/ceb7ca93875cd74bea60500812cf7f02
  1 file changed, 1 insertion(+)
 
 diff --git a/staging/src/k8s.io/apiserver/pkg/storage/etcd3/metrics/metrics.go b/staging/src/k8s.io/apiserver/pkg/storage/etcd3/metrics/metrics.go
-index ac023d55d8c..bb2b86e2129 100644
+index e3147323d7b..bc3462b66eb 100644
 --- a/staging/src/k8s.io/apiserver/pkg/storage/etcd3/metrics/metrics.go
 +++ b/staging/src/k8s.io/apiserver/pkg/storage/etcd3/metrics/metrics.go
 @@ -167,6 +167,7 @@ func Register() {
