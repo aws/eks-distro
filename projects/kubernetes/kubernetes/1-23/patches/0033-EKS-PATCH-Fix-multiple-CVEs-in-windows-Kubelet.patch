@@ -4,8 +4,8 @@ Date: Thu, 27 Jul 2023 17:55:36 +0000
 Subject: [PATCH] --EKS-PATCH-- Fix multiple CVEs in windows Kubelet
 
 ref:
- * CVE-2023-3676: https://t.corp.amazon.com/V971535044
- * CVE-2023-3955: https://t.corp.amazon.com/V971535136
+ * CVE-2023-3676
+ * CVE-2023-3955
 ---
  pkg/volume/util/subpath/subpath_windows.go    | 12 ++++++++----
  pkg/volume/util/util.go                       |  9 ++++++---
