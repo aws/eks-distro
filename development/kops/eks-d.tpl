@@ -48,8 +48,7 @@ spec:
   masterPublicName: api.{{ .clusterName }}
   networkCIDR: 172.20.0.0/16
   networking:
-    cilium:
-      chainingMode: portmap
+    cni: {}
   {{if .ipv6}}
   nonMasqueradeCIDR: ::/0
   {{else}}
