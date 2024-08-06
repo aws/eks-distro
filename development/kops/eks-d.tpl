@@ -48,7 +48,7 @@ spec:
   masterPublicName: api.{{ .clusterName }}
   networkCIDR: 172.20.0.0/16
   networking:
-    cni: {}
+    calico: {}
   {{if .ipv6}}
   nonMasqueradeCIDR: ::/0
   {{else}}
