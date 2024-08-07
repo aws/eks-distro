@@ -94,7 +94,7 @@ kops-arm: export NODE_INSTANCE_TYPE=t4g.medium
 kops-arm: export NODE_ARCHITECTURE=arm64
 kops-arm: export UBUNTU_RELEASE=jammy-22.04
 kops-arm: kops-prereqs
-	export IPV6=false; \
+	export IPV6=true; \
 	sleep 5m; \
 	RELEASE=$(RELEASE) $(KOPS_ENTRYPOINT);
 
