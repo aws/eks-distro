@@ -106,7 +106,7 @@ commands:
 
 ```bash
 RELEASE_BRANCH=1-30
-RELEASE=10
+RELEASE=11
 kubectl apply -f https://distro.eks.amazonaws.com/crds/releases.distro.eks.amazonaws.com-v1alpha1.yaml
 kubectl apply -f https://distro.eks.amazonaws.com/kubernetes-${RELEASE_BRANCH}/kubernetes-${RELEASE_BRANCH}-eks-${RELEASE}.yaml
 kubectl get release kubernetes-${RELEASE_BRANCH}-eks-${RELEASE}
@@ -121,6 +121,7 @@ repository for the [EKS Optimized AMI](https://github.com/awslabs/amazon-eks-ami
 if you are interested in the AL2 container runtime kernel version.
 
 #### EKS-D 1.30 Version Dependencies
+* [v1-30-eks-11](releases/1-30/11/index.md) (August 01, 2024)
 * [v1-30-eks-10](releases/1-30/10/index.md) (July 18, 2024)
 * [v1-30-eks-9](releases/1-30/9/index.md) (July 03, 2024)
 * [v1-30-eks-8](releases/1-30/8/index.md) (June 24, 2024)
@@ -129,6 +130,7 @@ if you are interested in the AL2 container runtime kernel version.
 * [v1-30-eks-5](releases/1-30/5/index.md) (May 28, 2024)
 
 #### EKS-D 1.29 Version Dependencies
+* [v1-29-eks-18](releases/1-29/18/index.md) (August 01, 2024)
 * [v1-29-eks-17](releases/1-29/17/index.md) (July 18, 2024)
 * [v1-29-eks-16](releases/1-29/16/index.md) (July 03, 2024)
 * [v1-29-eks-15](releases/1-29/15/index.md) (June 24, 2024)
@@ -148,6 +150,7 @@ if you are interested in the AL2 container runtime kernel version.
 * [v1-29-eks-1](releases/1-29/1/index.md) (December 16, 2023)
 
 #### EKS-D 1.28 Version Dependencies
+* [v1-28-eks-29](releases/1-28/29/index.md) (August 01, 2024)
 * [v1-28-eks-28](releases/1-28/28/index.md) (July 18, 2024)
 * [v1-28-eks-27](releases/1-28/27/index.md) (July 03, 2024)
 * [v1-28-eks-26](releases/1-28/26/index.md) (June 24, 2024)
@@ -179,6 +182,7 @@ if you are interested in the AL2 container runtime kernel version.
 
 
 #### EKS-D 1.27 Version Dependencies
+* [v1-27-eks-36](releases/1-27/36/index.md) (August 01, 2024)
 * [v1-27-eks-35](releases/1-27/35/index.md) (July 18, 2024)
 * [v1-27-eks-34](releases/1-27/34/index.md) (July 03, 2024)
 * [v1-27-eks-33](releases/1-27/33/index.md) (June 24, 2024)
