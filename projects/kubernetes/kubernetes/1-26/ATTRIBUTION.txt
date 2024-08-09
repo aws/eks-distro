@@ -958,7 +958,7 @@ https://github.com/liggitt/tabwriter
 ** github.com/vmware/govmomi/vim25/xml; version v0.30.6 --
 https://github.com/vmware/govmomi
 
-** golang.org/go; version go1.21.12 --
+** golang.org/go; version go1.21.13 --
 https://github.com/golang/go
 
 ** golang.org/x/crypto; version v0.21.0 --
