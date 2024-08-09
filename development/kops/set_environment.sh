@@ -25,11 +25,7 @@ export NODE_ARCHITECTURE=${NODE_ARCHITECTURE:-amd64}
 export UBUNTU_RELEASE=${UBUNTU_RELEASE:-focal-20.04}
 export IPV6=${IPV6:-false}
 
-if [[ ! "$RELEASE_BRANCH" < "1-29" ]]; then
-  export KOPS_VERSION="1.29.0-beta.1"
-else
-  export KOPS_VERSION="1.28.1"
-fi
+export KOPS_VERSION="1.29.2"
 
 # Check for the occasion the release branch version is newer than the most recent release of KOPS
 if [[ ${RELEASE_BRANCH#*-} > ${KOPS_VERSION#*.} ]]; then
