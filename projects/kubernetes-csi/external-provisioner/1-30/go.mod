@@ -27,7 +27,7 @@ require (
 	k8s.io/klog/v2 v2.120.1
 	sigs.k8s.io/controller-runtime v0.18.2
 	sigs.k8s.io/gateway-api v1.1.0
-	sigs.k8s.io/sig-storage-lib-external-provisioner/v10 v10.0.0
+	sigs.k8s.io/sig-storage-lib-external-provisioner/v10 v10.0.1
 )
 
 require (
