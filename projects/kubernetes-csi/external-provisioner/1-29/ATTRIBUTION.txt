@@ -29,7 +29,7 @@ https://github.com/google/gofuzz
 ** github.com/kubernetes-csi/csi-lib-utils; version v0.18.1 --
 https://github.com/kubernetes-csi/csi-lib-utils
 
-** github.com/kubernetes-csi/external-provisioner; version v5.0.1 --
+** github.com/kubernetes-csi/external-provisioner; version v5.0.2 --
 https://github.com/kubernetes-csi/external-provisioner
 
 ** github.com/kubernetes-csi/external-snapshotter/client/v6; version v6.3.0 --
@@ -119,7 +119,7 @@ https://github.com/kubernetes-sigs/gateway-api
 ** sigs.k8s.io/json; version v0.0.0-20221116044647-bc3834ca7abd --
 https://github.com/kubernetes-sigs/json
 
-** sigs.k8s.io/sig-storage-lib-external-provisioner/v10; version v10.0.0 --
+** sigs.k8s.io/sig-storage-lib-external-provisioner/v10; version v10.0.1 --
 https://github.com/kubernetes-sigs/sig-storage-lib-external-provisioner
 
 ** sigs.k8s.io/structured-merge-diff/v4; version v4.4.1 --

@@ -17,7 +17,7 @@ https://github.com/google/gofuzz
 ** github.com/kubernetes-csi/csi-lib-utils; version v0.18.0 --
 https://github.com/kubernetes-csi/csi-lib-utils
 
-** github.com/kubernetes-csi/livenessprobe; version v2.13.0 --
+** github.com/kubernetes-csi/livenessprobe; version v2.13.1 --
 https://github.com/kubernetes-csi/livenessprobe
 
 ** github.com/modern-go/concurrent; version v0.0.0-20180306012644-bacd9c7ef1dd --
