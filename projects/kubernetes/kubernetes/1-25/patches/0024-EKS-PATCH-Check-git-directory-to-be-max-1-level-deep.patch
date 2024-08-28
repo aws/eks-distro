@@ -1,0 +1,72 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Flora Wang <floraww@amazon.com>
+Date: Wed, 21 Aug 2024 20:15:23 +0000
+Subject: [PATCH] --EKS-PATCH-- Check git directory to be max 1 level deep
+
+Upstream PR, Issue, KEP, etc. links: https://github.com/kubernetes/kubernetes/pull/124531
+
+If this patch is based on an upstream commit, how (if at all) do this patch and the upstream source differ? N/A
+
+If this patch's changes have not been added by upstream, why not ? N/A
+
+Other patches related to this patch: N/A
+
+Changes made to this patch after its initial creation and reasons for these changes: N/A
+
+Kubernetes version this patch can be dropped: N/A
+---
+ pkg/volume/git_repo/git_repo.go      |  6 ++++++
+ pkg/volume/git_repo/git_repo_test.go | 16 +++++++++++++++-
+ 2 files changed, 21 insertions(+), 1 deletion(-)
+
+diff --git a/pkg/volume/git_repo/git_repo.go b/pkg/volume/git_repo/git_repo.go
+index 0c0029abc35..0d0e2eb65c3 100644
+--- a/pkg/volume/git_repo/git_repo.go
++++ b/pkg/volume/git_repo/git_repo.go
+@@ -259,6 +259,12 @@ func validateVolume(src *v1.GitRepoVolumeSource) error {
+ 	if err := validateNonFlagArgument(src.Directory, "directory"); err != nil {
+ 		return err
+ 	}
++	if (src.Revision != "") && (src.Directory != "") {
++		cleanedDir := filepath.Clean(src.Directory)
++		if strings.Contains(cleanedDir, "/") || (strings.Contains(cleanedDir, "\\")) {
++			return fmt.Errorf("%q is not a valid directory, it must not contain a directory separator", src.Directory)
++		}
++	}
+ 	return nil
+ }
+ 
+diff --git a/pkg/volume/git_repo/git_repo_test.go b/pkg/volume/git_repo/git_repo_test.go
+index ae889184be0..b115caa7dfc 100644
+--- a/pkg/volume/git_repo/git_repo_test.go
++++ b/pkg/volume/git_repo/git_repo_test.go
+@@ -26,7 +26,7 @@ import (
+ 	"strings"
+ 	"testing"
+ 
+-	"k8s.io/api/core/v1"
++	v1 "k8s.io/api/core/v1"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	"k8s.io/apimachinery/pkg/types"
+ 	"k8s.io/kubernetes/pkg/volume"
+@@ -267,6 +267,20 @@ func TestPlugin(t *testing.T) {
+ 			},
+ 			isExpectedFailure: true,
+ 		},
++		{
++			name: "invalid-revision-directory-combo",
++			vol: &v1.Volume{
++				Name: "vol1",
++				VolumeSource: v1.VolumeSource{
++					GitRepo: &v1.GitRepoVolumeSource{
++						Repository: gitURL,
++						Revision:   "main",
++						Directory:  "foo/bar",
++					},
++				},
++			},
++			isExpectedFailure: true,
++		},
+ 	}
+ 
+ 	for _, scenario := range scenarios {
