@@ -1,0 +1,77 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Flora Wang <floraww@amazon.com>
+Date: Thu, 22 Aug 2024 20:46:06 +0000
+Subject: [PATCH] --EKS-PATCH-- Check git directory to be max 1 level deep
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Description: In gitRepo volume, check that directory is max 1 level deep which fixes CVE-2018–11235.
+
+Upstream PR, Issue, KEP, etc. links: https://github.com/kubernetes/kubernetes/pull/124531
+
+If this patch is based on an upstream commit, how (if at all) do this patch and the upstream source differ? N/A
+
+If this patch's changes have not been added by upstream, why not ? N/A
+
+Other patches related to this patch: N/A
+
+Changes made to this patch after its initial creation and reasons for these changes: N/A
+
+Kubernetes version this patch can be dropped: N/A
+---
+ ]                                    |  1 +
+ pkg/volume/git_repo/git_repo.go      |  6 ++++++
+ pkg/volume/git_repo/git_repo_test.go | 14 ++++++++++++++
+ 3 files changed, 21 insertions(+)
+ create mode 160000 ]
+
+diff --git a/] b/]
+new file mode 160000
+index 00000000000..0deecd06869
+--- /dev/null
++++ b/]
+@@ -0,0 +1 @@
++Subproject commit 0deecd06869fe58b2d44ecd8673b4807e084b54c
+diff --git a/pkg/volume/git_repo/git_repo.go b/pkg/volume/git_repo/git_repo.go
+index 995018d9007..b3827b92ad0 100644
+--- a/pkg/volume/git_repo/git_repo.go
++++ b/pkg/volume/git_repo/git_repo.go
+@@ -261,6 +261,12 @@ func validateVolume(src *v1.GitRepoVolumeSource) error {
+ 	if err := validateNonFlagArgument(src.Directory, "directory"); err != nil {
+ 		return err
+ 	}
++	if (src.Revision != "") && (src.Directory != "") {
++		cleanedDir := filepath.Clean(src.Directory)
++		if strings.Contains(cleanedDir, "/") || (strings.Contains(cleanedDir, "\\")) {
++			return fmt.Errorf("%q is not a valid directory, it must not contain a directory separator", src.Directory)
++		}
++	}
+ 	return nil
+ }
+ 
+diff --git a/pkg/volume/git_repo/git_repo_test.go b/pkg/volume/git_repo/git_repo_test.go
+index 5b1461be892..650f765cc48 100644
+--- a/pkg/volume/git_repo/git_repo_test.go
++++ b/pkg/volume/git_repo/git_repo_test.go
+@@ -267,6 +267,20 @@ func TestPlugin(t *testing.T) {
+ 			},
+ 			isExpectedFailure: true,
+ 		},
++		{
++			name: "invalid-revision-directory-combo",
++			vol: &v1.Volume{
++				Name: "vol1",
++				VolumeSource: v1.VolumeSource{
++					GitRepo: &v1.GitRepoVolumeSource{
++						Repository: gitURL,
++						Revision:   "main",
++						Directory:  "foo/bar",
++					},
++				},
++			},
++			isExpectedFailure: true,
++		},
+ 	}
+ 
+ 	for _, scenario := range scenarios {
