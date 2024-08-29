@@ -17,4 +17,3 @@ a3cfb2c109e0c18b3abed2f03880e7063f71afdac96b4dcbe7b0e9a6e8857b23  _output/1-23/b
 56329007aa6db01705a98ac363d35623670b169c23f5636130d02094166dfaaf  _output/1-23/bin/windows/amd64/kubeadm.exe
 6fe3545efae6ec6d2532f65410cfa3997e58c451d0a34a2bc999d37532b8af54  _output/1-23/bin/windows/amd64/kubectl.exe
 b5463a563645c7b5d721f962be92f5273c38c51343535f82e39113aa3212380f  _output/1-23/bin/windows/amd64/kubelet.exe
-*****************************************
