@@ -119,40 +119,40 @@ https://github.com/grpc/grpc-go
 ** gopkg.in/yaml.v2; version v2.4.0 --
 https://gopkg.in/yaml.v2
 
-** k8s.io/api; version v0.30.0 --
+** k8s.io/api; version v0.30.1 --
 https://github.com/kubernetes/api
 
-** k8s.io/apimachinery/pkg; version v0.30.0 --
+** k8s.io/apimachinery/pkg; version v0.30.1 --
 https://github.com/kubernetes/apimachinery
 
-** k8s.io/apiserver; version v0.30.0 --
+** k8s.io/apiserver; version v0.30.1 --
 https://github.com/kubernetes/apiserver
 
-** k8s.io/client-go; version v0.30.0 --
+** k8s.io/client-go; version v0.30.1 --
 https://github.com/kubernetes/client-go
 
-** k8s.io/cloud-provider; version v0.30.0 --
+** k8s.io/cloud-provider; version v0.30.1 --
 https://github.com/kubernetes/cloud-provider
 
-** k8s.io/cloud-provider-aws; version v1.30.0 --
+** k8s.io/cloud-provider-aws; version v1.30.3 --
 https://github.com/kubernetes/cloud-provider-aws
 
-** k8s.io/component-base; version v0.30.0 --
+** k8s.io/component-base; version v0.30.1 --
 https://github.com/kubernetes/component-base
 
-** k8s.io/component-helpers/node/util; version v0.30.0 --
+** k8s.io/component-helpers/node/util; version v0.30.1 --
 https://github.com/kubernetes/component-helpers
 
-** k8s.io/controller-manager; version v0.30.0 --
+** k8s.io/controller-manager; version v0.30.1 --
 https://github.com/kubernetes/controller-manager
 
-** k8s.io/csi-translation-lib/plugins; version v0.30.0 --
+** k8s.io/csi-translation-lib/plugins; version v0.30.1 --
 https://github.com/kubernetes/csi-translation-lib
 
 ** k8s.io/klog/v2; version v2.120.1 --
 https://github.com/kubernetes/klog
 
-** k8s.io/kms; version v0.30.0 --
+** k8s.io/kms; version v0.30.1 --
 https://github.com/kubernetes/kms
 
 ** k8s.io/kube-openapi/pkg; version v0.0.0-20240228011516-70dd3763d340 --
@@ -167,7 +167,7 @@ https://github.com/kubernetes/kube-openapi
 ** k8s.io/kube-openapi/pkg/validation/strfmt; version v0.0.0-20240228011516-70dd3763d340 --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kubelet/pkg/apis/credentialprovider; version v0.30.0 --
+** k8s.io/kubelet/pkg/apis/credentialprovider; version v0.30.1 --
 https://github.com/kubernetes/kubelet
 
 ** k8s.io/utils; version v0.0.0-20240310230437-4693a0247e57 --
@@ -574,7 +574,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ** github.com/aws/aws-sdk-go/internal/sync/singleflight; version v1.51.1 --
 https://github.com/aws/aws-sdk-go
 
-** golang.org/go; version go1.22.6 --
+** golang.org/go; version go1.22.7 --
 https://github.com/golang/go
 
 ** golang.org/x/crypto; version v0.17.0 --
@@ -604,7 +604,7 @@ https://golang.org/x/text
 ** golang.org/x/time/rate; version v0.5.0 --
 https://golang.org/x/time
 
-** k8s.io/apimachinery/third_party/forked/golang; version v0.30.0 --
+** k8s.io/apimachinery/third_party/forked/golang; version v0.30.1 --
 https://github.com/kubernetes/apimachinery
 
 Copyright (c) 2009 The Go Authors. All rights reserved.
