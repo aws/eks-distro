@@ -432,7 +432,7 @@ TARGET_END_LOG?="------------------- `$(DATE_CMD) +'%Y-%m-%dT%H:%M:%S.$(DATE_NAN
 ####################################################
 
 #################### TARGETS FOR OVERRIDING ########
-BUILD_TARGETS?=validate-checksums attribution $(if $(IMAGE_NAMES),local-images,) $(if $(filter true,$(HAS_HELM_CHART)),helm/build,) $(if $(filter true,$(HAS_S3_ARTIFACTS)),upload-artifacts,) attribution-pr
+BUILD_TARGETS?=run-govulncheck validate-checksums attribution $(if $(IMAGE_NAMES),local-images,) $(if $(filter true,$(HAS_HELM_CHART)),helm/build,) $(if $(filter true,$(HAS_S3_ARTIFACTS)),upload-artifacts,) attribution-pr
 RELEASE_TARGETS?=validate-checksums $(if $(IMAGE_NAMES),images,) $(if $(filter true,$(HAS_HELM_CHART)),helm/push,) $(if $(filter true,$(HAS_S3_ARTIFACTS)),upload-artifacts,)
 ####################################################
 
@@ -559,6 +559,11 @@ endif
 
 .PHONY: binaries
 binaries: $(BINARY_TARGETS)
+
+.PHONY: run-govulncheck
+run-govulncheck: $(BINARY_TARGETS)
+	source $(BUILD_LIB)/govulncheck.sh \
+		&& rungovulncheck $(GOLANG_VERSION) $(REPO)
 
 $(KUSTOMIZE_TARGET):
 	@mkdir -p $(OUTPUT_DIR)
