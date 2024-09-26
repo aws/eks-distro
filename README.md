@@ -7,6 +7,7 @@
 | 1-28    | [![1-28](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-28-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-28-postsubmit) |
 | 1-29    | [![1-29](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-29-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-29-postsubmit) |
 | 1-30    | [![1-30](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-30-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-30-postsubmit) |
+| 1-31    | [![1-31](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-31-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-31-postsubmit) |
 
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/6111/badge)](https://bestpractices.coreinfrastructure.org/projects/6111)
 
@@ -33,6 +34,12 @@ To receive notifications about new EKS-D releases, subscribe to the EKS-D update
 <!--
 Source: https://github.com/cncf/artwork/tree/master/projects/kubernetes/certified-kubernetes
 -->
+
+### Kubernetes 1-31
+
+| Release | Manifest | Kubernetes Version |
+| -- | --- | --- |
+| 4 | [v1-31-eks-4](https://distro.eks.amazonaws.com/kubernetes-1-31/kubernetes-1-31-eks-4.yaml) | [v1.31.0](https://github.com/kubernetes/kubernetes/release/tag/v1.31.0) |
 
 ### Kubernetes 1-30
 
