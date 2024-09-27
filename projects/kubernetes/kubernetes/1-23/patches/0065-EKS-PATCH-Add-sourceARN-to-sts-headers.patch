@@ -1,0 +1,332 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: haoranleo <haoranr@amazon.com>
+Date: Wed, 28 Aug 2024 13:39:45 -0700
+Subject: [PATCH] --EKS-PATCH-- Add sourceARN to sts headers
+
+Description:
+Add caller info (source account and source arn) to STS requests that legacy cloud provider makes
+on behalf of customer through request headers, this is for confusion deputy issue protection. With
+the change customer is able to configure global conditional key in their IAM role in addition to trust
+policies https://docs.aws.amazon.com/IAM/latest/UserGuide/confused-deputy.html.
+
+Upstream PR, Issue, KEP, etc. links:
+We did same change in CCM https://github.com/kubernetes/cloud-provider-aws/pull/649 but for versions < 1.27,
+KCM still has in-tree legacy cloud provider. This patch is for these legacy cloud providers in KCM.
+
+If this patch is based on an upstream commit, how (if at all) do this patch and the upstream source differ?
+N/A
+
+If this patch's changes have not been added by upstream, why not?
+Versions < 1.27 are out of support upstream.
+
+Other patches related to this patch:
+N/A
+
+Changes made to this patch after its initial creation and reasons for these changes:
+N/A
+
+Kubernetes version this patch can be dropped:
+Till 1.23 is out of EKS support.
+
+Signed-off-by: Leo Li <haoranr@amazon.com>
+---
+ .../k8s.io/legacy-cloud-providers/aws/aws.go  | 40 +++++++-
+ .../legacy-cloud-providers/aws/aws_utils.go   | 21 +++++
+ .../aws/aws_utils_test.go                     | 57 ++++++++++++
+ .../github.com/aws/aws-sdk-go/aws/arn/arn.go  | 93 +++++++++++++++++++
+ vendor/modules.txt                            |  1 +
+ 5 files changed, 210 insertions(+), 2 deletions(-)
+ create mode 100644 staging/src/k8s.io/legacy-cloud-providers/aws/aws_utils_test.go
+ create mode 100644 vendor/github.com/aws/aws-sdk-go/aws/arn/arn.go
+
+diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
+index fe38604d422..6730488fed5 100644
+--- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
++++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
+@@ -253,6 +253,11 @@ const volumeAttachmentStuck = "VolumeAttachmentStuck"
+ // Indicates that a node has volumes stuck in attaching state and hence it is not fit for scheduling more pods
+ const nodeWithImpairedVolumes = "NodeWithImpairedVolumes"
+ 
++// Headers for STS request for source ARN
++const headerSourceArn = "x-amz-source-arn"
++// Headers for STS request for source account
++const headerSourceAccount = "x-amz-source-account"
++
+ const (
+ 	// volumeAttachmentConsecutiveErrorLimit is the number of consecutive errors we will ignore when waiting for a volume to attach/detach
+ 	volumeAttachmentStatusConsecutiveErrorLimit = 10
+@@ -614,6 +619,11 @@ type CloudConfig struct {
+ 
+ 		// RoleARN is the IAM role to assume when interaction with AWS APIs.
+ 		RoleARN string
++		// SourceARN is value which is passed while assuming role specified by RoleARN. When a service
++		// assumes a role in your account, you can include the aws:SourceAccount and aws:SourceArn global
++		// condition context keys in your role trust policy to limit access to the role to only requests that are generated
++		// by expected resources. https://docs.aws.amazon.com/IAM/latest/UserGuide/confused-deputy.html
++		SourceARN string
+ 
+ 		// KubernetesClusterTag is the legacy cluster id we'll use to identify our cluster resources
+ 		KubernetesClusterTag string
+@@ -1215,8 +1225,13 @@ func init() {
+ 		var creds *credentials.Credentials
+ 		if cfg.Global.RoleARN != "" {
+ 			klog.Infof("Using AWS assumed role %v", cfg.Global.RoleARN)
++
++			stsClient, err := getSTSClient(sess, cfg.Global.SourceARN)
++			if err != nil {
++				return nil, fmt.Errorf("unable to create sts client, %v", err)
++			}
+ 			provider := &stscreds.AssumeRoleProvider{
+-				Client:  sts.New(sess),
++				Client:  stsClient,
+ 				RoleARN: cfg.Global.RoleARN,
+ 			}
+ 
+@@ -1232,6 +1247,27 @@ func init() {
+ 	})
+ }
+ 
++func getSTSClient(sess *session.Session, sourceARN string) (*sts.STS, error) {
++	stsClient := sts.New(sess)
++
++	// parse both source account and source arn from the sourceARN, and add them as headers to the STS client
++	if sourceARN != "" {
++		sourceAcct, err := getSourceAccount(sourceARN)
++		if err != nil {
++			return nil, err
++		}
++		reqHeaders := map[string]string{
++			headerSourceAccount: sourceAcct,
++			headerSourceArn:     sourceARN,
++		}
++		stsClient.Handlers.Sign.PushFront(func(s *request.Request) {
++			s.ApplyOptions(request.WithSetRequestHeaders(reqHeaders))
++		})
++		klog.V(4).Infof("configuring STS client with extra headers, %v", reqHeaders)
++	}
++	return stsClient, nil
++}
++
+ func getRegionFromMetadata(cfg *CloudConfig) (string, error) {
+ 	klog.Infof("Get AWS region from metadata client")
+ 
+@@ -1264,7 +1300,7 @@ func readAWSCloudConfig(config io.Reader) (*CloudConfig, error) {
+ 	var err error
+ 
+ 	if config != nil {
+-		err = gcfg.ReadInto(&cfg, config)
++		err = gcfg.FatalOnly(gcfg.ReadInto(&cfg, config))
+ 		if err != nil {
+ 			return nil, err
+ 		}
+diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_utils.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_utils.go
+index f9e6cdab617..8445429aba4 100644
+--- a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_utils.go
++++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_utils.go
+@@ -20,7 +20,10 @@ limitations under the License.
+ package aws
+ 
+ import (
++	"fmt"
++	
+ 	"github.com/aws/aws-sdk-go/aws"
++	"github.com/aws/aws-sdk-go/aws/arn"
+ 
+ 	"k8s.io/apimachinery/pkg/util/sets"
+ )
+@@ -46,3 +49,21 @@ func stringSetFromPointers(in []*string) sets.String {
+ 	}
+ 	return out
+ }
++
++// getSourceAccount constructs source acct and return them for use
++func getSourceAccount(roleARN string) (string, error) {
++	// ARN format (https://docs.aws.amazon.com/IAM/latest/UserGuide/reference-arns.html)
++	// arn:partition:service:region:account-id:resource-type/resource-id
++	// IAM format, region is always blank
++	// arn:aws:iam::account:role/role-name-with-path
++	if !arn.IsARN(roleARN) {
++		return "", fmt.Errorf("incorrect ARN format for role %s", roleARN)
++	}
++
++	parsedArn, err := arn.Parse(roleARN)
++	if err != nil {
++		return "", err
++	}
++
++	return parsedArn.AccountID, nil
++}
+diff --git a/staging/src/k8s.io/legacy-cloud-providers/aws/aws_utils_test.go b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_utils_test.go
+new file mode 100644
+index 00000000000..b3c67af6e11
+--- /dev/null
++++ b/staging/src/k8s.io/legacy-cloud-providers/aws/aws_utils_test.go
+@@ -0,0 +1,57 @@
++/*
++Copyright 2014 The Kubernetes Authors.
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++    http://www.apache.org/licenses/LICENSE-2.0
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++*/
++
++package aws
++
++import "testing"
++
++func TestGetSourceAcctAndArn(t *testing.T) {
++	type args struct {
++		roleARN string
++	}
++	tests := []struct {
++		name    string
++		args    args
++		want    string
++		wantErr bool
++	}{
++		{
++			name: "corect role arn",
++			args: args{
++				roleARN: "arn:aws:iam::123456789876:role/test-cluster",
++			},
++			want:    "123456789876",
++			wantErr: false,
++		},
++		{
++			name: "incorect role arn",
++			args: args{
++				roleARN: "arn:aws:iam::123456789876",
++			},
++			want:    "",
++			wantErr: true,
++		},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			got, err := getSourceAccount(tt.args.roleARN)
++			if (err != nil) != tt.wantErr {
++				t.Errorf("getSourceAccount() error = %v, wantErr %v", err, tt.wantErr)
++				return
++			}
++			if got != tt.want {
++				t.Errorf("getSourceAccount() got = %v, want %v", got, tt.want)
++			}
++		})
++	}
++}
+diff --git a/vendor/github.com/aws/aws-sdk-go/aws/arn/arn.go b/vendor/github.com/aws/aws-sdk-go/aws/arn/arn.go
+new file mode 100644
+index 00000000000..1c496742903
+--- /dev/null
++++ b/vendor/github.com/aws/aws-sdk-go/aws/arn/arn.go
+@@ -0,0 +1,93 @@
++// Package arn provides a parser for interacting with Amazon Resource Names.
++package arn
++
++import (
++	"errors"
++	"strings"
++)
++
++const (
++	arnDelimiter = ":"
++	arnSections  = 6
++	arnPrefix    = "arn:"
++
++	// zero-indexed
++	sectionPartition = 1
++	sectionService   = 2
++	sectionRegion    = 3
++	sectionAccountID = 4
++	sectionResource  = 5
++
++	// errors
++	invalidPrefix   = "arn: invalid prefix"
++	invalidSections = "arn: not enough sections"
++)
++
++// ARN captures the individual fields of an Amazon Resource Name.
++// See http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html for more information.
++type ARN struct {
++	// The partition that the resource is in. For standard AWS regions, the partition is "aws". If you have resources in
++	// other partitions, the partition is "aws-partitionname". For example, the partition for resources in the China
++	// (Beijing) region is "aws-cn".
++	Partition string
++
++	// The service namespace that identifies the AWS product (for example, Amazon S3, IAM, or Amazon RDS). For a list of
++	// namespaces, see
++	// http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html#genref-aws-service-namespaces.
++	Service string
++
++	// The region the resource resides in. Note that the ARNs for some resources do not require a region, so this
++	// component might be omitted.
++	Region string
++
++	// The ID of the AWS account that owns the resource, without the hyphens. For example, 123456789012. Note that the
++	// ARNs for some resources don't require an account number, so this component might be omitted.
++	AccountID string
++
++	// The content of this part of the ARN varies by service. It often includes an indicator of the type of resource —
++	// for example, an IAM user or Amazon RDS database - followed by a slash (/) or a colon (:), followed by the
++	// resource name itself. Some services allows paths for resource names, as described in
++	// http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html#arns-paths.
++	Resource string
++}
++
++// Parse parses an ARN into its constituent parts.
++//
++// Some example ARNs:
++// arn:aws:elasticbeanstalk:us-east-1:123456789012:environment/My App/MyEnvironment
++// arn:aws:iam::123456789012:user/David
++// arn:aws:rds:eu-west-1:123456789012:db:mysql-db
++// arn:aws:s3:::my_corporate_bucket/exampleobject.png
++func Parse(arn string) (ARN, error) {
++	if !strings.HasPrefix(arn, arnPrefix) {
++		return ARN{}, errors.New(invalidPrefix)
++	}
++	sections := strings.SplitN(arn, arnDelimiter, arnSections)
++	if len(sections) != arnSections {
++		return ARN{}, errors.New(invalidSections)
++	}
++	return ARN{
++		Partition: sections[sectionPartition],
++		Service:   sections[sectionService],
++		Region:    sections[sectionRegion],
++		AccountID: sections[sectionAccountID],
++		Resource:  sections[sectionResource],
++	}, nil
++}
++
++// IsARN returns whether the given string is an ARN by looking for
++// whether the string starts with "arn:" and contains the correct number
++// of sections delimited by colons(:).
++func IsARN(arn string) bool {
++	return strings.HasPrefix(arn, arnPrefix) && strings.Count(arn, ":") >= arnSections-1
++}
++
++// String returns the canonical representation of the ARN
++func (arn ARN) String() string {
++	return arnPrefix +
++		arn.Partition + arnDelimiter +
++		arn.Service + arnDelimiter +
++		arn.Region + arnDelimiter +
++		arn.AccountID + arnDelimiter +
++		arn.Resource
++}
+diff --git a/vendor/modules.txt b/vendor/modules.txt
+index e39aeaae133..15de67fee97 100644
+--- a/vendor/modules.txt
++++ b/vendor/modules.txt
+@@ -116,6 +116,7 @@ github.com/asaskevich/govalidator
+ # github.com/aws/aws-sdk-go v1.54.6 => github.com/aws/aws-sdk-go v1.54.6
+ ## explicit; go 1.19
+ github.com/aws/aws-sdk-go/aws
++github.com/aws/aws-sdk-go/aws/arn
+ github.com/aws/aws-sdk-go/aws/auth/bearer
+ github.com/aws/aws-sdk-go/aws/awserr
+ github.com/aws/aws-sdk-go/aws/awsutil

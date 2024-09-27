@@ -6,6 +6,7 @@
 | 1-28    | [![1-28](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-28-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-28-postsubmit) |
 | 1-29    | [![1-29](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-29-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-29-postsubmit) |
 | 1-30    | [![1-30](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-30-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-30-postsubmit) |
+| 1-31    | [![1-31](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-31-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-31-postsubmit) |
 
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/6111/badge)](https://bestpractices.coreinfrastructure.org/projects/6111)
 
@@ -33,23 +34,29 @@ To receive notifications about new EKS-D releases, subscribe to the EKS-D update
 Source: https://github.com/cncf/artwork/tree/master/projects/kubernetes/certified-kubernetes
 -->
 
+### Kubernetes 1-31
+
+| Release | Manifest | Kubernetes Version |
+| -- | --- | --- |
+| 4 | [v1-31-eks-4](https://distro.eks.amazonaws.com/kubernetes-1-31/kubernetes-1-31-eks-4.yaml) | [v1.31.0](https://github.com/kubernetes/kubernetes/release/tag/v1.31.0) |
+
 ### Kubernetes 1-30
 
 | Release | Manifest | Kubernetes Version |
 | -- | --- | --- |
-| 13 | [v1-30-eks-13](https://distro.eks.amazonaws.com/kubernetes-1-30/kubernetes-1-30-eks-13.yaml) | [v1.30.3](https://github.com/kubernetes/kubernetes/release/tag/v1.30.3) |
+| 15 | [v1-30-eks-15](https://distro.eks.amazonaws.com/kubernetes-1-30/kubernetes-1-30-eks-15.yaml) | [v1.30.4](https://github.com/kubernetes/kubernetes/release/tag/v1.30.4) |
 
 ### Kubernetes 1-29
 
 | Release | Manifest | Kubernetes Version |
 | -- | --- | --- |
-| 20 | [v1-29-eks-20](https://distro.eks.amazonaws.com/kubernetes-1-29/kubernetes-1-29-eks-20.yaml) | [v1.29.7](https://github.com/kubernetes/kubernetes/release/tag/v1.29.7) |
+| 22 | [v1-29-eks-22](https://distro.eks.amazonaws.com/kubernetes-1-29/kubernetes-1-29-eks-22.yaml) | [v1.29.8](https://github.com/kubernetes/kubernetes/release/tag/v1.29.8) |
 
 ### Kubernetes 1-28
 
 | Release | Manifest | Kubernetes Version |
 | -- | --- | --- |
-| 31 | [v1-28-eks-31](https://distro.eks.amazonaws.com/kubernetes-1-28/kubernetes-1-28-eks-31.yaml) | [v1.28.12](https://github.com/kubernetes/kubernetes/release/tag/v1.28.12) |
+| 33 | [v1-28-eks-33](https://distro.eks.amazonaws.com/kubernetes-1-28/kubernetes-1-28-eks-33.yaml) | [v1.28.13](https://github.com/kubernetes/kubernetes/release/tag/v1.28.13) |
 
 ### Kubernetes 1.18 - 1.27: DEPRECATED
 

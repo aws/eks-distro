@@ -116,25 +116,25 @@ https://github.com/grpc/grpc-go
 ** gopkg.in/yaml.v2; version v2.4.0 --
 https://gopkg.in/yaml.v2
 
-** k8s.io/api; version v0.29.2 --
+** k8s.io/api; version v0.29.8 --
 https://github.com/kubernetes/api
 
-** k8s.io/apimachinery/pkg; version v0.29.2 --
+** k8s.io/apimachinery/pkg; version v0.29.8 --
 https://github.com/kubernetes/apimachinery
 
-** k8s.io/apiserver; version v0.29.2 --
+** k8s.io/apiserver; version v0.29.8 --
 https://github.com/kubernetes/apiserver
 
-** k8s.io/client-go; version v0.29.2 --
+** k8s.io/client-go; version v0.29.8 --
 https://github.com/kubernetes/client-go
 
-** k8s.io/component-base; version v0.29.2 --
+** k8s.io/component-base; version v0.29.8 --
 https://github.com/kubernetes/component-base
 
 ** k8s.io/klog/v2; version v2.120.0 --
 https://github.com/kubernetes/klog
 
-** k8s.io/kms; version v0.29.2 --
+** k8s.io/kms; version v0.29.8 --
 https://github.com/kubernetes/kms
 
 ** k8s.io/kube-openapi/pkg; version v0.0.0-20231010175941-2dd684a91f00 --
@@ -149,7 +149,7 @@ https://github.com/kubernetes/kube-openapi
 ** k8s.io/kube-openapi/pkg/validation/strfmt; version v0.0.0-20231010175941-2dd684a91f00 --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/metrics/pkg/apis/metrics; version v0.29.2 --
+** k8s.io/metrics/pkg/apis/metrics; version v0.29.8 --
 https://github.com/kubernetes/metrics
 
 ** k8s.io/utils; version v0.0.0-20230726121419-3b25d923346b --
@@ -161,7 +161,7 @@ https://github.com/kubernetes-sigs/apiserver-network-proxy
 ** sigs.k8s.io/json; version v0.0.0-20221116044647-bc3834ca7abd --
 https://github.com/kubernetes-sigs/json
 
-** sigs.k8s.io/metrics-server; version v0.7.1 --
+** sigs.k8s.io/metrics-server; version v0.7.2 --
 https://github.com/kubernetes-sigs/metrics-server
 
 ** sigs.k8s.io/structured-merge-diff/v4; version v4.4.1 --
@@ -731,7 +731,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/golang/protobuf; version v1.5.3 --
+** github.com/golang/protobuf; version v1.5.4 --
 https://github.com/golang/protobuf
 
 Copyright 2010 The Go Authors.  All rights reserved.
@@ -834,37 +834,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ** github.com/grafana/regexp; version v0.0.0-20221122212121-6b5c0a4cb7fd --
 https://github.com/grafana/regexp
 
-** golang.org/go; version go1.21.13 --
+** golang.org/go; version go1.22.7 --
 https://github.com/golang/go
-
-** golang.org/x/crypto; version v0.18.0 --
-https://golang.org/x/crypto
 
 ** golang.org/x/exp; version v0.0.0-20231110203233-9a3e6036ecaa --
 https://golang.org/x/exp
 
-** golang.org/x/net; version v0.20.0 --
-https://golang.org/x/net
-
 ** golang.org/x/oauth2; version v0.16.0 --
 https://golang.org/x/oauth2
-
-** golang.org/x/sync/singleflight; version v0.5.0 --
-https://golang.org/x/sync
-
-** golang.org/x/sys/unix; version v0.16.0 --
-https://golang.org/x/sys
-
-** golang.org/x/term; version v0.16.0 --
-https://golang.org/x/term
-
-** golang.org/x/text; version v0.14.0 --
-https://golang.org/x/text
 
 ** golang.org/x/time/rate; version v0.3.0 --
 https://golang.org/x/time
 
-** k8s.io/apimachinery/third_party/forked/golang; version v0.29.2 --
+** k8s.io/apimachinery/third_party/forked/golang; version v0.29.8 --
 https://github.com/kubernetes/apimachinery
 
 Copyright (c) 2009 The Go Authors. All rights reserved.
@@ -1054,6 +1036,54 @@ copyright notice, this list of conditions and the following disclaimer
 in the documentation and/or other materials provided with the
 distribution.
    * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+------
+
+** golang.org/x/crypto; version v0.26.0 --
+https://golang.org/x/crypto
+
+** golang.org/x/net; version v0.28.0 --
+https://golang.org/x/net
+
+** golang.org/x/sync/singleflight; version v0.8.0 --
+https://golang.org/x/sync
+
+** golang.org/x/sys/unix; version v0.23.0 --
+https://golang.org/x/sys
+
+** golang.org/x/term; version v0.23.0 --
+https://golang.org/x/term
+
+** golang.org/x/text; version v0.17.0 --
+https://golang.org/x/text
+
+Copyright 2009 The Go Authors.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+   * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+   * Neither the name of Google LLC nor the names of its
 contributors may be used to endorse or promote products derived from
 this software without specific prior written permission.
 

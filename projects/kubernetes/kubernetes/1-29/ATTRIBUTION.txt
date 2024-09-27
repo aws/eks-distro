@@ -161,7 +161,7 @@ https://github.com/nytimes/gziphandler
 ** github.com/opencontainers/go-digest; version v1.0.0 --
 https://github.com/opencontainers/go-digest
 
-** github.com/opencontainers/runc; version v1.1.10 --
+** github.com/opencontainers/runc; version v1.1.14 --
 https://github.com/opencontainers/runc
 
 ** github.com/opencontainers/runtime-spec/specs-go; version v1.0.3-0.20220909204839-494a5a6aca78 --
@@ -338,7 +338,7 @@ https://github.com/kubernetes/kubectl
 ** k8s.io/kubelet; version v0.0.0 --
 https://github.com/kubernetes/kubelet
 
-** k8s.io/kubernetes; version v1.29.7 --
+** k8s.io/kubernetes; version v1.29.8 --
 https://github.com/kubernetes/kubernetes
 
 ** k8s.io/legacy-cloud-providers; version v0.0.0 --
@@ -1353,13 +1353,13 @@ https://github.com/vmware/govmomi
 ** golang.org/go; version go1.21.13 --
 https://github.com/golang/go
 
-** golang.org/x/crypto; version v0.21.0 --
+** golang.org/x/crypto; version v0.22.0 --
 https://golang.org/x/crypto
 
 ** golang.org/x/exp; version v0.0.0-20220722155223-a9213eeb770e --
 https://golang.org/x/exp
 
-** golang.org/x/net; version v0.23.0 --
+** golang.org/x/net; version v0.24.0 --
 https://golang.org/x/net
 
 ** golang.org/x/oauth2; version v0.10.0 --
@@ -1368,10 +1368,10 @@ https://golang.org/x/oauth2
 ** golang.org/x/sync; version v0.5.0 --
 https://golang.org/x/sync
 
-** golang.org/x/sys; version v0.18.0 --
+** golang.org/x/sys; version v0.19.0 --
 https://golang.org/x/sys
 
-** golang.org/x/term; version v0.18.0 --
+** golang.org/x/term; version v0.19.0 --
 https://golang.org/x/term
 
 ** golang.org/x/text; version v0.14.0 --
@@ -1389,7 +1389,7 @@ https://github.com/kubernetes/apimachinery
 ** k8s.io/client-go/third_party/forked/golang/template; version v0.0.0 --
 https://github.com/kubernetes/client-go
 
-** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.29.7 --
+** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.29.8 --
 https://github.com/kubernetes/kubernetes
 
 ** k8s.io/utils/inotify; version v0.0.0-20230726121419-3b25d923346b --
@@ -1840,7 +1840,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.29.7 --
+** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.29.8 --
 https://github.com/kubernetes/kubernetes
 
 Copyright ©2013 The gonum Authors. All rights reserved.
