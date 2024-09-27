@@ -3,7 +3,6 @@
 
 | Release | Development Build Status                                                                                                                  |
 |---------|-------------------------------------------------------------------------------------------------------------------------------------------|
-| 1-27    | [![1-27](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-27-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-27-postsubmit) |
 | 1-28    | [![1-28](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-28-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-28-postsubmit) |
 | 1-29    | [![1-29](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-29-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-29-postsubmit) |
 | 1-30    | [![1-30](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-30-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-30-postsubmit) |
@@ -59,15 +58,7 @@ Source: https://github.com/cncf/artwork/tree/master/projects/kubernetes/certifie
 | -- | --- | --- |
 | 33 | [v1-28-eks-33](https://distro.eks.amazonaws.com/kubernetes-1-28/kubernetes-1-28-eks-33.yaml) | [v1.28.13](https://github.com/kubernetes/kubernetes/release/tag/v1.28.13) |
 
-
-### Kubernetes 1-27
-
-| Release | Manifest | Kubernetes Version |
-| -- | --- | --- |
-| 40 | [v1-27-eks-40](https://distro.eks.amazonaws.com/kubernetes-1-27/kubernetes-1-27-eks-40.yaml) | [v1.27.16](https://github.com/kubernetes/kubernetes/release/tag/v1.27.16) |
-
-
-### Kubernetes 1.18 - 1.26: DEPRECATED
+### Kubernetes 1.18 - 1.27: DEPRECATED
 
 In alignment with the [Amazon EKS release calendar](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html#kubernetes-release-calendar),
 EKS Distro has discontinued support of Kubernetes v1.18 - v1.26. While there are
