@@ -421,7 +421,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ** github.com/aws/aws-sdk-go/internal/sync/singleflight; version v1.54.6 --
 https://github.com/aws/aws-sdk-go
 
-** golang.org/go; version go1.22.7 --
+** golang.org/go; version go1.22.8 --
 https://github.com/golang/go
 
 ** golang.org/x/net; version v0.26.0 --
