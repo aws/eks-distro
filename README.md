@@ -56,7 +56,7 @@ Source: https://github.com/cncf/artwork/tree/master/projects/kubernetes/certifie
 
 | Release | Manifest | Kubernetes Version |
 | -- | --- | --- |
-| 33 | [v1-28-eks-33](https://distro.eks.amazonaws.com/kubernetes-1-28/kubernetes-1-28-eks-33.yaml) | [v1.28.13](https://github.com/kubernetes/kubernetes/release/tag/v1.28.13) |
+| 34 | [v1-28-eks-34](https://distro.eks.amazonaws.com/kubernetes-1-28/kubernetes-1-28-eks-34.yaml) | [v1.28.14](https://github.com/kubernetes/kubernetes/release/tag/v1.28.14) |
 
 ### Kubernetes 1.18 - 1.27: DEPRECATED
 
