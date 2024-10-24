@@ -1,0 +1,83 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Carter McKinnon <mckdev@amazon.com>
+Date: Wed, 16 Oct 2024 08:53:29 -0700
+Subject: [PATCH] --EKS-PATCH-- Add instanceExistsGracePeriod to
+ cloud-node-lifecycle-controller
+
+---
+ .../node_lifecycle_controller.go              | 38 +++++++++++++++----
+ 1 file changed, 31 insertions(+), 7 deletions(-)
+
+diff --git a/vendor/k8s.io/cloud-provider/controllers/nodelifecycle/node_lifecycle_controller.go b/vendor/k8s.io/cloud-provider/controllers/nodelifecycle/node_lifecycle_controller.go
+index b8a50e42cdd..50b0b896478 100644
+--- a/vendor/k8s.io/cloud-provider/controllers/nodelifecycle/node_lifecycle_controller.go
++++ b/vendor/k8s.io/cloud-provider/controllers/nodelifecycle/node_lifecycle_controller.go
+@@ -19,9 +19,11 @@ package cloud
+ import (
+ 	"context"
+ 	"errors"
++	"fmt"
++	"os"
+ 	"time"
+ 
+-	"k8s.io/api/core/v1"
++	v1 "k8s.io/api/core/v1"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	"k8s.io/apimachinery/pkg/labels"
+ 	"k8s.io/apimachinery/pkg/types"
+@@ -65,6 +67,9 @@ type CloudNodeLifecycleController struct {
+ 	// check node status posted from kubelet. This value should be lower than nodeMonitorGracePeriod
+ 	// set in controller-manager
+ 	nodeMonitorPeriod time.Duration
++
++	// Period of time after Node creation that the controller will assume the corresponding cloud instance exists
++	instanceExistsGracePeriod time.Duration
+ }
+ 
+ func NewCloudNodeLifecycleController(
+@@ -90,13 +95,26 @@ func NewCloudNodeLifecycleController(
+ 		return nil, errors.New("cloud provider does not support instances")
+ 	}
+ 
++	var instanceExistsGracePeriod time.Duration
++	instanceExistsGracePeriodFromEnv := os.Getenv("NODE_LIFECYCLE_CONTROLLER_INSTANCE_EXISTS_GRACE_PERIOD")
++	if instanceExistsGracePeriodFromEnv != "" {
++		if period, err := time.ParseDuration(instanceExistsGracePeriodFromEnv); err != nil {
++			return nil, fmt.Errorf("invalid NODE_LIFECYCLE_CONTROLLER_INSTANCE_EXISTS_GRACE_PERIOD: '%s': %v", instanceExistsGracePeriodFromEnv, err)
++		} else {
++			instanceExistsGracePeriod = period
++		}
++	} else {
++		instanceExistsGracePeriod = 2 * time.Minute
++	}
++
+ 	c := &CloudNodeLifecycleController{
+-		kubeClient:        kubeClient,
+-		nodeLister:        nodeInformer.Lister(),
+-		broadcaster:       eventBroadcaster,
+-		recorder:          recorder,
+-		cloud:             cloud,
+-		nodeMonitorPeriod: nodeMonitorPeriod,
++		kubeClient:                kubeClient,
++		nodeLister:                nodeInformer.Lister(),
++		broadcaster:               eventBroadcaster,
++		recorder:                  recorder,
++		cloud:                     cloud,
++		nodeMonitorPeriod:         nodeMonitorPeriod,
++		instanceExistsGracePeriod: instanceExistsGracePeriod,
+ 	}
+ 
+ 	return c, nil
+@@ -150,6 +168,12 @@ func (c *CloudNodeLifecycleController) MonitorNodes(ctx context.Context) {
+ 			continue
+ 		}
+ 
++		// skip the node if it was recently created, it may not have propagated in cloud provider yet
++		if time.Since(node.CreationTimestamp.Time) < c.instanceExistsGracePeriod {
++			klog.Infof("skipping node %s that was created within grace period (%v)", node.Name, c.instanceExistsGracePeriod)
++			continue
++		}
++
+ 		// At this point the node has NotReady status, we need to check if the node has been removed
+ 		// from the cloud provider. If node cannot be found in cloudprovider, then delete the node
+ 		exists, err := c.ensureNodeExistsByProviderID(ctx, node)
