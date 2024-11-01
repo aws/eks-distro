@@ -4,7 +4,22 @@ Date: Mon, 20 Nov 2023 17:54:16 +0000
 Subject: [PATCH] --EKS-PATCH-- Update log verbosity for node health and taint
  checks
 
-cherrypick of https://github.com/kubernetes/kubernetes/pull/121967
+Description:
+
+Upstream PR, Issue, KEP, etc. links:
+- https://github.com/kubernetes/kubernetes/pull/121967
+
+If this patch is based on an upstream commit, how (if at all) do this patch and the upstream source differ?
+- N/A
+If this patch's changes have not been added by upstream, why not ?
+- Pending upstream review
+
+Other patches related to this patch:
+- N/A
+Changes made to this patch after its initial creation and reasons for these changes:
+- N/A
+Kubernetes version this patch can be dropped:
+- Whenever the upstream PR is merged
 
 Signed-off-by: torredil <torredil@amazon.com>
 ---
