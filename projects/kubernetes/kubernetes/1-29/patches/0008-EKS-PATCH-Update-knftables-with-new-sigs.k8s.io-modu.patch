@@ -65,7 +65,7 @@ index c75e31fe54e..677d71c864f 100644
 -= vendor/github.com/danwinship/knftables/LICENSE 86d3f3a95c324c9479bd8986968f4327
 += vendor/sigs.k8s.io/knftables/LICENSE 86d3f3a95c324c9479bd8986968f4327
 diff --git a/go.mod b/go.mod
-index 7bf69dbbf49..f36bdcc9730 100644
+index 361fbe94f2c..7cf8a5b501f 100644
 --- a/go.mod
 +++ b/go.mod
 @@ -27,7 +27,6 @@ require (
@@ -76,7 +76,7 @@ index 7bf69dbbf49..f36bdcc9730 100644
  	github.com/distribution/reference v0.5.0
  	github.com/docker/go-units v0.5.0
  	github.com/emicklei/go-restful/v3 v3.11.0
-@@ -127,6 +126,7 @@ require (
+@@ -128,6 +127,7 @@ require (
  	k8s.io/sample-apiserver v0.0.0
  	k8s.io/system-validators v1.8.0
  	k8s.io/utils v0.0.0-20230726121419-3b25d923346b
@@ -167,7 +167,7 @@ index c5ea7db8760..3b29de7923e 100644
  
  func TestDeleteEndpointConnections(t *testing.T) {
 diff --git a/vendor/modules.txt b/vendor/modules.txt
-index 09a050491a3..fb719a21f51 100644
+index e4dd2ff19f3..e1384922680 100644
 --- a/vendor/modules.txt
 +++ b/vendor/modules.txt
 @@ -179,9 +179,6 @@ github.com/cpuguy83/go-md2man/v2/md2man
@@ -180,7 +180,7 @@ index 09a050491a3..fb719a21f51 100644
  # github.com/davecgh/go-spew v1.1.1
  ## explicit
  github.com/davecgh/go-spew/spew
-@@ -2471,6 +2468,9 @@ sigs.k8s.io/apiserver-network-proxy/konnectivity-client/proto/client
+@@ -2472,6 +2469,9 @@ sigs.k8s.io/apiserver-network-proxy/konnectivity-client/proto/client
  ## explicit; go 1.18
  sigs.k8s.io/json
  sigs.k8s.io/json/internal/golang/encoding/json
