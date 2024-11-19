@@ -209,7 +209,7 @@ https://github.com/etcd-io/etcd
 ** go.opencensus.io; version v0.24.0 --
 https://github.com/census-instrumentation/opencensus-go
 
-** go.opentelemetry.io/contrib/instrumentation/github.com/emicklei/go-restful/otelrestful; version v0.42.0 --
+** go.opentelemetry.io/contrib/instrumentation/github.com/emicklei/go-restful/otelrestful; version v0.44.0 --
 https://github.com/open-telemetry/opentelemetry-go-contrib
 
 ** go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc; version v0.42.0 --

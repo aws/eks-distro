@@ -2,6 +2,54 @@
 ** github.com/aws/aws-sdk-go; version v1.55.5 --
 https://github.com/aws/aws-sdk-go
 
+** github.com/aws/aws-sdk-go-v2; version v1.32.2 --
+https://github.com/aws/aws-sdk-go-v2
+
+** github.com/aws/aws-sdk-go-v2/config; version v1.28.0 --
+https://github.com/aws/aws-sdk-go-v2/config
+
+** github.com/aws/aws-sdk-go-v2/credentials; version v1.17.41 --
+https://github.com/aws/aws-sdk-go-v2/credentials
+
+** github.com/aws/aws-sdk-go-v2/feature/ec2/imds; version v1.16.17 --
+https://github.com/aws/aws-sdk-go-v2/feature/ec2/imds
+
+** github.com/aws/aws-sdk-go-v2/internal/configsources; version v1.3.21 --
+https://github.com/aws/aws-sdk-go-v2/internal/configsources
+
+** github.com/aws/aws-sdk-go-v2/internal/endpoints/v2; version v2.6.21 --
+https://github.com/aws/aws-sdk-go-v2/internal/endpoints/v2
+
+** github.com/aws/aws-sdk-go-v2/internal/ini; version v1.8.1 --
+https://github.com/aws/aws-sdk-go-v2/internal/ini
+
+** github.com/aws/aws-sdk-go-v2/service/ec2; version v1.186.0 --
+https://github.com/aws/aws-sdk-go-v2/service/ec2
+
+** github.com/aws/aws-sdk-go-v2/service/ecr; version v1.36.2 --
+https://github.com/aws/aws-sdk-go-v2/service/ecr
+
+** github.com/aws/aws-sdk-go-v2/service/ecrpublic; version v1.27.2 --
+https://github.com/aws/aws-sdk-go-v2/service/ecrpublic
+
+** github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding; version v1.12.0 --
+https://github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding
+
+** github.com/aws/aws-sdk-go-v2/service/internal/presigned-url; version v1.12.2 --
+https://github.com/aws/aws-sdk-go-v2/service/internal/presigned-url
+
+** github.com/aws/aws-sdk-go-v2/service/sso; version v1.24.2 --
+https://github.com/aws/aws-sdk-go-v2/service/sso
+
+** github.com/aws/aws-sdk-go-v2/service/ssooidc; version v1.28.2 --
+https://github.com/aws/aws-sdk-go-v2/service/ssooidc
+
+** github.com/aws/aws-sdk-go-v2/service/sts; version v1.32.2 --
+https://github.com/aws/aws-sdk-go-v2/service/sts
+
+** github.com/aws/smithy-go; version v1.22.0 --
+https://github.com/aws/smithy-go
+
 ** github.com/coreos/go-semver/semver; version v0.3.1 --
 https://github.com/coreos/go-semver
 
@@ -131,7 +179,7 @@ https://github.com/kubernetes/client-go
 ** k8s.io/cloud-provider; version v0.31.0 --
 https://github.com/kubernetes/cloud-provider
 
-** k8s.io/cloud-provider-aws; version v1.31.0 --
+** k8s.io/cloud-provider-aws; version v1.31.2 --
 https://github.com/kubernetes/cloud-provider-aws
 
 ** k8s.io/component-base; version v0.31.0 --
@@ -386,6 +434,10 @@ https://github.com/kubernetes-sigs/yaml
    limitations under the License.
 
 
+* For github.com/aws/smithy-go see also this required NOTICE:
+Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+
+
 * For github.com/coreos/go-semver/semver see also this required NOTICE:
 CoreOS Project
 Copyright 2018 CoreOS, Inc
@@ -582,6 +634,43 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
 LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+------
+
+** github.com/aws/aws-sdk-go-v2/internal/sync/singleflight; version v1.32.2 --
+https://github.com/aws/aws-sdk-go-v2
+
+** github.com/aws/smithy-go/internal/sync/singleflight; version v1.22.0 --
+https://github.com/aws/smithy-go
+
+Copyright (c) 2009 The Go Authors. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+   * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+   * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 
 ------
 
@@ -924,6 +1013,39 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
+** github.com/pmezard/go-difflib/difflib; version v1.0.1-0.20181226105442-5d4384ee4fb2 --
+https://github.com/pmezard/go-difflib
+
+Copyright (c) 2013, Patrick Mezard
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+    Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+    Redistributions in binary form must reproduce the above copyright
+notice, this list of conditions and the following disclaimer in the
+documentation and/or other materials provided with the distribution.
+    The names of its contributors may not be used to endorse or promote
+products derived from this software without specific prior written
+permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+------
+
 ** github.com/spf13/pflag; version v1.0.5 --
 https://github.com/spf13/pflag
 
@@ -1226,6 +1348,15 @@ Copyright (c) 2016 Mail.Ru Group
 ** github.com/stoewer/go-strcase; version v1.3.0 --
 https://github.com/stoewer/go-strcase
 Copyright (c) 2017, Adrian Stoewer <adrian.stoewer@rz.ifi.lmu.de>
+
+** github.com/stretchr/objx; version v0.5.2 --
+https://github.com/stretchr/objx
+Copyright (c) 2014 Stretchr, Inc.
+Copyright (c) 2017-2018 objx contributors
+
+** github.com/stretchr/testify; version v1.9.0 --
+https://github.com/stretchr/testify
+Copyright (c) 2012-2020 Mat Ryer, Tyler Bunnell and contributors.
 
 ** github.com/x448/float16; version v0.8.4 --
 https://github.com/x448/float16

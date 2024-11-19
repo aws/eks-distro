@@ -1333,7 +1333,7 @@ Copyright (c) 2012,2013 Ernest Micklei
 https://github.com/felixge/httpsnoop
 Copyright (c) 2016 Felix Geisendörfer (felix@debuggable.com)
 
-** github.com/golang-jwt/jwt/v4; version v4.5.0 --
+** github.com/golang-jwt/jwt/v4; version v4.5.1 --
 https://github.com/golang-jwt/jwt/v4
 Copyright (c) 2012 Dave Grijalva
 Copyright (c) 2021 golang-jwt maintainers
