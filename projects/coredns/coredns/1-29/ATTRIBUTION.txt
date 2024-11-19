@@ -2,7 +2,7 @@
 ** cloud.google.com/go/compute/metadata; version v0.2.3 --
 https://github.com/googleapis/google-cloud-go
 
-** github.com/aws/aws-sdk-go; version v1.44.327 --
+** github.com/aws/aws-sdk-go; version v1.51.25 --
 https://github.com/aws/aws-sdk-go
 
 ** github.com/Azure/go-autorest/autorest; version v0.11.29 --
@@ -32,7 +32,7 @@ https://github.com/Azure/go-autorest/tracing
 ** github.com/coredns/caddy; version v1.1.1 --
 https://github.com/coredns/caddy
 
-** github.com/coredns/coredns; version v1.11.1 --
+** github.com/coredns/coredns; version v1.11.3 --
 https://github.com/coredns/coredns
 
 ** github.com/coreos/go-semver/semver; version v0.3.0 --
@@ -41,7 +41,7 @@ https://github.com/coreos/go-semver
 ** github.com/coreos/go-systemd/v22/journal; version v22.3.2 --
 https://github.com/coreos/go-systemd/v22
 
-** github.com/DataDog/appsec-internal-go; version v1.4.1 --
+** github.com/DataDog/appsec-internal-go; version v1.5.0 --
 https://github.com/DataDog/appsec-internal-go
 
 ** github.com/DataDog/datadog-agent/pkg/obfuscate; version v0.48.0 --
@@ -50,7 +50,7 @@ https://github.com/DataDog/datadog-agent/pkg/obfuscate
 ** github.com/DataDog/datadog-agent/pkg/remoteconfig/state; version v0.48.1 --
 https://github.com/DataDog/datadog-agent/pkg/remoteconfig/state
 
-** github.com/DataDog/go-libddwaf/v2; version v2.2.3 --
+** github.com/DataDog/go-libddwaf/v2; version v2.3.2 --
 https://github.com/DataDog/go-libddwaf/v2
 
 ** github.com/DataDog/sketches-go/ddsketch; version v1.4.2 --
@@ -62,7 +62,7 @@ https://github.com/dimchansky/utfbom
 ** github.com/dnstap/golang-dnstap; version v0.4.0 --
 https://github.com/dnstap/golang-dnstap
 
-** github.com/ebitengine/purego; version v0.5.2 --
+** github.com/ebitengine/purego; version v0.6.0-alpha.5 --
 https://github.com/ebitengine/purego
 
 ** github.com/farsightsec/golang-framestream; version v0.3.0 --
@@ -74,10 +74,13 @@ https://github.com/flynn-archive/go-shlex
 ** github.com/go-logr/logr; version v1.4.1 --
 https://github.com/go-logr/logr
 
+** github.com/go-logr/stdr; version v1.2.2 --
+https://github.com/go-logr/stdr
+
 ** github.com/go-openapi/jsonpointer; version v0.19.6 --
 https://github.com/go-openapi/jsonpointer
 
-** github.com/go-openapi/jsonreference; version v0.20.1 --
+** github.com/go-openapi/jsonreference; version v0.20.2 --
 https://github.com/go-openapi/jsonreference
 
 ** github.com/go-openapi/swag; version v0.22.3 --
@@ -86,8 +89,8 @@ https://github.com/go-openapi/swag
 ** github.com/golang/groupcache/lru; version v0.0.0-20210331224755-41bb18bfe9da --
 https://github.com/golang/groupcache
 
-** github.com/google/gnostic; version v0.5.7-v3refs --
-https://github.com/google/gnostic
+** github.com/google/gnostic-models; version v0.6.8 --
+https://github.com/google/gnostic-models
 
 ** github.com/google/gofuzz; version v1.2.0 --
 https://github.com/google/gofuzz
@@ -95,7 +98,7 @@ https://github.com/google/gofuzz
 ** github.com/google/s2a-go; version v0.1.7 --
 https://github.com/google/s2a-go
 
-** github.com/googleapis/enterprise-certificate-proxy/client; version v0.3.1 --
+** github.com/googleapis/enterprise-certificate-proxy/client; version v0.3.2 --
 https://github.com/googleapis/enterprise-certificate-proxy
 
 ** github.com/infobloxopen/go-trees; version v0.0.0-20200715205103-96a057b8dfb9 --
@@ -128,70 +131,82 @@ https://github.com/openzipkin/zipkin-go
 ** github.com/outcaste-io/ristretto; version v0.2.3 --
 https://github.com/outcaste-io/ristretto
 
-** github.com/prometheus/client_golang/prometheus; version v1.16.0 --
+** github.com/prometheus/client_golang/prometheus; version v1.19.0 --
 https://github.com/prometheus/client_golang
 
-** github.com/prometheus/client_model/go; version v0.4.0 --
+** github.com/prometheus/client_model/go; version v0.6.0 --
 https://github.com/prometheus/client_model
 
-** github.com/prometheus/common; version v0.44.0 --
+** github.com/prometheus/common; version v0.53.0 --
 https://github.com/prometheus/common
 
-** github.com/prometheus/procfs; version v0.10.1 --
+** github.com/prometheus/procfs; version v0.12.0 --
 https://github.com/prometheus/procfs
 
-** go.etcd.io/etcd/api/v3; version v3.5.9 --
+** go.etcd.io/etcd/api/v3; version v3.5.12 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/client/pkg/v3; version v3.5.9 --
+** go.etcd.io/etcd/client/pkg/v3; version v3.5.12 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/client/v3; version v3.5.9 --
+** go.etcd.io/etcd/client/v3; version v3.5.12 --
 https://github.com/etcd-io/etcd
 
 ** go.opencensus.io; version v0.24.0 --
 https://github.com/census-instrumentation/opencensus-go
 
-** google.golang.org/genproto/googleapis/api; version v0.0.0-20231002182017-d307bd883b97 --
+** go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp; version v0.49.0 --
+https://github.com/open-telemetry/opentelemetry-go-contrib
+
+** go.opentelemetry.io/otel; version v1.24.0 --
+https://github.com/open-telemetry/opentelemetry-go
+
+** go.opentelemetry.io/otel/metric; version v1.24.0 --
+https://github.com/open-telemetry/opentelemetry-go
+
+** go.opentelemetry.io/otel/trace; version v1.24.0 --
+https://github.com/open-telemetry/opentelemetry-go
+
+** google.golang.org/genproto/googleapis/api; version v0.0.0-20240311132316-a219d84964c2 --
 https://github.com/googleapis/go-genproto
 
-** google.golang.org/genproto/googleapis/rpc; version v0.0.0-20231009173412-8bfb1ae86b6c --
+** google.golang.org/genproto/googleapis/rpc; version v0.0.0-20240318140521-94a12d6c2237 --
 https://github.com/googleapis/go-genproto
 
-** google.golang.org/grpc; version v1.58.3 --
+** google.golang.org/grpc; version v1.63.2 --
 https://github.com/grpc/grpc-go
 
-** gopkg.in/DataDog/dd-trace-go.v1; version v1.60.2 --
+** gopkg.in/DataDog/dd-trace-go.v1; version v1.62.0 --
 https://gopkg.in/DataDog/dd-trace-go.v1
 
 ** gopkg.in/yaml.v2; version v2.4.0 --
 https://gopkg.in/yaml.v2
 
-** k8s.io/api; version v0.27.4 --
+** k8s.io/api; version v0.29.3 --
 https://github.com/kubernetes/api
 
-** k8s.io/apimachinery/pkg; version v0.27.4 --
+** k8s.io/apimachinery/pkg; version v0.29.3 --
 https://github.com/kubernetes/apimachinery
 
-** k8s.io/client-go; version v0.27.4 --
+** k8s.io/client-go; version v0.29.3 --
 https://github.com/kubernetes/client-go
 
-** k8s.io/klog/v2; version v2.100.1 --
+** k8s.io/klog/v2; version v2.120.1 --
 https://github.com/kubernetes/klog
 
-** k8s.io/kube-openapi/pkg; version v0.0.0-20230501164219-8b0f38b5fd1f --
+** k8s.io/kube-openapi/pkg; version v0.0.0-20231010175941-2dd684a91f00 --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kube-openapi/pkg/validation/spec; version v0.0.0-20230501164219-8b0f38b5fd1f --
+** k8s.io/kube-openapi/pkg/validation/spec; version v0.0.0-20231010175941-2dd684a91f00 --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/utils; version v0.0.0-20230209194617-a36077c30491 --
+** k8s.io/utils; version v0.0.0-20230726121419-3b25d923346b --
 https://github.com/kubernetes/utils
 
 ** sigs.k8s.io/json; version v0.0.0-20221116044647-bc3834ca7abd --
 https://github.com/kubernetes-sigs/json
 
-** sigs.k8s.io/structured-merge-diff/v4; version v4.2.3 --
+** sigs.k8s.io/structured-merge-diff/v4; version v4.4.1 --
 https://github.com/kubernetes-sigs/structured-merge-diff
 
 
@@ -530,7 +545,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/aws/aws-sdk-go/internal/sync/singleflight; version v1.44.327 --
+** github.com/aws/aws-sdk-go/internal/sync/singleflight; version v1.51.25 --
 https://github.com/aws/aws-sdk-go
 
 ** golang.org/go; version go1.21.13 --
@@ -539,13 +554,13 @@ https://github.com/golang/go
 ** golang.org/x/crypto; version v0.22.0 --
 https://golang.org/x/crypto
 
-** golang.org/x/exp/rand; version v0.0.0-20240409090435-93d18d7e34b8 --
+** golang.org/x/exp/rand; version v0.0.0-20230321023759-10a507213a29 --
 https://golang.org/x/exp
 
-** golang.org/x/net; version v0.24.0 --
+** golang.org/x/net; version v0.23.0 --
 https://golang.org/x/net
 
-** golang.org/x/oauth2; version v0.13.0 --
+** golang.org/x/oauth2; version v0.18.0 --
 https://golang.org/x/oauth2
 
 ** golang.org/x/sys; version v0.19.0 --
@@ -560,7 +575,7 @@ https://golang.org/x/text
 ** golang.org/x/time/rate; version v0.5.0 --
 https://golang.org/x/time
 
-** k8s.io/apimachinery/third_party/forked/golang/reflect; version v0.27.4 --
+** k8s.io/apimachinery/third_party/forked/golang/reflect; version v0.29.3 --
 https://github.com/kubernetes/apimachinery
 
 Copyright (c) 2009 The Go Authors. All rights reserved.
@@ -667,7 +682,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/golang/protobuf; version v1.5.3 --
+** github.com/golang/protobuf; version v1.5.4 --
 https://github.com/golang/protobuf
 
 Copyright 2010 The Go Authors.  All rights reserved.
@@ -734,7 +749,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/google/uuid; version v1.3.1 --
+** github.com/google/uuid; version v1.6.0 --
 https://github.com/google/uuid
 
 Copyright (c) 2009,2014 Google Inc. All rights reserved.
@@ -767,7 +782,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/googleapis/gax-go/v2; version v2.12.0 --
+** github.com/googleapis/gax-go/v2; version v2.12.3 --
 https://github.com/googleapis/gax-go/v2
 
 Copyright 2016, Google Inc.
@@ -867,7 +882,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/miekg/dns; version v1.1.55 --
+** github.com/miekg/dns; version v1.1.58 --
 https://github.com/miekg/dns
 
 BSD 3-Clause License
@@ -939,7 +954,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/prometheus/common/internal/bitbucket.org/ww/goautoneg; version v0.44.0 --
+** github.com/prometheus/common/internal/bitbucket.org/ww/goautoneg; version v0.53.0 --
 https://github.com/prometheus/common
 
 Copyright (c) 2011, Open Knowledge Foundation Ltd.
@@ -1042,7 +1057,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** google.golang.org/api; version v0.147.0 --
+** google.golang.org/api; version v0.172.0 --
 https://github.com/googleapis/google-api-go-client
 
 Copyright (c) 2011 Google Inc. All rights reserved.
@@ -1075,7 +1090,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** google.golang.org/api/internal/third_party/uritemplates; version v0.147.0 --
+** google.golang.org/api/internal/third_party/uritemplates; version v0.172.0 --
 https://github.com/googleapis/google-api-go-client
 
 Copyright (c) 2013 Joshua Tacoma. All rights reserved.
@@ -1175,7 +1190,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** k8s.io/kube-openapi/pkg/internal/third_party/go-json-experiment/json; version v0.0.0-20230501164219-8b0f38b5fd1f --
+** k8s.io/kube-openapi/pkg/internal/third_party/go-json-experiment/json; version v0.0.0-20231010175941-2dd684a91f00 --
 https://github.com/kubernetes/kube-openapi
 
 Copyright (c) 2020 The Go Authors. All rights reserved.
@@ -1208,7 +1223,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** k8s.io/utils/internal/third_party/forked/golang/net; version v0.0.0-20230209194617-a36077c30491 --
+** k8s.io/utils/internal/third_party/forked/golang/net; version v0.0.0-20230726121419-3b25d923346b --
 https://github.com/kubernetes/utils
 
 Copyright (c) 2012 The Go Authors. All rights reserved.
@@ -1286,7 +1301,7 @@ PERFORMANCE OF THIS SOFTWARE.
 
 ------
 
-** github.com/antonmedv/expr; version v1.13.0 --
+** github.com/antonmedv/expr; version v1.15.5 --
 https://github.com/expr-lang/expr
 Copyright (c) 2019 Anton Medvedev
 
@@ -1314,7 +1329,11 @@ Copyright (c) 2015 Datadog, Inc
 https://github.com/emicklei/go-restful/v3
 Copyright (c) 2012,2013 Ernest Micklei
 
-** github.com/golang-jwt/jwt/v4; version v4.5.0 --
+** github.com/felixge/httpsnoop; version v1.0.4 --
+https://github.com/felixge/httpsnoop
+Copyright (c) 2016 Felix Geisendörfer (felix@debuggable.com)
+
+** github.com/golang-jwt/jwt/v4; version v4.5.1 --
 https://github.com/golang-jwt/jwt/v4
 Copyright (c) 2012 Dave Grijalva
 Copyright (c) 2021 golang-jwt maintainers
