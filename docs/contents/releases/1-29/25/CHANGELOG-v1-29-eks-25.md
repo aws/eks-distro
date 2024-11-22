@@ -5,11 +5,9 @@ This changelog highlights the changes for [v1-29-eks-25](https://github.com/aws/
 ## Changes
 
 ### Patches
-* Update patches and git tags ([3404](https://github.com/aws/eks-distro/pull/3404))
 * Updated the K8's project patches and git_tag ([3386](https://github.com/aws/eks-distro/pull/3386))
 
 ### Projects
-* Update patches and git tags ([3404](https://github.com/aws/eks-distro/pull/3404))
 * Updated the K8's project patches and git_tag ([3386](https://github.com/aws/eks-distro/pull/3386))
 
 ### Base Image
