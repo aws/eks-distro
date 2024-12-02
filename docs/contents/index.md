@@ -106,7 +106,7 @@ commands:
 
 ```bash
 RELEASE_BRANCH=1-31
-RELEASE=6
+RELEASE=8
 kubectl apply -f https://distro.eks.amazonaws.com/crds/releases.distro.eks.amazonaws.com-v1alpha1.yaml
 kubectl apply -f https://distro.eks.amazonaws.com/kubernetes-${RELEASE_BRANCH}/kubernetes-${RELEASE_BRANCH}-eks-${RELEASE}.yaml
 kubectl get release kubernetes-${RELEASE_BRANCH}-eks-${RELEASE}
@@ -121,6 +121,8 @@ repository for the [EKS Optimized AMI](https://github.com/awslabs/amazon-eks-ami
 if you are interested in the AL2 container runtime kernel version.
 
 #### EKS-D 1.31 Version Dependencies
+* [v1-31-eks-8](releases/1-31/8/index.md) (November 22, 2024)
+* [v1-31-eks-7](releases/1-31/7/index.md) (November 7, 2024)
 * [v1-31-eks-6](releases/1-31/6/index.md) (October 25, 2024)
 * [v1-31-eks-5](releases/1-31/5/index.md) (October 10, 2024)
 * [v1-31-eks-4](releases/1-31/4/index.md) (September 26, 2024)
@@ -129,6 +131,8 @@ if you are interested in the AL2 container runtime kernel version.
 * [v1-31-eks-1](releases/1-31/1/index.md) (September 26, 2024)
 
 #### EKS-D 1.30 Version Dependencies
+* [v1-30-eks-19](releases/1-30/19/index.md) (November 22, 2024)
+* [v1-30-eks-18](releases/1-30/18/index.md) (November 7, 2024)
 * [v1-30-eks-17](releases/1-30/17/index.md) (October 25, 2024)
 * [v1-30-eks-16](releases/1-30/16/index.md) (October 10, 2024)
 * [v1-30-eks-15](releases/1-30/15/index.md) (September 26, 2024)
@@ -144,6 +148,8 @@ if you are interested in the AL2 container runtime kernel version.
 * [v1-30-eks-5](releases/1-30/5/index.md) (May 28, 2024)
 
 #### EKS-D 1.29 Version Dependencies
+* [v1-29-eks-26](releases/1-29/26/index.md) (November 22, 2024)
+* [v1-29-eks-25](releases/1-29/25/index.md) (November 7, 2024)
 * [v1-29-eks-24](releases/1-29/24/index.md) (October 25, 2024)
 * [v1-29-eks-23](releases/1-29/23/index.md) (October 10, 2024)
 * [v1-29-eks-22](releases/1-29/22/index.md) (September 26, 2024)
@@ -170,6 +176,8 @@ if you are interested in the AL2 container runtime kernel version.
 * [v1-29-eks-1](releases/1-29/1/index.md) (December 16, 2023)
 
 #### EKS-D 1.28 Version Dependencies
+* [v1-28-eks-37](releases/1-28/37/index.md) (November 22, 2024)
+* [v1-28-eks-36](releases/1-28/36/index.md) (November 7, 2024)
 * [v1-28-eks-35](releases/1-28/35/index.md) (October 25, 2024)
 * [v1-28-eks-34](releases/1-28/34/index.md) (October 10, 2024)
 * [v1-28-eks-33](releases/1-28/33/index.md) (September 26, 2024)
