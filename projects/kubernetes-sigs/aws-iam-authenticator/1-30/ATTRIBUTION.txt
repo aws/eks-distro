@@ -2,6 +2,12 @@
 ** github.com/aws/aws-sdk-go; version v1.54.6 --
 https://github.com/aws/aws-sdk-go
 
+** github.com/aws/aws-sdk-go-v2; version v1.30.4 --
+https://github.com/aws/aws-sdk-go-v2
+
+** github.com/aws/smithy-go; version v1.20.4 --
+https://github.com/aws/smithy-go
+
 ** github.com/go-logr/logr; version v1.4.2 --
 https://github.com/go-logr/logr
 
@@ -44,7 +50,7 @@ https://github.com/prometheus/common
 ** github.com/prometheus/procfs; version v0.15.1 --
 https://github.com/prometheus/procfs
 
-** github.com/spf13/afero; version v1.1.2 --
+** github.com/spf13/afero; version v1.11.0 --
 https://github.com/spf13/afero
 
 ** github.com/spf13/cobra; version v1.8.1 --
@@ -83,7 +89,7 @@ https://github.com/kubernetes/sample-controller
 ** k8s.io/utils; version v0.0.0-20240711033017-18e509b52bc8 --
 https://github.com/kubernetes/utils
 
-** sigs.k8s.io/aws-iam-authenticator; version v0.6.27 --
+** sigs.k8s.io/aws-iam-authenticator; version v0.6.28 --
 https://github.com/kubernetes-sigs/aws-iam-authenticator
 
 ** sigs.k8s.io/json; version v0.0.0-20221116044647-bc3834ca7abd --
@@ -302,6 +308,10 @@ https://github.com/kubernetes-sigs/yaml
    limitations under the License.
 
 
+* For github.com/aws/smithy-go see also this required NOTICE:
+Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+
+
 * For github.com/prometheus/client_golang/prometheus see also this required NOTICE:
 Prometheus instrumentation library for Go applications
 Copyright 2012-2015 The Prometheus Authors
@@ -415,6 +425,43 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+------
+
+** github.com/aws/aws-sdk-go-v2/internal/sync/singleflight; version v1.30.4 --
+https://github.com/aws/aws-sdk-go-v2
+
+** github.com/aws/smithy-go/internal/sync/singleflight; version v1.20.4 --
+https://github.com/aws/smithy-go
+
+Copyright (c) 2009 The Go Authors. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+   * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+   * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 
 ------
 
@@ -990,7 +1037,7 @@ Copyright (c) 2016 Caleb Spare
 https://github.com/chzyer/readline
 Copyright (c) 2015 Chzyer
 
-** github.com/emicklei/go-restful/v3; version v3.11.0 --
+** github.com/emicklei/go-restful/v3; version v3.11.3 --
 https://github.com/emicklei/go-restful/v3
 Copyright (c) 2012,2013 Ernest Micklei
 
@@ -1022,7 +1069,7 @@ Copyright (c) 2013 - 2017 Thomas Pelletier, Eric Anderton
 https://github.com/sirupsen/logrus
 Copyright (c) 2014 Simon Eskildsen
 
-** github.com/spf13/cast; version v1.3.0 --
+** github.com/spf13/cast; version v1.6.0 --
 https://github.com/spf13/cast
 Copyright (c) 2014 Steve Francia
 
