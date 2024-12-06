@@ -212,13 +212,13 @@ https://github.com/census-instrumentation/opencensus-go
 ** go.opentelemetry.io/contrib/instrumentation/github.com/emicklei/go-restful/otelrestful; version v0.44.0 --
 https://github.com/open-telemetry/opentelemetry-go-contrib
 
-** go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc; version v0.42.0 --
+** go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc; version v0.46.0 --
 https://github.com/open-telemetry/opentelemetry-go-contrib
 
 ** go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp; version v0.44.0 --
 https://github.com/open-telemetry/opentelemetry-go-contrib
 
-** go.opentelemetry.io/otel; version v1.19.0 --
+** go.opentelemetry.io/otel; version v1.20.0 --
 https://github.com/open-telemetry/opentelemetry-go
 
 ** go.opentelemetry.io/otel/exporters/otlp/otlptrace; version v1.19.0 --
@@ -227,25 +227,25 @@ https://github.com/open-telemetry/opentelemetry-go
 ** go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc; version v1.19.0 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/otel/metric; version v1.19.0 --
+** go.opentelemetry.io/otel/metric; version v1.20.0 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/otel/sdk; version v1.19.0 --
+** go.opentelemetry.io/otel/sdk; version v1.20.0 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/otel/trace; version v1.19.0 --
+** go.opentelemetry.io/otel/trace; version v1.20.0 --
 https://github.com/open-telemetry/opentelemetry-go
 
 ** go.opentelemetry.io/proto/otlp; version v1.0.0 --
 https://github.com/open-telemetry/opentelemetry-proto-go
 
-** google.golang.org/genproto/googleapis/api; version v0.0.0-20230726155614-23370e0ffb3e --
+** google.golang.org/genproto/googleapis/api; version v0.0.0-20230822172742-b8732ec3820d --
 https://github.com/googleapis/go-genproto
 
 ** google.golang.org/genproto/googleapis/rpc; version v0.0.0-20230822172742-b8732ec3820d --
 https://github.com/googleapis/go-genproto
 
-** google.golang.org/grpc; version v1.58.3 --
+** google.golang.org/grpc; version v1.59.0 --
 https://github.com/grpc/grpc-go
 
 ** gopkg.in/square/go-jose.v2; version v2.6.0 --
@@ -338,7 +338,7 @@ https://github.com/kubernetes/kubectl
 ** k8s.io/kubelet; version v0.0.0 --
 https://github.com/kubernetes/kubelet
 
-** k8s.io/kubernetes; version v1.29.10 --
+** k8s.io/kubernetes; version v1.29.11 --
 https://github.com/kubernetes/kubernetes
 
 ** k8s.io/legacy-cloud-providers; version v0.0.0 --
@@ -1211,7 +1211,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/google/uuid; version v1.3.0 --
+** github.com/google/uuid; version v1.3.1 --
 https://github.com/google/uuid
 
 Copyright (c) 2009,2014 Google Inc. All rights reserved.
@@ -1362,7 +1362,7 @@ https://golang.org/x/exp
 ** golang.org/x/net; version v0.24.0 --
 https://golang.org/x/net
 
-** golang.org/x/oauth2; version v0.10.0 --
+** golang.org/x/oauth2; version v0.11.0 --
 https://golang.org/x/oauth2
 
 ** golang.org/x/sync; version v0.5.0 --
@@ -1389,7 +1389,7 @@ https://github.com/kubernetes/apimachinery
 ** k8s.io/client-go/third_party/forked/golang/template; version v0.0.0 --
 https://github.com/kubernetes/client-go
 
-** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.29.10 --
+** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.29.11 --
 https://github.com/kubernetes/kubernetes
 
 ** k8s.io/utils/inotify; version v0.0.0-20230726121419-3b25d923346b --
@@ -1840,7 +1840,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.29.10 --
+** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.29.11 --
 https://github.com/kubernetes/kubernetes
 
 Copyright ©2013 The gonum Authors. All rights reserved.
