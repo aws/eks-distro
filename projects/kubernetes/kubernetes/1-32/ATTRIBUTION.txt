@@ -1162,7 +1162,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ** github.com/liggitt/tabwriter; version v0.0.0-20181228230101-89fcab3d43de --
 https://github.com/liggitt/tabwriter
 
-** golang.org/go; version go1.23.3 --
+** golang.org/go; version go1.23.4 --
 https://github.com/golang/go
 
 ** k8s.io/apimachinery/third_party/forked/golang; version v1.32.0-beta.0 --
