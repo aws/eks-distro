@@ -1,6 +1,4 @@
-5ca84eb92faf18b517511378c2012e108c8e1d6a109f05b53b5a7ada639c0591  _output/1-27/bin/external-snapshotter/linux-amd64/csi-snapshotter
-ec0f13533329901f8f1d9422222d913c5fe56b744ce58c0063321efb73973550  _output/1-27/bin/external-snapshotter/linux-amd64/snapshot-controller
-eaa5eed7c9cbc03a129148e86da4a3e5dd41a1959e15424de465e1743f4649aa  _output/1-27/bin/external-snapshotter/linux-amd64/snapshot-validation-webhook
-a805e11012c496289e4ca83ef4e3463b11ee6b308860f3a8e8111eb03895ced1  _output/1-27/bin/external-snapshotter/linux-arm64/csi-snapshotter
-677c68d39daa022a8a9eacc3786fb85a0c537d988819d7e4058aa479dacf1a63  _output/1-27/bin/external-snapshotter/linux-arm64/snapshot-controller
-d2d9025e4d24ef630b5dc8b71fa2d6f730e096438ec69bf77115181a5b80025a  _output/1-27/bin/external-snapshotter/linux-arm64/snapshot-validation-webhook
+f4572f2cf96a9cb7e0c3117f04e9eb3fe1a1ea70c191533e1f019102f6c3e6ee  _output/1-27/bin/external-snapshotter/linux-amd64/csi-snapshotter
+b480e70ad5e9240796e797fe17685362c2e25fc49d2fd3c6232cb10ed2d6a20d  _output/1-27/bin/external-snapshotter/linux-amd64/snapshot-controller
+0d48342e8e257a71c8ad6a9ac3e50e96355c5fd8b34eced212192e8283c9b567  _output/1-27/bin/external-snapshotter/linux-arm64/csi-snapshotter
+46218380828bd702dbada6546ee9d8ad20e76ce154638aa7f1799867dacf4ef7  _output/1-27/bin/external-snapshotter/linux-arm64/snapshot-controller
