@@ -7,14 +7,13 @@ REPO_OWNER=kubernetes-csi
 
 CSI_SNAPSHOTTER_IMAGE_COMPONENT?=kubernetes-csi/external-snapshotter/csi-snapshotter
 SNAPSHOT_CONTROLLER_IMAGE_COMPONENT?=kubernetes-csi/external-snapshotter/snapshot-controller
-SNAPSHOT_VALIDATION_WEBHOOK_IMAGE_COMPONENT?=kubernetes-csi/external-snapshotter/snapshot-validation-webhook
 
-IMAGE_NAMES=csi-snapshotter snapshot-controller snapshot-validation-webhook
+IMAGE_NAMES=csi-snapshotter snapshot-controller
 
 SNAPSHOTTER_LICENSE=$(REPO)/vendor/github.com/kubernetes-csi/external-snapshotter/LICENSE
 
-BINARY_TARGET_FILES=snapshot-controller csi-snapshotter snapshot-validation-webhook
-SOURCE_PATTERNS=./cmd/snapshot-controller ./cmd/csi-snapshotter ./cmd/snapshot-validation-webhook
+BINARY_TARGET_FILES=snapshot-controller csi-snapshotter
+SOURCE_PATTERNS=./cmd/snapshot-controller ./cmd/csi-snapshotter
 
 DOCKERFILE_FOLDER=./docker/linux/$(IMAGE_NAME)
 

@@ -11,23 +11,19 @@ clone-repo:  ## Clone upstream `external-snapshotter`
 checkout-repo: ## Checkout upstream tag based on value in GIT_TAG file
 
 ##@ Binary Targets
-binaries: ## Build all binaries: `snapshot-controller csi-snapshotter snapshot-validation-webhook` for `linux/amd64 linux/arm64`
+binaries: ## Build all binaries: `snapshot-controller csi-snapshotter` for `linux/amd64 linux/arm64`
 _output/1-26/bin/external-snapshotter/linux-amd64/snapshot-controller: ## Build `_output/1-26/bin/external-snapshotter/linux-amd64/snapshot-controller`
 _output/1-26/bin/external-snapshotter/linux-amd64/csi-snapshotter: ## Build `_output/1-26/bin/external-snapshotter/linux-amd64/csi-snapshotter`
-_output/1-26/bin/external-snapshotter/linux-amd64/snapshot-validation-webhook: ## Build `_output/1-26/bin/external-snapshotter/linux-amd64/snapshot-validation-webhook`
 _output/1-26/bin/external-snapshotter/linux-arm64/snapshot-controller: ## Build `_output/1-26/bin/external-snapshotter/linux-arm64/snapshot-controller`
 _output/1-26/bin/external-snapshotter/linux-arm64/csi-snapshotter: ## Build `_output/1-26/bin/external-snapshotter/linux-arm64/csi-snapshotter`
-_output/1-26/bin/external-snapshotter/linux-arm64/snapshot-validation-webhook: ## Build `_output/1-26/bin/external-snapshotter/linux-arm64/snapshot-validation-webhook`
 
 ##@ Image Targets
-local-images: ## Builds `csi-snapshotter/images/amd64 snapshot-controller/images/amd64 snapshot-validation-webhook/images/amd64` as oci tars for presumbit validation
-images: ## Pushes `csi-snapshotter/images/push snapshot-controller/images/push snapshot-validation-webhook/images/push` to IMAGE_REPO
+local-images: ## Builds `csi-snapshotter/images/amd64 snapshot-controller/images/amd64` as oci tars for presumbit validation
+images: ## Pushes `csi-snapshotter/images/push snapshot-controller/images/push` to IMAGE_REPO
 csi-snapshotter/images/amd64: ## Builds/pushes `csi-snapshotter/images/amd64`
 snapshot-controller/images/amd64: ## Builds/pushes `snapshot-controller/images/amd64`
-snapshot-validation-webhook/images/amd64: ## Builds/pushes `snapshot-validation-webhook/images/amd64`
 csi-snapshotter/images/push: ## Builds/pushes `csi-snapshotter/images/push`
 snapshot-controller/images/push: ## Builds/pushes `snapshot-controller/images/push`
-snapshot-validation-webhook/images/push: ## Builds/pushes `snapshot-validation-webhook/images/push`
 
 ##@ Checksum Targets
 checksums: ## Update checksums file based on currently built binaries.
