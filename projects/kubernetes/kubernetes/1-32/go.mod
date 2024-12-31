@@ -10,11 +10,13 @@ go 1.23.0
 
 godebug default=go1.23
 
+godebug winsymlink=0
+
 require (
 	bitbucket.org/bertimus9/systemstat v0.5.0
 	github.com/JeffAshton/win_pdh v0.0.0-20161109143554-76bb4ee9f0ab
 	github.com/Microsoft/go-winio v0.6.2
-	github.com/Microsoft/hnslib v0.0.7
+	github.com/Microsoft/hnslib v0.0.8
 	github.com/armon/circbuf v0.0.0-20190214190532-5111143e8da2
 	github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5
 	github.com/blang/semver/v4 v4.0.0
@@ -34,7 +36,7 @@ require (
 	github.com/gogo/protobuf v1.3.2
 	github.com/golang/protobuf v1.5.4
 	github.com/google/cadvisor v0.51.0
-	github.com/google/cel-go v0.21.0
+	github.com/google/cel-go v0.22.0
 	github.com/google/gnostic-models v0.6.8
 	github.com/google/go-cmp v0.6.0
 	github.com/google/gofuzz v1.2.0
@@ -49,7 +51,7 @@ require (
 	github.com/onsi/ginkgo/v2 v2.21.0
 	github.com/onsi/gomega v1.35.1
 	github.com/opencontainers/runc v1.2.1
-	github.com/opencontainers/selinux v1.11.0
+	github.com/opencontainers/selinux v1.11.1
 	github.com/pkg/errors v0.9.1
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2
 	github.com/prometheus/client_golang v1.19.1
@@ -81,7 +83,7 @@ require (
 	golang.org/x/term v0.25.0
 	golang.org/x/time v0.7.0
 	golang.org/x/tools v0.26.0
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240701130421-f6361c86f094
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240826202546-f6391c0de4c7
 	google.golang.org/grpc v1.65.0
 	google.golang.org/protobuf v1.35.1
 	gopkg.in/evanphx/json-patch.v4 v4.12.0
@@ -103,11 +105,12 @@ require (
 	k8s.io/csi-translation-lib v0.0.0
 	k8s.io/dynamic-resource-allocation v0.0.0
 	k8s.io/endpointslice v0.0.0
+	k8s.io/externaljwt v0.0.0
 	k8s.io/klog/v2 v2.130.1
 	k8s.io/kms v0.0.0
 	k8s.io/kube-aggregator v0.0.0
 	k8s.io/kube-controller-manager v0.0.0
-	k8s.io/kube-openapi v0.0.0-20240827152857-f7e401e7b4c2
+	k8s.io/kube-openapi v0.0.0-20241105132330-32ad38e42d3f
 	k8s.io/kube-proxy v0.0.0
 	k8s.io/kube-scheduler v0.0.0
 	k8s.io/kubectl v0.0.0
@@ -124,6 +127,7 @@ require (
 )
 
 require (
+	cel.dev/expr v0.18.0 // indirect
 	github.com/Azure/go-ansiterm v0.0.0-20230124172434-306776ec8161 // indirect
 	github.com/MakeNowJust/heredoc v1.0.0 // indirect
 	github.com/NYTimes/gziphandler v1.1.1 // indirect
@@ -153,7 +157,6 @@ require (
 	github.com/go-openapi/swag v0.23.0 // indirect
 	github.com/go-task/slim-sprig/v3 v3.0.0 // indirect
 	github.com/golang-jwt/jwt/v4 v4.5.0 // indirect
-	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/google/btree v1.0.1 // indirect
 	github.com/google/pprof v0.0.0-20241029153458-d1b30febd7db // indirect
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect
@@ -199,7 +202,6 @@ require (
 	go.etcd.io/etcd/pkg/v3 v3.5.16 // indirect
 	go.etcd.io/etcd/raft/v3 v3.5.16 // indirect
 	go.etcd.io/etcd/server/v3 v3.5.16 // indirect
-	go.opencensus.io v0.24.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.53.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.53.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.28.0 // indirect
@@ -208,10 +210,9 @@ require (
 	golang.org/x/mod v0.21.0 // indirect
 	golang.org/x/text v0.19.0 // indirect
 	google.golang.org/genproto v0.0.0-20240123012728-ef4313101c80 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20240528184218-531527333157 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20240826202546-f6391c0de4c7 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
-	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	k8s.io/gengo/v2 v2.0.0-20240911193312-2b36238f13e9 // indirect
 	sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.31.0 // indirect
@@ -239,6 +240,7 @@ replace (
 	k8s.io/csi-translation-lib => ./staging/src/k8s.io/csi-translation-lib
 	k8s.io/dynamic-resource-allocation => ./staging/src/k8s.io/dynamic-resource-allocation
 	k8s.io/endpointslice => ./staging/src/k8s.io/endpointslice
+	k8s.io/externaljwt => ./staging/src/k8s.io/externaljwt
 	k8s.io/kms => ./staging/src/k8s.io/kms
 	k8s.io/kube-aggregator => ./staging/src/k8s.io/kube-aggregator
 	k8s.io/kube-controller-manager => ./staging/src/k8s.io/kube-controller-manager
