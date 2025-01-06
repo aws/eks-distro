@@ -811,19 +811,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/x/net; version v0.28.0 --
+** golang.org/x/net; version v0.33.0 --
 https://golang.org/x/net
 
 ** golang.org/x/oauth2; version v0.22.0 --
 https://golang.org/x/oauth2
 
-** golang.org/x/sys/unix; version v0.24.0 --
+** golang.org/x/sys/unix; version v0.28.0 --
 https://golang.org/x/sys
 
-** golang.org/x/term; version v0.23.0 --
+** golang.org/x/term; version v0.27.0 --
 https://golang.org/x/term
 
-** golang.org/x/text; version v0.17.0 --
+** golang.org/x/text; version v0.21.0 --
 https://golang.org/x/text
 
 ** golang.org/x/time/rate; version v0.6.0 --

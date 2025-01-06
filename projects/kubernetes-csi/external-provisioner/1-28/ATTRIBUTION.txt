@@ -797,7 +797,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/x/net; version v0.28.0 --
+** golang.org/x/net; version v0.33.0 --
 https://golang.org/x/net
 
 ** golang.org/x/oauth2; version v0.22.0 --
