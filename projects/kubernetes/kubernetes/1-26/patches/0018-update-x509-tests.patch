@@ -1,0 +1,35 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Vineeth Bandi <banvinee@amazon.com>
+Date: Tue, 14 Jan 2025 11:52:26 -0600
+Subject: [PATCH] update x509 tests
+
+Signed-off-by: Vineeth Bandi <banvinee@amazon.com>
+---
+ .../apiserver/pkg/authentication/request/x509/x509_test.go    | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/staging/src/k8s.io/apiserver/pkg/authentication/request/x509/x509_test.go b/staging/src/k8s.io/apiserver/pkg/authentication/request/x509/x509_test.go
+index 57209fff220..b9d23e35919 100644
+--- a/staging/src/k8s.io/apiserver/pkg/authentication/request/x509/x509_test.go
++++ b/staging/src/k8s.io/apiserver/pkg/authentication/request/x509/x509_test.go
+@@ -85,7 +85,7 @@ ze3kOoP+iWSmTySHMSKVMppp0Xnls6t38mrsXtPuY8fGD2GS6VllaizMqc3wShNK
+         Issuer: C=US, ST=My State, L=My City, O=My Org, OU=My Unit, CN=ROOT CA
+         Validity
+             Not Before: Dec  8 20:25:58 2014 GMT
+-            Not After : Dec  5 20:25:58 2024 GMT
++            Not After : Dec  5 20:25:58 2124 GMT
+         Subject: C=US, ST=My State, L=My City, O=My Org, OU=My Unit, CN=client_cn
+         Subject Public Key Info:
+             Public Key Algorithm: rsaEncryption
+@@ -159,7 +159,7 @@ i5fmaPPBNzzBFCaQoN3TAjrpwp5Z0kQ=
+         Issuer: C=US, ST=My State, L=My City, O=My Org, OU=My Unit, CN=ROOT CA
+         Validity
+             Not Before: Dec  8 20:25:58 2014 GMT
+-            Not After : Dec  5 20:25:58 2024 GMT
++            Not After : Dec  5 20:25:58 2124 GMT
+         Subject: C=US, ST=My State, L=My City, O=My Org, OU=My Unit, CN=127.0.0.1
+         Subject Public Key Info:
+             Public Key Algorithm: rsaEncryption
+-- 
+2.46.0
+
