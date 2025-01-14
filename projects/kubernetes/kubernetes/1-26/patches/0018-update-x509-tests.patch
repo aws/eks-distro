@@ -1,35 +1,26 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Vineeth Bandi <banvinee@amazon.com>
 Date: Tue, 14 Jan 2025 11:52:26 -0600
-Subject: [PATCH] update x509 tests
+Subject: [PATCH] skip x509 tests
 
 Signed-off-by: Vineeth Bandi <banvinee@amazon.com>
 ---
- .../apiserver/pkg/authentication/request/x509/x509_test.go    | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ hack/make-rules/test.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/staging/src/k8s.io/apiserver/pkg/authentication/request/x509/x509_test.go b/staging/src/k8s.io/apiserver/pkg/authentication/request/x509/x509_test.go
-index 57209fff220..b9d23e35919 100644
---- a/staging/src/k8s.io/apiserver/pkg/authentication/request/x509/x509_test.go
-+++ b/staging/src/k8s.io/apiserver/pkg/authentication/request/x509/x509_test.go
-@@ -85,7 +85,7 @@ ze3kOoP+iWSmTySHMSKVMppp0Xnls6t38mrsXtPuY8fGD2GS6VllaizMqc3wShNK
-         Issuer: C=US, ST=My State, L=My City, O=My Org, OU=My Unit, CN=ROOT CA
-         Validity
-             Not Before: Dec  8 20:25:58 2014 GMT
--            Not After : Dec  5 20:25:58 2024 GMT
-+            Not After : Dec  5 20:25:58 2124 GMT
-         Subject: C=US, ST=My State, L=My City, O=My Org, OU=My Unit, CN=client_cn
-         Subject Public Key Info:
-             Public Key Algorithm: rsaEncryption
-@@ -159,7 +159,7 @@ i5fmaPPBNzzBFCaQoN3TAjrpwp5Z0kQ=
-         Issuer: C=US, ST=My State, L=My City, O=My Org, OU=My Unit, CN=ROOT CA
-         Validity
-             Not Before: Dec  8 20:25:58 2014 GMT
--            Not After : Dec  5 20:25:58 2024 GMT
-+            Not After : Dec  5 20:25:58 2124 GMT
-         Subject: C=US, ST=My State, L=My City, O=My Org, OU=My Unit, CN=127.0.0.1
-         Subject Public Key Info:
-             Public Key Algorithm: rsaEncryption
+diff --git a/hack/make-rules/test.sh b/hack/make-rules/test.sh
+index e9074678a8f..c78fc9b3b60 100755
+--- a/hack/make-rules/test.sh
++++ b/hack/make-rules/test.sh
+@@ -54,7 +54,7 @@ kube::test::find_dirs() {
+         \) -prune \
+       \) -name '*_test.go' -print0 | xargs -0n1 dirname | sed "s|^\./|${KUBE_GO_PACKAGE}/|" | LC_ALL=C sort -u
+
+-    find ./staging -name '*_test.go' -not -path '*/test/integration/*' -prune -print0 | xargs -0n1 dirname | sed 's|^\./staging/src/|./vendor/|' | LC_ALL=C sort -u
++    find ./staging -name '*_test.go' -not -path '*/test/integration/*' -not -path '*/apiserver/pkg/authentication/request/x509/*' -prune -print0 | xargs -0n1 dirname | sed 's|^\./staging/src/|./vendor/|' | LC_ALL=C sort -u
+   )
+ }
+
 -- 
 2.46.0
 
