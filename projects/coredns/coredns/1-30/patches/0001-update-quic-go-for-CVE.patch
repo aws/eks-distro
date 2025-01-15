@@ -1,0 +1,46 @@
+From e9caa7236d6260032e13ad1b48e6987e4a554191 Mon Sep 17 00:00:00 2001
+From: Todd Neal <tnealt@amazon.com>
+Date: Sat, 7 Dec 2024 17:24:44 +0000
+Subject: [PATCH] update quic-go for CVE
+
+Vulnerability #1: GO-2024-3302
+    quic-go affected by an ICMP Packet Too Large Injection Attack on Linux in
+    github.com/quic-go/quic-go
+  More info: https://pkg.go.dev/vuln/GO-2024-3302
+  Module: github.com/quic-go/quic-go
+    Found in: github.com/quic-go/quic-go@v0.48.1
+    Fixed in: github.com/quic-go/quic-go@v0.48.2
+---
+ go.mod | 2 +-
+ go.sum | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/go.mod b/go.mod
+index 353efa08e..b91b68b7e 100644
+--- a/go.mod
++++ b/go.mod
+@@ -28,7 +28,7 @@ require (
+ 	github.com/prometheus/client_golang v1.20.5
+ 	github.com/prometheus/client_model v0.6.1
+ 	github.com/prometheus/common v0.60.1
+-	github.com/quic-go/quic-go v0.48.1
++	github.com/quic-go/quic-go v0.48.2
+ 	go.etcd.io/etcd/api/v3 v3.5.16
+ 	go.etcd.io/etcd/client/v3 v3.5.16
+ 	golang.org/x/crypto v0.28.0
+diff --git a/go.sum b/go.sum
+index 42967a59e..32aa89b01 100644
+--- a/go.sum
++++ b/go.sum
+@@ -299,6 +299,8 @@ github.com/prometheus/procfs v0.15.1 h1:YagwOFzUgYfKKHX6Dr+sHT7km/hxC76UB0leargg
+ github.com/prometheus/procfs v0.15.1/go.mod h1:fB45yRUv8NstnjriLhBQLuOUt+WW4BsoGhij/e3PBqk=
+ github.com/quic-go/quic-go v0.48.1 h1:y/8xmfWI9qmGTc+lBr4jKRUWLGSlSigv847ULJ4hYXA=
+ github.com/quic-go/quic-go v0.48.1/go.mod h1:yBgs3rWBOADpga7F+jJsb6Ybg1LSYiQvwWlLX+/6HMs=
++github.com/quic-go/quic-go v0.48.2 h1:wsKXZPeGWpMpCGSWqOcqpW2wZYic/8T3aqiOID0/KWE=
++github.com/quic-go/quic-go v0.48.2/go.mod h1:yBgs3rWBOADpga7F+jJsb6Ybg1LSYiQvwWlLX+/6HMs=
+ github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec h1:W09IVJc94icq4NjY3clb7Lk8O1qJ8BdBEF8z0ibU0rE=
+ github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec/go.mod h1:qqbHyh8v60DhA7CoWK5oRCqLrMHRGoxYCSS9EjAz6Eo=
+ github.com/richardartoul/molecule v1.0.1-0.20240531184615-7ca0df43c0b3 h1:4+LEVOB87y175cLJC/mbsgKmoDOjrBldtXvioEy96WY=
+-- 
+2.40.1
+
