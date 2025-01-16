@@ -62,7 +62,7 @@ https://github.com/docker/go-units
 ** github.com/euank/go-kmsg-parser/kmsgparser; version v2.0.0+incompatible --
 https://github.com/euank/go-kmsg-parser
 
-** github.com/go-logr/logr; version v1.2.3 --
+** github.com/go-logr/logr; version v1.3.0 --
 https://github.com/go-logr/logr
 
 ** github.com/go-logr/stdr; version v1.2.2 --
@@ -103,6 +103,9 @@ https://github.com/google/gnostic
 
 ** github.com/google/gofuzz; version v1.1.0 --
 https://github.com/google/gofuzz
+
+** github.com/google/s2a-go; version v0.1.4 --
+https://github.com/google/s2a-go
 
 ** github.com/google/shlex; version v0.0.0-20191202100458-e7afc7fbc510 --
 https://github.com/google/shlex
@@ -206,46 +209,43 @@ https://github.com/census-instrumentation/opencensus-go
 ** go.opentelemetry.io/contrib/instrumentation/github.com/emicklei/go-restful/otelrestful; version v0.35.0 --
 https://github.com/open-telemetry/opentelemetry-go-contrib
 
-** go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc; version v0.35.0 --
+** go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc; version v0.46.0 --
 https://github.com/open-telemetry/opentelemetry-go-contrib
 
-** go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp; version v0.35.1 --
+** go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp; version v0.44.0 --
 https://github.com/open-telemetry/opentelemetry-go-contrib
 
-** go.opentelemetry.io/otel; version v1.10.0 --
+** go.opentelemetry.io/otel; version v1.20.0 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/otel/exporters/otlp/internal/retry; version v1.10.0 --
+** go.opentelemetry.io/otel/exporters/otlp/otlptrace; version v1.19.0 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/otel/exporters/otlp/otlptrace; version v1.10.0 --
+** go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc; version v1.19.0 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc; version v1.10.0 --
+** go.opentelemetry.io/otel/metric; version v1.20.0 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/otel/metric; version v0.31.0 --
+** go.opentelemetry.io/otel/sdk; version v1.20.0 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/otel/sdk; version v1.10.0 --
+** go.opentelemetry.io/otel/trace; version v1.20.0 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/otel/trace; version v1.10.0 --
-https://github.com/open-telemetry/opentelemetry-go
-
-** go.opentelemetry.io/proto/otlp; version v0.19.0 --
+** go.opentelemetry.io/proto/otlp; version v1.0.0 --
 https://github.com/open-telemetry/opentelemetry-proto-go
 
-** google.golang.org/genproto/googleapis/api; version v0.0.0-20230525234020-1aefcd67740a --
+** google.golang.org/appengine; version v1.6.7 --
+https://github.com/golang/appengine
+
+** google.golang.org/genproto/googleapis/api; version v0.0.0-20230822172742-b8732ec3820d --
 https://github.com/googleapis/go-genproto
 
-** google.golang.org/genproto/googleapis/rpc; version v0.0.0-20230525234030-28d5490b6b19 --
+** google.golang.org/genproto/googleapis/rpc; version v0.0.0-20230822172742-b8732ec3820d --
 https://github.com/googleapis/go-genproto
 
-** google.golang.org/genproto/protobuf/field_mask; version v0.0.0-20230525234025-438c736192d0 --
-https://github.com/googleapis/go-genproto
-
-** google.golang.org/grpc; version v1.56.3 --
+** google.golang.org/grpc; version v1.59.0 --
 https://github.com/grpc/grpc-go
 
 ** gopkg.in/square/go-jose.v2; version v2.6.0 --
@@ -1144,7 +1144,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/google/go-cmp/cmp; version v0.5.9 --
+** github.com/google/go-cmp/cmp; version v0.6.0 --
 https://github.com/google/go-cmp
 
 Copyright (c) 2017 The Go Authors. All rights reserved.
@@ -1177,7 +1177,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/google/uuid; version v1.3.0 --
+** github.com/google/uuid; version v1.3.1 --
 https://github.com/google/uuid
 
 Copyright (c) 2009,2014 Google Inc. All rights reserved.
@@ -1210,7 +1210,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/googleapis/gax-go/v2; version v2.7.1 --
+** github.com/googleapis/gax-go/v2; version v2.11.0 --
 https://github.com/googleapis/gax-go/v2
 
 Copyright 2016, Google Inc.
@@ -1243,7 +1243,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/grpc-ecosystem/grpc-gateway/v2; version v2.7.0 --
+** github.com/grpc-ecosystem/grpc-gateway/v2; version v2.16.0 --
 https://github.com/grpc-ecosystem/grpc-gateway/v2
 
 Copyright (c) 2015, Gengo, Inc.
@@ -1325,13 +1325,13 @@ https://golang.org/x/crypto
 ** golang.org/x/net; version v0.24.0 --
 https://golang.org/x/net
 
-** golang.org/x/oauth2; version v0.7.0 --
+** golang.org/x/oauth2; version v0.11.0 --
 https://golang.org/x/oauth2
 
 ** golang.org/x/sync/singleflight; version v0.5.0 --
 https://golang.org/x/sync
 
-** golang.org/x/sys/unix; version v0.19.0 --
+** golang.org/x/sys; version v0.19.0 --
 https://golang.org/x/sys
 
 ** golang.org/x/term; version v0.19.0 --
@@ -1598,7 +1598,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** google.golang.org/api; version v0.114.0 --
+** google.golang.org/api; version v0.126.0 --
 https://github.com/googleapis/google-api-go-client
 
 Copyright (c) 2011 Google Inc. All rights reserved.
@@ -1631,7 +1631,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** google.golang.org/api/internal/third_party/uritemplates; version v0.114.0 --
+** google.golang.org/api/internal/third_party/uritemplates; version v0.126.0 --
 https://github.com/googleapis/google-api-go-client
 
 Copyright (c) 2013 Joshua Tacoma. All rights reserved.
@@ -1872,7 +1872,7 @@ Copyright (C) 2013 Blake Mizerany
 https://github.com/blang/semver/v4
 Copyright (c) 2014 Benedikt Lang <github at benediktlang.de>
 
-** github.com/cenkalti/backoff/v4; version v4.1.3 --
+** github.com/cenkalti/backoff/v4; version v4.2.1 --
 https://github.com/cenkalti/backoff/v4
 Copyright (c) 2014 Cenk Altı
 
