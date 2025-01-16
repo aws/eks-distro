@@ -22,6 +22,15 @@ Amazon EKS.
 This GitHub repository has everything required to build the components that make
 up the EKS Distro from source.
 
+## DEPRECATION NOTICE
+As part of an effort to streamline the maintenance of EKS-D, we will be deprecating the metrics-server and CSI sidecar projects from EKS-D. Releases for new versions will no longer be created after the dates listed below. EKS-D no longer uses these projects and it does not make sense to continue building them. The remaining projects in EKS-D will continue to be built for the time being. 
+
+metrics-server project deprecation: as of 1/16/2025
+
+csi sidecar projects deprecation: on or before 3/31/2025
+
+Please open an issue if you have any concerns.
+
 ## Releases
 
 Full documentation for releases can be found on [https://distro.eks.amazonaws.com](https://distro.eks.amazonaws.com).
