@@ -70,12 +70,12 @@ Source: https://github.com/cncf/artwork/tree/master/projects/kubernetes/certifie
 ### Kubernetes 1.18 - 1.27: DEPRECATED
 
 In alignment with the [Amazon EKS release calendar](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html#kubernetes-release-calendar),
-EKS Distro has discontinued support of Kubernetes v1.18 - v1.26. While there are
+EKS Distro has discontinued support of Kubernetes v1.18 - v1.27. While there are
 no plans to remove these versions' images from EKS Distro ECR, there will be no
 more updates, including security fixes, for them.
 
 **Due to the increased security risk this poses, it is HIGHLY recommended that
-users of v1.18 - v1.26 update to a supported version (v1.27+) as soon as
+users of v1.18 - v1.27 update to a supported version (v1.28+) as soon as
 possible.**
 
 ## Development
