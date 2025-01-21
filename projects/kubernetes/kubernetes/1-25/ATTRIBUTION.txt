@@ -210,7 +210,7 @@ https://github.com/etcd-io/etcd
 https://github.com/etcd-io/etcd
 
 ** go.opencensus.io; version v0.23.0 --
-https://github.com/census-instrumentation/opencensus-go
+https://go.opencensus.io
 
 ** go.opentelemetry.io/contrib; version v0.20.0 --
 https://github.com/open-telemetry/opentelemetry-go-contrib
