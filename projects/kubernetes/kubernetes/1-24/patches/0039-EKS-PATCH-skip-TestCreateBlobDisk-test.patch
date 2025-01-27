@@ -1,0 +1,27 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: cpanato <ctadeu@gmail.com>
+Date: Wed, 27 Nov 2024 17:23:39 +0100
+Subject: [PATCH] --EKS-PATCH-- skip TestCreateBlobDisk test
+
+Cherry-pick upstream PR
+https://github.com/kubernetes/kubernetes/pull/129011
+to avoid unit test failures in TestCreateBlobDisk.
+---
+ .../azure/azure_blobDiskController_test.go                     | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/staging/src/k8s.io/legacy-cloud-providers/azure/azure_blobDiskController_test.go b/staging/src/k8s.io/legacy-cloud-providers/azure/azure_blobDiskController_test.go
+index 8c2b6d290d0..a3f81c6f744 100644
+--- a/staging/src/k8s.io/legacy-cloud-providers/azure/azure_blobDiskController_test.go
++++ b/staging/src/k8s.io/legacy-cloud-providers/azure/azure_blobDiskController_test.go
+@@ -331,7 +331,10 @@ func TestFindSANameForDisk(t *testing.T) {
+ 	assert.NoError(t, err)
+ }
+ 
++// Skipping this test due to failing ci but not removing to keep for future reference if needed
++// GH Issue: https://github.com/kubernetes/kubernetes/issues/129007
+ func TestCreateBlobDisk(t *testing.T) {
++	t.Skip("skipping test due some Azure API changes and failing ci")
+ 	ctrl := gomock.NewController(t)
+ 	defer ctrl.Finish()
+ 	b := GetTestBlobDiskController(t)
