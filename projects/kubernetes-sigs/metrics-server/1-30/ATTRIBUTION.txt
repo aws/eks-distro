@@ -834,7 +834,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ** github.com/grafana/regexp; version v0.0.0-20221122212121-6b5c0a4cb7fd --
 https://github.com/grafana/regexp
 
-** golang.org/go; version go1.22.10 --
+** golang.org/go; version go1.22.11 --
 https://github.com/golang/go
 
 ** golang.org/x/exp; version v0.0.0-20231110203233-9a3e6036ecaa --
