@@ -1,8 +1,8 @@
 module go.etcd.io/etcd/server/v3
 
-go 1.21
+go 1.22
 
-toolchain go1.21.12
+toolchain go1.22.7
 
 require (
 	github.com/coreos/go-semver v0.3.0
@@ -22,16 +22,16 @@ require (
 	github.com/prometheus/client_model v0.2.0
 	github.com/soheilhy/cmux v0.1.5
 	github.com/spf13/cobra v1.1.3
-	github.com/stretchr/testify v1.8.4
+	github.com/stretchr/testify v1.9.0
 	github.com/tmc/grpc-websocket-proxy v0.0.0-20201229170055-e5319fda7802
 	github.com/xiang90/probing v0.0.0-20190116061207-43a291ad63a2
-	go.etcd.io/bbolt v1.3.10
-	go.etcd.io/etcd/api/v3 v3.5.15
-	go.etcd.io/etcd/client/pkg/v3 v3.5.15
-	go.etcd.io/etcd/client/v2 v2.305.15
-	go.etcd.io/etcd/client/v3 v3.5.15
-	go.etcd.io/etcd/pkg/v3 v3.5.15
-	go.etcd.io/etcd/raft/v3 v3.5.15
+	go.etcd.io/bbolt v1.3.11
+	go.etcd.io/etcd/api/v3 v3.5.16
+	go.etcd.io/etcd/client/pkg/v3 v3.5.16
+	go.etcd.io/etcd/client/v2 v2.305.16
+	go.etcd.io/etcd/client/v3 v3.5.16
+	go.etcd.io/etcd/pkg/v3 v3.5.16
+	go.etcd.io/etcd/raft/v3 v3.5.16
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.46.0
 	go.opentelemetry.io/otel v1.20.0
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.20.0
