@@ -1,2 +1,2 @@
-fd98f5e018de6039440e3bc091983824517d5d28362c5b3358e4f180d460bbba  _output/1-28/bin/external-attacher/linux-amd64/csi-attacher
-1074af9ceef5adfd8625d34addf32620083a408c35a04f302c65b57f4acabc52  _output/1-28/bin/external-attacher/linux-arm64/csi-attacher
+4b69a651d1d8d270a87158c12db04bf4170ebdcb7bab138928e6a3817382d1e4  _output/1-28/bin/external-attacher/linux-amd64/csi-attacher
+37c105e12229a4afbb8f05de22f9212f2ec95c6f0623ec1d4aafde3bc6ca8477  _output/1-28/bin/external-attacher/linux-arm64/csi-attacher
