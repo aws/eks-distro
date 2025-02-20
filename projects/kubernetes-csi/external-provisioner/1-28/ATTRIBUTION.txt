@@ -80,25 +80,25 @@ https://github.com/googleapis/go-genproto
 ** google.golang.org/grpc; version v1.69.2 --
 https://github.com/grpc/grpc-go
 
-** k8s.io/api; version v0.32.0 --
+** k8s.io/api; version v0.32.2 --
 https://github.com/kubernetes/api
 
-** k8s.io/apimachinery/pkg; version v0.32.0 --
+** k8s.io/apimachinery/pkg; version v0.32.2 --
 https://github.com/kubernetes/apimachinery
 
-** k8s.io/apiserver/pkg/util/feature; version v0.32.0 --
+** k8s.io/apiserver/pkg/util/feature; version v0.32.2 --
 https://github.com/kubernetes/apiserver
 
-** k8s.io/client-go; version v0.32.0 --
+** k8s.io/client-go; version v0.32.2 --
 https://github.com/kubernetes/client-go
 
-** k8s.io/component-base; version v0.32.0 --
+** k8s.io/component-base; version v0.32.2 --
 https://github.com/kubernetes/component-base
 
-** k8s.io/component-helpers/scheduling/corev1; version v0.32.0 --
+** k8s.io/component-helpers/scheduling/corev1; version v0.32.2 --
 https://github.com/kubernetes/component-helpers
 
-** k8s.io/csi-translation-lib; version v0.32.0 --
+** k8s.io/csi-translation-lib; version v0.32.2 --
 https://github.com/kubernetes/csi-translation-lib
 
 ** k8s.io/klog/v2; version v2.130.1 --
@@ -781,7 +781,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ** golang.org/go; version go1.23.6 --
 https://github.com/golang/go
 
-** k8s.io/apimachinery/third_party/forked/golang; version v0.32.0 --
+** k8s.io/apimachinery/third_party/forked/golang; version v0.32.2 --
 https://github.com/kubernetes/apimachinery
 
 Copyright (c) 2009 The Go Authors. All rights reserved.
