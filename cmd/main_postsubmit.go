@@ -113,7 +113,6 @@ func main() {
 		"coredns/coredns",
 		"etcd-io/etcd",
 		"kubernetes-sigs/aws-iam-authenticator",
-		"kubernetes-sigs/metrics-server",
 		"kubernetes-csi/external-attacher",
 		"kubernetes-csi/external-resizer",
 		"kubernetes-csi/livenessprobe",
