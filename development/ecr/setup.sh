@@ -28,7 +28,6 @@ readonly ECR_REPOS=(
     kubernetes-csi/livenessprobe
     kubernetes-csi/node-driver-registrar
     kubernetes-sigs/aws-iam-authenticator
-    kubernetes-sigs/metrics-server
     kubernetes/go-runner
     kubernetes/kube-apiserver
     kubernetes/kube-controller-manager
