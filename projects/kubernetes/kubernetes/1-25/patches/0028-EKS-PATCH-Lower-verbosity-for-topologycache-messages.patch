@@ -1,0 +1,46 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Davanum Srinivas <davanum@gmail.com>
+Date: Tue, 7 Jan 2025 21:19:27 -0500
+Subject: [PATCH] --EKS-PATCH-- Lower verbosity for topologycache messages
+
+Description:
+* Lowers verbosity for topologycache messages
+
+Upstream PR, Issue, KEP, etc. links:
+* This patch is based on this PR: https://github.com/kubernetes/kubernetes/pull/129512
+
+If this patch is based on an upstream commit, how (if at all) do this
+patch and the upstream source differ? No
+
+If this patch's changes have not been added by upstream, why not ? N/A
+
+Other patches related to this patch: N/A
+
+Changes made to this patch after its initial creation and reasons for
+these changes: N/A
+
+Kubernetes version this patch can be dropped: N/A
+
+Signed-off-by: Davanum Srinivas <davanum@gmail.com>
+---
+ pkg/controller/endpointslice/topologycache/topologycache.go | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/pkg/controller/endpointslice/topologycache/topologycache.go b/pkg/controller/endpointslice/topologycache/topologycache.go
+index 95573b99f19..e6bb93353e4 100644
+--- a/pkg/controller/endpointslice/topologycache/topologycache.go
++++ b/pkg/controller/endpointslice/topologycache/topologycache.go
+@@ -176,11 +176,11 @@ func (t *TopologyCache) SetNodes(nodes []*v1.Node) {
+ 
+ 	for _, node := range nodes {
+ 		if hasExcludedLabels(node.Labels) {
+-			klog.V(2).Infof("Ignoring node %s because it has an excluded label", node.Name)
++			klog.V(6).Infof("Ignoring node %s because it has an excluded label", node.Name)
+ 			continue
+ 		}
+ 		if !NodeReady(node.Status) {
+-			klog.V(2).Infof("Ignoring node %s because it is not ready: %v", node.Name, node.Status.Conditions)
++			klog.V(6).Infof("Ignoring node %s because it is not ready: %v", node.Name, node.Status.Conditions)
+ 			continue
+ 		}
+ 
