@@ -1,3 +1,2 @@
-e5a141f804c2bd347eb400e6f842d9066c1327ce48b71815884046132460827f  _output/1-28/bin/external-resizer/linux-amd64/csi-resizer
-536a7a1648eb4505bf5baf35853599ca2dba32698259c65ec98c3724627e1f1c  _output/1-28/bin/external-resizer/linux-arm64/csi-resizer
-
+896a4dcc6af190974c05afa963ff19c32ba4e927d8e7c54fc3092367a186bf00  _output/1-28/bin/external-resizer/linux-amd64/csi-resizer
+4317ddf2ab5887a5ff7e99a0008a0d9a04c0dffd48b7971bb5daf67eb093aca8  _output/1-28/bin/external-resizer/linux-arm64/csi-resizer
