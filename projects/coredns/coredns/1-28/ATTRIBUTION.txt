@@ -533,9 +533,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ** github.com/aws/aws-sdk-go/internal/sync/singleflight; version v1.44.327 --
 https://github.com/aws/aws-sdk-go
 
-** golang.org/go; version go1.23.6 --
-https://github.com/golang/go
-
 ** golang.org/x/time/rate; version v0.3.0 --
 https://golang.org/x/time
 
@@ -987,6 +984,9 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
+
+** golang.org/go; version go1.24.1 --
+https://github.com/golang/go
 
 ** golang.org/x/crypto; version v0.30.0 --
 https://golang.org/x/crypto

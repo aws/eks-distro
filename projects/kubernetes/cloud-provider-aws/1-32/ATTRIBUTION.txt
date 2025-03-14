@@ -179,7 +179,7 @@ https://github.com/kubernetes/client-go
 ** k8s.io/cloud-provider; version v0.32.0 --
 https://github.com/kubernetes/cloud-provider
 
-** k8s.io/cloud-provider-aws; version v1.32.1 --
+** k8s.io/cloud-provider-aws; version v1.32.2 --
 https://github.com/kubernetes/cloud-provider-aws
 
 ** k8s.io/component-base; version v0.32.0 --
@@ -661,7 +661,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ** github.com/aws/aws-sdk-go/internal/sync/singleflight; version v1.55.5 --
 https://github.com/aws/aws-sdk-go
 
-** golang.org/go; version go1.23.6 --
+** golang.org/go; version go1.23.7 --
 https://github.com/golang/go
 
 ** golang.org/x/crypto; version v0.17.0 --
