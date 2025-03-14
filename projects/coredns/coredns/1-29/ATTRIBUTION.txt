@@ -110,9 +110,6 @@ https://github.com/dimchansky/utfbom
 ** github.com/dnstap/golang-dnstap; version v0.4.0 --
 https://github.com/dnstap/golang-dnstap
 
-** github.com/ebitengine/purego; version v0.6.0-alpha.5 --
-https://github.com/ebitengine/purego
-
 ** github.com/farsightsec/golang-framestream; version v0.3.0 --
 https://github.com/farsightsec/golang-framestream
 
@@ -657,9 +654,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ** github.com/aws/aws-sdk-go/internal/sync/singleflight; version v1.55.5 --
 https://github.com/aws/aws-sdk-go
 
-** golang.org/go; version go1.23.6 --
-https://github.com/golang/go
-
 ** golang.org/x/exp/rand; version v0.0.0-20240506185415-9bf2ced13842 --
 https://golang.org/x/exp
 
@@ -1144,6 +1138,9 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
+
+** golang.org/go; version go1.24.0 --
+https://github.com/golang/go
 
 ** golang.org/x/crypto; version v0.28.0 --
 https://golang.org/x/crypto
