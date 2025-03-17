@@ -500,7 +500,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ** github.com/aws/aws-sdk-go/internal/sync/singleflight; version v1.54.6 --
 https://github.com/aws/aws-sdk-go
 
-** golang.org/go; version go1.23.6 --
+** golang.org/go; version go1.23.7 --
 https://github.com/golang/go
 
 ** k8s.io/apimachinery/third_party/forked/golang; version v0.32.0 --
