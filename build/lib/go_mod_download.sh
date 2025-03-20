@@ -12,7 +12,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 set -o errexit
 set -o nounset
 set -o pipefail
@@ -31,4 +30,21 @@ cd $REPO/$REPO_SUBPATH
 CACHE_KEY=$(echo $PROJECT_ROOT | sed 's/\(.*\)\//\1-/' | xargs basename)
 build::common::use_go_version $GOLANG_VERSION
 build::common::set_go_cache $CACHE_KEY $TAG
+
+# if there is a existing vendor directory running go mod vendor is not
+# neccessairly a problem since vendor directories generally match upstream dependencies
+# in some cases tho upstream has patched specific dependenies or more likely
+# we are carrying a patch which does
+# in these cases this go mod vendor will overwrite those patches
+PRE_EXISTING_VENDOR=""
+if [ -d vendor ]; then
+    PRE_EXISTING_VENDOR="true"
+fi
+
 build::common::echo_and_run go mod vendor
+
+if [ "${PRE_EXISTING_VENDOR}" = "true" ] && [ "$(git status --porcelain -- vendor | wc -l)" -gt 0 ]; then
+    echo "ERROR: 'go mod vendor' is updating the pre-existing vendor directory! This is likely not what you want since it could be overwriting patches"
+    echo "To skip downloading vendor dependencies for this project, set GO_MODS_VENDORED=true in the Makefile"
+    exit 1
+fi
