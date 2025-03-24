@@ -51,7 +51,7 @@ function get_container_yaml() {
 
     if  [[ $REPOSITORY_NAME == "kubernetes-sigs/metrics-server" ]]; then
         echo "    repository: ${IMAGE_REPO}/${REPOSITORY_NAME}
-          tag: ${VERSION}-eks-${RELEASE_BRANCH}-${ReleaseMap[$RELEASE_BRANCH]}"
+    tag: ${VERSION}-eks-${RELEASE_BRANCH}-${ReleaseMap[$RELEASE_BRANCH]}"
         return
     fi
     
