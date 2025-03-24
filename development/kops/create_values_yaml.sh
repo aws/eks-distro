@@ -31,6 +31,14 @@ function get_container_yaml() {
     RELEASE="${2}"
     VERSION="$(get_project_version $REPOSITORY_NAME)"
 
+    declare -A ReleaseMap
+    # Map to last release for metrics server
+    ReleaseMap["1-32"]=8
+    ReleaseMap["1-31"]=16
+    ReleaseMap["1-30"]=27
+    ReleaseMap["1-29"]=34
+    ReleaseMap["1-28"]=45
+
     if  [[ $REPOSITORY_NAME == "kubernetes-csi/external-snapshotter" ]] 
     then
         REPOSITORY_NAME="kubernetes-csi/external-snapshotter/csi-snapshotter"
@@ -39,6 +47,12 @@ function get_container_yaml() {
     if  [[ $REPOSITORY_NAME == "kubernetes/cloud-provider-aws" ]] 
     then
         REPOSITORY_NAME="kubernetes/cloud-provider-aws/cloud-controller-manager"
+    fi
+
+    if  [[ $REPOSITORY_NAME == "kubernetes-sigs/metrics-server" ]]; then
+        echo "    repository: ${IMAGE_REPO}/${REPOSITORY_NAME}
+          tag: ${VERSION}-eks-${RELEASE_BRANCH}-${ReleaseMap[$RELEASE_BRANCH]}"
+        return
     fi
     
     echo "    repository: ${IMAGE_REPO}/${REPOSITORY_NAME}
