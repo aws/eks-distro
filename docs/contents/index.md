@@ -83,7 +83,6 @@ components:
 * etcd
 * CSI Sidecars
 * aws-iam-authenticator
-* Kubernetes Metrics Server
 * Kubernetes
 
 All container images for these components are based on Amazon Linux 2 and are
