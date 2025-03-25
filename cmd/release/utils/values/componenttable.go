@@ -46,6 +46,10 @@ func GetComponentsFromReleaseManifest(releaseManifestURL string) (string, error)
 	for _, matchPair := range foundMatches {
 		uri := matchPair[1]
 		nameAndVersion := bytes.Split(captureRegex.Find(uri), []byte(":"))
+		// TODO: remove this after deprecating metrics server from the release yaml
+		if strings.Contains(string(nameAndVersion[0]), "metrics-server") {
+			continue
+		}
 		components = append(components, component{
 			name:    nameAndVersion[0],
 			version: nameAndVersion[1],
