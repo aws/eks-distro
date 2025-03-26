@@ -1,0 +1,39 @@
+From 4ba6b9d1c7a8841e61008ddf2463d096ff33c80b Mon Sep 17 00:00:00 2001
+From: Yash Thakkar <yathakka@amazon.com>
+Date: Tue, 25 Mar 2025 23:47:32 +0000
+Subject: [PATCH] updating expr package
+
+---
+ go.mod | 2 +-
+ go.sum | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/go.mod b/go.mod
+index b91b68b7e..f7247d45d 100644
+--- a/go.mod
++++ b/go.mod
+@@ -14,7 +14,7 @@ require (
+ 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.33.3
+ 	github.com/coredns/caddy v1.1.1
+ 	github.com/dnstap/golang-dnstap v0.4.0
+-	github.com/expr-lang/expr v1.16.9
++	github.com/expr-lang/expr v1.17.1
+ 	github.com/farsightsec/golang-framestream v0.3.0
+ 	github.com/go-logr/logr v1.4.2
+ 	github.com/grpc-ecosystem/grpc-opentracing v0.0.0-20180507213350-8e809c8a8645
+diff --git a/go.sum b/go.sum
+index 32aa89b01..e74742f66 100644
+--- a/go.sum
++++ b/go.sum
+@@ -124,6 +124,8 @@ github.com/envoyproxy/go-control-plane v0.9.4/go.mod h1:6rpuAdCZL397s3pYoYcLgu1m
+ github.com/envoyproxy/protoc-gen-validate v0.1.0/go.mod h1:iSmxcyjqTsJpI2R4NaDN7+kN2VEUnK/pcBlmesArF7c=
+ github.com/expr-lang/expr v1.16.9 h1:WUAzmR0JNI9JCiF0/ewwHB1gmcGw5wW7nWt8gc6PpCI=
+ github.com/expr-lang/expr v1.16.9/go.mod h1:8/vRC7+7HBzESEqt5kKpYXxrxkr31SaO8r40VO/1IT4=
++github.com/expr-lang/expr v1.17.1 h1:8nlCWiAbM/L9p4I5mWSCLTV9JnmMaEmgvA/dIL1Dslw=
++github.com/expr-lang/expr v1.17.1/go.mod h1:8/vRC7+7HBzESEqt5kKpYXxrxkr31SaO8r40VO/1IT4=
+ github.com/farsightsec/golang-framestream v0.3.0 h1:/spFQHucTle/ZIPkYqrfshQqPe2VQEzesH243TjIwqA=
+ github.com/farsightsec/golang-framestream v0.3.0/go.mod h1:eNde4IQyEiA5br02AouhEHCu3p3UzrCdFR4LuQHklMI=
+ github.com/fatih/color v1.7.0/go.mod h1:Zm6kSWBoL9eyXnKyktHP6abPY2pDugNf5KwzbycvMj4=
+-- 
+2.47.1
+
