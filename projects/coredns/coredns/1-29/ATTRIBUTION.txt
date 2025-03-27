@@ -1498,7 +1498,7 @@ Copyright (c) 2014 Evan Huus
 https://github.com/emicklei/go-restful/v3
 Copyright (c) 2012,2013 Ernest Micklei
 
-** github.com/expr-lang/expr; version v1.16.9 --
+** github.com/expr-lang/expr; version v1.17.1 --
 https://github.com/expr-lang/expr
 Copyright (c) 2018 Anton Medvedev
 
