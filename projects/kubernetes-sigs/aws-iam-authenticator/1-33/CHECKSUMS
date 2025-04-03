@@ -1,0 +1,4 @@
+0e2d881cecfe5c6a9e5e02257b00d0c3cb07e99218921a2734c9996b99212e2a  _output/1-33/bin/aws-iam-authenticator/darwin-amd64/aws-iam-authenticator
+1b8f05d5c9b419b5c073423a03ae7ef00d80c53c91d20e5add7ecde3fe41a99a  _output/1-33/bin/aws-iam-authenticator/linux-amd64/aws-iam-authenticator
+01224d2c93e5b77bad4eb4877b57096272f14a9bd832703e1cd70780f30f2247  _output/1-33/bin/aws-iam-authenticator/linux-arm64/aws-iam-authenticator
+286a9ae07a9ce728f5fb24cc47f994aa05c53b53dadc75d3bf9de11ae1914607  _output/1-33/bin/aws-iam-authenticator/windows-amd64/aws-iam-authenticator.exe
