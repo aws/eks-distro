@@ -979,7 +979,7 @@ https://golang.org/x/text
 ** golang.org/x/time/rate; version v0.0.0-20220210224613-90d013bbcef8 --
 https://golang.org/x/time
 
-** golang.org/x/tools/container/intsets; version v0.6.0 --
+** golang.org/x/tools/container/intsets; version v0.16.1 --
 https://golang.org/x/tools
 
 ** k8s.io/apimachinery/third_party/forked/golang; version v0.0.0 --
