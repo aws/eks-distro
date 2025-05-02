@@ -1142,22 +1142,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ** golang.org/go; version go1.24.2 --
 https://github.com/golang/go
 
-** golang.org/x/crypto; version v0.28.0 --
+** golang.org/x/crypto; version v0.36.0 --
 https://golang.org/x/crypto
 
-** golang.org/x/net; version v0.30.0 --
+** golang.org/x/net; version v0.38.0 --
 https://golang.org/x/net
 
-** golang.org/x/oauth2; version v0.23.0 --
+** golang.org/x/oauth2; version v0.28.0 --
 https://golang.org/x/oauth2
 
-** golang.org/x/sys; version v0.26.0 --
+** golang.org/x/sys; version v0.31.0 --
 https://golang.org/x/sys
 
-** golang.org/x/term; version v0.25.0 --
+** golang.org/x/term; version v0.30.0 --
 https://golang.org/x/term
 
-** golang.org/x/text; version v0.19.0 --
+** golang.org/x/text; version v0.23.0 --
 https://golang.org/x/text
 
 ** golang.org/x/time/rate; version v0.7.0 --
@@ -1510,7 +1510,7 @@ Copyright (c) 2016 Felix Geisendörfer (felix@debuggable.com)
 https://github.com/fxamacker/cbor/v2
 Copyright (c) 2019-present Faye Amacker
 
-** github.com/golang-jwt/jwt/v4; version v4.5.1 --
+** github.com/golang-jwt/jwt/v4; version v4.5.2 --
 https://github.com/golang-jwt/jwt/v4
 Copyright (c) 2012 Dave Grijalva
 Copyright (c) 2021 golang-jwt maintainers
