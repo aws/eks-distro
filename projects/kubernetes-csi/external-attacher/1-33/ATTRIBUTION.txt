@@ -725,7 +725,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/go; version go1.23.8 --
+** golang.org/go; version go1.23.9 --
 https://github.com/golang/go
 
 ** k8s.io/apimachinery/third_party/forked/golang; version v0.32.1 --
