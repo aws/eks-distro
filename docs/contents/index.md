@@ -120,7 +120,7 @@ repository for the [EKS Optimized AMI](https://github.com/awslabs/amazon-eks-ami
 if you are interested in the AL2 container runtime kernel version.
 
 #### EKS-D 1.32 Version Dependencies
-* [v1-32-eks-14](releases/1-32/14/index.md) (May 29, 2025)
+* [v1-32-eks-14](releases/1-32/14/index.md) (May 23, 2025)
 * [v1-32-eks-13](releases/1-32/13/index.md) (May 02, 2025)
 * [v1-32-eks-12](releases/1-32/12/index.md) (April 25, 2025)
 * [v1-32-eks-11](releases/1-32/11/index.md) (April 15, 2025)
@@ -136,7 +136,7 @@ if you are interested in the AL2 container runtime kernel version.
 * [v1-32-eks-1](releases/1-32/1/index.md) (December 06, 2024)
 
 #### EKS-D 1.31 Version Dependencies
-* [v1-31-eks-21](releases/1-31/21/index.md) (May 29, 2025)
+* [v1-31-eks-21](releases/1-31/21/index.md) (May 23, 2025)
 * [v1-31-eks-20](releases/1-31/20/index.md) (May 02, 2025)
 * [v1-31-eks-19](releases/1-31/19/index.md) (April 25, 2025)
 * [v1-31-eks-18](releases/1-31/18/index.md) (April 15, 2025)
@@ -159,7 +159,7 @@ if you are interested in the AL2 container runtime kernel version.
 * [v1-31-eks-1](releases/1-31/1/index.md) (September 26, 2024)
 
 #### EKS-D 1.30 Version Dependencies
-* [v1-30-eks-32](releases/1-30/32/index.md) (May 29, 2025)
+* [v1-30-eks-32](releases/1-30/32/index.md) (May 23, 2025)
 * [v1-30-eks-31](releases/1-30/31/index.md) (May 02, 2025)
 * [v1-30-eks-30](releases/1-30/30/index.md) (April 25, 2025)
 * [v1-30-eks-29](releases/1-30/29/index.md) (April 15, 2025)
@@ -189,7 +189,7 @@ if you are interested in the AL2 container runtime kernel version.
 * [v1-30-eks-5](releases/1-30/5/index.md) (May 28, 2024)
 
 #### EKS-D 1.29 Version Dependencies
-* [v1-29-eks-39](releases/1-29/39/index.md) (May 29, 2025)
+* [v1-29-eks-39](releases/1-29/39/index.md) (May 23, 2025)
 * [v1-29-eks-38](releases/1-29/38/index.md) (May 02, 2025)
 * [v1-29-eks-37](releases/1-29/37/index.md) (April 25, 2025)
 * [v1-29-eks-36](releases/1-29/36/index.md) (April 15, 2025)
@@ -230,7 +230,7 @@ if you are interested in the AL2 container runtime kernel version.
 * [v1-29-eks-1](releases/1-29/1/index.md) (December 16, 2023)
 
 #### EKS-D 1.28 Version Dependencies
-* [v1-28-eks-50](releases/1-28/50/index.md) (May 29, 2025)
+* [v1-28-eks-50](releases/1-28/50/index.md) (May 23, 2025)
 * [v1-28-eks-49](releases/1-28/49/index.md) (May 02, 2025)
 * [v1-28-eks-48](releases/1-28/48/index.md) (April 25, 2025)
 * [v1-28-eks-47](releases/1-28/47/index.md) (April 15, 2025)
