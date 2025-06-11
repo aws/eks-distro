@@ -1,4 +1,4 @@
-70e4624c2d8a5ebfc66dfb3358f7371ce059139ac1dc4507a9bcecab529f8e2e  _output/1-28/bin/aws-iam-authenticator/darwin-amd64/aws-iam-authenticator
-05be0470b67e7b780629f024a3022829ecce87eba3522cd5add8212dc169cfec  _output/1-28/bin/aws-iam-authenticator/linux-amd64/aws-iam-authenticator
-e8d17f984fa9159ab056bd9217b49f83bb3cf3205b96dd77c70471de83874089  _output/1-28/bin/aws-iam-authenticator/linux-arm64/aws-iam-authenticator
-21bbd11cf341b5dd635492317b97ca045d97af4579d193f3eeab9de795f47073  _output/1-28/bin/aws-iam-authenticator/windows-amd64/aws-iam-authenticator.exe
+b62ae4efbad86c2ce617b2968c538f798fcb83f85dc35c193f4a36ef43e49a14  _output/1-28/bin/aws-iam-authenticator/darwin-amd64/aws-iam-authenticator
+2205f971008c0a21a62ef21d593a31ba419f6364af2966e0b70359318810d0d8  _output/1-28/bin/aws-iam-authenticator/linux-amd64/aws-iam-authenticator
+0faf0ac71af14b07b2a2bd301249c5aec467f18d27e324eebd8d5521981fe96e  _output/1-28/bin/aws-iam-authenticator/linux-arm64/aws-iam-authenticator
+4d595a6c86f83e7e7bdc4d1c8b382f0f4dc7353360c85513881be9a9aaed0a25  _output/1-28/bin/aws-iam-authenticator/windows-amd64/aws-iam-authenticator.exe
