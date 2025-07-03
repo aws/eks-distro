@@ -171,6 +171,7 @@ if you are interested in the AL2 container runtime kernel version.
 * [v1-31-eks-1](releases/1-31/1/index.md) (September 26, 2024)
 
 #### EKS-D 1.30 Version Dependencies
+* [v1-30-eks-35](releases/1-30/35/index.md) (July 03, 2025)
 * [v1-30-eks-34](releases/1-30/34/index.md) (June 17, 2025)
 * [v1-30-eks-33](releases/1-30/33/index.md) (June 06, 2025)
 * [v1-30-eks-32](releases/1-30/32/index.md) (May 23, 2025)
