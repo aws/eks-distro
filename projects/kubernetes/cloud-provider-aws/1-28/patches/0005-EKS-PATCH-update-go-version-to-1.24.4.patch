@@ -1,0 +1,100 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Min Jin <minkimzz@amazon.com>
+Date: Thu, 26 Jun 2025 11:07:44 -0700
+Subject: [PATCH] --EKS-PATCH-- update go version to 1.24.4
+
+Signed-off-by: Min Jin <minkimzz@amazon.com>
+---
+ .github/workflows/deps.yml | 6 +++---
+ .ko.yaml                   | 2 +-
+ Dockerfile                 | 4 ++--
+ cloudbuild.yaml            | 2 +-
+ go.mod                     | 2 +-
+ tests/e2e/go.mod           | 2 +-
+ 6 files changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/.github/workflows/deps.yml b/.github/workflows/deps.yml
+index 360b69096b7..cf9413c1c99 100644
+--- a/.github/workflows/deps.yml
++++ b/.github/workflows/deps.yml
+@@ -22,10 +22,10 @@ jobs:
+       - id: govulncheck
+         uses: golang/govulncheck-action@v1
+         with:
+-          go-version-input: 1.21.11
++          go-version-input: 1.24.4
+           go-version-file: go.mod
+       - id: govulncheck-tests-e2e
+         uses: golang/govulncheck-action@v1
+         with:
+-          go-version-input: 1.21.11
+-          go-version-file: tests/e2e/go.mod
+\ No newline at end of file
++          go-version-input: 1.24.4
++          go-version-file: tests/e2e/go.mod
+diff --git a/.ko.yaml b/.ko.yaml
+index 250890ba165..dfb78c63669 100644
+--- a/.ko.yaml
++++ b/.ko.yaml
+@@ -1 +1 @@
+-defaultBaseImage: registry.k8s.io/build-image/go-runner:v2.3.1-go1.22.7-bookworm.0
++defaultBaseImage: registry.k8s.io/build-image/go-runner:v2.4.0-go1.24.4-bookworm.0
+diff --git a/Dockerfile b/Dockerfile
+index 513b3463b4b..4a8c1e20a38 100644
+--- a/Dockerfile
++++ b/Dockerfile
+@@ -14,7 +14,7 @@
+ ##                               BUILD ARGS                                   ##
+ ################################################################################
+ # This build arg allows the specification of a custom Golang image.
+-ARG GOLANG_IMAGE=golang:1.22.7
++ARG GOLANG_IMAGE=golang:1.24.4
+ 
+ # The distroless image on which the CPI manager image is built.
+ #
+@@ -22,7 +22,7 @@ ARG GOLANG_IMAGE=golang:1.22.7
+ # deterministic builds. Follow what kubernetes uses to build
+ # kube-controller-manager, for example for 1.23.x:
+ # https://github.com/kubernetes/kubernetes/blob/release-1.24/build/common.sh#L94
+-ARG DISTROLESS_IMAGE=registry.k8s.io/build-image/go-runner:v2.3.1-go1.22.7-bookworm.0
++ARG DISTROLESS_IMAGE=registry.k8s.io/build-image/go-runner:v2.4.0-go1.24.4-bookworm.0
+ 
+ ################################################################################
+ ##                              BUILD STAGE                                   ##
+diff --git a/cloudbuild.yaml b/cloudbuild.yaml
+index 2a8911b62da..97df885f128 100644
+--- a/cloudbuild.yaml
++++ b/cloudbuild.yaml
+@@ -17,7 +17,7 @@ steps:
+       - --platform=linux/amd64,linux/arm64
+       - .
+   # Build cloudbuild artifacts (for attestation)
+-  - name: 'docker.io/library/golang:1.22.7-bookworm'
++  - name: 'docker.io/library/golang:1.24.4-bookworm'
+     id: cloudbuild-artifacts
+     entrypoint: make
+     env:
+diff --git a/go.mod b/go.mod
+index fdcb6247f9a..154a5389889 100644
+--- a/go.mod
++++ b/go.mod
+@@ -1,6 +1,6 @@
+ module k8s.io/cloud-provider-aws
+ 
+-go 1.22.7
++go 1.24.4
+ 
+ require (
+ 	github.com/aws/aws-sdk-go v1.54.6
+diff --git a/tests/e2e/go.mod b/tests/e2e/go.mod
+index de7abebbd0a..04dacf5ee4a 100644
+--- a/tests/e2e/go.mod
++++ b/tests/e2e/go.mod
+@@ -1,6 +1,6 @@
+ module k8s.io/cloud-provider-aws/tests/e2e
+ 
+-go 1.22.7
++go 1.24.4
+ 
+ require (
+ 	github.com/onsi/ginkgo/v2 v2.4.0
