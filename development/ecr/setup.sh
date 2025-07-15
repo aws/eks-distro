@@ -19,14 +19,6 @@ set -e
 readonly ECR_REPOS=(
     coredns/coredns
     etcd-io/etcd
-    kubernetes-csi/external-attacher
-    kubernetes-csi/external-provisioner
-    kubernetes-csi/external-resizer
-    kubernetes-csi/external-snapshotter/csi-snapshotter
-    kubernetes-csi/external-snapshotter/snapshot-controller
-    kubernetes-csi/external-snapshotter/snapshot-validation-webhook
-    kubernetes-csi/livenessprobe
-    kubernetes-csi/node-driver-registrar
     kubernetes-sigs/aws-iam-authenticator
     kubernetes/go-runner
     kubernetes/kube-apiserver

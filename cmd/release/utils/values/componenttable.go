@@ -50,6 +50,16 @@ func GetComponentsFromReleaseManifest(releaseManifestURL string) (string, error)
 		if strings.Contains(string(nameAndVersion[0]), "metrics-server") {
 			continue
 		}
+		// TODO: remove this after deprecating CSI sidecar projects from the release yaml
+		componentName := string(nameAndVersion[0])
+		if strings.Contains(componentName, "external-attacher") ||
+			strings.Contains(componentName, "external-provisioner") ||
+			strings.Contains(componentName, "external-resizer") ||
+			strings.Contains(componentName, "external-snapshotter") ||
+			strings.Contains(componentName, "livenessprobe") ||
+			strings.Contains(componentName, "node-driver-registrar") {
+			continue
+		}
 		components = append(components, component{
 			name:    nameAndVersion[0],
 			version: nameAndVersion[1],

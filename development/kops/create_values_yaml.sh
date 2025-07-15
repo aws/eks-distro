@@ -53,6 +53,19 @@ function get_container_yaml() {
         fi
         return
     fi
+
+    # CSI sidecar components are deprecated
+    # Use latest tag instead of specific release number
+    if  [[ $REPOSITORY_NAME == "kubernetes-csi/node-driver-registrar" ]] || \
+        [[ $REPOSITORY_NAME == "kubernetes-csi/external-resizer" ]] || \
+        [[ $REPOSITORY_NAME == "kubernetes-csi/external-attacher" ]] || \
+        [[ $REPOSITORY_NAME == "kubernetes-csi/external-snapshotter" ]] || \
+        [[ $REPOSITORY_NAME == "kubernetes-csi/external-provisioner" ]] || \
+        [[ $REPOSITORY_NAME == "kubernetes-csi/livenessprobe" ]]; then
+        echo "    repository: ${IMAGE_REPO}/${REPOSITORY_NAME}
+    tag: ${VERSION}-eks-${RELEASE_BRANCH}-latest"
+        return
+    fi
     
     echo "    repository: ${IMAGE_REPO}/${REPOSITORY_NAME}
     tag: ${VERSION}-eks-${RELEASE_BRANCH}-${RELEASE}"
@@ -67,6 +80,33 @@ function get_project_version(){
 
     if  [[ $REPOSITORY_NAME == "kubernetes-sigs/metrics-server" ]]; then
         echo "v0.7.2"
+        return
+    fi
+
+    # CSI sidecar components are deprecated
+    # Use hardcoded versions since project directories will be removed
+    if  [[ $REPOSITORY_NAME == "kubernetes-csi/node-driver-registrar" ]]; then
+        echo "v2.13.0"
+        return
+    fi
+    if  [[ $REPOSITORY_NAME == "kubernetes-csi/external-resizer" ]]; then
+        echo "v1.13.2"
+        return
+    fi
+    if  [[ $REPOSITORY_NAME == "kubernetes-csi/external-attacher" ]]; then
+        echo "v4.8.1"
+        return
+    fi
+    if  [[ $REPOSITORY_NAME == "kubernetes-csi/external-snapshotter" ]]; then
+        echo "v8.2.1"
+        return
+    fi
+    if  [[ $REPOSITORY_NAME == "kubernetes-csi/external-provisioner" ]]; then
+        echo "v5.2.0"
+        return
+    fi
+    if  [[ $REPOSITORY_NAME == "kubernetes-csi/livenessprobe" ]]; then
+        echo "v2.15.0"
         return
     fi
     

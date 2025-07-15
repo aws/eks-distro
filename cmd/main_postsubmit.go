@@ -113,12 +113,6 @@ func main() {
 		"coredns/coredns",
 		"etcd-io/etcd",
 		"kubernetes-sigs/aws-iam-authenticator",
-		"kubernetes-csi/external-attacher",
-		"kubernetes-csi/external-resizer",
-		"kubernetes-csi/livenessprobe",
-		"kubernetes-csi/node-driver-registrar",
-		"kubernetes-csi/external-snapshotter",
-		"kubernetes-csi/external-provisioner",
 	}
 
 	if *buildKubeFirst {
