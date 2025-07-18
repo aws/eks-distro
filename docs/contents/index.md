@@ -81,7 +81,6 @@ components:
 * CNI plugins
 * CoreDNS
 * etcd
-* CSI Sidecars
 * aws-iam-authenticator
 * Kubernetes
 
