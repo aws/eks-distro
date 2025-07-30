@@ -1,31 +1,39 @@
-From 118beb39683b2785189f7a9e6760f7a8fc9725ed Mon Sep 17 00:00:00 2001
-From: kaposmee <kaposmee@amazon.com>
-Date: Fri, 2 May 2025 22:47:44 +0000
-Subject: [PATCH] Patch CVE-2025-22872 for coredns v1.12.1
+From c6c5ffe921188c53c2114ad89e0895566cc3bdaf Mon Sep 17 00:00:00 2001
+From: Shehbaj Dhillon <dshehbaj@amazon.com>
+Date: Mon, 21 Apr 2025 21:37:50 +0000
+Subject: [PATCH] 1.11.4 update go version, x/net version
 
 ---
- go.mod | 2 +-
- go.sum | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ .go-version | 2 +-
+ go.mod      | 2 +-
+ go.sum      | 4 ++--
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
+diff --git a/.go-version b/.go-version
+index f9e8384bb..e4a973f91 100644
+--- a/.go-version
++++ b/.go-version
+@@ -1 +1 @@
+-1.24.1
++1.24.2
 diff --git a/go.mod b/go.mod
-index 158ed1a53..7e2634b4b 100644
+index 4e3edb2a4..d02c76fb3 100644
 --- a/go.mod
 +++ b/go.mod
-@@ -160,7 +160,7 @@ require (
- 	go.uber.org/zap v1.27.0 // indirect
- 	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56 // indirect
- 	golang.org/x/mod v0.23.0 // indirect
+@@ -140,7 +140,7 @@ require (
+ 	go.uber.org/zap v1.17.0 // indirect
+ 	golang.org/x/exp v0.0.0-20240506185415-9bf2ced13842 // indirect
+ 	golang.org/x/mod v0.18.0 // indirect
 -	golang.org/x/net v0.37.0 // indirect
 +	golang.org/x/net v0.38.0 // indirect
  	golang.org/x/oauth2 v0.28.0 // indirect
  	golang.org/x/sync v0.12.0 // indirect
  	golang.org/x/term v0.30.0 // indirect
 diff --git a/go.sum b/go.sum
-index 98f1756da..eeeedfec4 100644
+index 788601f4b..f0b2be193 100644
 --- a/go.sum
 +++ b/go.sum
-@@ -433,8 +433,8 @@ golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2/go.mod h1:9nx3DQGgdP8bBQD5qx
+@@ -403,8 +403,8 @@ golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2/go.mod h1:9nx3DQGgdP8bBQD5qx
  golang.org/x/net v0.0.0-20220722155237-a158d28d115b/go.mod h1:XRhObCWvk6IyKnWLug+ECip1KBveYUHfp+8e9klMJ9c=
  golang.org/x/net v0.6.0/go.mod h1:2Tu9+aMcznHK/AK1HMvgo6xiTLG5rD5rZLDS+rp2Bjs=
  golang.org/x/net v0.10.0/go.mod h1:0qNGK6F8kojg2nk9dLZ2mShWaEBan6FAoqfSigmmuDg=
@@ -33,9 +41,9 @@ index 98f1756da..eeeedfec4 100644
 -golang.org/x/net v0.37.0/go.mod h1:ivrbrMbzFq5J41QOQh0siUuly180yBYtLp+CKbEaFx8=
 +golang.org/x/net v0.38.0 h1:vRMAPTMaeGqVhG5QyLJHqNDwecKTomGeqbnfZyKlBI8=
 +golang.org/x/net v0.38.0/go.mod h1:ivrbrMbzFq5J41QOQh0siUuly180yBYtLp+CKbEaFx8=
+ golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
  golang.org/x/oauth2 v0.28.0 h1:CrgCKl8PPAVtLnU3c+EDw6x11699EWlsDeWNWKdIOkc=
  golang.org/x/oauth2 v0.28.0/go.mod h1:onh5ek6nERTohokkhCD/y2cV4Do3fxFHFuAejCkRWT8=
- golang.org/x/sync v0.0.0-20181221193216-37e7f081c4d4/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
 -- 
 2.47.1
 
