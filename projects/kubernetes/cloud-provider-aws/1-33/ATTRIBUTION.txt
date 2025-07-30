@@ -2,31 +2,31 @@
 ** cel.dev/expr; version v0.19.1 --
 https://github.com/google/cel-spec
 
-** github.com/aws/aws-sdk-go; version v1.55.5 --
-https://github.com/aws/aws-sdk-go
-
-** github.com/aws/aws-sdk-go-v2; version v1.32.5 --
+** github.com/aws/aws-sdk-go-v2; version v1.36.5 --
 https://github.com/aws/aws-sdk-go-v2
 
-** github.com/aws/aws-sdk-go-v2/config; version v1.28.0 --
+** github.com/aws/aws-sdk-go-v2/config; version v1.29.14 --
 https://github.com/aws/aws-sdk-go-v2/config
 
-** github.com/aws/aws-sdk-go-v2/credentials; version v1.17.41 --
+** github.com/aws/aws-sdk-go-v2/credentials; version v1.17.67 --
 https://github.com/aws/aws-sdk-go-v2/credentials
 
-** github.com/aws/aws-sdk-go-v2/feature/ec2/imds; version v1.16.17 --
+** github.com/aws/aws-sdk-go-v2/feature/ec2/imds; version v1.16.31 --
 https://github.com/aws/aws-sdk-go-v2/feature/ec2/imds
 
-** github.com/aws/aws-sdk-go-v2/internal/configsources; version v1.3.24 --
+** github.com/aws/aws-sdk-go-v2/internal/configsources; version v1.3.36 --
 https://github.com/aws/aws-sdk-go-v2/internal/configsources
 
-** github.com/aws/aws-sdk-go-v2/internal/endpoints/v2; version v2.6.24 --
+** github.com/aws/aws-sdk-go-v2/internal/endpoints/v2; version v2.6.36 --
 https://github.com/aws/aws-sdk-go-v2/internal/endpoints/v2
 
-** github.com/aws/aws-sdk-go-v2/internal/ini; version v1.8.1 --
+** github.com/aws/aws-sdk-go-v2/internal/ini; version v1.8.3 --
 https://github.com/aws/aws-sdk-go-v2/internal/ini
 
-** github.com/aws/aws-sdk-go-v2/service/ec2; version v1.186.0 --
+** github.com/aws/aws-sdk-go-v2/service/autoscaling; version v1.53.3 --
+https://github.com/aws/aws-sdk-go-v2/service/autoscaling
+
+** github.com/aws/aws-sdk-go-v2/service/ec2; version v1.218.0 --
 https://github.com/aws/aws-sdk-go-v2/service/ec2
 
 ** github.com/aws/aws-sdk-go-v2/service/ecr; version v1.36.2 --
@@ -35,22 +35,31 @@ https://github.com/aws/aws-sdk-go-v2/service/ecr
 ** github.com/aws/aws-sdk-go-v2/service/ecrpublic; version v1.27.2 --
 https://github.com/aws/aws-sdk-go-v2/service/ecrpublic
 
-** github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding; version v1.12.1 --
+** github.com/aws/aws-sdk-go-v2/service/elasticloadbalancing; version v1.29.3 --
+https://github.com/aws/aws-sdk-go-v2/service/elasticloadbalancing
+
+** github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2; version v1.45.2 --
+https://github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2
+
+** github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding; version v1.12.3 --
 https://github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding
 
-** github.com/aws/aws-sdk-go-v2/service/internal/presigned-url; version v1.12.5 --
+** github.com/aws/aws-sdk-go-v2/service/internal/presigned-url; version v1.12.15 --
 https://github.com/aws/aws-sdk-go-v2/service/internal/presigned-url
 
-** github.com/aws/aws-sdk-go-v2/service/sso; version v1.24.2 --
+** github.com/aws/aws-sdk-go-v2/service/kms; version v1.41.0 --
+https://github.com/aws/aws-sdk-go-v2/service/kms
+
+** github.com/aws/aws-sdk-go-v2/service/sso; version v1.25.3 --
 https://github.com/aws/aws-sdk-go-v2/service/sso
 
-** github.com/aws/aws-sdk-go-v2/service/ssooidc; version v1.28.2 --
+** github.com/aws/aws-sdk-go-v2/service/ssooidc; version v1.30.1 --
 https://github.com/aws/aws-sdk-go-v2/service/ssooidc
 
-** github.com/aws/aws-sdk-go-v2/service/sts; version v1.33.1 --
+** github.com/aws/aws-sdk-go-v2/service/sts; version v1.33.19 --
 https://github.com/aws/aws-sdk-go-v2/service/sts
 
-** github.com/aws/smithy-go; version v1.22.1 --
+** github.com/aws/smithy-go; version v1.22.4 --
 https://github.com/aws/smithy-go
 
 ** github.com/coreos/go-semver/semver; version v0.3.1 --
@@ -182,7 +191,7 @@ https://github.com/kubernetes/client-go
 ** k8s.io/cloud-provider; version v0.33.0 --
 https://github.com/kubernetes/cloud-provider
 
-** k8s.io/cloud-provider-aws; version v1.33.0 --
+** k8s.io/cloud-provider-aws; version v1.33.1 --
 https://github.com/kubernetes/cloud-provider-aws
 
 ** k8s.io/component-base; version v0.33.0 --
@@ -652,10 +661,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/aws/aws-sdk-go-v2/internal/sync/singleflight; version v1.32.5 --
+** github.com/aws/aws-sdk-go-v2/internal/sync/singleflight; version v1.36.5 --
 https://github.com/aws/aws-sdk-go-v2
 
-** github.com/aws/smithy-go/internal/sync/singleflight; version v1.22.1 --
+** github.com/aws/smithy-go/internal/sync/singleflight; version v1.22.4 --
 https://github.com/aws/smithy-go
 
 Copyright (c) 2009 The Go Authors. All rights reserved.
@@ -686,42 +695,6 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
-------
-
-** github.com/aws/aws-sdk-go/internal/sync/singleflight; version v1.55.5 --
-https://github.com/aws/aws-sdk-go
-
-** k8s.io/apimachinery/third_party/forked/golang; version v0.33.0 --
-https://github.com/kubernetes/apimachinery
-
-Copyright (c) 2009 The Go Authors. All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are
-met:
-
-   * Redistributions of source code must retain the above copyright
-notice, this list of conditions and the following disclaimer.
-   * Redistributions in binary form must reproduce the above
-copyright notice, this list of conditions and the following disclaimer
-in the documentation and/or other materials provided with the
-distribution.
-   * Neither the name of Google Inc. nor the names of its
-contributors may be used to endorse or promote products derived from
-this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
@@ -1199,6 +1172,39 @@ https://gopkg.in/inf.v0
 
 Copyright (c) 2012 Péter Surányi. Portions Copyright (c) 2009 The Go
 Authors. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+   * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+   * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+------
+
+** k8s.io/apimachinery/third_party/forked/golang; version v0.33.0 --
+https://github.com/kubernetes/apimachinery
+
+Copyright (c) 2009 The Go Authors. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
