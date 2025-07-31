@@ -29,26 +29,26 @@ fi
 
 ACTUAL_FILES=$(mktemp)
 
-for file in $(find ${ARTIFACTS_FOLDER} -type f | sort); do
-    filepath=$(realpath --relative-base=$ARTIFACTS_FOLDER $file)
-	echo $filepath >> $ACTUAL_FILES
+find ${ARTIFACTS_FOLDER} -type f -print0 | sort -z | while IFS= read -r -d '' file; do
+    filepath=$(realpath --relative-base=$ARTIFACTS_FOLDER "$file")
+	echo "$filepath" >> "$ACTUAL_FILES"
 done
 
 EXPECTED_FILES=$(mktemp)
 export GIT_TAG=$GIT_TAG
 envsubst '$GIT_TAG' \
-	< $EXPECTED_FILES_PATH \
-	> $EXPECTED_FILES
+	< "$EXPECTED_FILES_PATH" \
+	| sort \
+	> "$EXPECTED_FILES"
 
 if $FAKE_ARM_ARTIFACTS_FOR_VALIDATION; then
-	sed -i '/arm64/d' $EXPECTED_FILES
+	sed -i '/arm64/d' "$EXPECTED_FILES"
 fi
 
-if ! diff $EXPECTED_FILES $ACTUAL_FILES; then
-	echo "Artifacts directory does not matched expected!"
+if ! diff "$EXPECTED_FILES" "$ACTUAL_FILES"; then
+	echo "Artifacts directory does not match expected!"
 	echo "******************* Actual ******************"
-	cat $ACTUAL_FILES
+	cat "$ACTUAL_FILES"
 	echo "*********************************************"
 	exit 1
 fi
-
