@@ -490,29 +490,43 @@ endif
 ifneq ($(REPO_NO_CLONE),true)
 $(REPO):
 	@echo -e $(call TARGET_START_LOG)
-ifneq ($(REPO_SPARSE_CHECKOUT),)
-	source $(BUILD_LIB)/common.sh && retry git clone --depth 1 --filter=blob:none --sparse -b $(GIT_TAG) $(CLONE_URL) $(REPO)
-	git -C $(REPO) sparse-checkout set $(REPO_SPARSE_CHECKOUT) --cone --skip-checks
+ifneq ($(and $(filter kubernetes,$(REPO)),$(filter-out true,$(BUILD_ARTIFACTS))),)
+	@echo "Skipping repo pull for $(REPO)"
 else
-	source $(BUILD_LIB)/common.sh && retry git clone $(CLONE_URL) $(REPO)
+	ifneq ($(REPO_SPARSE_CHECKOUT),)
+		@echo "Cloning repo $(REPO) with sparse checkout"
+		source $(BUILD_LIB)/common.sh && retry git clone --depth 1 --filter=blob:none --sparse -b $(GIT_TAG) $(CLONE_URL) $(REPO)
+		git -C $(REPO) sparse-checkout set $(REPO_SPARSE_CHECKOUT) --cone --skip-checks
+	else
+		@echo "Cloning repo $(REPO)"
+		source $(BUILD_LIB)/common.sh && retry git clone $(CLONE_URL) $(REPO)
+	endif
 endif
 	@echo -e $(call TARGET_END_LOG)
 endif
 
 $(GIT_CHECKOUT_TARGET): | $(REPO)
 	@echo -e $(call TARGET_START_LOG)
-	@rm -f $(REPO)/eks-distro-*
-	(cd $(REPO) && $(BASE_DIRECTORY)/build/lib/wait_for_tag.sh $(GIT_TAG))
-	git -C $(REPO) checkout --quiet -f $(GIT_TAG)
-	@touch $@
+	@if [ "$(REPO)" != "kubernetes" ] && [ "$(BUILD_ARTIFACTS)" = "true" ]; then \
+		rm -f $(REPO)/eks-distro-*; \
+		(cd $(REPO) && $(BASE_DIRECTORY)/build/lib/wait_for_tag.sh $(GIT_TAG)); \
+		git -C $(REPO) checkout --quiet -f $(GIT_TAG); \
+		touch $@; \
+	else \
+		echo "Skipping checkout for $(REPO)"; \
+	fi
 	@echo -e $(call TARGET_END_LOG)
 
 $(GIT_PATCH_TARGET): $(GIT_CHECKOUT_TARGET)
 	@echo -e $(call TARGET_START_LOG)
-	git -C $(REPO) config user.email prow@amazonaws.com
-	git -C $(REPO) config user.name "Prow Bot"
-	if [ -n "$(PATCHES_DIR)" ]; then git -C $(REPO) am --committer-date-is-author-date $(PATCHES_DIR)/*; fi
-	@touch $@
+	@if [ "$(REPO)" != "kubernetes" ] && [ "$(BUILD_ARTIFACTS)" = "true" ]; then \
+		git -C $(REPO) config user.email prow@amazonaws.com; \
+		git -C $(REPO) config user.name "Prow Bot"; \
+		if [ -n "$(PATCHES_DIR)" ]; then git -C $(REPO) am --committer-date-is-author-date $(PATCHES_DIR)/*; fi; \
+		touch $@; \
+	else \
+		echo "Skipping patches for $(REPO)"; \
+	fi
 	@echo -e $(call TARGET_END_LOG)
 
 
@@ -520,8 +534,12 @@ $(GIT_PATCH_TARGET): $(GIT_CHECKOUT_TARGET)
 $(REPO)/%ks-distro-go-mod-download: REPO_SUBPATH=$(if $(filter e,$*),,$(*:%/e=%))
 $(REPO)/%ks-distro-go-mod-download: $(if $(PATCHES_DIR),$(GIT_PATCH_TARGET),$(GIT_CHECKOUT_TARGET))
 	@echo -e $(call TARGET_START_LOG)
-	$(BASE_DIRECTORY)/build/lib/go_mod_download.sh $(MAKE_ROOT) $(REPO) $(GIT_TAG) $(GOLANG_VERSION) "$(REPO_SUBPATH)"
-	@touch $@
+	@if [ "$(REPO)" != "kubernetes" ] && [ "$(BUILD_ARTIFACTS)" = "true" ]; then \
+		$(BASE_DIRECTORY)/build/lib/go_mod_download.sh $(MAKE_ROOT) $(REPO) $(GIT_TAG) $(GOLANG_VERSION) "$(REPO_SUBPATH)"; \
+		touch $@; \
+	else \
+		echo "Skipping go mod download for $(REPO)"; \
+	fi
 	@echo -e $(call TARGET_END_LOG)
 
 ifneq ($(REPO),$(HELM_SOURCE_REPOSITORY))
