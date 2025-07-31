@@ -19,7 +19,7 @@ RELEASE_BRANCH="${1?First required argument is release branch for example 1-18}"
 RELEASE="${2?Second required argument is release for example 1}"
 ARTIFACT_BUCKET="${3?Third required argument is artifact bucket name}"
 CRDS="${4:-false}"
-DRY_RUN="${5:-false}"
+DRY_RUN="${5:-true}"
 
 BASE_DIRECTORY=$(git rev-parse --show-toplevel)
 

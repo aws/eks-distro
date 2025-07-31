@@ -28,15 +28,34 @@ RELEASE="${4?Fourth required argument is release for example 1}"
 GIT_TAG="${5:-}"
 
 DEST_DIR=${BASE_DIRECTORY}/kubernetes-${RELEASE_BRANCH}/releases/${RELEASE}/artifacts
+BUILD_ARTIFACTS=${BUILD_ARTIFACTS:-true}
 
 # For when calling from projects other than kubernetes
 if [ $PROJECT = "kubernetes" ]; then
-  GIT_TAG=$(cat ${BASE_DIRECTORY}/projects/kubernetes/kubernetes/${RELEASE_BRANCH}/GIT_TAG)
+    if [ "${BUILD_ARTIFACTS}" == "true" ]; then
+        GIT_TAG=$(cat "${BASE_DIRECTORY}"/projects/kubernetes/kubernetes/"${RELEASE_BRANCH}"/GIT_TAG)
+    else # copying artifacts so use the kubernetes versions of the internal build
+        echo "using internal build GIT_TAG"
+
+        echo "Copying tarballs"
+        build::common::echo_and_run cp -r "${BASE_DIRECTORY}/projects/kubernetes/kubernetes/_output/${RELEASE_BRANCH}/tar/"* "$SOURCE_ARTIFACT_DIR"
+
+        echo "Copying checksums"
+        build::common::echo_and_run cp "${BASE_DIRECTORY}/projects/kubernetes/kubernetes/_output/${RELEASE_BRANCH}/SHA"* "$SOURCE_ARTIFACT_DIR"
+
+        echo "Copying attribution"
+        build::common::echo_and_run cp "${BASE_DIRECTORY}/projects/kubernetes/kubernetes/_output/${RELEASE_BRANCH}/ATTRIBUTION.txt" "$SOURCE_ARTIFACT_DIR"
+    fi
 fi
 
 ARTIFACT_DIR=${DEST_DIR}/${PROJECT}/${GIT_TAG}
 mkdir -p $ARTIFACT_DIR
 build::common::echo_and_run cp -r $SOURCE_ARTIFACT_DIR/* $ARTIFACT_DIR
+
+# if we are running in copy mode for kubernetes we don't need checksums
+if [ "${PROJECT}" = "kubernetes" ] && [ "${BUILD_ARTIFACTS}" == "false" ]; then
+    exit 0
+fi
 
 # create checksums in source output since we validate artifacts from that folder
 build::common::echo_and_run $SCRIPT_ROOT/create_release_checksums.sh $SOURCE_ARTIFACT_DIR

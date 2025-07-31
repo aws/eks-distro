@@ -18,8 +18,7 @@ RELEASE_GIT_COMMIT_HASH?=$(shell git rev-parse @)
 
 REBUILD_ALL?=false
 
-ALL_PROJECTS=containernetworking_plugins coredns_coredns etcd-io_etcd kubernetes-sigs_aws-iam-authenticator \
-	kubernetes_release kubernetes_kubernetes kubernetes_cloud-provider-aws
+ALL_PROJECTS=kubernetes_kubernetes
 
 
 ifdef MAKECMDGOALS
