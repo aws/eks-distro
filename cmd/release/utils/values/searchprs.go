@@ -17,7 +17,7 @@ func GetChangelogPRs(releaseVersion string, overrideNumber int) (string, error) 
 	githubClient := github.NewClient(nil)
 
 	ctx := context.Background()
-	opts := &github.SearchOptions{Sort: "updated"}
+	opts := &github.SearchOptions{Sort: "created", Order: "desc"}
 	//Get the date of the last document release for the release version
 	prs, _, err := githubClient.Search.Issues(ctx, "is:pr is:merged label:release label:documentation repo:aws/eks-distro label:"+releaseVersion, opts)
 	if err != nil {
