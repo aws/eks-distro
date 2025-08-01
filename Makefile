@@ -18,9 +18,8 @@ RELEASE_GIT_COMMIT_HASH?=$(shell git rev-parse @)
 
 REBUILD_ALL?=false
 
-ALL_PROJECTS=containernetworking_plugins coredns_coredns etcd-io_etcd kubernetes-csi_external-attacher kubernetes-csi_external-resizer \
-	kubernetes-csi_livenessprobe kubernetes-csi_node-driver-registrar kubernetes-sigs_aws-iam-authenticator kubernetes-csi_external-snapshotter \
-	kubernetes-csi_external-provisioner kubernetes_release kubernetes_kubernetes kubernetes_cloud-provider-aws
+ALL_PROJECTS=containernetworking_plugins coredns_coredns etcd-io_etcd kubernetes-sigs_aws-iam-authenticator \
+	kubernetes_release kubernetes_kubernetes kubernetes_cloud-provider-aws
 
 
 ifdef MAKECMDGOALS

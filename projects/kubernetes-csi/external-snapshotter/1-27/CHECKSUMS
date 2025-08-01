@@ -1,4 +1,0 @@
-3d1d5ed4b489a90131df5f3820834a14ff4b1412a94dbc57a4ddc93b0c5f2697  _output/1-27/bin/external-snapshotter/linux-amd64/csi-snapshotter
-5bcec024f0edbfbf3a7717fc20eade52508ae8b99a6c859990083030dfb726f9  _output/1-27/bin/external-snapshotter/linux-amd64/snapshot-controller
-c44d84691d2c8aac2c0ff781ab6ddb7dba44f05d70e3cd099a1d959c0d744f1e  _output/1-27/bin/external-snapshotter/linux-arm64/csi-snapshotter
-b5a95f54afd0a07f37db84bfebfac2dc48f630e01584c648410585ff5b212a2f  _output/1-27/bin/external-snapshotter/linux-arm64/snapshot-controller

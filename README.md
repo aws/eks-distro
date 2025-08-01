@@ -29,7 +29,9 @@ As part of an effort to streamline the maintenance of EKS-D, we will be deprecat
 
 metrics-server project deprecation: as of 1/16/2025
 
-csi sidecar projects deprecation: on or before 3/31/2025
+csi sidecar projects deprecation: as of 3/31/2025
+
+Find the csi sidecar images at their new location here - https://gallery.ecr.aws/csi-components
 
 Please open an issue if you have any concerns.
 
