@@ -25,7 +25,13 @@ export NODE_ARCHITECTURE=${NODE_ARCHITECTURE:-amd64}
 export UBUNTU_RELEASE=${UBUNTU_RELEASE:-focal-20.04}
 export IPV6=${IPV6:-false}
 
-export KOPS_VERSION="1.29.2"
+KUBERNETES_VERSION=$(cat ../../projects/kubernetes/kubernetes/${RELEASE_BRANCH}/GIT_TAG)
+if [[ "${KUBERNETES_VERSION}" =~ ^v1\.3[4-9](\.|$) ]]; then
+  # For Kubernetes 1.34-1.39 use kops 1.32.1
+  export KOPS_VERSION="1.32.1"
+else
+  export KOPS_VERSION="1.29.2"
+fi
 
 # Check for the occasion the release branch version is newer than the most recent release of KOPS
 if [[ ${RELEASE_BRANCH#*-} > ${KOPS_VERSION#*.} ]]; then
