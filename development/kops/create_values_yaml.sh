@@ -54,25 +54,44 @@ function get_container_yaml() {
         return
     fi
 
-    # CSI sidecar components have moved to gallery.ecr.aws/csi-components
-    # Use new repository location and standard upstream versioning
+    # CSI sidecar components have moved to public.ecr.aws/csi-components
     if  [[ $REPOSITORY_NAME == "kubernetes-csi/node-driver-registrar" ]] || \
         [[ $REPOSITORY_NAME == "kubernetes-csi/external-resizer" ]] || \
         [[ $REPOSITORY_NAME == "kubernetes-csi/external-attacher" ]] || \
         [[ $REPOSITORY_NAME == "kubernetes-csi/external-snapshotter" ]] || \
         [[ $REPOSITORY_NAME == "kubernetes-csi/external-provisioner" ]] || \
-        [[ $REPOSITORY_NAME == "kubernetes-csi/livenessprobe" ]]; then
-        
-        COMPONENT_NAME=$(echo $REPOSITORY_NAME | cut -d'/' -f2)
-        
-        if [[ $COMPONENT_NAME == external-* ]]; then
-            COMPONENT_NAME="csi-${COMPONENT_NAME#external-}"
-        elif [[ $COMPONENT_NAME == "node-driver-registrar" ]]; then
-            COMPONENT_NAME="csi-node-driver-registrar"
-        fi
+        [[ $REPOSITORY_NAME == "kubernetes-csi/livenessprobe" ]]; then \
+    
+        #https://gallery.ecr.aws/csi-components?page=1
+        case $REPOSITORY_NAME in
+            "kubernetes-csi/external-provisioner")
+                COMPONENT_NAME="csi-provisioner"
+                TAG="v5.3.0-eksbuild.3"
+                ;;
+            "kubernetes-csi/node-driver-registrar")
+                COMPONENT_NAME="csi-node-driver-registrar"
+                TAG="v2.14.0-eksbuild.4"
+                ;;
+            "kubernetes-csi/external-resizer")
+                COMPONENT_NAME="csi-resizer"
+                TAG="v1.14.0-eksbuild.3"
+                ;;
+            "kubernetes-csi/external-attacher")
+                COMPONENT_NAME="csi-attacher"
+                TAG="v4.9.0-eksbuild.3"
+                ;;
+            "kubernetes-csi/external-snapshotter")
+                COMPONENT_NAME="csi-snapshotter"
+                TAG="v8.3.0-eksbuild.1"
+                ;;
+            "kubernetes-csi/livenessprobe")
+                COMPONENT_NAME="livenessprobe"
+                TAG="v2.16.0-eksbuild.4"
+                ;;
+        esac
         
         echo "    repository: public.ecr.aws/csi-components/${COMPONENT_NAME}
-    tag: ${VERSION}"
+    tag: ${TAG}"
         return
     fi
     
