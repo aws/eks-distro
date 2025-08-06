@@ -71,7 +71,7 @@ function get_container_yaml() {
             COMPONENT_NAME="csi-node-driver-registrar"
         fi
         
-        echo "    repository: gallery.ecr.aws/csi-components/${COMPONENT_NAME}
+        echo "    repository: public.ecr.aws/csi-components/${COMPONENT_NAME}
     tag: ${VERSION}"
         return
     fi
