@@ -54,16 +54,25 @@ function get_container_yaml() {
         return
     fi
 
-    # CSI sidecar components are deprecated
-    # Use latest tag instead of specific release number
+    # CSI sidecar components have moved to gallery.ecr.aws/csi-components
+    # Use new repository location and standard upstream versioning
     if  [[ $REPOSITORY_NAME == "kubernetes-csi/node-driver-registrar" ]] || \
         [[ $REPOSITORY_NAME == "kubernetes-csi/external-resizer" ]] || \
         [[ $REPOSITORY_NAME == "kubernetes-csi/external-attacher" ]] || \
         [[ $REPOSITORY_NAME == "kubernetes-csi/external-snapshotter" ]] || \
         [[ $REPOSITORY_NAME == "kubernetes-csi/external-provisioner" ]] || \
         [[ $REPOSITORY_NAME == "kubernetes-csi/livenessprobe" ]]; then
-        echo "    repository: ${IMAGE_REPO}/${REPOSITORY_NAME}
-    tag: ${VERSION}-eks-${RELEASE_BRANCH}-latest"
+        
+        COMPONENT_NAME=$(echo $REPOSITORY_NAME | cut -d'/' -f2)
+        
+        if [[ $COMPONENT_NAME == external-* ]]; then
+            COMPONENT_NAME="csi-${COMPONENT_NAME#external-}"
+        elif [[ $COMPONENT_NAME == "node-driver-registrar" ]]; then
+            COMPONENT_NAME="csi-node-driver-registrar"
+        fi
+        
+        echo "    repository: gallery.ecr.aws/csi-components/${COMPONENT_NAME}
+    tag: ${VERSION}"
         return
     fi
     
