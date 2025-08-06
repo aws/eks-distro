@@ -31,10 +31,6 @@ function get_container_yaml() {
     RELEASE="${2}"
     VERSION="$(get_project_version $REPOSITORY_NAME)"
 
-    if  [[ $REPOSITORY_NAME == "kubernetes-csi/external-snapshotter" ]] 
-    then
-        REPOSITORY_NAME="kubernetes-csi/external-snapshotter/csi-snapshotter"
-    fi
 
     if  [[ $REPOSITORY_NAME == "kubernetes/cloud-provider-aws" ]] 
     then
@@ -111,32 +107,18 @@ function get_project_version(){
         return
     fi
 
-    # CSI sidecar components are deprecated
-    # Use hardcoded versions since project directories will be removed
-    if  [[ $REPOSITORY_NAME == "kubernetes-csi/node-driver-registrar" ]]; then
-        echo "v2.13.0"
-        return
-    fi
-    if  [[ $REPOSITORY_NAME == "kubernetes-csi/external-resizer" ]]; then
-        echo "v1.13.2"
-        return
-    fi
-    if  [[ $REPOSITORY_NAME == "kubernetes-csi/external-attacher" ]]; then
-        echo "v4.8.1"
-        return
-    fi
-    if  [[ $REPOSITORY_NAME == "kubernetes-csi/external-snapshotter" ]]; then
-        echo "v8.2.1"
-        return
-    fi
-    if  [[ $REPOSITORY_NAME == "kubernetes-csi/external-provisioner" ]]; then
-        echo "v5.2.0"
-        return
-    fi
-    if  [[ $REPOSITORY_NAME == "kubernetes-csi/livenessprobe" ]]; then
-        echo "v2.15.0"
-        return
-    fi
+    # Skip version lookup for CSI components since we use hardcoded versions
+    case $REPOSITORY_NAME in
+        "kubernetes-csi/node-driver-registrar"|\
+        "kubernetes-csi/external-resizer"|\
+        "kubernetes-csi/external-attacher"|\
+        "kubernetes-csi/external-snapshotter"|\
+        "kubernetes-csi/external-provisioner"|\
+        "kubernetes-csi/livenessprobe")
+            echo "skip-csi" 
+            return
+            ;;
+    esac
     
     TAG_FILE=${BASEDIR}/../../projects/${REPOSITORY_NAME}/GIT_TAG
     if [ -f "$TAG_FILE" ]; then
