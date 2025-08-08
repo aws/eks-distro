@@ -1322,9 +1322,6 @@ https://github.com/liggitt/tabwriter
 ** github.com/vmware/govmomi/vim25/xml; version v0.30.6 --
 https://github.com/vmware/govmomi
 
-** golang.org/go; version go1.22.12 --
-https://github.com/golang/go
-
 ** golang.org/x/crypto; version v0.22.0 --
 https://golang.org/x/crypto
 
@@ -1605,6 +1602,12 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+------
+
+** golang.org/go; version go1.22.12 --
+https://github.com/golang/go
+
+404: Not Found
 ------
 
 ** google.golang.org/api; version v0.126.0 --
