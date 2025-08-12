@@ -1,5 +1,5 @@
 
-** cel.dev/expr; version v0.19.1 --
+** cel.dev/expr; version v0.23.1 --
 https://github.com/google/cel-spec
 
 ** github.com/container-storage-interface/spec/lib/go/csi; version v1.9.0 --
@@ -26,7 +26,7 @@ https://github.com/containerd/typeurl/v2
 ** github.com/coredns/caddy/caddyfile; version v1.1.1 --
 https://github.com/coredns/caddy
 
-** github.com/coredns/corefile-migration/migration; version v1.0.25 --
+** github.com/coredns/corefile-migration/migration; version v1.0.26 --
 https://github.com/coredns/corefile-migration
 
 ** github.com/coreos/go-oidc; version v2.3.0+incompatible --
@@ -71,10 +71,10 @@ https://github.com/google/btree
 ** github.com/google/cadvisor; version v0.52.1 --
 https://github.com/google/cadvisor
 
-** github.com/google/cel-go; version v0.23.2 --
+** github.com/google/cel-go; version v0.25.0 --
 https://github.com/google/cel-go
 
-** github.com/google/gnostic-models; version v0.6.9 --
+** github.com/google/gnostic-models; version v0.7.0 --
 https://github.com/google/gnostic-models
 
 ** github.com/google/shlex; version v0.0.0-20191202100458-e7afc7fbc510 --
@@ -83,7 +83,7 @@ https://github.com/google/shlex
 ** github.com/grpc-ecosystem/go-grpc-prometheus; version v1.2.0 --
 https://github.com/grpc-ecosystem/go-grpc-prometheus
 
-** github.com/jonboulle/clockwork; version v0.4.0 --
+** github.com/jonboulle/clockwork; version v0.5.0 --
 https://github.com/jonboulle/clockwork
 
 ** github.com/kylelemons/godebug/diff; version v1.1.0 --
@@ -113,7 +113,7 @@ https://github.com/moby/term
 ** github.com/modern-go/concurrent; version v0.0.0-20180306012644-bacd9c7ef1dd --
 https://github.com/modern-go/concurrent
 
-** github.com/modern-go/reflect2; version v1.0.2 --
+** github.com/modern-go/reflect2; version v1.0.3-0.20250322232337-35a7c28c31ee --
 https://github.com/modern-go/reflect2
 
 ** github.com/NYTimes/gziphandler; version v1.1.1 --
@@ -149,22 +149,22 @@ https://github.com/prometheus/common
 ** github.com/prometheus/procfs; version v0.15.1 --
 https://github.com/prometheus/procfs
 
-** github.com/spf13/cobra; version v1.8.1 --
+** github.com/spf13/cobra; version v1.9.1 --
 https://github.com/spf13/cobra
 
-** github.com/vishvananda/netlink; version v1.3.1-0.20250206174618-62fb240731fa --
+** github.com/vishvananda/netlink; version v1.3.1 --
 https://github.com/vishvananda/netlink
 
-** github.com/vishvananda/netns; version v0.0.4 --
+** github.com/vishvananda/netns; version v0.0.5 --
 https://github.com/vishvananda/netns
 
-** go.etcd.io/etcd/api/v3; version v3.5.21 --
+** go.etcd.io/etcd/api/v3; version v3.6.1 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/client/pkg/v3; version v3.5.21 --
+** go.etcd.io/etcd/client/pkg/v3; version v3.6.1 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/client/v3; version v3.5.21 --
+** go.etcd.io/etcd/client/v3; version v3.6.1 --
 https://github.com/etcd-io/etcd
 
 ** go.opentelemetry.io/auto/sdk; version v1.1.0 --
@@ -173,160 +173,163 @@ https://github.com/open-telemetry/opentelemetry-go-instrumentation
 ** go.opentelemetry.io/contrib/instrumentation/github.com/emicklei/go-restful/otelrestful; version v0.44.0 --
 https://github.com/open-telemetry/opentelemetry-go-contrib
 
-** go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc; version v0.58.0 --
+** go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc; version v0.60.0 --
 https://github.com/open-telemetry/opentelemetry-go-contrib
 
 ** go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp; version v0.58.0 --
 https://github.com/open-telemetry/opentelemetry-go-contrib
 
-** go.opentelemetry.io/otel; version v1.33.0 --
+** go.opentelemetry.io/otel; version v1.35.0 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/otel/exporters/otlp/otlptrace; version v1.33.0 --
+** go.opentelemetry.io/otel/exporters/otlp/otlptrace; version v1.34.0 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc; version v1.33.0 --
+** go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc; version v1.34.0 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/otel/metric; version v1.33.0 --
+** go.opentelemetry.io/otel/metric; version v1.35.0 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/otel/sdk; version v1.33.0 --
+** go.opentelemetry.io/otel/sdk; version v1.34.0 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/otel/trace; version v1.33.0 --
+** go.opentelemetry.io/otel/trace; version v1.35.0 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/proto/otlp; version v1.4.0 --
+** go.opentelemetry.io/proto/otlp; version v1.5.0 --
 https://github.com/open-telemetry/opentelemetry-proto-go
 
-** google.golang.org/genproto/googleapis/api; version v0.0.0-20241209162323-e6fa225c2576 --
+** go.yaml.in/yaml/v2; version v2.4.2 --
+https://github.com/yaml/go-yaml
+
+** google.golang.org/genproto/googleapis/api; version v0.0.0-20250303144028-a0af3efb3deb --
 https://github.com/googleapis/go-genproto
 
-** google.golang.org/genproto/googleapis/rpc; version v0.0.0-20241209162323-e6fa225c2576 --
+** google.golang.org/genproto/googleapis/rpc; version v0.0.0-20250303144028-a0af3efb3deb --
 https://github.com/googleapis/go-genproto
 
-** google.golang.org/grpc; version v1.68.1 --
+** google.golang.org/grpc; version v1.72.1 --
 https://github.com/grpc/grpc-go
 
 ** gopkg.in/go-jose/go-jose.v2; version v2.6.3 --
 https://gopkg.in/go-jose/go-jose.v2
 
-** k8s.io/api; version v1.33.3 --
+** k8s.io/api; version v1.34.0-beta.0 --
 https://github.com/kubernetes/api
 
-** k8s.io/apiextensions-apiserver/pkg; version v1.33.3 --
+** k8s.io/apiextensions-apiserver/pkg; version v1.34.0-beta.0 --
 https://github.com/kubernetes/apiextensions-apiserver
 
-** k8s.io/apimachinery/pkg; version v1.33.3 --
+** k8s.io/apimachinery/pkg; version v1.34.0-beta.0 --
 https://github.com/kubernetes/apimachinery
 
-** k8s.io/apiserver; version v1.33.3 --
+** k8s.io/apiserver; version v1.34.0-beta.0 --
 https://github.com/kubernetes/apiserver
 
-** k8s.io/cli-runtime/pkg; version v1.33.3 --
+** k8s.io/cli-runtime/pkg; version v1.34.0-beta.0 --
 https://github.com/kubernetes/cli-runtime
 
-** k8s.io/client-go; version v1.33.3 --
+** k8s.io/client-go; version v1.34.0-beta.0 --
 https://github.com/kubernetes/client-go
 
-** k8s.io/cloud-provider; version v1.33.3 --
+** k8s.io/cloud-provider; version v1.34.0-beta.0 --
 https://github.com/kubernetes/cloud-provider
 
-** k8s.io/cluster-bootstrap; version v1.33.3 --
+** k8s.io/cluster-bootstrap; version v1.34.0-beta.0 --
 https://github.com/kubernetes/cluster-bootstrap
 
-** k8s.io/component-base; version v1.33.3 --
+** k8s.io/component-base; version v1.34.0-beta.0 --
 https://github.com/kubernetes/component-base
 
-** k8s.io/component-helpers; version v1.33.3 --
+** k8s.io/component-helpers; version v1.34.0-beta.0 --
 https://github.com/kubernetes/component-helpers
 
-** k8s.io/controller-manager; version v1.33.3 --
+** k8s.io/controller-manager; version v1.34.0-beta.0 --
 https://github.com/kubernetes/controller-manager
 
-** k8s.io/cri-api/pkg; version v1.33.3 --
+** k8s.io/cri-api/pkg; version v1.34.0-beta.0 --
 https://github.com/kubernetes/cri-api
 
-** k8s.io/cri-client/pkg; version v1.33.3 --
+** k8s.io/cri-client/pkg; version v1.34.0-beta.0 --
 https://github.com/kubernetes/cri-client
 
-** k8s.io/csi-translation-lib; version v1.33.3 --
+** k8s.io/csi-translation-lib; version v1.34.0-beta.0 --
 https://github.com/kubernetes/csi-translation-lib
 
-** k8s.io/dynamic-resource-allocation; version v1.33.3 --
+** k8s.io/dynamic-resource-allocation; version v1.34.0-beta.0 --
 https://github.com/kubernetes/dynamic-resource-allocation
 
-** k8s.io/endpointslice; version v1.33.3 --
+** k8s.io/endpointslice; version v1.34.0-beta.0 --
 https://github.com/kubernetes/endpointslice
 
-** k8s.io/externaljwt/apis/v1alpha1; version v1.33.3 --
+** k8s.io/externaljwt/apis/v1; version v1.34.0-beta.0 --
 https://github.com/kubernetes/externaljwt
 
 ** k8s.io/klog/v2; version v2.130.1 --
 https://github.com/kubernetes/klog
 
-** k8s.io/kms; version v1.33.3 --
+** k8s.io/kms; version v1.34.0-beta.0 --
 https://github.com/kubernetes/kms
 
-** k8s.io/kube-aggregator/pkg; version v1.33.3 --
+** k8s.io/kube-aggregator/pkg; version v1.34.0-beta.0 --
 https://github.com/kubernetes/kube-aggregator
 
-** k8s.io/kube-controller-manager/config/v1alpha1; version v1.33.3 --
+** k8s.io/kube-controller-manager/config/v1alpha1; version v1.34.0-beta.0 --
 https://github.com/kubernetes/kube-controller-manager
 
-** k8s.io/kube-openapi/pkg; version v0.0.0-20250318190949-c8a335a9a2ff --
+** k8s.io/kube-openapi/pkg; version v0.0.0-20250710124328-f3f2b991d03b --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kube-openapi/pkg/validation/errors; version v0.0.0-20250318190949-c8a335a9a2ff --
+** k8s.io/kube-openapi/pkg/validation/errors; version v0.0.0-20250710124328-f3f2b991d03b --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kube-openapi/pkg/validation/spec; version v0.0.0-20250318190949-c8a335a9a2ff --
+** k8s.io/kube-openapi/pkg/validation/spec; version v0.0.0-20250710124328-f3f2b991d03b --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kube-openapi/pkg/validation/strfmt; version v0.0.0-20250318190949-c8a335a9a2ff --
+** k8s.io/kube-openapi/pkg/validation/strfmt; version v0.0.0-20250710124328-f3f2b991d03b --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kube-openapi/pkg/validation/validate; version v0.0.0-20250318190949-c8a335a9a2ff --
+** k8s.io/kube-openapi/pkg/validation/validate; version v0.0.0-20250710124328-f3f2b991d03b --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kube-proxy/config/v1alpha1; version v1.33.3 --
+** k8s.io/kube-proxy/config/v1alpha1; version v1.34.0-beta.0 --
 https://github.com/kubernetes/kube-proxy
 
-** k8s.io/kube-scheduler; version v1.33.3 --
+** k8s.io/kube-scheduler; version v1.34.0-beta.0 --
 https://github.com/kubernetes/kube-scheduler
 
-** k8s.io/kubectl/pkg; version v1.33.3 --
+** k8s.io/kubectl/pkg; version v1.34.0-beta.0 --
 https://github.com/kubernetes/kubectl
 
-** k8s.io/kubelet; version v1.33.3 --
+** k8s.io/kubelet; version v1.34.0-beta.0 --
 https://github.com/kubernetes/kubelet
 
-** k8s.io/kubernetes; version v1.33.3 --
+** k8s.io/kubernetes; version v1.34.0-beta.0 --
 https://github.com/kubernetes/kubernetes
 
-** k8s.io/kubernetes/third_party/forked/libcontainer; version v1.33.3 --
+** k8s.io/kubernetes/third_party/forked/libcontainer; version v1.34.0-beta.0 --
 https://github.com/kubernetes/kubernetes
 
-** k8s.io/metrics/pkg; version v1.33.3 --
+** k8s.io/metrics/pkg; version v1.34.0-beta.0 --
 https://github.com/kubernetes/metrics
 
-** k8s.io/mount-utils; version v1.33.3 --
+** k8s.io/mount-utils; version v1.34.0-beta.0 --
 https://github.com/kubernetes/mount-utils
 
-** k8s.io/pod-security-admission; version v1.33.3 --
+** k8s.io/pod-security-admission; version v1.34.0-beta.0 --
 https://github.com/kubernetes/pod-security-admission
 
-** k8s.io/system-validators/validators; version v1.9.1 --
+** k8s.io/system-validators/validators; version v1.10.1 --
 https://github.com/kubernetes/system-validators
 
-** k8s.io/utils; version v0.0.0-20241104100929-3ea5e8cea738 --
+** k8s.io/utils; version v0.0.0-20250604170112-4c0f3b243397 --
 https://github.com/kubernetes/utils
 
 ** sigs.k8s.io/apiserver-network-proxy/konnectivity-client; version v0.31.2 --
 https://github.com/kubernetes-sigs/apiserver-network-proxy
 
-** sigs.k8s.io/json; version v0.0.0-20241010143419-9aa6b5e7a4b3 --
+** sigs.k8s.io/json; version v0.0.0-20241014173422-cfa47c3a1cc8 --
 https://github.com/kubernetes-sigs/json
 
 ** sigs.k8s.io/knftables; version v0.0.17 --
@@ -344,13 +347,10 @@ https://github.com/kubernetes-sigs/kustomize
 ** sigs.k8s.io/randfill; version v1.0.0 --
 https://github.com/kubernetes-sigs/randfill
 
-** sigs.k8s.io/structured-merge-diff/v4; version v4.6.0 --
+** sigs.k8s.io/structured-merge-diff/v6; version v6.2.0 --
 https://github.com/kubernetes-sigs/structured-merge-diff
 
-** sigs.k8s.io/yaml; version v1.4.0 --
-https://github.com/kubernetes-sigs/yaml
-
-** sigs.k8s.io/yaml/goyaml.v2; version v1.4.0 --
+** sigs.k8s.io/yaml; version v1.5.0 --
 https://github.com/kubernetes-sigs/yaml
 
 
@@ -636,6 +636,22 @@ This product includes software developed at
 SoundCloud Ltd. (http://soundcloud.com/).
 
 
+* For go.yaml.in/yaml/v2 see also this required NOTICE:
+Copyright 2011-2016 Canonical Ltd.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+
 * For k8s.io/kubernetes/third_party/forked/libcontainer see also this required NOTICE:
 runc
 
@@ -681,22 +697,6 @@ Submitted on behalf of a third-party: @eclipseo (Robert-André Mauchin)
 Submitted on behalf of a third-party: @yanzhoupan (Andrew Pan)
 Submitted on behalf of a third-party: @STRRL (Zhiqiang ZHOU)
 Submitted on behalf of a third-party: @disconnect3d (Disconnect3d)
-
-
-* For sigs.k8s.io/yaml/goyaml.v2 see also this required NOTICE:
-Copyright 2011-2016 Canonical Ltd.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
 
 ------
 
@@ -955,7 +955,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/fsnotify/fsnotify; version v1.7.0 --
+** github.com/fsnotify/fsnotify; version v1.9.0 --
 https://github.com/fsnotify/fsnotify
 
 Copyright © 2012 The Go Authors. All rights reserved.
@@ -1127,7 +1127,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/grpc-ecosystem/grpc-gateway/v2; version v2.24.0 --
+** github.com/grpc-ecosystem/grpc-gateway/v2; version v2.26.3 --
 https://github.com/grpc-ecosystem/grpc-gateway/v2
 
 Copyright (c) 2015, Gengo, Inc.
@@ -1163,16 +1163,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ** github.com/liggitt/tabwriter; version v0.0.0-20181228230101-89fcab3d43de --
 https://github.com/liggitt/tabwriter
 
-** k8s.io/apimachinery/third_party/forked/golang; version v1.33.3 --
+** k8s.io/apimachinery/third_party/forked/golang; version v1.34.0-beta.0 --
 https://github.com/kubernetes/apimachinery
 
-** k8s.io/client-go/third_party/forked/golang/template; version v1.33.3 --
+** k8s.io/client-go/third_party/forked/golang/template; version v1.34.0-beta.0 --
 https://github.com/kubernetes/client-go
 
-** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.33.3 --
+** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.34.0-beta.0 --
 https://github.com/kubernetes/kubernetes
 
-** k8s.io/utils/inotify; version v0.0.0-20241104100929-3ea5e8cea738 --
+** k8s.io/utils/inotify; version v0.0.0-20250604170112-4c0f3b243397 --
 https://github.com/kubernetes/utils
 
 Copyright (c) 2009 The Go Authors. All rights reserved.
@@ -1343,7 +1343,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/spf13/pflag; version v1.0.5 --
+** github.com/spf13/pflag; version v1.0.6 --
 https://github.com/spf13/pflag
 
 Copyright (c) 2012 Alex Ogier. All rights reserved.
@@ -1377,7 +1377,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/go; version go1.24.5 --
+** golang.org/go; version go1.24.6 --
 https://github.com/golang/go
 
 ** golang.org/x/crypto; version v0.36.0 --
@@ -1507,7 +1507,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ** gopkg.in/go-jose/go-jose.v2/json; version v2.6.3 --
 https://gopkg.in/go-jose/go-jose.v2
 
-** k8s.io/utils/internal/third_party/forked/golang; version v0.0.0-20241104100929-3ea5e8cea738 --
+** k8s.io/utils/internal/third_party/forked/golang; version v0.0.0-20250604170112-4c0f3b243397 --
 https://github.com/kubernetes/utils
 
 Copyright (c) 2012 The Go Authors. All rights reserved.
@@ -1574,7 +1574,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** k8s.io/kube-openapi/pkg/internal/third_party/go-json-experiment/json; version v0.0.0-20250318190949-c8a335a9a2ff --
+** k8s.io/kube-openapi/pkg/internal/third_party/go-json-experiment/json; version v0.0.0-20250710124328-f3f2b991d03b --
 https://github.com/kubernetes/kube-openapi
 
 Copyright (c) 2020 The Go Authors. All rights reserved.
@@ -1607,7 +1607,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.33.3 --
+** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.34.0-beta.0 --
 https://github.com/kubernetes/kubernetes
 
 Copyright ©2013 The gonum Authors. All rights reserved.
@@ -1676,7 +1676,7 @@ Copyright (c) 2014 Cenk Altı
 https://github.com/cespare/xxhash/v2
 Copyright (c) 2016 Caleb Spare
 
-** github.com/emicklei/go-restful/v3; version v3.11.0 --
+** github.com/emicklei/go-restful/v3; version v3.12.2 --
 https://github.com/emicklei/go-restful/v3
 Copyright (c) 2012,2013 Ernest Micklei
 
@@ -1692,7 +1692,7 @@ Copyright (c) 2015 Fatih Arslan
 https://github.com/felixge/httpsnoop
 Copyright (c) 2016 Felix Geisendörfer (felix@debuggable.com)
 
-** github.com/fxamacker/cbor/v2; version v2.7.0 --
+** github.com/fxamacker/cbor/v2; version v2.8.0 --
 https://github.com/fxamacker/cbor/v2
 Copyright (c) 2019-present Faye Amacker
 
@@ -1744,15 +1744,6 @@ Copyright (c) 2014 Simon Eskildsen
 https://github.com/stoewer/go-strcase
 Copyright (c) 2017, Adrian Stoewer <adrian.stoewer@rz.ifi.lmu.de>
 
-** github.com/stretchr/objx; version v0.5.2 --
-https://github.com/stretchr/objx
-Copyright (c) 2014 Stretchr, Inc.
-Copyright (c) 2017-2018 objx contributors
-
-** github.com/stretchr/testify; version v1.10.0 --
-https://github.com/stretchr/testify
-Copyright (c) 2012-2020 Mat Ryer, Tyler Bunnell and contributors.
-
 ** github.com/x448/float16; version v0.8.4 --
 https://github.com/x448/float16
 Copyright (c) 2019 Montgomery Edwards⁴⁴⁸ and Faye Amacker
@@ -1769,7 +1760,7 @@ Copyright (c) 2016-2017 Uber Technologies, Inc.
 https://gopkg.in/natefinch/lumberjack.v2
 Copyright (c) 2014 Nate Finch 
 
-** k8s.io/kube-openapi/pkg/internal/third_party/govalidator; version v0.0.0-20250318190949-c8a335a9a2ff --
+** k8s.io/kube-openapi/pkg/internal/third_party/govalidator; version v0.0.0-20250710124328-f3f2b991d03b --
 https://github.com/kubernetes/kube-openapi
 Copyright (c) 2014 Alex Saskevich
 
@@ -1853,14 +1844,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ------
 
-** gopkg.in/yaml.v3; version v3.0.1 --
-https://gopkg.in/yaml.v3
+** go.yaml.in/yaml/v3; version v3.0.4 --
+https://github.com/yaml/go-yaml
 Copyright (c) 2006-2010 Kirill Simonov
 Copyright (c) 2006-2011 Kirill Simonov
 Copyright (c) 2011-2019 Canonical Ltd
 
-** sigs.k8s.io/yaml/goyaml.v3; version v1.4.0 --
-https://github.com/kubernetes-sigs/yaml
+** gopkg.in/yaml.v3; version v3.0.1 --
+https://gopkg.in/yaml.v3
 Copyright (c) 2006-2010 Kirill Simonov
 Copyright (c) 2006-2011 Kirill Simonov
 Copyright (c) 2011-2019 Canonical Ltd
@@ -1915,7 +1906,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-* For gopkg.in/yaml.v3 see also this required NOTICE:
+* For go.yaml.in/yaml/v3 see also this required NOTICE:
 Copyright 2011-2016 Canonical Ltd.
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -1931,7 +1922,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 
-* For sigs.k8s.io/yaml/goyaml.v3 see also this required NOTICE:
+* For gopkg.in/yaml.v3 see also this required NOTICE:
 Copyright 2011-2016 Canonical Ltd.
 
 Licensed under the Apache License, Version 2.0 (the "License");
