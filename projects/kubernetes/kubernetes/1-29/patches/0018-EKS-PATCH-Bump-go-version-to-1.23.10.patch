@@ -27,11 +27,12 @@ Kubernetes version this patch can be dropped:
 ---
  .go-version                                   |   2 +-
  build/build-image/cross/VERSION               |   2 +-
+ build/common.sh                               |   2 +-
  build/dependencies.yaml                       |   6 +-
  staging/publishing/rules.yaml                 |   2 +-
  .../azure/azure_blobDiskController_test.go    | 364 ------------------
  test/images/Makefile                          |   2 +-
- 6 files changed, 7 insertions(+), 371 deletions(-)
+ 7 files changed, 8 insertions(+), 372 deletions(-)
  delete mode 100644 staging/src/k8s.io/legacy-cloud-providers/azure/azure_blobDiskController_test.go
 
 diff --git a/.go-version b/.go-version
@@ -50,6 +51,19 @@ index 55f1fb049ab..e92cbb8d643 100644
 @@ -1 +1 @@
 -v1.29.0-go1.23.6-bullseye.0
 +v1.29.0-go1.23.10-bullseye.0
+diff --git a/build/common.sh b/build/common.sh
+index 06292442695..61e9863de52 100755
+--- a/build/common.sh
++++ b/build/common.sh
+@@ -97,7 +97,7 @@ readonly KUBE_CONTAINER_RSYNC_PORT=8730
+
+ # These are the default versions (image tags) for their respective base images.
+ readonly __default_distroless_iptables_version=v0.5.13
+-readonly __default_go_runner_version=v2.4.0-go1.23.6-bookworm.0
++readonly __default_go_runner_version=v2.4.0-go1.23.10-bookworm.0
+ readonly __default_setcap_version=bookworm-v1.0.3
+
+ # These are the base images for the Docker-wrapped binaries.
 diff --git a/build/dependencies.yaml b/build/dependencies.yaml
 index 876fa1484b4..8f0d2ea30ce 100644
 --- a/build/dependencies.yaml
