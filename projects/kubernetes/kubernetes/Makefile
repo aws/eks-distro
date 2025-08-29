@@ -55,7 +55,140 @@ HAS_S3_ARTIFACTS=true
 
 KUBE_GIT_VERSION_FILE=$(RELEASE_BRANCH)/KUBE_GIT_VERSION_FILE
 
+# Environment variables to support copying the internally built artifacts instead of
+# rebuilding from EKS-D repo source
+BUILD_ARTIFACTS ?= false
+ifeq ($(BUILD_ARTIFACTS),false)
+BINARY_TARGETS:=
+export KUBERNETES_ARTIFACTS_SOURCE_S3_BUCKET:="eks-distro-dev-release-artifacts"
+_bootstrap:=$(shell ./build/bootstrap_copy_release_variables.sh 2>&1)
+$(info Bootstrap output: $(_bootstrap))
+export GIT_TAG:=$(shell cat .k8s_version)
+export GOLANG_VERSION:=$(shell cat .go-version)
+export EKS_VERSION:=$(shell cat .eks_version)
+export KUBERNETES_ARTIFACTS_SOURCE_S3_RELEASE_PATH:=$(shell cat .s3_sync_path)
+$(if $(GIT_TAG),$(shell rm -f .k8s_version),$(error GIT_TAG is empty, .k8s_version might be missing))
+$(if $(GOLANG_VERSION),$(shell rm -f .go-version),$(error GOLANG_VERSION is empty, .go-version might be missing))
+$(if $(EKS_VERSION),$(shell rm -f .eks_version),$(error EKS_VERSION is empty, .eks_version might be missing))
+$(if $(KUBERNETES_ARTIFACTS_SOURCE_S3_RELEASE_PATH),$(shell rm -f .s3_sync_path),$(error KUBERNETES_ARTIFACTS_SOURCE_S3_RELEASE_PATH is empty, .s3_sync_path might be missing))
+endif
+
+
 include $(BASE_DIRECTORY)/Common.mk
+
+##################################### START Image Copy Block #####################################
+# if we are not building artifacts, run the copy script instead to grab the latest source
+# we can deprecate the rest of the processing when all projects are moved to internal builds
+ifeq ($(BUILD_ARTIFACTS),false)
+# Override the main build targets to copy instead of build
+.PHONY: binaries
+binaries: copy-kubernetes-artifacts
+	@echo -e $(call TARGET_START_LOG)
+	@echo "Using copied binaries instead of building"
+	@echo -e $(call TARGET_END_LOG)
+
+.PHONY: images
+images: copy-kubernetes-images
+	@echo -e $(call TARGET_START_LOG)
+	@echo "Using copied images instead of building images"
+	@echo -e $(call TARGET_END_LOG)
+
+.PHONY: tarballs
+tarballs: copy-kubernetes-artifacts
+	@echo -e $(call TARGET_START_LOG)
+	@echo "Using copied tarballs instead of building"
+	@echo -e $(call TARGET_END_LOG)
+
+# Override local-images to use copied images instead of building
+.PHONY: local-images
+local-images: copy-kubernetes-images
+	@echo -e $(call TARGET_START_LOG)
+	@echo "Using copied images instead of building local images"
+	@echo -e $(call TARGET_END_LOG)
+
+# Override all individual image targets to do nothing when copying
+.PHONY: $(call IMAGE_TARGETS_FOR_NAME, pause)
+$(call IMAGE_TARGETS_FOR_NAME, pause):
+	@echo -e $(call TARGET_START_LOG)
+	@echo "Skipping build of pause - using copied artifacts"
+	@echo -e $(call TARGET_END_LOG)
+
+.PHONY: $(PAUSE_DST)
+$(PAUSE_DST):
+	@echo -e $(call TARGET_START_LOG)
+	@echo "Skipping pause source copy - using copied artifacts"
+	@echo -e $(call TARGET_END_LOG)
+
+.PHONY: $(LOCAL_IMAGE_TARGETS)
+$(LOCAL_IMAGE_TARGETS):
+	@echo -e $(call TARGET_START_LOG)
+	@echo "Skipping build of $@ - using copied artifacts"
+	@echo -e $(call TARGET_END_LOG)
+
+.PHONY: $(IMAGE_TARGETS)
+$(IMAGE_TARGETS):
+	@echo -e $(call TARGET_START_LOG)
+	@echo "Skipping build of $@ - using copied artifacts"
+	@echo -e $(call TARGET_END_LOG)
+
+.PHONY: $(foreach image,$(DOCKER_TAR_IMAGE_NAMES),$(image)/images/arm64)
+$(foreach image,$(DOCKER_TAR_IMAGE_NAMES),$(image)/images/arm64):
+	@echo -e $(call TARGET_START_LOG)
+	@echo "Skipping build of $@ - using copied artifacts"
+	@echo -e $(call TARGET_END_LOG)
+
+.PHONY: $(foreach image,$(IMAGE_NAMES),$(image)/images/push)
+$(foreach image,$(IMAGE_NAMES),$(image)/images/push):
+	@echo -e $(call TARGET_START_LOG)
+	@echo "Skipping push of $@ - using copied artifacts"
+	@echo -e $(call TARGET_END_LOG)
+
+# Copy artifacts from source S3 to local _output structure
+# this includes tarballs, kube binaries, and image tars
+.PHONY: copy-kubernetes-artifacts
+copy-kubernetes-artifacts:
+	@echo -e $(call TARGET_START_LOG)
+	@echo "Copying Kubernetes binaries from S3..."
+	@mkdir -p _output/
+	./build/copy_kubernetes_artifacts.sh
+	@chmod +x _output/*
+	@echo -e $(call TARGET_END_LOG)
+
+# retag container images to current format
+.PHONY: copy-kubernetes-images
+copy-kubernetes-images: copy-kubernetes-artifacts
+	@echo -e $(call TARGET_START_LOG)
+	@echo "Copying Kubernetes container images..."
+	SOURCE_ECR_REG=$(DEV_ECR_REG) ./build/copy_kubernetes_images.sh
+	@echo -e $(call TARGET_END_LOG)
+
+# Override attribution-related targets
+.PHONY: $(GATHER_LICENSES_TARGETS)
+$(GATHER_LICENSES_TARGETS):
+	@echo -e $(call TARGET_START_LOG)
+	@echo "Skipping license gathering - using copied artifacts"
+	@echo -e $(call TARGET_END_LOG)
+
+.PHONY: fix-licenses
+fix-licenses:
+	@echo -e $(call TARGET_START_LOG)
+	@echo "Skipping license fixes - using copied artifacts"
+	@echo -e $(call TARGET_END_LOG)
+
+.PHONY: gather-licenses
+gather-licenses:
+	@echo -e $(call TARGET_START_LOG)
+	@echo "Skipping license gathering - using copied artifacts"
+	@echo -e $(call TARGET_END_LOG)
+
+# Override the go-license.csv pattern target
+$(OUTPUT_DIR)/%ttribution/go-license.csv:
+	@echo -e $(call TARGET_START_LOG)
+	@echo "Skipping go-license.csv generation - using copied artifacts"
+	@echo -e $(call TARGET_END_LOG)
+
+endif
+##################################### END Image Copy Block #####################################
 
 # Validate version file before uploading artifacts since that runs in both build and release
 s3-artifacts: cleanup-artifacts
@@ -96,34 +229,45 @@ pause/images/%: IMAGE=$(PAUSE_IMAGE)
 $(call IMAGE_TARGETS_FOR_NAME, pause): $(PAUSE_DST)
 
 $(PAUSE_DST): $(GIT_PATCH_TARGET)
-	@mkdir -p $(dir $(PAUSE_DST))
-	cp $(PAUSE_SRC_DIR)/linux/pause.c $(PAUSE_DST) || cp $(PAUSE_SRC_DIR)/pause.c $(PAUSE_DST)
+	@$(if $(filter true,$(BUILD_ARTIFACTS)),\
+		mkdir -p $(dir $(PAUSE_DST)) && \
+		(cp $(PAUSE_SRC_DIR)/linux/pause.c $(PAUSE_DST) || cp $(PAUSE_SRC_DIR)/pause.c $(PAUSE_DST)),)
 
 tarballs: $(KUBE_GIT_VERSION_FILE)
-	@echo -e $(call TARGET_START_LOG)
-	build/create_tarballs.sh $(REPO) $(GIT_TAG) $(RELEASE_BRANCH)
-	@echo -e $(call TARGET_END_LOG)
+	@$(if $(filter true,$(BUILD_ARTIFACTS)),\
+		echo -e $(call TARGET_START_LOG) && \
+		build/create_tarballs.sh $(REPO) $(GIT_TAG) $(RELEASE_BRANCH) && \
+		echo -e $(call TARGET_END_LOG),)
 
 .PHONY: cleanup-artifacts
 cleanup-artifacts:
-	@mkdir -p $(ARTIFACTS_PATH)/bin
-	rm -rf $(OUTPUT_DIR)/{attribution,LICENSES,pause} $(OUTPUT_DIR)/bin/{LICENSES,ATTRIBUTION.txt}
-	mv $(OUTPUT_DIR)/bin/* $(ARTIFACTS_PATH)/bin
-	cp $(OUTPUT_DIR)/ATTRIBUTION.txt $(ARTIFACTS_PATH)
-	if [ "$(FAKE_ARM_IMAGES_FOR_VALIDATION)" = "true" ]; then rm -rf $(OUTPUT_DIR)/images/bin/linux/arm64; fi
+	@if [ "$(BUILD_ARTIFACTS)" = "true" ]; then \
+		mkdir -p "$(ARTIFACTS_PATH)/bin"; \
+		rm -rf "$(OUTPUT_DIR)/attribution" "$(OUTPUT_DIR)/LICENSES" "$(OUTPUT_DIR)/pause" "$(OUTPUT_DIR)/bin/LICENSES" "$(OUTPUT_DIR)/bin/ATTRIBUTION.txt"; \
+		mv "$(OUTPUT_DIR)/bin/"* "$(ARTIFACTS_PATH)/bin"; \
+		cp "$(OUTPUT_DIR)/ATTRIBUTION.txt" "$(ARTIFACTS_PATH)"; \
+		if [ "$(FAKE_ARM_IMAGES_FOR_VALIDATION)" = "true" ]; then rm -rf "$(OUTPUT_DIR)/images/bin/linux/arm64"; fi; \
+	else \
+		mkdir -p "$(ARTIFACTS_PATH)/bin"; \
+		mv "$(OUTPUT_DIR)/bin/"* "$(ARTIFACTS_PATH)/bin"; \
+		if [ "$(FAKE_ARM_IMAGES_FOR_VALIDATION)" = "true" ]; then rm -rf "$(OUTPUT_DIR)/images/bin/linux/arm64"; fi; \
+	fi
 
 .PHONY: test
 test: $(GIT_PATCH_TARGET)
-	@echo “!!!GIT_PATCH_TARGET!!! : $(GIT_PATCH_TARGET)”
-	@echo “!!!BINARY_TARGETS!!!: $(BINARY_TARGETS)”
-	build/run_tests.sh $(RELEASE_BRANCH) $(GOLANG_VERSION)
+	@$(if $(filter true,$(BUILD_ARTIFACTS)),\
+		echo "!!!GIT_PATCH_TARGET!!! : $(GIT_PATCH_TARGET)" && \
+		echo "!!!BINARY_TARGETS!!!: $(BINARY_TARGETS)" && \
+		build/run_tests.sh $(RELEASE_BRANCH) $(GOLANG_VERSION),)
 
 .PHONY: fix-licenses
 fix-licenses: $(GIT_PATCH_TARGET)
-	build/fix_licenses.sh $(REPO) $(OUTPUT_DIR) $(RELEASE_BRANCH)
+	@$(if $(filter true,$(BUILD_ARTIFACTS)),\
+		build/fix_licenses.sh $(REPO) $(OUTPUT_DIR) $(RELEASE_BRANCH),)
 
 $(KUBE_GIT_VERSION_FILE): $(GIT_PATCH_TARGET)
-	build/create_version_file.sh $(GIT_TAG) $(RELEASE_BRANCH)
+	@$(if $(filter true,$(BUILD_ARTIFACTS)),\
+		build/create_version_file.sh $(GIT_TAG) $(RELEASE_BRANCH),)
 
 .PHONY: reset-repo
 reset-repo: $(REPO)

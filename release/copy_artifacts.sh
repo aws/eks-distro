@@ -28,15 +28,30 @@ RELEASE="${4?Fourth required argument is release for example 1}"
 GIT_TAG="${5:-}"
 
 DEST_DIR=${BASE_DIRECTORY}/kubernetes-${RELEASE_BRANCH}/releases/${RELEASE}/artifacts
+BUILD_ARTIFACTS=${BUILD_ARTIFACTS:-false}
+
+IS_INTERNAL_BUILD=false
+if [[ "${BUILD_ARTIFACTS}" == "false" && "${SOURCE_ARTIFACT_DIR}" == *"kubernetes/kubernetes"* ]]; then
+    IS_INTERNAL_BUILD=true
+fi
 
 # For when calling from projects other than kubernetes
-if [ $PROJECT = "kubernetes" ]; then
-  GIT_TAG=$(cat ${BASE_DIRECTORY}/projects/kubernetes/kubernetes/${RELEASE_BRANCH}/GIT_TAG)
+if [ "$PROJECT" = "kubernetes" ]; then
+    if [[ "${IS_INTERNAL_BUILD}" == "true" ]]; then
+        echo "using internal build GIT_TAG"
+    else
+        GIT_TAG=$(cat "${BASE_DIRECTORY}"/projects/kubernetes/kubernetes/"${RELEASE_BRANCH}"/GIT_TAG)
+    fi
 fi
 
 ARTIFACT_DIR=${DEST_DIR}/${PROJECT}/${GIT_TAG}
 mkdir -p $ARTIFACT_DIR
 build::common::echo_and_run cp -r $SOURCE_ARTIFACT_DIR/* $ARTIFACT_DIR
+
+# if we are running in copy mode for kubernetes we don't need checksums
+if [[ "${IS_INTERNAL_BUILD}" == "true" ]]; then
+    exit 0
+fi
 
 # create checksums in source output since we validate artifacts from that folder
 build::common::echo_and_run $SCRIPT_ROOT/create_release_checksums.sh $SOURCE_ARTIFACT_DIR

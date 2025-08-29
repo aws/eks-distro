@@ -25,7 +25,15 @@ This GitHub repository has everything required to build the components that make
 up the EKS Distro from source.
 
 ## DEPRECATION NOTICE
-As part of an effort to streamline the maintenance of EKS-D, we will be deprecating the metrics-server and CSI sidecar projects from EKS-D. Releases for new versions will no longer be created after the dates listed below. EKS-D no longer uses these projects and it does not make sense to continue building them. The remaining projects in EKS-D will continue to be built for the time being. 
+As part of an effort to streamline the maintenance of EKS-D, we will be deprecating 
+the metrics-server and CSI sidecar projects from EKS-D. Releases for new versions will 
+no longer be created after the dates listed below. EKS-D no longer uses these projects, 
+and it does not make sense to continue building them. The remaining projects in EKS-D 
+will continue to be built for the time being. Additionally, The infrastructure for 
+building EKS-D from source code will no longer be maintained, including project 
+directories and build scripts. However, we will continue to publish all EKS-D images 
+and artifacts to their current repositories and destinations. Users can still access 
+and use all released EKS-D components as before.
 
 metrics-server project deprecation: as of 1/16/2025
 

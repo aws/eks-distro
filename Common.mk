@@ -18,6 +18,7 @@ MAKE_ROOT=$(BASE_DIRECTORY)/projects/$(COMPONENT)
 PROJECT_PATH?=$(subst $(BASE_DIRECTORY)/,,$(MAKE_ROOT))
 BUILD_LIB=${BASE_DIRECTORY}/build/lib
 OUTPUT_BIN_DIR?=$(OUTPUT_DIR)/bin/$(REPO)
+BUILD_ARTIFACTS?=false
 
 #################### AWS ###########################
 AWS_REGION?=us-west-2
@@ -490,29 +491,43 @@ endif
 ifneq ($(REPO_NO_CLONE),true)
 $(REPO):
 	@echo -e $(call TARGET_START_LOG)
+ifneq ($(and $(filter kubernetes,$(REPO)),$(filter-out true,$(BUILD_ARTIFACTS))),)
+	@echo "Skipping repo pull for $(REPO)"
+else
 ifneq ($(REPO_SPARSE_CHECKOUT),)
+	@echo "Cloning repo $(REPO) with sparse checkout"
 	source $(BUILD_LIB)/common.sh && retry git clone --depth 1 --filter=blob:none --sparse -b $(GIT_TAG) $(CLONE_URL) $(REPO)
 	git -C $(REPO) sparse-checkout set $(REPO_SPARSE_CHECKOUT) --cone --skip-checks
 else
+	@echo "Cloning repo $(REPO)"
 	source $(BUILD_LIB)/common.sh && retry git clone $(CLONE_URL) $(REPO)
+endif
 endif
 	@echo -e $(call TARGET_END_LOG)
 endif
 
 $(GIT_CHECKOUT_TARGET): | $(REPO)
 	@echo -e $(call TARGET_START_LOG)
-	@rm -f $(REPO)/eks-distro-*
-	(cd $(REPO) && $(BASE_DIRECTORY)/build/lib/wait_for_tag.sh $(GIT_TAG))
-	git -C $(REPO) checkout --quiet -f $(GIT_TAG)
-	@touch $@
+	@if [ "$(REPO)" = "kubernetes" ] && [ "$(BUILD_ARTIFACTS)" = "false" ]; then \
+  		echo "Skipping checkout for $(REPO)"; \
+	else \
+		rm -f $(REPO)/eks-distro-*; \
+		(cd $(REPO) && $(BASE_DIRECTORY)/build/lib/wait_for_tag.sh $(GIT_TAG)); \
+		git -C $(REPO) checkout --quiet -f $(GIT_TAG); \
+		touch $@; \
+	fi
 	@echo -e $(call TARGET_END_LOG)
 
 $(GIT_PATCH_TARGET): $(GIT_CHECKOUT_TARGET)
 	@echo -e $(call TARGET_START_LOG)
-	git -C $(REPO) config user.email prow@amazonaws.com
-	git -C $(REPO) config user.name "Prow Bot"
-	if [ -n "$(PATCHES_DIR)" ]; then git -C $(REPO) am --committer-date-is-author-date $(PATCHES_DIR)/*; fi
-	@touch $@
+	@if [ "$(REPO)" = "kubernetes" ] && [ "$(BUILD_ARTIFACTS)" = "false" ]; then \
+		echo "Skipping patches for $(REPO)"; \
+	else \
+		git -C $(REPO) config user.email prow@amazonaws.com; \
+		git -C $(REPO) config user.name "Prow Bot"; \
+		if [ -n "$(PATCHES_DIR)" ]; then git -C $(REPO) am --committer-date-is-author-date $(PATCHES_DIR)/*; fi; \
+		touch $@; \
+	fi
 	@echo -e $(call TARGET_END_LOG)
 
 
@@ -520,8 +535,12 @@ $(GIT_PATCH_TARGET): $(GIT_CHECKOUT_TARGET)
 $(REPO)/%ks-distro-go-mod-download: REPO_SUBPATH=$(if $(filter e,$*),,$(*:%/e=%))
 $(REPO)/%ks-distro-go-mod-download: $(if $(PATCHES_DIR),$(GIT_PATCH_TARGET),$(GIT_CHECKOUT_TARGET))
 	@echo -e $(call TARGET_START_LOG)
-	$(BASE_DIRECTORY)/build/lib/go_mod_download.sh $(MAKE_ROOT) $(REPO) $(GIT_TAG) $(GOLANG_VERSION) "$(REPO_SUBPATH)"
-	@touch $@
+	@if [ "$(REPO)" = "kubernetes" ] && [ "$(BUILD_ARTIFACTS)" = "false" ]; then \
+		echo "Skipping go mod download for $(REPO)"; \
+	else \
+  		$(BASE_DIRECTORY)/build/lib/go_mod_download.sh $(MAKE_ROOT) $(REPO) $(GIT_TAG) $(GOLANG_VERSION) "$(REPO_SUBPATH)"; \
+  		touch $@; \
+	fi
 	@echo -e $(call TARGET_END_LOG)
 
 ifneq ($(REPO),$(HELM_SOURCE_REPOSITORY))
@@ -604,10 +623,16 @@ gather-licenses: $(GATHER_LICENSES_TARGETS)
 # if multiple attributions are being generated, the file will be <binary>_ATTRIBUTION.txt and licenses will be stored in _output/<binary>, `%` will equal `<BINARY>_A`
 %TTRIBUTION.txt: LICENSE_OUTPUT_PATH=$(OUTPUT_DIR)$(if $(filter A,$(*F)),,/$(call TO_LOWER,$(*F:%_A=%)))
 %TTRIBUTION.txt: $$(LICENSE_OUTPUT_PATH)/attribution/go-license.csv
+ifneq ($(and $(filter kubernetes,$(REPO)),$(filter-out true,$(BUILD_ARTIFACTS))),)
+	@echo -e $(call TARGET_START_LOG)
+	@echo "Skipping attribution generation for $(REPO)/$(RELEASE_BRANCH)"
+	@echo -e $(call TARGET_END_LOG)
+else
 	@echo -e $(call TARGET_START_LOG)
 	@rm -f $(@F)
 	$(BASE_DIRECTORY)/build/lib/create_attribution.sh $(MAKE_ROOT) $(GOLANG_VERSION) $(MAKE_ROOT)/$(LICENSE_OUTPUT_PATH) $(@F) $(RELEASE_BRANCH)
 	@echo -e $(call TARGET_END_LOG)
+endif
 
 .PHONY: attribution
 attribution: $(and $(filter true,$(HAS_LICENSES)),$(ATTRIBUTION_TARGETS))
