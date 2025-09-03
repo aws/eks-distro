@@ -33,7 +33,7 @@ K8S_PATCH_VERSION=$(grep "${LATEST_VERSION}/artifacts/kubernetes/v[0-9]" "$TEMP_
 echo "${K8S_PATCH_VERSION}" > .k8s_version
 
 EKS_VERSION=$(grep "${LATEST_VERSION}/artifacts/kubernetes/${K8S_PATCH_VERSION}/artifacts/kubernetes-public/" "$TEMP_FILE" | \
-              grep -o 'v[0-9.]\+-eks-[a-z0-9]\+' | head -1)
+              grep -o "${K8S_PATCH_VERSION}-eks-[a-z0-9]\+" | head -1)
 echo "${EKS_VERSION}" > .eks_version
 
 # Construct the final S3 path to sync
