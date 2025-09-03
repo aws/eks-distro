@@ -11,10 +11,6 @@ clone-repo:  ## Clone upstream `kubernetes`
 checkout-repo: ## Checkout upstream tag based on value in GIT_TAG file
 patch-repo: ## Patch upstream repo with patches in patches directory
 
-##@ Binary Targets
-binaries: ## Build all binaries: `kubelet` for `linux/amd64 linux/arm64`
-_output/1-26/bin/linux/amd64/kubelet: ## Build `_output/1-26/bin/linux/amd64/kubelet`
-
 ##@ Image Targets
 local-images: ## Builds `pause/images/amd64 kube-proxy/images/amd64 kube-apiserver/images/amd64 kube-controller-manager/images/amd64 kube-scheduler/images/amd64` as oci tars for presumbit validation
 images: ## Pushes `pause/images/push pause/images/amd64 pause/images/arm64 kube-proxy/images/push kube-proxy/images/amd64 kube-proxy/images/arm64 kube-apiserver/images/push kube-apiserver/images/amd64 kube-apiserver/images/arm64 kube-controller-manager/images/push kube-controller-manager/images/amd64 kube-controller-manager/images/arm64 kube-scheduler/images/push kube-scheduler/images/amd64 kube-scheduler/images/arm64` to IMAGE_REPO
@@ -33,11 +29,6 @@ kube-controller-manager/images/push: ## Builds/pushes `kube-controller-manager/i
 kube-controller-manager/images/arm64: ## Builds/pushes `kube-controller-manager/images/arm64`
 kube-scheduler/images/push: ## Builds/pushes `kube-scheduler/images/push`
 kube-scheduler/images/arm64: ## Builds/pushes `kube-scheduler/images/arm64`
-
-##@ Checksum Targets
-checksums: ## Update checksums file based on currently built binaries.
-validate-checksums: # Validate checksums of currently built binaries against checksums file.
-all-checksums: ## Update checksums files for all RELEASE_BRANCHes.
 
 ##@ Run in Docker Targets
 run-all-attributions-in-docker: ## Run `all-attributions` in docker builder container
