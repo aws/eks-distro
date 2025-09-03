@@ -943,10 +943,14 @@ generate: # Update UPSTREAM_PROJECTS.yaml
 update-go-mods: # Update locally checked-in go sum to assist in vuln scanning
 update-go-mods: DEST_PATH=$(if $(IS_RELEASE_BRANCH_BUILD),$(RELEASE_BRANCH)/$$gomod,$$gomod)
 update-go-mods: checkout-repo
-	for gomod in $(GO_MOD_PATHS); do \
-		mkdir -p $(DEST_PATH); \
-		cp $(REPO)/$$gomod/go.{mod,sum} $(DEST_PATH); \
-	done
+	@if [ "$(REPO)" = "kubernetes" ]; then \
+		echo "Skipping update-go-mods for kubernetes repository"; \
+	else \
+		for gomod in $(GO_MOD_PATHS); do \
+			mkdir -p $(DEST_PATH); \
+			cp $(REPO)/$$gomod/go.{mod,sum} $(DEST_PATH); \
+		done; \
+	fi
 
 .PHONY: all-update-go-mods
 all-update-go-mods:
