@@ -60,6 +60,8 @@ KUBE_GIT_VERSION_FILE=$(RELEASE_BRANCH)/KUBE_GIT_VERSION_FILE
 BUILD_ARTIFACTS ?= false
 ifeq ($(BUILD_ARTIFACTS),false)
 BINARY_TARGETS:=
+
+ifdef RELEASE_BRANCH
 export KUBERNETES_ARTIFACTS_SOURCE_S3_BUCKET:="eks-distro-dev-release-artifacts"
 _bootstrap:=$(shell ./build/bootstrap_copy_release_variables.sh 2>&1)
 $(info Bootstrap output: $(_bootstrap))
@@ -71,6 +73,8 @@ $(if $(GIT_TAG),$(shell rm -f .k8s_version),$(error GIT_TAG is empty, .k8s_versi
 $(if $(GOLANG_VERSION),$(shell rm -f .go-version),$(error GOLANG_VERSION is empty, .go-version might be missing))
 $(if $(EKS_VERSION),$(shell rm -f .eks_version),$(error EKS_VERSION is empty, .eks_version might be missing))
 $(if $(KUBERNETES_ARTIFACTS_SOURCE_S3_RELEASE_PATH),$(shell rm -f .s3_sync_path),$(error KUBERNETES_ARTIFACTS_SOURCE_S3_RELEASE_PATH is empty, .s3_sync_path might be missing))
+endif
+
 endif
 
 
