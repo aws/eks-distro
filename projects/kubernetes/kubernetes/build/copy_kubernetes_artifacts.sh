@@ -47,4 +47,17 @@ done
 # update files for any legacy method callers of these files during the build e.g., crd generation
 cp "_output/${RELEASE_BRANCH}/KUBE_GIT_VERSION_FILE" "${RELEASE_BRANCH}/KUBE_GIT_VERSION_FILE"
 echo "${GIT_TAG}" > "${RELEASE_BRANCH}/GIT_TAG"
-echo "${GOLANG_VERSION}" > "${RELEASE_BRANCH}/GOLANG_VERSION"
+echo "${GOLANG_VERSION%.*}" > "${RELEASE_BRANCH}/GOLANG_VERSION"
+cp "_output/${RELEASE_BRANCH}/attribution/ATTRIBUTION.TXT" "${RELEASE_BRANCH}/ATTRIBUTION.TXT"
+
+# Copy go.mod and go.sum files with fallback
+if [[ -f "_output/${RELEASE_BRANCH}/go.mod" && -f "_output/${RELEASE_BRANCH}/go.sum" ]]; then
+    cp "_output/${RELEASE_BRANCH}/go.mod" "${RELEASE_BRANCH}/go.mod"
+    cp "_output/${RELEASE_BRANCH}/go.sum" "${RELEASE_BRANCH}/go.sum"
+else
+    TEMP_DIR=$(mktemp -d)
+    tar -xzf "${ARTIFACT_DIR}/kubernetes-src.tar.gz" -C "${TEMP_DIR}"
+    cp "${TEMP_DIR}/go.mod" "${RELEASE_BRANCH}/go.mod"
+    cp "${TEMP_DIR}/go.sum" "${RELEASE_BRANCH}/go.sum"
+    rm -rf "${TEMP_DIR}"
+fi

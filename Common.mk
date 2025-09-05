@@ -956,6 +956,12 @@ update-go-mods: checkout-repo
 all-update-go-mods:
 	$(BASE_DIRECTORY)/build/update-attribution-files/make_attribution.sh projects/$(COMPONENT) update-go-mods
 
+update-internal-build-files: setup-internal-build-files
+
+.PHONY: setup-internal-build-files
+setup-internal-build-files:
+	@echo "this project is not setup for internal builds"
+
 .PHONY: update-vendor-for-dep-patch
 update-vendor-for-dep-patch: # After bumping dep in go.mod file, uses generic vendor update script or one provided from upstream project
 update-vendor-for-dep-patch: checkout-repo
