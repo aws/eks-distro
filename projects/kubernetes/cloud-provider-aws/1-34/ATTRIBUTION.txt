@@ -2,7 +2,7 @@
 ** cel.dev/expr; version v0.24.0 --
 https://github.com/google/cel-spec
 
-** github.com/aws/aws-sdk-go-v2; version v1.36.5 --
+** github.com/aws/aws-sdk-go-v2; version v1.38.3 --
 https://github.com/aws/aws-sdk-go-v2
 
 ** github.com/aws/aws-sdk-go-v2/config; version v1.29.14 --
@@ -14,10 +14,10 @@ https://github.com/aws/aws-sdk-go-v2/credentials
 ** github.com/aws/aws-sdk-go-v2/feature/ec2/imds; version v1.16.31 --
 https://github.com/aws/aws-sdk-go-v2/feature/ec2/imds
 
-** github.com/aws/aws-sdk-go-v2/internal/configsources; version v1.3.36 --
+** github.com/aws/aws-sdk-go-v2/internal/configsources; version v1.4.6 --
 https://github.com/aws/aws-sdk-go-v2/internal/configsources
 
-** github.com/aws/aws-sdk-go-v2/internal/endpoints/v2; version v2.6.36 --
+** github.com/aws/aws-sdk-go-v2/internal/endpoints/v2; version v2.7.6 --
 https://github.com/aws/aws-sdk-go-v2/internal/endpoints/v2
 
 ** github.com/aws/aws-sdk-go-v2/internal/ini; version v1.8.3 --
@@ -26,7 +26,7 @@ https://github.com/aws/aws-sdk-go-v2/internal/ini
 ** github.com/aws/aws-sdk-go-v2/service/autoscaling; version v1.53.3 --
 https://github.com/aws/aws-sdk-go-v2/service/autoscaling
 
-** github.com/aws/aws-sdk-go-v2/service/ec2; version v1.218.0 --
+** github.com/aws/aws-sdk-go-v2/service/ec2; version v1.249.0 --
 https://github.com/aws/aws-sdk-go-v2/service/ec2
 
 ** github.com/aws/aws-sdk-go-v2/service/ecr; version v1.36.2 --
@@ -41,10 +41,10 @@ https://github.com/aws/aws-sdk-go-v2/service/elasticloadbalancing
 ** github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2; version v1.45.2 --
 https://github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2
 
-** github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding; version v1.12.3 --
+** github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding; version v1.13.1 --
 https://github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding
 
-** github.com/aws/aws-sdk-go-v2/service/internal/presigned-url; version v1.12.15 --
+** github.com/aws/aws-sdk-go-v2/service/internal/presigned-url; version v1.13.6 --
 https://github.com/aws/aws-sdk-go-v2/service/internal/presigned-url
 
 ** github.com/aws/aws-sdk-go-v2/service/kms; version v1.41.0 --
@@ -59,7 +59,7 @@ https://github.com/aws/aws-sdk-go-v2/service/ssooidc
 ** github.com/aws/aws-sdk-go-v2/service/sts; version v1.33.19 --
 https://github.com/aws/aws-sdk-go-v2/service/sts
 
-** github.com/aws/smithy-go; version v1.22.4 --
+** github.com/aws/smithy-go; version v1.23.0 --
 https://github.com/aws/smithy-go
 
 ** github.com/coreos/go-semver/semver; version v0.3.1 --
@@ -179,37 +179,37 @@ https://github.com/googleapis/go-genproto
 ** google.golang.org/grpc; version v1.72.1 --
 https://github.com/grpc/grpc-go
 
-** k8s.io/api; version v0.34.0-rc.0 --
+** k8s.io/api; version v0.34.0 --
 https://github.com/kubernetes/api
 
-** k8s.io/apimachinery/pkg; version v0.34.0-rc.0 --
+** k8s.io/apimachinery/pkg; version v0.34.0 --
 https://github.com/kubernetes/apimachinery
 
-** k8s.io/apiserver; version v0.34.0-rc.0 --
+** k8s.io/apiserver; version v0.34.0 --
 https://github.com/kubernetes/apiserver
 
-** k8s.io/client-go; version v0.34.0-rc.0 --
+** k8s.io/client-go; version v0.34.0 --
 https://github.com/kubernetes/client-go
 
-** k8s.io/cloud-provider; version v0.34.0-rc.0 --
+** k8s.io/cloud-provider; version v0.34.0 --
 https://github.com/kubernetes/cloud-provider
 
-** k8s.io/cloud-provider-aws; version v1.34.0-rc.0 --
+** k8s.io/cloud-provider-aws; version v1.34.0 --
 https://github.com/kubernetes/cloud-provider-aws
 
-** k8s.io/component-base; version v0.34.0-rc.0 --
+** k8s.io/component-base; version v0.34.0 --
 https://github.com/kubernetes/component-base
 
-** k8s.io/component-helpers/node/util; version v0.34.0-rc.0 --
+** k8s.io/component-helpers/node/util; version v0.34.0 --
 https://github.com/kubernetes/component-helpers
 
-** k8s.io/controller-manager; version v0.34.0-rc.0 --
+** k8s.io/controller-manager; version v0.34.0 --
 https://github.com/kubernetes/controller-manager
 
 ** k8s.io/klog/v2; version v2.130.1 --
 https://github.com/kubernetes/klog
 
-** k8s.io/kms; version v0.34.0-rc.0 --
+** k8s.io/kms; version v0.34.0 --
 https://github.com/kubernetes/kms
 
 ** k8s.io/kube-openapi/pkg; version v0.0.0-20250710124328-f3f2b991d03b --
@@ -224,7 +224,7 @@ https://github.com/kubernetes/kube-openapi
 ** k8s.io/kube-openapi/pkg/validation/strfmt; version v0.0.0-20250710124328-f3f2b991d03b --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kubelet/pkg/apis/credentialprovider; version v0.34.0-rc.0 --
+** k8s.io/kubelet/pkg/apis/credentialprovider; version v0.34.0 --
 https://github.com/kubernetes/kubelet
 
 ** k8s.io/utils; version v0.0.0-20250604170112-4c0f3b243397 --
@@ -661,10 +661,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/aws/aws-sdk-go-v2/internal/sync/singleflight; version v1.36.5 --
+** github.com/aws/aws-sdk-go-v2/internal/sync/singleflight; version v1.38.3 --
 https://github.com/aws/aws-sdk-go-v2
 
-** github.com/aws/smithy-go/internal/sync/singleflight; version v1.22.4 --
+** github.com/aws/smithy-go/internal/sync/singleflight; version v1.23.0 --
 https://github.com/aws/smithy-go
 
 Copyright (c) 2009 The Go Authors. All rights reserved.
@@ -1168,7 +1168,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** k8s.io/apimachinery/third_party/forked/golang; version v0.34.0-rc.0 --
+** k8s.io/apimachinery/third_party/forked/golang; version v0.34.0 --
 https://github.com/kubernetes/apimachinery
 
 Copyright (c) 2009 The Go Authors. All rights reserved.
