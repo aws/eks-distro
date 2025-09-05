@@ -19,6 +19,8 @@ set -o pipefail
 
 echo "===== Starting ${BASH_SOURCE[0]} ====="
 
+CONTEXT=${1:-"all"}
+
 if [[ -z "$JOB_TYPE" ]]; then
     exit 0
 fi
@@ -116,6 +118,12 @@ This PR updates the checked in go.mod and go.sum files across all dependency pro
 EOF
 )
         ;;
+    internal-builds)
+        pr_body=$(cat <<'EOF'
+This PR updates the checked in GIT_TAG, GOLANG_VERSION, go.mod, go.sum, and ATTRIBUTION files across all internally build projects.
+EOF
+)
+        ;;
     *)
         echo "Invalid argument: $1"
         exit 1
@@ -163,21 +171,31 @@ function pr::create::go-mod() {
     pr:create "$pr_title" "$commit_message" "$pr_branch" "$pr_body"
 }
 
+function pr::create::internal-builds() {
+    local -r pr_title="Update GIT_TAG and GOLANG_VERSION files for internally built projects"
+    local -r commit_message="[PR BOT] Update GIT_TAG and GOLANG_VERSION files"
+    local -r pr_branch="internal-builds-$MAIN_BRANCH"
+    local -r pr_body=$(pr::create::pr_body "internal-builds")
+
+    pr:create "$pr_title" "$commit_message" "$pr_branch" "$pr_body"
+}
+
 function pr::file:add() {
     local -r file="$1"
 
-    if git check-ignore -q $FILE; then
-        continue
+    if git check-ignore -q $file; then
+        return
     fi
 
-    local -r diff="$(git diff --ignore-blank-lines --ignore-all-space $FILE)"
+    local -r diff="$(git diff --ignore-blank-lines --ignore-all-space $file)"
     if [[ -z $diff ]]; then
-        continue
+        return
     fi
 
     git add $file
 }
 
+function handle_checksums() {
 echo "Adding Checksum files"
 # Add checksum files
 for FILE in $(find . -type f -name CHECKSUMS); do
@@ -189,36 +207,20 @@ done
 # when running `make update-checksum-files`
 git add ./build/lib/install_go_versions.sh
 
-# stash attribution and help.mk files
-git stash --keep-index
-
 pr::create::checksums
+}
 
-git checkout $MAIN_BRANCH
-
-if [ "$(git stash list)" != "" ]; then
-    build::common::echo_and_run git stash pop
-    build::common::echo_and_run git status
-fi
-
+function handle_attribution() {
 echo "Adding ATTRIBUTION files"
 # Add attribution files
 for FILE in $(find . -type f \( -name "*ATTRIBUTION.txt" ! -path "*/_output/*" \)); do
     pr::file:add $FILE
 done
 
-# stash help.mk files
-git stash --keep-index
-
 pr::create::attribution
+}
 
-git checkout $MAIN_BRANCH
-
-if [ "$(git stash list)" != "" ]; then
-    build::common::echo_and_run git stash pop
-    build::common::echo_and_run git status
-fi
-
+function handle_help() {
 echo "Adding Help.mk files"
 
 # Add help.mk/Makefile files
@@ -226,18 +228,10 @@ for FILE in $(find . -type f \( -name Help.mk -o -name Makefile \)); do
     pr::file:add $FILE
 done
 
-# stash go.sum files
-git stash --keep-index
-
 pr::create::help
+}
 
-git checkout $MAIN_BRANCH
-
-if [ "$(git stash list)" != "" ]; then
-    build::common::echo_and_run git stash pop
-    build::common::echo_and_run git status
-fi
-
+function handle_go_mod() {
 echo "Adding go.mod and go.sum files"
 # Add go.mod files
 for FILE in $(find . -type f \( -name go.sum -o -name go.mod \)); do    
@@ -245,5 +239,54 @@ for FILE in $(find . -type f \( -name go.sum -o -name go.mod \)); do
 done
 
 pr::create::go-mod
+}
+
+function handle_internal_builds() {
+echo "Processing internally built projects"
+
+# Read supported release branches
+SUPPORTED_RELEASE_BRANCHES=$(cat $(git rev-parse --show-toplevel)/release/SUPPORTED_RELEASE_BRANCHES)
+
+for PROJECT in $INTERNALLY_BUILT_PROJECTS; do
+    PROJECT_PATH=$(echo $PROJECT | sed 's/_/\//g')
+    for RELEASE_BRANCH in $SUPPORTED_RELEASE_BRANCHES; do
+        for FILE in $(find ./projects/$PROJECT_PATH/$RELEASE_BRANCH -type f \( -name GIT_TAG -o -name GOLANG_VERSION -o -name go.mod -o -name go.sum -o -name ATTRIBUTION.txt \) 2>/dev/null || true); do
+            git check-ignore -q $FILE || git add $FILE
+        done
+    done
+done
+
+pr::create::internal-builds
+}
+
+# Main dispatcher
+case $CONTEXT in
+    "checksums")
+        handle_checksums
+        ;;
+    "attribution")
+        handle_attribution
+        ;;
+    "help")
+        handle_help
+        ;;
+    "go-mod")
+        handle_go_mod
+        ;;
+    "internal-builds")
+        handle_internal_builds
+        ;;
+    "all")
+        handle_checksums
+        handle_attribution
+        handle_help
+        handle_go_mod
+        handle_internal_builds
+        ;;
+    *)
+        echo "Invalid context: $CONTEXT"
+        exit 1
+        ;;
+esac
 
 echo "===== Ending ${BASH_SOURCE[0]} ====="
