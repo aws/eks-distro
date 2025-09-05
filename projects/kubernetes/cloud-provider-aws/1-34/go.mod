@@ -4,7 +4,7 @@ go 1.24.4
 
 require (
 	github.com/Pallinder/go-randomdata v1.2.0
-	github.com/aws/aws-sdk-go-v2 v1.36.5
+	github.com/aws/aws-sdk-go-v2 v1.38.3
 	github.com/aws/aws-sdk-go-v2/config v1.29.14
 	github.com/aws/aws-sdk-go-v2/service/autoscaling v1.53.3
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.36.2
@@ -21,15 +21,15 @@ require (
 	github.com/stretchr/testify v1.10.0
 	golang.org/x/time v0.11.0
 	gopkg.in/gcfg.v1 v1.2.3
-	k8s.io/api v0.34.0-rc.0
-	k8s.io/apimachinery v0.34.0-rc.0
-	k8s.io/client-go v0.34.0-rc.0
-	k8s.io/cloud-provider v0.34.0-rc.0
-	k8s.io/code-generator v0.34.0-rc.0
-	k8s.io/component-base v0.34.0-rc.0
-	k8s.io/controller-manager v0.34.0-rc.0
+	k8s.io/api v0.34.0
+	k8s.io/apimachinery v0.34.0
+	k8s.io/client-go v0.34.0
+	k8s.io/cloud-provider v0.34.0
+	k8s.io/code-generator v0.34.0
+	k8s.io/component-base v0.34.0
+	k8s.io/controller-manager v0.34.0
 	k8s.io/klog/v2 v2.130.1
-	k8s.io/kubelet v0.34.0-rc.0
+	k8s.io/kubelet v0.34.0
 	k8s.io/utils v0.0.0-20250604170112-4c0f3b243397
 	sigs.k8s.io/controller-runtime v0.20.3
 )
@@ -59,16 +59,16 @@ require (
 	github.com/antlr4-go/antlr/v4 v4.13.0 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.67
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.16.31
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.3.36 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.6.36 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.6 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.6 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.8.3 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.218.0
-	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.12.3 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.12.15 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.249.0
+	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.1 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.6 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.25.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.30.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.33.19
-	github.com/aws/smithy-go v1.22.4
+	github.com/aws/smithy-go v1.23.0
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/blang/semver/v4 v4.0.0 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
@@ -138,10 +138,10 @@ require (
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250303144028-a0af3efb3deb // indirect
 	google.golang.org/grpc v1.72.1 // indirect
 	google.golang.org/protobuf v1.36.5 // indirect
-	k8s.io/apiserver v0.34.0-rc.0 // indirect
-	k8s.io/component-helpers v0.34.0-rc.0 // indirect
+	k8s.io/apiserver v0.34.0 // indirect
+	k8s.io/component-helpers v0.34.0 // indirect
 	k8s.io/gengo/v2 v2.0.0-20250604051438-85fd79dbfd9f // indirect
-	k8s.io/kms v0.34.0-rc.0 // indirect
+	k8s.io/kms v0.34.0 // indirect
 	k8s.io/kube-openapi v0.0.0-20250710124328-f3f2b991d03b // indirect
 	sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.31.2 // indirect
 	sigs.k8s.io/json v0.0.0-20241014173422-cfa47c3a1cc8 // indirect
