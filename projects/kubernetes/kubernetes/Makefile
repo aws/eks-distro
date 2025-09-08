@@ -191,6 +191,9 @@ $(OUTPUT_DIR)/%ttribution/go-license.csv:
 	@echo "Skipping go-license.csv generation - using copied artifacts"
 	@echo -e $(call TARGET_END_LOG)
 
+.PHONY: setup-internal-build-files
+setup-internal-build-files: copy-kubernetes-artifacts
+
 endif
 ##################################### END Image Copy Block #####################################
 

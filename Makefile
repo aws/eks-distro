@@ -18,8 +18,10 @@ RELEASE_GIT_COMMIT_HASH?=$(shell git rev-parse @)
 
 REBUILD_ALL?=false
 
-ALL_PROJECTS=containernetworking_plugins coredns_coredns etcd-io_etcd kubernetes-sigs_aws-iam-authenticator \
-	kubernetes_release kubernetes_kubernetes kubernetes_cloud-provider-aws
+ALL_PROJECTS=kubernetes_kubernetes containernetworking_plugins coredns_coredns etcd-io_etcd kubernetes-sigs_aws-iam-authenticator \
+	kubernetes_release kubernetes_cloud-provider-aws
+
+INTERNALLY_BUILT_PROJECTS=kubernetes_kubernetes
 
 
 ifdef MAKECMDGOALS
@@ -172,6 +174,7 @@ makes-clean-%:
 .PHONY: attribution-files
 attribution-files: $(addprefix attribution-files-project-, $(ALL_PROJECTS))
 	cat _output/total_summary.txt
+	build/update-attribution-files/create_pr.sh attribution
 
 .PHONY: attribution-files-project-%
 attribution-files-project-%:
@@ -179,8 +182,7 @@ attribution-files-project-%:
 	$(MAKE) -C $(PROJECT_PATH) all-attributions
 
 .PHONY: update-attribution-files
-update-attribution-files: add-generated-help-block go-mod-files attribution-files
-	build/update-attribution-files/create_pr.sh
+update-attribution-files: add-generated-help-block internal-build-files go-mod-files attribution-files
 
 .PHONY: checksum-files-project-%
 checksum-files-project-%:
@@ -190,7 +192,7 @@ checksum-files-project-%:
 .PHONY: update-checksum-files
 update-checksum-files: $(addprefix checksum-files-project-, $(ALL_PROJECTS))
 	build/lib/update_go_versions.sh
-	build/update-attribution-files/create_pr.sh
+	build/update-attribution-files/create_pr.sh checksums
 
 .PHONY: go-mod-files-project-%
 go-mod-files-project-%:
@@ -199,7 +201,16 @@ go-mod-files-project-%:
 
 .PHONY: go-mod-files
 go-mod-files: $(addprefix go-mod-files-project-, $(ALL_PROJECTS))
-	build/update-attribution-files/create_pr.sh
+	build/update-attribution-files/create_pr.sh go-mod
+
+.PHONY: internal-build-files-project-%
+internal-build-files-project-%:
+	$(eval PROJECT_PATH=projects/$(subst _,/,$*))
+	for release_branch in $(SUPPORTED_RELEASE_BRANCHES); do RELEASE_BRANCH=$$release_branch $(MAKE) -C $(PROJECT_PATH) update-internal-build-files; done
+
+.PHONY: internal-build-files
+internal-build-files: $(addprefix internal-build-files-project-, $(INTERNALLY_BUILT_PROJECTS))
+	INTERNALLY_BUILT_PROJECTS="$(INTERNALLY_BUILT_PROJECTS)" build/update-attribution-files/create_pr.sh internal-builds
 
 .PHONY: add-generated-help-block-project-%
 add-generated-help-block-project-%:
@@ -208,7 +219,7 @@ add-generated-help-block-project-%:
 
 .PHONY: add-generated-help-block
 add-generated-help-block: $(addprefix add-generated-help-block-project-, $(ALL_PROJECTS))
-	build/update-attribution-files/create_pr.sh
+	build/update-attribution-files/create_pr.sh help
 
 .PHONY: update-release-number
 update-release-number:
