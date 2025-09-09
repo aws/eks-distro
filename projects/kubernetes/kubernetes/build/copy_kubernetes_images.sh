@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-for IMAGE_NAME in "kube-apiserver" "kube-controller-manager" "kube-proxy" "kube-scheduler" "pause"; do
+for IMAGE_NAME in "kube-apiserver" "kube-controller-manager" "kube-scheduler" "pause"; do
     SOURCE_IMAGE="${SOURCE_ECR_REG}/kubernetes/${IMAGE_NAME}:${EKS_VERSION}"
     DEST_IMAGE="${IMAGE_REPO}/kubernetes/${IMAGE_NAME}:${GIT_TAG}-eks-${RELEASE_BRANCH}-${RELEASE}"
 
@@ -28,3 +28,33 @@ for IMAGE_NAME in "kube-apiserver" "kube-controller-manager" "kube-proxy" "kube-
         "${DEST_IMAGE}-linux_amd64" \
         "${DEST_IMAGE}-linux_arm64"
 done
+
+get_kube_proxy_tag() {
+    case "$1" in
+        "1-28") echo "v1.28.15" ;;
+        "1-29") echo "v1.29.15" ;;
+        "1-30") echo "v1.30.14" ;;
+        "1-31") echo "v1.31.10" ;;
+        "1-32") echo "v1.32.6" ;;
+        "1-33") echo "v1.33.3" ;;
+        *) echo "$GIT_TAG" ;;
+    esac
+}
+
+# temporarily handle kube-proxy separately until full deprecation
+KUBE_PROXY_GIT_TAG=$(get_kube_proxy_tag "$RELEASE_BRANCH")
+mkdir -p "${RELEASE_BRANCH}/kube-proxy/"
+echo "${KUBE_PROXY_GIT_TAG}" > "${RELEASE_BRANCH}/kube-proxy/GIT_TAG"
+SOURCE_IMAGE="${SOURCE_ECR_REG}/kubernetes/kube-proxy:${KUBE_PROXY_GIT_TAG}-eks-abcdef1"
+DEST_IMAGE="${IMAGE_REPO}/kubernetes/kube-proxy:${KUBE_PROXY_GIT_TAG}-eks-${RELEASE_BRANCH}-${RELEASE}"
+
+echo "Copying ${SOURCE_IMAGE}-linux_amd64 to ${DEST_IMAGE}-linux_amd64"
+docker buildx imagetools create --tag "${DEST_IMAGE}-linux_amd64" "${SOURCE_IMAGE}-linux_amd64"
+
+echo "Copying ${SOURCE_IMAGE}-linux_arm64 to ${DEST_IMAGE}-linux_arm64"
+docker buildx imagetools create --tag "${DEST_IMAGE}-linux_arm64" "${SOURCE_IMAGE}-linux_arm64"
+
+echo "Creating multi-arch image ${DEST_IMAGE}"
+docker buildx imagetools create --tag "${DEST_IMAGE}" \
+    "${DEST_IMAGE}-linux_amd64" \
+    "${DEST_IMAGE}-linux_arm64"
