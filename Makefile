@@ -18,8 +18,8 @@ RELEASE_GIT_COMMIT_HASH?=$(shell git rev-parse @)
 
 REBUILD_ALL?=false
 
-ALL_PROJECTS=kubernetes_kubernetes containernetworking_plugins coredns_coredns etcd-io_etcd kubernetes-sigs_aws-iam-authenticator \
-	kubernetes_release kubernetes_cloud-provider-aws
+ALL_PROJECTS=kubernetes_release kubernetes_kubernetes containernetworking_plugins coredns_coredns etcd-io_etcd \
+	kubernetes_cloud-provider-aws kubernetes-sigs_aws-iam-authenticator
 
 INTERNALLY_BUILT_PROJECTS=kubernetes_kubernetes
 

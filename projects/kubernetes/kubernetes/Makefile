@@ -63,8 +63,7 @@ BINARY_TARGETS:=
 
 ifdef RELEASE_BRANCH
 export KUBERNETES_ARTIFACTS_SOURCE_S3_BUCKET:="eks-distro-dev-release-artifacts"
-_bootstrap:=$(shell ./build/bootstrap_copy_release_variables.sh 2>&1)
-$(info Bootstrap output: $(_bootstrap))
+_bootstrap:=$(shell ./build/bootstrap_copy_release_variables.sh)
 export GIT_TAG:=$(shell cat .k8s_version)
 export GOLANG_VERSION:=$(shell cat .go-version)
 export EKS_VERSION:=$(shell cat .eks_version)
@@ -97,12 +96,6 @@ images: copy-kubernetes-images
 	@echo "Using copied images instead of building images"
 	@echo -e $(call TARGET_END_LOG)
 
-.PHONY: tarballs
-tarballs: copy-kubernetes-artifacts
-	@echo -e $(call TARGET_START_LOG)
-	@echo "Using copied tarballs instead of building"
-	@echo -e $(call TARGET_END_LOG)
-
 # Override local-images to use copied images instead of building
 .PHONY: local-images
 local-images: copy-kubernetes-images
@@ -115,12 +108,6 @@ local-images: copy-kubernetes-images
 $(call IMAGE_TARGETS_FOR_NAME, pause):
 	@echo -e $(call TARGET_START_LOG)
 	@echo "Skipping build of pause - using copied artifacts"
-	@echo -e $(call TARGET_END_LOG)
-
-.PHONY: $(PAUSE_DST)
-$(PAUSE_DST):
-	@echo -e $(call TARGET_START_LOG)
-	@echo "Skipping pause source copy - using copied artifacts"
 	@echo -e $(call TARGET_END_LOG)
 
 .PHONY: $(LOCAL_IMAGE_TARGETS)
@@ -154,7 +141,7 @@ copy-kubernetes-artifacts:
 	@echo -e $(call TARGET_START_LOG)
 	@echo "Copying Kubernetes binaries from S3..."
 	@mkdir -p _output/
-	./build/copy_kubernetes_artifacts.sh
+	RELEASE=$(RELEASE) ./build/copy_kubernetes_artifacts.sh
 	@chmod +x _output/*
 	@echo -e $(call TARGET_END_LOG)
 
@@ -163,7 +150,7 @@ copy-kubernetes-artifacts:
 copy-kubernetes-images: copy-kubernetes-artifacts
 	@echo -e $(call TARGET_START_LOG)
 	@echo "Copying Kubernetes container images..."
-	SOURCE_ECR_REG=$(DEV_ECR_REG) ./build/copy_kubernetes_images.sh
+	RELEASE=$(RELEASE) SOURCE_ECR_REG=$(DEV_ECR_REG) GO_RUNNER_IMAGE=$(GO_RUNNER_IMAGE) ./build/copy_kubernetes_images.sh
 	@echo -e $(call TARGET_END_LOG)
 
 # Override attribution-related targets
@@ -171,12 +158,6 @@ copy-kubernetes-images: copy-kubernetes-artifacts
 $(GATHER_LICENSES_TARGETS):
 	@echo -e $(call TARGET_START_LOG)
 	@echo "Skipping license gathering - using copied artifacts"
-	@echo -e $(call TARGET_END_LOG)
-
-.PHONY: fix-licenses
-fix-licenses:
-	@echo -e $(call TARGET_START_LOG)
-	@echo "Skipping license fixes - using copied artifacts"
 	@echo -e $(call TARGET_END_LOG)
 
 .PHONY: gather-licenses

@@ -12,6 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+set -eux
 
 for IMAGE_NAME in "kube-apiserver" "kube-controller-manager" "kube-scheduler" "pause"; do
     SOURCE_IMAGE="${SOURCE_ECR_REG}/kubernetes/${IMAGE_NAME}:${EKS_VERSION}"
@@ -48,11 +49,25 @@ echo "${KUBE_PROXY_GIT_TAG}" > "${RELEASE_BRANCH}/kube-proxy/GIT_TAG"
 SOURCE_IMAGE="${SOURCE_ECR_REG}/kubernetes/kube-proxy:${KUBE_PROXY_GIT_TAG}-eks-abcdef1"
 DEST_IMAGE="${IMAGE_REPO}/kubernetes/kube-proxy:${KUBE_PROXY_GIT_TAG}-eks-${RELEASE_BRANCH}-${RELEASE}"
 
-echo "Copying ${SOURCE_IMAGE}-linux_amd64 to ${DEST_IMAGE}-linux_amd64"
-docker buildx imagetools create --tag "${DEST_IMAGE}-linux_amd64" "${SOURCE_IMAGE}-linux_amd64"
+echo "Building ${DEST_IMAGE}-linux_amd64 with BuildKit"
+"$(git rev-parse --show-toplevel)/build/lib/buildkit.sh" build \
+    --frontend dockerfile.v0 \
+    --opt platform=linux/amd64 \
+    --opt build-arg:SOURCE_IMAGE="${SOURCE_IMAGE}-linux_amd64" \
+    --opt build-arg:GO_RUNNER_IMAGE="${GO_RUNNER_IMAGE}" \
+    --local dockerfile=docker/kube-proxy \
+    --local context=. \
+    --output type=image,name="${DEST_IMAGE}-linux_amd64",push=true
 
-echo "Copying ${SOURCE_IMAGE}-linux_arm64 to ${DEST_IMAGE}-linux_arm64"
-docker buildx imagetools create --tag "${DEST_IMAGE}-linux_arm64" "${SOURCE_IMAGE}-linux_arm64"
+echo "Building ${DEST_IMAGE}-linux_arm64 with BuildKit"
+"$(git rev-parse --show-toplevel)/build/lib/buildkit.sh" build \
+    --frontend dockerfile.v0 \
+    --opt platform=linux/arm64 \
+    --opt build-arg:SOURCE_IMAGE="${SOURCE_IMAGE}-linux_arm64" \
+    --opt build-arg:GO_RUNNER_IMAGE="${GO_RUNNER_IMAGE}" \
+    --local dockerfile=docker/kube-proxy \
+    --local context=. \
+    --output type=image,name="${DEST_IMAGE}-linux_arm64",push=true
 
 echo "Creating multi-arch image ${DEST_IMAGE}"
 docker buildx imagetools create --tag "${DEST_IMAGE}" \

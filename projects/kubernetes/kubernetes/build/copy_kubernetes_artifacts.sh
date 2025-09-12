@@ -12,11 +12,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+set -eux
 
 mkdir -p "_output/${RELEASE_BRANCH}/"
 echo "${KUBERNETES_ARTIFACTS_SOURCE_S3_RELEASE_PATH}"
 echo "_output/${RELEASE_BRANCH}/"
-aws s3 sync "${KUBERNETES_ARTIFACTS_SOURCE_S3_RELEASE_PATH}" "_output/${RELEASE_BRANCH}"
+aws s3 sync "${KUBERNETES_ARTIFACTS_SOURCE_S3_RELEASE_PATH}" "_output/${RELEASE_BRANCH}" --quiet
 
 ARTIFACT_DIR="_output/tar/${RELEASE_BRANCH}"
 mkdir -p ${ARTIFACT_DIR}
@@ -28,7 +29,7 @@ cp "_output/${RELEASE_BRANCH}/SHA"* "_output/${RELEASE_BRANCH}/images/"
 
 PROJECT_ROOT=$(cat "_output/${RELEASE_BRANCH}/attribution/root-module.txt")
 MAKE_ROOT="$(git rev-parse --show-toplevel)/projects/kubernetes/kubernetes/${RELEASE_BRANCH}"
-generate-attribution "${PROJECT_ROOT}" "${MAKE_ROOT}" "${GOLANG_VERSION}" "_output/${RELEASE_BRANCH}" "${GIT_TAG}"
+generate-attribution "${PROJECT_ROOT}" "${MAKE_ROOT}" "go${GOLANG_VERSION}" "_output/${RELEASE_BRANCH}" "${GIT_TAG}" 2>&1
 echo "Copying attribution"
 cp "_output/${RELEASE_BRANCH}/attribution/ATTRIBUTION.txt" "${ARTIFACT_DIR}"
 
@@ -48,7 +49,7 @@ done
 cp "_output/${RELEASE_BRANCH}/KUBE_GIT_VERSION_FILE" "${RELEASE_BRANCH}/KUBE_GIT_VERSION_FILE"
 echo "${GIT_TAG}" > "${RELEASE_BRANCH}/GIT_TAG"
 echo "${GOLANG_VERSION%.*}" > "${RELEASE_BRANCH}/GOLANG_VERSION"
-cp "_output/${RELEASE_BRANCH}/attribution/ATTRIBUTION.TXT" "${RELEASE_BRANCH}/ATTRIBUTION.TXT"
+cp "_output/${RELEASE_BRANCH}/attribution/ATTRIBUTION.txt" "${RELEASE_BRANCH}"
 
 # Copy go.mod and go.sum files with fallback
 if [[ -f "_output/${RELEASE_BRANCH}/go.mod" && -f "_output/${RELEASE_BRANCH}/go.sum" ]]; then
