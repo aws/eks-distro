@@ -12,6 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+set -eux
 
 # we want to determine kubernetes patch version e.g., (GIT_TAG), go version e.g., (GOLANG_VERSION),
 # and EKS_VERSION which will be used for copying s3 artifacts and images

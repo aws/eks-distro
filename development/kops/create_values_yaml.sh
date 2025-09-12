@@ -97,6 +97,21 @@ function get_container_yaml() {
 
 function get_project_version(){
     REPOSITORY_NAME="${1}"
+    if [[ $REPOSITORY_NAME == "kubernetes/kube-proxy" ]]; then
+        REPOSITORY_NAME="kubernetes/kubernetes"
+        PRIMARY_PATH="${BASEDIR}/../../projects/${REPOSITORY_NAME}/${RELEASE_BRANCH}/kube-proxy/GIT_TAG"
+        FALLBACK_PATH="${BASEDIR}/../../projects/${REPOSITORY_NAME}/${RELEASE_BRANCH}/GIT_TAG"
+        
+        if [[ -f "$PRIMARY_PATH" ]]; then
+            VERSION=$(cat "$PRIMARY_PATH")
+        else
+            VERSION=$(cat "$FALLBACK_PATH")
+        fi
+        
+        echo "$VERSION"
+        return 0
+    fi
+
     if  [[ $REPOSITORY_NAME == kubernetes/* ]] && [[ $REPOSITORY_NAME != "kubernetes/cloud-provider-aws" ]] 
     then
         REPOSITORY_NAME="kubernetes/kubernetes"
