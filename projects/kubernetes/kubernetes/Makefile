@@ -141,7 +141,7 @@ copy-kubernetes-artifacts:
 	@echo -e $(call TARGET_START_LOG)
 	@echo "Copying Kubernetes binaries from S3..."
 	@mkdir -p _output/
-	RELEASE=$(RELEASE) ./build/copy_kubernetes_artifacts.sh
+	RELEASE=$(RELEASE) IMAGE_REPO=$(IMAGE_REPO) ./build/copy_kubernetes_artifacts.sh
 	@chmod +x _output/*
 	@echo -e $(call TARGET_END_LOG)
 
