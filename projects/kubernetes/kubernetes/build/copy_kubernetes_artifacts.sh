@@ -27,9 +27,11 @@ echo "Copying checksums"
 cp "_output/${RELEASE_BRANCH}/SHA"* "${ARTIFACT_DIR}"
 cp "_output/${RELEASE_BRANCH}/SHA"* "_output/${RELEASE_BRANCH}/images/"
 
-PROJECT_ROOT=$(cat "_output/${RELEASE_BRANCH}/attribution/root-module.txt")
-MAKE_ROOT="$(git rev-parse --show-toplevel)/projects/kubernetes/kubernetes/${RELEASE_BRANCH}"
-generate-attribution "${PROJECT_ROOT}" "${MAKE_ROOT}" "go${GOLANG_VERSION}" "_output/${RELEASE_BRANCH}" "${GIT_TAG}" 2>&1
+if [[ ! -f "_output/${RELEASE_BRANCH}/attribution/ATTRIBUTION.txt" ]]; then
+    PROJECT_ROOT=$(cat "_output/${RELEASE_BRANCH}/attribution/root-module.txt")
+    MAKE_ROOT="$(git rev-parse --show-toplevel)/projects/kubernetes/kubernetes/${RELEASE_BRANCH}"
+    generate-attribution "${PROJECT_ROOT}" "${MAKE_ROOT}" "go${GOLANG_VERSION}" "_output/${RELEASE_BRANCH}" "${GIT_TAG}" 2>&1
+fi
 echo "Copying attribution"
 cp "_output/${RELEASE_BRANCH}/attribution/ATTRIBUTION.txt" "${ARTIFACT_DIR}"
 
