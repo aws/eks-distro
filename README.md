@@ -50,7 +50,9 @@ Full documentation for releases can be found on [https://distro.eks.amazonaws.co
 To receive notifications about new EKS-D releases, subscribe to the EKS-D updates SNS topic:
 `arn:aws:sns:us-east-1:379412251201:eks-distro-updates`
 
-[<img src="docs/contents/certified-kubernetes-1.26-color.svg" height=150>](https://github.com/cncf/k8s-conformance/pull/2507)
+[<img src="docs/contents/certified-kubernetes-1.28-color.svg" height=150>](https://github.com/cncf/k8s-conformance/pull/2847)
+[<img src="docs/contents/certified-kubernetes-1.32-color.svg" height=150>](https://github.com/cncf/k8s-conformance/pull/3598)
+[<img src="docs/contents/certified-kubernetes-1.33-color.svg" height=150>](https://github.com/cncf/k8s-conformance/pull/3774)
 <!--
 Source: https://github.com/cncf/artwork/tree/master/projects/kubernetes/certified-kubernetes
 -->
