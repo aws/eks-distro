@@ -41,31 +41,31 @@ https://github.com/prometheus/procfs
 ** github.com/spf13/cobra; version v1.1.3 --
 https://github.com/spf13/cobra
 
-** go.etcd.io/etcd/api/v3; version v3.5.16 --
+** go.etcd.io/etcd/api/v3; version v3.5.21 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/client/pkg/v3; version v3.5.16 --
+** go.etcd.io/etcd/client/pkg/v3; version v3.5.21 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/client/v2; version v2.305.16 --
+** go.etcd.io/etcd/client/v2; version v2.305.21 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/client/v3; version v3.5.16 --
+** go.etcd.io/etcd/client/v3; version v3.5.21 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/etcdctl/v3; version v3.5.16 --
+** go.etcd.io/etcd/etcdctl/v3; version v3.5.21 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/etcdutl/v3; version v3.5.16 --
+** go.etcd.io/etcd/etcdutl/v3; version v3.5.21 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/pkg/v3; version v3.5.16 --
+** go.etcd.io/etcd/pkg/v3; version v3.5.21 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/raft/v3; version v3.5.16 --
+** go.etcd.io/etcd/raft/v3; version v3.5.21 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/server/v3; version v3.5.16 --
+** go.etcd.io/etcd/server/v3; version v3.5.21 --
 https://github.com/etcd-io/etcd
 
 ** go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc; version v0.46.0 --
@@ -546,20 +546,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/go; version go1.22.12 --
+** golang.org/go; version go1.23.12 --
 https://github.com/golang/go
-
-** golang.org/x/crypto; version v0.21.0 --
-https://golang.org/x/crypto
-
-** golang.org/x/net; version v0.23.0 --
-https://golang.org/x/net
-
-** golang.org/x/sys/unix; version v0.18.0 --
-https://golang.org/x/sys
-
-** golang.org/x/text; version v0.14.0 --
-https://golang.org/x/text
 
 ** golang.org/x/time/rate; version v0.0.0-20210220033141-f8bda1e9f3ba --
 https://golang.org/x/time
@@ -577,6 +565,48 @@ copyright notice, this list of conditions and the following disclaimer
 in the documentation and/or other materials provided with the
 distribution.
    * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+------
+
+** golang.org/x/crypto; version v0.36.0 --
+https://golang.org/x/crypto
+
+** golang.org/x/net; version v0.38.0 --
+https://golang.org/x/net
+
+** golang.org/x/sys/unix; version v0.31.0 --
+https://golang.org/x/sys
+
+** golang.org/x/text; version v0.23.0 --
+https://golang.org/x/text
+
+Copyright 2009 The Go Authors.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+   * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+   * Neither the name of Google LLC nor the names of its
 contributors may be used to endorse or promote products derived from
 this software without specific prior written permission.
 
@@ -656,7 +686,7 @@ Copyright (c) 2016 Caleb Spare
 https://github.com/cpuguy83/go-md2man/v2
 Copyright (c) 2014 Brian Goff
 
-** github.com/golang-jwt/jwt/v4; version v4.4.2 --
+** github.com/golang-jwt/jwt/v4; version v4.5.2 --
 https://github.com/golang-jwt/jwt/v4
 Copyright (c) 2012 Dave Grijalva
 Copyright (c) 2021 golang-jwt maintainers
