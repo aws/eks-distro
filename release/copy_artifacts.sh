@@ -48,11 +48,6 @@ ARTIFACT_DIR=${DEST_DIR}/${PROJECT}/${GIT_TAG}
 mkdir -p $ARTIFACT_DIR
 build::common::echo_and_run cp -r $SOURCE_ARTIFACT_DIR/* $ARTIFACT_DIR
 
-# if we are running in copy mode for kubernetes we don't need checksums
-if [[ "${IS_INTERNAL_BUILD}" == "true" ]]; then
-    exit 0
-fi
-
 # create checksums in source output since we validate artifacts from that folder
 build::common::echo_and_run $SCRIPT_ROOT/create_release_checksums.sh $SOURCE_ARTIFACT_DIR
 build::common::echo_and_run $SCRIPT_ROOT/create_release_checksums.sh $ARTIFACT_DIR
