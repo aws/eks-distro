@@ -91,14 +91,14 @@ binaries: copy-kubernetes-artifacts
 	@echo -e $(call TARGET_END_LOG)
 
 .PHONY: images
-images: copy-kubernetes-images
+images: copy-kubernetes-artifacts
 	@echo -e $(call TARGET_START_LOG)
 	@echo "Using copied images instead of building images"
 	@echo -e $(call TARGET_END_LOG)
 
 # Override local-images to use copied images instead of building
 .PHONY: local-images
-local-images: copy-kubernetes-images
+local-images: copy-kubernetes-artifacts
 	@echo -e $(call TARGET_START_LOG)
 	@echo "Using copied images instead of building local images"
 	@echo -e $(call TARGET_END_LOG)
@@ -141,16 +141,13 @@ copy-kubernetes-artifacts:
 	@echo -e $(call TARGET_START_LOG)
 	@echo "Copying Kubernetes binaries from S3..."
 	@mkdir -p _output/
-	RELEASE=$(RELEASE) IMAGE_REPO=$(IMAGE_REPO) ./build/copy_kubernetes_artifacts.sh
+	RELEASE=$(RELEASE) \
+    IMAGE_REPO=$(IMAGE_REPO) \
+    SOURCE_ECR_REG=$(DEV_ECR_REG) \
+    GO_RUNNER_IMAGE=$(GO_RUNNER_IMAGE) \
+    MAKE_ROOT=$(MAKE_ROOT) \
+    ./build/copy_kubernetes_artifacts.sh
 	@chmod +x _output/*
-	@echo -e $(call TARGET_END_LOG)
-
-# retag container images to current format
-.PHONY: copy-kubernetes-images
-copy-kubernetes-images: copy-kubernetes-artifacts
-	@echo -e $(call TARGET_START_LOG)
-	@echo "Copying Kubernetes container images..."
-	RELEASE=$(RELEASE) SOURCE_ECR_REG=$(DEV_ECR_REG) GO_RUNNER_IMAGE=$(GO_RUNNER_IMAGE) ./build/copy_kubernetes_images.sh
 	@echo -e $(call TARGET_END_LOG)
 
 # Override attribution-related targets
