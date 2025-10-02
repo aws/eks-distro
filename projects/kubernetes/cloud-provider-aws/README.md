@@ -7,6 +7,7 @@
 | 1-31    | ![Version](https://img.shields.io/badge/version-v1.31.5-blue) |
 | 1-32    | ![Version](https://img.shields.io/badge/version-v1.32.0-blue) |
 | 1-33    | ![Version](https://img.shields.io/badge/version-v1.32.0-blue) |
+| 1-34    | ![Version](https://img.shields.io/badge/version-v1.34.0-blue) |
 
 The AWS cloud provider provides the interface between a Kubernetes cluster and AWS service APIs. This project allows a Kubernetes cluster to provision, monitor and remove AWS resources necessary for operation of the cluster.
 
