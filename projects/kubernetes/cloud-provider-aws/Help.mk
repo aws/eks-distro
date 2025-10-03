@@ -12,10 +12,10 @@ checkout-repo: ## Checkout upstream tag based on value in GIT_TAG file
 
 ##@ Binary Targets
 binaries: ## Build all binaries: `aws-cloud-controller-manager ecr-credential-provider` for `linux/amd64 linux/arm64`
-_output/1-33/bin/cloud-provider-aws/linux-amd64/aws-cloud-controller-manager: ## Build `_output/1-33/bin/cloud-provider-aws/linux-amd64/aws-cloud-controller-manager`
-_output/1-33/bin/cloud-provider-aws/linux-amd64/ecr-credential-provider: ## Build `_output/1-33/bin/cloud-provider-aws/linux-amd64/ecr-credential-provider`
-_output/1-33/bin/cloud-provider-aws/linux-arm64/aws-cloud-controller-manager: ## Build `_output/1-33/bin/cloud-provider-aws/linux-arm64/aws-cloud-controller-manager`
-_output/1-33/bin/cloud-provider-aws/linux-arm64/ecr-credential-provider: ## Build `_output/1-33/bin/cloud-provider-aws/linux-arm64/ecr-credential-provider`
+_output/1-34/bin/cloud-provider-aws/linux-amd64/aws-cloud-controller-manager: ## Build `_output/1-34/bin/cloud-provider-aws/linux-amd64/aws-cloud-controller-manager`
+_output/1-34/bin/cloud-provider-aws/linux-amd64/ecr-credential-provider: ## Build `_output/1-34/bin/cloud-provider-aws/linux-amd64/ecr-credential-provider`
+_output/1-34/bin/cloud-provider-aws/linux-arm64/aws-cloud-controller-manager: ## Build `_output/1-34/bin/cloud-provider-aws/linux-arm64/aws-cloud-controller-manager`
+_output/1-34/bin/cloud-provider-aws/linux-arm64/ecr-credential-provider: ## Build `_output/1-34/bin/cloud-provider-aws/linux-arm64/ecr-credential-provider`
 
 ##@ Image Targets
 local-images: ## Builds `cloud-controller-manager/images/amd64` as oci tars for presumbit validation

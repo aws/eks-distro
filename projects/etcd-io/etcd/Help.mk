@@ -12,10 +12,10 @@ checkout-repo: ## Checkout upstream tag based on value in GIT_TAG file
 
 ##@ Binary Targets
 binaries: ## Build all binaries: `etcd etcdctl` for `linux/amd64 linux/arm64`
-_output/1-33/bin/etcd/linux-amd64/etcd: ## Build `_output/1-33/bin/etcd/linux-amd64/etcd`
-_output/1-33/bin/etcd/linux-amd64/etcdctl: ## Build `_output/1-33/bin/etcd/linux-amd64/etcdctl`
-_output/1-33/bin/etcd/linux-arm64/etcd: ## Build `_output/1-33/bin/etcd/linux-arm64/etcd`
-_output/1-33/bin/etcd/linux-arm64/etcdctl: ## Build `_output/1-33/bin/etcd/linux-arm64/etcdctl`
+_output/1-34/bin/etcd/linux-amd64/etcd: ## Build `_output/1-34/bin/etcd/linux-amd64/etcd`
+_output/1-34/bin/etcd/linux-amd64/etcdctl: ## Build `_output/1-34/bin/etcd/linux-amd64/etcdctl`
+_output/1-34/bin/etcd/linux-arm64/etcd: ## Build `_output/1-34/bin/etcd/linux-arm64/etcd`
+_output/1-34/bin/etcd/linux-arm64/etcdctl: ## Build `_output/1-34/bin/etcd/linux-arm64/etcdctl`
 
 ##@ Image Targets
 local-images: ## Builds `etcd/images/amd64` as oci tars for presumbit validation
