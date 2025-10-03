@@ -12,10 +12,10 @@ checkout-repo: ## Checkout upstream tag based on value in GIT_TAG file
 
 ##@ Binary Targets
 binaries: ## Build all binaries: `aws-iam-authenticator` for `linux/amd64 linux/arm64 darwin/amd64 windows/amd64`
-_output/1-33/bin/aws-iam-authenticator/linux-amd64/aws-iam-authenticator: ## Build `_output/1-33/bin/aws-iam-authenticator/linux-amd64/aws-iam-authenticator`
-_output/1-33/bin/aws-iam-authenticator/linux-arm64/aws-iam-authenticator: ## Build `_output/1-33/bin/aws-iam-authenticator/linux-arm64/aws-iam-authenticator`
-_output/1-33/bin/aws-iam-authenticator/darwin-amd64/aws-iam-authenticator: ## Build `_output/1-33/bin/aws-iam-authenticator/darwin-amd64/aws-iam-authenticator`
-_output/1-33/bin/aws-iam-authenticator/windows-amd64/aws-iam-authenticator.exe: ## Build `_output/1-33/bin/aws-iam-authenticator/windows-amd64/aws-iam-authenticator.exe`
+_output/1-34/bin/aws-iam-authenticator/linux-amd64/aws-iam-authenticator: ## Build `_output/1-34/bin/aws-iam-authenticator/linux-amd64/aws-iam-authenticator`
+_output/1-34/bin/aws-iam-authenticator/linux-arm64/aws-iam-authenticator: ## Build `_output/1-34/bin/aws-iam-authenticator/linux-arm64/aws-iam-authenticator`
+_output/1-34/bin/aws-iam-authenticator/darwin-amd64/aws-iam-authenticator: ## Build `_output/1-34/bin/aws-iam-authenticator/darwin-amd64/aws-iam-authenticator`
+_output/1-34/bin/aws-iam-authenticator/windows-amd64/aws-iam-authenticator.exe: ## Build `_output/1-34/bin/aws-iam-authenticator/windows-amd64/aws-iam-authenticator.exe`
 
 ##@ Image Targets
 local-images: ## Builds `aws-iam-authenticator/images/amd64` as oci tars for presumbit validation
