@@ -12,8 +12,8 @@ checkout-repo: ## Checkout upstream tag based on value in GIT_TAG file
 
 ##@ Binary Targets
 binaries: ## Build all binaries: `go-runner` for `linux/amd64 linux/arm64`
-_output/1-33/bin/release-src/linux-amd64/go-runner: ## Build `_output/1-33/bin/release-src/linux-amd64/go-runner`
-_output/1-33/bin/release-src/linux-arm64/go-runner: ## Build `_output/1-33/bin/release-src/linux-arm64/go-runner`
+_output/1-34/bin/release-src/linux-amd64/go-runner: ## Build `_output/1-34/bin/release-src/linux-amd64/go-runner`
+_output/1-34/bin/release-src/linux-arm64/go-runner: ## Build `_output/1-34/bin/release-src/linux-arm64/go-runner`
 
 ##@ Image Targets
 local-images: ## Builds `go-runner/images/amd64 kube-proxy-base/images/amd64` as oci tars for presumbit validation
