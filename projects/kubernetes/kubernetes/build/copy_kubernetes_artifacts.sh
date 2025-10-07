@@ -105,9 +105,11 @@ process_kube_proxy() {
             --output type=image,name="${dest_image}-linux_${ARCH}",push="${PUSH_IMAGES}"
     done
 
-    echo "Creating multi-arch image ${dest_image}"
-    docker buildx imagetools create --tag "${dest_image}" \
-        "${dest_image}-linux_amd64" "${dest_image}-linux_arm64"
+    if [[ "${PUSH_IMAGES}" == "true" ]]; then
+        echo "Creating multi-arch image ${dest_image}"
+        docker buildx imagetools create --tag "${dest_image}" \
+            "${dest_image}-linux_amd64" "${dest_image}-linux_arm64"
+    fi
 
     process_architectures "${dest_image}" "kube-proxy" "${image_tag}" "${dest_image}" "docker"
 }
@@ -146,10 +148,12 @@ for IMAGE_NAME in "kube-apiserver" "kube-controller-manager" "kube-scheduler" "p
         OUTPUT_TYPE=oci
     fi
     
-    docker buildx imagetools create \
-        $(printf -- "--tag %s " "${TAGS[@]}") \
-        "${DEST_IMAGE}-linux_amd64" \
-        "${DEST_IMAGE}-linux_arm64"
+    if [[ "${PUSH_IMAGES}" == "true" ]]; then
+        docker buildx imagetools create \
+            $(printf -- "--tag %s " "${TAGS[@]}") \
+            "${DEST_IMAGE}-linux_amd64" \
+            "${DEST_IMAGE}-linux_arm64"
+    fi
 
     EXPORT_TAGS=$(IFS=,; echo "${TAGS[*]}")
     process_architectures "${DEST_IMAGE}" "${IMAGE_NAME}" "${IMAGE_TAG}" "${EXPORT_TAGS}" "${OUTPUT_TYPE}"
