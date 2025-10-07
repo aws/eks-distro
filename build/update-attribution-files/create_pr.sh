@@ -120,7 +120,7 @@ EOF
         ;;
     internal-builds)
         pr_body=$(cat <<'EOF'
-This PR updates the checked in GIT_TAG, GOLANG_VERSION, go.mod, go.sum, and ATTRIBUTION files across all internally build projects.
+This PR updates the checked in GIT_TAG, GOLANG_VERSION, and ATTRIBUTION files across all internally build projects.
 EOF
 )
         ;;
@@ -250,7 +250,7 @@ SUPPORTED_RELEASE_BRANCHES=$(cat $(git rev-parse --show-toplevel)/release/SUPPOR
 for PROJECT in $INTERNALLY_BUILT_PROJECTS; do
     PROJECT_PATH=$(echo $PROJECT | sed 's/_/\//g')
     for RELEASE_BRANCH in $SUPPORTED_RELEASE_BRANCHES; do
-        for FILE in $(find ./projects/$PROJECT_PATH/$RELEASE_BRANCH -type f \( -name GIT_TAG -o -name GOLANG_VERSION -o -name go.mod -o -name go.sum -o -name ATTRIBUTION.txt \) 2>/dev/null || true); do
+        for FILE in $(find ./projects/$PROJECT_PATH/$RELEASE_BRANCH -type f \( -name GIT_TAG -o -name GOLANG_VERSION -o -name ATTRIBUTION.txt \) 2>/dev/null || true); do
             git check-ignore -q $FILE || git add $FILE
         done
     done
