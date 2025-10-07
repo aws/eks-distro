@@ -57,6 +57,7 @@ KUBE_GIT_VERSION_FILE=$(RELEASE_BRANCH)/KUBE_GIT_VERSION_FILE
 
 # Environment variables to support copying the internally built artifacts instead of
 # rebuilding from EKS-D repo source
+PUSH_IMAGES ?= true
 BUILD_ARTIFACTS ?= false
 ifeq ($(BUILD_ARTIFACTS),false)
 BINARY_TARGETS:=
@@ -146,6 +147,7 @@ copy-kubernetes-artifacts:
     SOURCE_ECR_REG=$(DEV_ECR_REG) \
     GO_RUNNER_IMAGE=$(GO_RUNNER_IMAGE) \
     MAKE_ROOT=$(MAKE_ROOT) \
+    PUSH_IMAGES=$(PUSH_IMAGES) \
     ./build/copy_kubernetes_artifacts.sh
 	@chmod +x _output/*
 	@echo -e $(call TARGET_END_LOG)

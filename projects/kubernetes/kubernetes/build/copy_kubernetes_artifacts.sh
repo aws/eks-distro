@@ -20,10 +20,97 @@ OUTPUT_DIR="_output/${RELEASE_BRANCH}"
 BIN_OUTPUT_DIR="${OUTPUT_DIR}/bin"
 IMAGE_OUTPUT_DIR="${OUTPUT_DIR}/images/bin"
 ARTIFACT_DIR="_output/tar/${RELEASE_BRANCH}"
+ARCHITECTURES=("amd64" "arm64")
 
 mkdir -p "${OUTPUT_DIR}"
 mkdir -p "${ARTIFACT_DIR}"
 mkdir -p "${IMAGE_OUTPUT_DIR}/amd64" "${IMAGE_OUTPUT_DIR}/arm64"
+
+retag_and_push_image() {
+    local source_image=$1
+    local dest_image=$2
+    local arch=$3
+    
+    "$(git rev-parse --show-toplevel)/build/lib/buildkit.sh" build \
+        --frontend dockerfile.v0 \
+        --opt build-arg:SOURCE_IMAGE="${source_image}-linux_${arch}" \
+        --opt platform=linux/${arch} \
+        --local dockerfile=docker/retag \
+        --local context=. \
+        --output type=image,name="${dest_image}-linux_${arch}",push="${PUSH_IMAGES}"
+}
+
+export_image_tar() {
+    local dest_image=$1
+    local arch=$2
+    local image_name=$3
+    local output_type=${4:-docker}
+    local tags=$5
+    
+    "$(git rev-parse --show-toplevel)/build/lib/buildkit.sh" build \
+        --frontend dockerfile.v0 \
+        --opt build-arg:SOURCE_IMAGE="${dest_image}" \
+        --local dockerfile=docker/retag \
+        --local context=. \
+        --opt platform=linux/${arch} \
+        --output type="${output_type}",oci-mediatypes=true,\"name="${tags}"\",dest="${IMAGE_OUTPUT_DIR}/linux/${arch}/${image_name}.tar"
+}
+
+process_architectures() {
+    local dest_image=$1
+    local image_name=$2
+    local image_tag=$3
+    local export_tags=$4
+    local output_type=${5:-docker}
+    
+    for ARCH in "${ARCHITECTURES[@]}"; do
+        mkdir -p "${IMAGE_OUTPUT_DIR}/linux/${ARCH}/"
+        echo "${image_tag}" > "${IMAGE_OUTPUT_DIR}/linux/${ARCH}/${image_name}.docker_tag"
+        echo "${export_tags}" > "${IMAGE_OUTPUT_DIR}/linux/${ARCH}/${image_name}.docker_image_name"
+        export_image_tar "${dest_image}" "${ARCH}" "${image_name}" "${output_type}" "${export_tags}"
+    done
+}
+
+get_kube_proxy_tag() {
+    case "$1" in
+        "1-28") echo "v1.28.15" ;;
+        "1-29") echo "v1.29.15" ;;
+        "1-30") echo "v1.30.14" ;;
+        "1-31") echo "v1.31.10" ;;
+        "1-32") echo "v1.32.6" ;;
+        "1-33") echo "v1.33.3" ;;
+        "1-34") echo "v1.34.0" ;;
+        *) echo "$GIT_TAG" ;;
+    esac
+}
+
+process_kube_proxy() {
+    local kube_proxy_tag=$(get_kube_proxy_tag "$RELEASE_BRANCH")
+    mkdir -p "${RELEASE_BRANCH}/kube-proxy/"
+    echo "${kube_proxy_tag}" > "${RELEASE_BRANCH}/kube-proxy/GIT_TAG"
+    
+    local source_image="${SOURCE_ECR_REG}/kubernetes/kube-proxy:${kube_proxy_tag}-eks-abcdef1"
+    local image_tag="${kube_proxy_tag}-eks-${RELEASE_BRANCH}-${RELEASE}"
+    local dest_image="${IMAGE_REPO}/kubernetes/kube-proxy:${image_tag}"
+
+    for ARCH in "${ARCHITECTURES[@]}"; do
+        echo "Building ${dest_image}-linux_${ARCH} with BuildKit"
+        "$(git rev-parse --show-toplevel)/build/lib/buildkit.sh" build \
+            --frontend dockerfile.v0 \
+            --opt platform=linux/${ARCH} \
+            --opt build-arg:SOURCE_IMAGE="${source_image}-linux_${ARCH}" \
+            --opt build-arg:GO_RUNNER_IMAGE="${GO_RUNNER_IMAGE}" \
+            --local dockerfile=docker/kube-proxy \
+            --local context=. \
+            --output type=image,name="${dest_image}-linux_${ARCH}",push="${PUSH_IMAGES}"
+    done
+
+    echo "Creating multi-arch image ${dest_image}"
+    docker buildx imagetools create --tag "${dest_image}" \
+        "${dest_image}-linux_amd64" "${dest_image}-linux_arm64"
+
+    process_architectures "${dest_image}" "kube-proxy" "${image_tag}" "${dest_image}" "docker"
+}
 
 aws s3 sync "${KUBERNETES_ARTIFACTS_SOURCE_S3_RELEASE_PATH}" "${OUTPUT_DIR}" \
   --exclude "*.sha*" \
@@ -45,23 +132,10 @@ for IMAGE_NAME in "kube-apiserver" "kube-controller-manager" "kube-scheduler" "p
     IMAGE_TAG="${GIT_TAG}-eks-${RELEASE_BRANCH}-${RELEASE}"
     DEST_IMAGE="${IMAGE_REPO}/kubernetes/${IMAGE_NAME}:${IMAGE_TAG}"
 
-    echo "Copying ${SOURCE_IMAGE}-linux_amd64 to ${DEST_IMAGE}-linux_amd64"
-    "$(git rev-parse --show-toplevel)/build/lib/buildkit.sh" build \
-      --frontend dockerfile.v0 \
-      --opt build-arg:SOURCE_IMAGE="${SOURCE_IMAGE}-linux_amd64" \
-      --opt platform=linux/amd64 \
-      --local dockerfile=docker/retag \
-      --local context=. \
-      --output type=image,name="${DEST_IMAGE}-linux_amd64",push=true
-
-    echo "Copying ${SOURCE_IMAGE}-linux_arm64 to ${DEST_IMAGE}-linux_arm64"
-    "$(git rev-parse --show-toplevel)/build/lib/buildkit.sh" build \
-      --frontend dockerfile.v0 \
-      --opt build-arg:SOURCE_IMAGE="${SOURCE_IMAGE}-linux_arm64" \
-      --opt platform=linux/arm64 \
-      --local dockerfile=docker/retag \
-      --local context=. \
-      --output type=image,name="${DEST_IMAGE}-linux_arm64",push=true
+    for ARCH in "${ARCHITECTURES[@]}"; do
+        echo "Copying ${SOURCE_IMAGE}-linux_${ARCH} to ${DEST_IMAGE}-linux_${ARCH}"
+        retag_and_push_image "${SOURCE_IMAGE}" "${DEST_IMAGE}" "${ARCH}"
+    done
 
     echo "Creating multi-arch image ${DEST_IMAGE}"
     TAGS=("${DEST_IMAGE}")
@@ -78,99 +152,18 @@ for IMAGE_NAME in "kube-apiserver" "kube-controller-manager" "kube-scheduler" "p
         "${DEST_IMAGE}-linux_arm64"
 
     EXPORT_TAGS=$(IFS=,; echo "${TAGS[*]}")
-    for ARCH in amd64 arm64; do
-        mkdir -p "${IMAGE_OUTPUT_DIR}/linux/${ARCH}/"
-
-        echo "${IMAGE_TAG}" > "${IMAGE_OUTPUT_DIR}/linux/${ARCH}/${IMAGE_NAME}.docker_tag"
-        echo "${EXPORT_TAGS}" > "${IMAGE_OUTPUT_DIR}/linux/${ARCH}/${IMAGE_NAME}.docker_image_name"
-
-        "$(git rev-parse --show-toplevel)/build/lib/buildkit.sh" build \
-          --frontend dockerfile.v0 \
-          --opt build-arg:SOURCE_IMAGE="${DEST_IMAGE}" \
-          --local dockerfile=docker/retag \
-          --local context=. \
-          --opt platform=linux/${ARCH} \
-          --output type="${OUTPUT_TYPE}",oci-mediatypes=true,\"name="${EXPORT_TAGS}"\",dest="${IMAGE_OUTPUT_DIR}/linux/${ARCH}/${IMAGE_NAME}.tar"
-    done
+    process_architectures "${DEST_IMAGE}" "${IMAGE_NAME}" "${IMAGE_TAG}" "${EXPORT_TAGS}" "${OUTPUT_TYPE}"
 done
-
-get_kube_proxy_tag() {
-    case "$1" in
-        "1-28") echo "v1.28.15" ;;
-        "1-29") echo "v1.29.15" ;;
-        "1-30") echo "v1.30.14" ;;
-        "1-31") echo "v1.31.10" ;;
-        "1-32") echo "v1.32.6" ;;
-        "1-33") echo "v1.33.3" ;;
-        "1-34") echo "v1.34.0" ;;
-        *) echo "$GIT_TAG" ;;
-    esac
-}
 
 # temporarily handle kube-proxy separately until full deprecation
-KUBE_PROXY_GIT_TAG=$(get_kube_proxy_tag "$RELEASE_BRANCH")
-mkdir -p "${RELEASE_BRANCH}/kube-proxy/"
-echo "${KUBE_PROXY_GIT_TAG}" > "${RELEASE_BRANCH}/kube-proxy/GIT_TAG"
-SOURCE_IMAGE="${SOURCE_ECR_REG}/kubernetes/kube-proxy:${KUBE_PROXY_GIT_TAG}-eks-abcdef1"
-IMAGE_TAG="${KUBE_PROXY_GIT_TAG}-eks-${RELEASE_BRANCH}-${RELEASE}"
-DEST_IMAGE="${IMAGE_REPO}/kubernetes/kube-proxy:${IMAGE_TAG}"
-
-echo "Building ${DEST_IMAGE}-linux_amd64 with BuildKit"
-"$(git rev-parse --show-toplevel)/build/lib/buildkit.sh" build \
-    --frontend dockerfile.v0 \
-    --opt platform=linux/amd64 \
-    --opt build-arg:SOURCE_IMAGE="${SOURCE_IMAGE}-linux_amd64" \
-    --opt build-arg:GO_RUNNER_IMAGE="${GO_RUNNER_IMAGE}" \
-    --local dockerfile=docker/kube-proxy \
-    --local context=. \
-    --output type=image,name="${DEST_IMAGE}-linux_amd64",push=true
-
-echo "Building ${DEST_IMAGE}-linux_arm64 with BuildKit"
-"$(git rev-parse --show-toplevel)/build/lib/buildkit.sh" build \
-    --frontend dockerfile.v0 \
-    --opt platform=linux/arm64 \
-    --opt build-arg:SOURCE_IMAGE="${SOURCE_IMAGE}-linux_arm64" \
-    --opt build-arg:GO_RUNNER_IMAGE="${GO_RUNNER_IMAGE}" \
-    --local dockerfile=docker/kube-proxy \
-    --local context=. \
-    --output type=image,name="${DEST_IMAGE}-linux_arm64",push=true
-
-echo "Creating multi-arch image ${DEST_IMAGE}"
-docker buildx imagetools create --tag "${DEST_IMAGE}" \
-    "${DEST_IMAGE}-linux_amd64" \
-    "${DEST_IMAGE}-linux_arm64"
-
-for ARCH in amd64 arm64; do
-    echo "${IMAGE_TAG}" > "${IMAGE_OUTPUT_DIR}/linux/${ARCH}/kube-proxy.docker_tag"
-    echo "${DEST_IMAGE}" > "${IMAGE_OUTPUT_DIR}/linux/${ARCH}/kube-proxy.docker_image_name"
-
-    "$(git rev-parse --show-toplevel)/build/lib/buildkit.sh" build \
-        --frontend dockerfile.v0 \
-        --opt build-arg:SOURCE_IMAGE="${DEST_IMAGE}" \
-        --local dockerfile=docker/retag \
-        --local context=. \
-        --opt platform=linux/${ARCH} \
-        --output type=docker,oci-mediatypes=true,\"name="${DEST_IMAGE}"\",dest="${IMAGE_OUTPUT_DIR}/linux/${ARCH}/kube-proxy.tar"
-done
+process_kube_proxy
 
 # create tarballs with newly tagged images and binaries
 cp "${OUTPUT_DIR}/tar/kubernetes-src.tar.gz" "${ARTIFACT_DIR}"
 build::tarballs::create_tarballs "${BIN_OUTPUT_DIR}" "${OUTPUT_DIR}" "${ARTIFACT_DIR}" "${IMAGE_OUTPUT_DIR}"
 
-# update files for any legacy method callers of these files during the build e.g., crd generation
+# update files for any legacy method callers of these files during the build e.g., crd generation, attribution periodic
 cp "${OUTPUT_DIR}/KUBE_GIT_VERSION_FILE" "${RELEASE_BRANCH}/KUBE_GIT_VERSION_FILE"
 echo "${GIT_TAG}" > "${RELEASE_BRANCH}/GIT_TAG"
 echo "${GOLANG_VERSION%.*}" > "${RELEASE_BRANCH}/GOLANG_VERSION"
 cp "${OUTPUT_DIR}/attribution/ATTRIBUTION.txt" "${RELEASE_BRANCH}"
-
-# Copy go.mod and go.sum files with fallback
-if [[ -f "${OUTPUT_DIR}/go.mod" && -f "${OUTPUT_DIR}/go.sum" ]]; then
-    cp "${OUTPUT_DIR}/go.mod" "${RELEASE_BRANCH}/go.mod"
-    cp "${OUTPUT_DIR}/go.sum" "${RELEASE_BRANCH}/go.sum"
-else
-    TEMP_DIR=$(mktemp -d)
-    tar -xzf "${ARTIFACT_DIR}/kubernetes-src.tar.gz" -C "${TEMP_DIR}"
-    cp "${TEMP_DIR}/go.mod" "${RELEASE_BRANCH}/go.mod"
-    cp "${TEMP_DIR}/go.sum" "${RELEASE_BRANCH}/go.sum"
-    rm -rf "${TEMP_DIR}"
-fi
