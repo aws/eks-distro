@@ -164,6 +164,7 @@ process_kube_proxy
 
 # create tarballs with newly tagged images and binaries
 cp "${OUTPUT_DIR}/tar/kubernetes-src.tar.gz" "${ARTIFACT_DIR}"
+chmod -R 755 "${BIN_OUTPUT_DIR}"
 build::tarballs::create_tarballs "${BIN_OUTPUT_DIR}" "${OUTPUT_DIR}" "${ARTIFACT_DIR}" "${IMAGE_OUTPUT_DIR}"
 
 # update files for any legacy method callers of these files during the build e.g., crd generation, attribution periodic
