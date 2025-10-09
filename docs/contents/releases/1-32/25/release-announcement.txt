@@ -1,0 +1,2 @@
+Amazon EKS Distro v1-32-eks-25 is now available. Builds are available through ECR Public Gallery (https://gallery.ecr.aws/eks-distro). The changelog and release manifest are available on GitHub (https://github.com/aws/eks-distro/releases).
+	
