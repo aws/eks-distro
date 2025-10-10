@@ -71,49 +71,6 @@ process_architectures() {
     done
 }
 
-get_kube_proxy_tag() {
-    case "$1" in
-        "1-28") echo "v1.28.15" ;;
-        "1-29") echo "v1.29.15" ;;
-        "1-30") echo "v1.30.14" ;;
-        "1-31") echo "v1.31.10" ;;
-        "1-32") echo "v1.32.6" ;;
-        "1-33") echo "v1.33.3" ;;
-        "1-34") echo "v1.34.0" ;;
-        *) echo "$GIT_TAG" ;;
-    esac
-}
-
-process_kube_proxy() {
-    local kube_proxy_tag=$(get_kube_proxy_tag "$RELEASE_BRANCH")
-    mkdir -p "${RELEASE_BRANCH}/kube-proxy/"
-    echo "${kube_proxy_tag}" > "${RELEASE_BRANCH}/kube-proxy/GIT_TAG"
-    
-    local source_image="${SOURCE_ECR_REG}/kubernetes/kube-proxy:${kube_proxy_tag}-eks-abcdef1"
-    local image_tag="${kube_proxy_tag}-eks-${RELEASE_BRANCH}-${RELEASE}"
-    local dest_image="${IMAGE_REPO}/kubernetes/kube-proxy:${image_tag}"
-
-    for ARCH in "${ARCHITECTURES[@]}"; do
-        echo "Building ${dest_image}-linux_${ARCH} with BuildKit"
-        "$(git rev-parse --show-toplevel)/build/lib/buildkit.sh" build \
-            --frontend dockerfile.v0 \
-            --opt platform=linux/${ARCH} \
-            --opt build-arg:SOURCE_IMAGE="${source_image}-linux_${ARCH}" \
-            --opt build-arg:GO_RUNNER_IMAGE="${GO_RUNNER_IMAGE}" \
-            --local dockerfile=docker/kube-proxy \
-            --local context=. \
-            --output type=image,name="${dest_image}-linux_${ARCH}",push="${PUSH_IMAGES}"
-    done
-
-    if [[ "${PUSH_IMAGES}" == "true" ]]; then
-        echo "Creating multi-arch image ${dest_image}"
-        docker buildx imagetools create --tag "${dest_image}" \
-            "${dest_image}-linux_amd64" "${dest_image}-linux_arm64"
-    fi
-
-    process_architectures "${dest_image}" "kube-proxy" "${image_tag}" "${dest_image}" "docker"
-}
-
 aws s3 sync "${KUBERNETES_ARTIFACTS_SOURCE_S3_RELEASE_PATH}" "${OUTPUT_DIR}" \
   --exclude "*.sha*" \
   --exclude "*SHA*" \
@@ -129,7 +86,7 @@ cp "${OUTPUT_DIR}/attribution/ATTRIBUTION.txt" "${ARTIFACT_DIR}"
 cp "${OUTPUT_DIR}/attribution/ATTRIBUTION.txt" "${OUTPUT_DIR}"
 
 echo "Retagging images"
-for IMAGE_NAME in "kube-apiserver" "kube-controller-manager" "kube-scheduler" "pause"; do
+for IMAGE_NAME in "kube-apiserver" "kube-controller-manager" "kube-scheduler" "kube-proxy" "pause"; do
     SOURCE_IMAGE="${SOURCE_ECR_REG}/kubernetes/${IMAGE_NAME}:${EKS_VERSION}"
     IMAGE_TAG="${GIT_TAG}-eks-${RELEASE_BRANCH}-${RELEASE}"
     DEST_IMAGE="${IMAGE_REPO}/kubernetes/${IMAGE_NAME}:${IMAGE_TAG}"
@@ -159,9 +116,6 @@ for IMAGE_NAME in "kube-apiserver" "kube-controller-manager" "kube-scheduler" "p
     process_architectures "${DEST_IMAGE}" "${IMAGE_NAME}" "${IMAGE_TAG}" "${EXPORT_TAGS}" "${OUTPUT_TYPE}"
 done
 
-# temporarily handle kube-proxy separately until full deprecation
-process_kube_proxy
-
 # create tarballs with newly tagged images and binaries
 cp "${OUTPUT_DIR}/tar/kubernetes-src.tar.gz" "${ARTIFACT_DIR}"
 chmod -R 755 "${BIN_OUTPUT_DIR}"
@@ -170,5 +124,6 @@ build::tarballs::create_tarballs "${BIN_OUTPUT_DIR}" "${OUTPUT_DIR}" "${ARTIFACT
 # update files for any legacy method callers of these files during the build e.g., crd generation, attribution periodic
 cp "${OUTPUT_DIR}/KUBE_GIT_VERSION_FILE" "${RELEASE_BRANCH}/KUBE_GIT_VERSION_FILE"
 echo "${GIT_TAG}" > "${RELEASE_BRANCH}/GIT_TAG"
+echo "${GIT_TAG}" > "${RELEASE_BRANCH}/kube-proxy/GIT_TAG"
 echo "${GOLANG_VERSION%.*}" > "${RELEASE_BRANCH}/GOLANG_VERSION"
 cp "${OUTPUT_DIR}/attribution/ATTRIBUTION.txt" "${RELEASE_BRANCH}"
