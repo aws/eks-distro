@@ -191,7 +191,7 @@ https://github.com/kubernetes/client-go
 ** k8s.io/cloud-provider; version v0.33.0 --
 https://github.com/kubernetes/cloud-provider
 
-** k8s.io/cloud-provider-aws; version v1.33.1 --
+** k8s.io/cloud-provider-aws; version v1.33.2 --
 https://github.com/kubernetes/cloud-provider-aws
 
 ** k8s.io/component-base; version v0.33.0 --
