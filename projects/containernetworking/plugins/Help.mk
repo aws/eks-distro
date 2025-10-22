@@ -9,7 +9,6 @@
 ##@ GIT/Repo Targets
 clone-repo:  ## Clone upstream `plugins`
 checkout-repo: ## Checkout upstream tag based on value in GIT_TAG file
-patch-repo: ## Patch upstream repo with patches in patches directory
 
 ##@ Run in Docker Targets
 run-all-attributions-in-docker: ## Run `all-attributions` in docker builder container
