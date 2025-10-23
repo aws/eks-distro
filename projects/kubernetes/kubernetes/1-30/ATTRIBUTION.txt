@@ -1337,7 +1337,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ** github.com/liggitt/tabwriter; version v0.0.0-20181228230101-89fcab3d43de --
 https://github.com/liggitt/tabwriter
 
-** golang.org/go; version go1.23.10 --
+** golang.org/go; version go1.23.12 --
 https://github.com/golang/go
 
 ** golang.org/x/crypto; version v0.22.0 --
