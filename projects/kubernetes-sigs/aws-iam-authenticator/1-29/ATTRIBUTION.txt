@@ -830,7 +830,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/go; version go1.25.1 --
+** golang.org/go; version go1.25.3 --
 https://github.com/golang/go
 
 ** golang.org/x/net; version v0.43.0 --
