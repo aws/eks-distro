@@ -97,44 +97,6 @@ images: copy-kubernetes-artifacts
 	@echo "Using copied images instead of building images"
 	@echo -e $(call TARGET_END_LOG)
 
-# Override local-images to use copied images instead of building
-.PHONY: local-images
-local-images: copy-kubernetes-artifacts
-	@echo -e $(call TARGET_START_LOG)
-	@echo "Using copied images instead of building local images"
-	@echo -e $(call TARGET_END_LOG)
-
-# Override all individual image targets to do nothing when copying
-.PHONY: $(call IMAGE_TARGETS_FOR_NAME, pause)
-$(call IMAGE_TARGETS_FOR_NAME, pause):
-	@echo -e $(call TARGET_START_LOG)
-	@echo "Skipping build of pause - using copied artifacts"
-	@echo -e $(call TARGET_END_LOG)
-
-.PHONY: $(LOCAL_IMAGE_TARGETS)
-$(LOCAL_IMAGE_TARGETS):
-	@echo -e $(call TARGET_START_LOG)
-	@echo "Skipping build of $@ - using copied artifacts"
-	@echo -e $(call TARGET_END_LOG)
-
-.PHONY: $(IMAGE_TARGETS)
-$(IMAGE_TARGETS):
-	@echo -e $(call TARGET_START_LOG)
-	@echo "Skipping build of $@ - using copied artifacts"
-	@echo -e $(call TARGET_END_LOG)
-
-.PHONY: $(foreach image,$(DOCKER_TAR_IMAGE_NAMES),$(image)/images/arm64)
-$(foreach image,$(DOCKER_TAR_IMAGE_NAMES),$(image)/images/arm64):
-	@echo -e $(call TARGET_START_LOG)
-	@echo "Skipping build of $@ - using copied artifacts"
-	@echo -e $(call TARGET_END_LOG)
-
-.PHONY: $(foreach image,$(IMAGE_NAMES),$(image)/images/push)
-$(foreach image,$(IMAGE_NAMES),$(image)/images/push):
-	@echo -e $(call TARGET_START_LOG)
-	@echo "Skipping push of $@ - using copied artifacts"
-	@echo -e $(call TARGET_END_LOG)
-
 # Copy artifacts from source S3 to local _output structure
 # this includes tarballs, kube binaries, and image tars
 .PHONY: copy-kubernetes-artifacts
@@ -150,25 +112,6 @@ copy-kubernetes-artifacts:
     PUSH_IMAGES=$(PUSH_IMAGES) \
     ./build/copy_kubernetes_artifacts.sh
 	@chmod +x _output/*
-	@echo -e $(call TARGET_END_LOG)
-
-# Override attribution-related targets
-.PHONY: $(GATHER_LICENSES_TARGETS)
-$(GATHER_LICENSES_TARGETS):
-	@echo -e $(call TARGET_START_LOG)
-	@echo "Skipping license gathering - using copied artifacts"
-	@echo -e $(call TARGET_END_LOG)
-
-.PHONY: gather-licenses
-gather-licenses:
-	@echo -e $(call TARGET_START_LOG)
-	@echo "Skipping license gathering - using copied artifacts"
-	@echo -e $(call TARGET_END_LOG)
-
-# Override the go-license.csv pattern target
-$(OUTPUT_DIR)/%ttribution/go-license.csv:
-	@echo -e $(call TARGET_START_LOG)
-	@echo "Skipping go-license.csv generation - using copied artifacts"
 	@echo -e $(call TARGET_END_LOG)
 
 .PHONY: setup-internal-build-files

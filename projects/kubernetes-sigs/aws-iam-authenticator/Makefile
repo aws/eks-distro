@@ -19,6 +19,11 @@ HAS_S3_ARTIFACTS=true
 
 BUILDER_IMAGE=$(EKS_DISTRO_BASE_IMAGE)
 
+# Environment variables to support copying the internally built artifacts instead of
+# rebuilding from EKS-D repo source
+#PUSH_IMAGES ?= true
+#BUILD_ARTIFACTS ?= false
+
 include $(BASE_DIRECTORY)/Common.mk
 
 build: validate-cli-version

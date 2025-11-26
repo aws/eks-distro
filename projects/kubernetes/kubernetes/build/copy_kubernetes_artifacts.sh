@@ -76,11 +76,6 @@ aws s3 sync "${KUBERNETES_ARTIFACTS_SOURCE_S3_RELEASE_PATH}" "${OUTPUT_DIR}" \
   --exclude "*SHA*" \
   --quiet
 
-if [[ ! -f "${OUTPUT_DIR}/attribution/ATTRIBUTION.txt" ]]; then
-    PROJECT_ROOT=$(cat "${OUTPUT_DIR}/attribution/root-module.txt")
-    RELEASE_BRANCH_ROOT="$(git rev-parse --show-toplevel)/projects/kubernetes/kubernetes/${RELEASE_BRANCH}"
-    generate-attribution "${PROJECT_ROOT}" "${RELEASE_BRANCH_ROOT}" "go${GOLANG_VERSION}" "${OUTPUT_DIR}" "${GIT_TAG}" 2>&1
-fi
 echo "Copying attribution"
 cp "${OUTPUT_DIR}/attribution/ATTRIBUTION.txt" "${ARTIFACT_DIR}"
 cp "${OUTPUT_DIR}/attribution/ATTRIBUTION.txt" "${OUTPUT_DIR}"
