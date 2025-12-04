@@ -30,14 +30,25 @@ retag_and_push_image() {
     local source_image=$1
     local dest_image=$2
     local arch=$3
-    
-    "$(git rev-parse --show-toplevel)/build/lib/buildkit.sh" build \
-        --frontend dockerfile.v0 \
-        --opt build-arg:SOURCE_IMAGE="${source_image}-linux_${arch}" \
-        --opt platform=linux/${arch} \
-        --local dockerfile=docker/retag \
-        --local context=. \
-        --output type=image,name="${dest_image}-linux_${arch}",push="${PUSH_IMAGES}"
+
+    if [[ "${source_image}" == *"kube-proxy"* ]]; then
+        "$(git rev-parse --show-toplevel)/build/lib/buildkit.sh" build \
+            --frontend dockerfile.v0 \
+            --opt build-arg:SOURCE_IMAGE="${source_image}-linux_${arch}" \
+            --opt build-arg:GO_RUNNER_IMAGE="${GO_RUNNER_IMAGE}" \
+            --opt platform=linux/${arch} \
+            --local dockerfile=docker/kube-proxy \
+            --local context=. \
+            --output type=image,name="${dest_image}-linux_${arch}",push="${PUSH_IMAGES}"
+    else
+        "$(git rev-parse --show-toplevel)/build/lib/buildkit.sh" build \
+            --frontend dockerfile.v0 \
+            --opt build-arg:SOURCE_IMAGE="${source_image}-linux_${arch}" \
+            --opt platform=linux/${arch} \
+            --local dockerfile=docker/retag \
+            --local context=. \
+            --output type=image,name="${dest_image}-linux_${arch}",push="${PUSH_IMAGES}"
+    fi
 }
 
 export_image_tar() {
@@ -47,13 +58,24 @@ export_image_tar() {
     local output_type=${4:-docker}
     local tags=$5
     
-    "$(git rev-parse --show-toplevel)/build/lib/buildkit.sh" build \
-        --frontend dockerfile.v0 \
-        --opt build-arg:SOURCE_IMAGE="${dest_image}" \
-        --local dockerfile=docker/retag \
-        --local context=. \
-        --opt platform=linux/${arch} \
-        --output type="${output_type}",oci-mediatypes=true,\"name="${tags}"\",dest="${IMAGE_OUTPUT_DIR}/linux/${arch}/${image_name}.tar"
+    if [[ "${image_name}" == *"kube-proxy"* ]]; then
+        "$(git rev-parse --show-toplevel)/build/lib/buildkit.sh" build \
+            --frontend dockerfile.v0 \
+            --opt build-arg:SOURCE_IMAGE="${dest_image}" \
+            --opt build-arg:GO_RUNNER_IMAGE="${GO_RUNNER_IMAGE}" \
+            --local dockerfile=docker/kube-proxy \
+            --local context=. \
+            --opt platform=linux/${arch} \
+            --output type="${output_type}",oci-mediatypes=true,\"name="${tags}"\",dest="${IMAGE_OUTPUT_DIR}/linux/${arch}/${image_name}.tar"
+    else
+        "$(git rev-parse --show-toplevel)/build/lib/buildkit.sh" build \
+            --frontend dockerfile.v0 \
+            --opt build-arg:SOURCE_IMAGE="${dest_image}" \
+            --local dockerfile=docker/retag \
+            --local context=. \
+            --opt platform=linux/${arch} \
+            --output type="${output_type}",oci-mediatypes=true,\"name="${tags}"\",dest="${IMAGE_OUTPUT_DIR}/linux/${arch}/${image_name}.tar"
+    fi
 }
 
 process_architectures() {
