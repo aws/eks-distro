@@ -31,11 +31,13 @@ LATEST_VERSION=$(grep -o 'eks\.[0-9]\+' "$TEMP_FILE" | sort -V | tail -1)
 
 K8S_PATCH_VERSION=$(grep "${LATEST_VERSION}/artifacts/kubernetes/v[0-9]" "$TEMP_FILE" | \
               grep -o 'v[0-9][^/]*' | head -1)
-echo "${K8S_PATCH_VERSION}" > .k8s_version
 
 EKS_VERSION=$(grep "${LATEST_VERSION}/artifacts/kubernetes/${K8S_PATCH_VERSION}/artifacts/kubernetes-public/" "$TEMP_FILE" | \
-              grep -o "${K8S_PATCH_VERSION}-eks-[a-z0-9]\+" | head -1)
+              grep -oE "${K8S_PATCH_VERSION}(-beta\.[0-9]+|-rc\.[0-9]+)?-eks-[a-z0-9]+" | head -1)
 echo "${EKS_VERSION}" > .eks_version
+
+GIT_TAG=${EKS_VERSION%-eks-*}
+echo "${GIT_TAG}" > .git_tag
 
 # Construct the final S3 path to sync
 KUBERNETES_ARTIFACTS_SOURCE_S3_RELEASE_PATH="s3://${KUBERNETES_ARTIFACTS_SOURCE_S3_BUCKET}/${S3_PREFIX}${LATEST_VERSION}/artifacts/kubernetes/${K8S_PATCH_VERSION}/artifacts/kubernetes-public/${EKS_VERSION}/"
