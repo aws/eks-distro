@@ -25,9 +25,6 @@ do-not-merge/hold:
 base-img-pkg-update:
   - "EKS_DISTRO_BASE_TAG_FILE"
 
-v1.28:
-  - "**/1-28/**/*"
-
 v1.29:
   - "**/1-29/**/*"
 
