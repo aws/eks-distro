@@ -21,7 +21,7 @@ REBUILD_ALL?=false
 ALL_PROJECTS=kubernetes_release kubernetes_kubernetes containernetworking_plugins coredns_coredns etcd-io_etcd \
 	kubernetes_cloud-provider-aws kubernetes-sigs_aws-iam-authenticator
 
-INTERNALLY_BUILT_PROJECTS=kubernetes_kubernetes
+INTERNALLY_BUILT_PROJECTS=kubernetes_kubernetes kubernetes-sigs_aws-iam-authenticator
 
 
 ifdef MAKECMDGOALS
