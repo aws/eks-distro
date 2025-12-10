@@ -58,27 +58,26 @@ else
         GIT_TAG="$(cat $PROJECT_ROOT/$release/GIT_TAG)"
         GOLANG_VERSION="$(cat $PROJECT_ROOT/$release/GOLANG_VERSION)"
 
-        if ! ( $(cat $MAKE_ROOT/release/K8_SUPPORTED_RELEASE_BRANCHES | grep -q $release) >/dev/null 2>&1 )  || [[ $(basename "$PROJECT") == "kubernetes" ]] || [[ $(basename "$PROJECT") == "release" ]]; then
-            if $(cat $MAKE_ROOT/release/K8_SUPPORTED_RELEASE_BRANCHES | grep -q $LAST_RELEASE_BRANCH) >/dev/null 2>&1 || [ "$GIT_TAG" != "$LAST_GIT_TAG" ] || [ "${GOLANG_VERSION}" != "${LAST_GOLANG_VERSION}" ] || [ $TARGET == "update-go-mods" ]; then
-                # clean before regenerating to ensure there are no intermediate files left around
-                make -C $PROJECT_ROOT clean clean-go-cache
-                build::attribution::generate $release
-            else
-                # if the git_tags match across release branches, save the output state to avoid
-                # rebuilding/regenerating
-                if [[ $TARGET == *"checksums"* ]]; then
-                    echo "Copying $LAST_RELEASE_BRANCH CHECKSUMS to $release"
-                    mkdir -p $PROJECT_ROOT/_output/$release
-                    sed "s/$LAST_RELEASE_BRANCH/$release/" $PROJECT_ROOT/$LAST_RELEASE_BRANCH/CHECKSUMS > $PROJECT_ROOT/$release/CHECKSUMS
-                fi
 
-                if [[ $TARGET == *"attribution"* ]]; then
-                    echo "Copying $LAST_RELEASE_BRANCH ATTRIBUTION to $release"
-                    mkdir -p $PROJECT_ROOT/_output/$release
-                    cp -rf $PROJECT_ROOT/$LAST_RELEASE_BRANCH/*TTRIBUTION.txt $PROJECT_ROOT/$release
-                fi         
-            fi
-        fi
+          if [ "$GIT_TAG" != "$LAST_GIT_TAG" ] || [ "${GOLANG_VERSION}" != "${LAST_GOLANG_VERSION}" ] || [ $TARGET == "update-go-mods" ]; then
+              # clean before regenerating to ensure there are no intermediate files left around
+              make -C $PROJECT_ROOT clean clean-go-cache
+              build::attribution::generate $release
+          else
+              # if the git_tags match across release branches, save the output state to avoid
+              # rebuilding/regenerating
+              if [[ $TARGET == *"checksums"* ]] && [ -f "$PROJECT_ROOT/$LAST_RELEASE_BRANCH/CHECKSUMS" ]; then
+                  echo "Copying $LAST_RELEASE_BRANCH CHECKSUMS to $release"
+                  mkdir -p $PROJECT_ROOT/_output/$release
+                  sed "s/$LAST_RELEASE_BRANCH/$release/" $PROJECT_ROOT/$LAST_RELEASE_BRANCH/CHECKSUMS > $PROJECT_ROOT/$release/CHECKSUMS
+              fi
+
+              if [[ $TARGET == *"attribution"* ]] && ls $PROJECT_ROOT/$LAST_RELEASE_BRANCH/*TTRIBUTION.txt 1> /dev/null 2>&1; then
+                  echo "Copying $LAST_RELEASE_BRANCH ATTRIBUTION to $release"
+                  mkdir -p $PROJECT_ROOT/_output/$release
+                  cp -rf $PROJECT_ROOT/$LAST_RELEASE_BRANCH/*TTRIBUTION.txt $PROJECT_ROOT/$release
+              fi
+          fi
 
         LAST_GIT_TAG="$GIT_TAG"
         LAST_GOLANG_VERSION="${GOLANG_VERSION}"

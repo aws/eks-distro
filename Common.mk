@@ -18,7 +18,7 @@ MAKE_ROOT=$(BASE_DIRECTORY)/projects/$(COMPONENT)
 PROJECT_PATH?=$(subst $(BASE_DIRECTORY)/,,$(MAKE_ROOT))
 BUILD_LIB=${BASE_DIRECTORY}/build/lib
 OUTPUT_BIN_DIR?=$(OUTPUT_DIR)/bin/$(REPO)
-BUILD_ARTIFACTS?=false
+BUILD_ARTIFACTS?=true
 
 #################### AWS ###########################
 AWS_REGION?=us-west-2
@@ -168,8 +168,8 @@ IMAGE_IMPORT_CACHE?=$(call CACHE_IMPORT_IMAGES,$(OLDEST_BRANCH_WITH_SAME_GIT_TAG
 
 BUILD_OCI_TARS?=false
 
-LOCAL_IMAGE_TARGETS=$(foreach image,$(IMAGE_NAMES),$(image)/images/amd64) $(if $(filter true,$(HAS_HELM_CHART)),helm/build,) 
-IMAGE_TARGETS=$(foreach image,$(IMAGE_NAMES),$(if $(filter true,$(BUILD_OCI_TARS)),$(call IMAGE_TARGETS_FOR_NAME,$(image)),$(image)/images/push)) $(if $(filter true,$(HAS_HELM_CHART)),helm/push,) 
+LOCAL_IMAGE_TARGETS=$(if $(filter-out true,$(BUILD_ARTIFACTS)),,$(foreach image,$(IMAGE_NAMES),$(image)/images/amd64) $(if $(filter true,$(HAS_HELM_CHART)),helm/build,))
+IMAGE_TARGETS=$(if $(filter-out true,$(BUILD_ARTIFACTS)),,$(foreach image,$(IMAGE_NAMES),$(if $(filter true,$(BUILD_OCI_TARS)),$(call IMAGE_TARGETS_FOR_NAME,$(image)),$(image)/images/push)) $(if $(filter true,$(HAS_HELM_CHART)),helm/push,)) 
 
 ############# WINDOWS #############################
 # similar to https://github.com/kubernetes-csi/livenessprobe/blob/master/release-tools/prow.sh#L78
@@ -346,7 +346,7 @@ setup_uniq_go_mod_license_filters = \
 BINARY_PLATFORMS?=linux/amd64 linux/arm64
 SIMPLE_CREATE_BINARIES?=true
 
-BINARY_TARGETS?=$(call BINARY_TARGETS_FROM_FILES_PLATFORMS, $(BINARY_TARGET_FILES), $(BINARY_PLATFORMS))
+BINARY_TARGETS?=$(if $(filter-out true,$(BUILD_ARTIFACTS)),,$(call BINARY_TARGETS_FROM_FILES_PLATFORMS, $(BINARY_TARGET_FILES), $(BINARY_PLATFORMS)))
 BINARY_TARGET_FILES?=
 SOURCE_PATTERNS?=$(foreach _,$(BINARY_TARGET_FILES),.)
 GO_MOD_PATHS?=$(foreach _,$(BINARY_TARGET_FILES),.)
@@ -399,11 +399,27 @@ HANDLE_DEPENDENCIES_TARGET=handle-dependencies
 
 #################### LICENSES ######################
 HAS_LICENSES?=true
-ATTRIBUTION_TARGETS?=$(call pairmap,ATTRIBUTION_TARGET_FROM_BINARY_GO_MOD,$(BINARY_TARGET_FILES),$(GO_MOD_PATHS))
-GATHER_LICENSES_TARGETS?=$(call pairmap,LICENSE_TARGET_FROM_BINARY_GO_MOD,$(BINARY_TARGET_FILES),$(GO_MOD_PATHS))
+ATTRIBUTION_TARGETS?=$(if $(filter-out true,$(BUILD_ARTIFACTS)),,$(call pairmap,ATTRIBUTION_TARGET_FROM_BINARY_GO_MOD,$(BINARY_TARGET_FILES),$(GO_MOD_PATHS)))
+GATHER_LICENSES_TARGETS?=$(if $(filter-out true,$(BUILD_ARTIFACTS)),,$(call pairmap,LICENSE_TARGET_FROM_BINARY_GO_MOD,$(BINARY_TARGET_FILES),$(GO_MOD_PATHS)))
 LICENSES_OUTPUT_DIR?=$(OUTPUT_DIR)
 LICENSES_TARGETS_FOR_PREREQ=$(if $(filter true,$(HAS_LICENSES)),$(GATHER_LICENSES_TARGETS) \
 	$(foreach target,$(ATTRIBUTION_TARGETS),_output/$(target)),)
+####################################################
+
+#################### COPY ARTIFACTS MODE ###########
+ifneq ($(filter-out true,$(BUILD_ARTIFACTS)),)
+ifneq ($(COPY_ARTIFACTS_SCRIPT),)
+
+.PHONY: copy-artifacts
+copy-artifacts:
+	@echo -e $(call TARGET_START_LOG)
+	@echo "Copying artifacts from source..."
+	@mkdir -p $(OUTPUT_DIR)
+	@$(COPY_ARTIFACTS_SCRIPT)
+	@echo -e $(call TARGET_END_LOG)
+
+endif
+endif
 ####################################################
 
 #################### TARBALLS ######################
@@ -491,7 +507,7 @@ endif
 ifneq ($(REPO_NO_CLONE),true)
 $(REPO):
 	@echo -e $(call TARGET_START_LOG)
-ifneq ($(and $(filter kubernetes,$(REPO)),$(filter-out true,$(BUILD_ARTIFACTS))),)
+ifneq ($(filter-out true,$(BUILD_ARTIFACTS)),)
 	@echo "Skipping repo pull for $(REPO)"
 else
 ifneq ($(REPO_SPARSE_CHECKOUT),)
@@ -508,7 +524,7 @@ endif
 
 $(GIT_CHECKOUT_TARGET): | $(REPO)
 	@echo -e $(call TARGET_START_LOG)
-	@if [ "$(REPO)" = "kubernetes" ] && [ "$(BUILD_ARTIFACTS)" = "false" ]; then \
+	@if [ "$(BUILD_ARTIFACTS)" = "false" ]; then \
   		echo "Skipping checkout for $(REPO)"; \
 	else \
 		rm -f $(REPO)/eks-distro-*; \
@@ -520,7 +536,7 @@ $(GIT_CHECKOUT_TARGET): | $(REPO)
 
 $(GIT_PATCH_TARGET): $(GIT_CHECKOUT_TARGET)
 	@echo -e $(call TARGET_START_LOG)
-	@if [ "$(REPO)" = "kubernetes" ] && [ "$(BUILD_ARTIFACTS)" = "false" ]; then \
+	@if [ "$(BUILD_ARTIFACTS)" = "false" ]; then \
 		echo "Skipping patches for $(REPO)"; \
 	else \
 		git -C $(REPO) config user.email prow@amazonaws.com; \
@@ -535,7 +551,7 @@ $(GIT_PATCH_TARGET): $(GIT_CHECKOUT_TARGET)
 $(REPO)/%ks-distro-go-mod-download: REPO_SUBPATH=$(if $(filter e,$*),,$(*:%/e=%))
 $(REPO)/%ks-distro-go-mod-download: $(if $(PATCHES_DIR),$(GIT_PATCH_TARGET),$(GIT_CHECKOUT_TARGET))
 	@echo -e $(call TARGET_START_LOG)
-	@if [ "$(REPO)" = "kubernetes" ] && [ "$(BUILD_ARTIFACTS)" = "false" ]; then \
+	@if [ "$(BUILD_ARTIFACTS)" = "false" ]; then \
 		echo "Skipping go mod download for $(REPO)"; \
 	else \
   		$(BASE_DIRECTORY)/build/lib/go_mod_download.sh $(MAKE_ROOT) $(REPO) $(GIT_TAG) $(GOLANG_VERSION) "$(REPO_SUBPATH)"; \
@@ -577,7 +593,11 @@ $(OUTPUT_BIN_DIR)/%: $$(call GO_MOD_DOWNLOAD_TARGET_FROM_GO_MOD_PATH,$$(GO_MOD_P
 endif
 
 .PHONY: binaries
+ifneq ($(filter-out true,$(BUILD_ARTIFACTS)),)
+binaries: copy-artifacts
+else
 binaries: $(BINARY_TARGETS)
+endif
 
 $(KUSTOMIZE_TARGET):
 	@mkdir -p $(OUTPUT_DIR)
@@ -623,7 +643,7 @@ gather-licenses: $(GATHER_LICENSES_TARGETS)
 # if multiple attributions are being generated, the file will be <binary>_ATTRIBUTION.txt and licenses will be stored in _output/<binary>, `%` will equal `<BINARY>_A`
 %TTRIBUTION.txt: LICENSE_OUTPUT_PATH=$(OUTPUT_DIR)$(if $(filter A,$(*F)),,/$(call TO_LOWER,$(*F:%_A=%)))
 %TTRIBUTION.txt: $$(LICENSE_OUTPUT_PATH)/attribution/go-license.csv
-ifneq ($(and $(filter kubernetes,$(REPO)),$(filter-out true,$(BUILD_ARTIFACTS))),)
+ifneq ($(filter-out true,$(BUILD_ARTIFACTS)),)
 	@echo -e $(call TARGET_START_LOG)
 	@echo "Skipping attribution generation for $(REPO)/$(RELEASE_BRANCH)"
 	@echo -e $(call TARGET_END_LOG)
@@ -651,11 +671,18 @@ all-attributions:
 #### Tarball Targets
 
 .PHONY: tarballs
+ifneq ($(filter-out true,$(BUILD_ARTIFACTS)),)
+tarballs: copy-artifacts
+	@echo -e $(call TARGET_START_LOG)
+	$(BASE_DIRECTORY)/build/lib/simple_create_tarballs.sh $(TAR_FILE_PREFIX) $(MAKE_ROOT)/$(OUTPUT_DIR) $(MAKE_ROOT)/$(OUTPUT_BIN_DIR) $(GIT_TAG) "$(BINARY_PLATFORMS)" $(ARTIFACTS_PATH) $(GIT_HASH)
+	@echo -e $(call TARGET_END_LOG)
+else
 tarballs: $(LICENSES_TARGETS_FOR_PREREQ)
 ifeq ($(SIMPLE_CREATE_TARBALLS),true)
 	@echo -e $(call TARGET_START_LOG)
 	$(BASE_DIRECTORY)/build/lib/simple_create_tarballs.sh $(TAR_FILE_PREFIX) $(MAKE_ROOT)/$(OUTPUT_DIR) $(MAKE_ROOT)/$(OUTPUT_BIN_DIR) $(GIT_TAG) "$(BINARY_PLATFORMS)" $(ARTIFACTS_PATH) $(GIT_HASH)
 	@echo -e $(call TARGET_END_LOG)
+endif
 endif
 
 .PHONY: upload-artifacts
@@ -713,8 +740,13 @@ all-attributions-checksums:
 
 ifneq ($(IMAGE_NAMES),)
 .PHONY: local-images images
+ifneq ($(filter-out true,$(BUILD_ARTIFACTS)),)
+local-images: copy-artifacts
+images: copy-artifacts
+else
 local-images: clean-job-caches $(LOCAL_IMAGE_TARGETS)
 images: $(IMAGE_TARGETS)
+endif
 endif
 
 .PHONY: clean-job-caches
@@ -960,7 +992,11 @@ update-internal-build-files: setup-internal-build-files
 
 .PHONY: setup-internal-build-files
 setup-internal-build-files:
+ifneq ($(and $(filter-out true,$(BUILD_ARTIFACTS)),$(COPY_ARTIFACTS_SCRIPT)),)
+	@$(MAKE) copy-artifacts
+else
 	@echo "this project is not setup for internal builds"
+endif
 
 .PHONY: update-vendor-for-dep-patch
 update-vendor-for-dep-patch: # After bumping dep in go.mod file, uses generic vendor update script or one provided from upstream project

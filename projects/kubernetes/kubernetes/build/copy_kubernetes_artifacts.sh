@@ -16,6 +16,7 @@ set -eux
 
 source "${MAKE_ROOT}/build/lib/tarballs.sh"
 
+ROOT_DIR="$(git rev-parse --show-toplevel)"
 OUTPUT_DIR="_output/${RELEASE_BRANCH}"
 BIN_OUTPUT_DIR="${OUTPUT_DIR}/bin"
 IMAGE_OUTPUT_DIR="${OUTPUT_DIR}/images/bin"
@@ -32,7 +33,7 @@ retag_and_push_image() {
     local arch=$3
 
     if [[ "${source_image}" == *"kube-proxy"* ]]; then
-        "$(git rev-parse --show-toplevel)/build/lib/buildkit.sh" build \
+        "${ROOT_DIR}/build/lib/buildkit.sh" build \
             --frontend dockerfile.v0 \
             --opt build-arg:SOURCE_IMAGE="${source_image}-linux_${arch}" \
             --opt build-arg:GO_RUNNER_IMAGE="${GO_RUNNER_IMAGE}" \
@@ -41,11 +42,11 @@ retag_and_push_image() {
             --local context=. \
             --output type=image,name="${dest_image}-linux_${arch}",push="${PUSH_IMAGES}"
     else
-        "$(git rev-parse --show-toplevel)/build/lib/buildkit.sh" build \
+        "${ROOT_DIR}/build/lib/buildkit.sh" build \
             --frontend dockerfile.v0 \
             --opt build-arg:SOURCE_IMAGE="${source_image}-linux_${arch}" \
             --opt platform=linux/${arch} \
-            --local dockerfile=docker/retag \
+            --local dockerfile="${ROOT_DIR}/build/lib/docker/retag" \
             --local context=. \
             --output type=image,name="${dest_image}-linux_${arch}",push="${PUSH_IMAGES}"
     fi
@@ -59,7 +60,7 @@ export_image_tar() {
     local tags=$5
     
     if [[ "${image_name}" == *"kube-proxy"* ]]; then
-        "$(git rev-parse --show-toplevel)/build/lib/buildkit.sh" build \
+        "${ROOT_DIR}/build/lib/buildkit.sh" build \
             --frontend dockerfile.v0 \
             --opt build-arg:SOURCE_IMAGE="${dest_image}" \
             --opt build-arg:GO_RUNNER_IMAGE="${GO_RUNNER_IMAGE}" \
@@ -68,10 +69,10 @@ export_image_tar() {
             --opt platform=linux/${arch} \
             --output type="${output_type}",oci-mediatypes=true,\"name="${tags}"\",dest="${IMAGE_OUTPUT_DIR}/linux/${arch}/${image_name}.tar"
     else
-        "$(git rev-parse --show-toplevel)/build/lib/buildkit.sh" build \
+        "${ROOT_DIR}/build/lib/buildkit.sh" build \
             --frontend dockerfile.v0 \
             --opt build-arg:SOURCE_IMAGE="${dest_image}" \
-            --local dockerfile=docker/retag \
+            --local dockerfile="${ROOT_DIR}/build/lib/docker/retag" \
             --local context=. \
             --opt platform=linux/${arch} \
             --output type="${output_type}",oci-mediatypes=true,\"name="${tags}"\",dest="${IMAGE_OUTPUT_DIR}/linux/${arch}/${image_name}.tar"
@@ -98,11 +99,6 @@ aws s3 sync "${KUBERNETES_ARTIFACTS_SOURCE_S3_RELEASE_PATH}" "${OUTPUT_DIR}" \
   --exclude "*SHA*" \
   --quiet
 
-if [[ ! -f "${OUTPUT_DIR}/attribution/ATTRIBUTION.txt" ]]; then
-    PROJECT_ROOT=$(cat "${OUTPUT_DIR}/attribution/root-module.txt")
-    RELEASE_BRANCH_ROOT="$(git rev-parse --show-toplevel)/projects/kubernetes/kubernetes/${RELEASE_BRANCH}"
-    generate-attribution "${PROJECT_ROOT}" "${RELEASE_BRANCH_ROOT}" "go${GOLANG_VERSION}" "${OUTPUT_DIR}" "${GIT_TAG}" 2>&1
-fi
 echo "Copying attribution"
 cp "${OUTPUT_DIR}/attribution/ATTRIBUTION.txt" "${ARTIFACT_DIR}"
 cp "${OUTPUT_DIR}/attribution/ATTRIBUTION.txt" "${OUTPUT_DIR}"
