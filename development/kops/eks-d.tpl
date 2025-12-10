@@ -104,10 +104,14 @@ spec:
   kubeDNS:
     provider: CoreDNS
     coreDNSImage: {{ .coredns.repository }}:{{ .coredns.tag }}
+  {{- if .usePodInfraContainer }}
   masterKubelet:
     podInfraContainerImage: {{ .pause.repository }}:{{ .pause.tag }}
+  {{- end }}
   kubelet:
+    {{- if .usePodInfraContainer }}
     podInfraContainerImage: {{ .pause.repository }}:{{ .pause.tag }}
+    {{- end }}
     anonymousAuth: false
     # for 1.19 and above webhook auth is the default mode
     authorizationMode: Webhook
