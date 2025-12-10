@@ -141,7 +141,7 @@ function get_project_version(){
     else
         VERSION=$(cat ${BASEDIR}/../../projects/${REPOSITORY_NAME}/${RELEASE_BRANCH}/GIT_TAG)
     fi
-    
+
     echo $VERSION
 }
 
@@ -149,14 +149,6 @@ function get_project_version(){
 UBUNTU_AMI=$(aws ec2 describe-images --owners 099720109477 --filters "Name=name,Values=ubuntu/images/hvm-ssd/ubuntu-$UBUNTU_RELEASE-$NODE_ARCHITECTURE-server-*" --query 'sort_by(Images, &CreationDate)[-1].[Name]' --output text)
 
 echo "Creating ./${KOPS_CLUSTER_NAME}/values.yaml"
-
-# podInfraContainer should be used <= 1.34
-KUBERNETES_MINOR_VERSION=$(echo $KUBERNETES_VERSION | cut -d. -f2)
-if [ "$KUBERNETES_MINOR_VERSION" -le 34 ]; then
-    USE_POD_INFRA_CONTAINER="true"
-else
-    USE_POD_INFRA_CONTAINER="false"
-fi
 
 cat << EOF > ./${KOPS_CLUSTER_NAME}/values.yaml
 kubernetesVersion: ${ARTIFACT_URL}/kubernetes/${KUBERNETES_VERSION}
@@ -169,7 +161,6 @@ instanceType: $NODE_INSTANCE_TYPE
 architecture: $NODE_ARCHITECTURE
 ubuntuAmi: $UBUNTU_AMI
 ipv6: $IPV6
-usePodInfraContainer: $USE_POD_INFRA_CONTAINER
 pause:
 $(get_container_yaml kubernetes/pause $RELEASE)
 kube_apiserver:
