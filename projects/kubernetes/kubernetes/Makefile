@@ -45,7 +45,9 @@ LICENSE_PACKAGE_FILTER=./cmd/kubelet ./cmd/kube-proxy ./cmd/kubeadm ./cmd/kubect
 # Since we are overriding the building of binaries, just pick 1 of the binaries as the target
 # kubernetes outputs to linux/amd64 instead of linux-amd64, have to override binary_targets as well
 BINARY_TARGET_FILES=kubelet
+ifeq ($(BUILD_ARTIFACTS),true)
 BINARY_TARGETS=$(OUTPUT_BIN_DIR)/linux/amd64/kubelet
+endif
 
 SIMPLE_CREATE_BINARIES=false
 SIMPLE_CREATE_TARBALLS=false
@@ -59,8 +61,15 @@ KUBE_GIT_VERSION_FILE=$(RELEASE_BRANCH)/KUBE_GIT_VERSION_FILE
 # rebuilding from EKS-D repo source
 PUSH_IMAGES ?= true
 BUILD_ARTIFACTS ?= false
+COPY_ARTIFACTS_SCRIPT = RELEASE=$(RELEASE) \
+    IMAGE_REPO=$(IMAGE_REPO) \
+    SOURCE_ECR_REG=$(DEV_ECR_REG) \
+    GO_RUNNER_IMAGE=$(GO_RUNNER_IMAGE) \
+    MAKE_ROOT=$(MAKE_ROOT) \
+    PUSH_IMAGES=$(PUSH_IMAGES) \
+    ./build/copy_kubernetes_artifacts.sh && chmod +x _output/*
+
 ifeq ($(BUILD_ARTIFACTS),false)
-BINARY_TARGETS:=
 
 ifdef RELEASE_BRANCH
 export KUBERNETES_ARTIFACTS_SOURCE_S3_BUCKET:="eks-distro-dev-release-artifacts"
@@ -77,105 +86,7 @@ endif
 
 endif
 
-
 include $(BASE_DIRECTORY)/Common.mk
-
-##################################### START Image Copy Block #####################################
-# if we are not building artifacts, run the copy script instead to grab the latest source
-# we can deprecate the rest of the processing when all projects are moved to internal builds
-ifeq ($(BUILD_ARTIFACTS),false)
-# Override the main build targets to copy instead of build
-.PHONY: binaries
-binaries: copy-kubernetes-artifacts
-	@echo -e $(call TARGET_START_LOG)
-	@echo "Using copied binaries instead of building"
-	@echo -e $(call TARGET_END_LOG)
-
-.PHONY: images
-images: copy-kubernetes-artifacts
-	@echo -e $(call TARGET_START_LOG)
-	@echo "Using copied images instead of building images"
-	@echo -e $(call TARGET_END_LOG)
-
-# Override local-images to use copied images instead of building
-.PHONY: local-images
-local-images: copy-kubernetes-artifacts
-	@echo -e $(call TARGET_START_LOG)
-	@echo "Using copied images instead of building local images"
-	@echo -e $(call TARGET_END_LOG)
-
-# Override all individual image targets to do nothing when copying
-.PHONY: $(call IMAGE_TARGETS_FOR_NAME, pause)
-$(call IMAGE_TARGETS_FOR_NAME, pause):
-	@echo -e $(call TARGET_START_LOG)
-	@echo "Skipping build of pause - using copied artifacts"
-	@echo -e $(call TARGET_END_LOG)
-
-.PHONY: $(LOCAL_IMAGE_TARGETS)
-$(LOCAL_IMAGE_TARGETS):
-	@echo -e $(call TARGET_START_LOG)
-	@echo "Skipping build of $@ - using copied artifacts"
-	@echo -e $(call TARGET_END_LOG)
-
-.PHONY: $(IMAGE_TARGETS)
-$(IMAGE_TARGETS):
-	@echo -e $(call TARGET_START_LOG)
-	@echo "Skipping build of $@ - using copied artifacts"
-	@echo -e $(call TARGET_END_LOG)
-
-.PHONY: $(foreach image,$(DOCKER_TAR_IMAGE_NAMES),$(image)/images/arm64)
-$(foreach image,$(DOCKER_TAR_IMAGE_NAMES),$(image)/images/arm64):
-	@echo -e $(call TARGET_START_LOG)
-	@echo "Skipping build of $@ - using copied artifacts"
-	@echo -e $(call TARGET_END_LOG)
-
-.PHONY: $(foreach image,$(IMAGE_NAMES),$(image)/images/push)
-$(foreach image,$(IMAGE_NAMES),$(image)/images/push):
-	@echo -e $(call TARGET_START_LOG)
-	@echo "Skipping push of $@ - using copied artifacts"
-	@echo -e $(call TARGET_END_LOG)
-
-# Copy artifacts from source S3 to local _output structure
-# this includes tarballs, kube binaries, and image tars
-.PHONY: copy-kubernetes-artifacts
-copy-kubernetes-artifacts:
-	@echo -e $(call TARGET_START_LOG)
-	@echo "Copying Kubernetes binaries from S3..."
-	@mkdir -p _output/
-	RELEASE=$(RELEASE) \
-    IMAGE_REPO=$(IMAGE_REPO) \
-    SOURCE_ECR_REG=$(DEV_ECR_REG) \
-    GO_RUNNER_IMAGE=$(GO_RUNNER_IMAGE) \
-    MAKE_ROOT=$(MAKE_ROOT) \
-    PUSH_IMAGES=$(PUSH_IMAGES) \
-    ./build/copy_kubernetes_artifacts.sh
-	@chmod +x _output/*
-	@echo -e $(call TARGET_END_LOG)
-
-# Override attribution-related targets
-.PHONY: $(GATHER_LICENSES_TARGETS)
-$(GATHER_LICENSES_TARGETS):
-	@echo -e $(call TARGET_START_LOG)
-	@echo "Skipping license gathering - using copied artifacts"
-	@echo -e $(call TARGET_END_LOG)
-
-.PHONY: gather-licenses
-gather-licenses:
-	@echo -e $(call TARGET_START_LOG)
-	@echo "Skipping license gathering - using copied artifacts"
-	@echo -e $(call TARGET_END_LOG)
-
-# Override the go-license.csv pattern target
-$(OUTPUT_DIR)/%ttribution/go-license.csv:
-	@echo -e $(call TARGET_START_LOG)
-	@echo "Skipping go-license.csv generation - using copied artifacts"
-	@echo -e $(call TARGET_END_LOG)
-
-.PHONY: setup-internal-build-files
-setup-internal-build-files: copy-kubernetes-artifacts
-
-endif
-##################################### END Image Copy Block #####################################
 
 # Validate version file before uploading artifacts since that runs in both build and release
 s3-artifacts: cleanup-artifacts
