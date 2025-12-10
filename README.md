@@ -3,7 +3,6 @@
 
 | Release | Development Build Status                                                                                                                  |
 |---------|-------------------------------------------------------------------------------------------------------------------------------------------|
-| 1-28    | [![1-28](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-28-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-28-postsubmit) |
 | 1-29    | [![1-29](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-29-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-29-postsubmit) |
 | 1-30    | [![1-30](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-30-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-30-postsubmit) |
 | 1-31    | [![1-31](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-31-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-31-postsubmit) |
@@ -51,7 +50,6 @@ Full documentation for releases can be found on [https://distro.eks.amazonaws.co
 To receive notifications about new EKS-D releases, subscribe to the EKS-D updates SNS topic:
 `arn:aws:sns:us-east-1:379412251201:eks-distro-updates`
 
-[<img src="docs/contents/certified-kubernetes-1.28-color.svg" height=150>](https://github.com/cncf/k8s-conformance/pull/2847)
 [<img src="docs/contents/certified-kubernetes-1.32-color.svg" height=150>](https://github.com/cncf/k8s-conformance/pull/3598)
 [<img src="docs/contents/certified-kubernetes-1.33-color.svg" height=150>](https://github.com/cncf/k8s-conformance/pull/3774)
 <!--
@@ -92,21 +90,15 @@ Source: https://github.com/cncf/artwork/tree/master/projects/kubernetes/certifie
 | -- | --- | --- |
 | 55 | [v1-29-eks-55](https://distro.eks.amazonaws.com/kubernetes-1-29/kubernetes-1-29-eks-55.yaml) | [v1.29.15](https://github.com/kubernetes/kubernetes/release/tag/v1.29.15) |
 
-### Kubernetes 1-28
-
-| Release | Manifest | Kubernetes Version |
-| -- | --- | --- |
-| 66 | [v1-28-eks-66](https://distro.eks.amazonaws.com/kubernetes-1-28/kubernetes-1-28-eks-66.yaml) | [v1.28.15](https://github.com/kubernetes/kubernetes/release/tag/v1.28.15) |
-
-### Kubernetes 1.18 - 1.27: DEPRECATED
+### Kubernetes 1.18 - 1.28: DEPRECATED
 
 In alignment with the [Amazon EKS release calendar](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html#kubernetes-release-calendar),
-EKS Distro has discontinued support of Kubernetes v1.18 - v1.27. While there are
+EKS Distro has discontinued support of Kubernetes v1.18 - v1.28. While there are
 no plans to remove these versions' images from EKS Distro ECR, there will be no
 more updates, including security fixes, for them.
 
 **Due to the increased security risk this poses, it is HIGHLY recommended that
-users of v1.18 - v1.27 update to a supported version (v1.28+) as soon as
+users of v1.18 - v1.28 update to a supported version (v1.29+) as soon as
 possible.**
 
 ## Development
