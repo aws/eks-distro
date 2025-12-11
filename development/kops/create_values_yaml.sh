@@ -39,8 +39,8 @@ function get_container_yaml() {
 
     if  [[ $REPOSITORY_NAME == "kubernetes-sigs/metrics-server" ]]; then
        
-        if [[ $RELEASE_BRANCH == "1-33" ]] || [[ $RELEASE_BRANCH == "1-34" ]]; then
-            # For releases 1-33 and 1-34, force metrics-server to use the 1-32 image
+        if [[ "${RELEASE_BRANCH#1-}" -gt 32 ]]; then
+            # For releases above 1-32, force metrics-server to use the 1-32 image
             echo "    repository: ${IMAGE_REPO}/${REPOSITORY_NAME}
     tag: ${VERSION}-eks-1-32-latest"
         else
