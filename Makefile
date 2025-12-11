@@ -73,7 +73,7 @@ postsubmit-build: setup
 		--rebuild-all=${REBUILD_ALL}
 
 .PHONY: kops
-kops: export UBUNTU_RELEASE=focal-20.04
+kops: export UBUNTU_RELEASE=jammy-22.04
 kops: $(if $(CODEBUILD_BUILD_ID),kops-codebuild,kops-prow)
 
 .PHONY: kops-codebuild
