@@ -22,7 +22,7 @@ export RELEASE=${RELEASE:-${DEFAULT_RELEASE}}
 export ARTIFACT_BASE_URL="https://distro.eks.amazonaws.com"
 export NODE_INSTANCE_TYPE=${NODE_INSTANCE_TYPE:-t3.medium}
 export NODE_ARCHITECTURE=${NODE_ARCHITECTURE:-amd64}
-export UBUNTU_RELEASE=${UBUNTU_RELEASE:-focal-20.04}
+export UBUNTU_RELEASE=${UBUNTU_RELEASE:-jammy-22.04}
 export IPV6=${IPV6:-false}
 
 KUBERNETES_VERSION=$(cat ../../projects/kubernetes/kubernetes/${RELEASE_BRANCH}/GIT_TAG)
