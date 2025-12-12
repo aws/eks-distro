@@ -10,25 +10,6 @@
 clone-repo:  ## Clone upstream `kubernetes`
 checkout-repo: ## Checkout upstream tag based on value in GIT_TAG file
 
-##@ Image Targets
-local-images: ## Builds `pause/images/amd64 kube-proxy/images/amd64 kube-apiserver/images/amd64 kube-controller-manager/images/amd64 kube-scheduler/images/amd64` as oci tars for presumbit validation
-images: ## Pushes `pause/images/push pause/images/amd64 pause/images/arm64 kube-proxy/images/push kube-proxy/images/amd64 kube-proxy/images/arm64 kube-apiserver/images/push kube-apiserver/images/amd64 kube-apiserver/images/arm64 kube-controller-manager/images/push kube-controller-manager/images/amd64 kube-controller-manager/images/arm64 kube-scheduler/images/push kube-scheduler/images/amd64 kube-scheduler/images/arm64` to IMAGE_REPO
-pause/images/amd64: ## Builds/pushes `pause/images/amd64`
-kube-proxy/images/amd64: ## Builds/pushes `kube-proxy/images/amd64`
-kube-apiserver/images/amd64: ## Builds/pushes `kube-apiserver/images/amd64`
-kube-controller-manager/images/amd64: ## Builds/pushes `kube-controller-manager/images/amd64`
-kube-scheduler/images/amd64: ## Builds/pushes `kube-scheduler/images/amd64`
-pause/images/push: ## Builds/pushes `pause/images/push`
-pause/images/arm64: ## Builds/pushes `pause/images/arm64`
-kube-proxy/images/push: ## Builds/pushes `kube-proxy/images/push`
-kube-proxy/images/arm64: ## Builds/pushes `kube-proxy/images/arm64`
-kube-apiserver/images/push: ## Builds/pushes `kube-apiserver/images/push`
-kube-apiserver/images/arm64: ## Builds/pushes `kube-apiserver/images/arm64`
-kube-controller-manager/images/push: ## Builds/pushes `kube-controller-manager/images/push`
-kube-controller-manager/images/arm64: ## Builds/pushes `kube-controller-manager/images/arm64`
-kube-scheduler/images/push: ## Builds/pushes `kube-scheduler/images/push`
-kube-scheduler/images/arm64: ## Builds/pushes `kube-scheduler/images/arm64`
-
 ##@ Run in Docker Targets
 run-all-attributions-in-docker: ## Run `all-attributions` in docker builder container
 run-all-attributions-checksums-in-docker: ## Run `all-attributions-checksums` in docker builder container
