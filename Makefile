@@ -21,7 +21,8 @@ REBUILD_ALL?=false
 ALL_PROJECTS=kubernetes_release kubernetes_kubernetes containernetworking_plugins coredns_coredns etcd-io_etcd \
 	kubernetes_cloud-provider-aws kubernetes-sigs_aws-iam-authenticator
 
-INTERNALLY_BUILT_PROJECTS=kubernetes_kubernetes kubernetes-sigs_aws-iam-authenticator
+# CNI is technically not an internal build, but for the purposes of updating metadata files like GIT_TAG and GOLANG_VERSION it is
+INTERNALLY_BUILT_PROJECTS=kubernetes_kubernetes kubernetes-sigs_aws-iam-authenticator containernetworking_plugins
 
 
 ifdef MAKECMDGOALS

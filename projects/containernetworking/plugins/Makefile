@@ -1,6 +1,10 @@
 BASE_DIRECTORY:=$(shell git rev-parse --show-toplevel)
-GIT_TAG?=$(shell cat $(RELEASE_BRANCH)/GIT_TAG)
-GOLANG_VERSION?=$(shell cat $(RELEASE_BRANCH)/GOLANG_VERSION)
+
+_bootstrap:=$(shell ./build/bootstrap_build_variables.sh)
+export GIT_TAG:=$(shell cat .git_tag)
+export GOLANG_VERSION:=$(shell cat .go-version)
+$(if $(GIT_TAG),$(shell rm -f .git_tag),$(error GIT_TAG is empty, .git_tag might be missing))
+$(if $(GOLANG_VERSION),$(shell rm -f .go-version),$(error GOLANG_VERSION is empty, .go-version might be missing))
 
 REPO=plugins
 REPO_OWNER=containernetworking
