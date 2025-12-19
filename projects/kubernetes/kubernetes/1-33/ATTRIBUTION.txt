@@ -209,67 +209,67 @@ https://github.com/grpc/grpc-go
 ** gopkg.in/go-jose/go-jose.v2; version v2.6.3 --
 https://gopkg.in/go-jose/go-jose.v2
 
-** k8s.io/api; version v1.33.5 --
+** k8s.io/api; version v1.33.7 --
 https://github.com/kubernetes/api
 
-** k8s.io/apiextensions-apiserver/pkg; version v1.33.5 --
+** k8s.io/apiextensions-apiserver/pkg; version v1.33.7 --
 https://github.com/kubernetes/apiextensions-apiserver
 
-** k8s.io/apimachinery/pkg; version v1.33.5 --
+** k8s.io/apimachinery/pkg; version v1.33.7 --
 https://github.com/kubernetes/apimachinery
 
-** k8s.io/apiserver; version v1.33.5 --
+** k8s.io/apiserver; version v1.33.7 --
 https://github.com/kubernetes/apiserver
 
-** k8s.io/cli-runtime/pkg; version v1.33.5 --
+** k8s.io/cli-runtime/pkg; version v1.33.7 --
 https://github.com/kubernetes/cli-runtime
 
-** k8s.io/client-go; version v1.33.5 --
+** k8s.io/client-go; version v1.33.7 --
 https://github.com/kubernetes/client-go
 
-** k8s.io/cloud-provider; version v1.33.5 --
+** k8s.io/cloud-provider; version v1.33.7 --
 https://github.com/kubernetes/cloud-provider
 
-** k8s.io/cluster-bootstrap; version v1.33.5 --
+** k8s.io/cluster-bootstrap; version v1.33.7 --
 https://github.com/kubernetes/cluster-bootstrap
 
-** k8s.io/component-base; version v1.33.5 --
+** k8s.io/component-base; version v1.33.7 --
 https://github.com/kubernetes/component-base
 
-** k8s.io/component-helpers; version v1.33.5 --
+** k8s.io/component-helpers; version v1.33.7 --
 https://github.com/kubernetes/component-helpers
 
-** k8s.io/controller-manager; version v1.33.5 --
+** k8s.io/controller-manager; version v1.33.7 --
 https://github.com/kubernetes/controller-manager
 
-** k8s.io/cri-api/pkg; version v1.33.5 --
+** k8s.io/cri-api/pkg; version v1.33.7 --
 https://github.com/kubernetes/cri-api
 
-** k8s.io/cri-client/pkg; version v1.33.5 --
+** k8s.io/cri-client/pkg; version v1.33.7 --
 https://github.com/kubernetes/cri-client
 
-** k8s.io/csi-translation-lib; version v1.33.5 --
+** k8s.io/csi-translation-lib; version v1.33.7 --
 https://github.com/kubernetes/csi-translation-lib
 
-** k8s.io/dynamic-resource-allocation; version v1.33.5 --
+** k8s.io/dynamic-resource-allocation; version v1.33.7 --
 https://github.com/kubernetes/dynamic-resource-allocation
 
-** k8s.io/endpointslice; version v1.33.5 --
+** k8s.io/endpointslice; version v1.33.7 --
 https://github.com/kubernetes/endpointslice
 
-** k8s.io/externaljwt/apis/v1alpha1; version v1.33.5 --
+** k8s.io/externaljwt/apis/v1alpha1; version v1.33.7 --
 https://github.com/kubernetes/externaljwt
 
 ** k8s.io/klog/v2; version v2.130.1 --
 https://github.com/kubernetes/klog
 
-** k8s.io/kms; version v1.33.5 --
+** k8s.io/kms; version v1.33.7 --
 https://github.com/kubernetes/kms
 
-** k8s.io/kube-aggregator/pkg; version v1.33.5 --
+** k8s.io/kube-aggregator/pkg; version v1.33.7 --
 https://github.com/kubernetes/kube-aggregator
 
-** k8s.io/kube-controller-manager/config/v1alpha1; version v1.33.5 --
+** k8s.io/kube-controller-manager/config/v1alpha1; version v1.33.7 --
 https://github.com/kubernetes/kube-controller-manager
 
 ** k8s.io/kube-openapi/pkg; version v0.0.0-20250318190949-c8a335a9a2ff --
@@ -287,34 +287,34 @@ https://github.com/kubernetes/kube-openapi
 ** k8s.io/kube-openapi/pkg/validation/validate; version v0.0.0-20250318190949-c8a335a9a2ff --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kube-proxy/config/v1alpha1; version v1.33.5 --
+** k8s.io/kube-proxy/config/v1alpha1; version v1.33.7 --
 https://github.com/kubernetes/kube-proxy
 
-** k8s.io/kube-scheduler; version v1.33.5 --
+** k8s.io/kube-scheduler; version v1.33.7 --
 https://github.com/kubernetes/kube-scheduler
 
-** k8s.io/kubectl/pkg; version v1.33.5 --
+** k8s.io/kubectl/pkg; version v1.33.7 --
 https://github.com/kubernetes/kubectl
 
-** k8s.io/kubelet; version v1.33.5 --
+** k8s.io/kubelet; version v1.33.7 --
 https://github.com/kubernetes/kubelet
 
-** k8s.io/kubernetes; version v1.33.5 --
+** k8s.io/kubernetes; version v1.33.7 --
 https://github.com/kubernetes/kubernetes
 
-** k8s.io/kubernetes/third_party/forked/libcontainer; version v1.33.5 --
+** k8s.io/kubernetes/third_party/forked/libcontainer; version v1.33.7 --
 https://github.com/kubernetes/kubernetes
 
-** k8s.io/metrics/pkg; version v1.33.5 --
+** k8s.io/metrics/pkg; version v1.33.7 --
 https://github.com/kubernetes/metrics
 
-** k8s.io/mount-utils; version v1.33.5 --
+** k8s.io/mount-utils; version v1.33.7 --
 https://github.com/kubernetes/mount-utils
 
-** k8s.io/pod-security-admission; version v1.33.5 --
+** k8s.io/pod-security-admission; version v1.33.7 --
 https://github.com/kubernetes/pod-security-admission
 
-** k8s.io/system-validators/validators; version v1.9.1 --
+** k8s.io/system-validators/validators; version v1.9.2 --
 https://github.com/kubernetes/system-validators
 
 ** k8s.io/utils; version v0.0.0-20241104100929-3ea5e8cea738 --
@@ -1175,13 +1175,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ** github.com/liggitt/tabwriter; version v0.0.0-20181228230101-89fcab3d43de --
 https://github.com/liggitt/tabwriter
 
-** k8s.io/apimachinery/third_party/forked/golang; version v1.33.5 --
+** k8s.io/apimachinery/third_party/forked/golang; version v1.33.7 --
 https://github.com/kubernetes/apimachinery
 
-** k8s.io/client-go/third_party/forked/golang/template; version v1.33.5 --
+** k8s.io/client-go/third_party/forked/golang/template; version v1.33.7 --
 https://github.com/kubernetes/client-go
 
-** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.33.5 --
+** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.33.7 --
 https://github.com/kubernetes/kubernetes
 
 ** k8s.io/utils/inotify; version v0.0.0-20241104100929-3ea5e8cea738 --
@@ -1395,7 +1395,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/go; version go1.24.6 --
+** golang.org/go; version go1.24.11 --
 https://github.com/golang/go
 
 ** golang.org/x/crypto; version v0.36.0 --
@@ -1631,7 +1631,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.33.5 --
+** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.33.7 --
 https://github.com/kubernetes/kubernetes
 
 Copyright ©2013 The gonum Authors. All rights reserved.
