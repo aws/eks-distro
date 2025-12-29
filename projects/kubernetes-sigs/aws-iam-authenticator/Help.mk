@@ -10,24 +10,6 @@
 clone-repo:  ## Clone upstream `aws-iam-authenticator`
 checkout-repo: ## Checkout upstream tag based on value in GIT_TAG file
 
-##@ Binary Targets
-binaries: ## Build all binaries: `aws-iam-authenticator` for `linux/amd64 linux/arm64 darwin/amd64 windows/amd64`
-_output/1-34/bin/aws-iam-authenticator/linux-amd64/aws-iam-authenticator: ## Build `_output/1-34/bin/aws-iam-authenticator/linux-amd64/aws-iam-authenticator`
-_output/1-34/bin/aws-iam-authenticator/linux-arm64/aws-iam-authenticator: ## Build `_output/1-34/bin/aws-iam-authenticator/linux-arm64/aws-iam-authenticator`
-_output/1-34/bin/aws-iam-authenticator/darwin-amd64/aws-iam-authenticator: ## Build `_output/1-34/bin/aws-iam-authenticator/darwin-amd64/aws-iam-authenticator`
-_output/1-34/bin/aws-iam-authenticator/windows-amd64/aws-iam-authenticator.exe: ## Build `_output/1-34/bin/aws-iam-authenticator/windows-amd64/aws-iam-authenticator.exe`
-
-##@ Image Targets
-local-images: ## Builds `aws-iam-authenticator/images/amd64` as oci tars for presumbit validation
-images: ## Pushes `aws-iam-authenticator/images/push` to IMAGE_REPO
-aws-iam-authenticator/images/amd64: ## Builds/pushes `aws-iam-authenticator/images/amd64`
-aws-iam-authenticator/images/push: ## Builds/pushes `aws-iam-authenticator/images/push`
-
-##@ Checksum Targets
-checksums: ## Update checksums file based on currently built binaries.
-validate-checksums: # Validate checksums of currently built binaries against checksums file.
-all-checksums: ## Update checksums files for all RELEASE_BRANCHes.
-
 ##@ Run in Docker Targets
 run-all-attributions-in-docker: ## Run `all-attributions` in docker builder container
 run-all-attributions-checksums-in-docker: ## Run `all-attributions-checksums` in docker builder container
