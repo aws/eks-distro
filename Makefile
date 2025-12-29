@@ -201,7 +201,7 @@ go-mod-files-project-%:
 	$(MAKE) -C $(PROJECT_PATH) all-update-go-mods
 
 .PHONY: go-mod-files
-go-mod-files: $(addprefix go-mod-files-project-, $(ALL_PROJECTS))
+go-mod-files: $(addprefix go-mod-files-project-, $(filter-out $(INTERNALLY_BUILT_PROJECTS),$(ALL_PROJECTS)))
 	build/update-attribution-files/create_pr.sh go-mod
 
 .PHONY: internal-build-files-project-%
@@ -219,7 +219,7 @@ add-generated-help-block-project-%:
 	$(MAKE) add-generated-help-block -C $(PROJECT_PATH)
 
 .PHONY: add-generated-help-block
-add-generated-help-block: $(addprefix add-generated-help-block-project-, $(ALL_PROJECTS))
+add-generated-help-block: $(addprefix add-generated-help-block-project-, $(filter-out $(INTERNALLY_BUILT_PROJECTS),$(ALL_PROJECTS)))
 	build/update-attribution-files/create_pr.sh help
 
 .PHONY: update-release-number
