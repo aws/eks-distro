@@ -38,8 +38,8 @@ retag_and_push_image() {
 aws s3 sync "${ARTIFACTS_SOURCE_S3_PATH}" "${OUTPUT_DIR}" --quiet
 
 echo "Reorganizing binaries to expected structure"
-# S3 structure: bin/linux/amd64/aws-iam-authenticator
-# Expected: bin/aws-iam-authenticator/linux-amd64/aws-iam-authenticator
+# S3 structure: bin/linux/amd64/binary-name
+# Expected: bin/repo-name/linux-amd64/binary-name
 if [ -d "${OUTPUT_DIR}/bin" ]; then
     TEMP_BIN_DIR="${OUTPUT_DIR}/bin_temp"
     mkdir -p "${TEMP_BIN_DIR}"
@@ -52,10 +52,8 @@ if [ -d "${OUTPUT_DIR}/bin" ]; then
             for binary in "${platform_dir}"/*; do
                 if [ -f "${binary}" ]; then
                     binary_name=$(basename "${binary}")
-                    # Remove .exe extension for directory name
-                    binary_base="${binary_name%.exe}"
-                    mkdir -p "${TEMP_BIN_DIR}/${binary_base}/${os}-${arch}"
-                    cp -p "${binary}" "${TEMP_BIN_DIR}/${binary_base}/${os}-${arch}/${binary_name}"
+                    mkdir -p "${TEMP_BIN_DIR}/${REPO}/${os}-${arch}"
+                    cp -p "${binary}" "${TEMP_BIN_DIR}/${REPO}/${os}-${arch}/${binary_name}"
                 fi
             done
         fi
@@ -70,8 +68,9 @@ echo "Copying attribution"
 cp "${OUTPUT_DIR}/attribution/ATTRIBUTION.txt" "${OUTPUT_DIR}"
 
 echo "Retagging images"
+SOURCE_IMAGE_TAG="${SOURCE_IMAGE_TAG:-${GIT_TAG}}"
 for IMAGE_NAME in "${IMAGE_NAMES[@]}"; do
-    SOURCE_IMAGE="${SOURCE_ECR_REG}/${IMAGE_NAME}:${GIT_TAG}"
+    SOURCE_IMAGE="${SOURCE_ECR_REG}/${IMAGE_NAME}:${SOURCE_IMAGE_TAG}"
     IMAGE_TAG="${GIT_TAG}-eks-${RELEASE_BRANCH}-${RELEASE}"
     DEST_IMAGE="${IMAGE_REPO}/${IMAGE_NAME}:${IMAGE_TAG}"
 

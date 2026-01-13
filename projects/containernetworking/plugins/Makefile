@@ -19,6 +19,7 @@ EXTRA_GO_LDFLAGS=-X github.com/containernetworking/plugins/pkg/utils/buildversio
 HAS_RELEASE_BRANCHES=true
 HAS_S3_ARTIFACTS=true
 IMAGE_NAMES=
+SKIP_CHECKSUM_VALIDATION=true
 
 # Generating the source patterns requires checking out the repo
 # delay this as much as possible by skipping when running docker targets
