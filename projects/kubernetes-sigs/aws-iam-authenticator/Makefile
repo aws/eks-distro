@@ -40,6 +40,7 @@ COPY_ARTIFACTS_SCRIPT = RELEASE=$(RELEASE) \
 	GO_RUNNER_IMAGE=$(GO_RUNNER_IMAGE) \
 	MAKE_ROOT=$(MAKE_ROOT) \
 	PUSH_IMAGES=$(PUSH_IMAGES) \
+	REPO=$(REPO) \
 	$(BASE_DIRECTORY)/build/lib/copy_internal_build_artifacts.sh && chmod +x _output/*
 
 
