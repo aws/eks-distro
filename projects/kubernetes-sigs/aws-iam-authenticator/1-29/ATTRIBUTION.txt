@@ -1,38 +1,41 @@
 
-** github.com/aws/aws-sdk-go-v2/config; version v1.31.17 --
+** github.com/aws/aws-sdk-go-v2/config; version v1.32.1 --
 https://github.com/aws/aws-sdk-go-v2/config
 
-** github.com/aws/aws-sdk-go-v2/credentials; version v1.18.21 --
+** github.com/aws/aws-sdk-go-v2/credentials; version v1.19.1 --
 https://github.com/aws/aws-sdk-go-v2/credentials
 
-** github.com/aws/aws-sdk-go-v2/feature/ec2/imds; version v1.18.13 --
+** github.com/aws/aws-sdk-go-v2/feature/ec2/imds; version v1.18.14 --
 https://github.com/aws/aws-sdk-go-v2/feature/ec2/imds
 
-** github.com/aws/aws-sdk-go-v2/internal/configsources; version v1.4.13 --
+** github.com/aws/aws-sdk-go-v2/internal/configsources; version v1.4.14 --
 https://github.com/aws/aws-sdk-go-v2/internal/configsources
 
-** github.com/aws/aws-sdk-go-v2/internal/endpoints/v2; version v2.7.13 --
+** github.com/aws/aws-sdk-go-v2/internal/endpoints/v2; version v2.7.14 --
 https://github.com/aws/aws-sdk-go-v2/internal/endpoints/v2
 
 ** github.com/aws/aws-sdk-go-v2/internal/ini; version v1.8.4 --
 https://github.com/aws/aws-sdk-go-v2/internal/ini
 
-** github.com/aws/aws-sdk-go-v2/service/ec2; version v1.264.0 --
+** github.com/aws/aws-sdk-go-v2/service/ec2; version v1.274.0 --
 https://github.com/aws/aws-sdk-go-v2/service/ec2
 
 ** github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding; version v1.13.3 --
 https://github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding
 
-** github.com/aws/aws-sdk-go-v2/service/internal/presigned-url; version v1.13.13 --
+** github.com/aws/aws-sdk-go-v2/service/internal/presigned-url; version v1.13.14 --
 https://github.com/aws/aws-sdk-go-v2/service/internal/presigned-url
 
-** github.com/aws/aws-sdk-go-v2/service/sso; version v1.30.1 --
+** github.com/aws/aws-sdk-go-v2/service/signin; version v1.0.1 --
+https://github.com/aws/aws-sdk-go-v2/service/signin
+
+** github.com/aws/aws-sdk-go-v2/service/sso; version v1.30.4 --
 https://github.com/aws/aws-sdk-go-v2/service/sso
 
-** github.com/aws/aws-sdk-go-v2/service/ssooidc; version v1.35.5 --
+** github.com/aws/aws-sdk-go-v2/service/ssooidc; version v1.35.9 --
 https://github.com/aws/aws-sdk-go-v2/service/ssooidc
 
-** github.com/aws/aws-sdk-go-v2/service/sts; version v1.39.1 --
+** github.com/aws/aws-sdk-go-v2/service/sts; version v1.41.1 --
 https://github.com/aws/aws-sdk-go-v2/service/sts
 
 ** github.com/aws/smithy-go; version v1.23.2 --
@@ -41,49 +44,49 @@ https://github.com/aws/smithy-go
 ** github.com/go-logr/logr; version v1.4.3 --
 https://github.com/go-logr/logr
 
-** github.com/go-openapi/jsonpointer; version v0.22.1 --
+** github.com/go-openapi/jsonpointer; version v0.22.3 --
 https://github.com/go-openapi/jsonpointer
 
-** github.com/go-openapi/jsonreference; version v0.21.2 --
+** github.com/go-openapi/jsonreference; version v0.21.3 --
 https://github.com/go-openapi/jsonreference
 
-** github.com/go-openapi/swag; version v0.25.1 --
+** github.com/go-openapi/swag; version v0.25.4 --
 https://github.com/go-openapi/swag
 
-** github.com/go-openapi/swag/cmdutils; version v0.25.1 --
+** github.com/go-openapi/swag/cmdutils; version v0.25.4 --
 https://github.com/go-openapi/swag/cmdutils
 
-** github.com/go-openapi/swag/conv; version v0.25.1 --
+** github.com/go-openapi/swag/conv; version v0.25.4 --
 https://github.com/go-openapi/swag/conv
 
-** github.com/go-openapi/swag/fileutils; version v0.25.1 --
+** github.com/go-openapi/swag/fileutils; version v0.25.4 --
 https://github.com/go-openapi/swag/fileutils
 
-** github.com/go-openapi/swag/jsonname; version v0.25.1 --
+** github.com/go-openapi/swag/jsonname; version v0.25.4 --
 https://github.com/go-openapi/swag/jsonname
 
-** github.com/go-openapi/swag/jsonutils; version v0.25.1 --
+** github.com/go-openapi/swag/jsonutils; version v0.25.4 --
 https://github.com/go-openapi/swag/jsonutils
 
-** github.com/go-openapi/swag/loading; version v0.25.1 --
+** github.com/go-openapi/swag/loading; version v0.25.4 --
 https://github.com/go-openapi/swag/loading
 
-** github.com/go-openapi/swag/mangling; version v0.25.1 --
+** github.com/go-openapi/swag/mangling; version v0.25.4 --
 https://github.com/go-openapi/swag/mangling
 
-** github.com/go-openapi/swag/netutils; version v0.25.1 --
+** github.com/go-openapi/swag/netutils; version v0.25.4 --
 https://github.com/go-openapi/swag/netutils
 
-** github.com/go-openapi/swag/stringutils; version v0.25.1 --
+** github.com/go-openapi/swag/stringutils; version v0.25.4 --
 https://github.com/go-openapi/swag/stringutils
 
-** github.com/go-openapi/swag/typeutils; version v0.25.1 --
+** github.com/go-openapi/swag/typeutils; version v0.25.4 --
 https://github.com/go-openapi/swag/typeutils
 
-** github.com/go-openapi/swag/yamlutils; version v0.25.1 --
+** github.com/go-openapi/swag/yamlutils; version v0.25.4 --
 https://github.com/go-openapi/swag/yamlutils
 
-** github.com/google/gnostic-models; version v0.7.0 --
+** github.com/google/gnostic-models; version v0.7.1 --
 https://github.com/google/gnostic-models
 
 ** github.com/modern-go/concurrent; version v0.0.0-20180306012644-bacd9c7ef1dd --
@@ -98,7 +101,7 @@ https://github.com/prometheus/client_golang
 ** github.com/prometheus/client_model/go; version v0.6.2 --
 https://github.com/prometheus/client_model
 
-** github.com/prometheus/common; version v0.67.2 --
+** github.com/prometheus/common; version v0.67.4 --
 https://github.com/prometheus/common
 
 ** github.com/prometheus/procfs; version v0.19.2 --
@@ -122,37 +125,37 @@ https://github.com/yaml/go-yaml
 ** gopkg.in/yaml.v2; version v2.4.0 --
 https://gopkg.in/yaml.v2
 
-** k8s.io/api; version v0.34.1 --
+** k8s.io/api; version v0.35.0 --
 https://github.com/kubernetes/api
 
-** k8s.io/apimachinery/pkg; version v0.34.1 --
+** k8s.io/apimachinery/pkg; version v0.35.0 --
 https://github.com/kubernetes/apimachinery
 
-** k8s.io/client-go; version v0.34.1 --
+** k8s.io/client-go; version v0.35.0 --
 https://github.com/kubernetes/client-go
 
-** k8s.io/component-base; version v0.34.1 --
+** k8s.io/component-base; version v0.35.0 --
 https://github.com/kubernetes/component-base
 
 ** k8s.io/klog/v2; version v2.130.1 --
 https://github.com/kubernetes/klog
 
-** k8s.io/kube-openapi/pkg; version v0.0.0-20250710124328-f3f2b991d03b --
+** k8s.io/kube-openapi/pkg; version v0.0.0-20250910181357-589584f1c912 --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kube-openapi/pkg/validation/spec; version v0.0.0-20250710124328-f3f2b991d03b --
+** k8s.io/kube-openapi/pkg/validation/spec; version v0.0.0-20250910181357-589584f1c912 --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/sample-controller/pkg/signals; version v0.34.1 --
+** k8s.io/sample-controller/pkg/signals; version v0.35.0 --
 https://github.com/kubernetes/sample-controller
 
-** k8s.io/utils; version v0.0.0-20250604170112-4c0f3b243397 --
+** k8s.io/utils; version v0.0.0-20251002143259-bc988d571ff4 --
 https://github.com/kubernetes/utils
 
-** sigs.k8s.io/aws-iam-authenticator; version v0.7.9 --
+** sigs.k8s.io/aws-iam-authenticator; version v0.7.10 --
 https://github.com/kubernetes-sigs/aws-iam-authenticator
 
-** sigs.k8s.io/json; version v0.0.0-20241014173422-cfa47c3a1cc8 --
+** sigs.k8s.io/json; version v0.0.0-20250730193827-2d320260d730 --
 https://github.com/kubernetes-sigs/json
 
 ** sigs.k8s.io/randfill; version v1.0.0 --
@@ -372,6 +375,87 @@ https://github.com/kubernetes-sigs/yaml
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
 
+* For github.com/go-openapi/jsonpointer see also this required NOTICE:
+Copyright 2015-2025 go-swagger maintainers
+
+// SPDX-FileCopyrightText: Copyright 2015-2025 go-swagger maintainers
+// SPDX-License-Identifier: Apache-2.0
+
+This software library, github.com/go-openapi/jsonpointer, includes software developed
+by the go-swagger and go-openapi maintainers ("go-swagger maintainers").
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this software except in compliance with the License.
+
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0.
+
+This software is copied from, derived from, and inspired by other original software products.
+It ships with copies of other software which license terms are recalled below.
+
+The original software was authored on 25-02-2013 by sigu-399 (https://github.com/sigu-399, sigu.399@gmail.com).
+
+github.com/sigh-399/jsonpointer
+===========================
+
+// SPDX-FileCopyrightText: Copyright 2013 sigu-399 ( https://github.com/sigu-399 )
+// SPDX-License-Identifier: Apache-2.0
+
+Copyright 2013 sigu-399 ( https://github.com/sigu-399 )
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+
+* For github.com/go-openapi/jsonreference see also this required NOTICE:
+Copyright 2015-2025 go-swagger maintainers
+
+// SPDX-FileCopyrightText: Copyright 2015-2025 go-swagger maintainers
+// SPDX-License-Identifier: Apache-2.0
+
+This software library, github.com/go-openapi/jsonpointer, includes software developed
+by the go-swagger and go-openapi maintainers ("go-swagger maintainers").
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this software except in compliance with the License.
+You may obtain a copy of the License at
+
+This software is copied from, derived from, and inspired by other original software products.
+It ships with copies of other software which license terms are recalled below.
+
+The original sofware was authored on 25-02-2013 by sigu-399 (https://github.com/sigu-399, sigu.399@gmail.com).
+
+github.com/sigh-399/jsonpointer
+===========================
+
+// SPDX-FileCopyrightText: Copyright 2013 sigu-399 ( https://github.com/sigu-399 )
+// SPDX-License-Identifier: Apache-2.0
+
+Copyright 2013 sigu-399 ( https://github.com/sigu-399 )
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+
 * For github.com/prometheus/client_golang/prometheus see also this required NOTICE:
 Prometheus instrumentation library for Go applications
 Copyright 2012-2015 The Prometheus Authors
@@ -480,7 +564,7 @@ Submitted on behalf of a third-party: @disconnect3d (Disconnect3d)
 
 ------
 
-** github.com/aws/aws-sdk-go-v2/internal/sync/singleflight; version v1.39.6 --
+** github.com/aws/aws-sdk-go-v2/internal/sync/singleflight; version v1.40.0 --
 https://github.com/aws/aws-sdk-go-v2
 
 ** github.com/aws/smithy-go/internal/sync/singleflight; version v1.23.2 --
@@ -581,48 +665,6 @@ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
 CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-
-------
-
-** github.com/gogo/protobuf; version v1.3.2 --
-https://github.com/gogo/protobuf
-
-Copyright (c) 2013, The GoGo Authors. All rights reserved.
-
-Protocol Buffers for Go with Gadgets
-
-Go support for Protocol Buffers - Google's data interchange format
-
-Copyright 2010 The Go Authors.  All rights reserved.
-https://github.com/golang/protobuf
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are
-met:
-
-    * Redistributions of source code must retain the above copyright
-notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above
-copyright notice, this list of conditions and the following disclaimer
-in the documentation and/or other materials provided with the
-distribution.
-    * Neither the name of Google Inc. nor the names of its
-contributors may be used to endorse or promote products derived from
-this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 
 
 ------
@@ -838,22 +880,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/go; version go1.25.4 --
+** golang.org/go; version go1.25.5 --
 https://github.com/golang/go
 
-** golang.org/x/net; version v0.46.0 --
+** golang.org/x/net; version v0.47.0 --
 https://go.googlesource.com/net
 
-** golang.org/x/oauth2; version v0.32.0 --
+** golang.org/x/oauth2; version v0.33.0 --
 https://go.googlesource.com/oauth2
 
-** golang.org/x/sys/unix; version v0.37.0 --
+** golang.org/x/sys/unix; version v0.38.0 --
 https://go.googlesource.com/sys
 
-** golang.org/x/term; version v0.36.0 --
+** golang.org/x/term; version v0.37.0 --
 https://go.googlesource.com/term
 
-** golang.org/x/text; version v0.30.0 --
+** golang.org/x/text; version v0.31.0 --
 https://go.googlesource.com/text
 
 ** golang.org/x/time/rate; version v0.14.0 --
@@ -991,7 +1033,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** k8s.io/apimachinery/third_party/forked/golang; version v0.34.1 --
+** k8s.io/apimachinery/third_party/forked/golang; version v0.35.0 --
 https://github.com/kubernetes/apimachinery
 
 Copyright (c) 2009 The Go Authors. All rights reserved.
@@ -1025,7 +1067,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** k8s.io/kube-openapi/pkg/internal/third_party/go-json-experiment/json; version v0.0.0-20250710124328-f3f2b991d03b --
+** k8s.io/kube-openapi/pkg/internal/third_party/go-json-experiment/json; version v0.0.0-20250910181357-589584f1c912 --
 https://github.com/kubernetes/kube-openapi
 
 Copyright (c) 2020 The Go Authors. All rights reserved.
@@ -1059,7 +1101,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** k8s.io/utils/internal/third_party/forked/golang; version v0.0.0-20250604170112-4c0f3b243397 --
+** k8s.io/utils/internal/third_party/forked/golang; version v0.0.0-20251002143259-bc988d571ff4 --
 https://github.com/kubernetes/utils
 
 Copyright (c) 2012 The Go Authors. All rights reserved.
