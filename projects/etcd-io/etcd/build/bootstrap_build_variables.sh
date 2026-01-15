@@ -39,5 +39,7 @@ if [[ "$(printf '%s\n' "$MIN_VERSION" "$GIT_TAG" | sort -V | head -1)" != "$MIN_
   GIT_TAG="$MIN_VERSION"
   echo "$GIT_TAG" > .git_tag
 fi
-curl -sL "https://raw.githubusercontent.com/etcd-io/etcd/${GIT_TAG}/go.mod" -o "${RELEASE_BRANCH}/go.mod"
-curl -sL "https://raw.githubusercontent.com/etcd-io/etcd/${GIT_TAG}/go.sum" -o "${RELEASE_BRANCH}/go.sum"
+curl -sL "https://raw.githubusercontent.com/etcd-io/etcd/${GIT_TAG}/go.mod" -o "${RELEASE_BRANCH}/server/go.mod"
+curl -sL "https://raw.githubusercontent.com/etcd-io/etcd/${GIT_TAG}/go.sum" -o "${RELEASE_BRANCH}/server/go.sum"
+curl -sL "https://raw.githubusercontent.com/etcd-io/etcd/${GIT_TAG}/etcdctl/go.mod" -o "${RELEASE_BRANCH}/etcdctl/go.mod"
+curl -sL "https://raw.githubusercontent.com/etcd-io/etcd/${GIT_TAG}/etcdctl/go.sum" -o "${RELEASE_BRANCH}/etcdctl/go.sum"

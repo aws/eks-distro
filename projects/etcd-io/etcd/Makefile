@@ -1,10 +1,12 @@
 BASE_DIRECTORY:=$(shell git rev-parse --show-toplevel)
 
+ifdef RELEASE_BRANCH
 _bootstrap:=$(shell ./build/bootstrap_build_variables.sh)
 export GIT_TAG:=$(shell cat .git_tag)
 export GOLANG_VERSION:=$(shell cat .go-version)
 $(if $(GIT_TAG),$(shell rm -f .git_tag),$(error GIT_TAG is empty, .git_tag might be missing))
 $(if $(GOLANG_VERSION),$(shell rm -f .go-version),$(error GOLANG_VERSION is empty, .go-version might be missing))
+endif
 
 REPO=etcd
 REPO_OWNER=etcd-io
