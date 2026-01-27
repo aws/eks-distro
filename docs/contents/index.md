@@ -103,8 +103,8 @@ manifest for EKS Distro, and view the release by running the following
 commands:
 
 ```bash
-RELEASE_BRANCH=1-34
-RELEASE=13
+RELEASE_BRANCH=1-35
+RELEASE=4
 kubectl apply -f https://distro.eks.amazonaws.com/crds/releases.distro.eks.amazonaws.com-v1alpha1.yaml
 kubectl apply -f https://distro.eks.amazonaws.com/kubernetes-${RELEASE_BRANCH}/kubernetes-${RELEASE_BRANCH}-eks-${RELEASE}.yaml
 kubectl get release kubernetes-${RELEASE_BRANCH}-eks-${RELEASE}
@@ -117,6 +117,13 @@ The EKS Distro of Kubernetes source repository does not include any AMIs (Amazon
 Machine Images), but it does use the EKS Optimized AMI. See the project
 repository for the [EKS Optimized AMI](https://github.com/awslabs/amazon-eks-ami)
 if you are interested in the AL2 container runtime kernel version.
+
+#### EKS-D 1.35 Version Dependencies
+* [v1-35-eks-4](releases/1-35/4/index.md) (January 27, 2026)
+* [v1-35-eks-3](releases/1-35/3/index.md) (January 27, 2026)
+* [v1-35-eks-2](releases/1-35/2/index.md) (January 27, 2026)
+* [v1-35-eks-1](releases/1-35/1/index.md) (January 27, 2026)
+
 
 #### EKS-D 1.34 Version Dependencies
 * [v1-34-eks-13](releases/1-34/13/index.md) (January 22, 2026)
