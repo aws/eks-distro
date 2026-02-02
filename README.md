@@ -9,6 +9,7 @@
 | 1-32    | [![1-32](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-32-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-32-postsubmit) |
 | 1-33    | [![1-33](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-33-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-33-postsubmit) |
 | 1-34    | [![1-34](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-34-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-34-postsubmit) |
+| 1-35    | [![1-35](https://prow.eks.amazonaws.com/badge.svg?jobs=build-1-35-postsubmit)](https://prow.eks.amazonaws.com/?job=build-1-35-postsubmit) |
 
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/6111/badge)](https://bestpractices.coreinfrastructure.org/projects/6111)
 
