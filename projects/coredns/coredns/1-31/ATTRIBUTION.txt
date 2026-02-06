@@ -1300,28 +1300,28 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ** golang.org/go; version go1.25.5 --
 https://github.com/golang/go
 
-** golang.org/x/crypto; version v0.41.0 --
+** golang.org/x/crypto; version v0.45.0 --
 https://golang.org/x/crypto
 
 ** golang.org/x/exp/constraints; version v0.0.0-20250408133849-7e4ce0ab07d0 --
 https://golang.org/x/exp
 
-** golang.org/x/mod/semver; version v0.26.0 --
+** golang.org/x/mod/semver; version v0.29.0 --
 https://golang.org/x/mod
 
-** golang.org/x/net; version v0.43.0 --
+** golang.org/x/net; version v0.47.0 --
 https://golang.org/x/net
 
 ** golang.org/x/oauth2; version v0.30.0 --
 https://golang.org/x/oauth2
 
-** golang.org/x/sys; version v0.36.0 --
+** golang.org/x/sys; version v0.38.0 --
 https://golang.org/x/sys
 
-** golang.org/x/term; version v0.34.0 --
+** golang.org/x/term; version v0.37.0 --
 https://golang.org/x/term
 
-** golang.org/x/text; version v0.28.0 --
+** golang.org/x/text; version v0.31.0 --
 https://golang.org/x/text
 
 ** golang.org/x/time/rate; version v0.12.0 --
@@ -1730,7 +1730,7 @@ Copyright (c) 2014 Evan Huus
 https://github.com/emicklei/go-restful/v3
 Copyright (c) 2012,2013 Ernest Micklei
 
-** github.com/expr-lang/expr; version v1.17.6 --
+** github.com/expr-lang/expr; version v1.17.7 --
 https://github.com/expr-lang/expr
 Copyright (c) 2018 Anton Medvedev
 
@@ -1775,7 +1775,7 @@ Copyright (c) 2013 Mitchell Hashimoto
 https://github.com/philhofer/fwd
 Copyright (c) 2014-2015, Philip Hofer
 
-** github.com/quic-go/quic-go; version v0.54.0 --
+** github.com/quic-go/quic-go; version v0.57.0 --
 https://github.com/quic-go/quic-go
 Copyright (c) 2016 the quic-go authors & Google, Inc.
 
