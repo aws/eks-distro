@@ -54,6 +54,7 @@ To receive notifications about new EKS-D releases, subscribe to the EKS-D update
 [<img src="docs/contents/certified-kubernetes-1.32-color.svg" height=150>](https://github.com/cncf/k8s-conformance/pull/3598)
 [<img src="docs/contents/certified-kubernetes-1.33-color.svg" height=150>](https://github.com/cncf/k8s-conformance/pull/3774)
 [<img src="docs/contents/certified-kubernetes-1.34-color.svg" height=150>](https://github.com/cncf/k8s-conformance/pull/3947)
+[<img src="docs/contents/certified-kubernetes-1.35-color.svg" height=150>](https://github.com/cncf/k8s-conformance/pull/4074)
 <!--
 Source: https://github.com/cncf/artwork/tree/master/projects/kubernetes/certified-kubernetes
 -->
