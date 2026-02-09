@@ -103,8 +103,8 @@ manifest for EKS Distro, and view the release by running the following
 commands:
 
 ```bash
-RELEASE_BRANCH=1-34
-RELEASE=13
+RELEASE_BRANCH=1-35
+RELEASE=5
 kubectl apply -f https://distro.eks.amazonaws.com/crds/releases.distro.eks.amazonaws.com-v1alpha1.yaml
 kubectl apply -f https://distro.eks.amazonaws.com/kubernetes-${RELEASE_BRANCH}/kubernetes-${RELEASE_BRANCH}-eks-${RELEASE}.yaml
 kubectl get release kubernetes-${RELEASE_BRANCH}-eks-${RELEASE}
