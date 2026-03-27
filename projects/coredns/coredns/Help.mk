@@ -9,11 +9,12 @@
 ##@ GIT/Repo Targets
 clone-repo:  ## Clone upstream `coredns`
 checkout-repo: ## Checkout upstream tag based on value in GIT_TAG file
+patch-repo: ## Patch upstream repo with patches in patches directory
 
 ##@ Binary Targets
 binaries: ## Build all binaries: `coredns` for `linux/amd64 linux/arm64`
-_output/1-34/bin/coredns/linux-amd64/coredns: ## Build `_output/1-34/bin/coredns/linux-amd64/coredns`
-_output/1-34/bin/coredns/linux-arm64/coredns: ## Build `_output/1-34/bin/coredns/linux-arm64/coredns`
+_output/1-35/bin/coredns/linux-amd64/coredns: ## Build `_output/1-35/bin/coredns/linux-amd64/coredns`
+_output/1-35/bin/coredns/linux-arm64/coredns: ## Build `_output/1-35/bin/coredns/linux-arm64/coredns`
 
 ##@ Image Targets
 local-images: ## Builds `coredns/images/amd64` as oci tars for presumbit validation
