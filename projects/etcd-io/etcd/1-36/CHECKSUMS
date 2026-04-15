@@ -1,0 +1,4 @@
+86938f62d082df590c23f73c17cc6657c5a95d009dfacdf8042718fd3b043d09  _output/1-36/bin/etcd/linux-amd64/etcd
+c771c91da3e44eddb00cadc64ff4e250eee6044ed7c9652315fa30eba4361ebf  _output/1-36/bin/etcd/linux-amd64/etcdctl
+9eef70a1b0954b89f161e627b86a01684291e82d87504fa116cca2af2977ee65  _output/1-36/bin/etcd/linux-arm64/etcd
+21a7b83537edfa70aab55b9829aa5c9628d961745ef54aca4edd918205d88337  _output/1-36/bin/etcd/linux-arm64/etcdctl
