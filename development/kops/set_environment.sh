@@ -26,8 +26,11 @@ export UBUNTU_RELEASE=${UBUNTU_RELEASE:-jammy-22.04}
 export IPV6=${IPV6:-false}
 
 KUBERNETES_VERSION=$(cat ../../projects/kubernetes/kubernetes/${RELEASE_BRANCH}/GIT_TAG)
-if [[ "${KUBERNETES_VERSION}" =~ ^v1\.3[4-9](\.|$) ]]; then
-  # For Kubernetes 1.34-1.39 use kops 1.32.1
+if [[ "${KUBERNETES_VERSION}" =~ ^v1\.3[6-9](\.|$) ]]; then
+  # For Kubernetes 1.36+ use kops 1.35.0 (containerd 2.x support)
+  export KOPS_VERSION="1.35.0"
+elif [[ "${KUBERNETES_VERSION}" =~ ^v1\.3[4-5](\.|$) ]]; then
+  # For Kubernetes 1.34-1.35 use kops 1.32.1
   export KOPS_VERSION="1.32.1"
 else
   export KOPS_VERSION="1.29.2"
