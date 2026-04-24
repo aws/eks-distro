@@ -254,31 +254,31 @@ https://github.com/open-telemetry/opentelemetry-go-contrib
 ** go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp; version v0.61.0 --
 https://github.com/open-telemetry/opentelemetry-go-contrib
 
-** go.opentelemetry.io/otel; version v1.38.0 --
+** go.opentelemetry.io/otel; version v1.40.0 --
 https://github.com/open-telemetry/opentelemetry-go
 
 ** go.opentelemetry.io/otel/log; version v0.13.0 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/otel/metric; version v1.38.0 --
+** go.opentelemetry.io/otel/metric; version v1.40.0 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/otel/sdk; version v1.38.0 --
+** go.opentelemetry.io/otel/sdk; version v1.40.0 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/otel/trace; version v1.38.0 --
+** go.opentelemetry.io/otel/trace; version v1.40.0 --
 https://github.com/open-telemetry/opentelemetry-go
 
 ** go.yaml.in/yaml/v2; version v2.4.3 --
 https://github.com/yaml/go-yaml
 
-** google.golang.org/genproto/googleapis/api; version v0.0.0-20251022142026-3a174f9686a8 --
+** google.golang.org/genproto/googleapis/api; version v0.0.0-20251202230838-ff82c1b0f217 --
 https://github.com/googleapis/go-genproto
 
-** google.golang.org/genproto/googleapis/rpc; version v0.0.0-20251124214823-79d6a2a48846 --
+** google.golang.org/genproto/googleapis/rpc; version v0.0.0-20251202230838-ff82c1b0f217 --
 https://github.com/googleapis/go-genproto
 
-** google.golang.org/grpc; version v1.77.0 --
+** google.golang.org/grpc; version v1.79.3 --
 https://github.com/grpc/grpc-go
 
 ** gopkg.in/ini.v1; version v1.67.0 --
@@ -1432,31 +1432,31 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/go; version go1.25.8 --
+** golang.org/go; version go1.25.9 --
 https://github.com/golang/go
 
-** golang.org/x/crypto; version v0.45.0 --
+** golang.org/x/crypto; version v0.46.0 --
 https://golang.org/x/crypto
 
 ** golang.org/x/exp/constraints; version v0.0.0-20250408133849-7e4ce0ab07d0 --
 https://golang.org/x/exp
 
-** golang.org/x/mod/semver; version v0.29.0 --
+** golang.org/x/mod/semver; version v0.30.0 --
 https://golang.org/x/mod
 
-** golang.org/x/net; version v0.47.0 --
+** golang.org/x/net; version v0.48.0 --
 https://golang.org/x/net
 
-** golang.org/x/oauth2; version v0.33.0 --
+** golang.org/x/oauth2; version v0.34.0 --
 https://golang.org/x/oauth2
 
-** golang.org/x/sys; version v0.39.0 --
+** golang.org/x/sys; version v0.40.0 --
 https://golang.org/x/sys
 
-** golang.org/x/term; version v0.37.0 --
+** golang.org/x/term; version v0.38.0 --
 https://golang.org/x/term
 
-** golang.org/x/text; version v0.31.0 --
+** golang.org/x/text; version v0.32.0 --
 https://golang.org/x/text
 
 ** golang.org/x/time/rate; version v0.14.0 --
