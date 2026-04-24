@@ -5,7 +5,7 @@ https://github.com/nytimes/gziphandler
 ** github.com/container-storage-interface/spec/lib/go/csi; version v1.9.0 --
 https://github.com/container-storage-interface/spec
 
-** github.com/containerd/containerd/api; version v1.9.0 --
+** github.com/containerd/containerd/api; version v1.10.0 --
 https://github.com/containerd/containerd/api
 
 ** github.com/containerd/errdefs; version v1.0.0 --
@@ -26,16 +26,16 @@ https://github.com/containerd/typeurl/v2
 ** github.com/coredns/caddy/caddyfile; version v1.1.1 --
 https://github.com/coredns/caddy
 
-** github.com/coredns/corefile-migration/migration; version v1.0.29 --
+** github.com/coredns/corefile-migration/migration; version v1.0.31 --
 https://github.com/coredns/corefile-migration
 
-** github.com/coreos/go-oidc; version v2.3.0+incompatible --
+** github.com/coreos/go-oidc; version v2.5.0+incompatible --
 https://github.com/coreos/go-oidc
 
 ** github.com/coreos/go-semver/semver; version v0.3.1 --
 https://github.com/coreos/go-semver
 
-** github.com/coreos/go-systemd/v22; version v22.5.0 --
+** github.com/coreos/go-systemd/v22; version v22.7.0 --
 https://github.com/coreos/go-systemd/v22
 
 ** github.com/distribution/reference; version v0.6.0 --
@@ -68,7 +68,7 @@ https://github.com/go-openapi/swag
 ** github.com/google/btree; version v1.1.3 --
 https://github.com/google/btree
 
-** github.com/google/cadvisor; version v0.53.0 --
+** github.com/google/cadvisor; version v0.56.2 --
 https://github.com/google/cadvisor
 
 ** github.com/google/cel-go; version v0.26.0 --
@@ -77,20 +77,17 @@ https://github.com/google/cel-go
 ** github.com/google/gnostic-models; version v0.7.0 --
 https://github.com/google/gnostic-models
 
-** github.com/grpc-ecosystem/go-grpc-prometheus; version v1.2.0 --
-https://github.com/grpc-ecosystem/go-grpc-prometheus
+** github.com/grpc-ecosystem/go-grpc-middleware/providers/prometheus; version v1.1.0 --
+https://github.com/grpc-ecosystem/go-grpc-middleware/providers/prometheus
+
+** github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors; version v2.3.3 --
+https://github.com/grpc-ecosystem/go-grpc-middleware/v2
 
 ** github.com/jonboulle/clockwork; version v0.5.0 --
 https://github.com/jonboulle/clockwork
 
 ** github.com/kylelemons/godebug/diff; version v1.1.0 --
 https://github.com/kylelemons/godebug
-
-** github.com/libopenstorage/openstorage; version v1.0.0 --
-https://github.com/libopenstorage/openstorage
-
-** github.com/mistifyio/go-zfs; version v2.1.2-0.20190413222219-f784269be439+incompatible --
-https://github.com/mistifyio/go-zfs
 
 ** github.com/moby/ipvs; version v1.1.0 --
 https://github.com/moby/ipvs
@@ -113,7 +110,7 @@ https://github.com/modern-go/concurrent
 ** github.com/modern-go/reflect2; version v1.0.3-0.20250322232337-35a7c28c31ee --
 https://github.com/modern-go/reflect2
 
-** github.com/opencontainers/cgroups; version v0.0.3 --
+** github.com/opencontainers/cgroups; version v0.0.6 --
 https://github.com/opencontainers/cgroups
 
 ** github.com/opencontainers/go-digest; version v1.0.0 --
@@ -122,10 +119,10 @@ https://github.com/opencontainers/go-digest
 ** github.com/opencontainers/image-spec/specs-go; version v1.1.1 --
 https://github.com/opencontainers/image-spec
 
-** github.com/opencontainers/runtime-spec/specs-go; version v1.2.1 --
+** github.com/opencontainers/runtime-spec/specs-go; version v1.3.0 --
 https://github.com/opencontainers/runtime-spec
 
-** github.com/opencontainers/selinux; version v1.13.0 --
+** github.com/opencontainers/selinux; version v1.13.1 --
 https://github.com/opencontainers/selinux
 
 ** github.com/pquerna/cachecontrol; version v0.1.0 --
@@ -137,13 +134,13 @@ https://github.com/prometheus/client_golang
 ** github.com/prometheus/client_model/go; version v0.6.2 --
 https://github.com/prometheus/client_model
 
-** github.com/prometheus/common; version v0.66.1 --
+** github.com/prometheus/common; version v0.67.5 --
 https://github.com/prometheus/common
 
-** github.com/prometheus/procfs; version v0.16.1 --
+** github.com/prometheus/procfs; version v0.19.2 --
 https://github.com/prometheus/procfs
 
-** github.com/spf13/cobra; version v1.10.0 --
+** github.com/spf13/cobra; version v1.10.2 --
 https://github.com/spf13/cobra
 
 ** github.com/vishvananda/netlink; version v1.3.1 --
@@ -152,196 +149,205 @@ https://github.com/vishvananda/netlink
 ** github.com/vishvananda/netns; version v0.0.5 --
 https://github.com/vishvananda/netns
 
-** go.etcd.io/etcd/api/v3; version v3.6.5 --
+** go.etcd.io/etcd/api/v3; version v3.6.8 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/client/pkg/v3; version v3.6.5 --
+** go.etcd.io/etcd/client/pkg/v3; version v3.6.8 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/client/v3; version v3.6.5 --
+** go.etcd.io/etcd/client/v3; version v3.6.8 --
 https://github.com/etcd-io/etcd
 
-** go.opentelemetry.io/auto/sdk; version v1.1.0 --
+** go.opentelemetry.io/auto/sdk; version v1.2.1 --
 https://github.com/open-telemetry/opentelemetry-go-instrumentation
 
-** go.opentelemetry.io/contrib/instrumentation/github.com/emicklei/go-restful/otelrestful; version v0.44.0 --
+** go.opentelemetry.io/contrib/instrumentation/github.com/emicklei/go-restful/otelrestful; version v0.65.0 --
 https://github.com/open-telemetry/opentelemetry-go-contrib
 
-** go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc; version v0.60.0 --
+** go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc; version v0.65.0 --
 https://github.com/open-telemetry/opentelemetry-go-contrib
 
-** go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp; version v0.61.0 --
+** go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp; version v0.65.0 --
 https://github.com/open-telemetry/opentelemetry-go-contrib
 
-** go.opentelemetry.io/otel; version v1.36.0 --
+** go.opentelemetry.io/otel; version v1.40.0 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/otel/exporters/otlp/otlptrace; version v1.34.0 --
+** go.opentelemetry.io/otel/exporters/otlp/otlptrace; version v1.40.0 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc; version v1.34.0 --
+** go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc; version v1.40.0 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/otel/metric; version v1.36.0 --
+** go.opentelemetry.io/otel/metric; version v1.40.0 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/otel/sdk; version v1.36.0 --
+** go.opentelemetry.io/otel/sdk; version v1.40.0 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/otel/trace; version v1.36.0 --
+** go.opentelemetry.io/otel/trace; version v1.40.0 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/proto/otlp; version v1.5.0 --
+** go.opentelemetry.io/proto/otlp; version v1.9.0 --
 https://github.com/open-telemetry/opentelemetry-proto-go
 
 ** go.yaml.in/yaml/v2; version v2.4.3 --
 https://github.com/yaml/go-yaml
 
-** google.golang.org/genproto/googleapis/api; version v0.0.0-20250303144028-a0af3efb3deb --
+** google.golang.org/genproto/googleapis/api; version v0.0.0-20260128011058-8636f8732409 --
 https://github.com/googleapis/go-genproto
 
-** google.golang.org/genproto/googleapis/rpc; version v0.0.0-20250528174236-200df99c418a --
+** google.golang.org/genproto/googleapis/rpc; version v0.0.0-20260128011058-8636f8732409 --
 https://github.com/googleapis/go-genproto
 
-** google.golang.org/grpc; version v1.72.2 --
+** google.golang.org/grpc; version v1.79.3 --
 https://github.com/grpc/grpc-go
 
 ** gopkg.in/go-jose/go-jose.v2; version v2.6.3 --
 https://gopkg.in/go-jose/go-jose.v2
 
-** k8s.io/api; version v1.35.2 --
+** k8s.io/api; version v1.36.0-rc.0 --
 https://github.com/kubernetes/api
 
-** k8s.io/apiextensions-apiserver/pkg; version v1.35.2 --
+** k8s.io/apiextensions-apiserver/pkg; version v1.36.0-rc.0 --
 https://github.com/kubernetes/apiextensions-apiserver
 
-** k8s.io/apimachinery/pkg; version v1.35.2 --
+** k8s.io/apimachinery/pkg; version v1.36.0-rc.0 --
 https://github.com/kubernetes/apimachinery
 
-** k8s.io/apiserver; version v1.35.2 --
+** k8s.io/apiserver; version v1.36.0-rc.0 --
 https://github.com/kubernetes/apiserver
 
-** k8s.io/cli-runtime/pkg; version v1.35.2 --
+** k8s.io/cli-runtime/pkg; version v1.36.0-rc.0 --
 https://github.com/kubernetes/cli-runtime
 
-** k8s.io/client-go; version v1.35.2 --
+** k8s.io/client-go; version v1.36.0-rc.0 --
 https://github.com/kubernetes/client-go
 
-** k8s.io/cloud-provider; version v1.35.2 --
+** k8s.io/cloud-provider; version v1.36.0-rc.0 --
 https://github.com/kubernetes/cloud-provider
 
-** k8s.io/cluster-bootstrap; version v1.35.2 --
+** k8s.io/cluster-bootstrap; version v1.36.0-rc.0 --
 https://github.com/kubernetes/cluster-bootstrap
 
-** k8s.io/component-base; version v1.35.2 --
+** k8s.io/component-base; version v1.36.0-rc.0 --
 https://github.com/kubernetes/component-base
 
-** k8s.io/component-helpers; version v1.35.2 --
+** k8s.io/component-helpers; version v1.36.0-rc.0 --
 https://github.com/kubernetes/component-helpers
 
-** k8s.io/controller-manager; version v1.35.2 --
+** k8s.io/controller-manager; version v1.36.0-rc.0 --
 https://github.com/kubernetes/controller-manager
 
-** k8s.io/cri-api/pkg; version v1.35.2 --
+** k8s.io/cri-api/pkg; version v1.36.0-rc.0 --
 https://github.com/kubernetes/cri-api
 
-** k8s.io/cri-client/pkg; version v1.35.2 --
+** k8s.io/cri-client/pkg; version v1.36.0-rc.0 --
 https://github.com/kubernetes/cri-client
 
-** k8s.io/csi-translation-lib; version v1.35.2 --
+** k8s.io/cri-streaming/pkg/streaming; version v1.36.0-rc.0 --
+https://github.com/kubernetes/cri-streaming
+
+** k8s.io/csi-translation-lib; version v1.36.0-rc.0 --
 https://github.com/kubernetes/csi-translation-lib
 
-** k8s.io/dynamic-resource-allocation; version v1.35.2 --
+** k8s.io/dynamic-resource-allocation; version v1.36.0-rc.0 --
 https://github.com/kubernetes/dynamic-resource-allocation
 
-** k8s.io/endpointslice; version v1.35.2 --
+** k8s.io/endpointslice; version v1.36.0-rc.0 --
 https://github.com/kubernetes/endpointslice
 
-** k8s.io/externaljwt/apis/v1; version v1.35.2 --
+** k8s.io/externaljwt/apis/v1; version v1.36.0-rc.0 --
 https://github.com/kubernetes/externaljwt
 
-** k8s.io/klog/v2; version v2.130.1 --
+** k8s.io/klog/v2; version v2.140.0 --
 https://github.com/kubernetes/klog
 
-** k8s.io/kms; version v1.35.2 --
+** k8s.io/kms; version v1.36.0-rc.0 --
 https://github.com/kubernetes/kms
 
-** k8s.io/kube-aggregator/pkg; version v1.35.2 --
+** k8s.io/kube-aggregator/pkg; version v1.36.0-rc.0 --
 https://github.com/kubernetes/kube-aggregator
 
-** k8s.io/kube-controller-manager/config/v1alpha1; version v1.35.2 --
+** k8s.io/kube-controller-manager/config/v1alpha1; version v1.36.0-rc.0 --
 https://github.com/kubernetes/kube-controller-manager
 
-** k8s.io/kube-openapi/pkg; version v0.0.0-20250910181357-589584f1c912 --
+** k8s.io/kube-openapi/pkg; version v0.0.0-20260317180543-43fb72c5454a --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kube-openapi/pkg/validation/errors; version v0.0.0-20250910181357-589584f1c912 --
+** k8s.io/kube-openapi/pkg/validation/errors; version v0.0.0-20260317180543-43fb72c5454a --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kube-openapi/pkg/validation/spec; version v0.0.0-20250910181357-589584f1c912 --
+** k8s.io/kube-openapi/pkg/validation/spec; version v0.0.0-20260317180543-43fb72c5454a --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kube-openapi/pkg/validation/strfmt; version v0.0.0-20250910181357-589584f1c912 --
+** k8s.io/kube-openapi/pkg/validation/strfmt; version v0.0.0-20260317180543-43fb72c5454a --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kube-openapi/pkg/validation/validate; version v0.0.0-20250910181357-589584f1c912 --
+** k8s.io/kube-openapi/pkg/validation/validate; version v0.0.0-20260317180543-43fb72c5454a --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kube-proxy/config/v1alpha1; version v1.35.2 --
+** k8s.io/kube-proxy/config/v1alpha1; version v1.36.0-rc.0 --
 https://github.com/kubernetes/kube-proxy
 
-** k8s.io/kube-scheduler; version v1.35.2 --
+** k8s.io/kube-scheduler; version v1.36.0-rc.0 --
 https://github.com/kubernetes/kube-scheduler
 
-** k8s.io/kubectl/pkg; version v1.35.2 --
+** k8s.io/kubectl/pkg; version v1.36.0-rc.0 --
 https://github.com/kubernetes/kubectl
 
-** k8s.io/kubelet; version v1.35.2 --
+** k8s.io/kubelet; version v1.36.0-rc.0 --
 https://github.com/kubernetes/kubelet
 
-** k8s.io/kubernetes; version v1.35.2 --
+** k8s.io/kubernetes; version v1.36.0-rc.0 --
 https://github.com/kubernetes/kubernetes
 
-** k8s.io/kubernetes/third_party/forked/libcontainer; version v1.35.2 --
+** k8s.io/kubernetes/third_party/forked/libcontainer; version v1.36.0-rc.0 --
 https://github.com/kubernetes/kubernetes
 
-** k8s.io/metrics/pkg; version v1.35.2 --
+** k8s.io/metrics/pkg; version v1.36.0-rc.0 --
 https://github.com/kubernetes/metrics
 
-** k8s.io/mount-utils; version v1.35.2 --
+** k8s.io/mount-utils; version v1.36.0-rc.0 --
 https://github.com/kubernetes/mount-utils
 
-** k8s.io/pod-security-admission; version v1.35.2 --
+** k8s.io/pod-security-admission; version v1.36.0-rc.0 --
 https://github.com/kubernetes/pod-security-admission
+
+** k8s.io/streaming/pkg; version v1.36.0-rc.0 --
+https://github.com/kubernetes/streaming
 
 ** k8s.io/system-validators/validators; version v1.12.1 --
 https://github.com/kubernetes/system-validators
 
-** k8s.io/utils; version v0.0.0-20251002143259-bc988d571ff4 --
+** k8s.io/utils; version v0.0.0-20260210185600-b8788abfbbc2 --
 https://github.com/kubernetes/utils
 
-** sigs.k8s.io/apiserver-network-proxy/konnectivity-client; version v0.31.2 --
+** k8s.io/utils/third_party/forked/golang/btree; version v0.0.0-20260210185600-b8788abfbbc2 --
+https://github.com/kubernetes/utils
+
+** sigs.k8s.io/apiserver-network-proxy/konnectivity-client; version v0.34.0 --
 https://github.com/kubernetes-sigs/apiserver-network-proxy
 
 ** sigs.k8s.io/json; version v0.0.0-20250730193827-2d320260d730 --
 https://github.com/kubernetes-sigs/json
 
-** sigs.k8s.io/knftables; version v0.0.17 --
+** sigs.k8s.io/knftables; version v0.0.21 --
 https://github.com/kubernetes-sigs/knftables
 
-** sigs.k8s.io/kustomize/api; version v0.20.1 --
+** sigs.k8s.io/kustomize/api; version v0.21.1 --
 https://github.com/kubernetes-sigs/kustomize
 
-** sigs.k8s.io/kustomize/kustomize/v5/commands/build; version v5.7.1 --
+** sigs.k8s.io/kustomize/kustomize/v5/commands/build; version v5.8.1 --
 https://github.com/kubernetes-sigs/kustomize
 
-** sigs.k8s.io/kustomize/kyaml; version v0.20.1 --
+** sigs.k8s.io/kustomize/kyaml; version v0.21.1 --
 https://github.com/kubernetes-sigs/kustomize
 
 ** sigs.k8s.io/randfill; version v1.0.0 --
 https://github.com/kubernetes-sigs/randfill
 
-** sigs.k8s.io/structured-merge-diff/v6; version v6.3.0 --
+** sigs.k8s.io/structured-merge-diff/v6; version v6.3.2 --
 https://github.com/kubernetes-sigs/structured-merge-diff
 
 ** sigs.k8s.io/yaml; version v1.6.0 --
@@ -695,7 +701,7 @@ Submitted on behalf of a third-party: @disconnect3d (Disconnect3d)
 
 ------
 
-** github.com/godbus/dbus/v5; version v5.1.0 --
+** github.com/godbus/dbus/v5; version v5.2.2 --
 https://github.com/godbus/dbus/v5
 
 Copyright (c) 2013, Georg Reinke (<guelfey at gmail dot com>), Google
@@ -745,38 +751,6 @@ modification, are permitted provided that the following conditions are met:
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-
-------
-
-** github.com/karrick/godirwalk; version v1.17.0 --
-https://github.com/karrick/godirwalk
-
-BSD 2-Clause License
-
-Copyright (c) 2017, Karrick McDermott
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-
-* Redistributions of source code must retain the above copyright notice, this
-  list of conditions and the following disclaimer.
-
-* Redistributions in binary form must reproduce the above copyright notice,
-  this list of conditions and the following disclaimer in the documentation
-  and/or other materials provided with the distribution.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
 DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
 FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
 DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
@@ -1070,7 +1044,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/grpc-ecosystem/grpc-gateway/v2; version v2.26.3 --
+** github.com/grpc-ecosystem/grpc-gateway/v2; version v2.27.7 --
 https://github.com/grpc-ecosystem/grpc-gateway/v2
 
 Copyright (c) 2015, Gengo, Inc.
@@ -1107,16 +1081,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ** github.com/liggitt/tabwriter; version v0.0.0-20181228230101-89fcab3d43de --
 https://github.com/liggitt/tabwriter
 
-** k8s.io/apimachinery/third_party/forked/golang; version v1.35.2 --
+** k8s.io/apimachinery/third_party/forked/golang; version v1.36.0-rc.0 --
 https://github.com/kubernetes/apimachinery
 
-** k8s.io/client-go/third_party/forked/golang/template; version v1.35.2 --
+** k8s.io/client-go/third_party/forked/golang/template; version v1.36.0-rc.0 --
 https://github.com/kubernetes/client-go
 
-** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.35.2 --
+** k8s.io/kubernetes/third_party/forked/golang/expansion; version v1.36.0-rc.0 --
 https://github.com/kubernetes/kubernetes
 
-** k8s.io/utils/inotify; version v0.0.0-20251002143259-bc988d571ff4 --
+** k8s.io/utils/inotify; version v0.0.0-20260210185600-b8788abfbbc2 --
 https://github.com/kubernetes/utils
 
 Copyright (c) 2009 The Go Authors. All rights reserved.
@@ -1224,7 +1198,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/pmezard/go-difflib/difflib; version v1.0.0 --
+** github.com/pmezard/go-difflib/difflib; version v1.0.1-0.20181226105442-5d4384ee4fb2 --
 https://github.com/pmezard/go-difflib
 
 Copyright (c) 2013, Patrick Mezard
@@ -1327,37 +1301,37 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/go; version go1.25.7 --
+** golang.org/go; version go1.26.2 --
 https://github.com/golang/go
 
-** golang.org/x/crypto; version v0.45.0 --
+** golang.org/x/crypto; version v0.47.0 --
 https://go.googlesource.com/crypto
 
-** golang.org/x/exp; version v0.0.0-20240719175910-8a7402abbf56 --
+** golang.org/x/exp/slices; version v0.0.0-20251219203646-944ab1f22d93 --
 https://go.googlesource.com/exp
 
-** golang.org/x/net; version v0.47.0 --
+** golang.org/x/net; version v0.49.0 --
 https://go.googlesource.com/net
 
-** golang.org/x/oauth2; version v0.30.0 --
+** golang.org/x/oauth2; version v0.34.0 --
 https://go.googlesource.com/oauth2
 
-** golang.org/x/sync; version v0.18.0 --
+** golang.org/x/sync; version v0.19.0 --
 https://go.googlesource.com/sync
 
-** golang.org/x/sys/unix; version v0.38.0 --
+** golang.org/x/sys/unix; version v0.40.0 --
 https://go.googlesource.com/sys
 
-** golang.org/x/term; version v0.37.0 --
+** golang.org/x/term; version v0.39.0 --
 https://go.googlesource.com/term
 
-** golang.org/x/text; version v0.31.0 --
+** golang.org/x/text; version v0.33.0 --
 https://go.googlesource.com/text
 
-** golang.org/x/time/rate; version v0.9.0 --
+** golang.org/x/time/rate; version v0.14.0 --
 https://go.googlesource.com/time
 
-** golang.org/x/tools/container/intsets; version v0.38.0 --
+** golang.org/x/tools/container/intsets; version v0.41.0 --
 https://go.googlesource.com/tools
 
 Copyright 2009 The Go Authors.
@@ -1391,7 +1365,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** google.golang.org/protobuf; version v1.36.8 --
+** google.golang.org/protobuf; version v1.36.12-0.20260120151049-f2248ac996af --
 https://go.googlesource.com/protobuf
 
 Copyright (c) 2018 The Go Authors. All rights reserved.
@@ -1460,7 +1434,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ** gopkg.in/go-jose/go-jose.v2/json; version v2.6.3 --
 https://gopkg.in/go-jose/go-jose.v2
 
-** k8s.io/utils/internal/third_party/forked/golang; version v0.0.0-20251002143259-bc988d571ff4 --
+** k8s.io/utils/internal/third_party/forked/golang; version v0.0.0-20260210185600-b8788abfbbc2 --
 https://github.com/kubernetes/utils
 
 Copyright (c) 2012 The Go Authors. All rights reserved.
@@ -1529,7 +1503,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** k8s.io/kube-openapi/pkg/internal/third_party/go-json-experiment/json; version v0.0.0-20250910181357-589584f1c912 --
+** k8s.io/kube-openapi/pkg/internal/third_party/go-json-experiment/json; version v0.0.0-20260317180543-43fb72c5454a --
 https://github.com/kubernetes/kube-openapi
 
 Copyright (c) 2020 The Go Authors. All rights reserved.
@@ -1563,7 +1537,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.35.2 --
+** k8s.io/kubernetes/third_party/forked/gonum/graph; version v1.36.0-rc.0 --
 https://github.com/kubernetes/kubernetes
 
 Copyright ©2013 The gonum Authors. All rights reserved.
@@ -1592,7 +1566,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/davecgh/go-spew/spew; version v1.1.1 --
+** github.com/davecgh/go-spew/spew; version v1.1.2-0.20180830191138-d8f796af33cc --
 https://github.com/davecgh/go-spew
 
 ISC License
@@ -1638,32 +1612,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-
-------
-
-** github.com/armon/circbuf; version v0.0.0-20190214190532-5111143e8da2 --
-https://github.com/armon/circbuf
-
-The MIT License (MIT)
-
-Copyright (c) 2013 Armon Dadgar
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in
-the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
-the Software, and to permit persons to whom the Software is furnished to do so,
-subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ------
 
@@ -1720,8 +1668,8 @@ THE SOFTWARE.
 
 ------
 
-** github.com/cenkalti/backoff/v4; version v4.3.0 --
-https://github.com/cenkalti/backoff/v4
+** github.com/cenkalti/backoff/v5; version v5.0.3 --
+https://github.com/cenkalti/backoff/v5
 
 The MIT License (MIT)
 
@@ -1774,7 +1722,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ------
 
-** github.com/emicklei/go-restful/v3; version v3.12.2 --
+** github.com/emicklei/go-restful/v3; version v3.13.0 --
 https://github.com/emicklei/go-restful/v3
 
 Copyright (c) 2012,2013 Ernest Micklei
@@ -1920,19 +1868,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ------
 
-** github.com/gregjones/httpcache; version v0.0.0-20190611155906-901d90724c79 --
-https://github.com/gregjones/httpcache
-
-Copyright © 2012 Greg Jones (greg.jones@gmail.com)
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-------
-
 ** github.com/josharian/intern; version v1.0.0 --
 https://github.com/josharian/intern
 
@@ -2051,33 +1986,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-
-------
-
-** github.com/mohae/deepcopy; version v0.0.0-20170929034955-c48cc78d4826 --
-https://github.com/mohae/deepcopy
-
-The MIT License (MIT)
-
-Copyright (c) 2014 Joel
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
 
 ------
 
@@ -2292,10 +2200,10 @@ THE SOFTWARE.
 
 ------
 
-** go.uber.org/zap; version v1.27.0 --
+** go.uber.org/zap; version v1.27.1 --
 https://github.com/uber-go/zap
 
-Copyright (c) 2016-2017 Uber Technologies, Inc.
+Copyright (c) 2016-2024 Uber Technologies, Inc.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -2434,7 +2342,20 @@ SOFTWARE.
 
 ------
 
-** k8s.io/kube-openapi/pkg/internal/third_party/govalidator; version v0.0.0-20250910181357-589584f1c912 --
+** k8s.io/client-go/third_party/forked/httpcache; version v1.36.0-rc.0 --
+https://github.com/kubernetes/client-go
+
+Copyright © 2012 Greg Jones (greg.jones@gmail.com)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+------
+
+** k8s.io/kube-openapi/pkg/internal/third_party/govalidator; version v0.0.0-20260317180543-43fb72c5454a --
 https://github.com/kubernetes/kube-openapi
 
 The MIT License (MIT)
@@ -2461,11 +2382,11 @@ SOFTWARE.
 
 ------
 
-** github.com/cyphar/filepath-securejoin; version v0.6.0 --
+** github.com/cyphar/filepath-securejoin; version v0.6.1 --
 https://github.com/cyphar/filepath-securejoin
 
     * Package github.com/cyphar/filepath-securejoin's source code may be found at:
-    https://github.com/cyphar/filepath-securejoin/tree/v0.6.0 
+    https://github.com/cyphar/filepath-securejoin/tree/v0.6.1 
 
 ## COPYING ##
 
@@ -2918,11 +2839,11 @@ Exhibit B - "Incompatible With Secondary Licenses" Notice
 
 ------
 
-** github.com/cyphar/filepath-securejoin/pathrs-lite; version v0.6.0 --
+** github.com/cyphar/filepath-securejoin/pathrs-lite; version v0.6.1 --
 https://github.com/cyphar/filepath-securejoin
 
     * Package github.com/cyphar/filepath-securejoin/pathrs-lite's source code may be found at:
-    https://github.com/cyphar/filepath-securejoin/tree/v0.6.0 
+    https://github.com/cyphar/filepath-securejoin/tree/v0.6.1 
 
 ## `pathrs-lite` ##
 
