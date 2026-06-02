@@ -2,7 +2,7 @@
 ** github.com/NYTimes/gziphandler; version v1.1.1 --
 https://github.com/nytimes/gziphandler
 
-** github.com/aws/aws-sdk-go-v2; version v1.38.3 --
+** github.com/aws/aws-sdk-go-v2; version v1.41.1 --
 https://github.com/aws/aws-sdk-go-v2
 
 ** github.com/aws/aws-sdk-go-v2/config; version v1.29.14 --
@@ -14,10 +14,10 @@ https://github.com/aws/aws-sdk-go-v2/credentials
 ** github.com/aws/aws-sdk-go-v2/feature/ec2/imds; version v1.16.31 --
 https://github.com/aws/aws-sdk-go-v2/feature/ec2/imds
 
-** github.com/aws/aws-sdk-go-v2/internal/configsources; version v1.4.6 --
+** github.com/aws/aws-sdk-go-v2/internal/configsources; version v1.4.17 --
 https://github.com/aws/aws-sdk-go-v2/internal/configsources
 
-** github.com/aws/aws-sdk-go-v2/internal/endpoints/v2; version v2.7.6 --
+** github.com/aws/aws-sdk-go-v2/internal/endpoints/v2; version v2.7.17 --
 https://github.com/aws/aws-sdk-go-v2/internal/endpoints/v2
 
 ** github.com/aws/aws-sdk-go-v2/internal/ini; version v1.8.3 --
@@ -29,7 +29,7 @@ https://github.com/aws/aws-sdk-go-v2/service/autoscaling
 ** github.com/aws/aws-sdk-go-v2/service/ec2; version v1.249.0 --
 https://github.com/aws/aws-sdk-go-v2/service/ec2
 
-** github.com/aws/aws-sdk-go-v2/service/ecr; version v1.36.2 --
+** github.com/aws/aws-sdk-go-v2/service/ecr; version v1.55.1 --
 https://github.com/aws/aws-sdk-go-v2/service/ecr
 
 ** github.com/aws/aws-sdk-go-v2/service/ecrpublic; version v1.27.2 --
@@ -59,13 +59,13 @@ https://github.com/aws/aws-sdk-go-v2/service/ssooidc
 ** github.com/aws/aws-sdk-go-v2/service/sts; version v1.33.19 --
 https://github.com/aws/aws-sdk-go-v2/service/sts
 
-** github.com/aws/smithy-go; version v1.23.0 --
+** github.com/aws/smithy-go; version v1.24.0 --
 https://github.com/aws/smithy-go
 
 ** github.com/coreos/go-semver/semver; version v0.3.1 --
 https://github.com/coreos/go-semver
 
-** github.com/coreos/go-systemd/v22; version v22.5.0 --
+** github.com/coreos/go-systemd/v22; version v22.7.0 --
 https://github.com/coreos/go-systemd/v22
 
 ** github.com/go-logr/logr; version v1.4.3 --
@@ -83,20 +83,17 @@ https://github.com/go-openapi/jsonreference
 ** github.com/go-openapi/swag; version v0.23.0 --
 https://github.com/go-openapi/swag
 
-** github.com/google/btree; version v1.1.3 --
-https://github.com/google/btree
-
 ** github.com/google/cel-go; version v0.26.0 --
 https://github.com/google/cel-go
 
 ** github.com/google/gnostic-models; version v0.7.0 --
 https://github.com/google/gnostic-models
 
-** github.com/grpc-ecosystem/go-grpc-prometheus; version v1.2.0 --
-https://github.com/grpc-ecosystem/go-grpc-prometheus
+** github.com/grpc-ecosystem/go-grpc-middleware/providers/prometheus; version v1.1.0 --
+https://github.com/grpc-ecosystem/go-grpc-middleware/providers/prometheus
 
-** github.com/jmespath/go-jmespath; version v0.4.0 --
-https://github.com/jmespath/go-jmespath
+** github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors; version v2.3.3 --
+https://github.com/grpc-ecosystem/go-grpc-middleware/v2
 
 ** github.com/kylelemons/godebug/diff; version v1.1.0 --
 https://github.com/kylelemons/godebug
@@ -116,118 +113,124 @@ https://github.com/prometheus/client_golang
 ** github.com/prometheus/client_model/go; version v0.6.2 --
 https://github.com/prometheus/client_model
 
-** github.com/prometheus/common; version v0.66.1 --
+** github.com/prometheus/common; version v0.67.5 --
 https://github.com/prometheus/common
 
-** github.com/prometheus/procfs; version v0.16.1 --
+** github.com/prometheus/procfs; version v0.19.2 --
 https://github.com/prometheus/procfs
 
-** github.com/spf13/cobra; version v1.10.0 --
+** github.com/spf13/cobra; version v1.10.2 --
 https://github.com/spf13/cobra
 
-** go.etcd.io/etcd/api/v3; version v3.6.5 --
+** go.etcd.io/etcd/api/v3; version v3.6.8 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/client/pkg/v3; version v3.6.5 --
+** go.etcd.io/etcd/client/pkg/v3; version v3.6.8 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/client/v3; version v3.6.5 --
+** go.etcd.io/etcd/client/v3; version v3.6.8 --
 https://github.com/etcd-io/etcd
 
-** go.opentelemetry.io/auto/sdk; version v1.1.0 --
+** go.opentelemetry.io/auto/sdk; version v1.2.1 --
 https://github.com/open-telemetry/opentelemetry-go-instrumentation
 
-** go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc; version v0.60.0 --
+** go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc; version v0.65.0 --
 https://github.com/open-telemetry/opentelemetry-go-contrib
 
-** go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp; version v0.61.0 --
+** go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp; version v0.65.0 --
 https://github.com/open-telemetry/opentelemetry-go-contrib
 
-** go.opentelemetry.io/otel; version v1.36.0 --
+** go.opentelemetry.io/otel; version v1.41.0 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/otel/exporters/otlp/otlptrace; version v1.34.0 --
+** go.opentelemetry.io/otel/exporters/otlp/otlptrace; version v1.40.0 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc; version v1.34.0 --
+** go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc; version v1.40.0 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/otel/metric; version v1.36.0 --
+** go.opentelemetry.io/otel/metric; version v1.41.0 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/otel/sdk; version v1.36.0 --
+** go.opentelemetry.io/otel/sdk; version v1.40.0 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/otel/trace; version v1.36.0 --
+** go.opentelemetry.io/otel/trace; version v1.41.0 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/proto/otlp; version v1.5.0 --
+** go.opentelemetry.io/proto/otlp; version v1.9.0 --
 https://github.com/open-telemetry/opentelemetry-proto-go
 
 ** go.yaml.in/yaml/v2; version v2.4.3 --
 https://github.com/yaml/go-yaml
 
-** google.golang.org/genproto/googleapis/api; version v0.0.0-20250303144028-a0af3efb3deb --
+** google.golang.org/genproto/googleapis/api; version v0.0.0-20260128011058-8636f8732409 --
 https://github.com/googleapis/go-genproto
 
-** google.golang.org/genproto/googleapis/rpc; version v0.0.0-20250528174236-200df99c418a --
+** google.golang.org/genproto/googleapis/rpc; version v0.0.0-20260128011058-8636f8732409 --
 https://github.com/googleapis/go-genproto
 
-** google.golang.org/grpc; version v1.72.2 --
+** google.golang.org/grpc; version v1.79.3 --
 https://github.com/grpc/grpc-go
 
-** k8s.io/api; version v0.35.0 --
+** k8s.io/api; version v0.36.0 --
 https://github.com/kubernetes/api
 
-** k8s.io/apimachinery/pkg; version v0.35.0 --
+** k8s.io/apimachinery/pkg; version v0.36.0 --
 https://github.com/kubernetes/apimachinery
 
-** k8s.io/apiserver; version v0.35.0 --
+** k8s.io/apiserver; version v0.36.0 --
 https://github.com/kubernetes/apiserver
 
-** k8s.io/client-go; version v0.35.0 --
+** k8s.io/client-go; version v0.36.0 --
 https://github.com/kubernetes/client-go
 
-** k8s.io/cloud-provider; version v0.35.0 --
+** k8s.io/cloud-provider; version v0.36.0 --
 https://github.com/kubernetes/cloud-provider
 
-** k8s.io/cloud-provider-aws; version v1.35.0 --
+** k8s.io/cloud-provider-aws; version v1.36.0 --
 https://github.com/kubernetes/cloud-provider-aws
 
-** k8s.io/component-base; version v0.35.0 --
+** k8s.io/component-base; version v0.36.0 --
 https://github.com/kubernetes/component-base
 
-** k8s.io/component-helpers/node/util; version v0.35.0 --
+** k8s.io/component-helpers/node/util; version v0.36.0 --
 https://github.com/kubernetes/component-helpers
 
-** k8s.io/controller-manager; version v0.35.0 --
+** k8s.io/controller-manager; version v0.36.0 --
 https://github.com/kubernetes/controller-manager
 
-** k8s.io/klog/v2; version v2.130.1 --
+** k8s.io/klog/v2; version v2.140.0 --
 https://github.com/kubernetes/klog
 
-** k8s.io/kms; version v0.35.0 --
+** k8s.io/kms; version v0.36.0 --
 https://github.com/kubernetes/kms
 
-** k8s.io/kube-openapi/pkg; version v0.0.0-20250910181357-589584f1c912 --
+** k8s.io/kube-openapi/pkg; version v0.0.0-20260317180543-43fb72c5454a --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kube-openapi/pkg/validation/errors; version v0.0.0-20250910181357-589584f1c912 --
+** k8s.io/kube-openapi/pkg/validation/errors; version v0.0.0-20260317180543-43fb72c5454a --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kube-openapi/pkg/validation/spec; version v0.0.0-20250910181357-589584f1c912 --
+** k8s.io/kube-openapi/pkg/validation/spec; version v0.0.0-20260317180543-43fb72c5454a --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kube-openapi/pkg/validation/strfmt; version v0.0.0-20250910181357-589584f1c912 --
+** k8s.io/kube-openapi/pkg/validation/strfmt; version v0.0.0-20260317180543-43fb72c5454a --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/kubelet/pkg/apis/credentialprovider; version v0.35.0 --
+** k8s.io/kubelet/pkg/apis/credentialprovider; version v0.36.0 --
 https://github.com/kubernetes/kubelet
 
-** k8s.io/utils; version v0.0.0-20251002143259-bc988d571ff4 --
+** k8s.io/streaming/pkg; version v0.36.0 --
+https://github.com/kubernetes/streaming
+
+** k8s.io/utils; version v0.0.0-20260210185600-b8788abfbbc2 --
 https://github.com/kubernetes/utils
 
-** sigs.k8s.io/apiserver-network-proxy/konnectivity-client; version v0.31.2 --
+** k8s.io/utils/third_party/forked/golang/btree; version v0.0.0-20260210185600-b8788abfbbc2 --
+https://github.com/kubernetes/utils
+
+** sigs.k8s.io/apiserver-network-proxy/konnectivity-client; version v0.34.0 --
 https://github.com/kubernetes-sigs/apiserver-network-proxy
 
 ** sigs.k8s.io/controller-runtime/pkg/log; version v0.20.3 --
@@ -239,7 +242,7 @@ https://github.com/kubernetes-sigs/json
 ** sigs.k8s.io/randfill; version v1.0.0 --
 https://github.com/kubernetes-sigs/randfill
 
-** sigs.k8s.io/structured-merge-diff/v6; version v6.3.0 --
+** sigs.k8s.io/structured-merge-diff/v6; version v6.3.2 --
 https://github.com/kubernetes-sigs/structured-merge-diff
 
 ** sigs.k8s.io/yaml; version v1.6.0 --
@@ -632,10 +635,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/aws/aws-sdk-go-v2/internal/sync/singleflight; version v1.38.3 --
+** github.com/aws/aws-sdk-go-v2/internal/sync/singleflight; version v1.41.1 --
 https://github.com/aws/aws-sdk-go-v2
 
-** github.com/aws/smithy-go/internal/sync/singleflight; version v1.23.0 --
+** github.com/aws/smithy-go/internal/sync/singleflight; version v1.24.0 --
 https://github.com/aws/smithy-go
 
 Copyright (c) 2009 The Go Authors. All rights reserved.
@@ -813,7 +816,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/grpc-ecosystem/grpc-gateway/v2; version v2.26.3 --
+** github.com/grpc-ecosystem/grpc-gateway/v2; version v2.27.7 --
 https://github.com/grpc-ecosystem/grpc-gateway/v2
 
 Copyright (c) 2015, Gengo, Inc.
@@ -988,34 +991,34 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/go; version go1.25.7 --
+** golang.org/go; version go1.26.2 --
 https://github.com/golang/go
 
-** golang.org/x/crypto; version v0.45.0 --
+** golang.org/x/crypto; version v0.47.0 --
 https://go.googlesource.com/crypto
 
-** golang.org/x/exp; version v0.0.0-20240719175910-8a7402abbf56 --
+** golang.org/x/exp/slices; version v0.0.0-20251219203646-944ab1f22d93 --
 https://go.googlesource.com/exp
 
-** golang.org/x/net; version v0.47.0 --
+** golang.org/x/net; version v0.49.0 --
 https://go.googlesource.com/net
 
-** golang.org/x/oauth2; version v0.30.0 --
+** golang.org/x/oauth2; version v0.34.0 --
 https://go.googlesource.com/oauth2
 
-** golang.org/x/sync; version v0.18.0 --
+** golang.org/x/sync; version v0.19.0 --
 https://go.googlesource.com/sync
 
-** golang.org/x/sys/unix; version v0.38.0 --
+** golang.org/x/sys/unix; version v0.40.0 --
 https://go.googlesource.com/sys
 
-** golang.org/x/term; version v0.37.0 --
+** golang.org/x/term; version v0.39.0 --
 https://go.googlesource.com/term
 
-** golang.org/x/text; version v0.31.0 --
+** golang.org/x/text; version v0.33.0 --
 https://go.googlesource.com/text
 
-** golang.org/x/time/rate; version v0.11.0 --
+** golang.org/x/time/rate; version v0.14.0 --
 https://go.googlesource.com/time
 
 Copyright 2009 The Go Authors.
@@ -1049,7 +1052,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** google.golang.org/protobuf; version v1.36.8 --
+** google.golang.org/protobuf; version v1.36.12-0.20260120151049-f2248ac996af --
 https://go.googlesource.com/protobuf
 
 Copyright (c) 2018 The Go Authors. All rights reserved.
@@ -1153,7 +1156,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** k8s.io/apimachinery/third_party/forked/golang; version v0.35.0 --
+** k8s.io/apimachinery/third_party/forked/golang; version v0.36.0 --
 https://github.com/kubernetes/apimachinery
 
 Copyright (c) 2009 The Go Authors. All rights reserved.
@@ -1187,7 +1190,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** k8s.io/kube-openapi/pkg/internal/third_party/go-json-experiment/json; version v0.0.0-20250910181357-589584f1c912 --
+** k8s.io/kube-openapi/pkg/internal/third_party/go-json-experiment/json; version v0.0.0-20260317180543-43fb72c5454a --
 https://github.com/kubernetes/kube-openapi
 
 Copyright (c) 2020 The Go Authors. All rights reserved.
@@ -1221,7 +1224,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** k8s.io/utils/internal/third_party/forked/golang; version v0.0.0-20251002143259-bc988d571ff4 --
+** k8s.io/utils/internal/third_party/forked/golang; version v0.0.0-20260210185600-b8788abfbbc2 --
 https://github.com/kubernetes/utils
 
 Copyright (c) 2012 The Go Authors. All rights reserved.
@@ -1330,8 +1333,8 @@ THE SOFTWARE.
 
 ------
 
-** github.com/cenkalti/backoff/v4; version v4.3.0 --
-https://github.com/cenkalti/backoff/v4
+** github.com/cenkalti/backoff/v5; version v5.0.3 --
+https://github.com/cenkalti/backoff/v5
 
 The MIT License (MIT)
 
@@ -1384,7 +1387,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ------
 
-** github.com/emicklei/go-restful/v3; version v3.12.2 --
+** github.com/emicklei/go-restful/v3; version v3.13.0 --
 https://github.com/emicklei/go-restful/v3
 
 Copyright (c) 2012,2013 Ernest Micklei
@@ -1719,10 +1722,10 @@ THE SOFTWARE.
 
 ------
 
-** go.uber.org/zap; version v1.27.0 --
+** go.uber.org/zap; version v1.27.1 --
 https://github.com/uber-go/zap
 
-Copyright (c) 2016-2017 Uber Technologies, Inc.
+Copyright (c) 2016-2024 Uber Technologies, Inc.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -1861,7 +1864,7 @@ SOFTWARE.
 
 ------
 
-** k8s.io/kube-openapi/pkg/internal/third_party/govalidator; version v0.0.0-20250910181357-589584f1c912 --
+** k8s.io/kube-openapi/pkg/internal/third_party/govalidator; version v0.0.0-20260317180543-43fb72c5454a --
 https://github.com/kubernetes/kube-openapi
 
 The MIT License (MIT)

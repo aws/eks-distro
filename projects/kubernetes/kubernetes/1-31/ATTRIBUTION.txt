@@ -1222,9 +1222,6 @@ https://go.googlesource.com/oauth2
 ** golang.org/x/time/rate; version v0.3.0 --
 https://go.googlesource.com/time
 
-** golang.org/x/tools/container/intsets; version v0.21.1-0.20240508182429-e35e4ccd0d2d --
-https://go.googlesource.com/tools
-
 ** k8s.io/apimachinery/third_party/forked/golang; version v1.31.14 --
 https://github.com/kubernetes/apimachinery
 
@@ -1447,7 +1444,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/go; version go1.24.13 --
+** golang.org/go; version go1.25.9 --
 https://github.com/golang/go
 
 ** golang.org/x/crypto; version v0.31.0 --
@@ -1467,6 +1464,9 @@ https://go.googlesource.com/term
 
 ** golang.org/x/text; version v0.21.0 --
 https://go.googlesource.com/text
+
+** golang.org/x/tools/container/intsets; version v0.26.0 --
+https://go.googlesource.com/tools
 
 Copyright 2009 The Go Authors.
 
