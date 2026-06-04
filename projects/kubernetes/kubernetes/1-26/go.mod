@@ -77,7 +77,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.20.0
 	go.opentelemetry.io/proto/otlp v1.0.0
 	go.uber.org/zap v1.19.0
-	golang.org/x/crypto v0.21.0
+	golang.org/x/crypto v0.52.0
 	golang.org/x/net v0.23.0
 	golang.org/x/oauth2 v0.11.0
 	golang.org/x/sync v0.5.0

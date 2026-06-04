@@ -29,7 +29,7 @@ require (
 	github.com/quic-go/quic-go v0.42.0
 	go.etcd.io/etcd/api/v3 v3.5.9
 	go.etcd.io/etcd/client/v3 v3.5.9
-	golang.org/x/crypto v0.22.0
+	golang.org/x/crypto v0.52.0
 	golang.org/x/sys v0.19.0
 	google.golang.org/api v0.147.0
 	google.golang.org/grpc v1.58.3

@@ -102,7 +102,7 @@ require (
 	go.opentelemetry.io/proto/otlp v1.0.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.26.0 // indirect
-	golang.org/x/crypto v0.32.0 // indirect
+	golang.org/x/crypto v0.52.0 // indirect
 	golang.org/x/exp v0.0.0-20230321023759-10a507213a29 // indirect
 	golang.org/x/mod v0.17.0 // indirect
 	golang.org/x/net v0.34.0 // indirect
@@ -135,4 +135,4 @@ require (
 )
 
 // Cannot be removed until all dependencies use crypto library v0.17.0 or higher
-replace golang.org/x/crypto => golang.org/x/crypto v0.17.0
+replace golang.org/x/crypto => golang.org/x/crypto v0.52.0
