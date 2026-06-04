@@ -30,7 +30,7 @@ require (
 	github.com/prometheus/common v0.32.1
 	go.etcd.io/etcd/api/v3 v3.5.1
 	go.etcd.io/etcd/client/v3 v3.5.1
-	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
+	golang.org/x/crypto v0.52.0
 	golang.org/x/sys v0.5.0
 	google.golang.org/api v0.64.0
 	google.golang.org/grpc v1.43.0
