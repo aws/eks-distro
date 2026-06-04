@@ -77,7 +77,7 @@ require (
 	go.opentelemetry.io/proto/otlp v1.0.0
 	go.uber.org/goleak v1.2.1
 	go.uber.org/zap v1.19.0
-	golang.org/x/crypto v0.22.0
+	golang.org/x/crypto v0.52.0
 	golang.org/x/net v0.24.0
 	golang.org/x/oauth2 v0.11.0
 	golang.org/x/sync v0.5.0
