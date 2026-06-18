@@ -27,6 +27,18 @@ mkdir -p "${OUTPUT_DIR}"
 mkdir -p "${ARTIFACT_DIR}"
 mkdir -p "${IMAGE_OUTPUT_DIR}/amd64" "${IMAGE_OUTPUT_DIR}/arm64"
 
+# Skip branches whose dev-release image is not yet published; the periodic can run before the release.
+READINESS_IMAGE="${SOURCE_ECR_REG}/kubernetes/kube-apiserver:${EKS_VERSION}"
+if inspect_output=$(docker buildx imagetools inspect "${READINESS_IMAGE}" 2>&1); then
+    :
+elif echo "${inspect_output}" | grep -qi "not found"; then
+    echo "Source image ${READINESS_IMAGE} not yet published; skipping ${RELEASE_BRANCH}"
+    exit 0
+else
+    echo "Failed to inspect ${READINESS_IMAGE}: ${inspect_output}" >&2
+    exit 1
+fi
+
 retag_and_push_image() {
     local source_image=$1
     local dest_image=$2
