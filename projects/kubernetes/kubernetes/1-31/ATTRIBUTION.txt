@@ -98,7 +98,7 @@ https://github.com/mistifyio/go-zfs
 ** github.com/moby/ipvs; version v1.1.0 --
 https://github.com/moby/ipvs
 
-** github.com/moby/spdystream; version v0.4.0 --
+** github.com/moby/spdystream; version v0.5.1 --
 https://github.com/moby/spdystream
 
 ** github.com/moby/sys/mountinfo; version v0.7.1 --
@@ -597,6 +597,18 @@ Copyright 2014-2021 Docker Inc.
 
 This product includes software developed at
 Docker Inc. (https://www.docker.com/).
+
+SPDY implementation (spdy/)
+
+The spdy directory contains code derived from the Go project (golang.org/x/net).
+
+Copyright 2009-2013 The Go Authors.
+Licensed under the BSD 3-Clause License.
+
+Modifications Copyright 2014-2021 Docker Inc.
+
+The BSD license text and Go patent grant are included in
+spdy/LICENSE and spdy/PATENTS.
 
 
 * For github.com/opencontainers/runc see also this required NOTICE:
@@ -1213,6 +1225,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ** github.com/liggitt/tabwriter; version v0.0.0-20181228230101-89fcab3d43de --
 https://github.com/liggitt/tabwriter
 
+** github.com/moby/spdystream/spdy; version v0.5.1 --
+https://github.com/moby/spdystream
+
 ** golang.org/x/exp; version v0.0.0-20230515195305-f3d0a9c9a5cc --
 https://go.googlesource.com/exp
 
@@ -1221,9 +1236,6 @@ https://go.googlesource.com/oauth2
 
 ** golang.org/x/time/rate; version v0.3.0 --
 https://go.googlesource.com/time
-
-** golang.org/x/tools/container/intsets; version v0.21.1-0.20240508182429-e35e4ccd0d2d --
-https://go.googlesource.com/tools
 
 ** k8s.io/apimachinery/third_party/forked/golang; version v1.31.14 --
 https://github.com/kubernetes/apimachinery
@@ -1447,7 +1459,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/go; version go1.24.13 --
+** golang.org/go; version go1.25.9 --
 https://github.com/golang/go
 
 ** golang.org/x/crypto; version v0.31.0 --
@@ -1467,6 +1479,9 @@ https://go.googlesource.com/term
 
 ** golang.org/x/text; version v0.21.0 --
 https://go.googlesource.com/text
+
+** golang.org/x/tools/container/intsets; version v0.26.0 --
+https://go.googlesource.com/tools
 
 Copyright 2009 The Go Authors.
 
