@@ -119,6 +119,7 @@ repository for the [EKS Optimized AMI](https://github.com/awslabs/amazon-eks-ami
 if you are interested in the AL2 container runtime kernel version.
 
 #### EKS-D 1.36 Version Dependencies
+* [v1-36-eks-3](releases/1-36/3/index.md) (June 22, 2026)
 * [v1-36-eks-2](releases/1-36/2/index.md) (June 02, 2026)
 * [v1-36-eks-1](releases/1-36/1/index.md) (June 02, 2026)
 
