@@ -27,14 +27,25 @@ aws s3 cp "s3://${S3_BUCKET}/${S3_PATH}/.git_tag" .git_tag
 aws s3 cp "s3://${S3_BUCKET}/${S3_PATH}/.go-version" /tmp/.go-version
 
 GOLANG_VERSION=$(cut -d. -f1,2 < /tmp/.go-version)
-MIN_GO_VERSION="1.24"
+# etcd 3.6.x (K8s 1.36+) requires Go 1.25; older release branches stay on the 3.5.x Go floor
+RELEASE_BRANCH_MINOR="${RELEASE_BRANCH##*-}"
+if [ "$RELEASE_BRANCH_MINOR" -ge 36 ]; then
+  MIN_GO_VERSION="1.25"
+else
+  MIN_GO_VERSION="1.24"
+fi
 if [[ "$(printf '%s\n' "$MIN_GO_VERSION" "$GOLANG_VERSION" | sort -V | head -1)" != "$MIN_GO_VERSION" ]]; then
   GOLANG_VERSION="$MIN_GO_VERSION"
 fi
 echo "$GOLANG_VERSION" > .go-version
 
 GIT_TAG=$(cat .git_tag)
-MIN_VERSION="v3.5.21"
+# Only K8s 1.36+ moves to etcd 3.6.x; older release branches stay on v3.5.21
+if [ "$RELEASE_BRANCH_MINOR" -ge 36 ]; then
+  MIN_VERSION="v3.6.12"
+else
+  MIN_VERSION="v3.5.21"
+fi
 if [[ "$(printf '%s\n' "$MIN_VERSION" "$GIT_TAG" | sort -V | head -1)" != "$MIN_VERSION" ]]; then
   GIT_TAG="$MIN_VERSION"
   echo "$GIT_TAG" > .git_tag
