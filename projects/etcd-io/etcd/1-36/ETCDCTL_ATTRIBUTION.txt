@@ -1,92 +1,35 @@
 
-** github.com/coreos/go-semver/semver; version v0.3.0 --
+** github.com/coreos/go-semver/semver; version v0.3.1 --
 https://github.com/coreos/go-semver
 
-** github.com/coreos/go-systemd/v22/journal; version v22.3.2 --
+** github.com/coreos/go-systemd/v22/journal; version v22.5.0 --
 https://github.com/coreos/go-systemd/v22
 
-** github.com/go-logr/logr; version v1.3.0 --
-https://github.com/go-logr/logr
-
-** github.com/go-logr/stdr; version v1.2.2 --
-https://github.com/go-logr/stdr
-
-** github.com/google/btree; version v1.0.1 --
-https://github.com/google/btree
-
-** github.com/jonboulle/clockwork; version v0.2.2 --
-https://github.com/jonboulle/clockwork
-
-** github.com/matttproud/golang_protobuf_extensions/pbutil; version v1.0.1 --
-https://github.com/matttproud/golang_protobuf_extensions
-
-** github.com/modern-go/concurrent; version v0.0.0-20180306012644-bacd9c7ef1dd --
-https://github.com/modern-go/concurrent
-
-** github.com/modern-go/reflect2; version v1.0.1 --
-https://github.com/modern-go/reflect2
-
-** github.com/prometheus/client_golang/prometheus; version v1.11.1 --
-https://github.com/prometheus/client_golang
-
-** github.com/prometheus/client_model/go; version v0.2.0 --
-https://github.com/prometheus/client_model
-
-** github.com/prometheus/common; version v0.26.0 --
-https://github.com/prometheus/common
-
-** github.com/prometheus/procfs; version v0.6.0 --
-https://github.com/prometheus/procfs
-
-** github.com/spf13/cobra; version v1.1.3 --
+** github.com/spf13/cobra; version v1.10.2 --
 https://github.com/spf13/cobra
 
-** go.etcd.io/etcd/api/v3; version v3.5.21 --
+** go.etcd.io/etcd/api/v3; version v3.6.12 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/client/pkg/v3; version v3.5.21 --
+** go.etcd.io/etcd/client/pkg/v3; version v3.6.12 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/client/v2; version v2.305.21 --
+** go.etcd.io/etcd/client/v3; version v3.6.12 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/client/v3; version v3.5.21 --
+** go.etcd.io/etcd/etcdctl/v3; version v3.6.12 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/etcdctl/v3; version v3.5.21 --
+** go.etcd.io/etcd/pkg/v3; version v3.6.12 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/etcdutl/v3; version v3.5.21 --
-https://github.com/etcd-io/etcd
-
-** go.etcd.io/etcd/pkg/v3; version v3.5.21 --
-https://github.com/etcd-io/etcd
-
-** go.etcd.io/etcd/raft/v3; version v3.5.21 --
-https://github.com/etcd-io/etcd
-
-** go.etcd.io/etcd/server/v3; version v3.5.21 --
-https://github.com/etcd-io/etcd
-
-** go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc; version v0.46.0 --
-https://github.com/open-telemetry/opentelemetry-go-contrib
-
-** go.opentelemetry.io/otel; version v1.20.0 --
-https://github.com/open-telemetry/opentelemetry-go
-
-** go.opentelemetry.io/otel/metric; version v1.20.0 --
-https://github.com/open-telemetry/opentelemetry-go
-
-** go.opentelemetry.io/otel/trace; version v1.20.0 --
-https://github.com/open-telemetry/opentelemetry-go
-
-** google.golang.org/genproto/googleapis/api; version v0.0.0-20230822172742-b8732ec3820d --
+** google.golang.org/genproto/googleapis/api; version v0.0.0-20251202230838-ff82c1b0f217 --
 https://github.com/googleapis/go-genproto
 
-** google.golang.org/genproto/googleapis/rpc/status; version v0.0.0-20230822172742-b8732ec3820d --
+** google.golang.org/genproto/googleapis/rpc/status; version v0.0.0-20251202230838-ff82c1b0f217 --
 https://github.com/googleapis/go-genproto
 
-** google.golang.org/grpc; version v1.59.0 --
+** google.golang.org/grpc; version v1.79.3 --
 https://github.com/grpc/grpc-go
 
 
@@ -308,96 +251,23 @@ Copyright 2018 CoreOS, Inc
 This product includes software developed at CoreOS, Inc.
 (http://www.coreos.com/).
 
-
-* For github.com/matttproud/golang_protobuf_extensions/pbutil see also this required NOTICE:
-Copyright 2012 Matt T. Proud (matt.proud@gmail.com)
-
-
-* For github.com/prometheus/client_golang/prometheus see also this required NOTICE:
-Prometheus instrumentation library for Go applications
-Copyright 2012-2015 The Prometheus Authors
-
-This product includes software developed at
-SoundCloud Ltd. (http://soundcloud.com/).
-
-
-The following components are included in this product:
-
-perks - a fork of https://github.com/bmizerany/perks
-https://github.com/beorn7/perks
-Copyright 2013-2015 Blake Mizerany, Björn Rabenstein
-See https://github.com/beorn7/perks/blob/master/README.md for license details.
-
-Go support for Protocol Buffers - Google's data interchange format
-http://github.com/golang/protobuf/
-Copyright 2010 The Go Authors
-See source code for license details.
-
-Support for streaming Protocol Buffer messages for the Go language (golang).
-https://github.com/matttproud/golang_protobuf_extensions
-Copyright 2013 Matt T. Proud
-Licensed under the Apache License, Version 2.0
-
-
-* For github.com/prometheus/client_model/go see also this required NOTICE:
-Data model artifacts for Prometheus.
-Copyright 2012-2015 The Prometheus Authors
-
-This product includes software developed at
-SoundCloud Ltd. (http://soundcloud.com/).
-
-
-* For github.com/prometheus/common see also this required NOTICE:
-Common libraries shared by Prometheus Go components.
-Copyright 2015 The Prometheus Authors
-
-This product includes software developed at
-SoundCloud Ltd. (http://soundcloud.com/).
-
-
-* For github.com/prometheus/procfs see also this required NOTICE:
-procfs provides functions to retrieve system, kernel and process
-metrics from the pseudo-filesystem proc.
-
-Copyright 2014-2015 The Prometheus Authors
-
-This product includes software developed at
-SoundCloud Ltd. (http://soundcloud.com/).
-
 ------
 
-** github.com/russross/blackfriday/v2; version v2.0.1 --
-https://github.com/russross/blackfriday/v2
+** github.com/cheggaaa/pb/v3; version v3.1.6 --
+https://github.com/cheggaaa/pb/v3
 
-Blackfriday is distributed under the Simplified BSD License:
+Copyright (c) 2012-2024, Sergey Cherepanov
+All rights reserved.
 
-> Copyright © 2011 Russ Ross
-> All rights reserved.
->
-> Redistribution and use in source and binary forms, with or without
-> modification, are permitted provided that the following conditions
-> are met:
->
-> 1.  Redistributions of source code must retain the above copyright
->     notice, this list of conditions and the following disclaimer.
->
-> 2.  Redistributions in binary form must reproduce the above
->     copyright notice, this list of conditions and the following
->     disclaimer in the documentation and/or other materials provided with
->     the distribution.
->
-> THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-> "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-> LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
-> FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-> COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-> INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
-> BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-> LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-> CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-> LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
-> ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-> POSSIBILITY OF SUCH DAMAGE.
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+* Neither the name of the author nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
@@ -442,7 +312,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/golang/protobuf; version v1.5.4 --
+** github.com/golang/protobuf/proto; version v1.5.4 --
 https://github.com/golang/protobuf
 
 Copyright 2010 The Go Authors.  All rights reserved.
@@ -476,43 +346,40 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/prometheus/common/internal/bitbucket.org/ww/goautoneg; version v0.26.0 --
-https://github.com/prometheus/common
+** github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2/options; version v2.26.3 --
+https://github.com/grpc-ecosystem/grpc-gateway/v2
 
-Copyright (c) 2011, Open Knowledge Foundation Ltd.
+Copyright (c) 2015, Gengo, Inc.
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are
-met:
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
 
-    Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
+    * Redistributions of source code must retain the above copyright notice,
+      this list of conditions and the following disclaimer.
 
-    Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in
-    the documentation and/or other materials provided with the
-    distribution.
+    * Redistributions in binary form must reproduce the above copyright notice,
+      this list of conditions and the following disclaimer in the documentation
+      and/or other materials provided with the distribution.
 
-    Neither the name of the Open Knowledge Foundation Ltd. nor the
-    names of its contributors may be used to endorse or promote
-    products derived from this software without specific prior written
-    permission.
+    * Neither the name of Gengo, Inc. nor the names of its
+      contributors may be used to endorse or promote products derived from this
+      software without specific prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 ------
 
-** github.com/spf13/pflag; version v1.0.5 --
+** github.com/spf13/pflag; version v1.0.10 --
 https://github.com/spf13/pflag
 
 Copyright (c) 2012 Alex Ogier. All rights reserved.
@@ -546,20 +413,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/go; version go1.25.0 --
+** golang.org/go; version go1.25.11 --
 https://github.com/golang/go
 
-** golang.org/x/crypto; version v0.36.0 --
-https://golang.org/x/crypto
-
-** golang.org/x/net; version v0.38.0 --
+** golang.org/x/net; version v0.52.0 --
 https://golang.org/x/net
 
-** golang.org/x/sys/unix; version v0.31.0 --
+** golang.org/x/sys/unix; version v0.42.0 --
 https://golang.org/x/sys
 
-** golang.org/x/text; version v0.23.0 --
+** golang.org/x/text; version v0.36.0 --
 https://golang.org/x/text
+
+** golang.org/x/time/rate; version v0.9.0 --
+https://golang.org/x/time
 
 Copyright 2009 The Go Authors.
 
@@ -591,40 +458,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/x/time/rate; version v0.0.0-20210220033141-f8bda1e9f3ba --
-https://golang.org/x/time
-
-Copyright (c) 2009 The Go Authors. All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are
-met:
-
-   * Redistributions of source code must retain the above copyright
-notice, this list of conditions and the following disclaimer.
-   * Redistributions in binary form must reproduce the above
-copyright notice, this list of conditions and the following disclaimer
-in the documentation and/or other materials provided with the
-distribution.
-   * Neither the name of Google Inc. nor the names of its
-contributors may be used to endorse or promote products derived from
-this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-------
-
-** google.golang.org/protobuf; version v1.33.0 --
+** google.golang.org/protobuf; version v1.36.10 --
 https://go.googlesource.com/protobuf
 
 Copyright (c) 2018 The Go Authors. All rights reserved.
@@ -657,101 +491,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** gopkg.in/cheggaaa/pb.v1; version v1.0.28 --
-https://gopkg.in/cheggaaa/pb.v1
-
-Copyright (c) 2012-2015, Sergey Cherepanov
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
-
-* Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-
-* Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
-
-* Neither the name of the author nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-------
-
-** github.com/beorn7/perks/quantile; version v1.0.1 --
-https://github.com/beorn7/perks
-Copyright (C) 2013 Blake Mizerany
-
-** github.com/cespare/xxhash/v2; version v2.2.0 --
-https://github.com/cespare/xxhash/v2
-Copyright (c) 2016 Caleb Spare
-
-** github.com/cpuguy83/go-md2man/v2/md2man; version v2.0.0 --
-https://github.com/cpuguy83/go-md2man/v2
-Copyright (c) 2014 Brian Goff
-
-** github.com/golang-jwt/jwt/v4; version v4.5.2 --
-https://github.com/golang-jwt/jwt/v4
-Copyright (c) 2012 Dave Grijalva
-Copyright (c) 2021 golang-jwt maintainers
-
-** github.com/json-iterator/go; version v1.1.11 --
-https://github.com/json-iterator/go
-Copyright (c) 2016 json-iterator
-
-** github.com/mattn/go-runewidth; version v0.0.9 --
-https://github.com/mattn/go-runewidth
-Copyright (c) 2016 Yasuhiro Matsumoto
-
-** github.com/olekukonko/tablewriter; version v0.0.5 --
-https://github.com/olekukonko/tablewriter
-Copyright (C) 2014 by Oleku Konko
-
-** github.com/shurcooL/sanitized_anchor_name; version v1.0.0 --
-https://github.com/shurcooL/sanitized_anchor_name
-Copyright (c) 2015 Dmitri Shuralyov
-
-** github.com/urfave/cli; version v1.22.4 --
-https://github.com/urfave/cli
-Copyright (c) 2016 Jeremy Saenz & Contributors
-
-** github.com/xiang90/probing; version v0.0.0-20190116061207-43a291ad63a2 --
-https://github.com/xiang90/probing
-Copyright (c) 2015 Xiang Li
-
-** go.etcd.io/bbolt; version v1.3.11 --
-https://github.com/etcd-io/bbolt
-Copyright (c) 2013 Ben Johnson
-
-** go.uber.org/atomic; version v1.7.0 --
-https://github.com/uber-go/atomic
-Copyright (c) 2016 Uber Technologies, Inc.
-
-** go.uber.org/multierr; version v1.6.0 --
-https://github.com/uber-go/multierr
-Copyright (c) 2017 Uber Technologies, Inc.
-
-** go.uber.org/zap; version v1.17.0 --
-https://github.com/uber-go/zap
-Copyright (c) 2016-2017 Uber Technologies, Inc.
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-------
-
-** github.com/bgentry/speakeasy; version v0.1.0 --
+** github.com/bgentry/speakeasy; version v0.2.0 --
 https://github.com/bgentry/speakeasy
 Copyright (c) 2017 Blake Gentry
 
@@ -777,7 +517,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ------
 
-** github.com/dustin/go-humanize; version v1.0.0 --
+** github.com/dustin/go-humanize; version v1.0.1 --
 https://github.com/dustin/go-humanize
 Copyright (c) 2005-2008  Dustin Sallings <dustin@spy.net>
 
@@ -800,4 +540,58 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 <http://www.opensource.org/licenses/mit-license.php>
+------
+
+** github.com/fatih/color; version v1.18.0 --
+https://github.com/fatih/color
+Copyright (c) 2013 Fatih Arslan
+
+** github.com/mattn/go-colorable; version v0.1.14 --
+https://github.com/mattn/go-colorable
+Copyright (c) 2016 Yasuhiro Matsumoto
+
+** github.com/mattn/go-isatty; version v0.0.20 --
+https://github.com/mattn/go-isatty
+Copyright (c) Yasuhiro MATSUMOTO <mattn.jp@gmail.com>
+
+** github.com/mattn/go-runewidth; version v0.0.16 --
+https://github.com/mattn/go-runewidth
+Copyright (c) 2016 Yasuhiro Matsumoto
+
+** github.com/olekukonko/tablewriter; version v0.0.5 --
+https://github.com/olekukonko/tablewriter
+Copyright (C) 2014 by Oleku Konko
+
+** github.com/rivo/uniseg; version v0.4.7 --
+https://github.com/rivo/uniseg
+Copyright (c) 2019 Oliver Kuederle
+
+** github.com/VividCortex/ewma; version v1.2.0 --
+https://github.com/VividCortex/ewma
+Copyright (c) 2013 VividCortex
+
+** go.uber.org/multierr; version v1.11.0 --
+https://github.com/uber-go/multierr
+Copyright (c) 2017-2021 Uber Technologies, Inc.
+
+** go.uber.org/zap; version v1.27.0 --
+https://github.com/uber-go/zap
+Copyright (c) 2016-2017 Uber Technologies, Inc.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ------
