@@ -90,6 +90,14 @@ spec:
     nodes: public
   kubeAPIServer:
     image: {{ .kube_apiserver.repository }}:{{ .kube_apiserver.tag }}
+    tlsMinVersion: VersionTLS12
+    tlsCipherSuites:
+    - TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+    - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+    - TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+    - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+    - TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256
+    - TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
   kubeControllerManager:
     image: {{ .kube_controller_manager.repository }}:{{ .kube_controller_manager.tag }}
   kubeScheduler:
@@ -111,6 +119,14 @@ spec:
     # for 1.19 and above webhook auth is the default mode
     authorizationMode: Webhook
     authenticationTokenWebhook: true
+    tlsMinVersion: VersionTLS12
+    tlsCipherSuites:
+    - TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+    - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+    - TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+    - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+    - TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256
+    - TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
 
 ---
 
