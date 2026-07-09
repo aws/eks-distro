@@ -1,6 +1,6 @@
 module github.com/aws/eks-distro
 
-go 1.25.0
+go 1.25
 
 require github.com/google/go-github/v52 v52.0.0
 
