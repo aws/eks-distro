@@ -1591,28 +1591,28 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/go; version go1.25.9 --
+** golang.org/go; version go1.25.11 --
 https://github.com/golang/go
 
-** golang.org/x/crypto; version v0.31.0 --
+** golang.org/x/crypto; version v0.52.0 --
 https://go.googlesource.com/crypto
 
-** golang.org/x/net; version v0.33.0 --
+** golang.org/x/net; version v0.55.0 --
 https://go.googlesource.com/net
 
-** golang.org/x/sync; version v0.10.0 --
+** golang.org/x/sync; version v0.20.0 --
 https://go.googlesource.com/sync
 
-** golang.org/x/sys; version v0.28.0 --
+** golang.org/x/sys; version v0.45.0 --
 https://go.googlesource.com/sys
 
-** golang.org/x/term; version v0.27.0 --
+** golang.org/x/term; version v0.43.0 --
 https://go.googlesource.com/term
 
-** golang.org/x/text; version v0.21.0 --
+** golang.org/x/text; version v0.37.0 --
 https://go.googlesource.com/text
 
-** golang.org/x/tools/container/intsets; version v0.26.0 --
+** golang.org/x/tools/container/intsets; version v0.44.0 --
 https://go.googlesource.com/tools
 
 Copyright 2009 The Go Authors.
