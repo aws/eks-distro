@@ -18,7 +18,7 @@ BASE_DIRECTORY=$(git rev-parse --show-toplevel)
 cd ${BASE_DIRECTORY}
 
 while read ANNOUNCEMENT; do
-  RELEASE_TAG=$(echo "${ANNOUNCEMENT}" | grep -o -E "[[:digit:]]{1}\-[[:digit:]]{2}-eks-[[:digit:]]{1,2}") # e.g. 1-25-eks-36
+  RELEASE_TAG=$(grep -o -E "[[:digit:]]{1}\-[[:digit:]]{2}-eks-[[:digit:]]{1,2}" "${ANNOUNCEMENT}") # e.g. 1-25-eks-36
   if [ -z "$RELEASE_TAG" ]; then
     echo "Failed to publish release notification: Unable to generate release number for notification subject"
     exit 1
@@ -30,4 +30,4 @@ while read ANNOUNCEMENT; do
   # git tag -a ${RELEASE_TAG} ${BASE_PULL_SHA} -m ${RELEASE_TAG} # TODO: Temporarily comment out to prevent job from failing
   # git push ${RELEASE_TAG} # TODO: Temporarily comment out to prevent job from failing
 
-done <$(git -C . diff --name-only HEAD^ HEAD | grep '^docs/contents/releases' | grep release-announcement.txt)
+done < <(git -C . diff --name-only HEAD^ HEAD | grep '^docs/contents/releases' | grep release-announcement.txt)
