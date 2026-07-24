@@ -1,0 +1,77 @@
+From b74808a6df94c90a211fa1ec7b1b8410a337e97d Mon Sep 17 00:00:00 2001
+From: Yong Tang <yong.tang.github@outlook.com>
+Date: Sun, 15 Mar 2026 14:27:03 -0700
+Subject: [PATCH 14/22] Fix case-sensitive zone handling in the transfer plugin
+ for AXFR/IXFR. (#7899)
+
+This PR fixes Fix case-sensitive zone handling in the transfer plugin for AXFR/IXFR, raised in 7898
+
+Signed-off-by: Yong Tang <yong.tang.github@outlook.com>
+---
+ plugin/transfer/transfer.go      |  4 ++--
+ plugin/transfer/transfer_test.go | 30 ++++++++++++++++++++++++++++++
+ 2 files changed, 32 insertions(+), 2 deletions(-)
+
+diff --git a/plugin/transfer/transfer.go b/plugin/transfer/transfer.go
+index ab079b502..5adf1c1e2 100644
+--- a/plugin/transfer/transfer.go
++++ b/plugin/transfer/transfer.go
+@@ -63,7 +63,7 @@ func (t *Transfer) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Ms
+ 		return dns.RcodeRefused, nil
+ 	}
+ 
+-	x := longestMatch(t.xfrs, state.QName())
++	x := longestMatch(t.xfrs, state.Name())
+ 	if x == nil {
+ 		return plugin.NextOrFailure(t.Name(), t.Next, ctx, w, r)
+ 	}
+@@ -93,7 +93,7 @@ func (t *Transfer) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Ms
+ 	var pchan <-chan []dns.RR
+ 	var err error
+ 	for _, p := range t.Transferers {
+-		pchan, err = p.Transfer(state.QName(), serial)
++		pchan, err = p.Transfer(state.Name(), serial)
+ 		if err == ErrNotAuthoritative {
+ 			// plugin was not authoritative for the zone, try next plugin
+ 			continue
+diff --git a/plugin/transfer/transfer_test.go b/plugin/transfer/transfer_test.go
+index b04039318..04ea6f8b5 100644
+--- a/plugin/transfer/transfer_test.go
++++ b/plugin/transfer/transfer_test.go
+@@ -339,3 +339,33 @@ func TestTransferDrainsProducerOnClientError(t *testing.T) {
+ 		t.Fatal("producer goroutine did not finish; channel likely not drained on client error")
+ 	}
+ }
++
++type nopHandler struct{}
++
++func (nopHandler) Name() string { return "nop" }
++func (nopHandler) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Msg) (int, error) {
++	return dns.RcodeSuccess, nil
++}
++
++func TestAXFRZoneMatchCaseInsensitive(t *testing.T) {
++	next := &transfererPlugin{Zone: "example.org.", Serial: 12345}
++	next.Next = nopHandler{}
++
++	tr := &Transfer{
++		Transferers: []Transferer{next},
++		xfrs:        []*xfr{{Zones: []string{"example.org."}, to: []string{"*"}}},
++		Next:        next,
++	}
++
++	ctx := context.TODO()
++	w := dnstest.NewMultiRecorder(&test.ResponseWriter{TCP: true})
++	m := new(dns.Msg)
++	m.SetAxfr("ExAmPlE.OrG.") // mixed case
++
++	_, err := tr.ServeDNS(ctx, w, m)
++	if err != nil {
++		t.Fatalf("ServeDNS error: %v", err)
++	}
++
++	validateAXFRResponse(t, w)
++}
+-- 
+2.47.3
+

@@ -1,0 +1,86 @@
+From bcd25ce9d8e4ba137b9619197b335b5139bb4fc9 Mon Sep 17 00:00:00 2001
+From: Yong Tang <yong.tang.github@outlook.com>
+Date: Fri, 20 Mar 2026 13:08:19 -0700
+Subject: [PATCH 18/22] Core: Propagate TSIG status in DoQ transport (#7947)
+
+This PR nsure DoQ writer preserves and returns TSIG verification status, preventing authentication bypass on DNS-over-QUIC.
+
+Signed-off-by: Yong Tang <yong.tang.github@outlook.com>
+---
+ core/dnsserver/quic.go             |  6 ++++--
+ core/dnsserver/server_quic.go      |  8 ++++++++
+ core/dnsserver/server_quic_test.go | 12 ++++++++++++
+ 3 files changed, 24 insertions(+), 2 deletions(-)
+
+diff --git a/core/dnsserver/quic.go b/core/dnsserver/quic.go
+index f7cde74a8..1dcbe3039 100644
+--- a/core/dnsserver/quic.go
++++ b/core/dnsserver/quic.go
+@@ -14,6 +14,7 @@ type DoQWriter struct {
+ 	remoteAddr net.Addr
+ 	stream     *quic.Stream
+ 	Msg        *dns.Msg
++	tsigStatus error
+ }
+ 
+ func (w *DoQWriter) Write(b []byte) (int, error) {
+@@ -53,14 +54,15 @@ func (w *DoQWriter) Close() error {
+ // AddPrefix adds a 2-byte prefix with the DNS message length.
+ func AddPrefix(b []byte) (m []byte) {
+ 	m = make([]byte, 2+len(b))
+-	binary.BigEndian.PutUint16(m, uint16(len(b)))
++	binary.BigEndian.PutUint16(m, uint16(len(b))) // #nosec G115 -- DNS message length fits in uint16
+ 	copy(m[2:], b)
+ 
+ 	return m
+ }
+ 
+ // These methods implement the dns.ResponseWriter interface from Go DNS.
+-func (w *DoQWriter) TsigStatus() error     { return nil }
++
++func (w *DoQWriter) TsigStatus() error     { return w.tsigStatus }
+ func (w *DoQWriter) TsigTimersOnly(b bool) {}
+ func (w *DoQWriter) Hijack()               {}
+ func (w *DoQWriter) LocalAddr() net.Addr   { return w.localAddr }
+diff --git a/core/dnsserver/server_quic.go b/core/dnsserver/server_quic.go
+index 0a220abe9..255da1007 100644
+--- a/core/dnsserver/server_quic.go
++++ b/core/dnsserver/server_quic.go
+@@ -215,6 +215,14 @@ func (s *ServerQUIC) serveQUICStream(stream *quic.Stream, conn *quic.Conn) {
+ 		Msg:        req,
+ 	}
+ 
++	if tsig := req.IsTsig(); tsig != nil {
++		if s.tsigSecret == nil {
++			w.tsigStatus = dns.ErrSecret
++		} else if _, ok := s.tsigSecret[tsig.Hdr.Name]; !ok {
++			w.tsigStatus = dns.ErrSecret
++		}
++	}
++
+ 	dnsCtx := context.WithValue(stream.Context(), Key{}, s.Server)
+ 	dnsCtx = context.WithValue(dnsCtx, LoopKey{}, 0)
+ 	s.ServeDNS(dnsCtx, w, req)
+diff --git a/core/dnsserver/server_quic_test.go b/core/dnsserver/server_quic_test.go
+index 19cadd2f0..563ffc578 100644
+--- a/core/dnsserver/server_quic_test.go
++++ b/core/dnsserver/server_quic_test.go
+@@ -439,3 +439,15 @@ func TestAcquireQUICWorkerReturnsFalseOnCancelledContext(t *testing.T) {
+ 		t.Fatal("expected acquireQUICWorker to return false when context is cancelled")
+ 	}
+ }
++
++func TestDoQWriterTsigStatusReturnsStoredStatus(t *testing.T) {
++	want := errors.New("bad tsig")
++
++	w := &DoQWriter{
++		tsigStatus: want,
++	}
++
++	if got := w.TsigStatus(); got != want {
++		t.Fatalf("TsigStatus() = %v, want %v", got, want)
++	}
++}
+-- 
+2.47.3
+

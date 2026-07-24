@@ -1,0 +1,71 @@
+From 452de3338d242e5801aba7adc33f2d9c80d23c6f Mon Sep 17 00:00:00 2001
+From: Yong Tang <yong.tang.github@outlook.com>
+Date: Tue, 24 Mar 2026 11:35:20 -0700
+Subject: [PATCH 15/22] plugin/transfter: Fix longestMatch to select the most
+ specific zone correctly. (#7949)
+
+* plugin/transfter: Fix longestMatch to select the most specific zone correctly.
+
+This PR Fix longestMatch to select the most specific zone correctly.The previous implementation used lexicographic string comparison, which could choose the wrong zone; this change selects the longest matching zone instead.
+
+Signed-off-by: Yong Tang <yong.tang.github@outlook.com>
+
+* Tie breaker
+
+Signed-off-by: Yong Tang <yong.tang.github@outlook.com>
+
+* Fix
+
+Signed-off-by: Yong Tang <yong.tang.github@outlook.com>
+
+---------
+
+Signed-off-by: Yong Tang <yong.tang.github@outlook.com>
+---
+ plugin/transfer/transfer.go      |  2 +-
+ plugin/transfer/transfer_test.go | 19 +++++++++++++++++++
+ 2 files changed, 20 insertions(+), 1 deletion(-)
+
+diff --git a/plugin/transfer/transfer.go b/plugin/transfer/transfer.go
+index 5adf1c1e2..bbd91b5eb 100644
+--- a/plugin/transfer/transfer.go
++++ b/plugin/transfer/transfer.go
+@@ -209,7 +209,7 @@ func longestMatch(xfrs []*xfr, name string) *xfr {
+ 	zone := "" // longest zone match wins
+ 	for _, xfr := range xfrs {
+ 		if z := plugin.Zones(xfr.Zones).Matches(name); z != "" {
+-			if z > zone {
++			if len(z) > len(zone) || (len(z) == len(zone) && z > zone) {
+ 				zone = z
+ 				x = xfr
+ 			}
+diff --git a/plugin/transfer/transfer_test.go b/plugin/transfer/transfer_test.go
+index 04ea6f8b5..2bf75ce07 100644
+--- a/plugin/transfer/transfer_test.go
++++ b/plugin/transfer/transfer_test.go
+@@ -369,3 +369,22 @@ func TestAXFRZoneMatchCaseInsensitive(t *testing.T) {
+ 
+ 	validateAXFRResponse(t, w)
+ }
++
++func TestLongestMatchMostSpecificZone(t *testing.T) {
++	x1 := &xfr{Zones: []string{"example.org."}}
++	x2 := &xfr{Zones: []string{"a.example.org."}}
++
++	got := longestMatch([]*xfr{x1, x2}, "host.a.example.org.")
++	if got != x2 {
++		t.Fatalf("expected most specific zone (a.example.org.) to match, got %+v", got)
++	}
++}
++
++func TestLongestMatchNilWhenNoMatch(t *testing.T) {
++	x1 := &xfr{Zones: []string{"example.org."}}
++
++	got := longestMatch([]*xfr{x1}, "other.net.")
++	if got != nil {
++		t.Fatalf("expected nil when no zones match, got %+v", got)
++	}
++}
+-- 
+2.47.3
+

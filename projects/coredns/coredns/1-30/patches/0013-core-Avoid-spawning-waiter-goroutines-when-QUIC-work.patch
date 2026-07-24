@@ -1,0 +1,126 @@
+From 7e0bd054938c26dd7e2553bc15d46f5a68a8c7bb Mon Sep 17 00:00:00 2001
+From: Yong Tang <yong.tang.github@outlook.com>
+Date: Mon, 16 Mar 2026 10:37:48 -0700
+Subject: [PATCH 13/22] core: Avoid spawning waiter goroutines when QUIC worker
+ pool is full (#7927)
+
+---
+ core/dnsserver/server_quic.go      | 39 +++++++++++++-----------------
+ core/dnsserver/server_quic_test.go | 39 ++++++++++++++++++++++++++++++
+ 2 files changed, 56 insertions(+), 22 deletions(-)
+
+diff --git a/core/dnsserver/server_quic.go b/core/dnsserver/server_quic.go
+index 442c55f6f..0a220abe9 100644
+--- a/core/dnsserver/server_quic.go
++++ b/core/dnsserver/server_quic.go
+@@ -127,6 +127,15 @@ func (s *ServerQUIC) ServeQUIC() error {
+ 	}
+ }
+ 
++func acquireQUICWorker(ctx context.Context, pool chan struct{}) bool {
++	select {
++	case pool <- struct{}{}:
++		return true
++	case <-ctx.Done():
++		return false
++	}
++}
++
+ // serveQUICConnection handles a new QUIC connection. It waits for new streams
+ // and passes them to serveQUICStream.
+ func (s *ServerQUIC) serveQUICConnection(conn *quic.Conn) {
+@@ -148,29 +157,15 @@ func (s *ServerQUIC) serveQUICConnection(conn *quic.Conn) {
+ 			return
+ 		}
+ 
+-		// Use a bounded worker pool with context cancellation
+-		select {
+-		case s.streamProcessPool <- struct{}{}:
+-			// Got worker slot immediately
+-			go func(st *quic.Stream, cn *quic.Conn) {
+-				defer func() { <-s.streamProcessPool }() // Release worker slot
+-				s.serveQUICStream(st, cn)
+-			}(stream, conn)
+-		default:
+-			// Worker pool full, check for context cancellation
+-			go func(st *quic.Stream, cn *quic.Conn) {
+-				select {
+-				case s.streamProcessPool <- struct{}{}:
+-					// Got worker slot after waiting
+-					defer func() { <-s.streamProcessPool }() // Release worker slot
+-					s.serveQUICStream(st, cn)
+-				case <-conn.Context().Done():
+-					// Connection context was cancelled while waiting
+-					st.Close()
+-					return
+-				}
+-			}(stream, conn)
++		if !acquireQUICWorker(conn.Context(), s.streamProcessPool) {
++			_ = stream.Close()
++			return
+ 		}
++
++		go func(st *quic.Stream, cn *quic.Conn) {
++			defer func() { <-s.streamProcessPool }()
++			s.serveQUICStream(st, cn)
++		}(stream, conn)
+ 	}
+ }
+ 
+diff --git a/core/dnsserver/server_quic_test.go b/core/dnsserver/server_quic_test.go
+index 8deb11c7c..19cadd2f0 100644
+--- a/core/dnsserver/server_quic_test.go
++++ b/core/dnsserver/server_quic_test.go
+@@ -2,6 +2,7 @@ package dnsserver
+ 
+ import (
+ 	"bytes"
++	"context"
+ 	"crypto/tls"
+ 	"errors"
+ 	"testing"
+@@ -400,3 +401,41 @@ func TestAddPrefix(t *testing.T) {
+ 		})
+ 	}
+ }
++
++func TestAcquireQUICWorkerWaitsForSlot(t *testing.T) {
++	pool := make(chan struct{}, 1)
++	pool <- struct{}{}
++
++	ctx, cancel := context.WithCancel(t.Context())
++	defer cancel()
++
++	done := make(chan bool, 1)
++	go func() {
++		done <- acquireQUICWorker(ctx, pool)
++	}()
++
++	select {
++	case <-done:
++		t.Fatal("acquireQUICWorker returned before a slot was released")
++	default:
++	}
++
++	<-pool
++
++	got := <-done
++	if !got {
++		t.Fatal("expected acquireQUICWorker to succeed after slot release")
++	}
++}
++
++func TestAcquireQUICWorkerReturnsFalseOnCancelledContext(t *testing.T) {
++	pool := make(chan struct{}, 1)
++	pool <- struct{}{}
++
++	ctx, cancel := context.WithCancel(context.Background())
++	cancel()
++
++	if got := acquireQUICWorker(ctx, pool); got {
++		t.Fatal("expected acquireQUICWorker to return false when context is cancelled")
++	}
++}
+-- 
+2.47.3
+

@@ -1,0 +1,77 @@
+From 59b1f140a73f6b0bdd20bb4363d213116bac4458 Mon Sep 17 00:00:00 2001
+From: Yong Tang <yong.tang.github@outlook.com>
+Date: Tue, 24 Mar 2026 13:46:15 -0700
+Subject: [PATCH 17/22] core: Preserve TSIG status in gRPC transport (#7943)
+
+---
+ core/dnsserver/server_grpc.go      | 11 ++++++++++-
+ core/dnsserver/server_grpc_test.go | 13 +++++++++++++
+ 2 files changed, 23 insertions(+), 1 deletion(-)
+
+diff --git a/core/dnsserver/server_grpc.go b/core/dnsserver/server_grpc.go
+index 06ee5de7f..351ba64ba 100644
+--- a/core/dnsserver/server_grpc.go
++++ b/core/dnsserver/server_grpc.go
+@@ -191,6 +191,14 @@ func (s *ServergRPC) Query(ctx context.Context, in *pb.DnsPacket) (*pb.DnsPacket
+ 
+ 	w := &gRPCresponse{localAddr: s.listenAddr, remoteAddr: a, Msg: msg}
+ 
++	if tsig := msg.IsTsig(); tsig != nil {
++		if s.tsigSecret == nil {
++			w.tsigStatus = dns.ErrSecret
++		} else if _, ok := s.tsigSecret[tsig.Hdr.Name]; !ok {
++			w.tsigStatus = dns.ErrSecret
++		}
++	}
++
+ 	dnsCtx := context.WithValue(ctx, Key{}, s.Server)
+ 	dnsCtx = context.WithValue(dnsCtx, LoopKey{}, 0)
+ 	s.ServeDNS(dnsCtx, w, msg)
+@@ -215,6 +223,7 @@ type gRPCresponse struct {
+ 	localAddr  net.Addr
+ 	remoteAddr net.Addr
+ 	Msg        *dns.Msg
++	tsigStatus error
+ }
+ 
+ // Write is the hack that makes this work. It does not actually write the message
+@@ -227,7 +236,7 @@ func (r *gRPCresponse) Write(b []byte) (int, error) {
+ 
+ // These methods implement the dns.ResponseWriter interface from Go DNS.
+ func (r *gRPCresponse) Close() error              { return nil }
+-func (r *gRPCresponse) TsigStatus() error         { return nil }
++func (r *gRPCresponse) TsigStatus() error         { return r.tsigStatus }
+ func (r *gRPCresponse) TsigTimersOnly(b bool)     {}
+ func (r *gRPCresponse) Hijack()                   {}
+ func (r *gRPCresponse) LocalAddr() net.Addr       { return r.localAddr }
+diff --git a/core/dnsserver/server_grpc_test.go b/core/dnsserver/server_grpc_test.go
+index bfb095cfc..ae2990f98 100644
+--- a/core/dnsserver/server_grpc_test.go
++++ b/core/dnsserver/server_grpc_test.go
+@@ -3,6 +3,7 @@ package dnsserver
+ import (
+ 	"context"
+ 	"crypto/tls"
++	"errors"
+ 	"net"
+ 	"testing"
+ 
+@@ -447,3 +448,15 @@ func TestServergRPC_Query_MaxSizeMessage(t *testing.T) {
+ 		t.Errorf("Expected no error for max size message, got: %v", err)
+ 	}
+ }
++
++func TestGRPCResponseTsigStatusReturnsStoredStatus(t *testing.T) {
++	want := errors.New("bad tsig")
++
++	r := &gRPCresponse{
++		tsigStatus: want,
++	}
++
++	if got := r.TsigStatus(); got != want {
++		t.Fatalf("TsigStatus() = %v, want %v", got, want)
++	}
++}
+-- 
+2.47.3
+
