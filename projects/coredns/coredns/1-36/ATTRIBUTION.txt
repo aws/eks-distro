@@ -1404,35 +1404,35 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/go; version go1.26.4 --
+** golang.org/go; version go1.26.5 --
 https://github.com/golang/go
 
 ** golang.org/x/crypto; version v0.48.0 --
-https://golang.org/x/crypto
+https://go.googlesource.com/crypto
 
 ** golang.org/x/exp/constraints; version v0.0.0-20250408133849-7e4ce0ab07d0 --
-https://golang.org/x/exp
+https://go.googlesource.com/exp
 
 ** golang.org/x/mod/semver; version v0.32.0 --
-https://golang.org/x/mod
+https://go.googlesource.com/mod
 
 ** golang.org/x/net; version v0.51.0 --
-https://golang.org/x/net
+https://go.googlesource.com/net
 
 ** golang.org/x/oauth2; version v0.35.0 --
-https://golang.org/x/oauth2
+https://go.googlesource.com/oauth2
 
 ** golang.org/x/sys; version v0.42.0 --
-https://golang.org/x/sys
+https://go.googlesource.com/sys
 
 ** golang.org/x/term; version v0.40.0 --
-https://golang.org/x/term
+https://go.googlesource.com/term
 
 ** golang.org/x/text; version v0.34.0 --
-https://golang.org/x/text
+https://go.googlesource.com/text
 
 ** golang.org/x/time/rate; version v0.14.0 --
-https://golang.org/x/time
+https://go.googlesource.com/time
 
 Copyright 2009 The Go Authors.
 
@@ -1465,7 +1465,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ------
 
 ** golang.org/x/xerrors; version v0.0.0-20231012003039-104605ab7028 --
-https://golang.org/x/xerrors
+https://go.googlesource.com/xerrors
 
 Copyright (c) 2019 The Go Authors. All rights reserved.
 
