@@ -78,7 +78,7 @@ https://github.com/google/cadvisor
 https://github.com/google/cadvisor
 
 ** github.com/google/cel-go; version v0.17.8 --
-https://github.com/google/cel-go
+https://github.com/cel-expr/cel-go
 
 ** github.com/google/gnostic-models; version v0.6.8 --
 https://github.com/google/gnostic-models
