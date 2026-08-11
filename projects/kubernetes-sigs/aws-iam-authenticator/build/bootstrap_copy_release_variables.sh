@@ -23,8 +23,13 @@ aws s3 ls --recursive "s3://${ARTIFACTS_SOURCE_S3_BUCKET}/${S3_PREFIX}" > "$TEMP
 # if we move to utilize platform version in EKS-D releases then we can also export this variable
 LATEST_VERSION=$(grep -o 'eks\.[0-9]\+' "$TEMP_FILE" | sort -V | tail -1)
 
-GIT_TAG=$(grep "${LATEST_VERSION}/artifacts/${REPO}/v[0-9]" "$TEMP_FILE" | \
-              grep -o 'v[0-9][^/]*' | head -1)
+# The authenticator runtime is decoupled and published under its full
+# runtime version (e.g. 0.0.66-v0.7.18-cvefix, i.e. <build>-v<upstream>), and
+# the copied binary is stamped with that full version. validate-cli-version
+# requires GIT_TAG == the binary's version.
+GIT_TAG=$(grep -oE "${LATEST_VERSION}/artifacts/${REPO}/[^/]+/" "$TEMP_FILE" | \
+              sed -E "s#.*/artifacts/${REPO}/([^/]+)/#\1#" | sort -u | \
+              grep -E '^[0-9].*-v[0-9]' | head -1)
 echo "${GIT_TAG}" > .git_tag
 
 ARTIFACTS_SOURCE_S3_PATH="s3://${ARTIFACTS_SOURCE_S3_BUCKET}/${S3_PREFIX}${LATEST_VERSION}/artifacts/${REPO}/${GIT_TAG}/"
