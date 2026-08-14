@@ -24,9 +24,11 @@ BUILDER_IMAGE=$(EKS_DISTRO_BASE_IMAGE)
 ifdef RELEASE_BRANCH
 _bootstrap:=$(shell REPO=$(REPO) ./build/bootstrap_copy_release_variables.sh)
 export GIT_TAG:=$(shell cat .git_tag)
+export IMAGE_VERSION:=$(shell cat .image_version)
 export GOLANG_VERSION:=$(shell cat .go-version)
 export ARTIFACTS_SOURCE_S3_PATH:=$(shell cat .s3_sync_path)
 $(if $(GIT_TAG),$(shell rm -f .git_tag),$(error GIT_TAG is empty, .git_tag might be missing))
+$(if $(IMAGE_VERSION),$(shell rm -f .image_version),$(error IMAGE_VERSION is empty, .image_version might be missing))
 $(if $(GOLANG_VERSION),$(shell rm -f .go-version),$(error GOLANG_VERSION is empty, .go-version might be missing))
 $(if $(ARTIFACTS_SOURCE_S3_PATH),$(shell rm -f .s3_sync_path),$(error ARTIFACTS_SOURCE_S3_PATH is empty, .s3_sync_path might be missing))
 endif
@@ -36,6 +38,7 @@ BUILD_ARTIFACTS ?= false
 COPY_ARTIFACTS_SCRIPT = RELEASE=$(RELEASE) \
 	IMAGE_REPO=$(IMAGE_REPO) \
 	IMAGE_NAMES="$(REPO_OWNER)/$(REPO)" \
+	IMAGE_VERSION=$(IMAGE_VERSION) \
 	SOURCE_ECR_REG=$(DEV_ECR_REG) \
 	GO_RUNNER_IMAGE=$(GO_RUNNER_IMAGE) \
 	MAKE_ROOT=$(MAKE_ROOT) \
