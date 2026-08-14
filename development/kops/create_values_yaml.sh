@@ -135,8 +135,12 @@ function get_project_version(){
             ;;
     esac
     
+    IMAGE_VERSION_FILE=${BASEDIR}/../../projects/${REPOSITORY_NAME}/${RELEASE_BRANCH}/IMAGE_VERSION
     TAG_FILE=${BASEDIR}/../../projects/${REPOSITORY_NAME}/GIT_TAG
-    if [ -f "$TAG_FILE" ]; then
+    # a build writes IMAGE_VERSION when the pushed image tag differs from GIT_TAG
+    if [ -f "$IMAGE_VERSION_FILE" ]; then
+        VERSION=$(cat "$IMAGE_VERSION_FILE")
+    elif [ -f "$TAG_FILE" ]; then
         VERSION=$(cat ${BASEDIR}/../../projects/${REPOSITORY_NAME}/GIT_TAG)
     else
         VERSION=$(cat ${BASEDIR}/../../projects/${REPOSITORY_NAME}/${RELEASE_BRANCH}/GIT_TAG)

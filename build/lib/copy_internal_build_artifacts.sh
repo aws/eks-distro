@@ -98,5 +98,9 @@ chmod -R 755 "${BIN_OUTPUT_DIR}"
 
 # update files for any legacy method callers of these files during the build e.g., crd generation, attribution periodic
 echo "${GIT_TAG}" > "${RELEASE_BRANCH}/GIT_TAG"
+# IMAGE_VERSION, when set, is the version the pushed image was tagged with
+if [ -n "${IMAGE_VERSION:-}" ]; then
+    echo "${IMAGE_VERSION}" > "${RELEASE_BRANCH}/IMAGE_VERSION"
+fi
 echo "${GOLANG_VERSION%.*}" > "${RELEASE_BRANCH}/GOLANG_VERSION"
 cp "${OUTPUT_DIR}/attribution/ATTRIBUTION.txt" "${RELEASE_BRANCH}"

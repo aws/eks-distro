@@ -2,4 +2,5 @@
 *.swp
 _output
 .DS_Store
+projects/*/*/1-*/IMAGE_VERSION
 
