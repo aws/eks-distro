@@ -23,9 +23,30 @@ aws s3 ls --recursive "s3://${ARTIFACTS_SOURCE_S3_BUCKET}/${S3_PREFIX}" > "$TEMP
 # if we move to utilize platform version in EKS-D releases then we can also export this variable
 LATEST_VERSION=$(grep -o 'eks\.[0-9]\+' "$TEMP_FILE" | sort -V | tail -1)
 
-GIT_TAG=$(grep "${LATEST_VERSION}/artifacts/${REPO}/v[0-9]" "$TEMP_FILE" | \
-              grep -o 'v[0-9][^/]*' | head -1)
+# The artifact directory is the full runtime version. Older releases used the
+# plain upstream form (v0.7.18-cvefix); decoupled releases use the combined
+# form (0.0.66-v0.7.18-cvefix). Accept both, newest first.
+GIT_TAG=$(grep -oE "${LATEST_VERSION}/artifacts/${REPO}/[^/]+/" "$TEMP_FILE" | \
+              sed -E "s#.*/artifacts/${REPO}/([^/]+)/#\1#" | sort -u | \
+              grep -E '^(v[0-9]|[0-9].*-v[0-9])' | sort -V | tail -1)
+if [ -z "${GIT_TAG}" ]; then
+    echo "ERROR: no artifact directory for ${REPO} under ${S3_PREFIX}${LATEST_VERSION}" >&2
+    exit 1
+fi
 echo "${GIT_TAG}" > .git_tag
+
+# IMAGE_VERSION is the plain upstream version (v0.7.18-cvefix) used only for
+# the public image tag. GIT_TAG keeps the full runtime version for S3 paths,
+# the source image tag, and validate-cli-version.
+if [[ "${GIT_TAG}" =~ ^v[0-9] ]]; then
+    IMAGE_VERSION="${GIT_TAG}"
+elif [[ "${GIT_TAG}" =~ -(v[0-9].*)$ ]]; then
+    IMAGE_VERSION="${BASH_REMATCH[1]}"
+else
+    echo "ERROR: cannot derive a plain v<version> from GIT_TAG '${GIT_TAG}'" >&2
+    exit 1
+fi
+echo "${IMAGE_VERSION}" > .image_version
 
 ARTIFACTS_SOURCE_S3_PATH="s3://${ARTIFACTS_SOURCE_S3_BUCKET}/${S3_PREFIX}${LATEST_VERSION}/artifacts/${REPO}/${GIT_TAG}/"
 echo "${ARTIFACTS_SOURCE_S3_PATH}" > .s3_sync_path

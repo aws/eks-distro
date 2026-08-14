@@ -69,9 +69,12 @@ cp "${OUTPUT_DIR}/attribution/ATTRIBUTION.txt" "${OUTPUT_DIR}"
 
 echo "Retagging images"
 SOURCE_IMAGE_TAG="${SOURCE_IMAGE_TAG:-${GIT_TAG}}"
+# IMAGE_VERSION (optional) overrides the version part of the destination tag,
+# letting a project publish under a clean version while GIT_TAG stays the full
+# internal runtime version for source lookups.
 for IMAGE_NAME in "${IMAGE_NAMES[@]}"; do
     SOURCE_IMAGE="${SOURCE_ECR_REG}/${IMAGE_NAME}:${SOURCE_IMAGE_TAG}"
-    IMAGE_TAG="${GIT_TAG}-eks-${RELEASE_BRANCH}-${RELEASE}"
+    IMAGE_TAG="${IMAGE_VERSION:-${GIT_TAG}}-eks-${RELEASE_BRANCH}-${RELEASE}"
     DEST_IMAGE="${IMAGE_REPO}/${IMAGE_NAME}:${IMAGE_TAG}"
 
     for ARCH in "${IMAGE_ARCHITECTURES[@]}"; do
