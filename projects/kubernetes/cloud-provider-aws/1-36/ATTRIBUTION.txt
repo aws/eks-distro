@@ -84,7 +84,7 @@ https://github.com/go-openapi/jsonreference
 https://github.com/go-openapi/swag
 
 ** github.com/google/cel-go; version v0.26.0 --
-https://github.com/cel-expr/cel-go
+https://github.com/google/cel-go
 
 ** github.com/google/gnostic-models; version v0.7.0 --
 https://github.com/google/gnostic-models
@@ -991,7 +991,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/go; version go1.26.5 --
+** golang.org/go; version go1.26.4 --
 https://github.com/golang/go
 
 ** golang.org/x/crypto; version v0.52.0 --

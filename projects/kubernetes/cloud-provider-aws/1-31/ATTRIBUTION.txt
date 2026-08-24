@@ -84,7 +84,7 @@ https://github.com/go-openapi/swag
 https://github.com/golang/groupcache
 
 ** github.com/google/cel-go; version v0.20.1 --
-https://github.com/cel-expr/cel-go
+https://github.com/google/cel-go
 
 ** github.com/google/gnostic-models; version v0.6.8 --
 https://github.com/google/gnostic-models
@@ -1038,7 +1038,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/go; version go1.25.12 --
+** golang.org/go; version go1.25.11 --
 https://github.com/golang/go
 
 ** golang.org/x/crypto; version v0.52.0 --
