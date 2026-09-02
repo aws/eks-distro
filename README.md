@@ -59,6 +59,13 @@ To receive notifications about new EKS-D releases, subscribe to the EKS-D update
 <!--
 Source: https://github.com/cncf/artwork/tree/master/projects/kubernetes/certified-kubernetes
 -->
+
+### Kubernetes 1-37
+
+| Release | Manifest | Kubernetes Version                                                      |
+| -- | --- |-------------------------------------------------------------------------|
+| 2 | [v1-37-eks-2](https://distro.eks.amazonaws.com/kubernetes-1-37/kubernetes-1-37-eks-2.yaml) | [v1.37.0](https://github.com/kubernetes/kubernetes/release/tag/v1.37.0) |
+
 ### Kubernetes 1-36
 
 | Release | Manifest | Kubernetes Version                                                      |
