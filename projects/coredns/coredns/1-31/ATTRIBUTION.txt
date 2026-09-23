@@ -1,5 +1,5 @@
 
-** cloud.google.com/go/auth; version v0.17.0 --
+** cloud.google.com/go/auth; version v0.18.2 --
 https://github.com/googleapis/google-cloud-go
 
 ** cloud.google.com/go/auth/oauth2adapt; version v0.2.8 --
@@ -86,7 +86,7 @@ https://github.com/coredns/coredns
 ** github.com/coreos/go-semver/semver; version v0.3.1 --
 https://github.com/coreos/go-semver
 
-** github.com/coreos/go-systemd/v22/journal; version v22.5.0 --
+** github.com/coreos/go-systemd/v22/journal; version v22.7.0 --
 https://github.com/coreos/go-systemd/v22
 
 ** github.com/DataDog/datadog-agent/comp/core/tagger/origindetection; version v0.77.0 --
@@ -176,7 +176,7 @@ https://github.com/google/gnostic-models
 ** github.com/google/s2a-go; version v0.1.9 --
 https://github.com/google/s2a-go
 
-** github.com/googleapis/enterprise-certificate-proxy/client; version v0.3.7 --
+** github.com/googleapis/enterprise-certificate-proxy/client; version v0.3.11 --
 https://github.com/googleapis/enterprise-certificate-proxy
 
 ** github.com/infobloxopen/go-trees; version v0.0.0-20200715205103-96a057b8dfb9 --
@@ -230,13 +230,13 @@ https://github.com/puzpuzpuz/xsync/v3
 ** github.com/tklauser/numcpus; version v0.11.0 --
 https://github.com/tklauser/numcpus
 
-** go.etcd.io/etcd/api/v3; version v3.6.4 --
+** go.etcd.io/etcd/api/v3; version v3.7.1 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/client/pkg/v3; version v3.6.4 --
+** go.etcd.io/etcd/client/pkg/v3; version v3.7.1 --
 https://github.com/etcd-io/etcd
 
-** go.etcd.io/etcd/client/v3; version v3.6.4 --
+** go.etcd.io/etcd/client/v3; version v3.7.1 --
 https://github.com/etcd-io/etcd
 
 ** go.opentelemetry.io/auto/sdk; version v1.2.1 --
@@ -272,13 +272,13 @@ https://github.com/open-telemetry/opentelemetry-proto-go
 ** go.yaml.in/yaml/v2; version v2.4.3 --
 https://github.com/yaml/go-yaml
 
-** google.golang.org/genproto/googleapis/api; version v0.0.0-20251222181119-0a764e51fe1b --
+** google.golang.org/genproto/googleapis/api; version v0.0.0-20260526163538-3dc84a4a5aaa --
 https://github.com/googleapis/go-genproto
 
-** google.golang.org/genproto/googleapis/rpc; version v0.0.0-20260209200024-4cfbd4190f57 --
+** google.golang.org/genproto/googleapis/rpc; version v0.0.0-20260526163538-3dc84a4a5aaa --
 https://github.com/googleapis/go-genproto
 
-** google.golang.org/grpc; version v1.79.3 --
+** google.golang.org/grpc; version v1.83.2 --
 https://github.com/grpc/grpc-go
 
 ** gopkg.in/ini.v1; version v1.67.1 --
@@ -896,7 +896,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/googleapis/gax-go/v2; version v2.15.0 --
+** github.com/googleapis/gax-go/v2; version v2.17.0 --
 https://github.com/googleapis/gax-go/v2
 
 Copyright 2016, Google Inc.
@@ -929,7 +929,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2/options; version v2.27.4 --
+** github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2/options; version v2.29.0 --
 https://github.com/grpc-ecosystem/grpc-gateway/v2
 
 Copyright (c) 2015, Gengo, Inc.
@@ -1370,31 +1370,31 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/go; version go1.25.13 --
+** golang.org/go; version go1.26.7 --
 https://github.com/golang/go
 
-** golang.org/x/crypto; version v0.53.0 --
+** golang.org/x/crypto; version v0.56.0 --
 https://go.googlesource.com/crypto
 
 ** golang.org/x/exp/constraints; version v0.0.0-20260209203927-2842357ff358 --
 https://go.googlesource.com/exp
 
-** golang.org/x/mod/semver; version v0.37.0 --
+** golang.org/x/mod/semver; version v0.40.0 --
 https://go.googlesource.com/mod
 
-** golang.org/x/net; version v0.56.0 --
+** golang.org/x/net; version v0.58.0 --
 https://go.googlesource.com/net
 
-** golang.org/x/oauth2; version v0.35.0 --
+** golang.org/x/oauth2; version v0.36.0 --
 https://go.googlesource.com/oauth2
 
-** golang.org/x/sys; version v0.46.0 --
+** golang.org/x/sys; version v0.47.0 --
 https://go.googlesource.com/sys
 
-** golang.org/x/term; version v0.44.0 --
+** golang.org/x/term; version v0.45.0 --
 https://go.googlesource.com/term
 
-** golang.org/x/text; version v0.39.0 --
+** golang.org/x/text; version v0.41.0 --
 https://go.googlesource.com/text
 
 ** golang.org/x/time/rate; version v0.15.0 --
@@ -1463,7 +1463,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** google.golang.org/api; version v0.258.0 --
+** google.golang.org/api; version v0.264.0 --
 https://github.com/googleapis/google-api-go-client
 
 Copyright (c) 2011 Google Inc. All rights reserved.
@@ -1496,7 +1496,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** google.golang.org/api/internal/third_party/uritemplates; version v0.258.0 --
+** google.golang.org/api/internal/third_party/uritemplates; version v0.264.0 --
 https://github.com/googleapis/google-api-go-client
 
 Copyright (c) 2013 Joshua Tacoma. All rights reserved.
