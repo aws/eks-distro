@@ -70,36 +70,36 @@ Source: https://github.com/cncf/artwork/tree/master/projects/kubernetes/certifie
 
 | Release | Manifest | Kubernetes Version                                                      |
 | -- | --- |-------------------------------------------------------------------------|
-| 7 | [v1-36-eks-7](https://distro.eks.amazonaws.com/kubernetes-1-36/kubernetes-1-36-eks-7.yaml) | [v1.36.2](https://github.com/kubernetes/kubernetes/release/tag/v1.36.2) |
+| 8 | [v1-36-eks-8](https://distro.eks.amazonaws.com/kubernetes-1-36/kubernetes-1-36-eks-8.yaml) | [v1.36.2](https://github.com/kubernetes/kubernetes/release/tag/v1.36.2) |
 
 ### Kubernetes 1-35
 
 | Release | Manifest | Kubernetes Version                                                      |
 | -- | --- |-------------------------------------------------------------------------|
-| 13 | [v1-35-eks-13](https://distro.eks.amazonaws.com/kubernetes-1-35/kubernetes-1-35-eks-13.yaml) | [v1.35.6](https://github.com/kubernetes/kubernetes/release/tag/v1.35.6) |
+| 14 | [v1-35-eks-14](https://distro.eks.amazonaws.com/kubernetes-1-35/kubernetes-1-35-eks-14.yaml) | [v1.35.6](https://github.com/kubernetes/kubernetes/release/tag/v1.35.6) |
 
 ### Kubernetes 1-34
 
 | Release | Manifest | Kubernetes Version                                                      |
 | -- | --- |-------------------------------------------------------------------------|
-| 22 | [v1-34-eks-22](https://distro.eks.amazonaws.com/kubernetes-1-34/kubernetes-1-34-eks-22.yaml) | [v1.34.9](https://github.com/kubernetes/kubernetes/release/tag/v1.34.9) |
+| 23 | [v1-34-eks-23](https://distro.eks.amazonaws.com/kubernetes-1-34/kubernetes-1-34-eks-23.yaml) | [v1.34.9](https://github.com/kubernetes/kubernetes/release/tag/v1.34.9) |
 ### Kubernetes 1-33
 
 | Release | Manifest | Kubernetes Version                                                      |
 | -- | --- |-------------------------------------------------------------------------|
-| 31 | [v1-33-eks-31](https://distro.eks.amazonaws.com/kubernetes-1-33/kubernetes-1-33-eks-31.yaml) | [v1.33.13](https://github.com/kubernetes/kubernetes/release/tag/v1.33.13) |
+| 32 | [v1-33-eks-32](https://distro.eks.amazonaws.com/kubernetes-1-33/kubernetes-1-33-eks-32.yaml) | [v1.33.13](https://github.com/kubernetes/kubernetes/release/tag/v1.33.13) |
 
 ### Kubernetes 1-32
 
 | Release | Manifest | Kubernetes Version                                                      |
 | -- | --- |-------------------------------------------------------------------------|
-| 41 | [v1-32-eks-41](https://distro.eks.amazonaws.com/kubernetes-1-32/kubernetes-1-32-eks-41.yaml) | [v1.32.13](https://github.com/kubernetes/kubernetes/release/tag/v1.32.13) |
+| 42 | [v1-32-eks-42](https://distro.eks.amazonaws.com/kubernetes-1-32/kubernetes-1-32-eks-42.yaml) | [v1.32.13](https://github.com/kubernetes/kubernetes/release/tag/v1.32.13) |
 
 ### Kubernetes 1-31
 
 | Release | Manifest | Kubernetes Version                                                        |
 | -- | --- |---------------------------------------------------------------------------|
-| 48 | [v1-31-eks-48](https://distro.eks.amazonaws.com/kubernetes-1-31/kubernetes-1-31-eks-48.yaml) | [v1.31.14](https://github.com/kubernetes/kubernetes/release/tag/v1.31.14) |
+| 49 | [v1-31-eks-49](https://distro.eks.amazonaws.com/kubernetes-1-31/kubernetes-1-31-eks-49.yaml) | [v1.31.14](https://github.com/kubernetes/kubernetes/release/tag/v1.31.14) |
 
 ### Kubernetes 1-30
 
