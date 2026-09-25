@@ -104,7 +104,7 @@ commands:
 
 ```bash
 RELEASE_BRANCH=1-36
-RELEASE=7
+RELEASE=8
 kubectl apply -f https://distro.eks.amazonaws.com/crds/releases.distro.eks.amazonaws.com-v1alpha1.yaml
 kubectl apply -f https://distro.eks.amazonaws.com/kubernetes-${RELEASE_BRANCH}/kubernetes-${RELEASE_BRANCH}-eks-${RELEASE}.yaml
 kubectl get release kubernetes-${RELEASE_BRANCH}-eks-${RELEASE}
@@ -123,6 +123,7 @@ if you are interested in the AL2 container runtime kernel version.
 * [v1-37-eks-2](releases/1-37/2/index.md) (September 02, 2026)
 
 #### EKS-D 1.36 Version Dependencies
+* [v1-36-eks-8](releases/1-36/8/index.md) (September 25, 2026)
 * [v1-36-eks-7](releases/1-36/7/index.md) (August 18, 2026)
 * [v1-36-eks-6](releases/1-36/6/index.md) (July 27, 2026)
 * [v1-36-eks-5](releases/1-36/5/index.md) (July 10, 2026)
@@ -132,6 +133,7 @@ if you are interested in the AL2 container runtime kernel version.
 * [v1-36-eks-1](releases/1-36/1/index.md) (June 02, 2026)
 
 #### EKS-D 1.35 Version Dependencies
+* [v1-35-eks-14](releases/1-35/14/index.md) (September 25, 2026)
 * [v1-35-eks-13](releases/1-35/13/index.md) (August 18, 2026)
 * [v1-35-eks-12](releases/1-35/12/index.md) (July 27, 2026)
 * [v1-35-eks-11](releases/1-35/11/index.md) (July 10, 2026)
@@ -147,6 +149,7 @@ if you are interested in the AL2 container runtime kernel version.
 * [v1-35-eks-1](releases/1-35/1/index.md) (December 11, 2025)
 
 #### EKS-D 1.34 Version Dependencies
+* [v1-34-eks-23](releases/1-34/23/index.md) (September 25, 2026)
 * [v1-34-eks-22](releases/1-34/22/index.md) (August 18, 2026)
 * [v1-34-eks-21](releases/1-34/21/index.md) (July 27, 2026)
 * [v1-34-eks-20](releases/1-34/20/index.md) (July 10, 2026)
@@ -168,6 +171,7 @@ if you are interested in the AL2 container runtime kernel version.
 * [v1-34-eks-4](releases/1-34/4/index.md) (October 02, 2025)
 
 #### EKS-D 1.33 Version Dependencies
+* [v1-33-eks-32](releases/1-33/32/index.md) (September 25, 2026)
 * [v1-33-eks-31](releases/1-33/31/index.md) (August 18, 2026)
 * [v1-33-eks-30](releases/1-33/30/index.md) (July 27, 2026)
 * [v1-33-eks-29](releases/1-33/29/index.md) (July 10, 2026)
@@ -201,6 +205,7 @@ if you are interested in the AL2 container runtime kernel version.
 * [v1-33-eks-1](releases/1-33/1/index.md) (May 28, 2025)
 
 #### EKS-D 1.32 Version Dependencies
+* [v1-32-eks-42](releases/1-32/42/index.md) (September 25, 2026)
 * [v1-32-eks-41](releases/1-32/41/index.md) (August 18, 2026)
 * [v1-32-eks-40](releases/1-32/40/index.md) (July 27, 2026)
 * [v1-32-eks-39](releases/1-32/39/index.md) (July 10, 2026)
@@ -244,6 +249,7 @@ if you are interested in the AL2 container runtime kernel version.
 * [v1-32-eks-1](releases/1-32/1/index.md) (December 06, 2024)
 
 #### EKS-D 1.31 Version Dependencies
+* [v1-31-eks-49](releases/1-31/49/index.md) (September 25, 2026)
 * [v1-31-eks-48](releases/1-31/48/index.md) (August 18, 2026)
 * [v1-31-eks-47](releases/1-31/47/index.md) (July 27, 2026)
 * [v1-31-eks-46](releases/1-31/46/index.md) (July 10, 2026)
