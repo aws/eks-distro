@@ -104,7 +104,7 @@ commands:
 
 ```bash
 RELEASE_BRANCH=1-36
-RELEASE=8
+RELEASE=9
 kubectl apply -f https://distro.eks.amazonaws.com/crds/releases.distro.eks.amazonaws.com-v1alpha1.yaml
 kubectl apply -f https://distro.eks.amazonaws.com/kubernetes-${RELEASE_BRANCH}/kubernetes-${RELEASE_BRANCH}-eks-${RELEASE}.yaml
 kubectl get release kubernetes-${RELEASE_BRANCH}-eks-${RELEASE}
@@ -123,6 +123,7 @@ if you are interested in the AL2 container runtime kernel version.
 * [v1-37-eks-2](releases/1-37/2/index.md) (September 02, 2026)
 
 #### EKS-D 1.36 Version Dependencies
+* [v1-36-eks-9](releases/1-36/9/index.md) (October 02, 2026)
 * [v1-36-eks-8](releases/1-36/8/index.md) (September 25, 2026)
 * [v1-36-eks-7](releases/1-36/7/index.md) (August 18, 2026)
 * [v1-36-eks-6](releases/1-36/6/index.md) (July 27, 2026)
