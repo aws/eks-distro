@@ -146,6 +146,15 @@ function get_project_version(){
         VERSION=$(cat ${BASEDIR}/../../projects/${REPOSITORY_NAME}/${RELEASE_BRANCH}/GIT_TAG)
     fi
 
+    # Decoupled releases set GIT_TAG to the full runtime version
+    # (0.0.66-v0.7.18-cvefix) while images are still pushed under the plain
+    # upstream version (v0.7.18-cvefix). Derive the plain version the same
+    # way the build does, so the tag we reference is the one that exists.
+    # See projects/kubernetes-sigs/aws-iam-authenticator/build/bootstrap_copy_release_variables.sh
+    if [[ ! "${VERSION}" =~ ^v[0-9] ]] && [[ "${VERSION}" =~ -(v[0-9].*)$ ]]; then
+        VERSION="${BASH_REMATCH[1]}"
+    fi
+
     echo $VERSION
 }
 
