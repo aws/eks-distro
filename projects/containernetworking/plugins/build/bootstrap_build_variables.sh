@@ -34,7 +34,11 @@ PLUGINS_VERSION=$(curl -sL "https://raw.githubusercontent.com/aws/amazon-vpc-cni
 GIT_TAG="v${PLUGINS_VERSION}"
 echo "${GIT_TAG}" > "${RELEASE_BRANCH}/GIT_TAG"
 echo "${GIT_TAG}" > .git_tag
-GOLANG_VERSION=$(curl -sL "https://raw.githubusercontent.com/containernetworking/plugins/${GIT_TAG}/.github/go-version")
+UPSTREAM_GOLANG_VERSION=$(curl -sL "https://raw.githubusercontent.com/containernetworking/plugins/${GIT_TAG}/.github/go-version")
+# Build with at least MIN_GOLANG_VERSION so the binaries pick up current Go security fixes,
+# even when the upstream tag still declares an older Go minor version.
+MIN_GOLANG_VERSION="1.26"
+GOLANG_VERSION=$(printf '%s\n%s\n' "${UPSTREAM_GOLANG_VERSION}" "${MIN_GOLANG_VERSION}" | sort -V | tail -1)
 echo "${GOLANG_VERSION}" > "${RELEASE_BRANCH}/GOLANG_VERSION"
 echo "${GOLANG_VERSION}" > .go-version
 
