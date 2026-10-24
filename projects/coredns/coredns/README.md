@@ -7,11 +7,11 @@
 | 1-30    | ![Version](https://img.shields.io/badge/version-v1.12.4-blue) |
 | 1-31    | ![Version](https://img.shields.io/badge/version-v1.12.4-blue) |
 | 1-32    | ![Version](https://img.shields.io/badge/version-v1.12.4-blue) |
-| 1-33    | ![Version](https://img.shields.io/badge/version-v1.14.6-blue) |
-| 1-34    | ![Version](https://img.shields.io/badge/version-v1.14.6-blue) |
-| 1-35    | ![Version](https://img.shields.io/badge/version-v1.14.6-blue) |
-| 1-36    | ![Version](https://img.shields.io/badge/version-v1.14.6-blue) |
-| 1-37    | ![Version](https://img.shields.io/badge/version-v1.14.6-blue) |
+| 1-33    | ![Version](https://img.shields.io/badge/version-v1.14.7-blue) |
+| 1-34    | ![Version](https://img.shields.io/badge/version-v1.14.7-blue) |
+| 1-35    | ![Version](https://img.shields.io/badge/version-v1.14.7-blue) |
+| 1-36    | ![Version](https://img.shields.io/badge/version-v1.14.7-blue) |
+| 1-37    | ![Version](https://img.shields.io/badge/version-v1.14.7-blue) |
 
 ### Updating
 
