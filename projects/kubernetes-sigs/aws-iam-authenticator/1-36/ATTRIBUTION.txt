@@ -1,47 +1,47 @@
 
-** github.com/aws/aws-sdk-go-v2/config; version v1.32.14 --
+** github.com/aws/aws-sdk-go-v2/config; version v1.32.29 --
 https://github.com/aws/aws-sdk-go-v2/config
 
-** github.com/aws/aws-sdk-go-v2/credentials; version v1.19.14 --
+** github.com/aws/aws-sdk-go-v2/credentials; version v1.19.28 --
 https://github.com/aws/aws-sdk-go-v2/credentials
 
-** github.com/aws/aws-sdk-go-v2/feature/ec2/imds; version v1.18.21 --
+** github.com/aws/aws-sdk-go-v2/feature/ec2/imds; version v1.18.30 --
 https://github.com/aws/aws-sdk-go-v2/feature/ec2/imds
 
-** github.com/aws/aws-sdk-go-v2/internal/configsources; version v1.4.21 --
+** github.com/aws/aws-sdk-go-v2/internal/configsources; version v1.4.30 --
 https://github.com/aws/aws-sdk-go-v2/internal/configsources
 
-** github.com/aws/aws-sdk-go-v2/internal/endpoints/v2; version v2.7.21 --
+** github.com/aws/aws-sdk-go-v2/internal/endpoints/v2; version v2.7.30 --
 https://github.com/aws/aws-sdk-go-v2/internal/endpoints/v2
 
-** github.com/aws/aws-sdk-go-v2/internal/ini; version v1.8.6 --
-https://github.com/aws/aws-sdk-go-v2/internal/ini
+** github.com/aws/aws-sdk-go-v2/internal/v4a; version v1.4.31 --
+https://github.com/aws/aws-sdk-go-v2/internal/v4a
 
-** github.com/aws/aws-sdk-go-v2/service/ec2; version v1.296.2 --
+** github.com/aws/aws-sdk-go-v2/service/ec2; version v1.316.0 --
 https://github.com/aws/aws-sdk-go-v2/service/ec2
 
-** github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding; version v1.13.7 --
+** github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding; version v1.13.13 --
 https://github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding
 
-** github.com/aws/aws-sdk-go-v2/service/internal/presigned-url; version v1.13.21 --
+** github.com/aws/aws-sdk-go-v2/service/internal/presigned-url; version v1.13.30 --
 https://github.com/aws/aws-sdk-go-v2/service/internal/presigned-url
 
-** github.com/aws/aws-sdk-go-v2/service/signin; version v1.0.9 --
+** github.com/aws/aws-sdk-go-v2/service/signin; version v1.4.0 --
 https://github.com/aws/aws-sdk-go-v2/service/signin
 
-** github.com/aws/aws-sdk-go-v2/service/sso; version v1.30.15 --
+** github.com/aws/aws-sdk-go-v2/service/sso; version v1.32.0 --
 https://github.com/aws/aws-sdk-go-v2/service/sso
 
-** github.com/aws/aws-sdk-go-v2/service/ssooidc; version v1.35.19 --
+** github.com/aws/aws-sdk-go-v2/service/ssooidc; version v1.37.0 --
 https://github.com/aws/aws-sdk-go-v2/service/ssooidc
 
-** github.com/aws/aws-sdk-go-v2/service/sts; version v1.41.10 --
+** github.com/aws/aws-sdk-go-v2/service/sts; version v1.44.0 --
 https://github.com/aws/aws-sdk-go-v2/service/sts
 
-** github.com/aws/smithy-go; version v1.24.3 --
+** github.com/aws/smithy-go; version v1.27.3 --
 https://github.com/aws/smithy-go
 
-** github.com/go-logr/logr; version v1.4.3 --
+** github.com/go-logr/logr; version v1.4.4 --
 https://github.com/go-logr/logr
 
 ** github.com/go-openapi/jsonpointer; version v0.22.5 --
@@ -113,10 +113,10 @@ https://github.com/spf13/afero
 ** github.com/spf13/cobra; version v1.10.2 --
 https://github.com/spf13/cobra
 
-** go.opentelemetry.io/otel; version v1.43.0 --
+** go.opentelemetry.io/otel; version v1.47.0 --
 https://github.com/open-telemetry/opentelemetry-go
 
-** go.opentelemetry.io/otel/trace; version v1.43.0 --
+** go.opentelemetry.io/otel/trace; version v1.47.0 --
 https://github.com/open-telemetry/opentelemetry-go
 
 ** go.yaml.in/yaml/v2; version v2.4.4 --
@@ -125,16 +125,16 @@ https://github.com/yaml/go-yaml
 ** gopkg.in/yaml.v2; version v2.4.0 --
 https://gopkg.in/yaml.v2
 
-** k8s.io/api; version v0.36.0 --
+** k8s.io/api; version v0.36.2 --
 https://github.com/kubernetes/api
 
-** k8s.io/apimachinery/pkg; version v0.36.0 --
+** k8s.io/apimachinery/pkg; version v0.36.2 --
 https://github.com/kubernetes/apimachinery
 
-** k8s.io/client-go; version v0.36.0 --
+** k8s.io/client-go; version v0.36.2 --
 https://github.com/kubernetes/client-go
 
-** k8s.io/component-base; version v0.36.0 --
+** k8s.io/component-base; version v0.36.2 --
 https://github.com/kubernetes/component-base
 
 ** k8s.io/klog/v2; version v2.140.0 --
@@ -146,13 +146,13 @@ https://github.com/kubernetes/kube-openapi
 ** k8s.io/kube-openapi/pkg/validation/spec; version v0.0.0-20260317180543-43fb72c5454a --
 https://github.com/kubernetes/kube-openapi
 
-** k8s.io/sample-controller/pkg/signals; version v0.36.0 --
+** k8s.io/sample-controller/pkg/signals; version v0.36.2 --
 https://github.com/kubernetes/sample-controller
 
 ** k8s.io/utils; version v0.0.0-20260210185600-b8788abfbbc2 --
 https://github.com/kubernetes/utils
 
-** sigs.k8s.io/aws-iam-authenticator; version v0.7.18-cvefix --
+** sigs.k8s.io/aws-iam-authenticator; version v0.7.24-cvefix --
 https://github.com/kubernetes-sigs/aws-iam-authenticator
 
 ** sigs.k8s.io/json; version v0.0.0-20250730193827-2d320260d730 --
@@ -567,10 +567,10 @@ Submitted on behalf of a third-party: @disconnect3d (Disconnect3d)
 
 ------
 
-** github.com/aws/aws-sdk-go-v2/internal/sync/singleflight; version v1.41.5 --
+** github.com/aws/aws-sdk-go-v2/internal/sync/singleflight; version v1.42.1 --
 https://github.com/aws/aws-sdk-go-v2
 
-** github.com/aws/smithy-go/internal/sync/singleflight; version v1.24.3 --
+** github.com/aws/smithy-go/internal/sync/singleflight; version v1.27.3 --
 https://github.com/aws/smithy-go
 
 Copyright (c) 2009 The Go Authors. All rights reserved.
@@ -847,22 +847,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/go; version go1.26.3 --
+** golang.org/go; version go1.27.3 --
 https://github.com/golang/go
 
-** golang.org/x/net; version v0.55.0 --
+** golang.org/x/net; version v0.61.0 --
 https://go.googlesource.com/net
 
 ** golang.org/x/oauth2; version v0.36.0 --
 https://go.googlesource.com/oauth2
 
-** golang.org/x/sys/unix; version v0.45.0 --
+** golang.org/x/sys/unix; version v0.49.0 --
 https://go.googlesource.com/sys
 
-** golang.org/x/term; version v0.43.0 --
+** golang.org/x/term; version v0.47.0 --
 https://go.googlesource.com/term
 
-** golang.org/x/text; version v0.37.0 --
+** golang.org/x/text; version v0.43.0 --
 https://go.googlesource.com/text
 
 ** golang.org/x/time/rate; version v0.15.0 --
@@ -1000,7 +1000,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** k8s.io/apimachinery/third_party/forked/golang; version v0.36.0 --
+** k8s.io/apimachinery/third_party/forked/golang; version v0.36.2 --
 https://github.com/kubernetes/apimachinery
 
 Copyright (c) 2009 The Go Authors. All rights reserved.
@@ -1478,7 +1478,7 @@ SOFTWARE.
 
 ------
 
-** go.yaml.in/yaml/v3; version v3.0.4 --
+** go.yaml.in/yaml/v3; version v3.0.5 --
 https://github.com/yaml/go-yaml
 
 This project is covered by two different licenses: MIT and Apache.
