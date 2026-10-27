@@ -27,13 +27,10 @@ aws s3 cp "s3://${S3_BUCKET}/${S3_PATH}/.git_tag" .git_tag
 aws s3 cp "s3://${S3_BUCKET}/${S3_PATH}/.go-version" /tmp/.go-version
 
 GOLANG_VERSION=$(cut -d. -f1,2 < /tmp/.go-version)
-# etcd 3.6.x (K8s 1.36+) requires Go 1.25; older release branches stay on the 3.5.x Go floor
 RELEASE_BRANCH_MINOR="${RELEASE_BRANCH##*-}"
-if [ "$RELEASE_BRANCH_MINOR" -ge 36 ]; then
-  MIN_GO_VERSION="1.25"
-else
-  MIN_GO_VERSION="1.24"
-fi
+# Go 1.25 and older no longer receive upstream security fixes, so every release branch
+# builds etcd with at least Go 1.26.
+MIN_GO_VERSION="1.26"
 if [[ "$(printf '%s\n' "$MIN_GO_VERSION" "$GOLANG_VERSION" | sort -V | head -1)" != "$MIN_GO_VERSION" ]]; then
   GOLANG_VERSION="$MIN_GO_VERSION"
 fi
