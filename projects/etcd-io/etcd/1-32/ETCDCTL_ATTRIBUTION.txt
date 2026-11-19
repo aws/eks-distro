@@ -546,7 +546,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------
 
-** golang.org/go; version go1.26.10 --
+** golang.org/go; version go1.26.11 --
 https://github.com/golang/go
 
 ** golang.org/x/crypto; version v0.36.0 --
@@ -625,7 +625,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ------
 
 ** google.golang.org/protobuf; version v1.33.0 --
-https://go.googlesource.com/protobuf
+https://github.com/protocolbuffers/protobuf-go
 
 Copyright (c) 2018 The Go Authors. All rights reserved.
 
