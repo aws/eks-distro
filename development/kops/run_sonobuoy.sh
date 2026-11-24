@@ -27,7 +27,7 @@ echo "Testing cluster ${KOPS_CLUSTER_NAME} with conformance mode ${CONFORMANCE_M
 
 function start_sonobuoy() {
   local count=0
-  while ! sonobuoy --context ${KOPS_CLUSTER_NAME} run --mode=certified-conformance --wait --kube-conformance-image ${CONFORMANCE_IMAGE} "$@"
+  while ! sonobuoy --context ${KOPS_CLUSTER_NAME} run --wait --kube-conformance-image ${CONFORMANCE_IMAGE} "$@"
   do
     sonobuoy --context ${KOPS_CLUSTER_NAME} delete --all --wait||true
     sleep 5
@@ -90,10 +90,11 @@ function run_conformance() {
 
 case $CONFORMANCE_MODE in
   certified)
-    run_conformance ""
+    run_conformance "" --mode=certified-conformance
     ;;
   split)
     run_conformance parallel \
+      --e2e-focus='\[Conformance\]' \
       --e2e-skip="${SERIAL_TESTS_REGEX}" \
       --plugin-env=e2e.E2E_EXTRA_GINKGO_ARGS=--procs=${CONFORMANCE_PARALLEL_PROCS}
     run_conformance serial \
