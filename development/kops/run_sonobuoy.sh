@@ -23,7 +23,7 @@ CONFORMANCE_IMAGE=registry.k8s.io/conformance:${KUBERNETES_VERSION}
 CONFORMANCE_MODE=${CONFORMANCE_MODE:-certified}
 CONFORMANCE_PARALLEL_PROCS=${CONFORMANCE_PARALLEL_PROCS:-20}
 CONFORMANCE_TIMEOUT_MINUTES=${CONFORMANCE_TIMEOUT_MINUTES:-1440}
-SERIAL_TESTS_REGEX='\[Serial\]|\[Disruptive\]|\[Slow\]|Garbage.collector'
+SERIAL_TESTS_REGEX='\[Serial\]|\[Disruptive\]'
 echo "Testing cluster ${KOPS_CLUSTER_NAME} with conformance mode ${CONFORMANCE_MODE}"
 
 function wait_for_sonobuoy() {
@@ -109,7 +109,7 @@ case $CONFORMANCE_MODE in
       --e2e-skip="${SERIAL_TESTS_REGEX}" \
       --plugin-env=e2e.E2E_EXTRA_GINKGO_ARGS=--procs=${CONFORMANCE_PARALLEL_PROCS}
     run_conformance serial \
-      --e2e-focus="(${SERIAL_TESTS_REGEX}).*\[Conformance\]"
+      --e2e-focus="(${SERIAL_TESTS_REGEX}).*\[Conformance\]|\[Conformance\].*(${SERIAL_TESTS_REGEX})"
     ;;
   *)
     echo "Unknown CONFORMANCE_MODE ${CONFORMANCE_MODE}, expected certified or split"
