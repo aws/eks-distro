@@ -20,16 +20,16 @@ ARTIFACTS_SOURCE_S3_BUCKET="eks-distro-dev-release-artifacts"
 S3_PREFIX="kubernetes-${RELEASE_BRANCH}/releases/"
 aws s3 ls --recursive "s3://${ARTIFACTS_SOURCE_S3_BUCKET}/${S3_PREFIX}" > "$TEMP_FILE"
 
-LATEST_VERSION=$(grep -o 'eks\.[0-9]\+' "$TEMP_FILE" | sort -V | tail -1)
+PLATFORM_VERSION=$("$(git rev-parse --show-toplevel)/build/lib/resolve_platform_version.sh" "${RELEASE_BRANCH}" "$TEMP_FILE")
 
-VERSION_DIR=$(grep "${LATEST_VERSION}/artifacts/${REPO}/v[0-9]" "$TEMP_FILE" | \
+VERSION_DIR=$(grep "${PLATFORM_VERSION}/artifacts/${REPO}/v[0-9]" "$TEMP_FILE" | \
               grep -o 'v[0-9][^/]*' | head -1)
 
 GIT_TAG=$(echo "${VERSION_DIR}" | grep -o 'v[0-9]\+\.[0-9]\+\.[0-9]\+')
 echo "${GIT_TAG}" > .git_tag
 echo "${VERSION_DIR}" > .source_image_tag
 
-ARTIFACTS_SOURCE_S3_PATH="s3://${ARTIFACTS_SOURCE_S3_BUCKET}/${S3_PREFIX}${LATEST_VERSION}/artifacts/${REPO}/${VERSION_DIR}/"
+ARTIFACTS_SOURCE_S3_PATH="s3://${ARTIFACTS_SOURCE_S3_BUCKET}/${S3_PREFIX}${PLATFORM_VERSION}/artifacts/${REPO}/${VERSION_DIR}/"
 echo "${ARTIFACTS_SOURCE_S3_PATH}" > .s3_sync_path
 
 aws s3 cp "${ARTIFACTS_SOURCE_S3_PATH}.go-version" .go-version
