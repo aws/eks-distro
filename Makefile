@@ -85,6 +85,7 @@ kops-codebuild: kops-amd kops-arm
 .PHONY: kops-prow
 kops-prow: KOPS_ENTRYPOINT=development/kops/prow.sh
 kops-prow: export CONFORMANCE_MODE=split
+kops-prow: export CONFORMANCE_TIMEOUT_MINUTES=90
 kops-prow: kops-amd kops-arm
 	@echo 'Done kops-prow'
 
@@ -93,7 +94,7 @@ kops-amd: kops-prereqs
 	RELEASE=$(RELEASE) $(KOPS_ENTRYPOINT)
 
 .PHONY: kops-arm
-kops-arm: export NODE_INSTANCE_TYPE=t4g.medium
+kops-arm: export NODE_INSTANCE_TYPE=t4g.xlarge
 kops-arm: export NODE_ARCHITECTURE=arm64
 kops-arm: export UBUNTU_RELEASE=jammy-22.04
 kops-arm: kops-prereqs

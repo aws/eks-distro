@@ -22,12 +22,21 @@ $PREFLIGHT_CHECK_PASSED || exit 1
 CONFORMANCE_IMAGE=registry.k8s.io/conformance:${KUBERNETES_VERSION}
 CONFORMANCE_MODE=${CONFORMANCE_MODE:-certified}
 CONFORMANCE_PARALLEL_PROCS=${CONFORMANCE_PARALLEL_PROCS:-20}
+CONFORMANCE_TIMEOUT_MINUTES=${CONFORMANCE_TIMEOUT_MINUTES:-1440}
 SERIAL_TESTS_REGEX='\[Serial\]|\[Disruptive\]|\[Slow\]|Garbage.collector'
 echo "Testing cluster ${KOPS_CLUSTER_NAME} with conformance mode ${CONFORMANCE_MODE}"
 
+function wait_for_sonobuoy() {
+  if ! sonobuoy --context ${KOPS_CLUSTER_NAME} wait --wait=${CONFORMANCE_TIMEOUT_MINUTES}
+  then
+    echo "Sonobuoy did not finish within ${CONFORMANCE_TIMEOUT_MINUTES} minutes"
+    exit 1
+  fi
+}
+
 function start_sonobuoy() {
   local count=0
-  while ! sonobuoy --context ${KOPS_CLUSTER_NAME} run --wait --kube-conformance-image ${CONFORMANCE_IMAGE} "$@"
+  while ! sonobuoy --context ${KOPS_CLUSTER_NAME} run --kube-conformance-image ${CONFORMANCE_IMAGE} "$@"
   do
     sonobuoy --context ${KOPS_CLUSTER_NAME} delete --all --wait||true
     sleep 5
@@ -39,6 +48,7 @@ function start_sonobuoy() {
     fi
     echo 'Waiting for the cluster to be ready...'
   done
+  wait_for_sonobuoy
 }
 
 results=''
@@ -83,7 +93,8 @@ function run_conformance() {
       exit 1
     fi
     sonobuoy --context ${KOPS_CLUSTER_NAME} delete --all --wait
-    sonobuoy --context ${KOPS_CLUSTER_NAME} run --rerun-failed ${results} --wait --kube-conformance-image ${CONFORMANCE_IMAGE}
+    sonobuoy --context ${KOPS_CLUSTER_NAME} run --rerun-failed ${results} --kube-conformance-image ${CONFORMANCE_IMAGE}
+    wait_for_sonobuoy
   done
   sonobuoy --context ${KOPS_CLUSTER_NAME} delete --all --wait || true
 }
