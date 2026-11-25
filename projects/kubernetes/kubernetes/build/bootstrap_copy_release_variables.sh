@@ -26,13 +26,12 @@ KUBERNETES_ARTIFACTS_SOURCE_S3_BUCKET="eks-distro-dev-release-artifacts"
 S3_PREFIX="kubernetes-${RELEASE_BRANCH}/releases/"
 aws s3 ls --recursive "s3://${KUBERNETES_ARTIFACTS_SOURCE_S3_BUCKET}/${S3_PREFIX}" > "$TEMP_FILE"
 
-# if we move to utilize platform version in EKS-D releases then we can also export this variable
-LATEST_VERSION=$(grep -o 'eks\.[0-9]\+' "$TEMP_FILE" | sort -V | tail -1)
+PLATFORM_VERSION=$("$(git rev-parse --show-toplevel)/build/lib/resolve_platform_version.sh" "${RELEASE_BRANCH}" "$TEMP_FILE")
 
-K8S_PATCH_VERSION=$(grep "${LATEST_VERSION}/artifacts/kubernetes/v[0-9]" "$TEMP_FILE" | \
+K8S_PATCH_VERSION=$(grep "${PLATFORM_VERSION}/artifacts/kubernetes/v[0-9]" "$TEMP_FILE" | \
               grep -o 'v[0-9][^/]*' | head -1)
 
-EKS_VERSION=$(grep "${LATEST_VERSION}/artifacts/kubernetes/${K8S_PATCH_VERSION}/artifacts/kubernetes-public/" "$TEMP_FILE" | \
+EKS_VERSION=$(grep "${PLATFORM_VERSION}/artifacts/kubernetes/${K8S_PATCH_VERSION}/artifacts/kubernetes-public/" "$TEMP_FILE" | \
               grep -oE "${K8S_PATCH_VERSION}(-beta\.[0-9]+|-rc\.[0-9]+)?-eks-[a-z0-9]+" | head -1)
 echo "${EKS_VERSION}" > .eks_version
 
@@ -40,7 +39,7 @@ GIT_TAG=${EKS_VERSION%-eks-*}
 echo "${GIT_TAG}" > .git_tag
 
 # Construct the final S3 path to sync
-KUBERNETES_ARTIFACTS_SOURCE_S3_RELEASE_PATH="s3://${KUBERNETES_ARTIFACTS_SOURCE_S3_BUCKET}/${S3_PREFIX}${LATEST_VERSION}/artifacts/kubernetes/${K8S_PATCH_VERSION}/artifacts/kubernetes-public/${EKS_VERSION}/"
+KUBERNETES_ARTIFACTS_SOURCE_S3_RELEASE_PATH="s3://${KUBERNETES_ARTIFACTS_SOURCE_S3_BUCKET}/${S3_PREFIX}${PLATFORM_VERSION}/artifacts/kubernetes/${K8S_PATCH_VERSION}/artifacts/kubernetes-public/${EKS_VERSION}/"
 echo "${KUBERNETES_ARTIFACTS_SOURCE_S3_RELEASE_PATH}" > .s3_sync_path
 
 aws s3 cp "${KUBERNETES_ARTIFACTS_SOURCE_S3_RELEASE_PATH}.go-version" .go-version

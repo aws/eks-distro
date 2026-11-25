@@ -20,14 +20,13 @@ S3_BUCKET="eks-distro-dev-release-artifacts"
 S3_PREFIX="kubernetes-${RELEASE_BRANCH}/releases/"
 aws s3 ls --recursive "s3://${S3_BUCKET}/${S3_PREFIX}" > "$TEMP_FILE"
 
-LATEST_VERSION=$(grep -o 'eks\.[0-9]\+' "$TEMP_FILE" | sort -V | tail -1)
-S3_PATH="${S3_PREFIX}${LATEST_VERSION}/artifacts/etcd"
+PLATFORM_VERSION=$("$(git rev-parse --show-toplevel)/build/lib/resolve_platform_version.sh" "${RELEASE_BRANCH}" "$TEMP_FILE")
+S3_PATH="${S3_PREFIX}${PLATFORM_VERSION}/artifacts/etcd"
 
 aws s3 cp "s3://${S3_BUCKET}/${S3_PATH}/.git_tag" .git_tag
 aws s3 cp "s3://${S3_BUCKET}/${S3_PATH}/.go-version" /tmp/.go-version
 
 GOLANG_VERSION=$(cut -d. -f1,2 < /tmp/.go-version)
-RELEASE_BRANCH_MINOR="${RELEASE_BRANCH##*-}"
 # Go 1.25 and older no longer receive upstream security fixes, so every release branch
 # builds etcd with at least Go 1.26.
 MIN_GO_VERSION="1.26"
@@ -36,17 +35,8 @@ if [[ "$(printf '%s\n' "$MIN_GO_VERSION" "$GOLANG_VERSION" | sort -V | head -1)"
 fi
 echo "$GOLANG_VERSION" > .go-version
 
-GIT_TAG=$(cat .git_tag)
-# Only K8s 1.36+ moves to etcd 3.6.x; older release branches stay on v3.5.21
-if [ "$RELEASE_BRANCH_MINOR" -ge 36 ]; then
-  MIN_VERSION="v3.6.12"
-else
-  MIN_VERSION="v3.5.21"
-fi
-if [[ "$(printf '%s\n' "$MIN_VERSION" "$GIT_TAG" | sort -V | head -1)" != "$MIN_VERSION" ]]; then
-  GIT_TAG="$MIN_VERSION"
-  echo "$GIT_TAG" > .git_tag
-fi
+GIT_TAG=$("$(dirname "$0")/effective_git_tag.sh" "${RELEASE_BRANCH}" "$(cat .git_tag)")
+echo "$GIT_TAG" > .git_tag
 curl -sL "https://raw.githubusercontent.com/etcd-io/etcd/${GIT_TAG}/server/go.mod" -o "${RELEASE_BRANCH}/server/go.mod"
 curl -sL "https://raw.githubusercontent.com/etcd-io/etcd/${GIT_TAG}/server/go.sum" -o "${RELEASE_BRANCH}/server/go.sum"
 curl -sL "https://raw.githubusercontent.com/etcd-io/etcd/${GIT_TAG}/etcdctl/go.mod" -o "${RELEASE_BRANCH}/etcdctl/go.mod"

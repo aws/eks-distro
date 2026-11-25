@@ -1,11 +1,12 @@
 name: base-image-pr-notifier
 on:
   pull_request_target:
-    types: [opened]
+    types: [opened, edited]
 permissions: {}
 jobs:
   baseimage-pr-notifier:
     runs-on: ubuntu-latest
+    if: github.event.action == 'opened' || github.event.changes.title != null
     steps:
       - name: Check PR title and notify Slack
         env:
@@ -14,15 +15,15 @@ jobs:
           PR_URL: ${{ github.event.pull_request.html_url }}
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: |
-          if [[ "$PR_AUTHOR" == "eks-distro-pr-bot" && ( "$PR_TITLE" == *"Update base image"* || "$PR_TITLE" == *"Update builder-base image"* || "$PR_TITLE" == *"Update golang"* || "$PR_TITLE" == *"Update GIT_TAG and GOLANG_VERSION"* || "$PR_TITLE" == *"Update ATTRIBUTION.txt"* || "$PR_TITLE" == *"Update go.mod"* || "$PR_TITLE" == *"Update CHECKSUMS"* || "$PR_TITLE" == *"Update Makefile generated help"* ) ]]; then
+          if [[ "$PR_AUTHOR" == "eks-distro-pr-bot" && ( "$PR_TITLE" == *"Update base image"* || "$PR_TITLE" == *"Update builder-base image"* || "$PR_TITLE" == *"Update golang"* || "$PR_TITLE" == *"Update GIT_TAG and GOLANG_VERSION"* || "$PR_TITLE" == *"Update ATTRIBUTION.txt"* || "$PR_TITLE" == *"Update go.mod"* || "$PR_TITLE" == *"Update CHECKSUMS"* || "$PR_TITLE" == *"Update Makefile generated help"* || "$PR_TITLE" == *"Bump dev releases:"* ) ]]; then
             payload=$(jq -n \
               --arg repo "$GITHUB_REPOSITORY" \
               --arg pr_title "$PR_TITLE" \
               --arg pr_url "$PR_URL" \
               '{repo: $repo, pr_title: $pr_title, pr_url: $pr_url}')
             curl -X POST -H 'Content-Type: application/json' --data "$payload" "$SLACK_WEBHOOK"
-            echo "Base image update detected - Slack notification sent"
+            echo "PR bot update detected - Slack notification sent"
           else
-            echo "Not a base image update PR - Skipping notification"
+            echo "Not a PR bot update - Skipping notification"
           fi
           exit 0
