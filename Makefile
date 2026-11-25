@@ -258,6 +258,10 @@ update-all-prod-release-numbers:
 update-dev-release-prs:
 	build/update-dev-release/create_pr.sh
 
+.PHONY: update-prod-release-prs
+update-prod-release-prs:
+	build/update-prod-release/create_pr.sh
+
 # See important note about minor releases in the Go function called.
 # release-docs is intended to be used to generate release docs for the latest release branch. If this command is used in
 # conjunction with release-docs-limited to make all the release docs for a new minor release, WITH_GIT_AND_PR should be
