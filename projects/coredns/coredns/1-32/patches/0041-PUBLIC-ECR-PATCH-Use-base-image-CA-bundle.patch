@@ -1,0 +1,37 @@
+From a495bb3eeb48d8f4c5fe243f804bbe37bb540f72 Mon Sep 17 00:00:00 2001
+From: kaposmee <kaposmee@amazon.com>
+Date: Sat, 24 Oct 2026 23:32:18 +0000
+Subject: [PATCH] Use base image CA bundle instead of Debian
+ ca-certificates.crt
+
+The COPY of the build stage's /etc/ssl/certs/ca-certificates.crt replaced the
+base image's symlink to the fixed tls-ca-bundle.pem with Debian's bundle,
+which still trusts emSign Root CA - C1 and emSign ECC Root CA - C3
+(CVE-2026-113470). Go reads that path first. Upstream dropped this COPY
+in v1.13; do the same here so the image uses the eks-distro base bundle.
+---
+ Dockerfile | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/Dockerfile b/Dockerfile
+index 5202e8b..3cd79c1 100644
+--- a/Dockerfile
++++ b/Dockerfile
+@@ -9,13 +9,12 @@ RUN export DEBCONF_NONINTERACTIVE_SEEN=true \
+            TERM=linux ; \
+     apt-get -qq update ; \
+     apt-get -qq upgrade ; \
+-    apt-get -qq --no-install-recommends install ca-certificates libcap2-bin; \
++    apt-get -qq --no-install-recommends install libcap2-bin; \
+     apt-get clean
+ COPY coredns /coredns
+ RUN setcap cap_net_bind_service=+ep /coredns
+ 
+ FROM --platform=$TARGETPLATFORM ${BASE}
+-COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+ COPY --from=build /coredns /coredns
+ USER nonroot:nonroot
+ # Reset the working directory inherited from the base image back to the expected default:
+-- 
+2.47.3
+
