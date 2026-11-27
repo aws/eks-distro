@@ -3,6 +3,7 @@ package values
 import (
 	"context"
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/google/go-github/v52/github"
@@ -14,9 +15,12 @@ const (
 )
 
 func GetChangelogPRs(releaseVersion string, overrideNumber int) (string, error) {
-	githubClient := github.NewClient(nil)
-
 	ctx := context.Background()
+	githubClient := github.NewClient(nil)
+	if token := os.Getenv("GITHUB_TOKEN"); token != "" {
+		githubClient = github.NewTokenClient(ctx, token)
+	}
+
 	opts := &github.SearchOptions{Sort: "created", Order: "desc"}
 	//Get the date of the last document release for the release version
 	prs, _, err := githubClient.Search.Issues(ctx, "is:pr is:merged label:release label:documentation repo:aws/eks-distro label:"+releaseVersion, opts)
@@ -28,7 +32,7 @@ func GetChangelogPRs(releaseVersion string, overrideNumber int) (string, error) 
 	prevDocRelease := githubTimeFormat
 	if len(prs.Issues) > 0 {
 		//Select the most recent pr from the above query and format the date expected for the go-github client
-		releasePRs, _, err := githubClient.Search.Issues(ctx, "is:pr is:merged label:PROD-release label:"+releaseVersion, opts)
+		releasePRs, _, err := githubClient.Search.Issues(ctx, baseQuery+" label:PROD-release label:"+releaseVersion, opts)
 		if err != nil {
 			return "", fmt.Errorf("get release PRs from %v: %w", githubClient, err)
 		}
@@ -38,7 +42,7 @@ func GetChangelogPRs(releaseVersion string, overrideNumber int) (string, error) 
 		//With no document releases we need to be a little bit clever to generate unannounced changelogs.
 		//This finds the
 		opts = &github.SearchOptions{Sort: "created", Order: "asc"}
-		prs, _, err := githubClient.Search.Issues(ctx, "is:pr is:merged label:PROD-release label:"+releaseVersion, opts)
+		prs, _, err := githubClient.Search.Issues(ctx, baseQuery+" label:PROD-release label:"+releaseVersion, opts)
 		if err != nil {
 			return "", fmt.Errorf("get PRs from %v: %w", githubClient, err)
 		}
